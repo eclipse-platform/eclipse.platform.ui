@@ -29,7 +29,7 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
 /**
- * Scanner that scans the document and partitions the document into the two 
+ * Scanner that scans the document and partitions the document into the three 
  * supported content types:
  * <ul>
  * <li>XML_COMMENT</li>
