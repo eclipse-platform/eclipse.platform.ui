@@ -837,7 +837,7 @@ protected ElementTree[] sortTrees(ElementTree[] trees) {
 		/* add all instances of the current oldest tree to the sorted list */
 		List indices = (List) table.remove(oldest);
 		for (Enumeration e = Collections.enumeration(indices); e.hasMoreElements();) {
-			Integer next = (Integer) e.nextElement();
+			e.nextElement();
 			sorted[i] = oldest;
 			i--;
 		}
@@ -903,7 +903,7 @@ protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMon
 						builders.addAll(infos.values());
 				}
 			}
-			writeBuilderPersistenInfo(output, builders, trees, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
+			writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
 			// add the current tree in the list as the last element
 			trees.add(current);
@@ -966,7 +966,7 @@ protected void writeTree(Project project, DataOutputStream output, IProgressMoni
 			current.immutable();
 
 			/* add the tree for each builder to the array */
-			writeBuilderPersistenInfo(output, builders, trees, Policy.subMonitorFor(monitor, 1));
+			writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, 1));
 			trees.add(current);
 
 			/* save the forest! */
@@ -1338,7 +1338,7 @@ public void visitAndSnap(IResource root) throws CoreException {
 	for (int i = 0; i < projects.length; i++)
 		visitAndSnap(projects[i]);
 }
-protected void writeBuilderPersistenInfo(DataOutputStream output, List builders, List trees, IProgressMonitor monitor) throws IOException {
+protected void writeBuilderPersistentInfo(DataOutputStream output, List builders, List trees, IProgressMonitor monitor) throws IOException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		// write the number of builders we are saving
