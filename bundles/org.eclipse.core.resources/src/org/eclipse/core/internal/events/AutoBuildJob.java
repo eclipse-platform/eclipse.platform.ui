@@ -39,27 +39,14 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private Workspace workspace;
 	private final IJobManager jobManager = Platform.getJobManager();
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
 		setRule(workspace.getRoot());
 		isAutoBuilding = workspace.isAutoBuilding();
 		this.workspace = workspace;
-		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
-	}
-
-	/**
-	 * The workspace description has changed.  Update autobuild state.
-	 * @param wasAutoBuilding the old autobuild state
-	 * @param isAutoBuilding the new autobuild state
-	 */
-	private void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
-		this.isAutoBuilding = isAutoBuilding;
-		//force a build if autobuild has been turned on
-		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
-			forceBuild = true;
-			build(false);
-		}
+		this.preferences.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -190,10 +177,14 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
 			return;
-		Object oldValue = event.getOldValue();
-		Object newValue = event.getNewValue();
-		if (oldValue instanceof Boolean && newValue instanceof Boolean)
-			autoBuildChanged(((Boolean) oldValue).booleanValue(), ((Boolean) newValue).booleanValue());
+		// get the new value of auto-build directly from the preferences
+		boolean wasAutoBuilding = isAutoBuilding;
+		isAutoBuilding = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
+		//force a build if autobuild has been turned on
+		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
+			forceBuild = true;
+			build(false);
+		}
 	}
 	
 	/* (non-Javadoc)

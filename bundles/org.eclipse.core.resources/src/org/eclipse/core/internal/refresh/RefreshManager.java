@@ -108,7 +108,6 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 */
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
-		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 		preferences.addPropertyChangeListener(this);
 
 		refreshJob = new RefreshJob();

@@ -28,6 +28,7 @@
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
 		<scope name="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
+		<initializer class="org.eclipse.core.internal.resources.PreferenceInitializer"/>
 	</extension>
 	
 	<extension point="org.eclipse.core.runtime.contentTypes">
