@@ -14,23 +14,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
 public class IResourceTest extends ResourceTest {
+
+	public static Test suite() {
+		return new TestSuite(IResourceTest.class);
+	}
+
 	public IResourceTest() {
 		super();
 	}
 
 	public IResourceTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(IResourceTest.class);
 	}
 
 	protected void tearDown() throws Exception {
@@ -80,6 +80,135 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Bug states that JDT cannot copy the .project file from the project root to
+	 * the build output folder.
+	 */
+	public void testBug25686() {
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFolder outputFolder = project.getFolder("bin");
+		IFile description = project.getFile(".project");
+		IFile destination = outputFolder.getFile(".project");
+		ensureExistsInWorkspace(new IResource[] {project, outputFolder}, true);
+
+		assertTrue("0.0", description.exists());
+		try {
+			description.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("0.1", destination.exists());
+	}
+
+	public void testBug28790() {
+		//test only applicable on windows
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		IFile file = project.getFile("a.txt");
+		ensureExistsInWorkspace(file, getRandomString());
+		try {
+			//ensure archive bit is not set
+			ResourceAttributes attributes = file.getResourceAttributes();
+			attributes.setArchive(false);
+			file.setResourceAttributes(attributes);
+			assertTrue("1.0", !file.getResourceAttributes().isArchive());
+			//modify the file
+			file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//now the archive bit should be set
+		assertTrue("2.0", file.getResourceAttributes().isArchive());
+	}
+
+	/**
+	 * Bug 31750 states that an OperationCanceledException is
+	 * not handled correctly if it occurs within a proxy visitor.
+	 */
+	public void testBug31750() {
+		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			public boolean visit(IResourceProxy proxy) {
+				throw new OperationCanceledException();
+			}
+		};
+		try {
+			getWorkspace().getRoot().accept(visitor, IResource.NONE);
+			fail("1.0");
+		} catch (OperationCanceledException e) {
+			// expected results
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+	}
+
+	/**
+	 * A resource that is deleted, recreated, and converted to a phantom
+	 * all in one operation should not appear in the resource delta for
+	 * clients that are not interested in phantoms.
+	 */
+	public void testBug35991() {
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
+		final IFile file = project.getFile("file1");
+		ensureExistsInWorkspace(project, true);
+		//create phantom file by adding sync info
+		final QualifiedName name = new QualifiedName("test", "testBug35991");
+		getWorkspace().getSynchronizer().add(name);
+		try {
+			getWorkspace().getSynchronizer().setSyncInfo(name, file, new byte[] {1});
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		final boolean[] seen = new boolean[] {false};
+		final boolean[] phantomSeen = new boolean[] {false};
+		class DeltaVisitor implements IResourceDeltaVisitor {
+			private boolean[] mySeen;
+			DeltaVisitor(boolean[] mySeen) {
+				this.mySeen = mySeen;
+			}
+			public boolean visit(IResourceDelta aDelta) {
+				if (aDelta.getResource().equals(file))
+					mySeen[0] = true;
+				return true;
+			}
+		};
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				IResourceDelta delta = event.getDelta();
+				if (delta == null)
+					return;
+				try {
+					delta.accept(new DeltaVisitor(seen));
+					delta.accept(new DeltaVisitor(phantomSeen), true);
+				} catch (CoreException e) {
+					fail("1.99", e);
+				}
+			}
+		};
+		try {
+			getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+			
+			try {
+				//removing and adding sync info causes phantom to be deleted and recreated
+				getWorkspace().run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						ISynchronizer synchronizer = getWorkspace().getSynchronizer();
+						synchronizer.flushSyncInfo(name, file, IResource.DEPTH_INFINITE);
+						synchronizer.setSyncInfo(name, file, new byte[] {1});
+					}
+				}, null, IWorkspace.AVOID_UPDATE, getMonitor());
+				//ensure file was only seen by phantom listener
+				assertTrue("1.0", !seen[0]);
+				assertTrue("1.0", phantomSeen[0]);
+			} catch (CoreException e) {
+				fail("2.99", e);
+			}
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener);
+		}
+
+	}
+
+	/**
 	 * 1GA6QJP: ITPCORE:ALL - Copying a resource does not copy its lastmodified time
 	 */
 	public void testCopy_1GA6QJP() {
@@ -122,7 +251,7 @@ public class IResourceTest extends ResourceTest {
 	 */
 	public void testCreate_1FW87XF() {
 		// FIXME: remove when fix this PR
-		String os = BootLoader.getOS();
+		String os = Platform.getOS();
 		if (!os.equals(Constants.OS_LINUX)) {
 			debug("Skipping testCreate_1FW87XF because it is still not supported by the platform.");
 			return;
@@ -517,68 +646,6 @@ public class IResourceTest extends ResourceTest {
 			project.delete(true, true, null);
 		} catch (CoreException e) {
 			fail("3.0", e);
-		}
-	}
-
-	/**
-	 * Bug states that JDT cannot copy the .project file from the project root to
-	 * the build output folder.
-	 */
-	public void testBug25686() {
-		IProject project = getWorkspace().getRoot().getProject("MyProject");
-		IFolder outputFolder = project.getFolder("bin");
-		IFile description = project.getFile(".project");
-		IFile destination = outputFolder.getFile(".project");
-		ensureExistsInWorkspace(new IResource[] {project, outputFolder}, true);
-
-		assertTrue("0.0", description.exists());
-		try {
-			description.copy(destination.getFullPath(), IResource.NONE, getMonitor());
-		} catch (CoreException e) {
-			fail("0.99", e);
-		}
-		assertTrue("0.1", destination.exists());
-	}
-
-	public void testBug28790() {
-		//test only applicable on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
-			return;
-		IProject project = getWorkspace().getRoot().getProject("MyProject");
-		IFile file = project.getFile("a.txt");
-		ensureExistsInWorkspace(file, getRandomString());
-		try {
-			//ensure archive bit is not set
-			ResourceAttributes attributes = file.getResourceAttributes();
-			attributes.setArchive(false);
-			file.setResourceAttributes(attributes);
-			assertTrue("1.0", !file.getResourceAttributes().isArchive());
-			//modify the file
-			file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
-		} catch (CoreException e) {
-			fail("1.99", e);
-		}
-		//now the archive bit should be set
-		assertTrue("2.0", file.getResourceAttributes().isArchive());
-	}
-
-	/**
-	 * Bug 31750 states that an OperationCanceledException is
-	 * not handled correctly if it occurs within a proxy visitor.
-	 */
-	public void testBug31750() {
-		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
-			public boolean visit(IResourceProxy proxy) {
-				throw new OperationCanceledException();
-			}
-		};
-		try {
-			getWorkspace().getRoot().accept(visitor, IResource.NONE);
-			fail("1.0");
-		} catch (OperationCanceledException e) {
-			// expected results
-		} catch (CoreException e) {
-			fail("2.0", e);
 		}
 	}
 }
