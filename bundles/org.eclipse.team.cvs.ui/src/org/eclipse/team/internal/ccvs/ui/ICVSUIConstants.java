@@ -45,6 +45,11 @@ public interface ICVSUIConstants {
 	public final String PREF_DIRTY_FLAG = "pref_dirty_flag";
 	public final String PREF_ADDED_FLAG = "pref_added_flag";
 	
-	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";
+	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	
+
+	// Wizard banners
+	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	
+	public final String IMG_WIZBAN_BRANCH = "wizban/newstream_wizban.gif";	
+	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.gif";	
 }
 

@@ -18,6 +18,7 @@ import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class NewLocationWizard extends Wizard {
@@ -38,7 +39,7 @@ public class NewLocationWizard extends Wizard {
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.title"), null);
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.title"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE));
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}

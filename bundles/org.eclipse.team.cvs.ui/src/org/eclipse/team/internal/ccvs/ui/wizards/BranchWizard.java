@@ -29,6 +29,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
@@ -42,7 +43,7 @@ public class BranchWizard extends Wizard {
 	}
 	
 	public void addPages() {
-		mainPage = new BranchWizardPage("branchPage", Policy.bind("BranchWizard.createABranch"), null);
+		mainPage = new BranchWizardPage("branchPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
 		addPage(mainPage);
 	}
 	public boolean performFinish() {

@@ -68,7 +68,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), null, wizards);
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards);
 		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description"));
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);

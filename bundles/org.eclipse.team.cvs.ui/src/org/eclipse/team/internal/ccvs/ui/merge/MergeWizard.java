@@ -23,10 +23,11 @@ public class MergeWizard extends Wizard {
 	IProject project;
 
 	public void addPages() {
-		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), null);
+		ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
+		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
 		startPage.setProject(project);
 		addPage(startPage);
-		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), null);
+		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage);
 		endPage.setProject(project);
 		addPage(endPage);
 	}

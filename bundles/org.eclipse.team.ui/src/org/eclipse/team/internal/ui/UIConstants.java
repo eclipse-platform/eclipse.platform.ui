@@ -31,4 +31,8 @@ public interface UIConstants {
 	public final String IMG_SYNC_MODE_CATCHUP = "clcl16/catchup_rls.gif";
 	public final String IMG_SYNC_MODE_RELEASE = "clcl16/release_rls.gif";
 	public final String IMG_SYNC_MODE_FREE = "clcl16/catchuprelease_rls.gif";
+	
+	// Wizard banners
+	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";
+	
 }

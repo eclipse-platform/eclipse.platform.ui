@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
@@ -32,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.IConfigurationWizard;
@@ -67,21 +69,22 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		setNeedsProgressMonitor(true);
 	}		
 	public void addPages() {
+		ImageDescriptor sharingImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE);
 		if (doesCVSDirectoryExist()) {
-			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), null);
+			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), sharingImage);
 			autoconnectPage.setProject(project);
 			addPage(autoconnectPage);
 		} else {
 			ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
 			if (locations.length > 0) {
-				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), null);
+				locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage);
 				addPage(locationPage);
 			}
-			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), null);
+			createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage);
 			addPage(createLocationPage);
-			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), null);
+			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage);
 			addPage(modulePage);
-			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("Ready to Share Project"), null);
+			finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("Ready to Share Project"), sharingImage);
 			addPage(finishPage);
 		}
 	}
