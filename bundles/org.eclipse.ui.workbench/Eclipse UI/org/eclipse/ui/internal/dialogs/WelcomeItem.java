@@ -100,9 +100,9 @@ private void openHelpTopic(String topic, String href) {
 	IHelp helpSupport = WorkbenchHelp.getHelpSupport();
 	if (helpSupport != null) {
 		if (href != null) 
-			helpSupport.displayHelpResource(href);
+			helpSupport.displayHelp(topic, href);
 		else
-			helpSupport.displayHelpResource(topic);
+			helpSupport.displayHelp(topic);
 	}
 }
 /**
