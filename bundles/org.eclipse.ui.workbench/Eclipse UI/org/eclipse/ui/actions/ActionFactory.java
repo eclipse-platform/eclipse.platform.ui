@@ -92,7 +92,10 @@ public abstract class ActionFactory {
      * enablement state.
      */
     public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null)
                 throw new IllegalArgumentException();
@@ -118,7 +121,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory ACTIVATE_EDITOR = new ActionFactory(
             "activateEditor") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -135,7 +141,9 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory BACK = new ActionFactory("back") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -154,7 +162,9 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory BACKWARD_HISTORY = new ActionFactory(
             "backardHistory") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -170,7 +180,9 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory CLOSE = new ActionFactory("close") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -186,7 +198,9 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory CLOSE_ALL = new ActionFactory("closeAll") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -203,7 +217,9 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory CLOSE_ALL_PERSPECTIVES = new ActionFactory(
             "closeAllPerspectives") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -220,7 +236,9 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory CLOSE_ALL_SAVED = new ActionFactory(
             "closeAllSaved") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -237,7 +255,9 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory CLOSE_PERSPECTIVE = new ActionFactory(
             "closePerspective") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -252,7 +272,9 @@ public abstract class ActionFactory {
      * Workbench action (id "intro"): Activate the introduction extension.
      */
     public static final ActionFactory INTRO = new ActionFactory("intro") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -269,7 +291,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory COPY = new ActionFactory("copy") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -294,7 +319,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory CUT = new ActionFactory("cut") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -319,7 +347,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory DELETE = new ActionFactory("delete") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -348,7 +379,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory EDIT_ACTION_SETS = new ActionFactory(
             "editActionSets") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -364,7 +398,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory EXPORT = new ActionFactory("export") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -381,7 +418,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory FIND = new ActionFactory("find") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -404,7 +444,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory FORWARD = new ActionFactory("forward") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -423,7 +466,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory FORWARD_HISTORY = new ActionFactory(
             "forwardHistory") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -440,7 +486,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory GO_INTO = new ActionFactory("goInto") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -458,7 +507,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory IMPORT = new ActionFactory("import") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -475,7 +527,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory LOCK_TOOL_BAR = new ActionFactory(
             "lockToolBar") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -491,7 +546,10 @@ public abstract class ActionFactory {
      * action maintains its enablement state.
      */
     public static final ActionFactory MAXIMIZE = new ActionFactory("maximize") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -509,7 +567,10 @@ public abstract class ActionFactory {
      * @since 3.1
      */
     public static final ActionFactory MINIMIZE = new ActionFactory("minimize") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -526,7 +587,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory MOVE = new ActionFactory("move") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -544,7 +608,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory NEW = new ActionFactory("new") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -564,7 +631,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory NEW_WIZARD_DROP_DOWN = new ActionFactory(
             "newWizardDropDown") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -581,7 +651,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory NEXT = new ActionFactory("next") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -606,7 +679,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory NEXT_EDITOR = new ActionFactory(
             "nextEditor") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -628,7 +704,10 @@ public abstract class ActionFactory {
      * </p>
      */
     public static final ActionFactory NEXT_PART = new ActionFactory("nextPart") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -651,7 +730,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory NEXT_PERSPECTIVE = new ActionFactory(
             "nextPerspective") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -668,7 +750,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory OPEN_NEW_WINDOW = new ActionFactory(
             "openNewWindow") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -685,7 +770,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory PASTE = new ActionFactory("paste") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -710,7 +798,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory PREFERENCES = new ActionFactory(
             "preferences") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -727,7 +818,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory PREVIOUS = new ActionFactory("previous") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -752,7 +846,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory PREVIOUS_EDITOR = new ActionFactory(
             "previousEditor") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -775,7 +872,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory PREVIOUS_PART = new ActionFactory(
             "previousPart") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -798,7 +898,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory PREVIOUS_PERSPECTIVE = new ActionFactory(
             "previousPerspective") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -815,7 +918,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory PRINT = new ActionFactory("print") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -841,7 +947,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory PROPERTIES = new ActionFactory(
             "properties") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -859,7 +968,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory QUIT = new ActionFactory("quit") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -876,7 +988,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory REDO = new ActionFactory("redo") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -901,7 +1016,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory REFRESH = new ActionFactory("refresh") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -920,7 +1038,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory RENAME = new ActionFactory("rename") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -939,7 +1060,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory RESET_PERSPECTIVE = new ActionFactory(
             "resetPerspective") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -956,7 +1080,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory REVERT = new ActionFactory("revert") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -974,7 +1101,10 @@ public abstract class ActionFactory {
      * maintains its enablement state.
      */
     public static final ActionFactory SAVE = new ActionFactory("save") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -990,7 +1120,10 @@ public abstract class ActionFactory {
      * changes. This action maintains its enablement state.
      */
     public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1006,7 +1139,10 @@ public abstract class ActionFactory {
      * action maintains its enablement state.
      */
     public static final ActionFactory SAVE_AS = new ActionFactory("saveAs") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1023,7 +1159,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SAVE_PERSPECTIVE = new ActionFactory(
             "savePerspective") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1041,7 +1180,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SELECT_ALL = new ActionFactory(
             "selectAll") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1060,7 +1202,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SHOW_EDITOR = new ActionFactory(
             "showEditor") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1077,7 +1222,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SHOW_OPEN_EDITORS = new ActionFactory(
             "showOpenEditors") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1094,7 +1242,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SHOW_WORKBOOK_EDITORS = new ActionFactory(
             "showWorkBookEditors") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1111,7 +1262,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SHOW_PART_PANE_MENU = new ActionFactory(
             "showPartPaneMenu") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1128,7 +1282,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory SHOW_VIEW_MENU = new ActionFactory(
             "showViewMenu") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1145,7 +1302,10 @@ public abstract class ActionFactory {
      * its enablement state.
      */
     public static final ActionFactory UNDO = new ActionFactory("undo") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1170,7 +1330,10 @@ public abstract class ActionFactory {
      * enablement state.
      */
     public static final ActionFactory UP = new ActionFactory("up") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1189,7 +1352,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory HELP_CONTENTS = new ActionFactory(
             "helpContents") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1208,7 +1374,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory HELP_SEARCH = new ActionFactory(
             "helpSearch") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1227,7 +1396,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory DYNAMIC_HELP = new ActionFactory(
             "dynamicHelp") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
@@ -1246,7 +1418,10 @@ public abstract class ActionFactory {
      */
     public static final ActionFactory OPEN_PERSPECTIVE_DIALOG = new ActionFactory(
             "openPerspectiveDialog") {//$NON-NLS-1$
-        /* (non-javadoc) method declared on ActionFactory */
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
                 throw new IllegalArgumentException();
