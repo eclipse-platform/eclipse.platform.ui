@@ -43,7 +43,17 @@
 %>
 	<tr>
 		<td align='<%=isRTL?"right":"left"%>' nowrap>
+<%
+		if(isSelected){
+%>
+			<b><img src="<%=icon%>" alt="<%=alt%>"><a href="<%=data.getTocDescriptionTopic(toc)%>" target="ContentViewFrame">&nbsp;<%=data.getTocLabel(toc)%></a></b>
+<%
+		}else{
+%>
 			<b><img src="<%=icon%>" alt="<%=alt%>"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
+<%
+		}
+%>
 		</td>
 	</tr>
 <%
