@@ -257,7 +257,8 @@ public class AntPropertiesBlock {
 		String[] pair= dialog.getNameValuePair();
 		prop.setName(pair[0]);
 		prop.setValue(pair[1]);
-		propertyTableViewer.update(prop, null);
+		//trigger a resort
+		propertyTableViewer.refresh();
 		container.update();
 	}
 	
