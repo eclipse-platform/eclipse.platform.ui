@@ -68,7 +68,7 @@ package org.eclipse.jface.text;
  * A document support for searching has deprecated since version 3.0. The recommended way
  * for searching is to use a {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}.<p>
  * 
- * In order to provided backward compatibility for clients of <code>IDocument</code>, extension
+ * In order to provide backward compatibility for clients of <code>IDocument</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
  * <ul>
