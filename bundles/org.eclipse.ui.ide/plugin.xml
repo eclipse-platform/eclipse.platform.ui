@@ -664,6 +664,18 @@
                id="org.eclipse.update.ui.newUpdates">
          </action>
       </actionSet>
+      <actionSet
+            label="%KeyBindingActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.actionSet.keyBindings">
+         <action
+               label="%KeyBindingActionSet.showKeyAssist.label"
+               class="org.eclipse.ui.internal.commands.ws.ShowKeyAssistHandler"
+               menubarPath="help/group.main"
+               id="org.eclipse.ui.actions.showKeyAssistHandler"
+               definitionId="org.eclipse.ui.window.showKeyAssist">
+         </action>
+      </actionSet>
    </extension>
 <!-- End Update -->
 </plugin>

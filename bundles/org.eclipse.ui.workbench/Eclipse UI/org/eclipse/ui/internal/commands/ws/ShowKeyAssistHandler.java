@@ -13,11 +13,7 @@ package org.eclipse.ui.internal.commands.ws;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
 
 /**
@@ -25,27 +21,18 @@ import org.eclipse.ui.commands.ExecutionException;
  * 
  * @since 3.1
  */
-public class ShowKeyAssistHandler extends AbstractHandler implements
-        IExecutableExtension {
+public class ShowKeyAssistHandler extends WorkbenchWindowHandlerDelegate {
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Opens the key assistant. This should never be called until initialization
+     * occurs.
      * 
-     * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
+     * @param parameterValuesByName
+     *            Ignored
+     * @return <code>null</code>
      */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
         PlatformUI.getWorkbench().getContextSupport().openKeyAssistDialog();
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-     *      java.lang.String, java.lang.Object)
-     */
-    public void setInitializationData(IConfigurationElement config,
-            String propertyName, Object data) throws CoreException {
-        // There is no data to pass.
     }
 }
