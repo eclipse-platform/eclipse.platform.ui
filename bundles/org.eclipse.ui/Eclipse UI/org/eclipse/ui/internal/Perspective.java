@@ -162,10 +162,6 @@ public void addFastView(IViewPart view) {
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
 			ctrl.setEnabled(false); // Remove focus support.
-		
-		// Enable dragging of the icon for the new fast view.
-		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
-		window.enableDragShortcutBarPart();
 	}
 }
 /**

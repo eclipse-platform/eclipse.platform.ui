@@ -505,6 +505,9 @@ private void createShortcutBar(Shell shell) {
 	// Define shortcut part.  This is for drag and drop.
 	shortcutBarPart = new ShortcutBarPart(shortcutBar);
 	
+	// Enable drag and drop.
+	enableDragShortcutBarPart();
+
 	// Add right mouse button support.
 	ToolBar tb = shortcutBar.getControl();
 	tb.addMouseListener(new MouseAdapter() {
