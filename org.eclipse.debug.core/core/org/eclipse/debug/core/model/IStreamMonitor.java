@@ -8,7 +8,7 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.IStreamListener;
 
 /**
- * A stream monitor manages the contents of a stream a process
+ * A stream monitor manages the contents of the stream a process
  * is writing to, and notifies registered listeners of changes in
  * the stream.
  * <p>

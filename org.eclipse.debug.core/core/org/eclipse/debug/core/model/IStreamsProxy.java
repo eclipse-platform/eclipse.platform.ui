@@ -42,6 +42,7 @@ public interface IStreamsProxy {
 	 * Writes the given text to the output stream connected to the
 	 * standard input stream of this proxy's process.
 	 *
+	 * @param input the text to be written
 	 * @exception IOException when an error occurs writing to the 
 	 *		underlying <code>OutputStream</code>.
 	 *

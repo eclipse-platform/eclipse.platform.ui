@@ -39,7 +39,7 @@ public interface IStep {
 	 * <p>
 	 * For example, a thread is considered to be stepping
 	 * after the <code>stepOver</code> call until the step over is completed,
-	 * a breakpoint is reached, an exception is thrown, or the thread or is
+	 * a breakpoint is reached, an exception is thrown, or the thread or debug target is
 	 * terminated.
 	 * </p>
 	 *

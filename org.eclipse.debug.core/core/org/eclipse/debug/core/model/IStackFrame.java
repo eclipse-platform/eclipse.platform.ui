@@ -68,6 +68,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 * @since 2.0
 	 */
 	public boolean hasVariables() throws DebugException;
@@ -168,6 +169,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 * @since 2.0
 	 */
 	public boolean hasRegisterGroups() throws DebugException;	
