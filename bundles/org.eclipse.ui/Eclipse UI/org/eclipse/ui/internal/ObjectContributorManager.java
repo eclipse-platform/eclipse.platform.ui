@@ -38,15 +38,19 @@ public abstract class ObjectContributorManager {
 	/** Table of contributors. */
 	protected Map contributors;
 
-	/** Cache of contributor search paths; <code>null</code> if none. */
-	protected Map lookup;
+	/** Cache of object class contributor search paths; <code>null</code> if none. */
+	protected Map objectLookup;
 
+	/** Cache of resource adapter class contributor search paths; <code>null</code> if none. */
+	protected Map adapterLookup;
+	
 /** 
  * Constructs a new contributor manager.
  */
 public ObjectContributorManager() {
 	contributors = new Hashtable(5);
-	lookup = null;
+	objectLookup = null;
+	adapterLookup = null;
 }
 /**
  * Adds contributors for the given types to the result list.
@@ -95,7 +99,24 @@ private List computeInterfaceOrder(List classList) {
  * smart and remove only those entries affected.
  */
 public void flushLookup() {
-	lookup = null;
+	objectLookup = null;
+	adapterLookup = null;
+}
+/**
+ * Cache the resource adapter class contributor search path.
+ */
+private void cacheAdapterLookup(Class adapterClass, List results) {
+	if (adapterLookup == null)
+		adapterLookup = new HashMap();
+	adapterLookup.put(adapterClass, results);
+}
+/**
+ * Cache the object class contributor search path.
+ */
+private void cacheObjectLookup(Class objectClass, List results) {
+	if (objectLookup == null)
+		objectLookup = new HashMap();
+	objectLookup.put(objectClass, results);
 }
 /**
  * Returns all the contributors registered against
@@ -106,8 +127,8 @@ protected List getContributors(Class objectClass) {
 	List objectList = null;
 	
 	// Lookup the results in the cache first
-	if (lookup != null) {
-		objectList = (List) lookup.get(objectClass);
+	if (objectLookup != null) {
+		objectList = (List) objectLookup.get(objectClass);
 	}
 	
 	// If not in cache, build it
@@ -117,9 +138,7 @@ protected List getContributors(Class objectClass) {
 			objectList = EMPTY_LIST;
 			
 		// Store the contribution list into the cache.
-		if (lookup == null)
-		   lookup = new HashMap();
-		lookup.put(objectClass, objectList);
+		cacheObjectLookup(objectClass, objectList);
 	}
 
 	return objectList;
@@ -252,36 +271,31 @@ protected List getContributors(Class objectClass, Class resourceClass) {
 	List resourceList = null;
 	
 	// Lookup the results in the cache first
-	if (lookup != null) {
-		objectList = (List) lookup.get(objectClass);
-		resourceList = (List) lookup.get(resourceClass);		
+	if (objectLookup != null) {
+		objectList = (List) objectLookup.get(objectClass);
+	}
+	if (adapterLookup != null) {
+		resourceList = (List) adapterLookup.get(resourceClass);		
 	}
 	
-	// If not in cache, build it
-	if (objectList == null || resourceList == null) {
-		if (objectList == null) {
-			objectList = addContributorsFor(objectClass);
-			if (objectList.size() == 0)
-				objectList = EMPTY_LIST;
+	if (objectList == null) {
+		objectList = addContributorsFor(objectClass);
+		if (objectList.size() == 0)
+			objectList = EMPTY_LIST;
+		cacheObjectLookup(objectClass, objectList);
+	}
+	if (resourceList == null) {
+		List contributors = addContributorsFor(resourceClass);
+		resourceList = new ArrayList(contributors.size());
+		Iterator enum = contributors.iterator();
+		while (enum.hasNext()){
+			IObjectContributor contributor = (IObjectContributor)enum.next();
+			if (contributor.canAdapt())
+				resourceList.add(contributor);
 		}
-		if (resourceList == null) {
-			List contributors = addContributorsFor(resourceClass);
-			resourceList = new ArrayList(contributors.size());
-			Iterator enum = contributors.iterator();
-			while (enum.hasNext()){
-				IObjectContributor contributor = (IObjectContributor)enum.next();
-				if (contributor.canAdapt())
-					resourceList.add(contributor);
-			}
-			if (resourceList.size() == 0)
-				resourceList = EMPTY_LIST;
-		}
-	
-		// Store the contribution lists into the cache.
-		if (lookup == null)
-		   lookup = new HashMap();
-		lookup.put(objectClass, objectList);
-		lookup.put(resourceClass, resourceList);
+		if (resourceList.size() == 0)
+			resourceList = EMPTY_LIST;
+		cacheAdapterLookup(resourceClass, resourceList);
 	}
 	
 	// Collect the contribution lists into one result
