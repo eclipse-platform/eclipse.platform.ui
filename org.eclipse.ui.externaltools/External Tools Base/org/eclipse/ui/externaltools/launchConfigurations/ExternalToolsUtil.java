@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
@@ -23,8 +24,17 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ResourceSelectionManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
+import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.registry
+	.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
@@ -186,5 +196,95 @@ public class ExternalToolsUtil {
 		}
 		return null;
 	}		
+	
+	/**
+	 * Returns the refresh scope specified by the given launch configuration or
+	 * <code>null</code> if none.
+	 * 
+	 * @param configuration	 * @return refresh scope	 * @throws CoreException if unable to access the associated attribute	 */	
+	public static String getRefreshScope(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+	}
+	
+	/**
+	 * Returns whether the refresh scope specified by the given launch
+	 * configuration is recursive.
+	 * 
+	 * @param configuration
+	 * @return whether the refresh scope is recursive
+	 * @throws CoreException if unable to access the associated attribute
+	 */	
+	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, false);
+	}
+	
+	/**
+	 * Refreshes the resources as specified by the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @param context context used to expand variables
+	 * @param monitor progress monitor	 * @throws CoreException if an exception occurrs while refreshing resources	 */
+	public static void refreshResources(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+		String scope = getRefreshScope(configuration);
+		if (scope == null)
+			return;
 		
+		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
+		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
+			String msg = ToolMessages.format("DefaultRunnerContext.invalidRefreshVarFormat", new Object[] {configuration.getName()}); //$NON-NLS-1$
+			abort(msg, null, 0);
+		}
+		
+		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
+		RefreshScopeVariable variable = registry.getRefreshVariable(varDef.name);
+		if (variable == null) {
+			String msg = ToolMessages.format("DefaultRunnerContext.noRefreshVarNamed", new Object[] {configuration.getName(), varDef.name}); //$NON-NLS-1$
+			abort(msg, null, 0);
+		}
+
+		int depth = IResource.DEPTH_ZERO;
+		if (isRefreshRecursive(configuration))
+			depth = IResource.DEPTH_INFINITE;
+
+		if (monitor.isCanceled())
+			return;
+					
+		IResource[] resources = variable.getExpander().getResources(varDef.name, varDef.argument, context);
+		if (resources == null || resources.length == 0)
+			return;
+			
+		monitor.beginTask(
+			ToolMessages.getString("DefaultRunnerContext.refreshResources"), //$NON-NLS-1$
+			resources.length);
+			
+		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "Exception(s) occurred during refresh.", null);
+		for (int i = 0; i < resources.length; i++) {
+			if (monitor.isCanceled())
+				break;
+			if (resources[i] != null && resources[i].isAccessible()) {
+				try {
+					resources[i].refreshLocal(depth, null);
+				} catch (CoreException e) {
+					status.merge(e.getStatus());
+				}
+			}
+			monitor.worked(1);
+		}
+		
+		monitor.done();
+		if (!status.isOK()) {
+			throw new CoreException(status);
+		}		
+	}	
+	
+	/**
+	 * Returns whether this tool is to be run in the background..
+	 * 
+	 * @param configuration
+	 * @return whether this tool is to be run in the background
+	 * @throws CoreException if unable to access the associated attribute
+	 */	
+	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
+	}	
 }
