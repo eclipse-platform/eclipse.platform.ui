@@ -27,7 +27,7 @@ import java.io.StringWriter;
  * @param navigator the resource navigator
  * @param label the label for the action
  */
-public FilterSelectionAction(Shell shell, ResourceNavigator navigator, String label) {
+public FilterSelectionAction(Shell shell, IResourceNavigatorPart navigator, String label) {
 	super(navigator, label);
 	setToolTipText(FILTER_TOOL_TIP);
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.FILTER_SELECTION_ACTION});
