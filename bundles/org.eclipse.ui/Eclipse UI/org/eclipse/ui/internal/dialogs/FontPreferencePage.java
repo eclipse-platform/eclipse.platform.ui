@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.dialogs;
 
+import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
@@ -174,10 +175,12 @@ public class FontPreferencePage
 		names.toArray(unsortedItems);
 
 		Sorter sorter = new Sorter() {
+			private Collator collator = Collator.getInstance();
+			
 			public boolean compare(Object o1, Object o2) {
 				String s1 = (String) o1;
 				String s2 = (String) o2;
-				return ((s1).compareTo(s2)) < 0;
+				return collator.compare(s1, s2) < 0;
 			}
 		};
 

@@ -43,8 +43,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			}
 
 			// The other pages are sorted in alphabetical order			 
-			String s1 = c1.getPageName().toUpperCase();
-			String s2 = c2.getPageName().toUpperCase();
+			String s1 = c1.getPageName();
+			String s2 = c2.getPageName();
 			//Return true if c2 is 'greater than' c1
 			return collator.compare(s2, s1) > 0;
 		}
