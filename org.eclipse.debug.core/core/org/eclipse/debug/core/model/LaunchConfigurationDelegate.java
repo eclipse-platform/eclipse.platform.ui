@@ -126,7 +126,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 				if (existsProblems(projects[i], IMarker.SEVERITY_ERROR)) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
-						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, configuration)).booleanValue();
 						break;
 					}
 				}	

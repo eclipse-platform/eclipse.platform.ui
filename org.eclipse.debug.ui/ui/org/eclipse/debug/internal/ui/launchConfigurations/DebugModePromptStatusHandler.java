@@ -19,6 +19,7 @@ import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 
@@ -29,6 +30,14 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
+		if (source instanceof ILaunchConfiguration) {
+			ILaunchConfiguration config = (ILaunchConfiguration)source;
+			boolean privateConfig = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
+			if (privateConfig) {
+				return new Boolean(false);
+			}	
+		}
+		
 		Shell activeShell = DebugUIPlugin.getShell();
 		String title = LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.0"); //$NON-NLS-1$
 		String message = LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.1"); //$NON-NLS-1$
