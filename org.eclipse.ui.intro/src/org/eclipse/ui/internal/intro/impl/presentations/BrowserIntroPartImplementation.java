@@ -115,7 +115,7 @@ public class BrowserIntroPartImplementation extends
                 }
             } else {
                 // Generate HTML for the cached page, and set it on the browser.
-                // getModel().setCurrentPageId(cachedPage);
+                getModel().setCurrentPageId(cachedPage, false);
                 // generateDynamicContentForPage(getModel().getCurrentPage());
             }
             updateHistory(cachedPage);
