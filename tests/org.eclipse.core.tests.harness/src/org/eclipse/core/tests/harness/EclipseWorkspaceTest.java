@@ -58,6 +58,16 @@ public class EclipseWorkspaceTest extends TestCase {
 	protected static int nextLocationCounter = 0;
 
 	/**
+	 * Log messages if we are in debug mode.
+	 */
+	public static void log(String message) {
+		String id = "org.eclipse.core.tests.harness/debug";
+		String option= Platform.getDebugOption(id);
+		if (Boolean.TRUE.toString().equalsIgnoreCase(option))
+			System.out.println(message);
+	}
+
+	/**
 	 * Need a zero argument constructor to satisfy the test harness.
 	 * This constructor should not do any real work nor should it be
 	 * called by user code.
@@ -949,16 +959,6 @@ public class EclipseWorkspaceTest extends TestCase {
 			e.printStackTrace();
 			assertTrue(e.toString(), false);
 		}
-	}
-
-	/**
-	 * Log messages if we are in debug mode.
-	 */
-	public static void log(String message) {
-		String id = "org.eclipse.core.tests.harness";
-		Plugin plugin = Platform.getPlugin(id);
-		if (plugin.isDebugging())
-			System.out.println(message);
 	}
 
 	protected void tearDown() throws Exception {
