@@ -16,7 +16,9 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 
 /**
- * TeamUI contains public API for generic UI-based Team functionality
+ * TeamUI contains public API for generic UI-based Team functionality.
+ * <p>
+ * This class is not intended to be sublcassed or instantiated by clients
  */
 public class TeamUI {
 

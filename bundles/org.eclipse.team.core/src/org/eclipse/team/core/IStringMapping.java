@@ -16,7 +16,7 @@ package org.eclipse.team.core;
  * A simple interface for mappings from a string (usually a file name or a file extension)
  * and a content type (typically <code>Team.TEXT</code>, <code>Team.BINARY</code> or
  * <code>Team.UNKNOWN</code>.
- * 
+ * <p>
  * This interface is not intented to be implemented by clients.
  * 
  * @since 3.1

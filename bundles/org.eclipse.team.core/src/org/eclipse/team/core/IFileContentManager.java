@@ -38,6 +38,9 @@ import org.eclipse.core.resources.IStorage;
  * If the user-defined mapping is deleted, the plugin-contributed mapping is valid again.
  * This interface is not intented to be implemented by clients.
  * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * 
  * @see org.eclipse.team.core.Team#getFileContentManager()
  * 
  * @since 3.1

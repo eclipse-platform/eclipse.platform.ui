@@ -13,6 +13,8 @@ package org.eclipse.team.core;
 /**
  * A file type info specifies both the file extension and the 
  * corresponding file type.
+ * <p>
+ * This interface is not intended to be implemented by clients.
  * 
  * @since 2.0
  * @deprecated Use the <code>IFileContentManager</code> API instead.
