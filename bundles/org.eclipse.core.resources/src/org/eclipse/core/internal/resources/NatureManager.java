@@ -326,7 +326,8 @@ protected boolean hasCycles(ProjectNatureDescriptor desc) {
 	String[] required = desc.getRequiredNatureIds();
 	for (int i = 0; i < required.length; i++) {
 		ProjectNatureDescriptor dependency = (ProjectNatureDescriptor)getNatureDescriptor(required[i]);
-		if (hasCycles(dependency)) {
+		//missing dependencies cannot create cycles
+		if (dependency != null && hasCycles(dependency)) {
 			desc.hasCycle = true;
 			desc.colour = BLACK;
 			return true;
