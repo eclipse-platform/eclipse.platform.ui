@@ -161,6 +161,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 					}
 				}
 			}, Policy.subMonitorFor(monitor, 100));
+			monitor.done();
 
 			// If the update succeeded but no contents were retreived from the server
 			// than we can assume that the remote file has no contents.
