@@ -238,6 +238,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		if (fileInfo != null) {
 			cvsDecoration.setAdded(fileInfo.isAdded());
 			cvsDecoration.setRevision(fileInfo.getRevision());
+			cvsDecoration.setReadOnly(file.isReadOnly());
 			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 			cvsDecoration.setNeedsMerge(fileInfo.isNeedsMerge(file.getTimeStamp()));
 			option = fileInfo.getKeywordMode();

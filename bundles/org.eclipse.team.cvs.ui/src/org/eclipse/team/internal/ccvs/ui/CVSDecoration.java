@@ -248,9 +248,10 @@ public class CVSDecoration {
 		}
 		if (isAdded()) {
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, preferences.getString(ICVSUIConstants.PREF_ADDED_FLAG));
-		}
-		bindings.put(CVSDecoratorConfiguration.FILE_REVISION, getRevision());
-		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, getTag());
+		} else if(isHasRemote()){
+			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, getRevision());
+			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, getTag());
+		}	
 		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, getResourceName());
 		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, getKeywordSubstitution());
 		if (resourceType != IResource.FILE && location != null) {

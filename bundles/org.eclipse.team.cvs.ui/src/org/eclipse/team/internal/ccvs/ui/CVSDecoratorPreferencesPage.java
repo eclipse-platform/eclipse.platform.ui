@@ -115,10 +115,10 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			} else if(element.equals("Project")) { //$NON-NLS-1$
 				decoration.setResourceType(IResource.PROJECT);
 				decoration.setHasRemote(true);
+				decoration.setTag("v1_0"); //$NON-NLS-1$
 			} else if(element.equals("Folder")) { //$NON-NLS-1$
 				decoration.setHasRemote(true);
 				decoration.setResourceType(IResource.FOLDER);
-				decoration.setDirty(true);
 				decoration.setHasRemote(true);
 			} else if(element.equals("dirty.cpp")){ //$NON-NLS-1$
 				decoration.setResourceType(IResource.FILE);
@@ -137,6 +137,11 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				decoration.setResourceType(IResource.FILE);
 				decoration.setDirty(false);
 				decoration.setHasRemote(true);
+			} else if(element.equals("archive.zip")){ //$NON-NLS-1$
+				decoration.setResourceType(IResource.FILE);
+				decoration.setDirty(false);
+				decoration.setHasRemote(true);
+				decoration.setKeywordSubstitution(Command.KSUBST_BINARY.getShortDisplayText());
 			}
 			decoration.compute();
 			return decoration;
@@ -188,6 +193,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 						"added.java", //$NON-NLS-1$
 						"todo.txt", //$NON-NLS-1$
 						"bugs.txt", //$NON-NLS-1$
+						"archive.zip", //$NON-NLS-1$
 						"Folder" //$NON-NLS-1$
 				};
 			} else {
@@ -376,7 +382,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		previewTree = new TreeViewer(previewGroup);
 		data = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		data.horizontalSpan = 2;
-		data.heightHint = 100;
+		data.heightHint = 125;
 		previewTree.getTree().setLayoutData(data);
 		previewTree.setContentProvider(previewContentProvider);
 		previewTree.setLabelProvider(new PreviewLabelProvider());
@@ -580,7 +586,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		CVSDecoration decoration = 
 			new CVSDecoration(name, prefs, fileTextFormat.getText(), folderTextFormat.getText(), projectTextFormat.getText());
 		
-		decoration.setTag("v1_0"); //$NON-NLS-1$
 		decoration.setKeywordSubstitution(Command.KSUBST_TEXT.getShortDisplayText()); //$NON-NLS-1$
 		decoration.setRevision("1.45"); //$NON-NLS-1$
 		try {
