@@ -39,6 +39,10 @@ public class ProcessPropertyPage extends PropertyPage {
 	 */
 	protected Control createContents(Composite ancestor) {
 					
+		WorkbenchHelp.setHelp(
+			ancestor,
+			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
+
 		Font font = ancestor.getFont();
 		noDefaultAndApplyButton();
 		
@@ -47,10 +51,6 @@ public class ProcessPropertyPage extends PropertyPage {
 		layout.numColumns= 2;
 		parent.setLayout(layout);
 		
-		WorkbenchHelp.setHelp(
-			parent,
-			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
-
 		Label l1= new Label(parent, SWT.NULL);
 		l1.setText(DebugPreferencesMessages.getString("ProcessPropertyPage.Command_Line__1")); //$NON-NLS-1$
 		
