@@ -19,15 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 
 public class RevertSection extends UpdateSection {
 // NL keys
-private static final String KEY_TITLE = "SnapshotPage.RevertSection.title";
-private static final String KEY_DESC = "SnapshotPage.RevertSection.desc";
-private static final String KEY_CURRENT_TEXT = "SnapshotPage.RevertSection.currentText";
-private static final String KEY_REVERT_TEXT = "SnapshotPage.RevertSection.revertText";
-private static final String KEY_REVERT_BUTTON = "SnapshotPage.RevertSection.revertButton";
-private static final String KEY_RESTORE_TEXT = "SnapshotPage.RevertSection.restoreText";
-private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.restoreButton";
-private static final String KEY_DIALOG_TITLE="SnapshotPage.RevertSection.dialog.title";
-private static final String KEY_DIALOG_MESSAGE="SnapshotPage.RevertSection.dialog.message";
+private static final String KEY_TITLE = "InstallConfigurationPage.RevertSection.title";
+private static final String KEY_DESC = "InstallConfigurationPage.RevertSection.desc";
+private static final String KEY_CURRENT_TEXT = "InstallConfigurationPage.RevertSection.currentText";
+private static final String KEY_REVERT_TEXT = "InstallConfigurationPage.RevertSection.revertText";
+private static final String KEY_REVERT_BUTTON = "InstallConfigurationPage.RevertSection.revertButton";
+private static final String KEY_RESTORE_TEXT = "InstallConfigurationPage.RevertSection.restoreText";
+private static final String KEY_RESTORE_BUTTON = "InstallConfigurationPage.RevertSection.restoreButton";
+private static final String KEY_DIALOG_TITLE="InstallConfigurationPage.RevertSection.dialog.title";
+private static final String KEY_DIALOG_MESSAGE="InstallConfigurationPage.RevertSection.dialog.message";
 
 	
 	private Composite container;

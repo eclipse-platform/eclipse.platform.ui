@@ -36,10 +36,11 @@ public static final String CATEGORY_PAGE = "Category";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String CONFIG_PAGE = "Config";
-public static final String SNAPSHOT_PAGE = "Snapshot";
+public static final String INSTALL_CONFIGURATION_PAGE = "InstallConfiguration";
 public static final String INSTALL_SITE_PAGE = "InstallSite";
 public static final String CDROM_PAGE = "MyComputer";
 public static final String UPDATES_PAGE = "Updates";
+public static final String UNKNOWN_PAGE = "Unknown";
 
 private Action homeAction;
 private UpdateAction backAction;
@@ -73,10 +74,11 @@ public void createPages() {
 	addPage(SITE_PAGE, sitePage);
 	addPage(CATEGORY_PAGE, new CategoryPage(this, "Category"));
 	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
-	addPage(SNAPSHOT_PAGE, new SnapshotPage(this, "Snapshot"));
+	addPage(INSTALL_CONFIGURATION_PAGE, new InstallConfigurationPage(this, "Snapshot"));
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
 	addPage(CDROM_PAGE, new MyComputerPage(this, "MyComputer"));
 	addPage(UPDATES_PAGE, new UpdatesPage(this, "Available Updates"));
+	addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	if (SWT.getPlatform().equals("win32")) {
 		addWebBrowser();
 	}
@@ -154,10 +156,11 @@ public void showPageWithInput(String pageId, Object input) {
 	
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 	if (part == this) return;
+	Object el=null;
 	if (sel instanceof IStructuredSelection) {
 		IStructuredSelection ssel = (IStructuredSelection)sel;
 		if (ssel.size()==1) {
-			Object el = ssel.getFirstElement();
+			el = ssel.getFirstElement();
 			if (el instanceof IFeature || el instanceof PendingChange ||
 								el instanceof CategorizedFeature) {
 				showPageWithInput(DETAILS_PAGE, el);
@@ -175,8 +178,9 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 				showPageWithInput(CONFIG_PAGE, el);
 				return;
 			}
-			if (el instanceof IInstallConfiguration) {
-				showPageWithInput(SNAPSHOT_PAGE, el);
+			if (el instanceof IInstallConfiguration ||
+				el instanceof PreservedConfiguration) {
+				showPageWithInput(INSTALL_CONFIGURATION_PAGE, el);
 				return;
 			}
 			if (el instanceof IConfigurationSite) {
@@ -193,7 +197,10 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 			}
 			if (el instanceof UpdateSearchSite) {
 				showPageWithInput(SITE_PAGE, el);
+				return;
 			}
+			//fallback - show empty page
+			showPageWithInput(UNKNOWN_PAGE, el);
 		}
 	}
 }

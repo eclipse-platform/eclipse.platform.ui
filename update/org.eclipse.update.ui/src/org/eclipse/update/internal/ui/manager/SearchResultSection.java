@@ -28,6 +28,8 @@ public class SearchResultSection {
 	private static final String KEY_DESC = "UpdatesPage.SearchResultSection.desc";
 	private static final String KEY_NODESC =
 		"UpdatesPage.SearchResultSection.nodesc";
+	private static final String KEY_STARTDESC =
+		"UpdatesPage.SearchResultSection.startdesc";
 	private static final String KEY_RESULT_ENTRY =
 		"UpdatesPage.SearchResultSection.resultEntry";
 	private static final String KEY_SITE_LINK = "openSite";
@@ -94,12 +96,26 @@ public class SearchResultSection {
 	}
 
 	public void reflow() {
+		reset();
+		searchFinished();
+	}
+	
+	public void reset() {
 		counter = 0;
 		Control[] children = container.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			child.dispose();
 		}
+	}
+
+	public void searchStarted() {
+		reset();
+		descLabel.setText(UpdateUIPlugin.getResourceString(KEY_STARTDESC));
+		container.layout(true);
+	}
+	
+	public void searchFinished() {
 		initialize();
 		container.layout(true);
 	}

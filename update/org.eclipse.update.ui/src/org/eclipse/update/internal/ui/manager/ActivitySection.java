@@ -15,22 +15,22 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class ActivitySection extends UpdateSection {
 // NL resource keys
-	private static final String KEY_TITLE = "SnapshotPage.ActivitySection.title";
-	private static final String KEY_DESC = "SnapshotPage.ActivitySection.desc";
-	private static final String KEY_DATE = "SnapshotPage.ActivitySection.headers.date";
-	private static final String KEY_TARGET = "SnapshotPage.ActivitySection.headers.target";
-	private static final String KEY_ACTION = "SnapshotPage.ActivitySection.headers.action";
-	private static final String KEY_STATUS = "SnapshotPage.ActivitySection.headers.status";
-	private static final String KEY_CONFIGURE = "SnapshotPage.ActivitySection.action.configure";
-	private static final String KEY_FEATURE_INSTALL = "SnapshotPage.ActivitySection.action.featureInstall";
-	private static final String KEY_FEATURE_REMOVE = "SnapshotPage.ActivitySection.action.featureRemove";
-	private static final String KEY_SITE_INSTALL = "SnapshotPage.ActivitySection.action.siteInstall";
-	private static final String KEY_SITE_REMOVE = "SnapshotPage.ActivitySection.action.siteRemove";	
-	private static final String KEY_UNCONFIGURE = "SnapshotPage.ActivitySection.action.unconfigure";
-	private static final String KEY_UNKNOWN = "SnapshotPage.ActivitySection.action.unknown";
-	private static final String KEY_REVERT = "SnapshotPage.ActivitySection.action.revert";
-	private static final String KEY_OK = "SnapshotPage.ActivitySection.status.ok";
-	private static final String KEY_NOK = "SnapshotPage.ActivitySection.status.nok";
+	private static final String KEY_TITLE = "InstallConfigurationPage.ActivitySection.title";
+	private static final String KEY_DESC = "InstallConfigurationPage.ActivitySection.desc";
+	private static final String KEY_DATE = "InstallConfigurationPage.ActivitySection.headers.date";
+	private static final String KEY_TARGET = "InstallConfigurationPage.ActivitySection.headers.target";
+	private static final String KEY_ACTION = "InstallConfigurationPage.ActivitySection.headers.action";
+	private static final String KEY_STATUS = "InstallConfigurationPage.ActivitySection.headers.status";
+	private static final String KEY_CONFIGURE = "InstallConfigurationPage.ActivitySection.action.configure";
+	private static final String KEY_FEATURE_INSTALL = "InstallConfigurationPage.ActivitySection.action.featureInstall";
+	private static final String KEY_FEATURE_REMOVE = "InstallConfigurationPage.ActivitySection.action.featureRemove";
+	private static final String KEY_SITE_INSTALL = "InstallConfigurationPage.ActivitySection.action.siteInstall";
+	private static final String KEY_SITE_REMOVE = "InstallConfigurationPage.ActivitySection.action.siteRemove";	
+	private static final String KEY_UNCONFIGURE = "InstallConfigurationPage.ActivitySection.action.unconfigure";
+	private static final String KEY_UNKNOWN = "InstallConfigurationPage.ActivitySection.action.unknown";
+	private static final String KEY_REVERT = "InstallConfigurationPage.ActivitySection.action.revert";
+	private static final String KEY_OK = "InstallConfigurationPage.ActivitySection.status.ok";
+	private static final String KEY_NOK = "InstallConfigurationPage.ActivitySection.status.nok";
 
 	private Composite container;
 	private FormWidgetFactory factory;

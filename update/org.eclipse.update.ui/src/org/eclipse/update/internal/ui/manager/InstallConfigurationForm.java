@@ -18,11 +18,11 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import java.util.Date;
 
-public class SnapshotForm extends PropertyWebForm {
-	private static final String KEY_CREATED_ON = "SnapshotPage.createdOn";
-	private static final String KEY_CURRENT_CONFIG = "SnapshotPage.currentConfig";
-	private static final String KEY_YES = "SnapshotPage.yes";
-	private static final String KEY_NO = "SnapshotPage.no";
+public class InstallConfigurationForm extends PropertyWebForm {
+	private static final String KEY_CREATED_ON = "InstallConfigurationPage.createdOn";
+	private static final String KEY_CURRENT_CONFIG = "InstallConfigurationPage.currentConfig";
+	private static final String KEY_YES = "InstallConfigurationPage.yes";
+	private static final String KEY_NO = "InstallConfigurationPage.no";
 	
 	private IInstallConfiguration currentConfiguration;
 	private Label dateLabel;
@@ -31,7 +31,7 @@ public class SnapshotForm extends PropertyWebForm {
 	private RevertSection revertSection;
 	private IUpdateModelChangedListener modelListener;
 	
-public SnapshotForm(UpdateFormPage page) {
+public InstallConfigurationForm(UpdateFormPage page) {
 	super(page);
 }
 
@@ -102,6 +102,9 @@ protected Object createPropertyLayoutData() {
 }
 
 public void expandTo(Object obj) {
+	if (obj instanceof PreservedConfiguration) {
+		obj = ((PreservedConfiguration)obj).getConfiguration();
+	}
 	if (obj instanceof IInstallConfiguration) {
 		inputChanged((IInstallConfiguration)obj);
 	}

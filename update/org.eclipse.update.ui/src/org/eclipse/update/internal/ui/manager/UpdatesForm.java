@@ -75,8 +75,7 @@ public class UpdatesForm extends UpdateWebForm {
 			String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 			String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
 			infoLabel.setText(text);
-			reflow();
-			updateSize();
+			reflow(true);
 			updates.detachProgressMonitor(this);
 			if (statusMonitor != null) {
 				updates.detachProgressMonitor(statusMonitor);
@@ -116,7 +115,8 @@ public class UpdatesForm extends UpdateWebForm {
 	protected void createContents(Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
-		layout.leftMargin = layout.rightMargin = 10;
+		layout.leftMargin = 10;
+		layout.rightMargin = 1;
 		layout.topMargin = 10;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 10;
@@ -243,12 +243,19 @@ public class UpdatesForm extends UpdateWebForm {
 		control.setLayoutData(td);
 		searchResultSection.setFullMode(settings.getBoolean(S_FULL_MODE));
 	}
-
-	private void reflow() {
-		searchResultSection.reflow();
+	
+	private void reflow(boolean searchFinished) {
+		if (searchFinished)
+		   searchResultSection.searchFinished();
+		else
+		   searchResultSection.reflow();
 		descLabel.getParent().layout(true);
 		((Composite) getControl()).layout(true);
 		updateSize();
+	}
+	
+	private void reflow() {
+		reflow(false);
 	}
 
 	private void toggleMode(final boolean fullMode) {
@@ -279,6 +286,7 @@ public class UpdatesForm extends UpdateWebForm {
 			attachStatusLineMonitor();
 			enableOptions(false);
 			updates.startSearch(getControl().getDisplay());
+			searchResultSection.searchStarted();
 		} catch (InvocationTargetException e) {
 			UpdateUIPlugin.logException(e);
 			return false;
