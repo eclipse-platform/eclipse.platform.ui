@@ -128,7 +128,7 @@ public class SearchPage extends NavigationPage {
 
 		if (root == null || !root.getChildren().hasNext()) {
 			root.addChild(
-				new SearchElement(WorkbenchResources.getString("No_results_found"), "org.eclipse.help/" + Resources.getString("noresult.html")));
+				new SearchElement(WorkbenchResources.getString("No_results_found"), "org.eclipse.help/" + Resources.getString("noresults.html")));
 			return root;
 		}
 
