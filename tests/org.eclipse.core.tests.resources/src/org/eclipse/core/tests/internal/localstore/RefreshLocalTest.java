@@ -11,9 +11,12 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -222,7 +225,7 @@ public void testSimpleRefresh() throws Throwable {
 	IFile file = project.getFile("file");
 	File target = file.getLocation().toFile();
 	ensureExistsInWorkspace(file, true);
-	ensureDoesNotExistInFileSystem(file);
+	ensureDoesNotExistInFileSystem(file);	
 	assertTrue("1.0", file.exists());
 	file.refreshLocal(IResource.DEPTH_INFINITE, null);
 	assertTrue("1.1", !file.exists());
@@ -235,5 +238,41 @@ public void testSimpleRefresh() throws Throwable {
 	folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	assertTrue("2.1", folder.exists());
 	assertTrue("2.2", ((Resource) folder).countResources(IResource.DEPTH_INFINITE, false) == (getTree(target).length + 1));
+}
+/**
+ * Tests if files with names that are invalid segments are properly rejected - does not run on Windows.
+ */
+public void testDiscoverFileWithInvalidName() {
+	
+	if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		return;
+	
+	/* initialize common objects */
+	IProject project = projects[0];
+
+	/* test root deletion */
+	IFile file = project.getFile("file.txt");
+	File target = file.getLocation().toFile();
+	ensureExistsInFileSystem(file);
+		
+	File fileWithInvalidName = new File(project.getLocation().toFile(), "a\\b");
+	try {
+		assertTrue("0.1", fileWithInvalidName.createNewFile());
+	} catch (IOException e) {
+		fail("0.2", e);
+	}			
+	assertTrue("1.0", !file.exists());
+	try {
+		project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		fail("2.0 - should have failed");
+	} catch (CoreException ce) {
+		IStatus status = ce.getStatus();
+		assertTrue("2.1", status.isMultiStatus());
+		IStatus[] children = status.getChildren();
+		assertEquals("2.2", 1, children.length);
+		assertTrue("2.3", children[0] instanceof ResourceStatus);		
+		assertEquals("2.4", IResourceStatus.INVALID_RESOURCE_NAME, children[0].getCode());			
+	}
+	assertTrue("3.0", file.exists());
 }
 }

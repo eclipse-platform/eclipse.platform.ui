@@ -141,7 +141,10 @@ public boolean resourcesChanged() {
 	return resourceChanged;
 }
 /**
- * deletion or creation -- Returns true if existence was not in sync.
+ * deletion or creation -- Returns:
+ * 	- RL_IN_SYNC - the resource is in-sync with the file system
+ * 	- RL_NOT_IN_SYNC - the resource is not in-sync with file system
+ * 	- RL_UNKNOWN - couldn't determine the sync status for this resource 
  */
 protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
 	boolean existsInWorkspace = node.existsInWorkspace();
@@ -230,6 +233,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		int targetType = target.getType();
 		if (targetType == IResource.PROJECT)
 			return true;
+
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
 			/* for folders we only care about updating local status */
 			if (targetType == IResource.FOLDER && node.isFolder()) {
@@ -248,7 +252,12 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 				if (lastModifed == node.getLastModified())
 					return true;
 			}
-		} else {
+		} else {			
+			if (node.existsInFileSystem() && !Path.EMPTY.isValidSegment(node.getLocalName())) {
+				String message = Policy.bind("resources.invalidResourceName", node.getLocalName());  //$NON-NLS-1$
+				errors.merge(new ResourceStatus(IResourceStatus.INVALID_RESOURCE_NAME, message));
+				return false; 
+			}			
 			int state = synchronizeExistence(node, target, node.getLevel());
 			if (state == RL_IN_SYNC || state == RL_NOT_IN_SYNC) {
 				if (targetType == IResource.FILE) {

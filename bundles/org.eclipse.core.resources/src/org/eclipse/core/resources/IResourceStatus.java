@@ -142,6 +142,12 @@ public interface IResourceStatus extends IStatus {
  	 * @since 2.1
  	 */
 	public static final int PARENT_READ_ONLY = 277;
+	
+	/** Status code constant (value 278) indicating a file exists in the
+	 * file system but its name is not a valid resource name.
+	 * Severity: error. Category: local file system.
+	 */
+	public static final int INVALID_RESOURCE_NAME = 278;		
 
 	// Workspace constants [300-398]
 	// Information Only [300-332]
