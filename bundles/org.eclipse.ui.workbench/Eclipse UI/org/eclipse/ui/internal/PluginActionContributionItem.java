@@ -49,10 +49,9 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
 	 */
 	public boolean isVisible() {
-		if(RoleManager.getInstance().isFiltering()){
-			if(!RoleManager.getInstance().isEnabledId(getId()))
-				return false;
-		}
-		return super.isVisible();
+		if(RoleManager.getInstance().isEnabledItem(this))
+			return super.isVisible();
+		else
+			return false;
 	}
 }

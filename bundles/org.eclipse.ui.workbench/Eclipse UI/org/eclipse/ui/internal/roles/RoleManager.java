@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -484,5 +485,18 @@ public class RoleManager implements IActivityListener {
 		}
 
 		return registry.getPerspectives();
+	}
+	
+	/**
+	 * Return whether or not this contribution item is
+	 * enabled.
+	 * @param item
+	 * @return
+	 */
+	public boolean isEnabledItem(IContributionItem item){
+		if(isFiltering())
+			return isEnabledId(item.getId());
+		else
+			return true;
 	}
 }
