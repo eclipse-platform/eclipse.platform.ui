@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -121,7 +123,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 
 	private boolean isValid(IResource resource) {
-		return resource.exists() || resource.isPhantom();
+		return resource.exists() || synchronizerCache.isPhantom(resource);
 	}
 	
 	/**
@@ -1424,7 +1426,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @param iResource
 	 * @return boolean
 	 */
-	public boolean isEdited(IFile resource) throws CVSException {
+	public boolean isEdited(IFile resource) {
 		return SyncFileWriter.isEdited(resource);
 	}
 	
@@ -1721,6 +1723,138 @@ public class EclipseSynchronizer implements IFlushOperation {
 			}
 		} finally {
 			endOperation();
+		}
+	}
+	
+	/**
+	 * Method called from background handler when resources that are mapped to CVS are recreated
+	 * @param resources
+	 * @param monitor
+	 * @throws CVSException
+	 */
+	public void resourcesRecreated(IResource[] resources, IProgressMonitor monitor) throws CVSException {
+		if (resources.length == 0) return;
+		ISchedulingRule rule = null;
+		ISchedulingRule projectsRule = getProjectRule(resources);
+		try {
+			monitor.beginTask(null, 100);
+			rule = beginBatching(projectsRule, monitor);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				try {
+					created(resource);
+				} catch (CVSException e) {
+					CVSProviderPlugin.log(e);
+				}
+			}
+		} finally {
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 5));
+			monitor.done();
+		}
+	}
+	
+	private ISchedulingRule getProjectRule(IResource[] resources) {
+		HashSet set = new HashSet();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			set.add(resource.getProject());
+		}
+		IProject[] projects = (IProject[]) set.toArray(new IProject[set.size()]);
+		if (projects.length == 1) {
+			return projects[0];
+		}
+		return new MultiRule(projects);
+	}
+
+	private void created(IResource resource) throws CVSException {
+		if (resource.exists()) {
+			if (resource.getType() == IResource.FILE) {
+				created((IFile)resource);
+			} else if (resource.getType() == IResource.FOLDER) {
+				created((IFolder)resource);
+			}
+		}
+	}
+	
+	/**
+	 * Notify the receiver that a folder has been created.
+	 * Any existing phantom sync info will be moved
+	 *
+	 * @param folder the folder that has been created
+	 */
+	private void created(IFolder folder) throws CVSException {
+		try {
+			// set the dirty count using what was cached in the phantom it
+			beginOperation();
+			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder);
+			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(folder);
+			if (folderInfo != null && syncBytes != null) {
+				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
+					// There is already a CVS subdirectory which indicates that
+					// either the folder was recreated by an external tool or that
+					// a folder with CVS information was copied from another location.
+					// To know the difference, we need to compare the folder sync info.
+					// If they are mapped to the same root and repository then just
+					// purge the phantom info. Otherwise, keep the original sync info.
+
+					// Get the new folder sync info
+					FolderSyncInfo newFolderInfo = getFolderSync(folder);
+					if (newFolderInfo.getRoot().equals(folderInfo.getRoot())
+						&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
+							// The folder is the same so use what is on disk
+							return;
+					}
+
+					// The folder is mapped to a different location.
+					// Purge new resource sync before restoring from phantom
+					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+					ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
+					for (int i = 0; i < children.length; i++) {
+						ICVSResource resource = children[i];
+						deleteResourceSync(resource.getIResource());
+					}
+				}
+
+				// set the sync info using what was cached in the phantom
+				setFolderSync(folder, folderInfo);
+				setCachedSyncBytes(folder, syncBytes);
+				// if there are members, indicate that 1 is changed so the Entries file is written
+				IResource[] members = members(folder);
+				if (members.length > 0) {
+					resourceChanged(members[0]);
+				}
+			}
+		} finally {
+			try {
+				endOperation();
+			} finally {
+				synchronizerCache.flush(folder);
+			}
+		}
+	}
+
+	/**
+	 * Notify the receiver that a file has been created. Any existing phantom
+	 * sync info will be moved
+	 *
+	 * @param file the file that has been created
+	 */
+	private void created(IFile file) throws CVSException {
+		try {
+			beginOperation();
+			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(file);
+			if (syncBytes == null) return;
+			byte[] newBytes = getSyncBytes(file);
+			if (newBytes == null) {
+				// only move the sync info if there is no new sync info
+				setSyncBytes(file, ResourceSyncInfo.convertFromDeletion(syncBytes));
+			}
+		} finally {
+			try {
+				endOperation();
+			} finally {
+				synchronizerCache.setCachedSyncBytes(file, null, true);
+			}
 		}
 	}
 }

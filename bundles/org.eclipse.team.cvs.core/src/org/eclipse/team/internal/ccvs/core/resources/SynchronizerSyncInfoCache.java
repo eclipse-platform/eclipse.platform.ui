@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -301,8 +302,16 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				pendingCacheWrites.remove(root);
 			}
 		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				// Must have been deleted since we checked
+				return;
+			}
 			throw CVSException.wrapException(e);
 		}
 		
+	}
+	
+	public boolean isPhantom(IResource resource) {
+		return resource.isPhantom() || pendingCacheWrites.containsKey(resource);
 	}
 }

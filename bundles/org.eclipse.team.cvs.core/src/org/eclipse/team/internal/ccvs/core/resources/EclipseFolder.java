@@ -221,7 +221,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		}, Policy.subMonitorFor(monitor, 99));
 	}
 	
-	/* private */ static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) throws CVSException {
+	/* private */ static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(null, 10);
 			monitor.subTask(container.getFullPath().toOSString());
@@ -236,6 +236,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				}
 			}
 		} catch (CoreException e) {
+			// Just ignore and continue
 		} finally {
 			monitor.done();
 		}

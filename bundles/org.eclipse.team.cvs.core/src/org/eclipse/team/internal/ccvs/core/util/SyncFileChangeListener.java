@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -141,6 +143,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						deferredHandler.ignoreFileChanged((IFile)resource);
 					} else if (isExternalDeletion(resource, kind)) {
 						externalDeletions.add(resource);
+					} else if (kind == IResourceDelta.ADDED && isRecreation(resource)) {
+						deferredHandler.recreated(resource);
 					}
 					return true;
 				}
@@ -227,6 +231,22 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	protected boolean isIgnoreFile(IResource resource) {
 		return resource.getType() == IResource.FILE &&
 			resource.getName().equals(SyncFileWriter.IGNORE_FILE);
+	}
+	
+	private boolean isRecreation(IResource resource) {
+		if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.FILE) {
+			try {
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if (cvsResource.isFolder()) {
+					return ((ICVSFolder)cvsResource).isCVSFolder();
+				}
+				return cvsResource.isManaged();
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+				// Fallthrough and assume it is not a recreation
+			}
+		}
+		return false;
 	}
 	
 	/*

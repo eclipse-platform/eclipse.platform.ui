@@ -30,8 +30,10 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	private static final int IGNORE_FILE_CHANGED = 1;
+	private static final int RECREATED_CVS_RESOURCE = 2;
 	
 	private Set changedIgnoreFiles = new HashSet();
+	private Set recreatedResources = new HashSet();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#processEvent(org.eclipse.team.core.subscribers.BackgroundEventHandler.Event, org.eclipse.core.runtime.IProgressMonitor)
@@ -41,6 +43,8 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		switch (type) {
 			case IGNORE_FILE_CHANGED :
 				changedIgnoreFiles.add(event.getResource());
+			case RECREATED_CVS_RESOURCE :
+				recreatedResources.add(event.getResource());
 		}				
 	}
 	
@@ -57,11 +61,20 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		queueEvent(new Event(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
+	/**
+	 * @param resource
+	 */
+	public void recreated(IResource resource) {
+		queueEvent(new Event(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
 	 */
 	protected void dispatchEvents(IProgressMonitor monitor) throws TeamException {
 		EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
 		changedIgnoreFiles.clear();
+		EclipseSynchronizer.getInstance().resourcesRecreated((IResource[]) recreatedResources.toArray(new IResource[recreatedResources.size()]), monitor);
+		recreatedResources.clear();
 	}
 }

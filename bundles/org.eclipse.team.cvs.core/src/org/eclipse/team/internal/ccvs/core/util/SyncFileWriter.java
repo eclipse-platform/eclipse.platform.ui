@@ -536,7 +536,7 @@ public class SyncFileWriter {
 						throw new CoreException(e.getStatus());
 					}
 				}
-			}, file, 0, null);
+			}, ResourcesPlugin.getWorkspace().getRuleFactory().createRule(file), 0, null);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
