@@ -80,7 +80,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         2.1
+         3.0 (originally added in release 2.1 as org.eclipse.ui.markerImageProviders)
       </documentation>
    </annotation>
 

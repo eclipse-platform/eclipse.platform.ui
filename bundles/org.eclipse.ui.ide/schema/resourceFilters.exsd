@@ -72,6 +72,15 @@ These filters can be selected to hide resources whose names match the filter&apo
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0 (originally added in release 1.0 as org.eclipse.ui.resourceFilters)
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>

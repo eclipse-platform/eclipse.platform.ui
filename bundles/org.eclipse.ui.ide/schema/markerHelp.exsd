@@ -90,7 +90,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Release 2.0
+         3.0 (originally added in release 2.0 as org.eclipse.ui.markerHelp)
       </documentation>
    </annotation>
 

@@ -83,6 +83,15 @@ The supplied image is drawn over the top right corner of the base image.
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0 (originally added in release 1.0 as org.eclipse.ui.projectNatureImages)
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
