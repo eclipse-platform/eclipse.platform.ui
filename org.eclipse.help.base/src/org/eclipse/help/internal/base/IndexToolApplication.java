@@ -44,11 +44,11 @@ public class IndexToolApplication
 	 */
 	public Object run(Object args) throws Exception {
 		try {
-			String directory = System.getProperty("indexOutput");
+			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
 			if (directory == null || directory.length() == 0) {
 				throw new Exception("indexOutput property is not set.");
 			}
-			String localeStr = System.getProperty("indexLocale");
+			String localeStr = System.getProperty("indexLocale"); //$NON-NLS-1$
 			if (localeStr == null || localeStr.length() < 2) {
 				throw new Exception("indexLocale property is not set.");
 			}
@@ -59,7 +59,7 @@ public class IndexToolApplication
 						localeStr.substring(0, 2),
 						localeStr.substring(3, 5));
 			} else {
-				locale = new Locale(localeStr.substring(0, 2), "");
+				locale = new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
 			}
 			preindex(directory, locale);
 		} catch (Exception e) {
@@ -71,7 +71,7 @@ public class IndexToolApplication
 	}
 
 	private void preindex(String outputDir, Locale locale) throws Exception {
-		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale);
+		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale); //$NON-NLS-1$
 
 		// clean
 		if (indexPath.exists()) {
@@ -83,7 +83,7 @@ public class IndexToolApplication
 			BaseHelpSystem.getSearchManager().getIndex(locale.toString()));
 		// zip up
 		File d =
-			new File(outputDir, "nl" + File.separator + locale.getLanguage());
+			new File(outputDir, "nl" + File.separator + locale.getLanguage()); //$NON-NLS-1$
 		if (locale.getCountry().length() > 0) {
 			d = new File(d, locale.getCountry());
 		}
@@ -91,7 +91,7 @@ public class IndexToolApplication
 			d.mkdirs();
 		ZipOutputStream zout =
 			new ZipOutputStream(
-				new FileOutputStream(new File(d, "doc_index.zip")));
+				new FileOutputStream(new File(d, "doc_index.zip"))); //$NON-NLS-1$
 		try {
 			zipDirectory(indexPath, zout, null);
 		} finally {
@@ -135,7 +135,7 @@ public class IndexToolApplication
 			if (base == null) {
 				path = files[i];
 			} else {
-				path = base + "/" + files[i];
+				path = base + "/" + files[i]; //$NON-NLS-1$
 			}
 			File f = new File(dir, files[i]);
 			if (f.isDirectory())

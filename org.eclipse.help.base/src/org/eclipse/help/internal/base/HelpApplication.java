@@ -28,7 +28,7 @@ import org.osgi.framework.*;
  */
 public class HelpApplication
 	implements IPlatformRunnable, IExecutableExtension {
-	private static final String APPLICATION_LOCK_FILE = ".applicationlock";
+	private static final String APPLICATION_LOCK_FILE = ".applicationlock"; //$NON-NLS-1$
 	private static final int STATUS_EXITTING = 0;
 	private static final int STATUS_RESTARTING = 2;
 	private static final int STATUS_RUNNING = 1;
@@ -61,7 +61,7 @@ public class HelpApplication
 			return EXIT_RESTART;
 		}
 
-		metadata = new File(Platform.getLocation().toFile(), ".metadata/");
+		metadata = new File(Platform.getLocation().toFile(), ".metadata/"); //$NON-NLS-1$
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out.println(
 				"Help web application could not start.  Check log file for details.");
@@ -96,26 +96,26 @@ public class HelpApplication
 	}
 	private void runUI(){
 		try {
-			Bundle bundle = Platform.getBundle("org.eclipse.help.ui");
+			Bundle bundle = Platform.getBundle("org.eclipse.help.ui"); //$NON-NLS-1$
 			if(bundle == null){
 				return;
 			}
-			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop");
+			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
 			Object o = c.newInstance();
-			Method m=c.getMethod("run", new Class[]{} );
+			Method m=c.getMethod("run", new Class[]{} ); //$NON-NLS-1$
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
 		}
 	}
 	private static void wakeupUI(){
 		try {
-			Bundle bundle = Platform.getBundle("org.eclipse.help.ui");
+			Bundle bundle = Platform.getBundle("org.eclipse.help.ui"); //$NON-NLS-1$
 			if(bundle == null){
 				return;
 			}
-			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop");
+			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
 			Object o = c.newInstance();
-			Method m=c.getMethod("wakeup", new Class[]{} );
+			Method m=c.getMethod("wakeup", new Class[]{} ); //$NON-NLS-1$
 			m.invoke(null, new Object[]{});
 		} catch (Exception e) {
 		}
@@ -127,19 +127,19 @@ public class HelpApplication
 		IConfigurationElement configElement,
 		String propertyName,
 		Object data) {
-		String value = (String) ((Map) data).get("mode");
-		if ("infocenter".equalsIgnoreCase(value)) {
+		String value = (String) ((Map) data).get("mode"); //$NON-NLS-1$
+		if ("infocenter".equalsIgnoreCase(value)) { //$NON-NLS-1$
 			BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
-		} else if ("standalone".equalsIgnoreCase(value)) {
+		} else if ("standalone".equalsIgnoreCase(value)) { //$NON-NLS-1$
 			BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
 		}
 	}
 	private void writeHostAndPort() throws IOException {
 		Properties p = new Properties();
-		p.put("host", WebappManager.getHost());
-		p.put("port", "" + WebappManager.getPort());
+		p.put("host", WebappManager.getHost()); //$NON-NLS-1$
+		p.put("port", "" + WebappManager.getPort()); //$NON-NLS-1$ //$NON-NLS-2$
 
-		File hostPortFile = new File(metadata, ".connection");
+		File hostPortFile = new File(metadata, ".connection"); //$NON-NLS-1$
 		hostPortFile.deleteOnExit();
 		FileOutputStream out = null;
 		try {
@@ -158,7 +158,7 @@ public class HelpApplication
 	private void obtainLock() {
 		File lockFile = new File(metadata, APPLICATION_LOCK_FILE);
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			lock = raf.getChannel().lock();
 		} catch (IOException ioe) {
 			lock = null;

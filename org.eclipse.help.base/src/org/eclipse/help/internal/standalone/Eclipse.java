@@ -201,7 +201,7 @@ public class Eclipse extends Thread {
 		return status;
 	}
 	private void printCommand() {
-		System.out.println("Launch command is:");
+		System.out.println("Launch command is:"); //$NON-NLS-1$
 		for (int i = 0; i < cmdarray.length; i++) {
 			System.out.println("  " + cmdarray[i]); //$NON-NLS-1$
 		}
