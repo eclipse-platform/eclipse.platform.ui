@@ -18,18 +18,10 @@
  <style type="text/css">
  
  BODY {
-	background-color: Window;
-	font: icon;
 	margin:0;
 	padding:0;
 	border-bottom:1px solid black;
-	border-right:1px solid black;
-	cursor:default;
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;	
+	border-right:1px solid black;s	
 }  
 </style>
 
@@ -37,7 +29,7 @@
 
 <body>
 
-<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10px; top:20; font: 14pt icon;">
+<div id="bannerTitle" style="background:#D4D0C8; width:100%; position:absolute; left:10px; top:20; font: 14pt icon;">
 	<%=request.getParameter("title") != null ?request.getParameter("title") : WebappResources.getString("Bookshelf", request)%>
 </div>
 

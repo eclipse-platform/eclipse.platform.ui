@@ -16,11 +16,12 @@
 
 <style type="text/css">
 
+
 BODY {
 	font: 8pt Tahoma;
 	margin:0;
 	padding:0;
-	border:0;
+
 }
 
 UL{
@@ -29,14 +30,13 @@ UL{
 
 LI {
 	list-style-type:none;
-
 }
 
 A {
 	text-decoration:none; 
 	text-indent:15px;
 	color:WindowText; 
-	padding:0px;;
+	padding:0px;
 }
 
 A.node {
@@ -74,6 +74,21 @@ function onloadHandler(toc, title)
 	parent.parent.MainFrame.location="home.jsp?title="+title;
 
 }
+
+// Netscape resize bug
+function handleResize(){
+   location.reload();
+   return false;
+}
+    
+if (document.layers){
+    window.captureEvents(Event.RESIZE);
+    window.onresize = handleResize;
+}
+
+</script>
+
+
 </script>
 
 </head>

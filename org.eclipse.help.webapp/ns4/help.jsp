@@ -65,11 +65,11 @@
 	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  framebroder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
 		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-		        <frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="auto" frameborder="0" resize=yes>
+		        <frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="yes" frameborder="0" resize=yes>
 		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		</frameset>
         <frameset id="contentFrameset" rows="27,*", frameborder=0 framespacing=0 border=0>
-        	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0"  frameborder="0" resize=yes>
+        	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0"  frameborder="0" resize=yes scrolling=no>
              <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
         </frameset>
      </frameset>

@@ -18,53 +18,37 @@
 
 <style type="text/css">
 
- 
 BODY {
 	font: 8pt Tahoma;
-	background:#D4D0C8;
-
-	/* need to set this for Mozilla */
-	height:23px;
+	background:black;
+	margin:0px;
+	padding-bottom:1px;
+	padding-left:1px;
+	padding-right:1px;
 }
 
 DIV {
 	background:#D4D0C8;
 }
 
-
-#titleText {
-	position:absolute; 
-	bottom:2px; 
-	text-indent:4px; 
-	z-order:20; 
+TABLE {
+	background:#D4D0C8;
 	font:8pt Tahoma;
 	font-weight:bold;
-	width:80%; 
-	overflow:hidden; 
-	white-space:nowrap;
 }
 
-TABLE {
-	background:#D4D0C8
-}
  
 </style>
 
 </head>
 
-<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
+<body leftmargin="1" topmargin="1" bottommargin="1" marginheight="0" marginwidth="0">
 
-	<div id="titleText">&nbsp;<%=WebappResources.getString("Content", request)%></div>
-
-<table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 valign=bottom width="100%" height="100%" nowrap>
-<tr>
-<td align=right ><div id="toolbarButton"><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="../images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a></div></td>
+<table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 width="100%" height="100%" nowrap>
+<tr border=1>
+<td align=left valign=center ><div id="title" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
+<td align=right ><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="../images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a>&nbsp;</td>
 </tr>
-</table>
-<!--		
-	<div style="right:5px; top:4px; bottom:3px;position:absolute;">
-	<a  href="#" onclick="parent.showBookshelf(this); this.blur();" ><img  src="../images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0"></a>
-	</div>
--->	
+</table>	
 </body>
 </html>

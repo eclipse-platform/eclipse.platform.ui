@@ -19,9 +19,7 @@
 
 BODY {
 	font: 8pt Tahoma;
-	margin-top:5px;
 	padding:0;
-	border:0;
 }
 
 A {
@@ -66,7 +64,6 @@ DIV.active {
 </head>
 
 <body >
-
 <% 
 ContentUtil content = new ContentUtil(application, request);
 String bookshelf = WebappResources.getString("Bookshelf", request);

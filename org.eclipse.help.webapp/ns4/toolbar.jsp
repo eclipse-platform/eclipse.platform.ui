@@ -52,44 +52,44 @@ function setTitle(label)
 </script>
 
 <style type="text/css">
- 
+
 BODY {
 	font: 8pt Tahoma;
-	background:#D4D0C8;
-	border-bottom:1px black solid;
-	border-right:1px black solid;
-	xxxxheight:100%;
-	/* need to set this for Mozilla */
-	height:23px;
+	background:black;
+	margin:0px;
+	padding-bottom:1px;
+	padding-right:1px;
 }
 
 DIV {
 	background:#D4D0C8;
 }
 
-SPAN {
-	margin:0px;
-	border:0px;
-	padding:0px;
+TABLE {
 	background:#D4D0C8;
+	font:8pt Tahoma;
+	font-weight:bold;
 }
 
+ 
 </style>
 
-   </head>
-   
-   <body  leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
-	  <div id="title" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;">&nbsp;<%=WebappResources.getString("Bookshelf", request)%></div>
-		
-		<div style="right:5px; top:4px; bottom:3px;position:absolute;">
-		<a  href="#" onclick="resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" name="sync_nav"></a>
-		<span style="width:3px;"></span>
-		<a  href="#" onclick="printContent(this);" ><img  src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" name="print"></a>
+</head>
 
-		</div>
-	  
-      <iframe name="liveHelpFrame" style="visibility:hidden" frameborder="no" width="0" height="0" scrolling="no">
-      </iframe>
+<body leftmargin="1" topmargin="1" bottommargin="1" marginheight="0" marginwidth="0">
+
+	<table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 width="100%" height="100%" nowrap>
+	<tr border=1>
+	<td align=left valign=center ><div id="title" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
+	<td align=right >
+		<a  href="#" onclick="parent.resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" ></a>&nbsp;
+		<a  href="#" onclick="parent.resynch(this);"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
+	</td>
+	</tr>
+	</table>	
+
+      <layer name="liveHelpFrame" style="visibility:hidden;width:0;height:0;" frameborder="no" width="0" height="0" scrolling="no">
+      </layer>
 
    </body>
 </html>
