@@ -564,6 +564,7 @@ public class WorkbenchActionBuilder {
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.NEW_EXT, false);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_GROUP, false);
 		tBarMgr.add(saveAction);
+		tBarMgr.add(saveAsAction);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.SAVE_EXT, false);
 		tBarMgr.add(printAction);
 		tBarMgr.addBaseGroup(IWorkbenchActionConstants.BUILD_GROUP, true);
