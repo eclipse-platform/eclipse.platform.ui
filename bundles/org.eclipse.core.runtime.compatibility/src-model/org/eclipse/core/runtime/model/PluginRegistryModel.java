@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
-import org.eclipse.core.runtime.IStatus;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 import org.eclipse.core.internal.model.PluginMap;
 import org.eclipse.core.internal.model.RegistryResolver;
 import org.eclipse.core.internal.runtime.Assert;
-import java.util.*;
+import org.eclipse.core.internal.plugins.InternalPlatform;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A container for a collection of plug-in descriptors.
@@ -288,5 +291,9 @@ public class PluginRegistryModel {
 		resolver.setTrimPlugins(trimDisabledPlugins);
 		resolver.setCrossLink(doCrossLinking);
 		return resolver.resolve(this);
+	}
+	
+	public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory) {
+		return InternalPlatform.parsePlugins(pluginPath, factory, false);
 	}
 }
