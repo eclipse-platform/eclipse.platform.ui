@@ -33,7 +33,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
 	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
-	public static final String PREF_DLG_LAST_SELECTION = "preference_dialog_last_selection";//$NON-NLS-1$
+	private static final String PREF_DLG_LAST_SELECTION = "preference_dialog_last_selection";//$NON-NLS-1$
+	
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
@@ -562,12 +563,19 @@ protected void selectSavedItem() {
 }
 
 /**
+ * Get the name of the selected item preference
+ */
+protected String getSelectedNodePreference(){
+	return PREF_DLG_LAST_SELECTION;
+}
+
+/**
  * Get the node that was last selected in the dialog store.
  * If there is no match then return the first one,
  */
 private TreeItem getLastSelectedNode(TreeItem[] items){
 	String lastSelectedNode = 
-		WorkbenchPlugin.getDefault().getDialogSettings().get(PREF_DLG_LAST_SELECTION);
+		WorkbenchPlugin.getDefault().getDialogSettings().get( getSelectedNodePreference());
 		
 	if(lastSelectedNode == null)
 		return items[0];
@@ -607,7 +615,7 @@ private TreeItem findNodeMatching(TreeItem[] items, String nodeId){
  * the last selection in case of an error.
  */
 private void clearSelectedNode(){
-	WorkbenchPlugin.getDefault().getDialogSettings().put(PREF_DLG_LAST_SELECTION,"");
+	WorkbenchPlugin.getDefault().getDialogSettings().put( getSelectedNodePreference(),"");
 }
 
 /**
@@ -624,7 +632,7 @@ private void setSelectedNode(){
 			storeValue = ((IPreferenceNode) data).getId();
 	}
 	
-	WorkbenchPlugin.getDefault().getDialogSettings().put(PREF_DLG_LAST_SELECTION,storeValue);
+	WorkbenchPlugin.getDefault().getDialogSettings().put( getSelectedNodePreference(),storeValue);
 }
 		
 /**
