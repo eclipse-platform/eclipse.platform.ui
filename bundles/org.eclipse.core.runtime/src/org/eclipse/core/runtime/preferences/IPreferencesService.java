@@ -361,6 +361,7 @@ public interface IPreferencesService {
 	 * <ul>
 	 * <li>"a" - look for a value for the property "a"
 	 * <li>"//a" - look for a value for the property "a"
+	 * <li>"///a" - look for a value for the property "/a"
 	 * <li>"//a//b" - look for a value for the property "a//b"
 	 * <li>"a/b/c" - look in the child node "a/b" for property "a"
 	 * <li>"/a/b/c" - look in the child node "a/b" for property "a"
