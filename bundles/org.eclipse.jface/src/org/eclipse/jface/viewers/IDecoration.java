@@ -3,27 +3,28 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * IDecoration is the interface that defines the result of 
- * a decoration of an Object.
- * */
-
+ * Defines the result of decorating an element.
+ */
 public interface IDecoration {
 
 	/**
-	 * Add a prefix to the result.
-	 * @param prefixString
+	 * Adds a prefix to the element's label.
+	 * 
+	 * @param prefix the prefix
 	 */
-	public void addPrefix(String prefixString);
+	public void addPrefix(String prefix);
 
 	/**
-	 * Add a suffix to the result.
-	 * @param suffixString
+	 * Adds a suffix to the element's label.
+	 * 
+	 * @param suffix the suffix
 	 */
-	public void addSuffix(String suffixString);
+	public void addSuffix(String suffix);
 	
 	/**
-	 * Add an overlay to the result.
-	 * @param overlay
+	 * Adds an overlay to the element's image.
+	 * 
+	 * @param overlay the overlay image descriptor
 	 */
 	public void addOverlay(ImageDescriptor overlay);
 }

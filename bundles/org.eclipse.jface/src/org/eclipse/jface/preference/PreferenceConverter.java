@@ -117,11 +117,12 @@ public class PreferenceConverter {
 	}
 	
 	/**
-	 * Read the supplied String and return its corresponding
+	 * Reads the supplied string and returns its corresponding
 	 * FontData. If it cannot be read then the default FontData
 	 * will be returned.
-	 * @param fontDataValue
-	 * @return FontData[]
+	 * 
+	 * @param fontDataValue the string value for the font data  
+	 * @return the font data
 	 */
 	public static FontData[] readFontData(String fontDataValue){
 		return basicGetFontData(fontDataValue);
@@ -428,13 +429,13 @@ public class PreferenceConverter {
 	}
 
 	/**
-	 * Return the stored representation of the FontData array.
-	 * FontDatas are stored in the form FontData;FontData;
-	 * Only include the non-null entries,
-	 * @return String - the String that will be stored
-	 * @param FontData[] - the FontDatas
+	 * Returns the stored representation of the given array of FontData objects.
+	 * The stored representation has the form FontData;FontData;
+	 * Only includes the non-null entries.
+	 * 
+	 * @param fontData the array of FontData objects
+	 * @return the stored representation of the FontData objects
 	 */
-
 	private static String getStoredRepresentation(FontData[] fontData) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fontData.length; i++) {

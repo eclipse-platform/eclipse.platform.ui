@@ -734,34 +734,39 @@ public boolean close() {
 }
 
 /**
- * Apply the dialog font all widgets that currently have the default
+ * Applies the dialog font to all controls that currently have the default
  * font.
- * @param the control to apply the font to. Font will also be applied to
+ * 
+ * @param control the control to apply the font to. Font will also be applied to
  * its children.
  */
-public static void applyDialogFont(Control control){
+public static void applyDialogFont(Control control) {
 	Font dialogFont = JFaceResources.getDialogFont();
-	Font defaultFont = JFaceResources.getDefaultFont(); 
-	applyDialogFont(control,dialogFont,defaultFont);
+	Font defaultFont = JFaceResources.getDefaultFont();
+	applyDialogFont(control, dialogFont, defaultFont);
 }
 
 /**
- * Set the dialog font on the control and any of its children if thier
+ * Sets the dialog font on the control and any of its children if thier
  * font is not otherwise set.
- * @param control
- * @param dialogFont
- * @param defaultFont
+ * 
+ * @param control the control to apply the font to. Font will also be applied to
+ * its children.
+ * @param dialogFont the dialog font to set
+ * @param defaultFont the default font to compare against
  */
-public static void applyDialogFont(Control control, Font dialogFont, Font defaultFont){
-	
-	if(control.getFont().equals(defaultFont))
+private static void applyDialogFont(
+	Control control,
+	Font dialogFont,
+	Font defaultFont) {
+
+	if (control.getFont().equals(defaultFont))
 		control.setFont(dialogFont);
-		
-	if(control instanceof Composite){
+
+	if (control instanceof Composite) {
 		Control[] children = ((Composite) control).getChildren();
-		for(int i = 0; i < children.length; i ++)	
-			applyDialogFont(children[i],dialogFont,defaultFont);
+		for (int i = 0; i < children.length; i++)
+			applyDialogFont(children[i], dialogFont, defaultFont);
 	}
-}
-		
+}	
 }
