@@ -24,8 +24,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.SynchronizeProjectsDialog;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
@@ -109,28 +107,13 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 			Object adapted = adaptable.getAdapter(IResource.class);
 			if (adapted != null) {
 				IResource resource = ((IResource)adapted);
-				if (isSharedWithCVS(resource)) 
+				if (CVSWorkspaceRoot.isSharedWithCVS(resource)) 
 					sharedResources.add(resource);
 			}
 		}
 		return (IResource[]) sharedResources.toArray(new IResource[sharedResources.size()]);
 	}
-
-	/**
-	 * A resource is considered shared 
-	 * @param resource
-	 * @return boolean
-	 */
-	private boolean isSharedWithCVS(IResource resource) throws CVSException {
-		if (!resource.isAccessible()) return false;
-		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		if (cvsResource.isManaged()) return true;
-		if (!cvsResource.exists()) return false;
-		if (cvsResource.isFolder() && ((ICVSFolder) cvsResource).isCVSFolder()) return true;
-		if (cvsResource.isIgnored()) return false;
-		return cvsResource.getParent().isCVSFolder();
-	}
-
+	
 	/**
 	 * This is a toolbar action so there are no selected resources.
 	 * 

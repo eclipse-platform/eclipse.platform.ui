@@ -726,4 +726,25 @@ public class CVSWorkspaceRoot {
 		IFolder linkedParent = resource.getProject().getFolder(linkedParentName);
 		return linkedParent.isLinked();
 	}
+	
+	/**
+	 * A resource is considered shared 
+	 * @param resource
+	 * @return boolean
+	 */
+	public static boolean isSharedWithCVS(IResource resource) throws CVSException {
+		if (!resource.isAccessible()) return false;
+		if(isLinkedResource(resource)) return false;
+	
+		if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+			return false;
+		}
+	
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		if (cvsResource.isManaged()) return true;
+		if (!cvsResource.exists()) return false;
+		if (cvsResource.isFolder() && ((ICVSFolder) cvsResource).isCVSFolder()) return true;
+		if (cvsResource.isIgnored()) return false;
+		return cvsResource.getParent().isCVSFolder();
+	}
 }
