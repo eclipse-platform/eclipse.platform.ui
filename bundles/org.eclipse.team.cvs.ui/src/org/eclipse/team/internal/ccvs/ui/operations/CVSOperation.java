@@ -253,4 +253,12 @@ public abstract class CVSOperation extends TeamOperation {
 	public void setShell(Shell shell) {
 		this.shell = shell;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		// Put CVS jobs in the background by default.
+		return true;
+	}
 }
