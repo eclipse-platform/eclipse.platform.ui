@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui;
  * (c) Copyright IBM Corp 2001
  */
 
-import org.eclipse.debug.core.DebugEvent;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Control;
+import org.eclipse.debug.core.DebugEvent;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Control;
 
 public abstract class BasicContentProvider implements IStructuredContentProvider {
 
@@ -70,14 +70,7 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 	 * @see ITreeContentProvider
 	 */
 	public Object[] getChildren(final Object parent) {
-		final Object[][] temp= new Object[1][];
-		Runnable runnable= new Runnable() {
-			public void run() {
-				temp[0]= doGetChildren(parent);
-			}
-		};
-		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), runnable);
-		return temp[0];
+		return doGetChildren(parent);
 	}
 	
 	/**
