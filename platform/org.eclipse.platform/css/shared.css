@@ -16,8 +16,14 @@ h2 {
 	font-weight : normal;
 	color : #7B8694;
 }
+/* For regular div labels */
+H4 .div-label {
+	font-size : 10pt;
+	font-weight : bold;
+}
 
-.page-title {
+/* For the main page content's title */
+#content-header H4 .div-label {
 	font-size : 14pt;
 	font-weight : normal;
 	color : #8C96A2;
@@ -29,11 +35,6 @@ h2 {
 	font-size : 10pt;
 	float : none;
 	clear : both;
-}
-
-H4 .div-label {
-	font-size : 10pt;
-	font-weight : bold;
 }
 
 a {
@@ -73,10 +74,21 @@ html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
 
 .intro-header H1 { padding-top : 10px; margin-left : 10px; }
 
-H4 .div-label {
+/* For regular div labels */
+#page-content div H4 {
 	padding : 10px;
-	margin-bottom : 5px;
+	padding-bottom : 0px;
 }
+
+/* For the main page content's div label */
+#page-content #content-header H4 {
+	padding-bottom : 10px;
+	padding-top : 0px;
+}
+
+/* special case for Mozilla's main content-header label.
+   Mozilla 1.4 needs more room at the top */
+#page-content > #content-header H4 { padding-top : 10px; }
 
 /* Needed in IE to get shift+tab to show the active image properly */
 a:active {
@@ -243,7 +255,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	clear : both;
 }
 
-.page-title, .page-description {
+#page-content #content-header H4, .page-description {
 	text-align : left;
 	margin-right : 10px;
 	float : none;
