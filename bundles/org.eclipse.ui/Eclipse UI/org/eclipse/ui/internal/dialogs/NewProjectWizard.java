@@ -113,6 +113,7 @@ public class NewProjectWizard extends BasicNewResourceWizard {
 			for (int i = 0; i < results.length; i++)
 				steps[i+1] = new InstallCapabilityStep(i+2, results[i]);
 			reviewPage.setSteps(steps);
+			configPage.setSteps(steps);
 		} else {
 		}
 	}

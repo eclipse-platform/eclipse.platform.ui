@@ -10,6 +10,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 public abstract class WizardStep {
 	private int number;
+	private boolean done = false;
 	
 	/**
 	 * Creates a wizard step.
@@ -44,5 +45,19 @@ public abstract class WizardStep {
 	 */
 	public int getNumber() {
 		return number;
+	}
+
+	/**
+	 * Returns whether the step is done it's work
+	 */
+	public boolean isDone() {
+		return done;
+	}
+
+	/**
+	 * Sets the step as being done
+	 */
+	protected void markAsDone() {
+		done = true;
 	}
 }

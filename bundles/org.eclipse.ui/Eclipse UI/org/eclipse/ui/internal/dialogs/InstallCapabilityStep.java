@@ -34,6 +34,6 @@ public class InstallCapabilityStep extends WizardStep {
 	 * Method declared on WizardStep.
 	 */
 	public String getDetails() {
-		return capability.getDescription();
+		return capability.getInstallDetails();
 	}
 }

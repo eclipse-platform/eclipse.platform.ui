@@ -35,8 +35,9 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	private static final String ATT_ICON = "icon";
 	private static final String ATT_NATURE_ID = "natureId";
 	private static final String ATT_CATEGORY = "category";
-	private static final String ATT_INSTALL_WIZARD = "installWizard";
 	private static final String ATT_DESCRIPTION = "description";
+	private static final String ATT_INSTALL_WIZARD = "installWizard";
+	private static final String ATT_INSTALL_DETAILS = "installDetails";
 	
 	private String id;
 	private String natureId;
@@ -147,6 +148,10 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		} catch (CoreException e) {
 			return null;
 		}
+	}
+	
+	public String getInstallDetails() {
+		return element.getAttribute(ATT_INSTALL_DETAILS);
 	}
 	
 	public String getDescription() {

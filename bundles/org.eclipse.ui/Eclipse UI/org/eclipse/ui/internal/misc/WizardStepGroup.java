@@ -31,6 +31,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  */
 public class WizardStepGroup {
 	private int numberColWidth = 8;
+	private WizardStep currentStep;
 	private TableViewer stepViewer;
 	private ISelectionChangedListener selectionListener;
 
@@ -52,7 +53,7 @@ public class WizardStepGroup {
 		// Create a composite to hold everything together
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		// Add a label to identify the step list field
 		Label label = new Label(composite, SWT.LEFT);
@@ -173,7 +174,10 @@ public class WizardStepGroup {
 				WizardStep step = (WizardStep) element;
 				switch (columnIndex) {
 					case 0 :	// Done image column
-						image = null;
+						if (step.isDone())
+							image = null;
+						else if (step == currentStep)
+							image = null;
 						break;
 					case 1 :	// Step number column
 						break;
