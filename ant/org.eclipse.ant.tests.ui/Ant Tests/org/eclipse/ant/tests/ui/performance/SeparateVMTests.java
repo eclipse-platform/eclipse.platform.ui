@@ -36,7 +36,7 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      * Performance test for launching Ant in a separate vm.
      */
 	public void testBuild() throws CoreException {
-    	tagAsSummary("Simple separate JRE Build", Dimension.CPU_TIME);
+    	tagAsSummary("Separate JRE Build", Dimension.CPU_TIME);
     	ILaunchConfiguration config= getLaunchConfiguration("echoingSepVM");
     	for (int i = 0; i < 10; i++) {
     		launch(config, 10);
@@ -49,7 +49,7 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      * Performance test for launching Ant in a separate vm with no console output.
      */
 	public void testBuildNoConsole() throws CoreException {
-    	tagAsSummary("Simple separate JRE Build set to not capture output", Dimension.CPU_TIME);
+    	tagAsSummary("Separate JRE Build; capture output off", Dimension.CPU_TIME);
     	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
 		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
@@ -70,7 +70,7 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
      * Performance test for launching Ant in a separate vm with debug information.
      */
     public void testBuildMinusDebug() throws CoreException {
-    	tagAsSummary("Simple separate JRE Build with debug information", Dimension.CPU_TIME);
+    	tagAsSummary("Separate JRE Build; -debug", Dimension.CPU_TIME);
     	ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
 		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
