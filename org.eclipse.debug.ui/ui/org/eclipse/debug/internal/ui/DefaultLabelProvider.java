@@ -132,6 +132,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					try {
 						return configuration.getType().getIdentifier();
 					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
 						return null;
 					}
 				}
@@ -149,6 +150,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				try {
 					return ((ILaunchConfiguration)element).getType().getIdentifier();
 				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
 					return null;
 				}
 			} 
