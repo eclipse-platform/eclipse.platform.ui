@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -457,7 +458,24 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	      return;
 	    }
 
-	    kpair=KeyPair.genKeyPair(jsch, type);
+	    final KeyPair[] _kpair=new KeyPair[1];
+	    final JSch _jsch=jsch;
+	    final int __type=type;
+	    final JSchException[] _e=new JSchException[1];
+	    BusyIndicator.showWhile(getShell().getDisplay(),
+	    		new Runnable(){
+	    	public void run(){
+	    		try{
+	    		  _kpair[0]=KeyPair.genKeyPair(_jsch, __type);
+	    		}catch(JSchException e){
+	    		  _e[0]=e;
+	    		}
+	    	}}
+	    		);
+	    if(_e[0]!=null){
+	    	throw _e[0];
+	    }
+	    kpair=_kpair[0];
 	    
 	    ByteArrayOutputStream out=new ByteArrayOutputStream();
 	    kpairComment=_type+"-1024"; //$NON-NLS-1$
@@ -474,10 +492,12 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  catch(JSchException ee){
 	    ok=false;
 	  }
-	  MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
-	  mb.setText(Policy.bind("CVSSSH2PreferencePage.info")); //$NON-NLS-1$
-	  mb.setMessage(_type+Policy.bind("CVSSSH2PreferencePage.47")); //$NON-NLS-1$
-	  mb.open();
+	  if(!ok){
+	    MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_ERROR);
+	    mb.setText(Policy.bind("CVSSSH2PreferencePage.error")); //$NON-NLS-1$
+	    mb.setMessage(Policy.bind("CVSSSH2PreferencePage.47")); //$NON-NLS-1$
+	    mb.open();
+	  }
 	}
       });
 
