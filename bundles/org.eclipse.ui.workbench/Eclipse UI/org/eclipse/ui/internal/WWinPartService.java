@@ -16,7 +16,6 @@ import org.eclipse.ui.*;
  * A part service for a workbench window.
  */
 public class WWinPartService implements IPartService {
-	private IWorkbenchWindow window;
 	private PartListenerList listeners = new PartListenerList();
 	private PartListenerList2 listeners2 = new PartListenerList2();
 	private WindowSelectionService selectionService;
@@ -77,7 +76,6 @@ public class WWinPartService implements IPartService {
  * Creates a new part service for a workbench window.
  */
 public WWinPartService(IWorkbenchWindow window) {
-	this.window = window;
 	selectionService = new WindowSelectionService(window);
 }
 /*

@@ -32,7 +32,6 @@ import org.eclipse.ui.dialogs.*;
 /*package*/ class WizardFileSystemImportPage1 extends WizardImportPage implements ISelectionChangedListener, Listener {
 	private List selectedResources;
 	private FileSystemElement root;
-	private IWorkbench workbench;
 
 	// widgets
 	protected Combo				typesToImportField;
@@ -61,7 +60,6 @@ import org.eclipse.ui.dialogs.*;
  */
 protected WizardFileSystemImportPage1(String name, IWorkbench aWorkbench, IStructuredSelection selection) {
 	super(name,selection);
-	this.workbench = aWorkbench;
 }
 /**
  *	Creates an instance of this class

@@ -27,7 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 
 public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private IWorkbench workbench;
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button refreshButton;
@@ -282,7 +281,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *	@see IWorkbenchPreferencePage
 	 */
 	public void init(IWorkbench aWorkbench) {
-		workbench = aWorkbench;
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$

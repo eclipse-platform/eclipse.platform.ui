@@ -44,7 +44,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
   */
 public class ZipFileExportWizard extends Wizard implements IExportWizard {
-	private IWorkbench workbench;
 	private IStructuredSelection selection;
 	private WizardZipFileResourceExportPage1 mainPage;
 /**
@@ -86,7 +85,6 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
  * Method declared on IWorkbenchWizard.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	this.workbench = workbench;
 	selection = currentSelection;
 
 	setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$

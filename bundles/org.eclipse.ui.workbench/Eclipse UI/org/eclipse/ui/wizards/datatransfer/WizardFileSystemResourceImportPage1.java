@@ -54,9 +54,6 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 class WizardFileSystemResourceImportPage1
 	extends WizardResourceImportPage
 	implements Listener {
-	
-
-	private IWorkbench workbench;
 	// widgets
 	protected Combo sourceNameField;
 	protected Button overwriteExistingResourcesCheckbox;
@@ -90,7 +87,6 @@ class WizardFileSystemResourceImportPage1
  */
 protected WizardFileSystemResourceImportPage1(String name, IWorkbench aWorkbench, IStructuredSelection selection) {
 	super(name,selection);
-	this.workbench = aWorkbench;
 }
 /**
  *	Creates an instance of this class
