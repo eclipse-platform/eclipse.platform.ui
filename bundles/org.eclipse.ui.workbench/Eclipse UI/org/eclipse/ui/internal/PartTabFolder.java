@@ -50,7 +50,6 @@ import org.eclipse.ui.progress.UIJob;
 
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
@@ -849,11 +848,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
 					getViewRegistry().find(partID);
 			
-				if(descriptor != null) {
-					if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID)) 
-						continue; // ignore the intro view
+				if(descriptor != null) 
 					tabText = descriptor.getLabel();
-				}
 
 				// Create the part.
 				LayoutPart part = new PartPlaceholder(partID);

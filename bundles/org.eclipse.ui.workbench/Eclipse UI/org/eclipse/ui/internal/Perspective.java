@@ -753,6 +753,8 @@ public IStatus restoreState() {
 		// Get the view details.
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
+		if (viewID.equals(IIntroConstants.INTRO_VIEW_ID))
+			continue;
 
 		// Create and open the view.
 		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(viewID);
