@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.cheatsheets">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetItemExtension" name="cheatSheetItemExtension"/>
+         <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetItemExtension" name="Cheat Sheet Item Extension"/>
       </appInfo>
       <documentation>
          This extension point should be used when an extra button needs to be added to a step in the cheat sheet.
@@ -91,32 +91,26 @@ You specify the name of an attribute that you will put into the cheat sheet item
       </appInfo>
       <documentation>
          Here is an example implementation of this extension point:
-
+&lt;p&gt;
+&lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.ui.cheatsheets.cheatSheetItemExtension&quot;&gt;
  &lt;itemExtension
    itemAttribute=&quot;xyzButton&quot;
-   class=&quot;com.org.xyz.HandleParsingAndAddButton&quot;&gt;
+   class=&quot;com.example.HandleParsingAndAddButton&quot;&gt;
  &lt;/itemExtension&gt;
 &lt;/extension&gt;
-
-
---------------------------------------------------------------------------------------
-
-And here is the item attribute for that extension :
-
-&lt;item
-  id = &quot;0&quot;
-  title=&quot;XYZ Title&quot;
-  xyzButton=&quot;/icon/button.gif&quot;
-  actionphrase=&quot;0,1&quot;
-  class=&quot;com.org.xyz.XYZAction&quot;
-  pluignId=&quot;com.org.xyz.plugin&quot;&gt;
-&lt;/item&gt;
-
-Note that the value of the attribute in the item tag can be ANYTHING.  It can be anything because
+&lt;/pre&gt;
+&lt;/p&gt;
+And here is the item attribute for that extension:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;item title=&quot;XYZ Title&quot; xyzButton=&quot;/icon/button.gif&quot;&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+Note that the value of the attribute in the item tag can be ANYTHING. It can be anything because
 the class that parses that attribute is the class HandleParsingAndAddButton, which in this example parses
 a string /icon/button.gif from the attribute.  It later will use that info to load the gif and use it as the icon
-for a new button (currently located beside the help icon for the step in the cheat sheet with id &quot;0&quot;).
+for a new button.
       </documentation>
    </annotation>
 
@@ -143,16 +137,8 @@ for a new button (currently located beside the help icon for the step in the che
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         /************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *  IBM Corporation - Initial API and implementation
- *************************************************************************/
+         Copyright (c) 2004 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

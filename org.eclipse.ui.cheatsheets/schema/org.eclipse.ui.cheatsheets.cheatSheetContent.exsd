@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.cheatsheets">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetContent" name="CheatSheetContent"/>
+         <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetContent" name="Cheat Sheet Content"/>
       </appInfo>
       <documentation>
          This extension point is used to register cheat sheet content contributions. Cheat sheets appear as choices from the &quot;Help&quot; menu or from within the cheat sheet view, and are typically used to aid a user through a series of comlex tasks to accomplish an overall goal.
@@ -161,26 +161,26 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Here is a sample usage of the cheatsheetContent extension point.
-
+         Here is a sample usage of the cheatSheetContent extension point:
+&lt;p&gt;
+&lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.ui.cheatsheets.cheatSheetContent&quot;&gt;
-  &lt;!-- this is a sample category.  the id can be referenced in the cheatsheet element --&gt;
-  &lt;!-- the name is displayed in the selection dialog and should be translatable --&gt;
   &lt;category
-            name=&quot;XYZ category&quot;
-            id=&quot;com.org.xyz.category&quot;&gt;
-        &lt;/category&gt;
-        &lt;!-- this is a sample cheat sheet.  the content file describes the cheat sheet steps and is loaded by the framework. --&gt;
-        &lt;cheatsheet
-            name=&quot;XYZ cheat sheet&quot;
-            category=&quot;com.org.xyz.category&quot;
-            id=&quot;com.org.xyz.cheatSheet&quot;
-            contentFile=&quot;XYZCheatSheet.xml&quot;&gt;
+     name=&quot;Example category&quot;
+     id=&quot;com.example.category&quot;&gt;
+  &lt;/category&gt;
+  &lt;cheatsheet
+     name=&quot;Example cheat sheet&quot;
+     category=&quot;com.example.category&quot;
+     id=&quot;com.example.cheatSheet&quot;
+     contentFile=&quot;ExampleCheatSheet.xml&quot;&gt;
          &lt;description&gt;
            This is a descriptive bit of text for my cheat sheet description.
          &lt;/description&gt;
-        &lt;/cheatsheet&gt;
+  &lt;/cheatsheet&gt;
 &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -189,24 +189,7 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         See the cheat sheet Javadoc specs for full API information.
-
-The main API&apos;s available are:
-
-  - Action to open a cheat sheet with an id, or a content file URL.
-  - Live help action to open a cheat sheet with an id from a live help link in a help book.
-  
-  - Interfaces for:
-    -Actions:  ICheatsheetAction
-      Allows for parameters to be passed to actions when they are run in a cheat sheet.
-      Parameters can be set in the cheat sheet content file or passed in at run time.
-    
-    -ICheatsheetManager: 
-      Implementation passed to actions implementing ICheatsheetAction and also passed in events 
-      fired to cheat sheet listeners.  Allows for data to be stored and retrieved for a particular cheat sheet.
-      
-    - Other interfaces:
-      All other interfaces relate to cheat sheet listeners and events.
+         For further details see the spec for the org.eclipse.ui.cheatsheets API package.
       </documentation>
    </annotation>
 
@@ -224,16 +207,8 @@ The main API&apos;s available are:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         /************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *  IBM Corporation - Initial API and implementation
- *************************************************************************/
+         Copyright (c) 2004 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
