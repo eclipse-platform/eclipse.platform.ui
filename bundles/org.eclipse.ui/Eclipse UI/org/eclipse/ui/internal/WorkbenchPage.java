@@ -566,7 +566,7 @@ private boolean certifyPart(IWorkbenchPart part) {
 	return false;
 }
 /**
- * Closes the perspective.  
+ * Closes the perspective.
  */
 public boolean close() {
 	final boolean [] ret = new boolean[1];;
@@ -588,21 +588,24 @@ public boolean closeAllSavedEditors() {
 	boolean deactivated = false;
 			
 	// Close all editors.
-	IEditorPart [] editors = getEditorManager().getDirtyEditors();
+	IEditorReference editors[] = getEditorReferences();
 	for (int i = 0; i < editors.length; i ++) {
-		IEditorPart editor = editors[i];
+		IEditorReference editor = editors[i];
+		IWorkbenchPart part = editor.getPart(false);
 		if(!editor.isDirty()) {
-			if (editor == activePart) {
+			if (part == activePart) {
 				deactivated = true;
 				setActivePart(null);
-			} else if (lastActiveEditor == editor) {
+			} else if (lastActiveEditor == part) {
 				lastActiveEditor = null;
 				actionSwitcher.updateTopEditor(null);
 			}
-			getEditorManager().closeEditor((IEditorReference)getReference(editor));
+			getEditorManager().closeEditor(editor);
 			activationList.remove(editor);
-			firePartClosed(editor);
-			editor.dispose();
+			if(part != null) {
+				firePartClosed(part);
+				part.dispose();
+			}
 		}
 	}
 	if (deactivated)

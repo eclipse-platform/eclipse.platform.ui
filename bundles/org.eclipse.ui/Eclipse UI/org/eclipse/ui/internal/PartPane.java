@@ -132,6 +132,7 @@ protected void createChildControl() {
 		public void run() {
 			part.createPartControl(content);
 			control.setContent(content);
+			page.addPart(partReference);
 			page.firePartOpened(part);
 		}
 		public void handleException(Throwable e) {
