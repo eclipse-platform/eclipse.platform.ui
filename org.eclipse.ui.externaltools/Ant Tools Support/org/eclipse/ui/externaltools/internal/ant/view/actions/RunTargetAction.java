@@ -32,7 +32,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	
 	public RunTargetAction(AntView view) {
 		super("Run", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN));
-		setDescription("Run the selected target or build file");
+		setToolTipText("Run the default target of the selected build file");
 		this.view= view;
 	}
 
