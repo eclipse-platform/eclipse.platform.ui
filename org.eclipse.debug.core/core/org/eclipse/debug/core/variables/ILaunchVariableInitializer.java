@@ -11,13 +11,15 @@
 package org.eclipse.debug.core.variables;
 
 /**
- * Launch variable initializers compute a value for a simple launch
- * variable. Simple launch variable values are normally specified by the user,
- * but variables contributed via extension may not have a
- * value yet. Launch variable initializers, provided via extension, supply
- * a value in this case.
- * 
+ * Launch variable initializers compute an initial value for a simple launch
+ * variable contributed by an extension, which is not defined with an initial
+ * value. This provides a mechnism for programatically computing the initial
+ * value of a launch variable.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
+ * @since 3.0
  */
 public interface ILaunchVariableInitializer {
 	/**

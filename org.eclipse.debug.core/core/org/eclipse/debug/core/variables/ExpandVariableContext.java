@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Represents the context in which a variable will be expanded.
+ * 
  * @since 3.0
  */
 public class ExpandVariableContext {

@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
+/**
+ * Implementation of a simple launch variable.
+ * <p>
+ * Clients may instantiate this class. This class is not intended to be subclassed.
+ * </p>
+ * @since 3.0
+ */
 
 public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	

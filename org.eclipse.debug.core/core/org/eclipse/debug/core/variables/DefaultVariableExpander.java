@@ -22,8 +22,9 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
  * Default variable expander implementation. Does nothing.
- * 
- * Clients are intended to extend this class.
+ * <p>
+ * Clients implementing variable expanders should extend this class.
+ * </p>
  * @since 3.0
  */
 public class DefaultVariableExpander implements IVariableExpander {

@@ -12,7 +12,7 @@ package org.eclipse.debug.core.variables;
 
 /**
  * Variable constants defining the name of variables contributed
- * by debug core.
+ * by the debug plug-in.
  * 
  * @since 3.0
  */
