@@ -885,7 +885,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			configsToBeDeleted.add(config);
 			return newCommand;
 		} catch (CoreException exception) {
-			MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.Command_error_13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.13"), ExternalToolsUIMessages.getString("BuilderPropertyPage.error")); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 	}
