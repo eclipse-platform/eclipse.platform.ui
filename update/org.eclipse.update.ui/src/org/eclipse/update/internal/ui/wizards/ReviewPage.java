@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
@@ -202,7 +203,7 @@ public class ReviewPage
 		ArrayList trueUpdates = new ArrayList();
 		for (int i=0; i<jobs.size(); i++) {
 			IInstallFeatureOperation job = (IInstallFeatureOperation)jobs.get(i);
-			if (!UpdateUI.isPatch(job.getFeature()))
+			if (!UpdateUtils.isPatch(job.getFeature()))
 				trueUpdates.add(job);
 		}
 		tableViewer.setCheckedElements(trueUpdates.toArray()); 

@@ -58,7 +58,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 				boolean oldFeature = false;
 				if (root instanceof JobRoot) {
 					IInstallFeatureOperation job = ((JobRoot)root).getJob();
-					boolean patch = UpdateUI.isPatch(job.getFeature());
+					boolean patch = UpdateUtils.isPatch(job.getFeature());
 					oldFeature = job.getOldFeature() != null;
 					return fe.getChildren(oldFeature, patch, config);
 				}
@@ -292,22 +292,13 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		}
 	}
 	
-	public FeatureHierarchyElement[] getOptionalElements(IInstallFeatureOperation job) {
-		for (int i = 0; i < jobRoots.length; i++) {
-			if (job.equals(jobRoots[i].getJob())) {
-				return jobRoots[i].getElements();
-			}
-		}
-		return null;
-	}
-	
 	public IFeature[] getUnconfiguredOptionalFeatures(IInstallFeatureOperation job, IConfiguredSite targetSite) {
 		for (int i = 0; i < jobRoots.length; i++) {
 			if (job.equals(jobRoots[i].getJob())) {
 				return jobRoots[i].getUnconfiguredOptionalFeatures(config, targetSite);
 			}
 		}
-		return null;
+		return new IFeature[0];
 	}
 	
 	public IFeatureReference[] getCheckedOptionalFeatures(IInstallFeatureOperation currentJob) {
@@ -325,7 +316,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 
 		IInstallFeatureOperation job = jobRoot.getJob();
 		boolean update = job.getOldFeature() != null;
-		boolean patch = UpdateUI.isPatch(job.getFeature());
+		boolean patch = UpdateUtils.isPatch(job.getFeature());
 		FeatureHierarchyElement[] elements = jobRoot.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			elements[i].addCheckedOptionalFeatures(update, patch, config, set);

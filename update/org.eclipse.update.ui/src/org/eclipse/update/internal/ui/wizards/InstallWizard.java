@@ -103,7 +103,7 @@ public class InstallWizard
 						IInstallFeatureOperation job = selectedJobs[i];
 						IFeature[] unconfiguredOptionalFeatures = null;
 						IFeatureReference[] optionalFeatures = null;
-						if (optionalFeaturesPage != null) {
+						if (UpdateUtils.hasOptionalFeatures(job.getFeature())) {
 							optionalFeatures =
 								optionalFeaturesPage
 									.getCheckedOptionalFeatures(
@@ -197,6 +197,9 @@ public class InstallWizard
 	}
 
 	private boolean isPageRequired(IWizardPage page) {
+		if (page == null)
+			return false;
+			
 		if (page.equals(licensePage)) {
 			return OperationsManager.hasSelectedJobsWithLicenses(
 				reviewPage.getSelectedJobs());
