@@ -1,22 +1,32 @@
 package org.eclipse.team.internal.ui.jobs;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.IRefreshEvent;
+import org.eclipse.team.internal.ui.synchronize.IRefreshSubscriberListener;
+import org.eclipse.team.internal.ui.synchronize.RefreshCompleteDialog;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.team.internal.ui.Policy;
 
 public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener {
 
 	private SubscriberParticipant participant;
+	private boolean addIfNeeded;
 
-	public RefreshUserNotificationPolicy(SubscriberParticipant participant) {
+	public RefreshUserNotificationPolicy(SubscriberParticipant participant, boolean addIfNeeded) {
 		this.participant = participant;
+		this.addIfNeeded = addIfNeeded;
 	}
 
 	/*
@@ -60,8 +70,21 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		}
 
 		// If there are interesting changes, ensure the sync view is showing them
-		if(infos.length > 0) {
+		// Also, add the participant to the sync view only if changes have been found.
+		if (infos.length > 0) {
 			participant.setMode(SubscriberParticipant.INCOMING_MODE);
+			final ISynchronizeManager manager = TeamUI.getSynchronizeManager();
+			if (addIfNeeded) {
+				manager.addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
+				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						ISynchronizeView view = manager.showSynchronizeViewInActivePage(null);
+						if (view != null) {
+							view.display(participant);
+						}
+					}
+				});
+			}
 		}
 		
 		// Prompt user if preferences are set for this type of refresh.

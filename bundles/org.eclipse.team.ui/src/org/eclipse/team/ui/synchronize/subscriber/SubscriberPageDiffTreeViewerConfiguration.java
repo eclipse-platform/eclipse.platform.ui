@@ -46,7 +46,7 @@ public class SubscriberPageDiffTreeViewerConfiguration extends TreeViewerAdvisor
 		super.initializeActions(treeViewer);
 		openWithActions = new OpenWithActionGroup(view, participant);
 		refactorActions = new RefactorActionGroup(view);
-		refreshSelectionAction = new TeamParticipantRefreshAction(treeViewer, participant, false /* refresh */);
+		refreshSelectionAction = new TeamParticipantRefreshAction(treeViewer, participant, false /* refresh */, false);
 		refreshSelectionAction.setWorkbenchSite(view.getSite());
 	}
 

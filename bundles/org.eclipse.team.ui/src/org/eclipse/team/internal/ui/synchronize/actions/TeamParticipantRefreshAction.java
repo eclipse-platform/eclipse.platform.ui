@@ -23,11 +23,11 @@ import org.eclipse.ui.IWorkbenchSite;
  */
 public class TeamParticipantRefreshAction extends RefreshAction {
 	
-	public TeamParticipantRefreshAction(ISelectionProvider provider, SubscriberParticipant participant, boolean refreshAll) {
-		super(provider, participant.getName(), participant.getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(participant), refreshAll);
+	public TeamParticipantRefreshAction(ISelectionProvider provider, SubscriberParticipant participant, boolean addIfNeeded, boolean refreshAll) {
+		super(provider, participant.getName(), participant.getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(participant, addIfNeeded), refreshAll);
 	}
 	
-	public static void run(IWorkbenchSite site, IResource[] resources, SubscriberParticipant participant) {
-		run(site, participant.getName(), resources, participant.getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(participant));
+	public static void run(IWorkbenchSite site, IResource[] resources, SubscriberParticipant participant, boolean addIfNeeded) {
+		run(site, participant.getName(), resources, participant.getSubscriberSyncInfoCollector(), new RefreshUserNotificationPolicy(participant, addIfNeeded));
 	}
 }

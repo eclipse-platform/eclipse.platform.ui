@@ -89,6 +89,7 @@ public class RefreshAction extends Action {
 	private static void schedule(Job job, IWorkbenchSite site) {
 		if(site == null) {
 			job.schedule();
+			return;
 		}
 		IWorkbenchSiteProgressService siteProgress = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (siteProgress != null) {

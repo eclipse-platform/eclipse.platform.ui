@@ -101,7 +101,7 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 		};
 		gotoNext = new NavigateAction(view, nav, true /*next*/);		
 		gotoPrevious = new NavigateAction(view, nav, false /*previous*/);
-		refreshAllAction = new TeamParticipantRefreshAction(getSite().getSelectionProvider(), getParticipant(), true /* refresh all */);
+		refreshAllAction = new TeamParticipantRefreshAction(getSite().getSelectionProvider(), getParticipant(), false, true /* refresh all */);
 		refreshAllAction.setWorkbenchSite(view.getSite());
 		collapseAll = new Action() {
 			public void run() {
@@ -155,8 +155,11 @@ public class SubscriberParticipantPage implements IPageBookViewPage, IPropertyCh
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		statusLine.dispose();
 		changesSection.dispose();
 		configuration.dispose();
+		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
+		participant.removePropertyChangeListener(this);
 	}
 
 	/*

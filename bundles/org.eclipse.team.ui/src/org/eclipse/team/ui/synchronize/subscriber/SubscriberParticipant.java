@@ -13,14 +13,23 @@ package org.eclipse.team.ui.synchronize.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.TeamParticipantRefreshAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -135,11 +144,12 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		return workingSet;
 	}
 	
-	public void refreshWithRemote(IResource[] resources) {
+	public void refreshWithRemote(IResource[] resources, boolean addIfNeeded) {
+		IWorkbenchSite site = view != null ? view.getSite() : null;
 		if((resources == null || resources.length == 0)) {
-			TeamParticipantRefreshAction.run(view.getSite(), collector.getWorkingSet(), this);
+			TeamParticipantRefreshAction.run(site, collector.getWorkingSet(), this, addIfNeeded);
 		} else {
-			TeamParticipantRefreshAction.run(view.getSite(), resources, this);
+			TeamParticipantRefreshAction.run(site, resources, this, addIfNeeded);
 		}
 	}
 	
@@ -276,5 +286,18 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		}
 		settings.putString(P_SYNCVIEWPAGE_MODE, Integer.toString(getMode()));
 		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
+	}
+	
+	public static SubscriberParticipant find(Subscriber s) {
+		ISynchronizeParticipant[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < participants.length; i++) {
+			ISynchronizeParticipant p = participants[i];
+			if(p instanceof SubscriberParticipant) {
+				if(((SubscriberParticipant)p).getSubscriber().equals(s)) {
+					return (SubscriberParticipant)p;
+				}
+			}
+		}
+		return null;
 	}
 }
