@@ -34,18 +34,21 @@ public class AntProjectNode extends AntElementNode {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getDisplayName()
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
 	 */
 	public String getLabel() {
-	    String projectName= "project"; //$NON-NLS-1$
+	    String projectName;
 	    if (fProject != null) {
 	        projectName= fProject.getName();
-	        if (projectName == null || projectName.length() == 0) {
-	            projectName= "project"; //$NON-NLS-1$
-	        }
+	    } else {
+	    	projectName= AntModelMessages.getString("AntProjectNode.0"); //$NON-NLS-1$
 	    }
+	    if (projectName == null || projectName.length() == 0) {
+            projectName= "project"; //$NON-NLS-1$
+        }
 		return projectName;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
 	 */
@@ -127,6 +130,7 @@ public class AntProjectNode extends AntElementNode {
 		AntModelProject project= (AntModelProject) getProject();
 		project.setCurrentConfiguringProperty(node);
 	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProjectNode()
      */

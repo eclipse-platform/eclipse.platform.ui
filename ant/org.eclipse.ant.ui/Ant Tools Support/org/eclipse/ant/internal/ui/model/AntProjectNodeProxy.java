@@ -51,6 +51,7 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fParsed && !force) {
 			return;
 		}
+		fName= null;
 		fChildNodes= null;
 		fParsed= true;
 		AntTargetNode[] nodes = null;
@@ -75,11 +76,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		
 		fModel= projectNode.getAntModel();
 		fProject= (AntModelProject)projectNode.getProject();
-		
-		String projectName = projectNode.getName();
-		if (projectName == null) {
-			projectName= AntModelMessages.getString("AntProjectNodeProxy.2"); //$NON-NLS-1$
-		}
 	}
 	
 	public void parseBuildFile() {
@@ -105,7 +101,14 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fProject == null) {
 			parseBuildFile();
 		}
-		return super.getLabel();
+		StringBuffer name= new StringBuffer(super.getLabel());
+		AntProjectNode realNode= getRealNode();
+		if (realNode != null && realNode.getProblemMessage() != null) {
+			name.append(" <"); //$NON-NLS-1$
+			name.append(getRealNode().getProblemMessage());
+			name.append('>');
+		}
+		return name.toString();
 	}
 	
 	/* (non-Javadoc)
@@ -167,11 +170,12 @@ public class AntProjectNodeProxy extends AntProjectNode {
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProblemMessage()
      */
     public String getProblemMessage() {
-       if (fProject == null) {
-           return super.getProblemMessage();
-       }
-        return getRealNode().getProblemMessage();
+		if (isErrorNode()) {
+			return getBuildFileName();
+		}
+    	return null;
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#isWarningNode()
      */
