@@ -382,7 +382,8 @@
             default="true"
             name="Plugin Icon Test 3"
             id="org.eclipse.ui.tests.IconTestEditor3"
-            extensions="icontest3"/>       </extension>
+            extensions="icontest3"/>       
+   </extension>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -408,15 +409,33 @@
       	</action>
       </actionSet>
       <actionSet
-            label="Drag Test"
-            visible="false"
-            id="org.eclipse.ui.tests.dragTestActions">
+            label="Test Actions"
+            visible="true"
+            id="org.eclipse.ui.tests.markers">
+         <menu id="test"
+            label="&amp;Test">
+            <separator name="additions" />
+         </menu>
          <action
                label="Drag-Drop Snapshot"
                class="org.eclipse.ui.tests.dnd.GenerateDragSnapshotAction"
                allowLabelUpdate="false"
-               menubarPath="additions"
+               menubarPath="test/additions"
                id="org.eclipse.ui.tests.action1">
+         </action>
+         <action
+               label="Create Test Markers"
+               class="org.eclipse.ui.tests.menus.AddMarkersAction"
+               allowLabelUpdate="false"
+               menubarPath="test/additions"
+               id="org.eclipse.ui.tests.markers.create">
+         </action>
+         <action
+               label="Delete Test Markers"
+               class="org.eclipse.ui.tests.menus.RemoveMarkersAction"
+               allowLabelUpdate="false"
+               menubarPath="test/additions"
+               id="org.eclipse.ui.tests.markers.delete">
          </action>
       </actionSet>
    </extension>
