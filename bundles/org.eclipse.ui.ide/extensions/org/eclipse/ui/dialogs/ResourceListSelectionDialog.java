@@ -142,6 +142,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         try {
                             Thread.sleep(10);
                         } catch (InterruptedException e) {
+                            // ignore
                         }
                     }
                     if (stop || resourceNames.isDisposed()) {
@@ -166,6 +167,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         try {
                             Thread.sleep(10);
                         } catch (InterruptedException e) {
+                            // ignore
                         }
                     }
                     if (stop || resourceNames.isDisposed()) {
@@ -251,6 +253,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         try {
                             Thread.sleep(10);
                         } catch (InterruptedException e) {
+                            // ignore
                         }
                     }
                     if (stop || resourceNames.isDisposed()) {
@@ -274,6 +277,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         try {
                             Thread.sleep(10);
                         } catch (InterruptedException e) {
+                            // ignore
                         }
                     }
                     if (stop || resourceNames.isDisposed()) {
@@ -646,6 +650,10 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         try {
             container.accept(new IResourceProxyVisitor() {
                 public boolean visit(IResourceProxy proxy) {
+                    // exclude derived resources (bug 38085)
+                    if (proxy.isDerived()) {
+                        return false;
+                    }
                     int type = proxy.getType();
                     if ((typeMask & type) != 0) {
                         if (match(proxy.getName())) {
@@ -664,6 +672,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 }
             }, IResource.NONE);
         } catch (CoreException e) {
+            // ignore
         }
     }
 
