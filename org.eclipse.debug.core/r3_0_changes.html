@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Untitled Document</title>
+<title>3.0 Debug Platform Change Notes</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
@@ -105,5 +105,10 @@
   maintain current behavior, clients do not need to do any work in the new method. Implementors of
   <code>org.eclipse.debug.core.model.IStreamMonitor</code> must now notify listeners via the new
   method when they are finished appending text.</p>
+ <h3>Generic Console</h3> 
+ <p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
+    This results in problems at startup such as "Could not restore workbench layout" with details that "Could not create view: org.eclipse.debug.ui.ConsoleView" for the particular perspective that contained reference to the old view id. 
+    The equivalent view id is now: "org.eclipse.ui.console.ConsoleView".<br>
+    The generic console is available via the Window>Show View>Basic>Console and is used by the Eclipse debug and Ant integration. </p>
 </body>
 </html>
