@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.internal.events.BuildManager;
 import org.eclipse.core.internal.events.NotificationManager;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
@@ -1667,7 +1668,14 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 			//tolerate locations being the same if this is the project being tested
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
-			if (location.isPrefixOf(definedLocalLocation) || definedLocalLocation.isPrefixOf(location)) {
+			IPath one = location;
+			IPath two = definedLocalLocation;
+			// If we are on a case-insensitive file system then we will convert to all lowercase.
+			if (!CoreFileSystemLibrary.isCaseSensitive()) {
+				one = new Path(location.toOSString().toLowerCase());
+				two = new Path(definedLocalLocation.toOSString().toLowerCase());
+			}
+			if (one.isPrefixOf(two) || two.isPrefixOf(one)) {
 				message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
