@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IAdapterManager;
  * 		<il>
  *			<li>the target's class: X
  *			<li>X's superclasses in order to <code>Object</code>
- *			<li>a depth-first traversal of the target class's interaces in the order 
+ *			<li>a depth-first traversal of the target class's interfaces in the order 
  *				returned by <code>getInterfaces</code> (in the example, A and 
  *				its superinterfaces then B and its superinterfaces)
  *		</il>
