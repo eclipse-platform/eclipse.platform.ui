@@ -36,7 +36,7 @@ public class CVSException extends TeamException {
 	}
 
 	public CVSException(int severity, int code, String message, Throwable e) {
-		super(new CVSStatus(severity, code, message, null));
+		super(new CVSStatus(severity, code, message, e));
 	}
 	
 	public CVSException(int severity, int code, String message) {

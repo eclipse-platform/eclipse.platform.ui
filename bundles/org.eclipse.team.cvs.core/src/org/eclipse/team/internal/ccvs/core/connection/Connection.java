@@ -72,9 +72,11 @@ public class Connection {
 		try {
 			serverConnection.close();
 		} catch (IOException ex) {
-			// It is possible that the stream is being closed because of another exception.
-			// Therefore, the communication exception is logged instead of thrown
-			CVSProviderPlugin.log(new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex));//$NON-NLS-1$
+			// Generally, errors on close are of no interest.
+			// However, log them if debugging is on
+			if (CVSProviderPlugin.getPlugin().isDebugging()) {
+				CVSProviderPlugin.log(new CVSCommunicationException(Policy.bind("Connection.cannotClose"), ex));//$NON-NLS-1$
+			}
 		} finally {
 			fResponseStream = null;
 			fIsEstablished = false;
