@@ -23,6 +23,8 @@ import java.util.List;
 
 /**
  *	Page 1 of the base resource export-to-zip Wizard
+ * WizardFileSystemExportPage1
+ * @deprecated use WizardZipFileResourceExportPage1
  */
 /*package*/ class WizardZipFileExportPage1 extends WizardFileSystemExportPage1 {
 

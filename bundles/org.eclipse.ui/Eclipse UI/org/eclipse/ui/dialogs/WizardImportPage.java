@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.*;
  *   <li><code>handleEvent</code></li>
  * </ul>
  * </p>
+ * @deprecated use WizardResourceImportPage
  */
 public abstract class WizardImportPage extends WizardDataTransferPage {
 	private	IResource currentResourceSelection;

@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  *	Page 1 of the base resource import-from-file-system Wizard
+ *  @deprecated use WizardFileSystemResourceImportPage1
  */
 /*package*/ class WizardFileSystemImportPage1 extends WizardImportPage implements ISelectionChangedListener, Listener {
 	private List selectedResources;

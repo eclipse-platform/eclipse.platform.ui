@@ -52,6 +52,7 @@ import java.text.MessageFormat;
  *   <li><code>updateWidgetEnablements</code></li>
  * </ul>
  * </p>
+ * @deprecated use WizardExportResourcePage
  */
 public abstract class WizardExportPage extends WizardDataTransferPage {
 	private IStructuredSelection currentResourceSelection;

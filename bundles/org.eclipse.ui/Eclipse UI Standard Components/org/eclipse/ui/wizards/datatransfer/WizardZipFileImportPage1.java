@@ -24,6 +24,7 @@ import java.util.zip.*;
  *	Note that importing from .jar is identical to importing from .zip, so
  *	all references to .zip in this class are equally applicable to .jar
  *	references.
+ * @deprecated use WizardZipFileResourceImportPage1
  */
 /*package*/ class WizardZipFileImportPage1 extends WizardFileSystemImportPage1 implements ISelectionChangedListener, Listener {
 	private ZipFileStructureProvider providerCache;

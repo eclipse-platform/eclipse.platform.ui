@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
+ *  @deprecated use WizardFileSystemResourceExportPage1
  */
 /*package*/ class WizardFileSystemExportPage1 extends WizardExportPage implements Listener {
 
