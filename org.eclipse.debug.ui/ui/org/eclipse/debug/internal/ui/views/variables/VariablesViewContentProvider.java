@@ -164,8 +164,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				try {
 					return types[0].getLogicalStructure(value);
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					DebugUIPlugin.log(e);
 				}
 			}
 		}

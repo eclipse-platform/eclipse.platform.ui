@@ -29,5 +29,13 @@ public interface ILogicalStructureType extends ILogicalStructureTypeDelegate{
 	 * structure type
 	 */
 	public String getDescription();
+	
+	/**
+	 * Returns this logical structure type's unique identifier, as defined
+	 * in plug-in XML.
+	 * 
+	 * @return this logical structure type's unique identifier
+	 */
+	public String getId();
 
 }

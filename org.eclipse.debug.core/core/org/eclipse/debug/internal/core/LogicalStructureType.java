@@ -74,6 +74,13 @@ public class LogicalStructureType implements ILogicalStructureType {
 	public String getDescription() {
 		return fConfigurationElement.getAttribute("description"); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getId()
+	 */
+	public String getId() {
+		return fConfigurationElement.getAttribute("id"); //$NON-NLS-1$
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getLogicalStructure(org.eclipse.debug.core.model.IValue)
