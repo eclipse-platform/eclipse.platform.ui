@@ -25,6 +25,12 @@ import org.eclipse.jface.text.IRegion;
  * @since 3.1
  */
 public interface IHyperlink {
+
+	/**
+	 * The region covered by this type of hyperlink.
+	 * 
+	 * @return the hyperlink region
+	 */
 	IRegion getHyperlinkRegion();
 	
 	/**
@@ -34,7 +40,7 @@ public interface IHyperlink {
 	 * which show several hyperlinks at once.
 	 * </p>
 	 * 
-	 * @return the type label or <code>null</code> if none.
+	 * @return the type label or <code>null</code> if none
 	 */
 	String getTypeLabel();
 	
@@ -45,7 +51,7 @@ public interface IHyperlink {
 	 * several targets for the same hyperlink location.
 	 * </p>
 	 * 
-	 * @return the text or <code>null</code> if none.
+	 * @return the text or <code>null</code> if none
 	 */
 	String getHyperlinkText();
 	
