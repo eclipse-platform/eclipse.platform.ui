@@ -150,13 +150,6 @@ protected Control createControl(Composite parent) {
 			checkSelectable();
 		}
 	});
-	// When focus is lost, save the value being editted
-	text.addFocusListener(new FocusAdapter() {
-		public void focusLost(FocusEvent e) {
-			fireApplyEditorValue();
-		} 
-	});
-	
 	text.setFont(parent.getFont());
 	text.setBackground(parent.getBackground());
 	text.setText("");//$NON-NLS-1$
