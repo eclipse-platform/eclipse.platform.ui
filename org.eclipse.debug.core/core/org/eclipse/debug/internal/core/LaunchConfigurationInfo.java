@@ -308,19 +308,19 @@ public class LaunchConfigurationInfo {
 	 */
 	protected Element createKeyValueElement(Document doc, String elementType, String key, String value) {
 		Element element = doc.createElement(elementType);
-		element.setAttribute("key", key);
-		element.setAttribute("value", value);
+		element.setAttribute("key", key); //$NON-NLS-1$
+		element.setAttribute("value", value); //$NON-NLS-1$
 		return element;
 	}
 	
 	protected Element createListElement(Document doc, String elementType, String listKey, List list) {
 		Element listElement = doc.createElement(elementType);
-		listElement.setAttribute("key", listKey);
+		listElement.setAttribute("key", listKey); //$NON-NLS-1$
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			String value = (String) iterator.next();
-			Element element = doc.createElement("listEntry");
-			element.setAttribute("value", value);
+			Element element = doc.createElement("listEntry"); //$NON-NLS-1$
+			element.setAttribute("value", value); //$NON-NLS-1$
 			listElement.appendChild(element);
 		}		
 		return listElement;
@@ -328,14 +328,14 @@ public class LaunchConfigurationInfo {
 	
 	protected Element createMapElement(Document doc, String elementType, String mapKey, Map map) {
 		Element mapElement = doc.createElement(elementType);
-		mapElement.setAttribute("key", mapKey);
+		mapElement.setAttribute("key", mapKey); //$NON-NLS-1$
 		Iterator iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
 			String value = (String) map.get(key);
-			Element element = doc.createElement("mapEntry");
-			element.setAttribute("key", key);
-			element.setAttribute("value", value);
+			Element element = doc.createElement("mapEntry"); //$NON-NLS-1$
+			element.setAttribute("key", key); //$NON-NLS-1$
+			element.setAttribute("value", value); //$NON-NLS-1$
 			mapElement.appendChild(element);
 		}		
 		return mapElement;		

@@ -84,14 +84,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 			
-			String localString = root.getAttribute("local");
-			String path = root.getAttribute("path");
+			String localString = root.getAttribute("local"); //$NON-NLS-1$
+			String path = root.getAttribute("path"); //$NON-NLS-1$
 
 			String message = null;				
 			if (path == null) {
-				message = "Invalid launch configuration memento: missing path attribute.";
+				message = DebugCoreMessages.getString("LaunchConfiguration.Invalid_launch_configuration_memento__missing_path_attribute_3"); //$NON-NLS-1$
 			} else if (localString == null) {
-				message = "Invalid launch configuration memento: missing local attribute.";
+				message = DebugCoreMessages.getString("LaunchConfiguration.Invalid_launch_configuration_memento__missing_local_attribute_4"); //$NON-NLS-1$
 			}
 			if (message != null) {
 				IStatus s = newStatus(message, DebugException.INTERNAL_ERROR, null);
@@ -114,7 +114,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (IOException e) {
 			ex = e;
 		}
-		IStatus s = newStatus("Exception occurred parsing memento.", DebugException.INTERNAL_ERROR, ex);
+		IStatus s = newStatus(DebugCoreMessages.getString("LaunchConfiguration.Exception_occurred_parsing_memento_5"), DebugException.INTERNAL_ERROR, ex); //$NON-NLS-1$
 		throw new CoreException(s);
 	}
 	
@@ -376,9 +376,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		relativePath = relativePath.setDevice(null);
 		
 		Document doc = new DocumentImpl();
-		Element node = doc.createElement("launchConfiguration");
-		node.setAttribute("local", (new Boolean(isLocal())).toString());
-		node.setAttribute("path", relativePath.toString());
+		Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+		node.setAttribute("local", (new Boolean(isLocal())).toString()); //$NON-NLS-1$
+		node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
 		
 		// produce a String output
 		StringWriter writer = new StringWriter();
@@ -392,7 +392,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		try {
 			serializer.asDOMSerializer().serialize(node);
 		} catch (IOException e) {
-			IStatus status = newStatus("Exception occurred creating launch configuration memento.", DebugException.INTERNAL_ERROR,  e);
+			IStatus status = newStatus(DebugCoreMessages.getString("LaunchConfiguration.Exception_occurred_creating_launch_configuration_memento_9"), DebugException.INTERNAL_ERROR,  e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return writer.toString();

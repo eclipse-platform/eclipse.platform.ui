@@ -22,7 +22,7 @@
 <!-- Extension points -->
 <extension-point id="launchers" name="%launcherExtensionPointName"/>
 <extension-point id="breakpoints" name="%breakpointExtensionPointName"/>
-<extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeName"/>
+<extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeNameExtensionPointName"/>
 <extension-point id="statusHandlers" name="%statusHandlerExtensionPointName"/>
 <extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName"/>
 

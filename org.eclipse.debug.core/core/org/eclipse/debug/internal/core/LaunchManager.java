@@ -461,11 +461,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * config type for the file extension.
 	 */
 	protected void addFileExtensions(IConfigurationElement configElement, LaunchConfigurationType configType) {
-		IConfigurationElement[] children = configElement.getChildren("fileExtension");
+		IConfigurationElement[] children = configElement.getChildren("fileExtension"); //$NON-NLS-1$
 		for (int i = 0; i < children.length; i++) {
 			IConfigurationElement fileExtensionElement = children[i];
-			String fileExtension = fileExtensionElement.getAttribute("extension");
-			String defaultValue = fileExtensionElement.getAttribute("default");
+			String fileExtension = fileExtensionElement.getAttribute("extension"); //$NON-NLS-1$
+			String defaultValue = fileExtensionElement.getAttribute("default"); //$NON-NLS-1$
 			addOneFileExtension(fileExtension, defaultValue, configType);
 		}
 	}
@@ -481,7 +481,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		configTypeList.add(configType);
 		
-		if (defaultValue.equalsIgnoreCase("true")) {
+		if (defaultValue.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
 		}
 	}
@@ -505,22 +505,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		} catch (FileNotFoundException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Exception_occurred_while_reading_default_configuration_type_map__{0}_5"), new String[]{e.toString()}), e)  //$NON-NLS-1$
 			);					
 		} catch (SAXException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Exception_occurred_while_reading_default_configuration_type_map__{0}_5"), new String[]{e.toString()}), e)  //$NON-NLS-1$
 			);
 		} catch (ParserConfigurationException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Exception_occurred_while_reading_default_configuration_type_map__{0}_5"), new String[]{e.toString()}), e)  //$NON-NLS-1$
 			);		
 		} catch (IOException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Exception_occurred_while_reading_default_configuration_type_map__{0}_5"), new String[]{e.toString()}), e)  //$NON-NLS-1$
 			);										
 		} finally {
 			if (stream != null) {
@@ -529,7 +529,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				} catch (IOException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Exception_occurred_while_reading_default_configuration_type_map__{0}_5"), new String[]{e.toString()}), e)  //$NON-NLS-1$
 					);																	
 				}
 			}
@@ -544,7 +544,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, "Invalid default configuration type map", null 
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Invalid_default_configuration_type_map_10"), null  //$NON-NLS-1$
 				)
 			);		
 			
@@ -957,7 +957,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					throw new CoreException(
 						new Status(
 						 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while re-building local launch configuration index.", new String[]{e.toString()}), null
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_re-building_local_launch_configuration_index_11"), new String[]{e.toString()}), null //$NON-NLS-1$
 						));
 				}
 			}
@@ -1084,7 +1084,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Invalid_launch_configuration_index._18"), null //$NON-NLS-1$
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Invalid_launch_configuration_index._18"), null //$NON-NLS-1$
 				)
 			);		
 			
@@ -1239,7 +1239,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			} else {
 				// invalid status handler
 				IStatus s = new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
-				MessageFormat.format("Invalid source locator extentsion defined by plug-in '{0}': 'id' not specified.", new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null); 
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Invalid_source_locator_extentsion_defined_by_plug-in___{0}______id___not_specified_12"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()} ), null);  //$NON-NLS-1$
 				DebugPlugin.getDefault().log(s);
 			}
 		}			
@@ -1252,9 +1252,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IConfigurationElement config = (IConfigurationElement)fSourceLocators.get(identifier);
 		if (config == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
-				MessageFormat.format("Source locator does not exist: {0}", new String[] {identifier} ), null));
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Source_locator_does_not_exist__{0}_13"), new String[] {identifier} ), null)); //$NON-NLS-1$
 		} else {
-			return (IPersistableSourceLocator)config.createExecutableExtension("class");
+			return (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		
 	}

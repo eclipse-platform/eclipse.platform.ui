@@ -187,7 +187,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					file.createNewFile();
 				}
 				FileOutputStream stream = new FileOutputStream(file);
-				stream.write(xml.getBytes("UTF8"));
+				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 				stream.close();
 				if (added) {
 					getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
@@ -210,7 +210,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, "Specified container for launch configuration does not exist.", null
+					 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.Specified_container_for_launch_configuration_does_not_exist_2"), null //$NON-NLS-1$
 					)
 				);				
 			}
