@@ -187,9 +187,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 	protected void handleResourceRemovals(ISyncInfoTreeChangeEvent event) {
 		// Remove the removed subtrees
 		IResource[] removedRoots = event.getRemovedSubtreeRoots();
-		for (int i = 0; i < removedRoots.length; i++) {
-			removeFromViewer(removedRoots[i]);
-		}
+		removeFromViewer(removedRoots);
 		// We have to look for folders that may no longer be in the set
 		// (i.e. are in-sync) but still have descendants in the set
 		IResource[] removedResources = event.getRemovedResources();

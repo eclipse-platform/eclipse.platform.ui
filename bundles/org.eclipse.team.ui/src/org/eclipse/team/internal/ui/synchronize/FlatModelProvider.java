@@ -259,10 +259,7 @@ public class FlatModelProvider extends SynchronizeModelProvider {
      */
     protected void handleResourceRemovals(ISyncInfoTreeChangeEvent event) {
         IResource[] resources = event.getRemovedResources();
-        for (int i = 0; i < resources.length; i++) {
-            IResource resource = resources[i];
-            removeFromViewer(resource);
-        }
+        removeFromViewer(resources);
     }
 
     /* (non-Javadoc)

@@ -125,6 +125,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	public static class NavigableCheckboxTreeViewer extends ContainerCheckedTreeViewer implements ITreeViewerAccessor {
 		public NavigableCheckboxTreeViewer(Composite parent, int style) {
 			super(parent, style);
+			setUseHashlookup(true);
 		}
 
 		public void createChildren(TreeItem item) {	
@@ -143,6 +144,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	public static class NavigableTreeViewer extends TreeViewer implements ITreeViewerAccessor {
 		public NavigableTreeViewer(Composite parent, int style) {
 			super(parent, style);
+			setUseHashlookup(true);
 		}
 
 		public void createChildren(TreeItem item) {	

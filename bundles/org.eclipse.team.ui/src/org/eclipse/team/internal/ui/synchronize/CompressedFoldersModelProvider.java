@@ -262,25 +262,33 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		}
 
 		IResource[] resources = event.getRemovedResources();
+		List resourcesToRemove = new ArrayList();
+		List resourcesToAdd = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (!removedProjects.contains(resource.getProject())) {
 				if (resource.getType() == IResource.FILE) {
 					if (isCompressedParentEmpty(resource) && !isOutOfSync(resource.getParent())) {
 						// The parent compressed folder is also empty so remove it
-						removeFromViewer(resource.getParent());
+					    resourcesToRemove.add(resource.getParent());
 					} else {
-						removeFromViewer(resource);
+					    resourcesToRemove.add(resource);
 					}
 				} else {
 					// A folder has been removed (i.e. is in-sync)
 					// but may still contain children
-					removeFromViewer(resource);
+				    resourcesToRemove.add(resource);
 					if (hasFileMembers((IContainer)resource)) {
-					    addResources(getFileMembers((IContainer)resource));
+					    resourcesToAdd.addAll(Arrays.asList(getFileMembers((IContainer)resource)));
 					}
 				}
 			}
+		}
+		if (!resourcesToRemove.isEmpty()) {
+		    removeFromViewer((IResource[]) resourcesToRemove.toArray(new IResource[resourcesToRemove.size()]));
+		}
+		if (!resourcesToAdd.isEmpty()) {
+		    addResources((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]));
 		}
 	}
 

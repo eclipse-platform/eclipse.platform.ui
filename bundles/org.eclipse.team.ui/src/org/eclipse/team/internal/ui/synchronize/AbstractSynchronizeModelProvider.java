@@ -745,16 +745,24 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * Remove any traces of the model element and any of it's descendants in the
 	 * hiearchy defined by the content provider from the content provider and
 	 * the viewer it is associated with.
-	 * @param node the model element to remove
+	 * @param nodes the model elements to remove
 	 */
-	protected void removeFromViewer(ISynchronizeModelElement node) {
-		ISynchronizeModelElement rootToClear = getRootToClear(node);
-		propogateConflictState(rootToClear, true /* clear the conflict */);
-		clearModelObjects(rootToClear);
+	protected void removeFromViewer(ISynchronizeModelElement[] nodes) {
+	    List rootsToClear = new ArrayList();
+	    for (int i = 0; i < nodes.length; i++) {
+            ISynchronizeModelElement node = nodes[i];
+			ISynchronizeModelElement rootToClear = getRootToClear(node);
+			propogateConflictState(rootToClear, true /* clear the conflict */);
+			clearModelObjects(rootToClear);           
+        }
+	    ISynchronizeModelElement[] roots = (ISynchronizeModelElement[]) rootsToClear.toArray(new ISynchronizeModelElement[rootsToClear.size()]);
 		if (Utils.canUpdateViewer(getViewer())) {
-			doRemove(rootToClear);
+			doRemove(roots);
 		}
-		updateHandler.nodeRemoved(rootToClear, this);
+		for (int i = 0; i < roots.length; i++) {
+            ISynchronizeModelElement element = roots[i];
+			updateHandler.nodeRemoved(element, this);
+        }
 	}
 	
 	/**
@@ -857,9 +865,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * Remove the element from the viewer
 	 * @param element the element to be removed
 	 */
-	protected void doRemove(ISynchronizeModelElement element) {
+	protected void doRemove(ISynchronizeModelElement[] elements) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.remove(element);		
+		viewer.remove(elements);		
 	}
 	
 	/**

@@ -124,7 +124,26 @@ public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelP
 	protected void removeFromViewer(IResource resource) {
 		ISynchronizeModelElement element = getModelObject(resource);
 		if(element != null) {
-			removeFromViewer(element);
+			removeFromViewer(new ISynchronizeModelElement[] { element });
+		}
+	}
+	
+	/**
+	 * Helper method to remove a set of resources from the viewer. If a resource
+	 * is not mapped to a model element, it is ignored.
+	 * @param resources the resources to remove
+	 */
+	protected void removeFromViewer(IResource[] resources) {
+	    List elements = new ArrayList();
+	    for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+			ISynchronizeModelElement element = getModelObject(resource);
+			if(element != null) {
+			    elements.add(element);
+			}
+        }
+		if (!elements.isEmpty()) {
+		    removeFromViewer((ISynchronizeModelElement[]) elements.toArray(new ISynchronizeModelElement[elements.size()]));
 		}
 	}
 	
