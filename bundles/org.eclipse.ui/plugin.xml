@@ -1332,12 +1332,6 @@
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
             id="org.eclipse.ui.presentations.default">
       </factory>
-<!-- START EXPERIMENTAL PRESENTATION FACTORY -->
-      <factory
-            name="Native"
-            class="org.eclipse.ui.internal.presentations.NativePresentationFactory"
-            id="org.eclipse.ui.presentations.native">
-      </factory>
    </extension>
 
 </plugin>
