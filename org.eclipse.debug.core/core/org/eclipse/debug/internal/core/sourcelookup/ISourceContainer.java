@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * A source container is a container of source code. A source container is
  * capable of searching for source elements by name. For example, a source
- * conatiner may be a project or a directory capable of searching for files
+ * container may be a project or a directory capable of searching for files
  * by name. A source container may be a composite container - i.e. contain
  * other source containers.
  * 
@@ -58,17 +59,17 @@ public interface ISourceContainer {
 	/**
 	 * Returns the source containers this container is composed of. An empty
 	 * collection is returned if this container is not a composite container.
-	 * For example, a workspace source container may be composed project source
+	 * For example, a workspace source container may be composed of project source
 	 * containers.
 	 * 
-	 * @return the source containers this conatiner is composed of, possibly
+	 * @return the source containers this container is composed of, possibly
 	 *  an empty collection
 	 */
-	public ISourceContainer[] getSourceContainers();
+	public ISourceContainer[] getSourceContainers(ILaunchConfiguration config);
 
 	/**
 	 * Returns whether this container is a composite container. A composite
-	 * container is composed of other source containers. For example a workspace
+	 * container is composed of other source containers. For example, a workspace
 	 * source container may be composed of project source containers.
 	 * 
 	 * @return whether this container is a composite container

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,18 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * A source path computer computes the default source lookup path (set of source
  * containers that should be considered) for a launch configuration.
  * 
- * TODO: contribution exampl
- * TODO: add factory method to launch manager to create source path computer
- *  for a launch configuration
+ * Contribution example:
+ * <pre>
+ * <extension point="org.eclipse.debug.core.sourcePathComputers">
+ *	 <sourcePathComputer
+ *		id="com.ibm.debug.pdt.PDTSourcePathComputer"
+ *		class="com.ibm.debug.pdt.PDTSourcePathComputer">
+ *	 </sourcePathComputer>
+ * </extension>
+ * </pre>
+ * 
+ * TODO: Didn't we also want to be able to override the registered computer
+ *  with a configuration attribute? 
  * 
  * @since 3.0
  */

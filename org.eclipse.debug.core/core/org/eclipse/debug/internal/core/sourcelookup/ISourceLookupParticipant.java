@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public interface ISourceLookupParticipant {
 	 * </p>
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
 	 * @param findDuplicates whether searching should continue after the first match is
-	 *  found, or if all source locations should be searched exhaustively for all potential
+	 *  found, or if all source containers should be searched exhaustively for all potential
 	 *  source elements corresponding to the given debug artifact	
 	 * @return a collection of source elements corresponding to the given
 	 *  debug artifact, possibly empty

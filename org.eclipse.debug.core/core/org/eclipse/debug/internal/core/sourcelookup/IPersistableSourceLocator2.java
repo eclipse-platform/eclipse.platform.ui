@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.debug.internal.core.sourcelookup;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
+
+/**
+ * Extensions to the <code>IPersistableSourceLocator</code> interface.
+ * <p>
+ * This class is yet experimental.
+ * </p>
+ * @see org.eclipse.debug.core.model.IPersistableSourceLocator
+ * @since 3.0 
+ */
+public interface IPersistableSourceLocator2 extends IPersistableSourceLocator {
+
+	/**
+	 * Initializes this source locator based on the given
+	 * memento, for the given launch configuration. This method
+	 * is called instead of <code>initializeFrom(String memento)</code>
+	 * defined in <code>IPersistableSourceLocator</code> when a source
+	 * locator implements this interface.
+	 * 
+	 * @param memento a memento to initialize this source locator
+	 * @param configuration the launch configuration this source locator is
+	 *  being created for
+	 * @exception CoreException on failure to initialize 
+	 */
+	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException;
+	
+	/**
+	 * Disposes this source locator. This method is called when a source
+	 * locator's associated launch is removed from the launch manager.
+	 */
+	public void dispose();
+}
