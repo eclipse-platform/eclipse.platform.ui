@@ -14,6 +14,7 @@ package org.eclipse.jface.text.formatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
@@ -41,7 +42,7 @@ import org.eclipse.jface.text.TypedPosition;
  * 
  * @since 3.0
  */
-public class MultiPassContentFormatter implements IContentFormatter, IContentFormatterExtension, IContentFormatterExtension2 {
+public class MultiPassContentFormatter implements IContentFormatter, IContentFormatterExtension {
 
 	/**
 	 * Position updater that shifts otherwise deleted positions to the next
@@ -116,7 +117,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension2#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.formatter.IFormattingContext)
+	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.formatter.IFormattingContext)
 	 */
 	public final void format(final IDocument medium, final IFormattingContext context) {
 
@@ -272,13 +273,6 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#getDocumentPartitioning()
-	 */
-	public final String getDocumentPartitioning() {
-		return fPartitioning;
-	}
-
-	/*
 	 * @see org.eclipse.jface.text.formatter.IContentFormatter#getFormattingStrategy(java.lang.String)
 	 */
 	public final IFormattingStrategy getFormattingStrategy(final String type) {
@@ -295,8 +289,9 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * 
 	 * @param strategy The master formatting strategy
 	 */
-	public final void setMasterStrategy(final IFormattingStrategyExtension strategy) {
-		fMaster= strategy;
+	public final void setMasterStrategy(final IFormattingStrategy strategy) {
+		Assert.isTrue(strategy instanceof IFormattingStrategyExtension);
+		fMaster= (IFormattingStrategyExtension) strategy;
 	}
 
 	/**
@@ -311,8 +306,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * @param strategy The slave formatting strategy
 	 * @param type The content type to register this strategy with
 	 */
-	public final void setSlaveStrategy(final IFormattingStrategyExtension strategy, final String type) {
-
+	public final void setSlaveStrategy(final IFormattingStrategy strategy, final String type) {
+		Assert.isTrue(strategy instanceof IFormattingStrategyExtension);
 		if (!fType.equals(type))
 			fSlaves.put(type, strategy);
 	}

@@ -61,8 +61,9 @@ import org.eclipse.jface.text.TypedPosition;
  * @see IDocument
  * @see ITypedRegion
  * @see Position
+ * @deprecated since 3.0, use <code>MultiPassContentFormatter</code> instead
  */
-public class ContentFormatter implements IContentFormatter, IContentFormatterExtension {
+public class ContentFormatter implements IContentFormatter {
 		
 	/**
 	 * Defines a reference to either the offset or the end offset of
@@ -344,14 +345,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		fPartitioning= partitioning;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#getDocumentPartitioning()
-	 * @since 3.0
-	 */
-	public String getDocumentPartitioning() {
-		return fPartitioning;
-	}
-
 	/**
 	 * Sets the formatter's operation mode.
 	 * 
