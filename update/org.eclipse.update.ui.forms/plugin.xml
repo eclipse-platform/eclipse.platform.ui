@@ -13,6 +13,8 @@
 </requires>
 
 <runtime>
-   <library name="forms.jar"/>
+   <library name="forms.jar">
+      <export name="*"/>
+   </library>
 </runtime>
 </plugin>
