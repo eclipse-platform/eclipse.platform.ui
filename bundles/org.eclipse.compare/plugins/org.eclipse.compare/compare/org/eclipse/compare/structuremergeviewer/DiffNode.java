@@ -290,23 +290,46 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		}
 	}
 	
-	//---- object
-
+	/* (non Javadoc)
+	 * see Object.hashCode
+	 */
 	public int hashCode() {
-		Object id= getId();
-		if (id != null)
-			return id.hashCode();
-		return super.hashCode();
+		String[] path= getPath(this, 0);
+		int hashCode= 1;
+		for (int i= 0; i < path.length; i++) {
+	    	String s= path[i];
+	   	 	hashCode= (31*hashCode) + (s != null ? s.hashCode() : 0);
+		}
+		return hashCode;
 	}
-
+	
+	/* (non Javadoc)
+	 * see Object.equals
+	 */
 	public boolean equals(Object other) {
 		if (other != null && getClass() == other.getClass()) {
-			DiffNode d= (DiffNode) other;
-			Object id1= getId();
-			Object id2= d.getId();
-			if (id1 != null && id2 != null)
-				return id1.equals(id2);
+			String[] path1= getPath(this, 0);
+			String[] path2= getPath((DiffNode) other, 0);
+			if (path1.length != path2.length)
+				return false;
+			for (int i= 0; i < path1.length; i++)
+				if (! path1[i].equals(path2[i]))
+					return false;
+			return true;
 		}
 		return super.equals(other);
+	}
+	
+	private static String[] getPath(ITypedElement el, int level) {
+		String[] path= null;
+		if (el instanceof IDiffContainer) {
+			IDiffContainer parent= ((IDiffContainer)el).getParent();
+			if (parent instanceof ITypedElement)
+				path= getPath((ITypedElement)parent, level+1);
+		}
+		if (path == null)
+			path= new String[level+1];
+		path[(path.length-1)-level]= el.getName();
+		return path;
 	}
 }
