@@ -658,7 +658,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	/**
-	 * System out or System error has had text append to it.
+	 * The stream with the given identifier has had text appended to it.
 	 * Adds the new text to the document.
 	 * 
 	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
