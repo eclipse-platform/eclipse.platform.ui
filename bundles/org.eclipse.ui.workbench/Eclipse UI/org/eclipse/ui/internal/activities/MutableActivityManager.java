@@ -177,7 +177,7 @@ public final class MutableActivityManager
 	}
 	
 	public boolean isMatch(String string, Set activityIds) {
-		return isMatch(string, activityIds);
+		return match(string, activityIds);
 	}
 
 	public boolean match(String string, Set activityIds) {
