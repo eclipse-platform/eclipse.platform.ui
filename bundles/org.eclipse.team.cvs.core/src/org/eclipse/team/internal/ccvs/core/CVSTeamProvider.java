@@ -905,6 +905,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				folder.acceptChildren(this);
 			};
 		});
+		Synchronizer.getInstance().save(new NullProgressMonitor());
 		return true;
 	}
 	
