@@ -68,7 +68,7 @@ public class HistoryBucket extends Bucket {
 		/**
 		 * Returns the byte array representation of a (UUID, timestamp) pair. 
 		 */
-		static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
+		private static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
 			byte[] uuidBytes = uuid.toBytes();
 			byte[] state = new byte[DATA_LENGTH];
 			System.arraycopy(uuidBytes, 0, state, 0, uuidBytes.length);
@@ -90,7 +90,7 @@ public class HistoryBucket extends Bucket {
 		 * Inserts the given item into the given array at the right position. 
 		 * Returns the resulting array. Returns null if the item already exists. 
 		 */
-		static byte[][] insert(byte[][] existing, byte[] toAdd) {
+		private static byte[][] insert(byte[][] existing, byte[] toAdd) {
 			// look for the right spot where to insert the new guy
 			int index = search(existing, toAdd);
 			if (index >= 0)
@@ -110,7 +110,7 @@ public class HistoryBucket extends Bucket {
 		/**
 		 * Merges two entries (are always sorted). Duplicates are discarded.
 		 */
-		static byte[][] merge(byte[][] base, byte[][] additions) {
+		private static byte[][] merge(byte[][] base, byte[][] additions) {
 			int additionPointer = 0;
 			int basePointer = 0;
 			int added = 0;
@@ -145,10 +145,6 @@ public class HistoryBucket extends Bucket {
 			return Arrays.binarySearch(existing, element, COMPARATOR);
 		}
 
-		public static void sort(byte[][] uuids) {
-			Arrays.sort(uuids, HistoryEntry.COMPARATOR);
-		}
-
 		public HistoryEntry(IPath path, byte[][] data) {
 			super(path);
 			this.data = data;
@@ -164,7 +160,7 @@ public class HistoryBucket extends Bucket {
 		 * Compacts the data array removing any null slots. If non-null slots
 		 * are found, the entry is marked for removal. 
 		 */
-		void compact() {
+		private void compact() {
 			if (!isDirty())
 				return;
 			int occurrences = 0;
@@ -288,8 +284,6 @@ public class HistoryBucket extends Bucket {
 		byte[][] uuids = new byte[length][HistoryEntry.DATA_LENGTH];
 		for (int j = 0; j < uuids.length; j++)
 			source.read(uuids[j]);
-		// TODO drop this line when compatibility for early adopters no longer needed
-		HistoryEntry.sort(uuids);
 		return uuids;
 	}
 
