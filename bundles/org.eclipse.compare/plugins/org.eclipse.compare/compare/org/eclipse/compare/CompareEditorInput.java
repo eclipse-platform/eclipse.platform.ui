@@ -88,6 +88,11 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
+	/**
+	 * Work in progres !!
+	 * SHOW_STRUCTURE is not public API.
+	 */
+	public static final boolean SHOW_STRUCTURE= false;
 	
 	/**
 	 * The name of the "dirty" property.
@@ -615,6 +620,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 		Viewer v= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
+		
+		if (SHOW_STRUCTURE) {
+			if (oldViewer != null && v != null && oldViewer.getClass() == v.getClass())
+				v= oldViewer;
+		}
 		
 		if (v instanceof IPropertyChangeNotifier) {
 			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) v;

@@ -2208,7 +2208,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						c.getDisplay().beep();
 					if (DEAD_STEP)
 						return true;
-					if (fChangeDiffs.size() > 0) {
+					if (fChangeDiffs != null && fChangeDiffs.size() > 0) {
 						if (down)
 							diff= (Diff) fChangeDiffs.get(0);
 						else
