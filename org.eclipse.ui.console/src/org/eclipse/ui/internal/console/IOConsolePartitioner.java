@@ -285,13 +285,16 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 */
 	public IRegion getRegion(IHyperlink link) {
 		try {
-			Position[] positions = getDocument().getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-			for (int i = 0; i < positions.length; i++) {
-				IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition)positions[i];
-				if (position.getHyperLink().equals(link)) {
-					return new Region(position.getOffset(), position.getLength());
+		    IDocument doc = getDocument();
+		    if (doc != null) {
+				Position[] positions = doc.getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+				for (int i = 0; i < positions.length; i++) {
+					IOConsoleHyperlinkPosition position = (IOConsoleHyperlinkPosition)positions[i];
+					if (position.getHyperLink().equals(link)) {
+						return new Region(position.getOffset(), position.getLength());
+					}
 				}
-			}
+		    }
 		} catch (BadPositionCategoryException e) {
 		}
 		return null;
