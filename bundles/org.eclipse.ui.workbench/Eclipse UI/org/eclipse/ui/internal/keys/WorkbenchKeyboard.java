@@ -667,11 +667,13 @@ public final class WorkbenchKeyboard {
      *            The exception to log; must not be <code>null</code>.
      */
     private final void logException(CommandException e) {
+        Throwable nestedException = e.getCause();
+        Throwable exception = (nestedException == null) ? e : nestedException;
         String message = Util.translateString(RESOURCE_BUNDLE,
-                "ExecutionError.message"); //$NON-NLS-1$
-        String title = Util.translateString(RESOURCE_BUNDLE, "NoMatches.Title"); //$NON-NLS-1$
+                "ExecutionError.Message"); //$NON-NLS-1$
+        String title = Util.translateString(RESOURCE_BUNDLE, "ExecutionError.Title"); //$NON-NLS-1$
         IStatus status = new Status(IStatus.ERROR,
-                WorkbenchPlugin.PI_WORKBENCH, 0, message, e.getCause());
+                WorkbenchPlugin.PI_WORKBENCH, 0, exception.getMessage(), exception);
         ErrorDialog.openError(workbench.getActiveWorkbenchWindow().getShell(),
                 title, message, status);
         WorkbenchPlugin.log(message, status);

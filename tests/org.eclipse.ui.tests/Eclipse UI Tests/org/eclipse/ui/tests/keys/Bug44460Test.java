@@ -27,6 +27,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -55,10 +56,12 @@ public class Bug44460Test extends UITestCase {
 	 * Test that pressing "Ctrl+Shift+T" in the Team Synchronizing perspective
 	 * does not match anything.
 	 * 
+     * @throws CommandException
+     *             If execution of the handler fails.
 	 * @throws CoreException
 	 *             If the project cannot be created or opened.
 	 */
-	public void testCtrlShiftT() throws CoreException {
+	public void testCtrlShiftT() throws CommandException, CoreException {
 		// Open a new test window.
 		IWorkbenchWindow window = openTestWindow();
 
