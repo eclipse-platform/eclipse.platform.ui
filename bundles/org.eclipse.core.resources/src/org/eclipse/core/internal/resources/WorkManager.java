@@ -78,6 +78,8 @@ public void checkIn() throws CoreException {
 		while (!acquired) {
 			try {
 				acquired = getWorkspaceLock().acquire();
+				//above call should block, but sleep just in case it doesn't behave
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 			}
 		}
