@@ -136,7 +136,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-		getDelegate();
+		ILaunchConfigurationDelegate delegate= getDelegate();
 		
 		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
@@ -144,7 +144,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			monitor= new NullProgressMonitor();
 		}
 		try {
-			getDelegate().launch(this, mode, launch, monitor);
+			delegate.launch(this, mode, launch, monitor);
 		} catch (CoreException e) {
 			// if there was an exception, and the launch is empty, remove it
 			if (!launch.hasChildren()) {
