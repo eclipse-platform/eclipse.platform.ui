@@ -253,8 +253,8 @@ boolean hasDelta(IPath path, long id) {
 public boolean isPersistent(MarkerInfo info) {
 	if (!cache.isPersistent(info.getType()))
 		return false;
-	Boolean isTransient = (Boolean) info.getAttribute(IMarker.TRANSIENT); 
-	return isTransient == null || !isTransient.booleanValue();
+	Object isTransient = info.getAttribute(IMarker.TRANSIENT); 
+	return isTransient == null || !(isTransient instanceof Boolean) || !((Boolean) isTransient).booleanValue();
 }
 /**
  * Returns true if any of the given markers are persistent,

@@ -56,7 +56,7 @@ private void checkInfo(MarkerInfo info) throws CoreException {
 	}
 }
 /**
- * @see IMarker#delete
+ * @see IMarker#delete()
  */
 public void delete() throws CoreException {
 	final ISchedulingRule rule = getWorkspace().getRuleFactory().markerRule(resource);
@@ -69,7 +69,7 @@ public void delete() throws CoreException {
 	}
 }
 /**
- * @see IMarker#equals
+ * @see IMarker#equals(Object)
  */
 public boolean equals(Object object) {
 	if (!(object instanceof IMarker))
@@ -78,13 +78,13 @@ public boolean equals(Object object) {
 	return (id == other.getId() && resource.equals(other.getResource()));
 }
 /**
- * @see IMarker#exists
+ * @see IMarker#exists()
  */
 public boolean exists() {
 	return getInfo() != null;
 }
 /**
- * @see IMarker#getAttribute
+ * @see IMarker#getAttribute(String)
  */
 public Object getAttribute(String attributeName) throws CoreException {
 	Assert.isNotNull(attributeName);
@@ -93,7 +93,7 @@ public Object getAttribute(String attributeName) throws CoreException {
 	return info.getAttribute(attributeName);
 }
 /**
- * @see IMarker#getAttribute
+ * @see IMarker#getAttribute(String, int)
  */
 public int getAttribute(String attributeName, int defaultValue) {
 	Assert.isNotNull(attributeName);
@@ -106,7 +106,7 @@ public int getAttribute(String attributeName, int defaultValue) {
 	return defaultValue;
 }
 /**
- * @see IMarker#getAttribute
+ * @see IMarker#getAttribute(String, String)
  */
 public String getAttribute(String attributeName, String defaultValue) {
 	Assert.isNotNull(attributeName);
@@ -119,7 +119,7 @@ public String getAttribute(String attributeName, String defaultValue) {
 	return defaultValue;
 }
 /**
- * @see IMarker#getAttribute
+ * @see IMarker#getAttribute(String, boolean)
  */
 public boolean getAttribute(String attributeName, boolean defaultValue) {
 	Assert.isNotNull(attributeName);
@@ -149,7 +149,7 @@ public Object[] getAttributes(String[] attributeNames) throws CoreException {
 	return info.getAttributes(attributeNames);
 }
 /**
- * @see IMarker#getCreationTime
+ * @see IMarker#getCreationTime()
  */
 public long getCreationTime() throws CoreException {
 	MarkerInfo info = getInfo();
@@ -157,7 +157,7 @@ public long getCreationTime() throws CoreException {
 	return info.getCreationTime();
 }
 /**
- * @see IMarker#getId
+ * @see IMarker#getId()
  */
 public long getId() {
 	return id;
@@ -166,13 +166,13 @@ protected MarkerInfo getInfo() {
 	return getWorkspace().getMarkerManager().findMarkerInfo(resource, id);
 }
 /**
- * @see IMarker#getResource
+ * @see IMarker#getResource()
  */
 public IResource getResource() {
 	return resource;
 }
 /**
- * @see IMarker#getType
+ * @see IMarker#getType()
  */
 public String getType() throws CoreException {
 	MarkerInfo info = getInfo();
@@ -191,19 +191,19 @@ public int hashCode() {
 	return (int) id + resource.hashCode();
 }
 /**
- * @see IMarker#isSubtypeOf
+ * @see IMarker#isSubtypeOf(String)
  */
 public boolean isSubtypeOf(String type) throws CoreException {
 	return getWorkspace().getMarkerManager().isSubtype(getType(), type);
 }
 /**
- * @see IMarker#setAttribute
+ * @see IMarker#setAttribute(String, int)
  */
 public void setAttribute(String attributeName, int value) throws CoreException {
 	setAttribute(attributeName, new Integer(value));
 }
 /**
- * @see IMarker#setAttribute
+ * @see IMarker#setAttribute(String, Object)
  */
 public void setAttribute(String attributeName, Object value) throws CoreException {
 	Assert.isNotNull(attributeName);
@@ -230,13 +230,13 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 	}
 }
 /**
- * @see IMarker#setAttribute
+ * @see IMarker#setAttribute(String, boolean)
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException {
 	setAttribute(attributeName, value ? Boolean.TRUE : Boolean.FALSE);
 }
 /**
- * @see IMarker#setAttributes
+ * @see IMarker#setAttributes(String[], Object[])
  */
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException {
 	Assert.isNotNull(attributeNames);
@@ -264,7 +264,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 	}
 }
 /**
- * @see IMarker#setAttributes
+ * @see IMarker#setAttributes(Map)
  */
 public void setAttributes(Map values) throws CoreException {
 	Workspace workspace = getWorkspace();
