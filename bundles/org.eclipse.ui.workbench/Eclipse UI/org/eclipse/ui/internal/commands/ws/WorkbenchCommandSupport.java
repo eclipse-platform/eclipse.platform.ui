@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.commands.ws;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -200,12 +202,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         // TODO Should these be removed at shutdown? Is life cycle important?
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#addHandlerSubmissions(java.util.List)
-     */
-    public void addHandlerSubmissions(List handlerSubmissions) {
+    public void addHandlerSubmission(HandlerSubmission handlerSubmission) {
+        addHandlerSubmissions(Collections.singleton(handlerSubmission));
+    }
+
+    public void addHandlerSubmissions(Collection handlerSubmissions) {
         handlerSubmissions = Util.safeCopy(handlerSubmissions,
                 HandlerSubmission.class);
 
@@ -248,10 +249,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public ICommandManager getCommandManager() {
         // TODO need to proxy this to prevent casts to IMutableCommandManager
         return mutableCommandManager;
-    }
-
-    public void setActiveContextIds(Set activeContextIds) {
-        mutableCommandManager.setActiveContextIds(activeContextIds);
     }
 
     // TODO Remove this method -- deprecated.
@@ -447,12 +444,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#removeHandlerSubmissions(java.util.List)
-     */
-    public void removeHandlerSubmissions(List handlerSubmissions) {
+    public void removeHandlerSubmission(HandlerSubmission handlerSubmission) {
+        removeHandlerSubmissions(Collections.singleton(handlerSubmission));
+    }
+
+    public void removeHandlerSubmissions(Collection handlerSubmissions) {
         handlerSubmissions = Util.safeCopy(handlerSubmissions,
                 HandlerSubmission.class);
 
@@ -473,6 +469,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
 
         processHandlerSubmissions(true);
+    }
+
+    public void setActiveContextIds(Set activeContextIds) {
+        mutableCommandManager.setActiveContextIds(activeContextIds);
     }
 
     // TODO Remove this method -- deprecated

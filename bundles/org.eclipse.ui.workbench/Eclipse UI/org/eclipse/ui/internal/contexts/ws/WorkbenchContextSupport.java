@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.contexts.ws;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +43,7 @@ import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.*;
+import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Policy;
@@ -215,7 +217,11 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 activationListener);
     }
 
-    public void addEnabledSubmissions(List enabledSubmissions) {
+    public void addEnabledSubmission(EnabledSubmission enabledSubmission) {
+        addEnabledSubmissions(Collections.singleton(enabledSubmission));
+    }
+    
+    public void addEnabledSubmissions(Collection enabledSubmissions) {
         enabledSubmissions = Util.safeCopy(enabledSubmissions,
                 EnabledSubmission.class);
 
@@ -579,7 +585,11 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         return returnValue;
     }
 
-    public void removeEnabledSubmissions(List enabledSubmissions) {
+    public void removeEnabledSubmission(EnabledSubmission enabledSubmission) {
+        removeEnabledSubmissions(Collections.singleton(enabledSubmission));
+    }
+    
+    public void removeEnabledSubmissions(Collection enabledSubmissions) {
         enabledSubmissions = Util.safeCopy(enabledSubmissions,
                 EnabledSubmission.class);
 

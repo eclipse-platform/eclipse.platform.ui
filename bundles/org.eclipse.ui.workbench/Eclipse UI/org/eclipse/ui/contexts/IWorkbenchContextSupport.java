@@ -10,7 +10,7 @@
  ******************************************************************************/
 package org.eclipse.ui.contexts;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -69,9 +69,16 @@ public interface IWorkbenchContextSupport {
     /**
      * TODO
      * 
+     * @param enabledSubmission
+     */
+    void addEnabledSubmission(EnabledSubmission enabledSubmission);
+    
+    /**
+     * TODO
+     * 
      * @param enabledSubmissions
      */
-    void addEnabledSubmissions(List enabledSubmissions);
+    void addEnabledSubmissions(Collection enabledSubmissions);
 
     /**
      * Returns the context manager for the workbench.
@@ -126,9 +133,16 @@ public interface IWorkbenchContextSupport {
     /**
      * TODO
      * 
+     * @param enabledSubmission
+     */
+    void removeEnabledSubmission(EnabledSubmission enabledSubmission);
+    
+    /**
+     * TODO
+     * 
      * @param enabledSubmissions
      */
-    void removeEnabledSubmissions(List enabledSubmissions);
+    void removeEnabledSubmissions(Collection enabledSubmissions);
 
     /**
      * Enables or disables the global key binding architecture. The architecture

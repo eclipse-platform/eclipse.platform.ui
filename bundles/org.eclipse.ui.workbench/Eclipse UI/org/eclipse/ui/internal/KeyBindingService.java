@@ -33,9 +33,9 @@ import org.eclipse.ui.contexts.EnabledSubmission;
 
 /**
  * This service provides a nestable implementation of a key binding service.
- * This class is provided for backwards compatibility only, and might be
- * removed in the future. All of the functionality is the class can be
- * duplicated by using the commands and contexts API.
+ * This class is provided for backwards compatibility only, and might be removed
+ * in the future. All of the functionality is the class can be duplicated by
+ * using the commands and contexts API.
  * 
  * @since 2.0
  */
@@ -69,16 +69,16 @@ final class KeyBindingService implements INestableKeyBindingService {
     private Map handlerSubmissionsByCommandId = new HashMap();
 
     /**
-     * The context submissions from the currently active nested service.  This
+     * The context submissions from the currently active nested service. This
      * value is <code>null</code> if there is no currently active nested
      * service.
      */
     private List nestedEnabledSubmissions = null;
-    
+
     /**
-     * The handler submissions from the currently active nested service.  This
+     * The handler submissions from the currently active nested service. This
      * value is <code>null</code> if there is no currently active handler
-     * service. 
+     * service.
      */
     private List nestedHandlerSubmissions = null;
 
@@ -122,40 +122,52 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            The site for which this service will be responsible; should
      *            not be <code>null</code>.
      * @param parent
-     *            The parent key binding service, if any; <code>null</code>
-     *            if none.
+     *            The parent key binding service, if any; <code>null</code> if
+     *            none.
      */
-    KeyBindingService(IWorkbenchPartSite workbenchPartSite, KeyBindingService parent) {
+    KeyBindingService(IWorkbenchPartSite workbenchPartSite,
+            KeyBindingService parent) {
         this.workbenchPartSite = workbenchPartSite;
         this.parent = parent;
     }
 
     private boolean disposed;
-    
-    public void dispose() {
-        if (!disposed) {  
-            deactivateNestedService();
-            disposed = true;            
 
-            //System.out.print("disposing " + (new ArrayList(enabledSubmissions)).size() + " EnabledSubmissions");
-        	//System.out.println(" and " + handlerSubmissionsByCommandId.values().size() + " HandlerSubmissions");                                    
-            
-            Workbench.getInstance().getContextSupport().removeEnabledSubmissions(new ArrayList(enabledSubmissions));        
-        	enabledSubmissions.clear();
-            Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(new ArrayList(handlerSubmissionsByCommandId.values()));        
-        	handlerSubmissionsByCommandId.clear();
-        	
-        	for (Iterator iterator = nestedServices.values().iterator(); iterator.hasNext();) {
-                KeyBindingService keyBindingService = (KeyBindingService) iterator.next();
+    public void dispose() {
+        if (!disposed) {
+            deactivateNestedService();
+            disposed = true;
+
+            //System.out.print("disposing " + (new
+            // ArrayList(enabledSubmissions)).size() + " EnabledSubmissions");
+            //System.out.println(" and " +
+            // handlerSubmissionsByCommandId.values().size() + "
+            // HandlerSubmissions");
+
+            Workbench
+                    .getInstance()
+                    .getContextSupport()
+                    .removeEnabledSubmissions(new ArrayList(enabledSubmissions));
+            enabledSubmissions.clear();
+            Workbench.getInstance().getCommandSupport()
+                    .removeHandlerSubmissions(
+                            new ArrayList(handlerSubmissionsByCommandId
+                                    .values()));
+            handlerSubmissionsByCommandId.clear();
+
+            for (Iterator iterator = nestedServices.values().iterator(); iterator
+                    .hasNext();) {
+                KeyBindingService keyBindingService = (KeyBindingService) iterator
+                        .next();
                 keyBindingService.dispose();
             }
-        	
+
             nestedEnabledSubmissions = null;
             nestedHandlerSubmissions = null;
             nestedServices.clear();
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -163,15 +175,15 @@ final class KeyBindingService implements INestableKeyBindingService {
      */
     public boolean activateKeyBindingService(IWorkbenchSite nestedSite) {
         if (disposed) return false;
-        
+
         // Check if we should do a deactivation.
         if (nestedSite == null) {
-        	// We should do a deactivation, if there is one active.
+            // We should do a deactivation, if there is one active.
             if (activeService == null) {
-            	// There is no active service.  Do no work.
+                // There is no active service. Do no work.
                 return false;
             } else {
-            	// Deactivate the currently active nested service.
+                // Deactivate the currently active nested service.
                 deactivateNestedService();
                 return true;
             }
@@ -183,9 +195,8 @@ final class KeyBindingService implements INestableKeyBindingService {
         if (service == null) { return false; }
 
         if (service == activeService) {
-        	// The service is already active.
-        	return false;
-        }
+        // The service is already active.
+        return false; }
 
         deactivateNestedService();
         activateNestedService(service);
@@ -199,22 +210,23 @@ final class KeyBindingService implements INestableKeyBindingService {
      * 
      * @param service
      *            The service to become active; if <code>null</code>, then
-     *            the reference to the active service is set to <code>null</code>
-     *            but nothing else happens.
+     *            the reference to the active service is set to
+     *            <code>null</code> but nothing else happens.
      */
     private final void activateNestedService(final IKeyBindingService service) {
         if (disposed) return;
-        
-        /* If I have a parent, and I'm the active service, then deactivate so
-    	 * that I can make changes.
-    	 */
+
+        /*
+         * If I have a parent, and I'm the active service, then deactivate so
+         * that I can make changes.
+         */
         boolean active = false;
         boolean haveParent = (parent != null);
         if (haveParent) {
-        	active = (parent.activeService == this);
-        	if (active) {
-        		parent.deactivateNestedService();
-        	}
+            active = (parent.activeService == this);
+            if (active) {
+                parent.deactivateNestedService();
+            }
         }
 
         // Update the active service.
@@ -224,12 +236,12 @@ final class KeyBindingService implements INestableKeyBindingService {
         if (service == null) { return; }
 
         if (haveParent) {
-        	if (active) {
-        		parent.activateNestedService(this);
-        	}
+            if (active) {
+                parent.activateNestedService(this);
+            }
 
         } else if (activeService instanceof KeyBindingService) {
-        	// I have no parent, so I can make the changes myself.
+            // I have no parent, so I can make the changes myself.
             final KeyBindingService nestedService = (KeyBindingService) activeService;
 
             // Update the contexts.
@@ -247,27 +259,27 @@ final class KeyBindingService implements INestableKeyBindingService {
     }
 
     /**
-     * Deactives the currently active service. This nulls out the reference,
-     * and removes all the enabled submissions for the nested service.
+     * Deactives the currently active service. This nulls out the reference, and
+     * removes all the enabled submissions for the nested service.
      */
     private final void deactivateNestedService() {
         if (disposed) return;
-        
+
         // Don't do anything if there is no active service.
         if (activeService == null) { return; }
 
         // Check to see if there is a parent.
         boolean active = false;
         if (parent != null) {
-        	// Check if I'm the active service.
-        	if (parent.activeService == this) {
-        		active = true;
-        		// Deactivate myself so I can make changes.
-        		parent.deactivateNestedService();
-        	}
+            // Check if I'm the active service.
+            if (parent.activeService == this) {
+                active = true;
+                // Deactivate myself so I can make changes.
+                parent.deactivateNestedService();
+            }
 
         } else if (activeService instanceof KeyBindingService) {
-        	// There is no parent, so I can do all of the work.
+            // There is no parent, so I can do all of the work.
             final KeyBindingService nestedService = (KeyBindingService) activeService;
 
             // Remove all the nested context ids.
@@ -293,11 +305,12 @@ final class KeyBindingService implements INestableKeyBindingService {
      * Gets a copy of all the enabled submissions in the nesting chain.
      * 
      * @return All of the nested enabled submissions -- including the ones from
-     *         this service. This list may be empty, but is never <code>null</code>.
+     *         this service. This list may be empty, but is never
+     *         <code>null</code>.
      */
     private final List getEnabledSubmissions() {
         if (disposed) return null;
-        
+
         final List submissions = new ArrayList(enabledSubmissions);
         if (activeService instanceof KeyBindingService) {
             final KeyBindingService nestedService = (KeyBindingService) activeService;
@@ -310,11 +323,12 @@ final class KeyBindingService implements INestableKeyBindingService {
      * Gets a copy of all the handler submissions in the nesting chain.
      * 
      * @return All of the nested handler submissions -- including the ones from
-     *         this service. This list may be empty, but is never <code>null</code>.
+     *         this service. This list may be empty, but is never
+     *         <code>null</code>.
      */
     private final List getHandlerSubmissions() {
         if (disposed) return null;
-        
+
         final List submissions = new ArrayList(handlerSubmissionsByCommandId
                 .values());
         if (activeService instanceof KeyBindingService) {
@@ -331,18 +345,20 @@ final class KeyBindingService implements INestableKeyBindingService {
      */
     public IKeyBindingService getKeyBindingService(IWorkbenchSite nestedSite) {
         if (disposed) return null;
-        
+
         if (nestedSite == null) { return null; }
 
         IKeyBindingService service = (IKeyBindingService) nestedServices
                 .get(nestedSite);
         if (service == null) {
-            // TODO the INestedKeyBindingService API should be based on IWorkbenchPartSite..
+            // TODO the INestedKeyBindingService API should be based on
+            // IWorkbenchPartSite..
             if (nestedSite instanceof IWorkbenchPartSite)
-                service = new KeyBindingService((IWorkbenchPartSite) nestedSite, this);
-            else 
+                service = new KeyBindingService(
+                        (IWorkbenchPartSite) nestedSite, this);
+            else
                 service = new KeyBindingService(null, this);
-            
+
             nestedServices.put(nestedSite, service);
         }
 
@@ -351,7 +367,7 @@ final class KeyBindingService implements INestableKeyBindingService {
 
     public String[] getScopes() {
         if (disposed) return null;
-        
+
         // Get the nested scopes, if any.
         final String[] nestedScopes;
         if (activeService == null) {
@@ -374,8 +390,9 @@ final class KeyBindingService implements INestableKeyBindingService {
 
     /**
      * Replaces the active workbench site with this service's active workbench
-     * site. This ensures that the context manager will recognize the context
-     * as active. Note: this method modifies the list in place; it is <em>destructive</em>.
+     * site. This ensures that the context manager will recognize the context as
+     * active. Note: this method modifies the list in place; it is
+     * <em>destructive</em>.
      * 
      * @param submissionsToModify
      *            The submissions list to modify; must not be <code>null</code>,
@@ -383,7 +400,7 @@ final class KeyBindingService implements INestableKeyBindingService {
      */
     private final void normalizeSites(final List submissionsToModify) {
         if (disposed) return;
-        
+
         final int size = submissionsToModify.size();
         for (int i = 0; i < size; i++) {
             final Object submission = submissionsToModify.get(i);
@@ -394,8 +411,8 @@ final class KeyBindingService implements INestableKeyBindingService {
                 if (!workbenchPartSite.equals(enabledSubmission
                         .getActiveWorkbenchPartSite())) {
                     replacementSubmission = new EnabledSubmission(
-                            enabledSubmission.getActiveShell(), workbenchPartSite,
-                            enabledSubmission.getContextId());
+                            enabledSubmission.getActiveShell(),
+                            workbenchPartSite, enabledSubmission.getContextId());
                 } else {
                     replacementSubmission = enabledSubmission;
                 }
@@ -404,11 +421,9 @@ final class KeyBindingService implements INestableKeyBindingService {
                 final HandlerSubmission handlerSubmission = (HandlerSubmission) submission;
                 if (!workbenchPartSite.equals(handlerSubmission
                         .getActiveWorkbenchPartSite())) {
-                    replacementSubmission = new HandlerSubmission(
-                            null, 
-                            handlerSubmission
-                            .getActiveShell(),
-                            workbenchPartSite,                                                         
+                    replacementSubmission = new HandlerSubmission(null,
+                            handlerSubmission.getActiveShell(),
+                            workbenchPartSite,
                             handlerSubmission.getCommandId(), handlerSubmission
                                     .getHandler(), handlerSubmission
                                     .getPriority());
@@ -427,7 +442,7 @@ final class KeyBindingService implements INestableKeyBindingService {
 
     public void registerAction(IAction action) {
         if (disposed) return;
-        
+
         unregisterAction(action);
         String commandId = action.getActionDefinitionId();
         if (commandId != null) {
@@ -443,8 +458,9 @@ final class KeyBindingService implements INestableKeyBindingService {
 
             // Create the new submission
             IHandler handler = new ActionHandler(action);
-            HandlerSubmission handlerSubmission = new HandlerSubmission(null, null,
-                    workbenchPartSite, commandId, handler, Priority.MEDIUM);
+            HandlerSubmission handlerSubmission = new HandlerSubmission(null,
+                    null, workbenchPartSite, commandId, handler,
+                    Priority.MEDIUM);
             handlerSubmissionsByCommandId.put(commandId, handlerSubmission);
 
             // Either submit the new handler myself, or simply re-activate.
@@ -454,8 +470,7 @@ final class KeyBindingService implements INestableKeyBindingService {
                 }
             } else {
                 Workbench.getInstance().getCommandSupport()
-                        .addHandlerSubmissions(
-                                Collections.singletonList(handlerSubmission));
+                        .addHandlerSubmission(handlerSubmission);
             }
         }
     }
@@ -481,7 +496,7 @@ final class KeyBindingService implements INestableKeyBindingService {
 
     public void setScopes(String[] scopes) {
         if (disposed) return;
-        
+
         // Either deactivate myself, or remove the previous submissions myself.
         boolean active = false;
         if ((parent != null) && (parent.activeService == this)) {
@@ -498,8 +513,8 @@ final class KeyBindingService implements INestableKeyBindingService {
         for (Iterator iterator = enabledContextIds.iterator(); iterator
                 .hasNext();) {
             String contextId = (String) iterator.next();
-            enabledSubmissions.add(new EnabledSubmission(null, workbenchPartSite,
-                    contextId));
+            enabledSubmissions.add(new EnabledSubmission(null,
+                    workbenchPartSite, contextId));
         }
 
         // Submit the new contexts myself, or simply re-active myself.
@@ -515,7 +530,7 @@ final class KeyBindingService implements INestableKeyBindingService {
 
     public void unregisterAction(IAction action) {
         if (disposed) return;
-        
+
         String commandId = action.getActionDefinitionId();
 
         if (commandId != null) {
@@ -539,9 +554,7 @@ final class KeyBindingService implements INestableKeyBindingService {
                     }
                 } else {
                     Workbench.getInstance().getCommandSupport()
-                            .removeHandlerSubmissions(
-                                    Collections
-                                            .singletonList(handlerSubmission));
+                            .removeHandlerSubmission(handlerSubmission);
                 }
             }
         }

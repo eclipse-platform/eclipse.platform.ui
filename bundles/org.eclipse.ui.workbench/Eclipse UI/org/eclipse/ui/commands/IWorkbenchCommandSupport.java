@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -32,9 +32,16 @@ public interface IWorkbenchCommandSupport {
     /**
      * TODO
      * 
+     * @param handlerSubmission
+     */
+    void addHandlerSubmission(HandlerSubmission handlerSubmission);
+
+    /**
+     * TODO
+     * 
      * @param handlerSubmissions
      */
-    void addHandlerSubmissions(List handlerSubmissions);
+    void addHandlerSubmissions(Collection handlerSubmissions);
 
     /**
      * Deregisters the given <code>shell</code> from the global key bindings.
@@ -43,7 +50,7 @@ public interface IWorkbenchCommandSupport {
      * 
      * @param shell
      *            The shell to deregister; may be <code>null</code>.
-     * @deprecated Use the equivalent methods on IWorkbenchContextSupport
+     * @deprecated to be removed for 3.0 Use the equivalent methods on IWorkbenchContextSupport
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#unregisterShell(Shell)
      */
     void deregisterFromKeyBindings(Shell shell);
@@ -80,18 +87,25 @@ public interface IWorkbenchCommandSupport {
      *            bindings normally used in dialogs (e.g., text editing
      *            commands). All workbench windows say <code>false</code>
      *            here.
-     * @deprecated Use the equivalent methods on IWorkbenchContextSupport
+     * @deprecated to be removed for 3.0. Use the equivalent methods on IWorkbenchContextSupport
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(Shell,
      *      int)
      */
-    void registerForKeyBindings(Shell shell, boolean dialogOnly);  
-    
+    void registerForKeyBindings(Shell shell, boolean dialogOnly);
+
+    /**
+     * TODO
+     * 
+     * @param handlerSubmission
+     */
+    void removeHandlerSubmission(HandlerSubmission handlerSubmission);
+
     /**
      * TODO
      * 
      * @param handlerSubmissions
      */
-    void removeHandlerSubmissions(List handlerSubmissions);
+    void removeHandlerSubmissions(Collection handlerSubmissions);
 
     /**
      * Enables or disables the global key binding architecture. The architecture

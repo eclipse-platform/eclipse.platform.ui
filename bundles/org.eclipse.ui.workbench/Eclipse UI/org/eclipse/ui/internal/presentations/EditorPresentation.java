@@ -153,18 +153,15 @@ public class EditorPresentation extends BasicStackPresentation {
         openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
                 shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
                 openEditorDropDownHandler, Priority.MEDIUM);
-        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmissions(
-                Collections.singletonList(openEditorDropDownHandlerSubmission));
+        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+                openEditorDropDownHandlerSubmission);
     }
 
     public void dispose() {
         if (openEditorDropDownHandlerSubmission != null) {
-            PlatformUI
-                    .getWorkbench()
-                    .getCommandSupport()
-                    .removeHandlerSubmissions(
-                            Collections
-                                    .singletonList(openEditorDropDownHandlerSubmission));
+            PlatformUI.getWorkbench().getCommandSupport()
+                    .removeHandlerSubmission(
+                            openEditorDropDownHandlerSubmission);
             openEditorDropDownHandlerSubmission = null;
         }
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
