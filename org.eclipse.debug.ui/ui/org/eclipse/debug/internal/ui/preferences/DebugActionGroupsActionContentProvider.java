@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroup;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -37,12 +36,12 @@ public class DebugActionGroupsActionContentProvider implements IStructuredConten
 		}
 		if (actionContributionItems != null) {
 			if (actionContributionItems.isEmpty()) {
-				return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
+				return new String[]{DebugPreferencesMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
 			} else {
 				return actionContributionItems.toArray();
 			}
 		} else {
-			return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
+			return new String[]{DebugPreferencesMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
 		}
 	}
 	/**

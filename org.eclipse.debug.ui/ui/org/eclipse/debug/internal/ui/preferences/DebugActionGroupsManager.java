@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -137,7 +136,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 			if (id != null && name != null) {
 				if (fDebugActionGroups.get(id) != null) {
 					//duplicate id..report error and ignore extension
-					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id})); //$NON-NLS-1$
+					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugPreferencesMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id})); //$NON-NLS-1$
 					continue;
 				}
 				
@@ -163,7 +162,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 				if (id != null) {
 					errorId= ": "  + id; //$NON-NLS-1$
 				}
-				DebugUIPlugin.logErrorMessage(DebugUIMessages.getString("DebugActionGroupsManager.Improperly_specified_debug_action_group_4") + errorId); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage(DebugPreferencesMessages.getString("DebugActionGroupsManager.Improperly_specified_debug_action_group_4") + errorId); //$NON-NLS-1$
 			}
 		}
 	}
@@ -413,7 +412,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 			StringBuffer buff= new StringBuffer(fName);
 			buff.append(" ("); //$NON-NLS-1$
 			buff.append(fViewName);
-			buff.append(DebugUIMessages.getString("DebugActionGroupsManager._view__6")); //$NON-NLS-1$
+			buff.append(DebugPreferencesMessages.getString("DebugActionGroupsManager._view__6")); //$NON-NLS-1$
 			buff.append(getDescriptor());
 			buff.append(')');
 			return buff.toString();
@@ -434,9 +433,9 @@ public class DebugActionGroupsManager implements IMenuListener {
 		
 		protected String getDescriptor() {
 			if (fToolbarAction) {
-				return DebugUIMessages.getString("DebugActionGroupsManager.toolbar_7"); //$NON-NLS-1$
+				return DebugPreferencesMessages.getString("DebugActionGroupsManager.toolbar_7"); //$NON-NLS-1$
 			} else {
-				return DebugUIMessages.getString("DebugActionGroupsManager.context_menu_8"); //$NON-NLS-1$
+				return DebugPreferencesMessages.getString("DebugActionGroupsManager.context_menu_8"); //$NON-NLS-1$
 			}
 		}
 		

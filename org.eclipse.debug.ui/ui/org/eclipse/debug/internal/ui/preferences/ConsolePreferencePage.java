@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -31,7 +30,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public ConsolePreferencePage() {
 		super(GRID);
-		setDescription(DebugUIMessages.getString("ConsolePreferencePage.Console_settings")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.getString("ConsolePreferencePage.Console_settings")); //$NON-NLS-1$
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -50,17 +49,17 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugUIMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugUIMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
-		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_Out__2"), getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_Error__3"), getFieldEditorParent()); //$NON-NLS-1$
-		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_In__4"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Out__2"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_Error__3"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, DebugPreferencesMessages.getString("ConsolePreferencePage.Standard_In__4"), getFieldEditorParent()); //$NON-NLS-1$
 		
 		WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(CONSOLE_FONT,
-				DebugUIMessages.getString("ConsolePreferencePage.Console_font_setting___5"), getFieldEditorParent()); //$NON-NLS-1$
+				DebugPreferencesMessages.getString("ConsolePreferencePage.Console_font_setting___5"), getFieldEditorParent()); //$NON-NLS-1$
 		
 		addField(sysout);
 		addField(syserr);

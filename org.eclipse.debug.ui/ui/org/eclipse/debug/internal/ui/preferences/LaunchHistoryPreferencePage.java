@@ -18,11 +18,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.DebugHistoryPreferenceTab;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.debug.internal.ui.launchConfigurations.RunHistoryPreferenceTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -66,12 +63,12 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fHistoryMaxEditor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.Maximum_launch_history_size_1"), composite); //$NON-NLS-1$
+		fHistoryMaxEditor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.Maximum_launch_history_size_1"), composite); //$NON-NLS-1$
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
 		fHistoryMaxEditor.setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 		fHistoryMaxEditor.setPreferencePage(this);
 		fHistoryMaxEditor.setTextLimit(Integer.toString(historyMax).length());
-		fHistoryMaxEditor.setErrorMessage(MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.The_size_of_the_launch_history_should_be_between_{0}_and_{1}_1"), new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
+		fHistoryMaxEditor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.The_size_of_the_launch_history_should_be_between_{0}_and_{1}_1"), new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
 		fHistoryMaxEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fHistoryMaxEditor.setValidRange(1, historyMax);
 		fHistoryMaxEditor.load();
@@ -89,12 +86,12 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		tabFolder.setLayoutData(gd);
 		
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.De&bug_1")); //$NON-NLS-1$
+		tab.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.De&bug_1")); //$NON-NLS-1$
 		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_DEBUG));
 		tab.setControl(createDebugTab(tabFolder));
 		
 		tab = new TabItem(tabFolder, SWT.NONE);
-		tab.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.&Run_2")); //$NON-NLS-1$
+		tab.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.&Run_2")); //$NON-NLS-1$
 		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_RUN));
 		tab.setControl(createRunTab(tabFolder));
 				
@@ -121,7 +118,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		setDescription(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.description")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.getString("LaunchHistoryPreferencePage.description")); //$NON-NLS-1$
 	}
 
 	/**

@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.preferences;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroup;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroupAction;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -13,7 +12,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class DebugActionGroupsLabelProvider extends LabelProvider {
 
-	private String UNKNOWN = DebugUIMessages.getString("DebugActionGroupsLabelProvider.<Unknown>_1"); //$NON-NLS-1$
+	private String UNKNOWN = DebugPreferencesMessages.getString("DebugActionGroupsLabelProvider.<Unknown>_1"); //$NON-NLS-1$
 
 	public DebugActionGroupsLabelProvider() {
 		super();

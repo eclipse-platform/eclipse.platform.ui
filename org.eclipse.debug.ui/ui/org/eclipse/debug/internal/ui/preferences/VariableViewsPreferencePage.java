@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -33,7 +32,7 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	 */
 	public VariableViewsPreferencePage() {
 		super(GRID);
-		setDescription(DebugUIMessages.getString("VariabeViewsPreferencePage.Debug_Variable_Views_Settings_1"));  //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.getString("VariabeViewsPreferencePage.Debug_Variable_Views_Settings_1"));  //$NON-NLS-1$
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -52,21 +51,21 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	 */
 	public void createFieldEditors() {
 		
-		addField(new ColorFieldEditor(CHANGED_VARIABLE_RGB, DebugUIMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugUIMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, DebugUIMessages.getString("VariableViewPreferencePage.Show_type_&names_by_default_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugPreferencesMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, DebugPreferencesMessages.getString("VariableViewPreferencePage.Show_type_&names_by_default_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
 		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION,
-					DebugUIMessages.getString("VariableViewsPreferencePage.Orientation_of_detail_pane_in_variables_view_1"), //$NON-NLS-1$
+					DebugPreferencesMessages.getString("VariableViewsPreferencePage.Orientation_of_detail_pane_in_variables_view_1"), //$NON-NLS-1$
 					1,
 					new String[][] {
-						{DebugUIMessages.getString("VariableViewsPreferencePage.To_the_right_of_variables_tree_pane_2"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT}, //$NON-NLS-1$
-						{DebugUIMessages.getString("VariableViewsPreferencePage.Underneath_the_variables_tree_pane_3"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH} //$NON-NLS-1$
+						{DebugPreferencesMessages.getString("VariableViewsPreferencePage.To_the_right_of_variables_tree_pane_2"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT}, //$NON-NLS-1$
+						{DebugPreferencesMessages.getString("VariableViewsPreferencePage.Underneath_the_variables_tree_pane_3"), IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH} //$NON-NLS-1$
 					},
 					getFieldEditorParent(), true));
 	}
