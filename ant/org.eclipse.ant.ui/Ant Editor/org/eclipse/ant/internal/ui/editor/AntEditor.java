@@ -164,9 +164,9 @@ public class AntEditor extends TextEditor {
          * Here the according ISourceReference should be determined and
          * then passed to setSelection.
          */
-        XmlElement tempSelectedXmlElement = (XmlElement)selection.getFirstElement(); 
-        if(tempSelectedXmlElement != null) {
-			setSelection(tempSelectedXmlElement, !isActivePart());
+        XmlElement selectedXmlElement = (XmlElement)selection.getFirstElement(); 
+        if(selectedXmlElement != null) {
+			setSelection(selectedXmlElement, !isActivePart());
         }
     }
 
