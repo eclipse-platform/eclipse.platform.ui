@@ -271,6 +271,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			return;
 		}
 		
+		boolean migration = false;
 		try {
 			ISourceLocator locator = getLaunchManager().newSourceLocator(type);
 			if(!(locator instanceof AbstractSourceLookupDirector)) {
@@ -286,6 +287,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 					setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.2")); //$NON-NLS-1$
 					return;
 				}
+				migration = true;
 			}
 			fLocator = (AbstractSourceLookupDirector)locator;			
 			if (memento == null) {
@@ -298,7 +300,12 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			return;
 		}	
 		
-		initializeFrom(fLocator);		
+		initializeFrom(fLocator);
+		if (migration && configuration.isWorkingCopy()) {
+			// ensure perform apply actual updates the config
+			setDirty(true);
+			performApply((ILaunchConfigurationWorkingCopy)configuration);
+		}
 	}
 	
 	/**
