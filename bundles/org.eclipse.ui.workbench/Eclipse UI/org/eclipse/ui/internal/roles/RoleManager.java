@@ -38,7 +38,7 @@ public class RoleManager {
 	private static RoleManager singleton;
 	private boolean filterRoles = true;
 
-	private Role[] roles;
+	private Role[] roles = new Role[0];
 
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
