@@ -527,7 +527,7 @@ public class AntModel {
 			}
 			}
 		} else {
-			taskNode= createNotWellKnownTask(newTask, attributes);
+			taskNode= newNotWellKnownTaskNode(newTask, attributes);
 			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(taskNode);
 		}
 		fTaskToNode.put(newTask, taskNode);
@@ -622,7 +622,7 @@ public class AntModel {
         } else if(taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
         	newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_FILE)); //$NON-NLS-1$
         } else {   
-        	newNode = createNotWellKnownTask(newTask, attributes);
+        	newNode = newNotWellKnownTaskNode(newTask, attributes);
         }
 		String taskFileName= newTask.getLocation().getFileName();
 		boolean external= isTaskExternal(taskFileName);
@@ -638,9 +638,8 @@ public class AntModel {
 		return !taskFile.equals(getEditedFile());
 	}
 
-	private AntTaskNode createNotWellKnownTask(Task newTask, Attributes attributes) {
-		AntTaskNode newNode;
-		newNode= new AntTaskNode(newTask);
+	private AntTaskNode newNotWellKnownTaskNode(Task newTask, Attributes attributes) {
+		AntTaskNode newNode= new AntTaskNode(newTask);
 		String id= attributes.getValue("id"); //$NON-NLS-1$
 		if (id != null) {
 			newNode.setId(id);
