@@ -22,9 +22,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandDefinition;
-import org.eclipse.ui.commands.IAction;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;

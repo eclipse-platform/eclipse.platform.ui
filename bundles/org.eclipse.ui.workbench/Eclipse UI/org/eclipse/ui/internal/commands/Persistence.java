@@ -48,6 +48,7 @@ final class Persistence {
 	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	final static String TAG_HELP_ID = "helpId"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_URI = "imageUri"; //$NON-NLS-1$
@@ -160,6 +161,7 @@ final class Persistence {
 		// TODO deprecated end		
 		
 		String description = memento.getString(TAG_DESCRIPTION);
+		String helpId = memento.getString(TAG_HELP_ID);
 		String id = memento.getString(TAG_ID);
 
 		if (id == null)
@@ -177,7 +179,7 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 		
-		return new CommandDefinition(allowsContextBindings, allowsImageBindings, allowsKeyBindings, categoryId, description, id, name, pluginId);
+		return new CommandDefinition(allowsContextBindings, allowsImageBindings, allowsKeyBindings, categoryId, description, helpId, id, name, pluginId);
 	}
 
 	static List readCommandDefinitions(IMemento memento, String name, String pluginIdOverride) {
@@ -485,6 +487,7 @@ final class Persistence {
 		memento.putString(TAG_ALLOWS_KEY_BINDINGS, commandDefinition.getAllowsKeyBindings() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		memento.putString(TAG_CATEGORY_ID, commandDefinition.getCategoryId());
 		memento.putString(TAG_DESCRIPTION, commandDefinition.getDescription());
+		memento.putString(TAG_HELP_ID, commandDefinition.getHelpId());
 		memento.putString(TAG_ID, commandDefinition.getId());
 		memento.putString(TAG_NAME, commandDefinition.getName());
 		memento.putString(TAG_PLUGIN_ID, commandDefinition.getPluginId());

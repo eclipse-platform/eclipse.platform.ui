@@ -119,7 +119,7 @@ final class CommandDefinition implements ICommandDefinition {
 						compareTo = Util.compare(description, commandDefinition.description);	
 
 						if (compareTo == 0) {
-							compareTo = helpId.compareTo(commandDefinition.helpId);	
+							compareTo = Util.compare(helpId, commandDefinition.helpId);
 		
 							if (compareTo == 0) {
 								compareTo = id.compareTo(commandDefinition.id);	
@@ -151,7 +151,7 @@ final class CommandDefinition implements ICommandDefinition {
 		equals &= allowsKeyBindings == commandDefinition.allowsKeyBindings;
 		equals &= Util.equals(categoryId, commandDefinition.categoryId);
 		equals &= Util.equals(description, commandDefinition.description);
-		equals &= helpId.equals(commandDefinition.helpId);
+		equals &= Util.equals(helpId, commandDefinition.helpId);
 		equals &= id.equals(commandDefinition.id);
 		equals &= name.equals(commandDefinition.name);
 		equals &= Util.equals(pluginId, commandDefinition.pluginId);
