@@ -20,7 +20,7 @@
    <extension
          point="org.eclipse.ui.presentationFactories">
       <factory
-            name="R21Presentation"
+            name="%Presentation.r21.name"
             class="org.eclipse.ui.internal.presentations.R21PresentationFactory"
             id="org.eclipse.ui.internal.r21presentationFactory">
       </factory>

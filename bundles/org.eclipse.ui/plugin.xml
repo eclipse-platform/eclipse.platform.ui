@@ -1330,7 +1330,7 @@
    <extension
          point="org.eclipse.ui.systemSummarySections">
       <section
-            sectionTitle="Platform Details"
+            sectionTitle="%SystemSummary.sectionTitle.platform"
             class="org.eclipse.ui.internal.about.ConfigurationLogDefaultSection"
             id="10.DefaultSection">
       </section>
@@ -1338,7 +1338,7 @@
    <extension
          point="org.eclipse.ui.presentationFactories">
       <factory
-            name="Default"
+            name="%Presentation.default.name"
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
             id="org.eclipse.ui.presentations.default">
       </factory>
