@@ -69,7 +69,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		//tabFolder.setBorderVisible(true);
 		// set basic colors
-		ColorSchemeService.setTabAttributes(tabFolder);
+		ColorSchemeService.setTabAttributes(this, tabFolder);
 
 		updateGradient();
 		

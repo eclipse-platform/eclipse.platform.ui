@@ -126,7 +126,7 @@ public class EditorPresentation extends BasicStackPresentation {
         tabFolder.setUnselectedImageVisible(true);
         //tabFolder.setBorderVisible(true);
         // set basic colors
-        ColorSchemeService.setTabAttributes(tabFolder);
+        ColorSchemeService.setTabAttributes(this, tabFolder);
         updateGradient();
         tabFolder.setMinimizeVisible((flags & SWT.MIN) != 0);
         tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);

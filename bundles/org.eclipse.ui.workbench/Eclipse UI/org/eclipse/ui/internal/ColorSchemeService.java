@@ -14,19 +14,20 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.presentations.BasicStackPresentation;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * ColorSchemeService is the service that sets the colors on widgets as
  * appropriate.
- * 
- * TODO: do we need this?  can this be expanded or removed entirely?
  */
 public class ColorSchemeService {
 
@@ -74,7 +75,7 @@ public class ColorSchemeService {
 	    control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
     }
     
-	public static void setTabAttributes(final CTabFolder control) {
+	public static void setTabAttributes(final BasicStackPresentation presentation, final CTabFolder control) {
 	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 	    if (control.getData(LISTENER_KEY) == null) {
 	        final IPropertyChangeListener listener = new IPropertyChangeListener() {
@@ -93,7 +94,7 @@ public class ColorSchemeService {
 							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START)
 							|| property.equals(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END)
                             || property.equals(IWorkbenchThemeConstants.TAB_TEXT_FONT)) {
-                        setTabAttributes(control);                        
+                        setTabAttributes(presentation, control);                        
                     }
                 }	            
 	        };
@@ -128,18 +129,21 @@ public class ColorSchemeService {
         percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
         vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
         
-        control.setBackground(c, percent, vertical);
-			
-		control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
-        
-		c[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-        c[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+        control.setBackground(c, percent, vertical);		
 
-        percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
-        vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
-        
+        if (presentation.isActive()) {                
+			control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
+			c[0] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+	        c[1] = colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+	
+	        percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
+	        vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
+		}
         control.setSelectionBackground(c, percent, vertical);
-        
-        control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+        CTabItem [] items = control.getItems();
+        Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+        for (int i = 0; i < items.length; i++) {
+			items[i].setFont(tabFont);
+		}
 	}	
 }
