@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
+import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -430,6 +431,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
+		StringBuffer vmArgs= generateVMArguments();
+		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
 		
 		launch.setSourceLocator(new ISourceLocator() {
 			/* (non-Javadoc)
@@ -487,6 +490,17 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 	
+	private StringBuffer generateVMArguments() {
+		StringBuffer vmArgs= new StringBuffer("-Dant.home=\""); //$NON-NLS-1$
+		vmArgs.append(AntCorePlugin.getPlugin().getPreferences().getAntHome());
+		vmArgs.append("\" "); //$NON-NLS-1$
+		File antLibDir= new File(AntCorePlugin.getPlugin().getPreferences().getAntHome(), "lib"); //$NON-NLS-1$
+		vmArgs.append("-Dant.library.dir=\""); //$NON-NLS-1$
+		vmArgs.append(antLibDir.getAbsolutePath());
+		vmArgs.append('\"');
+		return vmArgs;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
