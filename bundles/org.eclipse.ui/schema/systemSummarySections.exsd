@@ -84,7 +84,7 @@
       </appInfo>
       <documentation>
          Following is an example of a systemSummarySections extension: 
-
+&lt;pre&gt;
 &lt;extension
  point=&quot;org.eclipse.ui.systemSummarySections&quot;&gt;
  &lt;section
@@ -93,6 +93,8 @@
   id=&quot;RCPBrowser.ConfigDetails&quot;&gt;
  &lt;/section&gt;
 &lt;/extension&gt;
+&lt;/pre&gt;
+
       </documentation>
    </annotation>
 
