@@ -23,7 +23,6 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
@@ -42,7 +41,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
@@ -62,7 +60,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private PresentableViewPart presentableAdapter = new PresentableViewPart(this);
 	
 	private CLabel titleLabel;
-	private CLabel status;
+	//private CLabel status;
 	private boolean busy = false;
 
 	private boolean fast = false;
@@ -271,11 +269,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	protected void createTitleBar() {
 		// Only do this once.
-		if (status != null)
-			return;
-
-		status = new CLabel(control, SWT.LEFT);
-		ColorSchemeService.setViewColors(status);
 
 		updateTitles();
 
@@ -393,7 +386,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Returns the drag control.
 	 */
 	public Control getDragHandle() {
-		return status;
+		return control;
 	}
 	/**
 	 * @see ViewActionBars
@@ -592,47 +585,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Update the title attributes.
 	 */
 	public void updateTitles() {
-		IViewReference ref = getViewReference();
+		presentableAdapter.firePropertyChange(IPresentablePart.PROP_TITLE);
 		
-		if (status != null && !status.isDisposed()) {
-			ColorSchemeService.setViewColors(status);
-			//status.setBackground(status.getParent().getBackground());
-			boolean changed = false;
-			String text = ref.getTitle();
-			
-			if (text != null) {
-				int i = text.indexOf('(');
-				int j = text.lastIndexOf(')');
-				
-				if (i > 0 && j > 0 && j > i)
-					text = text.substring(i + 1, j).trim();
-				else 
-					text = null;
-			}
-			
-			if (!Util.equals(text, status.getText())) {
-				status.setText(text);
-				changed = true;
-			}
-
-			String toolTipText = ref.getTitleToolTip();
-			
-			if (!Util.equals(toolTipText, status.getToolTipText())) {
-				status.setToolTipText(toolTipText);
-				changed = true;
-			}
-
-			//((ViewForm2) control).setStatus(text != null ? status : null);
-			((ViewForm) control).setTopLeft(text != null ? status : null);
-			
-			if (changed) {
-				status.update();
-				
-				// notify the page that this view's title has changed
-				// in case it needs to update its fast view button
-				page.updateTitle(ref);
-			}
-		}
 	}
 
 	/* (non-Javadoc)

@@ -349,4 +349,11 @@ public class EditorPresentation extends BasicStackPresentation {
     void close(IPresentablePart presentablePart) {
         getSite().close(presentablePart);
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getCurrentTitle()
+	 */
+	protected String getCurrentTitle() {
+		return "";
+	}
 }

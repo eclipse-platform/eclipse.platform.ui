@@ -35,6 +35,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
@@ -66,6 +67,7 @@ public class BasicStackPresentation extends StackPresentation {
 	private int tabPosition;
 	private MenuManager systemMenuManager = new MenuManager();
 	private TabFolderLayout layout;
+	private Label titleLabel;
 	
 	// Current tab colours
 	private Color backgroundGradientStart;
@@ -201,6 +203,9 @@ public class BasicStackPresentation extends StackPresentation {
 		tabFolder = control;
 		
 		layout = new TabFolderLayout(tabFolder);
+
+		titleLabel = new Label(control.getParent(), SWT.WRAP);
+		titleLabel.setVisible(false);
 		
 		viewToolBar = new ToolBar(control.getParent(), SWT.HORIZONTAL 
 				| SWT.FLAT | SWT.WRAP);
@@ -234,8 +239,9 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		tabFolder.addCTabFolder2Listener(expandListener);
 		
-		PresentationUtil.addDragListener(tabFolder, new Listener() {
+		Listener dragListener = new Listener() {
 			public void handleEvent(Event event) {
+				
 				Point localPos = new Point(event.x, event.y);
 				// Ignore drags unless they are on the title area
 				if ((tabFolder.getStyle() & SWT.TOP) != 0) {
@@ -260,6 +266,16 @@ public class BasicStackPresentation extends StackPresentation {
 				if (getSite().isMoveable(part)) {
 					getSite().dragStart(part, 
 						tabFolder.toDisplay(localPos), false);
+				}
+			}
+		};
+		
+		PresentationUtil.addDragListener(tabFolder, dragListener);
+		PresentationUtil.addDragListener(titleLabel, new Listener() {
+			public void handleEvent(Event event) {
+				if (layout.isTrimOnTop()) {
+					Point localPos = new Point(event.x, event.y);
+					getSite().dragStart(titleLabel.toDisplay(localPos), false);
 				}
 			}
 		});
@@ -361,6 +377,7 @@ public class BasicStackPresentation extends StackPresentation {
 			break;
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
+		 case IPresentablePart.PROP_TITLE:
 		 	setControlSize();
 		 	break;
 		}
@@ -416,13 +433,41 @@ public class BasicStackPresentation extends StackPresentation {
 		return activeState;
 	}
 	
+	protected String getCurrentTitle() {
+		if (current == null) {
+			return "";
+		} 
+		
+		String result = current.getTitle();
+		if (result.equals(current.getName())) {
+			return "";
+		}
+		
+		return result + " ";
+	}
+	
 	/**
 	 * Set the size of a page in the folder.
 	 */
 	protected void setControlSize() {
 		// Set up the top-right controls
-		List topRight = new ArrayList(2);
-				
+		List topRight = new ArrayList(3);
+		
+		String currentTitle = getCurrentTitle();
+		
+		if (!currentTitle.equals("")) {
+			titleLabel.moveAbove(null);
+			topRight.add(titleLabel);
+			layout.setNumLeftAligned(1);
+			titleLabel.setText(currentTitle);
+			titleLabel.setVisible(true);
+			titleLabel.setFont(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
+					.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
+		} else {
+			titleLabel.setVisible(false);
+			layout.setNumLeftAligned(0);
+		}
+		
 		Control toolbar = getCurrentToolbar();
 		
 		if (toolbar != null) {
@@ -502,6 +547,9 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		tabFolder.dispose();
 		tabFolder = null;
+		
+		titleLabel.dispose();
+		titleLabel = null;
 		
 		viewToolBar.dispose();
 	}

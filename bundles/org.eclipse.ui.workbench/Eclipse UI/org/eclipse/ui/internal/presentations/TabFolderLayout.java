@@ -44,6 +44,7 @@ public class TabFolderLayout {
 	private Rectangle centerArea = new Rectangle(0,0,0,0);
 	private int trimStart;
 	private boolean trimOnTop = false;
+	private int leftAligned = 0;
 	
 	/**
 	 * Creates a new TabFolderLayout which will arrange controls along the title
@@ -96,6 +97,16 @@ public class TabFolderLayout {
 	}
 	
 	/**
+	 * Sets the number of controls that will be left-aligned. If nonzero, the first
+	 * n controls will be left-aligned. 
+	 * 
+	 * @param leftAligned
+	 */
+	public void setNumLeftAligned(int leftAligned) {
+		this.leftAligned = leftAligned;
+	}
+	
+	/**
 	 * Returns true iff the trim widgets were positioned on the title bar in the
 	 * last call to layout(). Returns false if the widgets were positioned within
 	 * the client area.
@@ -124,24 +135,28 @@ public class TabFolderLayout {
 	 */
 	public void layout() {
 		cache.flush();		
-				
-		Rectangle trimRegion = getTitleTrimRegion();
-
-		Point trimSize = computeTrimSize();
 		
+		// Initialize variables that will be needed for both cases
 		Rectangle bounds = tabFolder.getBounds();
-		
 		trimStart = bounds.width;
-		
 		Rectangle clientBounds = calculatePageBounds(tabFolder);
 		
-		trimOnTop = trimSize.x <= trimRegion.width && trimSize.y <= trimRegion.height; 
+		// Determine if the controls will fit on the top
+		Rectangle trimRegion = getTitleTrimRegion();
+		Point trimSize = computeTrimSize(0, topControls.length);
+		
+		trimOnTop = trimSize.x <= trimRegion.width && trimSize.y <= trimRegion.height;
+		
 		// Check if we have room for all our topRight controls on the top border
 		if (trimOnTop) {
 			
-			trimStart = trimRegion.x + trimRegion.width - trimSize.x - bounds.x ;
+//			if (leftAligned > 0) {
+//				trimStart = trimRegion.x;
+//			} else {
+//				trimStart = trimRegion.x + trimRegion.width - trimSize.x - bounds.x ;
+//			}
 			
-			align(0, topControls.length, trimRegion);
+			trimStart = align(0, topControls.length, trimRegion, true) - bounds.x;
 
 			centerArea = clientBounds;
 			
@@ -149,8 +164,10 @@ public class TabFolderLayout {
 		}
 		
 		// Else we need to place the controls below the title
+		int leftMargin = 2;
 		
-		Rectangle currentRect = new Rectangle(clientBounds.x, clientBounds.y, clientBounds.width, 0);
+		Rectangle currentRect = new Rectangle(clientBounds.x + leftMargin, clientBounds.y, 
+				clientBounds.width - leftMargin, 0);
 		
 		int idx = 0;
 		while (idx < topControls.length) {
@@ -174,7 +191,7 @@ public class TabFolderLayout {
 			}
 			
 			if (rowCount > 0) {
-				align(idx, rowCount, currentRect);
+				align(idx, rowCount, currentRect, false);
 				idx += rowCount;
 			} else {
 				Point size = cache.computeSize(idx, clientBounds.width, SWT.DEFAULT);
@@ -199,18 +216,54 @@ public class TabFolderLayout {
 	 * @param numControls number of controls to arrange
 	 * @param region region in which to arrange the controls
 	 */
-	private void align(int firstControl, int numControls, Rectangle region) {
-		int last = firstControl + numControls;
-		int currentPos = region.x + region.width;
+	private int align(int firstControl, int numControls, Rectangle region, boolean centerAlign) {
+		int lastLeftAligned = Math.max(firstControl, Math.min(firstControl + numControls, leftAligned));
 		
-		// Arrange controls from right to left
-		for (int idx = firstControl + numControls - 1; idx >= firstControl; idx--) {
+		Point leftSize = computeTrimSize(firstControl, lastLeftAligned - firstControl);
+		Point rightSize = computeTrimSize(lastLeftAligned, numControls + firstControl - lastLeftAligned);
+		
+		int currentPos = region.x;
+		
+		Rectangle bounds = tabFolder.getBounds();
+		
+		currentPos = region.x;
+		 
+		int start;
+		
+		if (centerAlign) {
+			int minimum = bounds.x + (bounds.width - leftSize.x) / 2;
+			int maximum = region.x + region.width - rightSize.x;
+			currentPos = Math.min(Math.max(minimum, region.x), maximum);
+		}
+		
+		if (firstControl < lastLeftAligned) {
+			start = currentPos;
+		} else {
+			start = region.x + region.width - rightSize.x;
+		}
+		
+		// Arrange left-aligned controls (if any)
+		int leftAligned = firstControl;
+		for (; leftAligned < lastLeftAligned; leftAligned++) {
+			Point size = cache.computeSize(leftAligned, SWT.DEFAULT, SWT.DEFAULT);
+			
+			topControls[leftAligned].setBounds(currentPos, region.y + (region.height - size.y) / 2, size.x, size.y);
+			
+			currentPos += size.x;
+		}
+		
+		// Arrange right-aligned controls
+		currentPos = region.x + region.width;
+		
+		for (int idx = firstControl + numControls - 1; idx >= leftAligned; idx--) {
 			Point size = cache.computeSize(idx, SWT.DEFAULT, SWT.DEFAULT);
 			
 			topControls[idx].setBounds(currentPos - size.x, region.y + (region.height - size.y) / 2, size.x, size.y);
 
 			currentPos -= size.x;
 		}
+		
+		return start;
 	}
 	
 	
@@ -245,7 +298,7 @@ public class TabFolderLayout {
 		result.height = tabFolder.getTabHeight() - differenceBetweenTabHeightAndTrimRegion();
 		
 		// Amount to shift to avoid stomping on the curve
-		int xShift = 3;
+		int xShift = 5;
 		result.x += xShift;
 		result.width -= xShift;
 		
@@ -293,10 +346,11 @@ public class TabFolderLayout {
 	 * 
 	 * @return the total preferred width of the top controls
 	 */
-	protected Point computeTrimSize() {
+	protected Point computeTrimSize(int start, int length) {
 		int width = 0;
 		int height = 0;
-		for (int idx = 0; idx < topControls.length; idx++) {
+		int last = start + length;
+		for (int idx = start; idx < last; idx++) {
 			Point next = cache.computeSize(idx, SWT.DEFAULT, SWT.DEFAULT);
 			width += next.x;
 			height = Math.max(height, next.y);
