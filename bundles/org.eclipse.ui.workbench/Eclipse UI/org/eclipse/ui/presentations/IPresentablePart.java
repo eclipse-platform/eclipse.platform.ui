@@ -19,8 +19,6 @@ import org.eclipse.ui.IPropertyListener;
  * is essentially the same as IWorkbenchPart, except it does not provide access
  * to lifecycle events and allows repositioning of the part.
  * 
- * TODO: Write a common base class for IPresentablePart and IWorkbenchPart. 
- * 
  * Not intended to be implemented by clients.
  * 
  * @since 3.0

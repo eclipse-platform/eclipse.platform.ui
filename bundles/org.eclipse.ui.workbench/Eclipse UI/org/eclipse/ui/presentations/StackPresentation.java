@@ -42,7 +42,7 @@ public abstract class StackPresentation {
 	}
 
 	/**
-	 * Returns the presentation site.
+	 * Returns the presentation site (not null).
 	 */
 	protected IStackPresentationSite getSite() {
 	    return site;
