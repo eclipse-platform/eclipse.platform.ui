@@ -2,15 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register import wizard extensions. Import wizards appear as choices within the "Import Dialog" and are used to import resources into the workbench. 
-&lt;P&gt;
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import Dialog&quot; and are used to import resources into the workbench. 
+&lt;p&gt;
 Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
-   </documentation>
-</annotation>
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -136,16 +137,16 @@ Wizards may optionally specify a description subelement whose body should contai
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-       point="org.eclipse.ui.importWizards"&gt; 
+       point=&quot;org.eclipse.ui.importWizards&quot;&gt; 
       &lt;wizard 
-         id="com.xyz.ImportWizard1" 
-         name="XYZ Web Scraper" 
-         class="com.xyz.imports.ImportWizard1" 
-         icon="./icons/import1.gif"&gt; 
+         id=&quot;com.xyz.ImportWizard1&quot; 
+         name=&quot;XYZ Web Scraper&quot; 
+         class=&quot;com.xyz.imports.ImportWizard1&quot; 
+         icon=&quot;./icons/import1.gif&quot;&gt; 
          &lt;description&gt; 
             A simple engine that searches the Web and imports files 
          &lt;/description&gt; 
-         &lt;selection class="org.eclipse.core.resources.IResource"/&gt; 
+         &lt;selection class=&quot;org.eclipse.core.resources.IResource&quot;/&gt; 
       &lt;/wizard&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;

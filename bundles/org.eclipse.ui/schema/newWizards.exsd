@@ -2,17 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Creation Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register resource creation wizard extensions. Creation wizards appear as choices within the "New Dialog", and are typically used to create folders and files. 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Creation Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register resource creation wizard extensions. Creation wizards appear as choices within the &quot;New Dialog&quot;, and are typically used to create folders and files. 
 &lt;p&gt;
-In the "New Dialog", wizards are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called "Java" which is appropriate for "Class" or "Package" creation wizards.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. Uncategorized wizards, as well as wizards with invalid category paths, will end up in an "Other" category. 
+In the &quot;New Dialog&quot;, wizards are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called &quot;Java&quot; which is appropriate for &quot;Class&quot; or &quot;Package&quot; creation wizards.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. Uncategorized wizards, as well as wizards with invalid category paths, will end up in an &quot;Other&quot; category. 
+&lt;/p&gt;
+
 &lt;p&gt;
 Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
-   </documentation>
-</annotation>
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -111,10 +114,10 @@ as one of the choices in the creation dialog box.
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  a slash-delimited path ('/') of category IDs. Each token in the
+                  a slash-delimited path (&apos;/&apos;) of category IDs. Each token in the
 path must represent a valid category ID previously defined
 by this or some other plug-in. If omitted, the wizard will be
-added to the "Other" category.
+added to the &quot;Other&quot; category.
                </documentation>
             </annotation>
          </attribute>
@@ -132,7 +135,7 @@ added to the "Other" category.
             <annotation>
                <documentation>
                   an optional attribute indicating the wizard will create an IProject resource.
-Also causes the wizard to appear as a choice within the "New Project Dialog".
+Also causes the wizard to appear as a choice within the &quot;New Project Dialog&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -191,26 +194,26 @@ Also causes the wizard to appear as a choice within the "New Project Dialog".
          Following is an example of creation wizard configuration: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.newWizards"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.newWizards&quot;&gt; 
       &lt;category 
-        id="com.xyz.XYZ" 
-        name="XYZ Wizards"&gt; 
+        id=&quot;com.xyz.XYZ&quot; 
+        name=&quot;XYZ Wizards&quot;&gt; 
       &lt;/category&gt; 
       &lt;category 
-        id="com.xyz.XYZ.Web" 
-        name="Web Wizards" 
-        parentCategory="com.xyz.XYZ"&gt; 
+        id=&quot;com.xyz.XYZ.Web&quot; 
+        name=&quot;Web Wizards&quot; 
+        parentCategory=&quot;com.xyz.XYZ&quot;&gt; 
       &lt;/category&gt; 
       &lt;wizard 
-          id="com.xyz.wizard1" 
-          name="XYZ artifact" 
-          category="com.xyz.XYZ/com.xyz.XYZ.Web" 
-          icon="./icons/XYZwizard1.gif" 
-          class="com.xyz.XYZWizard1"&gt; 
+          id=&quot;com.xyz.wizard1&quot; 
+          name=&quot;XYZ artifact&quot; 
+          category=&quot;com.xyz.XYZ/com.xyz.XYZ.Web&quot; 
+          icon=&quot;./icons/XYZwizard1.gif&quot; 
+          class=&quot;com.xyz.XYZWizard1&quot;&gt; 
           &lt;description&gt; 
               Create a simple XYZ artifact and set initial content 
           &lt;/description&gt; 
-           &lt;selection class="org.eclipse.core.resources.IResource"/&gt;          
+           &lt;selection class=&quot;org.eclipse.core.resources.IResource&quot;/&gt;          
       &lt;/wizard&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;

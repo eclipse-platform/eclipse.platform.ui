@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="preferencePages" name="Preference Pages"/>
-   </appInfo>
-   <documentation>
-      The workbench provides one common dialog box for preferences.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="preferencePages" name="Preference Pages"/>
+      </appInfo>
+      <documentation>
+         The workbench provides one common dialog box for preferences.
 The purpose of this extension point is to allow plug-ins to add
 pages to the preference dialog box. When preference dialog box
 is opened (initiated from the menu bar), pages contributed in
@@ -18,11 +18,12 @@ box provides for hierarchical grouping of the pages. For this
 reason, a page can optionally specify a &lt;samp&gt;category&lt;/samp&gt; attribute.
 This
 attribute represents a path composed of parent page IDs separated
-by '/'. If this attribute is omitted or if any of the parent
+by &apos;/&apos;. If this attribute is omitted or if any of the parent
 nodes in the path cannot be found, the page will be added at
 the root level.
-   </documentation>
-</annotation>
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -89,7 +90,7 @@ the root level.
             <annotation>
                <documentation>
                   a path indicating the location of the page in the preference tree. The path may either be a parent node ID or a sequence
-     of IDs separated by '/', representing the full path from the root node.
+     of IDs separated by &apos;/&apos;, representing the full path from the root node.
                </documentation>
             </annotation>
          </attribute>
@@ -105,20 +106,21 @@ the root level.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-       point="org.eclipse.ui.preferencePages"&gt; 
+       point=&quot;org.eclipse.ui.preferencePages&quot;&gt; 
       &lt;page 
-         id="com.xyz.prefpage1" 
-         name="XYZ" 
-         class="com.xyz.prefpages.PrefPage1"&gt; 
+         id=&quot;com.xyz.prefpage1&quot; 
+         name=&quot;XYZ&quot; 
+         class=&quot;com.xyz.prefpages.PrefPage1&quot;&gt; 
       &lt;/page&gt; 
       &lt;page 
-         id="com.xyz.prefpage2" 
-         name="Keyboard Settings" 
-         class="com.xyz.prefpages.PrefPage2" 
-         category="com.xyz.prefpage1"&gt; 
+         id=&quot;com.xyz.prefpage2&quot; 
+         name=&quot;Keyboard Settings&quot; 
+         class=&quot;com.xyz.prefpages.PrefPage2&quot; 
+         category=&quot;com.xyz.prefpage1&quot;&gt; 
       &lt;/page&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -150,6 +152,7 @@ through this extension will be added after them according to their category info
          &lt;p&gt;
 Copyright (c) 2002 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+&lt;/p&gt;
       </documentation>
    </annotation>
 

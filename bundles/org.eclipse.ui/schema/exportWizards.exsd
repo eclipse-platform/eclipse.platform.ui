@@ -2,15 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="exportWizards" name="Export Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register export wizard extensions. Export wizards appear as choices within the "Export Dialog", and are used to export resources from the workbench. 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="exportWizards" name="Export Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register export wizard extensions. Export wizards appear as choices within the &quot;Export Dialog&quot;, and are used to export resources from the workbench. 
 &lt;p&gt;
 Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
-   </documentation>
-</annotation>
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -137,16 +138,16 @@ when the wizard is invoked.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-       point="org.eclipse.ui.exportWizards"&gt; 
+       point=&quot;org.eclipse.ui.exportWizards&quot;&gt; 
       &lt;wizard 
-         id="com.xyz.ExportWizard1" 
-         name="XYZ Web Exporter" 
-         class="com.xyz.exports.ExportWizard1" 
-         icon="./icons/import1.gif"&gt; 
+         id=&quot;com.xyz.ExportWizard1&quot; 
+         name=&quot;XYZ Web Exporter&quot; 
+         class=&quot;com.xyz.exports.ExportWizard1&quot; 
+         icon=&quot;./icons/import1.gif&quot;&gt; 
          &lt;description&gt; 
             A simple engine that exports Web project 
          &lt;/description&gt; 
-         &lt;selection class="org.eclipse.core.resources.IProject"/&gt; 
+         &lt;selection class=&quot;org.eclipse.core.resources.IProject&quot;/&gt; 
       &lt;/wizard&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -183,6 +184,7 @@ for files and directories.
          &lt;p&gt;
 Copyright (c) 2002 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+&lt;/p&gt;
       </documentation>
    </annotation>
 

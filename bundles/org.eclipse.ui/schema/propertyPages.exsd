@@ -9,10 +9,15 @@
          This extension point is used to add additional property page for objects of a given type.  Once defined, these property pages will appear in the Properties Dialog for objects of that type. 
 &lt;p&gt;
 A property page is a user friendly way to interact with the properties of an object.  Unlike the Properties view, which restricts the space available for editing an object property, a property page may benefit from the freedom to define larger, more complex controls with labels, icons, etc.  Properties which logically go together may also be clustered in a page, rather than scattered in the property sheet. However, in most applications it will be appropriate to expose some properties of an object via the property sheet and some via the property pages. 
+&lt;/p&gt;
+
 &lt;p&gt;
 Property pages are shown in a dialog box that is normally visible when the &quot;Properties&quot; menu item is selected on a pop-up menu for an object. In addition to the object class, the name filter can optionally be supplied to register property pages only for specific object types. 
+&lt;/p&gt;
+
 &lt;p&gt;
 If these filtering mechanisms are inadequate a property page may use the filter mechanism.  In this case the attributes of the target object are described in a series of key value pairs.  The attributes which apply to the selection are type specific and beyond the domain of the workbench itself, so the workbench will delegate filtering at this level to the actual selection.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -202,6 +207,7 @@ allowed to register property pages for them.
          &lt;p&gt;
 Copyright (c) 2002 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+&lt;/p&gt;
       </documentation>
    </annotation>
 

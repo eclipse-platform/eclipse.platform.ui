@@ -191,6 +191,7 @@ declarative or implements
          The following are example of decorators:
 &lt;p&gt;
 A full decorator. The plug-in developer must handle their own image support.
+&lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
@@ -205,9 +206,13 @@ A full decorator. The plug-in developer must handle their own image support.
         &lt;/decorator&gt;
     &lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;/p&gt;
+
 &lt;p&gt;
 A lightweight decorator. There is a concrete class but as it is an
 ILightweightLabelDecorator it only needs to supply text and an ImageDescriptor and therefore needs no resource handling.
+&lt;/p&gt;
+
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
@@ -226,6 +231,8 @@ ILightweightLabelDecorator it only needs to supply text and an ImageDescriptor a
 &lt;/p&gt;
 &lt;p&gt;A declarative lightweight decorator. There is no concrete class so it
 supplies an icon and a quadrant to apply that icon.
+&lt;/p&gt;
+
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.decorators&quot;&gt; 
