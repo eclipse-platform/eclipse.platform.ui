@@ -12,9 +12,6 @@ Contributors:
 package org.eclipse.jface.text.rules;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.text.IDocument;
 
 

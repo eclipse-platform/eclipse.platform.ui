@@ -10,12 +10,11 @@ Contributors:
 **********************************************************************/
 
 package org.eclipse.jface.text.contentassist;
-import java.util.Iterator;
-
+
 import java.util.Stack;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,10 +28,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.contentassist.ContentAssistant.LayoutManager;
 
 
 /**
