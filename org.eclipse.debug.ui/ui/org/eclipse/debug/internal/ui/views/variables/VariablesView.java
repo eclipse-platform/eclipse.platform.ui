@@ -39,7 +39,6 @@ import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.ViewerState;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -457,7 +456,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			try {
 				svc = mp.newDetailsViewerConfiguration();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("VariablesView.Error_1"), DebugUIViewsMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getSite().getShell(), VariablesViewMessages.getString("VariablesView.Error_1"), VariablesViewMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		if (svc == null) {
@@ -542,7 +541,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		ViewForm viewForm = new ViewForm(getSashForm(), SWT.FLAT);
 		
 		CLabel detailsLabel = new CLabel(viewForm, SWT.NONE);
-		detailsLabel.setText("Details");
+		detailsLabel.setText(VariablesViewMessages.getString("VariablesView.44")); //$NON-NLS-1$
 		detailsLabel.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES));
 		viewForm.setTopLeft(detailsLabel);
 								
@@ -722,7 +721,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -730,23 +729,23 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getSite().getKeyBindingService().registerAction(textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.COPY);
-		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Copy_8"), "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Copy_8"), "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
-		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.CUT, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
-		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.PASTE, textAction);
 		
 		//XXX Still using "old" resource access
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.DebugUIViewsMessages"); //$NON-NLS-1$
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.VariablesViewMessages"); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
 		
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
@@ -885,7 +884,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			} 
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
-			getDetailDocument().set(DebugUIViewsMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
+			getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
 		}				
 	}
 	
@@ -926,7 +925,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 							getModelPresentation().computeDetail(val, VariablesView.this);
 						} catch (DebugException e) {
 							DebugUIPlugin.log(e);
-							getDetailDocument().set(DebugUIViewsMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$	
+							getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$	
 						}
 					} else {
 						fValueSelection = null;
