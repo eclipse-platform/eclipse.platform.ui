@@ -79,7 +79,13 @@ public final class MutableContextManager extends AbstractContextManager
                 // Do nothing. Stop ascending the ancestry.
             }
 
-            return depth2 - depth1;
+            // If the contexts are equal depth, then use their identifier.
+            int compare = depth2 - depth1;
+            if (compare == 0) {
+                compare = contextId1.compareTo(contextId2);
+            }
+            
+            return compare;
         }
     }
 
