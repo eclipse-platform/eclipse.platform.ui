@@ -70,9 +70,9 @@ public class IOConsolePartition implements ITypedRegion {
      * @param offset
      * @param length
      */
-    public void delete(int offset, int length) {
-        buffer.delete(offset, offset+length);
-        length -= length;
+    public void delete(int offset, int delLength) {
+        buffer.delete(offset, offset+delLength);
+        length -= delLength;
     }
     
     /*
