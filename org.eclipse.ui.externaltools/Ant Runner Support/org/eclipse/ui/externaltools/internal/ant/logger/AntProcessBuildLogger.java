@@ -31,8 +31,8 @@ import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 public class AntProcessBuildLogger extends NullBuildLogger {
 	
 	/**
-	   * Size of left-hand column for right-justified task name.
-	   * @see #logMessage(String, BuildEvent, -1)
+	 * Size of left-hand column for right-justified task name.
+	 * @see #logMessage(String, BuildEvent, -1)
 	  */
 	public static final int LEFT_COLUMN_SIZE = 15;
 
@@ -178,27 +178,26 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			Location location = task.getLocation();
 			if (location != null) {
 				String path = location.toString().trim();
-				// format is file:F:L: where F is file path, and L is line number
-				int index = path.indexOf(':');
-				if (index >= 0) {
+				if (path.startsWith("file:")) {
 					// remove "file:"
-					path = path.substring(index + 1);
+					path= path.substring(5, path.length());
+				}
+				// format is file:F:L: where F is file path, and L is line number
+				int index = path.lastIndexOf(':');
+				if (index == path.length() - 1) {
+					// remove trailing ':'
+					path = path.substring(0, index);
 					index = path.lastIndexOf(':');
-					if (index == path.length() - 1) {
-						// remove trailing ':'
-						path = path.substring(0, index);
-						index = path.lastIndexOf(':');
-					}
-					// split file and line number
-					String fileName = path.substring(0, index);
-					String lineNumber = path.substring(index + 1);
-					IFile file = getFileForLocation(fileName);
-					if (file != null) {
-						try {
-							int line = Integer.parseInt(lineNumber);
-							return new FileLink(offset, length, file, null, -1, -1, line);
-						} catch (NumberFormatException e) {
-						}
+				}
+				// split file and line number
+				String fileName = path.substring(0, index);
+				String lineNumber = path.substring(index + 1);
+				IFile file = getFileForLocation(fileName);
+				if (file != null) {
+					try {
+						int line = Integer.parseInt(lineNumber);
+						return new FileLink(offset, length, file, null, -1, -1, line);
+					} catch (NumberFormatException e) {
 					}
 				}
 			}
