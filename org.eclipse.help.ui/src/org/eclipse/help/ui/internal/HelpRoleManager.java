@@ -51,7 +51,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 			new HashSet(activityManager.getDefinedActivityIds());
 		disabledActivities.removeAll(activityManager.getEnabledActivityIds());
 		disabledActivities.removeAll(commandManager.getActiveActivityIds());
-		return !activityManager.match(href, disabledActivities);
+		return !activityManager.isMatch(href, disabledActivities);
 	}
 
 	/*
@@ -72,7 +72,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 			href = href.substring(0, i);
 
 		if (!activityManager
-			.match(href, activityManager.getEnabledActivityIds())) {
+			.isMatch(href, activityManager.getEnabledActivityIds())) {
 			Set enabledActivities =
 				new HashSet(activityManager.getEnabledActivityIds());
 			Set definedActivityIds = activityManager.getDefinedActivityIds();
@@ -80,7 +80,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 				String definedActivityId = (String) it.next();
 				IActivity definedActivity =
 					activityManager.getActivity(definedActivityId);
-				if (definedActivity.match(href))
+				if (definedActivity.isMatch(href))
 					enabledActivities.add(definedActivityId);
 
 			}
