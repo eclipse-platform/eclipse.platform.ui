@@ -9,12 +9,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -98,25 +97,40 @@ public void run(){
 		if (i > 0)
 			buf.append("\n"); //$NON-NLS-1$
 		buf.append(resources[i].getName());
-	}	
-	
-	// set the clipboard contents
-	clipboard.setContents(
-		new Object[]{
-			resources, 
-			fileNames, 
-			buf.toString()}, 
-		new Transfer[]{
-			ResourceTransfer.getInstance(), 
-			FileTransfer.getInstance(), 
-			TextTransfer.getInstance()});
+	}
+	setClipboard(resources, fileNames, buf.toString());
 			
 	// update the enablement of the paste action
 	// workaround since the clipboard does not suppot callbacks
 	if (pasteAction != null && pasteAction.getStructuredSelection() != null) 
 		pasteAction.selectionChanged(pasteAction.getStructuredSelection());
 }
-
+/**
+ * Set the clipboard contents. Prompt to retry if clipboard is busy.
+ * 
+ * @param resources the resources to copy to the clipboard
+ * @param fileNames file names of the resources to copy to the clipboard
+ * @param names string representation of all names
+ */
+private void setClipboard(IResource[] resources, String[] fileNames, String names) {
+	try {
+		// set the clipboard contents
+		clipboard.setContents(
+			new Object[]{
+				resources, 
+				fileNames, 
+				names}, 
+			new Transfer[]{
+				ResourceTransfer.getInstance(), 
+				FileTransfer.getInstance(), 
+				TextTransfer.getInstance()});
+	} catch (SWTError e){
+		if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+			throw e;
+		if (MessageDialog.openQuestion(shell, ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.title"), ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+			setClipboard(resources, fileNames, names);
+	}	
+}
 /**
  * The <code>CopyAction</code> implementation of this
  * <code>SelectionListenerAction</code> method enables this action if 
