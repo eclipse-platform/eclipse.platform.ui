@@ -300,7 +300,9 @@ protected Object basicRun(String[] args) throws Exception {
 	} catch (InvocationTargetException e) {
 		if (e.getTargetException() instanceof Error)
 			throw (Error) e.getTargetException();
-		else
+		else if (e.getTargetException() instanceof Exception)
+			throw (Exception) e.getTargetException();
+		else //could be a subclass of Throwable!
 			throw e;
 	}
 }
