@@ -95,6 +95,9 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
 	public void moveTag() {
 		addLocalOption(RTag.FORCE_REASSIGNMENT);
 		addLocalOption(RTag.CLEAR_FROM_REMOVED);
+		if (tag != null && tag.getType() == CVSTag.BRANCH) {
+			addLocalOption(RTag.FORCE_BRANCH_REASSIGNMENT);
+		}
 	}
 
 	/* (non-Javadoc)
