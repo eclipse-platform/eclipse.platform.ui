@@ -160,9 +160,7 @@ public class DeferredTreeContentManager {
         // Cancel any jobs currently fetching children for the same parent
         // instance.
         Platform.getJobManager().cancel(parent);
-        String jobName = ProgressMessages.format(
-                "DeferredTreeContentManager.FetchingName", //$NON-NLS-1$
-                new Object[] { adapter.getLabel(parent) });
+        String jobName = getFetchJobName(parent, adapter);
         Job job = new Job(jobName) {
             public IStatus run(IProgressMonitor monitor) {
                 adapter.fetchDeferredChildren(parent, collector, monitor);
@@ -240,6 +238,20 @@ public class DeferredTreeContentManager {
             job.schedule();
         else
             progressService.schedule(job);
+    }
+    
+    /**
+     * Returns a name to use for the job that fetches children of the given parent.
+     * Subclasses may override. Default job name is parent's label.
+     * 
+     * @param parent parent that children are to be fetched for
+     * @param adapter parent's deferred adapter
+     * @return job name
+     */
+    protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
+        return ProgressMessages.format(
+                "DeferredTreeContentManager.FetchingName", //$NON-NLS-1$
+                new Object[] { adapter.getLabel(parent) });
     }
 
     /**
