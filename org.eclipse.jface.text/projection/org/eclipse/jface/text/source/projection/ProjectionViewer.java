@@ -926,7 +926,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 		
 		StyledText textWidget= getTextWidget();
-		if (textWidget == null || !redraws())
+		if (textWidget == null)
 			return;
 
 		Point selection= null;
@@ -934,23 +934,27 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 			case CUT:
 				
-				selection= getSelectedRange();
-				if (selection.y == 0)
-					copyMarkedRegion(true);
-				else
-					copyToClipboard(selection.x, selection.y, true, textWidget);
-				
-				selection= textWidget.getSelectionRange();
-				fireSelectionChanged(selection.x, selection.y);
+				if (redraws()) {
+					selection= getSelectedRange();
+					if (selection.y == 0)
+						copyMarkedRegion(true);
+					else
+						copyToClipboard(selection.x, selection.y, true, textWidget);
+					
+					selection= textWidget.getSelectionRange();
+					fireSelectionChanged(selection.x, selection.y);
+				}
 				break;
 				
 			case COPY:
 				
-				selection= getSelectedRange();
-				if (selection.y == 0)
-					copyMarkedRegion(false);
-				else
-					copyToClipboard(selection.x, selection.y, false, textWidget);
+				if (redraws()) {
+					selection= getSelectedRange();
+					if (selection.y == 0)
+						copyMarkedRegion(false);
+					else
+						copyToClipboard(selection.x, selection.y, false, textWidget);
+				}
 				break;
 			
 			default:
