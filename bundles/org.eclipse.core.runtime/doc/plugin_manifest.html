@@ -1,264 +1,294 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
-<title>Plug-in manifest</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Plug-in Manifest</title>
 </head>
-<body bgcolor="#FFFFFF" link=blue vlink=blue class="Normal" lang=EN-US>
-<div class=Section1> 
-  <h1>IBM Eclipse Platform<br>
-    Plug-in Manifest</h1>
-  <p><span style='font-size:10.0pt'>Version 2.0 - Last revised June 24, 2002</span></p>
-  <p>The manifest markup definitions below make use of various naming tokens and 
-    identifiers. To eliminate ambiguity, here are some production rules for these 
-    [are referenced in text below]. In general, all identifiers are case-sensitive. 
-  </p>
-<pre>SimpleToken := sequence of characters from ('a-z','A-Z','0-9')
-ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)
-JavaClassName := ComposedToken
-PlugInId := ComposedToken
-PlugInPrereq := PlugInId | 'export' PlugInId
-ExtensionId := SimpleToken
-ExtensionPointId := SimpleToken
-ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
-  <p>The remainder of this section describes the plugin.xml file structure as 
-    a series of DTD fragments. File <a href="rplugdtd.htm">plugin.dtd</a> presents 
-    the DTD definition in its entirety. </p>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;
-&lt;!ELEMENT plugin (requires?, runtime?, extension-point*, extension*)&gt;
-&lt;!ATTLIST plugin
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  provider-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-  class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+<body link="#0000FF" vlink="#800080">
+
+<div class=Section1>
+
+<h1>IBM Eclipse Platform Plug-in Manifest</h1>
+
+<p>Version 2.0 - Last revised June 20, 2002</p>
+
+<p>The manifest markup definitions below make use of various naming tokens and
+identifiers. To eliminate ambiguity, here are some production rules for these [are
+referenced in text below]. In general, all identifiers are case-sensitive. </p>
+
+<pre>SimpleToken := sequence of characters from ('a-z','A-Z','0-9')&nbsp;</pre><pre>ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)&nbsp;</pre><pre>JavaClassName := ComposedToken&nbsp;</pre><pre>PlugInId := ComposedToken</pre><pre>PlugInPrereq := PlugInId | 'export' PlugInId&nbsp;</pre><pre>ExtensionId := SimpleToken&nbsp;</pre><pre>ExtensionPointId := SimpleToken&nbsp;</pre><pre>ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
+
+<p>The remainder of this section describes the plugin.xml file structure as a series
+of DTD fragments. File <a href="rplugdtd.htm">plugin.dtd</a> presents the DTD
+definition in its entirety. </p>
+
+<tt><p>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+<br>&lt;!ELEMENT plugin (requires?, runtime?, extension-point*, extension*)&gt;&nbsp;
+<br>&lt;!ATTLIST plugin&nbsp;
+<br>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br>&nbsp; version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br>&nbsp; provider-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+<br>&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
+<br>&gt;</tt></p>
+
+<p>The &lt;plugin&gt; element defines the body of the manifest. It optionally contains
+definitions for the plug-in runtime, definitions of other plug-ins required by
+this one, declarations of any new extension points being introduced by the
+plug-in, as well as configuration of functional extensions (configured into
+extension points defined by other plug-ins, or introduced by this plug-in).
+&lt;plugin&gt; attributes are as follows: </p>
+
+<ul>
+ <li><b>name</b> - user
+     displayable (translatable) name for the plug-in</li>
+ <li><b>id</b> - unique identifier
+     for the plug-in.</li>
+ <ul>
+  <li>To minimize potential for naming collisions, the identifier should be derived from the internet
+      domain id of the supplying provider (reversing the domain name tokens and
+      appending additional name tokens separated by dot [.]). For example,
+      provider ibm.com could define plug-in identifier com.ibm.db2</li>
+  <li>[production rule: PlugInId]</li>
+ </ul>
+ <li><b>version </b>- plug-in
+     version number. See org.eclipse.core.runtime.PluginVersionIdentifier for
+     details. Plug-in version format is <b>major.minor.service.qualifier</b>.
+     Change in the major component is interpreted as an incompatible version
+     change. Change in the minor component is interpreted as a compatible
+     version change. Change in the service component is interpreted as <i>cumulative</i>
+     service applied to the minor version.  Change in the qualifier component is interpreted as
+     different source code control version of the same component.</li>
+ <li><b>provider-name </b>-
+     user-displayable name of the provider supplying the plug-in.</li>
+ <li><b>class - </b>name of the
+     plug-in class for this plug-in. The class must be a subclass of
+     org.eclipse.core.runtime.Plugin.</li>
+</ul>
+
+<p>The XML DTD construction rule <tt><i>element</i>*</tt> means zero or more occurrences of the
+element; <tt><i>element</i>?</tt> means zero or
+one occurrence of the element; and <tt><i>element</i>+</tt> (used below) means one or more
+occurrences of the element. Based on the &lt;plugin&gt; definition above, this
+means, for example, that a plug-in containing only a run-time definition and no
+extension point declarations or extension configurations is valid (for example,
+common libraries that other plug-ins depend on). Similarly, a plug-in
+containing only extension configurations and no runtime or extension points of
+its own is also valid (for example, configuring classes delivered in other
+plug-ins into extension points declared in other plug-ins). </p>
+
+<p>The &lt;requires&gt; section of the manifest declares any dependencies on other plug-ins. </p>
+
+<p><tt>&lt;!ELEMENT requires (import+)&gt;
+<br>
+<br>&lt;!ELEMENT import EMPTY&gt;
+<br>&lt;!ATTLIST import
+<br>&nbsp;plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp;version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+<br>&nbsp;match<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>(perfect | equivalent | compatible | greaterOrEqual) &quot;compatible&quot;
+<br>&nbsp;export&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+<br>&nbsp;optional&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
+<br>&gt;</p></tt>
+
+<p>Each dependency is specified using an &lt;import&gt; element. It contains the
+following attributes: </p>
+
+<ul>
+ <li><b>plugin</b> - identifier of the required plug-in</li>
+ <li><b>version</b> - optional version specification</li>
+ <li><b>match</b> - version matching rule. Ignored if version attribute is not specified. Determines
+     whether the dependency is satisfied only with a plug-in that has this exact specified version, with a plug-in
+     that has a service or qualifier more recent than this one, with any
+     compatible version (including a more recent minor version of the plug-in)
+     or with any more recent version of this plug-in</li>
+ <li><b>export</b> - specifies whether the dependent plug-in classes are made visible (are (re)exported)
+     to users of this plug-in. By default, dependent classes are not exported
+     (are not made visible)</li>
+ <li><b>optional </b> - specifies
+     whether or not this dependency will be strictly enforced. If set to &quot;true&quot; and this
+     dependency cannot be satisfied, the dependency will be ignored</li>
+</ul>
+
+<p><a name=runtime></a>The &lt;runtime&gt; section of the manifest contains a
+definition of one or more libraries that make up the plug-in runtime. The
+referenced libraries are used by the platform execution mechanisms (the plug-in
+class loader) to load and execute the correct code required by the plug-in. </p>
+
+<p><tt>&lt;!ELEMENT runtime (library+)&gt;&nbsp;
+<br>
+<br>&lt;!ELEMENT library (export*)&gt;
+<br>&lt;!ATTLIST library&nbsp;
+<br>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br><span style="mso-spacerun: yes">&nbsp; </span>type<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>(code | resource) &quot;code&quot;
+<br>&gt;
+<br>
+<br>&lt;!ELEMENT export EMPTY&gt;&nbsp;
+<br>&lt;!ATTLIST export
+<br>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br>&gt;</tt></p>
+
+<p>The &lt;runtime&gt; element has no attributes. </p>
+
+<p>The &lt;library&gt; elements collectively define the plug-in runtime. At least one
+&lt;library&gt; must be specified. Each &lt;library&gt; element has the
+following attributes: </p>
+
+<ul type=disc>
+ <li><b>name - </b>string
+     reference to a library file or directory containing classes (relative to
+     the plug-in install directory). Directory references must contain trailing
+     file separator.</li>
+ <li><b>type</b> - specifies whether this library contains executable code (&quot;code&quot;) or just
+     resources. If the library is
+     of type "code" accessing anything in this library will cause activation of
+     the plug-in. Accessing a &quot;resource&quot; will not cause plug-in activation (a potential for significant
+     performance improvement). It should be noted that specifying a library of type &quot;code&quot; allows it to
+     contain both code and resources. But specifying a library of type &quot;resource&quot; assumes it will only be
+     used for resources.</li>
+</ul>
+
+<p>Each &lt;library&gt; element can specify which portion of the library should be
+exported. The export rules are specified as a set of export masks. By default
+(no export rules specified), the library is considered to be private. The
+&lt;export&gt; elements have the following attributes: </p>
+
+<ul>
+ <li><b>name - s</b>pecifies the
+     export mask. Valid values are:</li>
+ <ul>
+  <li><b>*</b> - indicates all contents of library are exported (public)</li>
+ </ul>
+ <li><b>package-name</b></li>
+ <ul>
+  <li><b>*</b> - indicates all classes in the specified package are exported. The matching rules are
+      the same as in the Java import statement.</li>
+ </ul>
+ <li><b>class-name - </b>fully qualified java class name</li>
+</ul>
+
+<p>The platform's architecture is based on the notion of configurable extension
+points. The platform itself predefines a set of extension points that cover the
+task of extending the platform and desktop (for example, adding menu actions,
+contributing embedded editor). In addition to the predefined extension points,
+each supplied plug-in can declare additional extension points. By declaring an
+extension point the plug-in is essentially advertising the ability to configure
+the plug-in function with externally supplied extensions. For example, the Page
+Builder plug-in may declare an extension point for adding new Design Time
+Controls (DTCs) into its builder palette. This means that the Page Builder has
+defined an architecture for what it means to be a DTC and has implemented the
+code that looks for DTC extensions that have been configured into the extension
+points. </p>
+
+<p><tt>&lt;!ELEMENT extension-point EMPTY&gt;&nbsp;&nbsp;
+<br>&lt;!ATTLIST extension-point&nbsp;
+<br>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+<br>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;&nbsp;&nbsp;&nbsp;
+<br>&nbsp; schema&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
+<br>&gt;</tt></p>
+
+<p>The &lt;extension-point&gt; element has the following attributes: </p>
+
+<ul>
+ <li><b>name - </b>user-displayable (translatable) name for the extension point</li>
+ <li><b>id - </b>simple id token, unique within this plug-in. The token cannot contain dot (.) or
+     whitespace.</li>
+ <ul>
+  <li>[production rule: ExtensionPointId]</li>
+ </ul>
+ <li><b>schema</b> - schema
+     specification for this extension point. The exact details are being
+     defined as part of the Plug-In Development Environment (PDE). The schema
+     is currently not used at runtime. The reference is a file name relative to
+     the plug-in installation location.</li>
+</ul>
+
+<p>Actual extensions are configured into extension points (predefined, or newly declared
+in this plug-in) in the &lt;extension&gt; section. The configuration
+information is specified as well-formed XML contained between the &lt;extension&gt;
+and &lt;/extension&gt; tags. The platform does not specify the actual form of
+the configuration markup (other than requiring it to be well-formed XML). The
+markup is defined by the supplier of the plug-in that declared the extension
+point. The platform does not actually interpret the configuration markup. It
+simply passes the configuration information to the plug-in as part of the
+extension point processing (at the time the extension point logic queries all
+of its configured extensions). </p>
+
+<pre>&lt;!ELEMENT extension ANY&gt;&nbsp;
+&lt;!ATTLIST extension&nbsp;
+&nbsp; point&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED&nbsp;
+&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
+&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &gt;</pre>
-  <p>The &lt;plugin&gt; element defines the body of the manifest. It optionally 
-    contains definitions for the plug-in runtime, definitions of other plug-ins 
-    required by this one, declarations of any new extension points being introduced 
-    by the plug-in, as well as configuration of functional extensions (configured 
-    into extension points defined by other plug-ins, or introduced by this plug-in). 
-    &lt;plugin&gt; attributes are as follows: </p>
-  <ul type=disc>
-    <li><b>name</b> - user displayable (translatable) name for the plug-in</li>
-    <li><b>id</b> - unique identifier for the plug-in.</li>
-    <ul type=circle>
-      <li>To minimize potential for naming collisions, the identifier should be 
-        derived from the internet domain id of the supplying provider (reversing 
-        the domain name tokens and appending additional name tokens separated 
-        by dot [.]). For example, provider ibm.com could define plug-in identifier 
-        com.ibm.db2</li>
-      <li>[production rule: PlugInId]</li>
-    </ul>
-    <li><b>version </b>- plug-in version number. See org.eclipse.core.runtime.PluginVersionIdentifier 
-      for details. Plug-in version format is <b>major.minor.service.qualifier</b>. 
-      Change in the major component is interpreted as an incompatible version 
-      change. Change in the minor component is interpreted as a compatible version 
-      change. Change in the service component is interpreted as <i>cumulative</i> 
-      service applied to the minor version.&nbsp; Change in the qualifier component 
-      is interpreted as different source code control version of the same component.</li>
-    <li><b>provider-name</b> <b>-</b> user-displayable name of the provider supplying 
-      the plug-in.</li>
-    <li><b>class - </b>name of the plug-in class for this plug-in. The class must 
-      be a subclass of org.eclipse.core.runtime.Plugin.</li>
-  </ul>
-  <p>The XML DTD construction rule <tt><i>element</i></tt><tt>*</tt> means zero 
-    or more occurrences of the element; <tt><i>element</i></tt><tt>?</tt> means 
-    zero or one occurrence of the element; and <tt><i>element</i></tt><tt>+</tt> 
-    (used below) means one or more occurrences of the element. Based on the &lt;plugin&gt; 
-    definition above, this means, for example, that a plug-in containing only 
-    a run-time definition and no extension point declarations or extension configurations 
-    is valid (for example, common libraries that other plug-ins depend on). Similarly, 
-    a plug-in containing only extension configurations and no runtime or extension 
-    points of its own is also valid (for example, configuring classes delivered 
-    in other plug-ins into extension points declared in other plug-ins). </p>
-  <p>The &lt;requires&gt; section of the manifest declares any dependencies on 
-    other plug-ins. </p>
-<pre>&lt;!ELEMENT requires (import+)&gt;
-&lt;!ELEMENT import EMPTY&gt;
-&lt;!ATTLIST import
-  plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-  match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (perfect | equivalent | compatible | greaterOrEqual) &quot;compatible&quot;
-  export&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-  optional&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (true | false) &quot;false&quot;
-&gt;</pre>
-  <p>Each dependency is specified using an &lt;import&gt; element. It contains 
-    the following attributes: </p>
-  <ul type=disc>
-    <li><b>plugin</b> - identifier of the required plug-in</li>
-    <li><b>version</b> - optional version specification</li>
-    <li><b>match</b> - version matching rule. Ignored if version attribute is 
-      not specified. Determines whether the dependency is satisfied only with 
-      a plug-in&nbsp; that has this exact&nbsp; specified version, with a plug-in 
-      that has a service or qualifier more recent than this one, with any compatible 
-      version (including a more recent minor version of the plug-in) or with any 
-      more recent version of this plug-in</li>
-    <li><b>export</b> - specifies whether the dependent plug-in classes are made 
-      visible (are (re)exported) to users of this plug-in. By default, dependent 
-      classes are not exported (are not made visible)</li>
-    <li><b>optional </b>&#8211; specifies whether or not this dependency will 
-      be strictly enforced.&nbsp; If set to &#8216;true&#8217; and this dependency 
-      cannot be satisfied, the dependency will be ignored</li>
-  </ul>
-  <p><a
-name=runtime></a>The &lt;runtime&gt; section of the manifest contains a definition 
-    of one or more libraries that make up the plug-in runtime. The referenced 
-    libraries are used by the platform execution mechanisms (the plug-in class 
-    loader) to load and execute the correct code required by the plug-in. </p>
-<pre>&lt;!ELEMENT runtime (library+)&gt;
-&lt;!ELEMENT library (export*)&gt;
-&lt;!ATTLIST library
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (code | resource) &quot;code&quot;
-&gt;
-&lt;!ELEMENT export EMPTY&gt;
-&lt;!ATTLIST export
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&gt;</pre>
-  <p>The &lt;runtime&gt; element has no attributes. </p>
-  <p>The &lt;library&gt; elements collectively define the plug-in runtime. At 
-    least one &lt;library&gt; must be specified. Each &lt;library&gt; element 
-    has the following attributes: </p>
-  <ul type=disc>
-    <li><b>name - </b>string reference to a library file or directory containing 
-      classes (relative to the plug-in install directory). Directory references 
-      must contain trailing file separator.</li>
-    <li><b>type &#8211;</b> specifies whether this library contains executable 
-      code (&#8216;code&#8217;) or just resources.&nbsp; If the library is of 
-      type &#8216;code&#8217; accessing anything in this library will cause activation 
-      of the plug-in.&nbsp; Accessing a &#8216;resource&#8217; will not cause 
-      plug-in activation (a potential for significant performance improvement).&nbsp; 
-      It should be noted that specifying a library of type &#8216;code&#8217; 
-      allows it to contain both code and resources.&nbsp; But specifying a library 
-      of type &#8216;resource&#8217; assumes it will only be used for resources.</li>
-  </ul>
-  <p>Each &lt;library&gt; element can specify which portion of the library should 
-    be exported. The export rules are specified as a set of export masks. By default 
-    (no export rules specified), the library is considered to be private. The 
-    &lt;export&gt; elements have the following attributes: </p>
-  <ul type=disc>
-    <li><b>name - s</b>pecifies the export mask. Valid values are:</li>
-    <ul type=circle>
-      <li><b>*</b> - indicates all contents of library are exported (public)</li>
-    </ul>
-    <li><b>package-name</b></li>
-    <ul type=circle>
-      <li><b>* - </b>indicates all classes in the specified package are exported. 
-        The matching rules are the same as in the Java import statement.</li>
-    </ul>
-    <li><b>class-name - </b>fully qualified java class name</li>
-  </ul>
-  <p>The platform's architecture is based on the notion of configurable extension 
-    points. The platform itself predefines a set of extension points that cover 
-    the task of extending the platform and desktop (for example, adding menu actions, 
-    contributing embedded editor). In addition to the predefined extension points, 
-    each supplied plug-in can declare additional extension points. By declaring 
-    an extension point the plug-in is essentially advertising the ability to configure 
-    the plug-in function with externally supplied extensions. For example, the 
-    Page Builder plug-in may declare an extension point for adding new Design 
-    Time Controls (DTCs) into its builder palette. This means that the Page Builder 
-    has defined an architecture for what it means to be a DTC and has implemented 
-    the code that looks for DTC extensions that have been configured into the 
-    extension points. </p>
-<pre>&lt;!ELEMENT extension-point EMPTY&gt;
-&lt;!ATTLIST extension-point
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  schema&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&gt;</pre>
-  <p>The &lt;extension-point&gt; element has the following attributes: </p>
-  <ul type=disc>
-    <li><b>name - </b>user-displayable (translatable) name for the extension point</li>
-    <li><b>id - </b>simple id token, unique within this plug-in. The token cannot 
-      contain dot (.) or whitespace.</li>
-    <ul type=circle>
-      <li>[production rule: ExtensionPointId]</li>
-    </ul>
-    <li><b>schema</b> - schema specification for this extension point. The exact 
-      details are being defined as part of the Plug-In Development Environment 
-      (PDE). The schema is currently not used at runtime. The reference is a file 
-      name relative to the plug-in installation location.</li>
-  </ul>
-  <p>Actual extensions are configured into extension points (predefined, or newly 
-    declared in this plug-in) in the &lt;extension&gt; section. The configuration 
-    information is specified as well-formed XML contained between the &lt;extension&gt; 
-    and &lt;/extension&gt; tags. The platform does not specify the actual form 
-    of the configuration markup (other than requiring it to be well-formed XML). 
-    The markup is defined by the supplier of the plug-in that declared the extension 
-    point. The platform does not actually interpret the configuration markup. 
-    It simply passes the configuration information to the plug-in as part of the 
-    extension point processing (at the time the extension point logic queries 
-    all of its configured extensions). </p>
-<pre>&lt;!ELEMENT extension ANY&gt;
-&lt;!ATTLIST extension
-  point&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&gt;</pre>
-  <p>The &lt;extension&gt; element has the following attributes: </p>
-  <ul type=disc>
-    <li><b>point - </b>reference to an extension point being configured. The extension 
-      point can be one defined in this plug-in or another plug-in</li>
-    <ul type=circle>
-      <li>[production rule: ExtensionPointReference]</li>
-    </ul>
-    <li><b>id - </b>optional identifier for this extension point configuration 
-      instance. This is used by extension points that need to uniquely identify 
-      (rather than just enumerate) the specific configured extensions. The identifier 
-      is specified as a simple token unique within the definition of the declaring 
-      plug-in. When used globally, the extension identifier is qualified by the 
-      plug-in identifier</li>
-    <ul type=circle>
-      <li>[production rule: ExtensionId]</li>
-    </ul>
-    <li><b>name - </b>user-displayable (translatable) name for the extension</li>
-  </ul>
-  <p><b>Important:</b> The content of the &lt;extension&gt; element is declared 
-    using the <tt><span
-style='font-size:10.0pt;font-family:"Courier New"'>ANY</span></tt> rule. This 
-    means that any well-formed XML can be specified within the extension configuration 
-    section (between &lt;extension&gt; and &lt;/extension&gt; tags). </p>
-  <p>Fragments are used to increase the scope of a plug-in. An example would be to incorporate data such as messages or labels in another language.<\p>
-<pre>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;
-&lt;!ELEMENT fragment (requires?, runtime?, extension-point*, extension*)&gt;
-&lt;!ATTLIST fragment
-  name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  provider-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED
-  plugin-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  plugin-version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-  match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (perfect | equivalent | compatible | greaterOrEqual) &quot;compatible&quot;
-&gt;</pre>
-  <p>Each fragment must be associated with a specific plug-in.  The associated plug-in is identified with &lt;plugin-id&gt;, &lt;plugin-version&gt; and optionally, &lt;match&gt;. Note that if this specification matches more than one plug-in, the matching plug-in with the highest version number will be used.</p>
-  <p>The &lt;requires&gt;, &lt;runtime&gt;, &lt;extension-point&gt;, and &lt;extension&gt; components of a fragment will be logically added to the matching plug-in.</p>
-  <p>&lt;fragment&gt; attributes are as follows: </p>
-  <ul type=disc>
-    <li><b>name</b> - user displayable (translatable) name for the fragment</li>
-    <li><b>id</b> - unique identifier for the fragment.</li>
-    <ul type=circle>
-      <li>To minimize potential for naming collisions, the identifier should be 
-        derived from the id of the associated plug-in in addition to something 
-        which identifies the scope of this fragment.&nbsp; For example, org.eclipse.core.runtime.nl1 
-        could define a natural language fragment for the org.eclipse.core.runtime 
-        plug-in</li>
-      <li>[production rule: PlugInId]</li>
-    </ul>
-    <li><b>version </b>- fragment version number. See org.eclipse.core.runtime.PluginVersionIdentifier 
-      for details. Fragment version format is the same as plug-in version format.</li>
-    <li><b>provider-name</b> <b>-</b> user-displayable name of the provider supplying 
-      the fragment.</li>
-    <li><b>plugin-</b><b>id &#8211; </b>matches the id of the associated plug-in</li>
-    <li><b>plugin-</b><b>version &#8211;</b> matches the version of the associated 
-      plug-in</li>
-    <li><b>match &#8211;</b> the matching rule used to find an associated plug-in 
-      using &lt;plugin-id&gt; and &lt;plugin-version&gt;.&nbsp; See the definition 
-      of &lt;match&gt; in the &lt;requires&gt; clause for complete details.</li>
-  </ul>
-  <p><i><span
-style='font-size:10.0pt'>(c) Copyright IBM Corp. 2002&nbsp; All Rights Reserved.</span></i> 
-  </p>
+
+<p>The &lt;extension&gt; element has the following attributes: </p>
+
+<ul>
+ <li><b>point - </b>reference to
+     an extension point being configured. The extension point can be one
+     defined in this plug-in or another plug-in</li>
+ <ul>
+  <li>[production rule: ExtensionPointReference]</li>
+ </ul>
+ <li><b>id - </b>optional
+     identifier for this extension point configuration instance. This is used
+     by extension points that need to uniquely identify (rather than just
+     enumerate) the specific configured extensions. The identifier is specified
+     as a simple token unique within the definition of the declaring plug-in.
+     When used globally, the extension identifier is qualified by the plug-in
+     identifier</li>
+ <ul>
+  <li>[production rule: ExtensionId]</li>
+ </ul>
+ <li><b>name - </b>user-displayable
+     (translatable) name for the extension</li>
+</ul>
+
+<p><b>Important:</b>
+The content of the &lt;extension&gt; element is declared using the <tt>ANY</tt> rule. This
+means that any well-formed XML can be specified within the extension
+configuration section (between &lt;extension&gt; and &lt;/extension&gt; tags). </p>
+<p>
+Fragments are used to increase the scope of a plug-in. An example would be to incorporate data such as messages or labels in another language.
+</p>
+<tt><p>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
+<br>&lt;!ELEMENT fragment (requires?, runtime?, extension-point*, extension*)&gt;
+<br>&lt;!ATTLIST fragment
+<br>&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp; version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp; provider-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED
+<br>&nbsp; plugin-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp; plugin-version&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+<br>&nbsp; match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (perfect | equivalent | compatible | greaterOrEqual) &quot;compatible&quot;
+<br>&gt;</tt></p>
+
+<p>Each fragment must be associated with a specific plug-in. The associated plug-in is identified with &lt;plugin-id&gt;, &lt;plugin-version&gt; and optionally, &lt;match&gt;. Note that if this specification matches more than one plug-in, the matching plug-in with the highest version number will be used.</p>
+<p>The &lt;requires&gt;, &lt;runtime&gt;, &lt;extension-point&gt;, and &lt;extension&gt; components of a fragment will be 
+logically added to the matching plug-in.</p>
+<p>&lt;fragment&gt; attributes are as follows: </p>
+
+<ul>
+ <li><b>name</b> - user displayable (translatable) name for the fragment</li>
+ <li><b>id</b> - unique identifier for the fragment.</li>
+ <ul>
+  <li>To minimize potential for naming collisions, the identifier should be derived from the id of
+      the associated plug-in in addition to something which identifies the
+      scope of this fragment. For example, org.eclipse.core.runtime.nl1 could define a natural language fragment
+      for the org.eclipse.core.runtime plug-in</li>
+  <li>[production rule: PlugInId]</li>
+ </ul>
+ <li><b>version</b> - fragment
+     version number. See org.eclipse.core.runtime.PluginVersionIdentifier for
+     details. Fragment version format is the same as plug-in version format.</li>
+ <li><b>provider-name</b> - user-displayable name of the provider supplying the fragment.</li>
+ <li><b>plugin-id</b> - matches the id of the associated plug-in</li>
+ <li><b>plugin</b> - matches the version of the associated plug-in</li>
+ <li><b>match</b> - the matching rule used to find an
+     associated plug-in using &lt;plugin-id&gt; and
+     &lt;plugin-version&gt;. See the definition of &lt;match&gt; in the &lt;requires&gt; clause for
+     complete details.</li>
+</ul>
+<p><i>(c) Copyright IBM Corp. 2002 All Rights Reserved.</i> </p>
 </div>
 </body>
 </html>
