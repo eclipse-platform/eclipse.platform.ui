@@ -67,7 +67,7 @@ public class AntLaunchWizardPage extends WizardPage {
 	 * Method declared on IWizardPage.
 	 */
 	public void createControl(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ANT_LAUNCH_WIZARD_PAGE);		
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_LAUNCH_WIZARD_PAGE);		
 		
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());

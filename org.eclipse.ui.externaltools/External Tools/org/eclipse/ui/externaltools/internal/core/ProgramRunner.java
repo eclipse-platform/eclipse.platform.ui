@@ -45,8 +45,8 @@ public class ProgramRunner extends ExternalToolsRunner {
 				p = Runtime.getRuntime().exec(commandLine, null, workingDir);
 			else
 				p = Runtime.getRuntime().exec(commandLine);		
-			new Thread(getRunnable(p.getInputStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_INFO, finished)).start();
-			new Thread(getRunnable(p.getErrorStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_ERR, finished)).start();
+			new Thread(getRunnable(p.getInputStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_INFO, finished, runnerContext.getShowLog())).start();
+			new Thread(getRunnable(p.getErrorStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_ERR, finished, runnerContext.getShowLog())).start();
 	
 			p.waitFor();
 				
@@ -72,7 +72,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 	 * Returns a runnable that is used to capture and print out a stream
 	 * from another process.
 	 */
-	private Runnable getRunnable(final InputStream input, final LogConsoleDocument document, final int severity, final boolean[] finished) {
+	private Runnable getRunnable(final InputStream input, final LogConsoleDocument document, final int severity, final boolean[] finished, final boolean showLog) {
 		return new Runnable() {
 			public void run() {
 				try {
@@ -84,7 +84,8 @@ public class ProgramRunner extends ExternalToolsRunner {
 							sb.append((char)c);
 							c = input.read();
 						}
-						document.append(sb.toString(), severity);
+						if (showLog)
+							document.append(sb.toString(), severity);
 						try {
 							Thread.currentThread().sleep(100);
 						} catch (InterruptedException e) {

@@ -172,6 +172,11 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 			
 		ToolUtil.saveDirtyEditors(window);
 			
+		// Selection is assigned BEFORE Log Console is given focus.
+		// Otherwise incorrect selection is used. Selection is assigned outside
+		// runnable.run(IProgressMonitor) to avoid invalid thread access.
+		final ISelection sel = window.getSelectionService().getSelection();
+								
 		if (tool.getShowLog()) {
 			ToolUtil.showLogConsole(window);
 			ToolUtil.clearLogDocument();
@@ -180,11 +185,15 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				IResource resource = null;
-				ISelection sel = window.getSelectionService().getSelection();
 				if (sel instanceof IStructuredSelection) {
 					Object result = ((IStructuredSelection)sel).getFirstElement();
 					if (result instanceof IResource)
 						resource = (IResource) result;
+					else if (result instanceof IAdaptable) {
+						Object temp = ((IAdaptable) result).getAdapter(IResource.class);
+						if (temp instanceof IResource)
+							resource = (IResource) temp;
+					}
 				}
 				DefaultRunnerContext context;
 				if (resource != null)

@@ -48,6 +48,8 @@ public final class ExternalToolsBuilder extends IncrementalProjectBuilder {
 				context.run(monitor);
 			} catch (InterruptedException e) {
 				// Do nothing, the operation was cancelled by the user
+			} finally {
+				forgetLastBuiltState();
 			}
 		}
 		

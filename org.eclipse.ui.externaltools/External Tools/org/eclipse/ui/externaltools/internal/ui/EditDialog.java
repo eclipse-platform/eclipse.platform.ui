@@ -58,8 +58,8 @@ public class EditDialog extends TitleAreaDialog {
 	private Button locationBrowseWorkspace;
 	private Button locationBrowseFileSystem;
 	private Button argumentsBrowseVariable;
-	private Button directoryBrowseWorkspace;
-	private Button directoryBrowseFileSystem;
+//	private Button directoryBrowseWorkspace;
+	private Button directoryBrowseButton;
 	private Button refreshOptionButton;
 	private Button showLog;
 	
@@ -141,7 +141,7 @@ public class EditDialog extends TitleAreaDialog {
 		// Need to keep track of the FormData's for the buttons to set
 		// the width of all the buttons to be the same as the largest
 		// button width
-		FormData[] buttonData = new FormData[6];
+		FormData[] buttonData = new FormData[5];
 		
 		// Create name label
 		Label nameLabel = new Label(topComp, SWT.NONE);
@@ -221,39 +221,30 @@ public class EditDialog extends TitleAreaDialog {
 		argumentsBrowseVariable.setLayoutData(buttonData[2]);
 		checkForMaxWidth(argumentsBrowseVariable);
 
-		// Create directory browse workspace button.
-		directoryBrowseWorkspace = new Button(topComp, SWT.PUSH);
-		directoryBrowseWorkspace.setText(ToolMessages.getString("EditDialog.browseWkspButton2")); //$NON-NLS-1$
-		buttonData[3] = new FormData();
-		buttonData[3].left = new FormAttachment(argumentsBrowseVariable, 0, SWT.LEFT);
-		buttonData[3].top = new FormAttachment(argumentsBrowseVariable, GROUP_SPACE, SWT.BOTTOM);
-		directoryBrowseWorkspace.setLayoutData(buttonData[3]);
-		checkForMaxWidth(directoryBrowseWorkspace);
-
 		// Create label for directory text field.
 		Label dirLabel = new Label(topComp, SWT.NONE);
 		dirLabel.setText(ToolMessages.getString("EditDialog.dirLabel")); //$NON-NLS-1$
 		data = new FormData();
-		data.bottom = new FormAttachment(directoryBrowseWorkspace, 0, SWT.BOTTOM);
+		data.top = new FormAttachment(argumentsField, GROUP_SPACE+buttonLabelHeightDiff, SWT.BOTTOM);
 		dirLabel.setLayoutData(data);
 
 		// Create directory text field.
 		directoryField = new Text(topComp, SWT.BORDER);
 		data = new FormData();
 		data.left = new FormAttachment(0, 0);
-		data.right = new FormAttachment(directoryBrowseWorkspace, -MARGIN_SPACE, SWT.LEFT);
-		data.top = new FormAttachment(directoryBrowseWorkspace, WIDGET_SPACE, SWT.BOTTOM);
+		data.right = new FormAttachment(argumentsBrowseVariable, -MARGIN_SPACE, SWT.LEFT);
+		data.top = new FormAttachment(dirLabel, WIDGET_SPACE, SWT.BOTTOM);
 		data.width = FIELD_WIDTH;
 		directoryField.setLayoutData(data);
 
 		// Create directory browse file system button.
-		directoryBrowseFileSystem = new Button(topComp, SWT.PUSH);
-		directoryBrowseFileSystem.setText(ToolMessages.getString("EditDialog.browseFileSysButton2")); //$NON-NLS-1$
-		buttonData[4] = new FormData();
-		buttonData[4].left = new FormAttachment(argumentsField, MARGIN_SPACE, SWT.RIGHT);
-		buttonData[4].bottom = new FormAttachment(directoryField, 0, SWT.BOTTOM);
-		directoryBrowseFileSystem.setLayoutData(buttonData[4]);
-		checkForMaxWidth(directoryBrowseFileSystem);
+		directoryBrowseButton = new Button(topComp, SWT.PUSH);
+		directoryBrowseButton.setText(ToolMessages.getString("EditDialog.directoryBrowseButton")); //$NON-NLS-1$
+		buttonData[3] = new FormData();
+		buttonData[3].left = new FormAttachment(argumentsField, MARGIN_SPACE, SWT.RIGHT);
+		buttonData[3].bottom = new FormAttachment(directoryField, 0, SWT.BOTTOM);
+		directoryBrowseButton.setLayoutData(buttonData[3]);
+		checkForMaxWidth(directoryBrowseButton);
 		
 		// Create refresh check box and label.
 		Label refreshLabel = new Label(topComp, SWT.NONE);
@@ -275,10 +266,11 @@ public class EditDialog extends TitleAreaDialog {
 		// Create refresh scope.
 		refreshOptionButton = new Button(topComp, SWT.PUSH);
 		refreshOptionButton.setText(ToolMessages.getString("EditDialog.refreshOptionButton")); //$NON-NLS-1$
-		buttonData[5] = new FormData();
-		buttonData[5].left = new FormAttachment(directoryBrowseFileSystem, 0, SWT.LEFT);
-		buttonData[5].top = new FormAttachment(refreshField, 0, SWT.TOP);
-		refreshOptionButton.setLayoutData(buttonData[5]);
+		buttonData[4] = new FormData();
+		buttonData[4].left = new FormAttachment(directoryBrowseButton, 0, SWT.LEFT);
+		buttonData[4].top = new FormAttachment(refreshField, 0, SWT.TOP);
+		refreshOptionButton.setLayoutData(buttonData[4]);
+		checkForMaxWidth(refreshOptionButton);
 		
 		// Create show log checkbox
 		showLog = new Button(topComp, SWT.CHECK);
@@ -318,8 +310,7 @@ public class EditDialog extends TitleAreaDialog {
 			argumentsField,
 			argumentsBrowseVariable,
 			directoryField,
-			directoryBrowseWorkspace,
-			directoryBrowseFileSystem,
+			directoryBrowseButton,
 			refreshField,
 			refreshOptionButton};
 		topComp.setTabList(tabList);
@@ -397,31 +388,12 @@ public class EditDialog extends TitleAreaDialog {
 			}
 		});
 		
-		directoryBrowseWorkspace.addSelectionListener(new SelectionAdapter() {
+		directoryBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-					getShell(), 
-					ResourcesPlugin.getWorkspace().getRoot(), 
-					false, 
-					ToolMessages.getString("EditDialog.selectFolder")); //$NON-NLS-1$
-				dialog.showClosedProjects(false);
-				dialog.setTitle(ToolMessages.getString("EditDialog.browseWorkspaceTitle")); //$NON-NLS-1$
+				DirectorySelectionDialog dialog = new DirectorySelectionDialog(getShell());
 				dialog.open();
-				Object[] result = dialog.getResult();
-				if (result != null && result.length == 1) {
-					StringBuffer buf = new StringBuffer();
-					ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, result[0].toString(), buf);
-					directoryField.setText(buf.toString());
-				}
-			}
-		});
-		
-		directoryBrowseFileSystem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
-				dialog.setMessage(ToolMessages.getString("EditDialog.selectDirectory")); //$NON-NLS-1$
-				dialog.setFilterPath(directoryField.getText());
-				String selectedDirectory = dialog.open();
+				Object[] results = dialog.getResult();
+				String selectedDirectory = (String)results[0];
 				if (selectedDirectory != null) {
 					directoryField.setText(selectedDirectory);
 				}
@@ -829,6 +801,109 @@ public class EditDialog extends TitleAreaDialog {
 				return ToolUtil.buildVariableTag(varName, ((IResource)resource[0]).getFullPath().toString());
 			else
 				return null;
+		}
+	}
+	
+		/**
+	 * Internal dialog to show available variables from which
+	 * the user can select one.
+	 */
+	private class DirectorySelectionDialog extends SelectionDialog {
+		String location;
+		List list;
+		
+		public DirectorySelectionDialog(Shell parent) {
+			super(parent);
+			setTitle(ToolMessages.getString("EditDialog.browseDirTitle")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.VARIABLE_SELECTION_DIALOG);
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite 
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolMessages.getString("EditDialog.selectDir")); //$NON-NLS-1$
+			
+			list = new List(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			list.setLayoutData(data);
+
+			list.add(ToolMessages.getString("EditDialog.varWorkspaceLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.dirBrowseWorkspace")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.dirBrowseFileSystem")); //NON-NLS-1$)
+			
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			int sel = list.getSelectionIndex();
+			String result = null;
+			
+			switch (sel) {
+				case 0 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null);
+					break;
+
+				case 1 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_LOC, null);
+					break;
+
+				case 2 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_CONTAINER_LOC, null);
+					break;
+
+				case 3 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_LOC, null);
+					break;
+
+				case 4 :
+					result = showContainerDialog();
+					break;
+
+				case 5 :
+					result = showDirectoryDialog();
+					break;
+				
+			}
+			
+			if (result != null)
+				setSelectionResult(new Object[] {result});
+			super.okPressed();
+		}
+		
+		private String showContainerDialog() {
+			String varName = ExternalTool.VAR_WORKSPACE_LOC;
+			ContainerSelectionDialog containerDialog;
+			containerDialog = new ContainerSelectionDialog(
+				getShell(), 
+				ResourcesPlugin.getWorkspace().getRoot(),
+				false,
+				ToolMessages.getString("EditDialog.selectContainer")); //$NON-NLS-1$
+			containerDialog.open();
+			Object[] resource = containerDialog.getResult();
+			if (resource != null && resource.length > 0)
+				return ToolUtil.buildVariableTag(varName, ((IPath)resource[0]).toString());
+			else
+				return null;
+		}
+		
+		private String showDirectoryDialog() {
+				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
+				dialog.setMessage(ToolMessages.getString("EditDialog.selectDirectory")); //$NON-NLS-1$
+				dialog.setFilterPath(directoryField.getText());
+				return dialog.open();	
 		}
 	}
 	
