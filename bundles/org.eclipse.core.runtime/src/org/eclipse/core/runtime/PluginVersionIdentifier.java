@@ -12,8 +12,7 @@ package org.eclipse.core.runtime;
 
 import java.util.Vector;
 import java.util.StringTokenizer;
-import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 
 /**
  * <p>
@@ -117,11 +116,34 @@ public PluginVersionIdentifier(int major, int minor, int service, String qualifi
  * Qualifier characters that are not a letter or a digit are replaced.
  */
 public PluginVersionIdentifier(String versionId) {
-
+	Object[] parts = parseVersion(versionId);
+	this.major = ((Integer) parts[0]).intValue(); 
+	this.minor = ((Integer) parts[1]).intValue(); 
+	this.service = ((Integer) parts[2]).intValue(); 
+	this.qualifier = (String) parts[3];
+}
+/**
+ * Validates the given string as a plug-in version identifier.
+ * 
+ * @param version the string to validate
+ * @return a status object with code <code>IStatus.OK</code> if
+ *		the given string is valid as a plug-in version identifier, otherwise a status
+ *		object indicating what is wrong with the string
+ * @since 2.0
+ */
+public static IStatus validateVersion(String version) {
+	try {
+		parseVersion(version);
+	} catch (RuntimeException e) {
+		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
+	}
+	return new Status(IStatus.OK, Platform.PI_RUNTIME, IStatus.OK, Policy.bind("ok"), null); //$NON-NLS-1$
+}
+private static Object[] parseVersion(String versionId) {
+	
 	// Do the test outside of the assert so that they 'Policy.bind' 
 	// will not be evaluated each time (including cases when we would
 	// have passed by the assert).
-
 	if (versionId == null)
 		Assert.isNotNull(null, Policy.bind("parse.emptyPluginVersion")); //$NON-NLS-1$
 	String s = versionId.trim();
@@ -137,9 +159,8 @@ public PluginVersionIdentifier(String versionId) {
 	StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 	Vector elements = new Vector(4);
 
-	while(st.hasMoreTokens()) {
+	while (st.hasMoreTokens())
 		elements.addElement(st.nextToken());
-	}
 
 	int elementSize = elements.size();
 	
@@ -148,32 +169,47 @@ public PluginVersionIdentifier(String versionId) {
 	if (elementSize > 4)
 		Assert.isTrue(false, Policy.bind("parse.fourElementPluginVersion", s)); //$NON-NLS-1$
 
+	int[] numbers = new int[3];
 	try {
-		this.major = (new Integer((String)elements.elementAt(0))).intValue();
+		numbers[0] = Integer.parseInt((String) elements.elementAt(0));
+		if (numbers[0] < 0)
+			Assert.isTrue(false, Policy.bind("parse.postiveMajor", s)); //$NON-NLS-1$
 	} catch (NumberFormatException nfe) {
 		Assert.isTrue(false,Policy.bind("parse.numericMajorComponent", s)); //$NON-NLS-1$
 	}
 
 	try {
-		if (elementSize>=2) this.minor = (new Integer((String)elements.elementAt(1))).intValue();
+		if (elementSize>=2) {
+			numbers[1] = Integer.parseInt((String) elements.elementAt(1));
+			if (numbers[1] < 0)
+				Assert.isTrue(false, Policy.bind("parse.postiveMinor", s)); //$NON-NLS-1$
+		} else
+			numbers[1] = 0;
 	} catch (NumberFormatException nfe) {
 		Assert.isTrue(false,Policy.bind("parse.numericMinorComponent", s)); //$NON-NLS-1$
 	}
 
 	try {
-		if (elementSize>=3) this.service = (new Integer((String)elements.elementAt(2))).intValue();
+		if (elementSize>=3) {
+			numbers[2] = Integer.parseInt((String) elements.elementAt(2));
+			if (numbers[2] < 0)
+				Assert.isTrue(false, Policy.bind("parse.postiveService", s)); //$NON-NLS-1$
+		} else
+			numbers[2] = 0;
 	} catch (NumberFormatException nfe) {
 		Assert.isTrue(false,Policy.bind("parse.numericServiceComponent", s)); //$NON-NLS-1$
 	}
 	
-	if (elementSize>=4) this.qualifier = verifyQualifier((String)elements.elementAt(3));
-	
-	if (this.major < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMajor", s)); //$NON-NLS-1$
-	if (this.minor < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveMinor", s)); //$NON-NLS-1$
-	if (this.service < 0)
-		Assert.isTrue(false, Policy.bind("parse.postiveService", s)); //$NON-NLS-1$
+	// "result" is a 4-element array with the major, minor, service, and qualifier
+	Object[] result = new Object[4];
+	result[0] = new Integer(numbers[0]);
+	result[1] = new Integer(numbers[1]);
+	result[2] = new Integer(numbers[2]);
+	if (elementSize>=4) 
+		result[3] = verifyQualifier((String) elements.elementAt(3));
+	else
+		result[3] = ""; //$NON-NLS-1$
+	return result;
 }
 /**
  * Compare version identifiers for equality. Identifiers are
@@ -412,7 +448,7 @@ public String toString() {
 		return base + SEPARATOR + qualifier;
 }
 
-private String verifyQualifier(String s) {
+private static String verifyQualifier(String s) {
 	char[] chars = s.trim().toCharArray();
 	boolean whitespace = false;
 	for(int i=0; i<chars.length; i++) {
