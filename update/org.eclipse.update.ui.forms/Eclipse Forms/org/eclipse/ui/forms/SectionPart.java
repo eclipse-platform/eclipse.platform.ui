@@ -16,16 +16,21 @@ import org.eclipse.ui.forms.widgets.*;
 
 /**
  * Section part implements IFormPart interface based on the Section widget.
+ * @see Section
  */
 public class SectionPart implements IFormPart {
 	private IManagedForm managedForm;
 	private Section section;
-	
+
+/**
+ * Creates a new section part based on the provided section.
+ * @param section the section to use
+ */	
 	public SectionPart(Section section) {
 		this.section = section;
 		initialize();
 	}
-	
+
 	protected void initialize() {
 		if ((section.getExpansionStyle()& Section.NONE)==0) {
 			section.addExpansionListener(new ExpansionAdapter() {
@@ -38,7 +43,11 @@ public class SectionPart implements IFormPart {
 			});
 		}
 	}
-	
+
+/**
+ * Returns the section widget used in this part.
+ * @return the section widget
+ */
 	public Section getSection() {
 		return section;
 	}
@@ -49,7 +58,7 @@ public class SectionPart implements IFormPart {
 	protected void expansionStateChanged(boolean expanded) {
 		managedForm.getForm().reflow(false);
 	}
-	
+
 	public SectionPart(Composite parent, FormToolkit toolkit, int style) {
 		this(toolkit.createSection(parent, style));
 	}
@@ -90,5 +99,9 @@ public class SectionPart implements IFormPart {
 	 * @see org.eclipse.ui.forms.IFormPart#refresh()
 	 */
 	public void refresh() {
+	}
+	
+	public boolean isDirty() {
+		return false;
 	}
 }

@@ -20,29 +20,34 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public abstract class FormWizard extends Wizard {
 	protected FormToolkit toolkit;
 
-/**
- * Creates the wizard that will own its own colors.
- */
+	/**
+	 * Creates the wizard that will own its own colors.
+	 */
 	public FormWizard() {
 	}
-/**
- * Creates a wizard that will use shared colors.
- * @param colors
- */
+	/**
+	 * Creates a wizard that will use shared colors.
+	 * 
+	 * @param colors
+	 *            shared colors
+	 */
 	public FormWizard(FormColors colors) {
 		toolkit = new FormToolkit(colors);
 	}
-/**
- * Creates form toolkit if missing before creating page controls.
- */
+	/**
+	 * Creates form toolkit if missing before creating page controls.
+	 * 
+	 * @param pageContainer
+	 *            the page container widget
+	 */
 	public void createPageControls(Composite pageContainer) {
-		if (toolkit==null)
+		if (toolkit == null)
 			toolkit = new FormToolkit(pageContainer.getDisplay());
 		super.createPageControls(pageContainer);
 	}
-/**
- * Disposes the toolkit and the wizard itself.
- */
+	/**
+	 * Disposes the toolkit and the wizard itself.
+	 */
 	public void dispose() {
 		super.dispose();
 		toolkit.dispose();

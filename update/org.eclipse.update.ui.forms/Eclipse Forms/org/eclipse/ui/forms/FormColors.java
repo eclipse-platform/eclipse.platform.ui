@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Display;
  * are chosen to make the widgets look correct in the editor area. If a
  * different set of colors is needed, subclass this class and override
  * 'initialize' and/or 'initializeColors'.
+ * 
+ * @since 3.0
  */
 public class FormColors {
 	public static final String TITLE = "org.eclipse.ui.forms.TITLE";
@@ -29,25 +31,42 @@ public class FormColors {
 
 	protected Map colorRegistry = new HashMap(10);
 
-	private Color background;
-	private Color foreground;
+	protected Color background;
+	protected Color foreground;
 	private boolean shared;
-	private Display display;
+	protected Display display;
 	protected Color border;
 
+	/**
+	 * Creates form colors using the provided display.
+	 * 
+	 * @param display
+	 *            the display to use
+	 */
 	public FormColors(Display display) {
 		this.display = display;
 		initialize();
 	}
-	
+
+	/**
+	 * Returns the display used to create colors.
+	 * 
+	 * @return the display
+	 */
 	public Display getDisplay() {
 		return display;
 	}
-
+	/**
+	 * Initializes the colors. Subclasses can override this method to change
+	 * the way colors are created. Alternatively, only the color table can be
+	 * modified by overriding <code>initializeColorTable()</code>.
+	 * 
+	 * @see #initializeColorTable
+	 */
 	protected void initialize() {
 		background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		foreground = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		initializeColors();
+		initializeColorTable();
 		updateBorderColor();
 	}
 
@@ -56,7 +75,7 @@ public class FormColors {
 	 * DEFAULT_HEADER. Subclasses can override to allocate this colors
 	 * differently.
 	 */
-	protected void initializeColors() {
+	protected void initializeColorTable() {
 		createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
 		createColor(TITLE, 102, 120, 153);
@@ -94,52 +113,81 @@ public class FormColors {
 		else
 			border = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
-
+	/**
+	 * Sets the background color. All the toolkits that use this class will
+	 * share the same background.
+	 * 
+	 * @param bg
+	 *            background color
+	 */
 	public void setBackground(Color bg) {
 		this.background = bg;
 		updateBorderColor();
 	}
-
+	/**
+	 * Sets the foreground color. All the toolkits that use this class will
+	 * share the same foreground.
+	 * 
+	 * @param fg
+	 *            foreground color
+	 */
 	public void setForeground(Color fg) {
 		this.foreground = fg;
 	}
 
+	/**
+	 * Returns the current background color.
+	 * 
+	 * @return the background color
+	 */
 	public Color getBackground() {
 		return background;
 	}
-
+	/**
+	 * Returns the current foreground color.
+	 * 
+	 * @return the foreground color
+	 */
 	public Color getForeground() {
 		return foreground;
 	}
-
+	/**
+	 * Returns the computed border color. Border color depends on the
+	 * background and is recomputed whenever the background changes.
+	 * 
+	 * @return the current border color
+	 */
 	public Color getBorderColor() {
 		return border;
 	}
-/**
- * Tests if the background is white. White background has RGB value
- * 255,255,255.
- * @return <samp>true</samp> if background is white, <samp>false</samp>
- * otherwise.
- */
+	/**
+	 * Tests if the background is white. White background has RGB value
+	 * 255,255,255.
+	 * 
+	 * @return <samp>true</samp> if background is white, <samp>false</samp>
+	 *         otherwise.
+	 */
 	public boolean isWhiteBackground() {
 		return background.getRed() == 255
 			&& background.getGreen() == 255
 			&& background.getBlue() == 255;
 	}
 
-/**
- * Returns the color object for the provided key or <samp>null</samp>
- * if not in the registry.
- * @param key the color key
- * @return color object if found, or <samp>null</samp> if not.
- */
+	/**
+	 * Returns the color object for the provided key or <samp>null</samp> if
+	 * not in the registry.
+	 * 
+	 * @param key
+	 *            the color key
+	 * @return color object if found, or <samp>null</samp> if not.
+	 */
 	public Color getColor(String key) {
 		return (Color) colorRegistry.get(key);
 	}
-	
-/**
- * Disposes all the colors in the registry.
- */
+
+	/**
+	 * Disposes all the colors in the registry.
+	 */
 
 	public void dispose() {
 		Iterator e = colorRegistry.values().iterator();
@@ -149,14 +197,15 @@ public class FormColors {
 	}
 
 	/**
-	 * Marks the colors shared. Shared colors should not be disposed
-	 * by individual clients that use them.
+	 * Marks the colors shared. This prevents toolkits that share this object
+	 * from disposing it.
 	 */
 	public void markShared() {
 		this.shared = true;
 	}
 	/**
 	 * Tests if the colors are shared.
+	 * 
 	 * @return <code>true</code> if shared, <code>false</code> otherwise.
 	 */
 	public boolean isShared() {

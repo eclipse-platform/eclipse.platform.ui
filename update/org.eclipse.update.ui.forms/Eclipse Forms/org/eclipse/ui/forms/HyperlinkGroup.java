@@ -36,12 +36,12 @@ public class HyperlinkGroup extends HyperlinkSettings {
 	private class GroupListener implements Listener, HyperlinkListener {
 		public void handleEvent(Event e) {
 			switch (e.type) {
-			    case SWT.MouseEnter:
-			    	onMouseEnter(e);
-			    	break;
-			    case SWT.MouseExit:
-			    	onMouseExit(e);
-			    	break;
+				case SWT.MouseEnter :
+					onMouseEnter(e);
+					break;
+				case SWT.MouseExit :
+					onMouseExit(e);
+					break;
 				case SWT.MouseDown :
 					onMouseDown(e);
 					break;
@@ -126,34 +126,52 @@ public class HyperlinkGroup extends HyperlinkSettings {
 			link.setUnderlined(true);
 		hook(link);
 	}
+	/**
+	 * Sets the group background and also sets the background of all the
+	 * currently managed links.
+	 * 
+	 * @param bg
+	 *            the new background
+	 */
 
-	public void setBackground(Color color) {
-		super.setBackground(color);
+	public void setBackground(Color bg) {
+		super.setBackground(bg);
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
 				Hyperlink label = (Hyperlink) links.get(i);
-				label.setBackground(color);
+				label.setBackground(bg);
 			}
 		}
 	}
-
-	public void setForeground(Color color) {
-		super.setForeground(color);
+	/**
+	 * Sets the group foreground and also sets the background of all the
+	 * currently managed links.
+	 * 
+	 * @param fg
+	 *            the new foreground
+	 */
+	public void setForeground(Color fg) {
+		super.setForeground(fg);
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
 				Hyperlink label = (Hyperlink) links.get(i);
-				label.setForeground(color);
+				label.setForeground(fg);
 			}
 		}
 	}
-
-	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
-		super.setHyperlinkUnderlineMode(newHyperlinkUnderlineMode);
+	/**
+	 * Sets the hyperlink underline mode.
+	 * 
+	 * @param mode
+	 *            the new hyperlink underline mode
+	 * @see HyperlinkSettings
+	 */
+	public void setHyperlinkUnderlineMode(int mode) {
+		super.setHyperlinkUnderlineMode(mode);
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
 				Hyperlink label = (Hyperlink) links.get(i);
-				label.setUnderlined(
-					newHyperlinkUnderlineMode == UNDERLINE_ALWAYS);
+				label.setUnderlined(mode == UNDERLINE_ALWAYS);
 			}
 		}
 	}

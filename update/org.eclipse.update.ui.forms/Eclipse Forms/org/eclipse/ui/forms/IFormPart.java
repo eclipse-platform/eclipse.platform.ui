@@ -11,19 +11,26 @@
 package org.eclipse.ui.forms;
 
 /**
- * Classes that take part
+ * 
+ * @see IManagedForm
  */
 public interface IFormPart {
 	/**
 	 * Initializes the part.
 	 * 
-	 * @param form
+	 * @param form the managed form that manages the part
 	 */
 	void initialize(IManagedForm form);
 	/**
 	 * Disposes the part allowing it to release allocated resources.
 	 */
 	void dispose();
+	/**
+	 * Returns true if the part has been modified with respect to
+	 * the data loaded from the model.
+	 * @return
+	 */
+	boolean isDirty();
 	/**
 	 * If part is displaying information loaded from a model, this method
 	 * instructs it to commit the new (modified) data back into the model.

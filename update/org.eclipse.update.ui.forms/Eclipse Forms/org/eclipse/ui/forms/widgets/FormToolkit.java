@@ -18,6 +18,26 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 
+/**
+ * The toolkit is responsible for creating SWT controls adapted to work in
+ * Eclipse forms. In addition to changing their presentation properties (fonts,
+ * colors etc.), various listeners are attached to make them behave correctly
+ * in the form context.
+ * <p>
+ * In addition to being the control factory, the toolkit is also responsible
+ * for painting flat borders for select controls, managing hyperlink groups and
+ * control colors.
+ * <p>
+ * Typically, one toolkit object is created per workbench part (for example, an
+ * editor or a form wizard). The toolkit is disposed when the part is disposed.
+ * To conserve resources, it is possible to create one color object for the
+ * entire plug-in and shared it between several toolkits. The plug-in is
+ * responsible for disposing the colors (disposing the toolkit that shares
+ * color will not dispose the colors).
+ * 
+ * @since 3.0
+ */
+
 public class FormToolkit {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
 	public static final String TREE_BORDER = "treeBorder";
@@ -84,8 +104,6 @@ public class FormToolkit {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(colors.getBorderColor());
-					//gc.drawRectangle(b.x - 2, b.y - 2, b.width + 3, b.height
-					// + 3);
 					gc.drawRectangle(
 						b.x - 1,
 						b.y - 1,
@@ -123,7 +141,8 @@ public class FormToolkit {
 	}
 
 	/**
-	 * Creates a toolkit that will use the provided (shared) colors.
+	 * Creates a toolkit that will use the provided (shared) colors. The
+	 * toolkit will <b>not</b> dispose the provided colors.
 	 * 
 	 * @param colors
 	 *            the shared colors
@@ -133,18 +152,45 @@ public class FormToolkit {
 		initialize();
 	}
 
+	/**
+	 * Creates a button as a part of the form.
+	 * 
+	 * @param parent
+	 *            the button parent
+	 * @param text
+	 *            an optional text for the button (can be <code>null</code>)
+	 * @param style
+	 *            the button style (for example, <code>SWT.PUSH</code>)
+	 * @return the button widget
+	 */
 	public Button createButton(Composite parent, String text, int style) {
 		Button button = new Button(parent, style | SWT.FLAT);
-		button.setBackground(colors.getBackground());
-		button.setForeground(colors.getForeground());
 		if (text != null)
 			button.setText(text);
-		button.addFocusListener(visibilityHandler);
+		adapt(button, true, true);
 		return button;
 	}
+
+	/**
+	 * Creates the composite as a part of the form.
+	 * 
+	 * @param parent
+	 *            the composite parent
+	 * @return the composite widget
+	 */
 	public Composite createComposite(Composite parent) {
 		return createComposite(parent, SWT.NULL);
 	}
+	/**
+	 * Creates the composite as part of the form using the provided style.
+	 * 
+	 * @param parent
+	 *            the composite parent
+	 * @param style
+	 *            the composite style
+	 * @return the composite widget
+	 */
+
 	public Composite createComposite(Composite parent, int style) {
 		Composite composite = new Composite(parent, style);
 		composite.setBackground(colors.getBackground());
@@ -156,50 +202,80 @@ public class FormToolkit {
 		composite.setMenu(parent.getMenu());
 		return composite;
 	}
+	/**
+	 * Creats the composite that can server as a separator between various
+	 * parts of a form. Separator height should be controlled by setting the
+	 * height hint on the layout data for the composite.
+	 * 
+	 * @param parent
+	 *            the separator parent
+	 * @return the separator widget
+	 */
 	public Composite createCompositeSeparator(Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
-				if (composite.isDisposed()) return;
+				if (composite.isDisposed())
+					return;
 				Rectangle bounds = composite.getBounds();
 				GC gc = e.gc;
 				gc.setForeground(colors.getColor(FormColors.SEPARATOR));
 				gc.setBackground(colors.getBackground());
-				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height, false);	
+				gc.fillGradientRectangle(
+					0,
+					0,
+					bounds.width,
+					bounds.height,
+					false);
 			}
 		});
 		if (parent instanceof Section)
-			((Section)parent).setSeparatorControl(composite);
+			 ((Section) parent).setSeparatorControl(composite);
 		return composite;
 	}
-
-	public Label createHeadingLabel(Composite parent, String text) {
-		return createHeadingLabel(parent, text, SWT.NONE);
-	}
-
-	public Label createHeadingLabel(Composite parent, String text, int style) {
-		Label label = new Label(parent, style);
-		if (text != null)
-			label.setText(text);
-		label.setBackground(colors.getBackground());
-		label.setForeground(colors.getForeground());
-		label.setFont(
-			JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-		return label;
-	}
-
+	/**
+	 * Creates a label as a part of the form.
+	 * 
+	 * @param parent
+	 *            the label parent
+	 * @param text
+	 *            the label text
+	 * @return the label widget
+	 */
 	public Label createLabel(Composite parent, String text) {
 		return createLabel(parent, text, SWT.NONE);
 	}
+
+	/**
+	 * Creates a label as a part of the form.
+	 * 
+	 * @param parent
+	 *            the label parent
+	 * @param text
+	 *            the label text
+	 * @param style
+	 *            the label style
+	 * @return the label widget
+	 */
 	public Label createLabel(Composite parent, String text, int style) {
 		Label label = new Label(parent, style);
 		if (text != null)
 			label.setText(text);
-		label.setBackground(colors.getBackground());
-		label.setForeground(colors.getForeground());
+		adapt(label, false, false);
 		return label;
 	}
-
+	/**
+	 * Creates a hyperlink as a part of the form. The hyperlink will be added
+	 * to the hyperlink group that belongs to this toolkit.
+	 * 
+	 * @param parent
+	 *            the hyperlink parent
+	 * @param text
+	 *            the text of the hyperlink
+	 * @param style
+	 *            the hyperlink style
+	 * @return the hyperlink widget
+	 */
 	public Hyperlink createHyperlink(
 		Composite parent,
 		String text,
@@ -207,62 +283,116 @@ public class FormToolkit {
 		Hyperlink hyperlink = new Hyperlink(parent, style);
 		if (text != null)
 			hyperlink.setText(text);
-		//hyperlink.setBackground(colors.getBackground());
-		//hyperlink.setForeground(colors.getForeground());
 		hyperlink.addFocusListener(visibilityHandler);
 		hyperlink.addKeyListener(keyboardHandler);
 		hyperlinkGroup.add(hyperlink);
 		return hyperlink;
 	}
 
+	/**
+	 * Creates a rich text as a part of the form.
+	 * 
+	 * @param parent
+	 *            the rich text parent
+	 * @param trackFocus
+	 *            if <code>true</code>, the toolkit will monitor focus
+	 *            transfers to ensure that the hyperlink in focus is visible in
+	 *            the form.
+	 * @return the rich text widget
+	 */
+
 	public RichText createRichText(Composite parent, boolean trackFocus) {
 		RichText engine = new RichText(parent, SWT.WRAP);
-		engine.setBackground(colors.getBackground());
-		engine.setForeground(colors.getForeground());
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkGroup());
-		if (trackFocus)
-			engine.addFocusListener(visibilityHandler);
-		engine.addKeyListener(keyboardHandler);
+		adapt(engine, trackFocus, true);
 		engine.setMenu(parent.getMenu());
 		return engine;
 	}
 
-	public Twistie createTwistie(Composite parent) {
-		Twistie twistie = new Twistie(parent, SWT.NULL);
-		twistie.setBackground(colors.getBackground());
-		twistie.setActiveDecorationColor(
-			getHyperlinkGroup().getActiveForeground());
-		twistie.setDecorationColor(colors.getColor(FormColors.SEPARATOR));
-		twistie.addFocusListener(visibilityHandler);
-		twistie.addKeyListener(keyboardHandler);
-		return twistie;
+	/**
+	 * Adapts a control to be used in a form that is associated with this
+	 * toolkit. This involves adjusting colors and optionally adding handlers
+	 * to ensure focus tracking and keyboard management.
+	 * 
+	 * @param control
+	 *            a control to adapt
+	 * @param trackFocus
+	 *            if <code>true</code>, form will be scrolled horizontally
+	 *            and/or vertically if needed to ensure that the control is
+	 *            visible when it gains focus. Set it to <code>false</code>
+	 *            if the control is not capable of gaining focus.
+	 * @param trackKeyboard
+	 *            if <code>true</code>, the control that is capable of
+	 *            gaining focus will be tracked for certain keys that are
+	 *            important to the underlying form (for example, PageUp,
+	 *            PageDown, ScrollUp, ScrollDown etc.). Set it to <code>false</code>
+	 *            if the control is not capable of gaining focus or these
+	 *            particular key event are already used by the control.
+	 */
+
+	public void adapt(
+		Control control,
+		boolean trackFocus,
+		boolean trackKeyboard) {
+		control.setBackground(colors.getBackground());
+		control.setForeground(colors.getForeground());
+		if (trackFocus)
+			control.addFocusListener(visibilityHandler);
+		if (trackKeyboard)
+			control.addKeyListener(keyboardHandler);
+		control.addKeyListener(keyboardHandler);
 	}
-	
+
+	/**
+	 * Creates a section as a part of the form.
+	 * 
+	 * @param parent
+	 *            the section parent
+	 * @param sectionStyle
+	 *            the section style
+	 * @return the section widget
+	 */
 	public Section createSection(Composite parent, int sectionStyle) {
 		Section section = new Section(parent, sectionStyle);
 		section.setBackground(colors.getBackground());
 		section.setForeground(colors.getForeground());
 		section.textLabel.addFocusListener(visibilityHandler);
 		section.textLabel.addKeyListener(keyboardHandler);
-		if (section.toggle!=null) {
+		if (section.toggle != null) {
 			section.toggle.addFocusListener(visibilityHandler);
-			section.toggle.setActiveDecorationColor(getHyperlinkGroup().getActiveForeground());
-			section.toggle.setDecorationColor(colors.getColor(FormColors.SEPARATOR));
+			section.toggle.addKeyListener(keyboardHandler);
+			section.toggle.setActiveDecorationColor(
+				getHyperlinkGroup().getActiveForeground());
+			section.toggle.setDecorationColor(
+				colors.getColor(FormColors.SEPARATOR));
 		}
 		section.setFont(
-				JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+			JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		return section;
 	}
-
-	public ExpandableComposite createExpandableComposite(Composite parent, int expansionStyle) {
-		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL, expansionStyle);
+	/**
+	 * Creates an expandable composite as a part of the form.
+	 * 
+	 * @param parent
+	 *            the expandable composite parent
+	 * @param expansionStyle
+	 *            the expandable composite style
+	 * @return the expandable composite widget
+	 */
+	public ExpandableComposite createExpandableComposite(
+		Composite parent,
+		int expansionStyle) {
+		ExpandableComposite ec =
+			new ExpandableComposite(parent, SWT.NULL, expansionStyle);
 		ec.setBackground(colors.getBackground());
 		ec.setForeground(colors.getForeground());
 		//hyperlinkGroup.add(ec.textLabel);
-		if (ec.toggle!=null)
+		if (ec.toggle != null) {
 			ec.toggle.addFocusListener(visibilityHandler);
+			ec.toggle.addKeyListener(keyboardHandler);
+		}
 		ec.textLabel.addFocusListener(visibilityHandler);
 		ec.textLabel.addKeyListener(keyboardHandler);
 		ec.setFont(
@@ -270,41 +400,91 @@ public class FormToolkit {
 		return ec;
 	}
 
+	/**
+	 * Creates a separator label as a part of the form.
+	 * 
+	 * @param parent
+	 *            the separator parent
+	 * @param style
+	 *            the separator style
+	 * @return the separator label
+	 */
+
 	public Label createSeparator(Composite parent, int style) {
 		Label label = new Label(parent, SWT.SEPARATOR | style);
 		label.setBackground(colors.getBackground());
 		label.setForeground(colors.getBorderColor());
 		return label;
 	}
-	
+	/**
+	 * Creates a table as a part of the form.
+	 * 
+	 * @param parent
+	 *            the table parent
+	 * @param style
+	 *            the table style
+	 * @return the table widget
+	 */
 	public Table createTable(Composite parent, int style) {
 		Table table = new Table(parent, style | borderStyle);
-		table.setBackground(colors.getBackground());
-		table.setForeground(colors.getForeground());
+		adapt(table, false, false);
 		hookDeleteListener(table);
 		return table;
 	}
+
+	/**
+	 * Creates a text as a part of the form.
+	 * 
+	 * @param parent
+	 *            the text parent
+	 * @param value
+	 *            the text initial value
+	 * @return the text widget
+	 */
 	public Text createText(Composite parent, String value) {
 		return createText(parent, value, SWT.SINGLE);
 	}
-	
+	/**
+	 * Creates a text as a part of the form.
+	 * 
+	 * @param parent
+	 *            the text parent
+	 * @param value
+	 *            the text initial value
+	 * @param the
+	 *            text style
+	 * @return the text widget
+	 */
 	public Text createText(Composite parent, String value, int style) {
 		Text text = new Text(parent, borderStyle | style);
 		if (value != null)
 			text.setText(value);
-		text.setBackground(colors.getBackground());
-		text.setForeground(colors.getForeground());
-		text.addFocusListener(visibilityHandler);
+		adapt(text, true, false);
 		return text;
 	}
+	/**
+	 * Creates a tree widget as a part of the form.
+	 * 
+	 * @param parent
+	 *            the tree parent
+	 * @param style
+	 *            the tree style
+	 * @return the tree widget
+	 */
 	public Tree createTree(Composite parent, int style) {
 		Tree tree = new Tree(parent, borderStyle | style);
-		tree.setBackground(colors.getBackground());
-		tree.setForeground(colors.getForeground());
+		adapt(tree, false, false);
 		hookDeleteListener(tree);
 		return tree;
 	}
 
+	/**
+	 * Creates a form widget in the provided parent.
+	 * 
+	 * @param parent
+	 *            the form parent
+	 * @return the form widget
+	 */
 	public Form createForm(Composite parent) {
 		Form form = new Form(parent);
 		form.setExpandHorizontal(true);
@@ -315,36 +495,40 @@ public class FormToolkit {
 		return form;
 	}
 
-/*
-	private void deleteKeyPressed(Widget widget) {
-		if (!(widget instanceof Control))
-			return;
-		Control control = (Control) widget;
-		for (Control parent = control.getParent();
-			parent != null;
-			parent = parent.getParent()) {
-			if (parent.getData() instanceof SectionPart) {
-				SectionPart section = (SectionPart) parent.getData();
-				section.doGlobalAction(ActionFactory.DELETE.getId());
-				break;
-			}
-		}
-	}
-*/
+	//TODO hook delete key
+	/*
+	 * private void deleteKeyPressed(Widget widget) { if (!(widget instanceof
+	 * Control)) return; Control control = (Control) widget; for (Control
+	 * parent = control.getParent(); parent != null; parent =
+	 * parent.getParent()) { if (parent.getData() instanceof SectionPart) {
+	 * SectionPart section = (SectionPart) parent.getData();
+	 * section.doGlobalAction(ActionFactory.DELETE.getId()); break; } } }
+	 */
+
+	/**
+	 * Disposes the toolkit.
+	 */
 	public void dispose() {
 		if (colors.isShared() == false) {
 			colors.dispose();
 			colors = null;
 		}
 	}
+	/**
+	 * Returns the hyperlink group that manages hyperlinks for this toolkit.
+	 * 
+	 * @return the hyperlink group
+	 */
 	public HyperlinkGroup getHyperlinkGroup() {
 		return hyperlinkGroup;
 	}
+
 	public void hookDeleteListener(Control control) {
 		if (deleteListener == null) {
 			deleteListener = new KeyAdapter() {
 				public void keyPressed(KeyEvent event) {
 					if (event.character == SWT.DEL && event.stateMask == 0) {
+						//TODO hook delete key
 						//deleteKeyPressed(event.widget);
 					}
 				}
@@ -352,6 +536,52 @@ public class FormToolkit {
 		}
 		control.addKeyListener(deleteListener);
 	}
+
+	/**
+	 * Refreshes the hyperlink colors by loading from JFace settings.
+	 */
+	public void refreshHyperlinkColors() {
+		hyperlinkGroup.initializeDefaultForegrounds(colors.getDisplay());
+	}
+
+	/**
+	 * Paints flat borders for widgets created by this toolkit within the
+	 * provided parent. Borders will not be painted if the global border style
+	 * is SWT.BORDER (i.e. if native borders are used). Call this method during
+	 * creation of a form composite to get the borders of its children painted.
+	 * 
+	 * @param parent
+	 */
+	public void paintBordersFor(Composite parent) {
+		if (borderStyle == SWT.BORDER)
+			return;
+		if (borderPainter == null)
+			borderPainter = new BorderPainter();
+		parent.addPaintListener(borderPainter);
+	}
+	/**
+	 * Returns the colors used by this toolkit.
+	 * 
+	 * @return the color object
+	 */
+	public FormColors getColors() {
+		return colors;
+	}
+
+	/**
+	 * Returns the border style used for various widgets created by this
+	 * toolkit. The intent of the toolkit is to create controls with styles
+	 * that yield a 'flat' appearance. On systems where the native borders are
+	 * already flat, we set the style to SWT.BORDER and don't paint the borders
+	 * ourselves. Otherwise, the style is set to SWT.NULL, and borders are
+	 * painted by the toolkit.
+	 * 
+	 * @return the global border style
+	 */
+	public int getBorderStyle() {
+		return borderStyle;
+	}
+
 	private void initialize() {
 		String osname = System.getProperty("os.name");
 		if (osname.equals("Windows XP"))
@@ -360,23 +590,5 @@ public class FormToolkit {
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
-	}
-
-	public void updateHyperlinkColors() {
-		hyperlinkGroup.initializeDefaultForegrounds(colors.getDisplay());
-	}
-
-	public void paintBordersFor(Composite parent) {
-		if (borderStyle==SWT.BORDER) return;
-		if (borderPainter == null)
-			borderPainter = new BorderPainter();
-		parent.addPaintListener(borderPainter);
-	}
-
-	public FormColors getColors() {
-		return colors;
-	}
-	public int getBorderStyle() {
-		return borderStyle;
 	}
 }

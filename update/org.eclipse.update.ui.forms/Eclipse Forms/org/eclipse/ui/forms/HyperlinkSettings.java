@@ -77,7 +77,7 @@ public class HyperlinkSettings {
 		foreground = newForeground;
 	}
 
-	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
-		hyperlinkUnderlineMode = newHyperlinkUnderlineMode;
+	public void setHyperlinkUnderlineMode(int mode) {
+		hyperlinkUnderlineMode = mode;
 	}
 }
