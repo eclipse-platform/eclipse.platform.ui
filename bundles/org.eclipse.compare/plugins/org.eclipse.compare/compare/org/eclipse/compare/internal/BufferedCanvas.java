@@ -65,7 +65,7 @@ public abstract class BufferedCanvas extends Canvas {
 
 		Point size= getSize();
 
-		if (size.x <= 0 || size.y <= 0)
+		if (size.x <= 1 || size.y <= 1) // we test for <= 1 because on X11 controls have initial size 1,1
 			return;
 
 		if (fBuffer != null) {
