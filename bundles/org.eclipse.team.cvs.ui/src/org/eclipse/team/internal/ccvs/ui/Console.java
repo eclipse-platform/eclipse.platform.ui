@@ -1,18 +1,22 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -51,7 +55,7 @@ public class Console extends ViewPart {
 	 */
 	public Console() {
 		instances.add(this);
-		document = new Document();
+		document = new Document("");
 	}
 
 	/**
@@ -111,9 +115,16 @@ public class Console extends ViewPart {
 	public void append(final String message) {
 		getViewSite().getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				document.set(document.get() + message);
-				if (message.length() > 0 && viewer != null)
-					viewer.revealRange(document.get().length() - 1, 1);
+				try {
+					document.replace(document.getLength(), 0, message);
+					if (message.length() > 0 && viewer != null) {
+						viewer.revealRange(document.getLength() - 1, 1);
+					}
+				} catch (BadLocationException e) {
+					IStatus status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, null, e);
+					ErrorDialog.openError(getViewSite().getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), status);
+					CVSUIPlugin.log(status);
+				}
 			}
 		});
 	}
