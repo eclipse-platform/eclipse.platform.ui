@@ -1,16 +1,16 @@
 package org.eclipse.ui.internal;
 
 import java.text.Collator;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -473,6 +473,7 @@ public class EditorList {
 	}
 	
 	private class BookMarkAction extends Action {
+		String newValue;
 		/**
 		 *	Create an instance of this class
 		 */
@@ -482,19 +483,46 @@ public class EditorList {
 //			WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
 		}
 		/** 
-		 * Performs the save.
+		 * Create the new bookmark.
 		 */
 		public void run() {
 			TableItem[] items = editorsTable.getSelection();
 			if(items.length == 0) {
 				return;
 			}
+
 			for (int i = 0; i < items.length; i++) {
 				Adapter e = (Adapter)items[i].getData();
-				workbook.addBookMark(e.editorRef);
+				EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
+				EditorShortcut shortcut = EditorShortcut.create(e.editorRef);
+				int index = manager.indexof(shortcut) ;
+				if (index != -1) {
+					EditorShortcut[] shortcuts = manager.getItems();
+					newValue = e.getText()[0] + " (" + shortcuts[index].getTitle() + ")";
+					if(checkOverwrite()) {
+						shortcuts[index].setTitle(e.getText()[0]);
+					}
+					shortcut.dispose();
+				} else {
+					manager.add(shortcut);
+				}
 			}
 			destroyControl();
 		}
+		/**
+		 * Check if the user wishes to overwrite the supplied resource
+		 * @returns true if there is no collision or delete was successful
+		 * @param shell the shell to create the dialog in 
+		 * @param destination - the resource to be overwritten
+		 */
+		private boolean checkOverwrite() {
+			final String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
+			final String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
+
+			return MessageDialog.openQuestion(window.getShell(), 
+				RESOURCE_EXISTS_TITLE,
+				MessageFormat.format(RESOURCE_EXISTS_MESSAGE,new Object[] {newValue}));
+		}				
 	}
 	/**
 	 * A helper inner class to adapt EditorHistoryItem and IEditorPart

@@ -97,11 +97,6 @@ public void becomeActiveWorkbook(boolean hasFocus) {
 		area.setActiveWorkbook(this, hasFocus);
 }
 
-public void addBookMark(IEditorReference ref) {
-	EditorShortcutManager man = ((Workbench)editorArea.getWorkbenchWindow().getWorkbench()).getEditorShortcutManager();
-	man.add(EditorShortcut.create(ref));
-}
-
 public void createControl(Composite parent) {
 
 	if (workbookForm != null)

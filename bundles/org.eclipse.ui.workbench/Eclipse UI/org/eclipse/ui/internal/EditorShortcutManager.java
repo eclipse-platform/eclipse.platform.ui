@@ -17,12 +17,21 @@ public class EditorShortcutManager {
 		list = new ArrayList();
 	}
 	
-	public void add(EditorShortcut item) {
-		list.add(item);
-		Object list[] = listeners.getListeners();
-		for (int i = 0; i < list.length; i++) {
-			((IEditorShortcutListener)list[i]).shortcutAdded(item);
-		}		
+	public int indexof(EditorShortcut shortcut) {
+		return list.indexOf(shortcut);
+	}
+	
+	public boolean add(EditorShortcut item) {
+		if (list.contains(item)) {
+			return false;
+		} else {
+			list.add(item);
+			Object list[] = listeners.getListeners();
+			for (int i = 0; i < list.length; i++) {
+				((IEditorShortcutListener)list[i]).shortcutAdded(item);
+			}
+			return true;
+		}
 	}
 	
 	public void remove(EditorShortcut item) {

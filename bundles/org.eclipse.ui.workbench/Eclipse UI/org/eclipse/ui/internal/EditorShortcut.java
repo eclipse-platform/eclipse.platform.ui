@@ -214,11 +214,11 @@ public class EditorShortcut implements Comparable {
 		if(!(o instanceof EditorShortcut))
 			return false;
 		EditorShortcut other = (EditorShortcut)o;
-		return title.equals(other.title);
+		return tooltip.equals(other.tooltip);
 	}
 	public int compareTo(Object o) {
 		EditorShortcut other = (EditorShortcut)o;
-		return collator.compare(this.getTitle(),other.getTitle());
+		return collator.compare(this.getTitleToolTip(),other.getTitleToolTip());
 	}
 	private EditorShortcutManager getManager() {
 		return ((Workbench)PlatformUI.getWorkbench()).getEditorShortcutManager();

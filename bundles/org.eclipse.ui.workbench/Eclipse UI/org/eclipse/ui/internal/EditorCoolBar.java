@@ -27,7 +27,6 @@ public class EditorCoolBar {
 	
 	private CoolItem bookMarkItem;
 	private ToolBar bookMarkToolBar;
-	private MenuManager chevronMenuManager;
 	private MenuManager bookMarkMenuManager = new MenuManager();
 
 	private EditorList editorList;
@@ -626,8 +625,10 @@ public class EditorCoolBar {
 	}
 		
 	private void fillContextMenu(IMenuManager menuMgr) {
+		RenameAction renameAction = new RenameAction();
+		renameAction.setEnabled(selection.length == 1);
 		menuMgr.add(new OpenAction());
-		menuMgr.add(new RenameAction());
+		menuMgr.add(renameAction);
 		menuMgr.add(new DeleteAction());
 	}	
 	
@@ -812,17 +813,7 @@ public class EditorCoolBar {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
 					if (askForLabel(shortcut.getTitle())) {
-						for (int j = 0; j < shortcuts.length; j++) {
-							if (shortcuts[j].getTitle().equals(newValue)) {
-								if (checkOverwrite()) {
-									shortcutManager.remove(shortcuts[j]);
-									shortcuts[j].dispose();	
-								}
-								break;								
-							}
-						}
 						shortcut.setTitle(newValue);
-						shortcutManager.add(shortcut);	
 					}
 				}	
 			}
