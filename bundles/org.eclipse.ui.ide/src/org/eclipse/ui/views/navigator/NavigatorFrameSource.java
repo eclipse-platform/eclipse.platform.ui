@@ -13,6 +13,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.views.framelist.TreeFrame;
 import org.eclipse.ui.views.framelist.TreeViewerFrameSource;
 
@@ -56,11 +57,8 @@ public class NavigatorFrameSource extends TreeViewerFrameSource {
             MessageDialog
                     .openInformation(
                             navigator.getViewSite().getShell(),
-                            ResourceNavigatorMessages
-                                    .getString("NavigatorFrameSource.closedProject.title"), //$NON-NLS-1$
-                            ResourceNavigatorMessages
-                                    .format(
-                                            "NavigatorFrameSource.closedProject.message", new Object[] { project.getName() })); //$NON-NLS-1$
+                            ResourceNavigatorMessages.NavigatorFrameSource_closedProject_title,
+                            NLS.bind(ResourceNavigatorMessages.NavigatorFrameSource_closedProject_message, project.getName()));
             navigator.getFrameList().back();
         } else {
             super.frameChanged(frame);

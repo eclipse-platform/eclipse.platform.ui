@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -25,7 +26,7 @@ public class ForwardAction extends FrameAction {
      */
     public ForwardAction(FrameList frameList) {
         super(frameList);
-        setText(FrameListMessages.getString("Forward.text")); //$NON-NLS-1$
+        setText(FrameListMessages.Forward_text);
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
@@ -45,11 +46,10 @@ public class ForwardAction extends FrameAction {
         if (nextFrame != null) {
             String text = nextFrame.getToolTipText();
             if (text != null && text.length() > 0) {
-                return FrameListMessages.format(
-                        "Forward.toolTipOneArg", new Object[] { text }); //$NON-NLS-1$
+                return NLS.bind(FrameListMessages.Forward_toolTipOneArg, text);
             }
         }
-        return FrameListMessages.getString("Forward.toolTip"); //$NON-NLS-1$
+        return FrameListMessages.Forward_toolTip;
     }
 
     /**

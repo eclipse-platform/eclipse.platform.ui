@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -317,16 +318,11 @@ public class AdaptedResourceNavigator extends ViewPart {
             if (o instanceof IResource) {
                 return ((IResource) o).getFullPath().makeRelative().toString();
             } else {
-                return ResourceNavigatorMessages
-                        .getString("ResourceNavigator.oneItemSelected");
-                //$NON-NLS-1$
+                return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
             }
         }
         if (selection.size() > 1) {
-            return ResourceNavigatorMessages.format(
-                    "ResourceNavigator.statusLine", new Object[] { new Integer(
-                            selection.size()) });
-            //$NON-NLS-1$
+            return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, new Integer(selection.size()));
         }
         return ""; //$NON-NLS-1$
     }
@@ -338,9 +334,7 @@ public class AdaptedResourceNavigator extends ViewPart {
         if (element instanceof IResource) {
             IPath path = ((IResource) element).getFullPath();
             if (path.isRoot()) {
-                return ResourceNavigatorMessages
-                        .getString("ResourceManager.toolTip");
-                //$NON-NLS-1$
+                return ResourceNavigatorMessages.ResourceManager_toolTip;
             } else {
                 return path.makeRelative().toString();
             }

@@ -164,16 +164,14 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
                 .setImageDescriptor(getImageDescriptor("etool16/export_wiz.gif")); //$NON-NLS-1$
 
         collapseAllAction = new CollapseAllAction(navigator,
-                ResourceNavigatorMessages.getString("CollapseAllAction.title"));//$NON-NLS-1$
-        collapseAllAction.setToolTipText(ResourceNavigatorMessages
-                .getString("CollapseAllAction.toolTip")); //$NON-NLS-1$
+                ResourceNavigatorMessages.CollapseAllAction_title);
+        collapseAllAction.setToolTipText(ResourceNavigatorMessages.CollapseAllAction_toolTip);
         collapseAllAction
                 .setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
 
         toggleLinkingAction = new ToggleLinkingAction(navigator,
-                ResourceNavigatorMessages.getString("ToggleLinkingAction.text")); //$NON-NLS-1$
-        toggleLinkingAction.setToolTipText(ResourceNavigatorMessages
-                .getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
+                ResourceNavigatorMessages.ToggleLinkingAction_text);
+        toggleLinkingAction.setToolTipText(ResourceNavigatorMessages.ToggleLinkingAction_toolTip);
         toggleLinkingAction
                 .setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
     }
@@ -233,8 +231,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
 
-        MenuManager newMenu = new MenuManager(ResourceNavigatorMessages
-                .getString("ResourceNavigator.new")); //$NON-NLS-1$
+        MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_new);
         menu.add(newMenu);
         newMenu.add(newWizardMenu);
 

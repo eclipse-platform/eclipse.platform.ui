@@ -35,8 +35,7 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
         sortByTypeAction = new SortViewAction(navigator, true);
 
         filterAction = new FilterSelectionAction(navigator,
-                ResourceNavigatorMessages
-                        .getString("ResourceNavigator.filterText")); //$NON-NLS-1$
+                ResourceNavigatorMessages.ResourceNavigator_filterText);
         filterAction
                 .setDisabledImageDescriptor(getImageDescriptor("dlcl16/filter_ps.gif"));//$NON-NLS-1$
         filterAction
@@ -45,8 +44,7 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 
     public void fillActionBars(IActionBars actionBars) {
         IMenuManager menu = actionBars.getMenuManager();
-        IMenuManager submenu = new MenuManager(ResourceNavigatorMessages
-                .getString("ResourceNavigator.sort")); //$NON-NLS-1$
+        IMenuManager submenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_sort);
         menu.add(submenu);
         submenu.add(sortByNameAction);
         submenu.add(sortByTypeAction);

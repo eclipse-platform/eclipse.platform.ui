@@ -126,8 +126,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
                             IStatus.ERROR,
                             IDEWorkbenchPlugin.IDE_WORKBENCH,
                             IStatus.ERROR,
-                            ResourceNavigatorMessages
-                                    .getString("LocalSelectionTransfer.errorMessage"), null)); //$NON-NLS-1$
+                            ResourceNavigatorMessages.LocalSelectionTransfer_errorMessage, null));
         }
         return selection;
     }

@@ -46,12 +46,10 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
      * @param viewer the viewer
      */
     public ShowInNavigatorAction(IWorkbenchPage page, ISelectionProvider viewer) {
-        super(viewer, ResourceNavigatorMessages
-                .getString("ShowInNavigator.text")); //$NON-NLS-1$
+        super(viewer, ResourceNavigatorMessages.ShowInNavigator_text);
         Assert.isNotNull(page);
         this.page = page;
-        setDescription(ResourceNavigatorMessages
-                .getString("ShowInNavigator.toolTip")); //$NON-NLS-1$
+        setDescription(ResourceNavigatorMessages.ShowInNavigator_toolTip);
         page.getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 				INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION);
     }
@@ -101,8 +99,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
             }
         } catch (PartInitException e) {
             ErrorDialog.openError(page.getWorkbenchWindow().getShell(),
-                    ResourceNavigatorMessages
-                            .getString("ShowInNavigator.errorMessage"), //$NON-NLS-1$
+                    ResourceNavigatorMessages.ShowInNavigator_errorMessage,
                     e.getMessage(), e.getStatus());
         }
     }

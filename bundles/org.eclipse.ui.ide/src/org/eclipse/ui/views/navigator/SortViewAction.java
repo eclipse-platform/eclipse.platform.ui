@@ -28,14 +28,11 @@ public class SortViewAction extends ResourceNavigatorAction {
     public SortViewAction(IResourceNavigator navigator, boolean sortByType) {
         super(
                 navigator,
-                sortByType ? ResourceNavigatorMessages
-                        .getString("SortView.byType") : ResourceNavigatorMessages.getString("SortView.byName")); //$NON-NLS-2$ //$NON-NLS-1$
+                sortByType ? ResourceNavigatorMessages.SortView_byType : ResourceNavigatorMessages.SortView_byName);
         if (sortByType) {
-            setToolTipText(ResourceNavigatorMessages
-                    .getString("SortView.toolTipByType")); //$NON-NLS-1$
+            setToolTipText(ResourceNavigatorMessages.SortView_toolTipByType);
         } else {
-            setToolTipText(ResourceNavigatorMessages
-                    .getString("SortView.toolTipByName")); //$NON-NLS-1$
+            setToolTipText(ResourceNavigatorMessages.SortView_toolTipByName);
         }
         setEnabled(true);
         sortCriteria = sortByType ? ResourceSorter.TYPE : ResourceSorter.NAME;

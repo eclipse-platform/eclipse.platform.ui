@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
     protected GotoResourceDialog(Shell parentShell, IContainer container,
             int typesMask) {
         super(parentShell, container, typesMask);
-        setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
+        setTitle(ResourceNavigatorMessages.Goto_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell,
                 INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
         setAllowUserToToggleDerived(true);

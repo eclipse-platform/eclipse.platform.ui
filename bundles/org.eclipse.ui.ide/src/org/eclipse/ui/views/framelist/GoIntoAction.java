@@ -24,8 +24,8 @@ public class GoIntoAction extends FrameAction {
      */
     public GoIntoAction(FrameList frameList) {
         super(frameList);
-        setText(FrameListMessages.getString("GoInto.text")); //$NON-NLS-1$
-        setToolTipText(FrameListMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
+        setText(FrameListMessages.GoInto_text);
+        setToolTipText(FrameListMessages.GoInto_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IFrameListHelpContextIds.GO_INTO_ACTION);
         update();

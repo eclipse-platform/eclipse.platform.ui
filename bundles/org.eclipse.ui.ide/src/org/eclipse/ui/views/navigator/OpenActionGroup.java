@@ -81,8 +81,7 @@ public class OpenActionGroup extends ResourceNavigatorActionGroup {
         if (!(element instanceof IFile))
             return;
 
-        MenuManager submenu = new MenuManager(ResourceNavigatorMessages
-                .getString("ResourceNavigator.openWith"), OPEN_WITH_ID); //$NON-NLS-1$
+        MenuManager submenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_openWith, OPEN_WITH_ID);
         submenu.add(new OpenWithMenu(navigator.getSite().getPage(),
                 (IFile) element));
         menu.add(submenu);

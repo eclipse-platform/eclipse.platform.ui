@@ -40,11 +40,9 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 2.0
  */
 public class NavigatorDragAdapter extends DragSourceAdapter {
-    private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages
-            .getString("DragAdapter.title"); //$NON-NLS-1$
+    private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.DragAdapter_title;
 
-    private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages
-            .getString("DragAdapter.checkDeleteMessage"); //$NON-NLS-1$
+    private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages.DragAdapter_checkDeleteMessage;
 
     ISelectionProvider selectionProvider;
 

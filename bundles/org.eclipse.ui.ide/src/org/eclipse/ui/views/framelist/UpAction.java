@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -25,7 +26,7 @@ public class UpAction extends FrameAction {
      */
     public UpAction(FrameList frameList) {
         super(frameList);
-        setText(FrameListMessages.getString("Up.text")); //$NON-NLS-1$
+        setText(FrameListMessages.Up_text);
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
         setDisabledImageDescriptor(images
@@ -44,11 +45,10 @@ public class UpAction extends FrameAction {
         if (parentFrame != null) {
             String text = parentFrame.getToolTipText();
             if (text != null && text.length() > 0) {
-                return FrameListMessages.format(
-                        "Up.toolTipOneArg", new Object[] { text }); //$NON-NLS-1$
+                return NLS.bind(FrameListMessages.Up_toolTipOneArg, text);
             }
         }
-        return FrameListMessages.getString("Up.toolTip"); //$NON-NLS-1$
+        return FrameListMessages.Up_toolTip;
 
     }
 

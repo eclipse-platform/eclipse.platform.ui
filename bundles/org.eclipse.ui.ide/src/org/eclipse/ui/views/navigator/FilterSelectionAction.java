@@ -21,14 +21,11 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
  * The FilterSelectionAction opens the filters dialog.
  */
 public class FilterSelectionAction extends ResourceNavigatorAction {
-    private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages
-            .getString("FilterSelection.toolTip"); //$NON-NLS-1$
+    private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.FilterSelection_toolTip;
 
-    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages
-            .getString("FilterSelection.message"); //$NON-NLS-1$
+    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.FilterSelection_message;
 
-    private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages
-            .getString("FilterSelection.title"); //$NON-NLS-1$
+    private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages.FilterSelection_title;
 
     /**
      * Creates the action.

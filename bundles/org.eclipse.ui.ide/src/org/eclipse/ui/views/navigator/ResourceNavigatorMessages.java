@@ -1,58 +1,88 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * Utility class which helps managing messages
- * @since 2.0
- */
-public class ResourceNavigatorMessages {
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.navigator.messages";//$NON-NLS-1$
+public class ResourceNavigatorMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ui.views.navigator.messages";//$NON-NLS-1$
 
-    private static ResourceBundle bundle = ResourceBundle
-            .getBundle(RESOURCE_BUNDLE);
+	public static String ResourceNavigator_oneItemSelected;
+	public static String ResourceNavigator_statusLine;
+	public static String ResourceNavigator_workingSetToolTip;
+	public static String ResourceNavigator_workingSetInputToolTip;
+	public static String ResourceManager_toolTip;
+	public static String ShowInNavigator_errorMessage;
 
-    private ResourceNavigatorMessages() {
-        // prevent instantiation of class
-    }
+	// --- Actions ---
+	public static String ResourceNavigator_sort;
+	public static String SortView_byType;
+	public static String SortView_toolTipByType;
+	public static String SortView_byName;
+	public static String SortView_toolTipByName;
 
-    /**
-     * Returns the formatted message for the given key in
-     * the resource bundle. 
-     *
-     * @param key the resource name
-     * @param args the message arguments
-     * @return the string
-     */
-    public static String format(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
-    }
+	public static String ToggleLinkingAction_text;
+	public static String ToggleLinkingAction_toolTip;
 
-    /**
-     * Returns the resource object with the given key in
-     * the resource bundle. If there isn't any value under
-     * the given key, the key is returned.
-     *
-     * @param key the resource name
-     * @return the string
-     */
-    public static String getString(String key) {
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return key;
-        }
-    }
+	public static String ResourceNavigator_filterText;
+
+	public static String ResourceNavigator_new;
+	public static String ResourceNavigator_openWith;
+
+	public static String ShowInNavigator_text;
+	public static String ShowInNavigator_toolTip;
+
+	public static String CopyAction_title;
+	public static String CopyAction_toolTip;
+
+	public static String PasteAction_title;
+	public static String PasteAction_toolTip;
+
+	public static String CollapseAllAction_title;
+	public static String CollapseAllAction_toolTip;
+
+	public static String GoToResource_label;
+
+	public static String NavigatorFrameSource_closedProject_title;
+	public static String NavigatorFrameSource_closedProject_message;
+	// --- Dialogs ---
+	public static String Goto_title;
+	public static String FilterSelection_message;
+	public static String FilterSelection_toolTip;
+	public static String FilterSelection_title;
+
+	public static String DropAdapter_title;
+	public static String DropAdapter_problemImporting;
+	public static String DropAdapter_problemsMoving;
+	public static String DropAdapter_question;
+	public static String DropAdapter_targetMustBeResource;
+	public static String DropAdapter_canNotDropIntoClosedProject;
+	public static String DropAdapter_resourcesCanNotBeSiblings;
+	public static String DropAdapter_ok;
+	public static String DropAdapter_overwriteQuery;
+	public static String DropAdapter_dropOperationErrorOther;
+
+	public static String DragAdapter_title;
+	public static String DragAdapter_checkDeleteMessage;
+
+	public static String LocalSelectionTransfer_errorMessage;
+
+	public static String CopyToClipboardProblemDialog_title;
+	public static String CopyToClipboardProblemDialog_message;
+
+	public static String MoveResourceAction_title;
+	public static String MoveResourceAction_checkMoveMessage;
+
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, ResourceNavigatorMessages.class);
+	}
 }

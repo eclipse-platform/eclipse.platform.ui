@@ -67,13 +67,12 @@ import org.eclipse.ui.part.ResourceTransfer;
      * @param clipboard a platform clipboard
      */
     public CopyAction(Shell shell, Clipboard clipboard) {
-        super(ResourceNavigatorMessages.getString("CopyAction.title")); //$NON-NLS-1$
+        super(ResourceNavigatorMessages.CopyAction_title);
         Assert.isNotNull(shell);
         Assert.isNotNull(clipboard);
         this.shell = shell;
         this.clipboard = clipboard;
-        setToolTipText(ResourceNavigatorMessages
-                .getString("CopyAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(ResourceNavigatorMessages.CopyAction_toolTip);
         setId(CopyAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				INavigatorHelpContextIds.COPY_ACTION);
@@ -160,8 +159,7 @@ import org.eclipse.ui.part.ResourceTransfer;
             if (MessageDialog
                     .openQuestion(
                             shell,
-                            ResourceNavigatorMessages
-                                    .getString("CopyToClipboardProblemDialog.title"), ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+                            ResourceNavigatorMessages.CopyToClipboardProblemDialog_title, ResourceNavigatorMessages.CopyToClipboardProblemDialog_message))
                 setClipboard(resources, fileNames, names);
         }
     }

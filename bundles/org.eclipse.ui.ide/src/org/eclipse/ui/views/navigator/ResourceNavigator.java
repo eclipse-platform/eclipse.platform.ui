@@ -48,6 +48,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -599,14 +600,11 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             if (o instanceof IResource) {
                 return ((IResource) o).getFullPath().makeRelative().toString();
             } else {
-                return ResourceNavigatorMessages
-                        .getString("ResourceNavigator.oneItemSelected"); //$NON-NLS-1$
+                return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
             }
         }
         if (selection.size() > 1) {
-            return ResourceNavigatorMessages.format(
-                    "ResourceNavigator.statusLine", //$NON-NLS-1$
-                    new Object[] { new Integer(selection.size()) });
+            return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, String.valueOf(selection.size()));
         }
         return ""; //$NON-NLS-1$
     }
@@ -633,8 +631,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         if (element instanceof IResource) {
             IPath path = ((IResource) element).getFullPath();
             if (path.isRoot()) 
-                return ResourceNavigatorMessages
-                        .getString("ResourceManager.toolTip"); //$NON-NLS-1$
+                return ResourceNavigatorMessages.ResourceManager_toolTip; //$NON-NLS-1$
             return path.makeRelative().toString();
         } 
         
@@ -1226,9 +1223,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 || input.equals(workspace.getRoot())) {
             setContentDescription(""); //$NON-NLS-1$
             if (workingSet != null) {
-                setTitleToolTip(ResourceNavigatorMessages.format(
-                        "ResourceNavigator.workingSetToolTip", //$NON-NLS-1$
-                        new Object[] { workingSet.getName() }));
+                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetToolTip, workingSet.getName()));
             } else {
                 setTitleToolTip(""); //$NON-NLS-1$
             }
@@ -1240,9 +1235,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             if(text != null)
             	setContentDescription(text);
             if (workingSet != null) {
-                setTitleToolTip(ResourceNavigatorMessages.format(
-                        "ResourceNavigator.workingSetInputToolTip", //$NON-NLS-1$
-                        new Object[] { inputToolTip, workingSet.getName() }));
+                setTitleToolTip(NLS.bind(ResourceNavigatorMessages.ResourceNavigator_workingSetInputToolTip, inputToolTip, workingSet.getName()));
             } else {
                 setTitleToolTip(inputToolTip);
             }

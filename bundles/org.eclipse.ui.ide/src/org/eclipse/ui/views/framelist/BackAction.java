@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.framelist;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -25,7 +26,7 @@ public class BackAction extends FrameAction {
      */
     public BackAction(FrameList frameList) {
         super(frameList);
-        setText(FrameListMessages.getString("Back.text")); //$NON-NLS-1$
+        setText(FrameListMessages.Back_text);
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
@@ -45,11 +46,10 @@ public class BackAction extends FrameAction {
         if (previousFrame != null) {
             String text = previousFrame.getToolTipText();
             if (text != null && text.length() > 0) {
-                return FrameListMessages.format(
-                        "Back.toolTipOneArg", new Object[] { text }); //$NON-NLS-1$
+                return NLS.bind(FrameListMessages.Back_toolTipOneArg, text);
             }
         }
-        return FrameListMessages.getString("Back.toolTip"); //$NON-NLS-1$
+        return FrameListMessages.Back_toolTip;
     }
 
     /**

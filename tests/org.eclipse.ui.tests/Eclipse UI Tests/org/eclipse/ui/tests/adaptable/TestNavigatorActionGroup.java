@@ -52,8 +52,7 @@ public class TestNavigatorActionGroup extends ActionGroup {
         IStructuredSelection selection = (IStructuredSelection) getContext()
                 .getSelection();
 
-        MenuManager newMenu = new MenuManager(ResourceNavigatorMessages
-                .getString("ResourceNavigator.new")); //$NON-NLS-1$
+        MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.ResourceNavigator_new);
         menu.add(newMenu);
         newMenu.add(new NewWizardMenu(navigator.getSite().getWorkbenchWindow()));
 

@@ -90,7 +90,7 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
         forwardAction = new ForwardAction(frameList);
         upAction = new UpAction(frameList);
         goToResourceAction = new GotoResourceAction(navigator,
-                ResourceNavigatorMessages.getString("GoToResource.label")); //$NON-NLS-1$
+                ResourceNavigatorMessages.GoToResource_label);
     }
 
     public void updateActionBars() {

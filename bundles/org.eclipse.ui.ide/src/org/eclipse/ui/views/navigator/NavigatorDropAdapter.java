@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -182,7 +183,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      */
     private IStatus ok() {
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0,
-                ResourceNavigatorMessages.getString("DropAdapter.ok"), null); //$NON-NLS-1$
+                ResourceNavigatorMessages.DropAdapter_ok, null);
     }
 
     /**
@@ -193,8 +194,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
         if (status == null)
             return;
 
-        String genericTitle = ResourceNavigatorMessages
-                .getString("DropAdapter.title"); //$NON-NLS-1$
+        String genericTitle = ResourceNavigatorMessages.DropAdapter_title;
         int codes = IStatus.ERROR | IStatus.WARNING;
 
         //simple case: one error, not a multistatus
@@ -255,8 +255,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      */
     private IStatus performFileDrop(Object data) {
         MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0,
-                ResourceNavigatorMessages
-                        .getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
+                ResourceNavigatorMessages.DropAdapter_problemImporting, null);
         mergeStatus(problems, validateTarget(getCurrentTarget(),
                 getCurrentTransfer()));
 
@@ -281,8 +280,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      */
     private IStatus performResourceCopy(Shell shell, IResource[] sources) {
         MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
-                ResourceNavigatorMessages
-                        .getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
+                ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
         mergeStatus(problems, validateTarget(getCurrentTarget(),
                 getCurrentTransfer()));
 
@@ -299,17 +297,15 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      */
     private IStatus performResourceMove(IResource[] sources) {
         MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1,
-                ResourceNavigatorMessages
-                        .getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
+                ResourceNavigatorMessages.DropAdapter_problemsMoving, null);
         mergeStatus(problems, validateTarget(getCurrentTarget(),
                 getCurrentTransfer()));
 
         IContainer target = getActualTarget((IResource) getCurrentTarget());
         ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
                 getShell(),
-                ResourceNavigatorMessages.getString("MoveResourceAction.title"), //$NON-NLS-1$
-                ResourceNavigatorMessages
-                        .getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
+                ResourceNavigatorMessages.MoveResourceAction_title,
+                ResourceNavigatorMessages.MoveResourceAction_checkMoveMessage);
         sources = checker.checkReadOnlyResources(sources);
         MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(
                 getShell());
@@ -326,8 +322,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             return ALL;
 
         final String returnCode[] = { CANCEL };
-        final String msg = ResourceNavigatorMessages.format(
-                "DropAdapter.overwriteQuery", new Object[] { pathString }); //$NON-NLS-1$
+        final String msg = NLS.bind(ResourceNavigatorMessages.DropAdapter_overwriteQuery, pathString);
         final String[] options = { IDialogConstants.YES_LABEL,
                 IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL,
                 IDialogConstants.CANCEL_LABEL };
@@ -335,8 +330,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             public void run() {
                 MessageDialog dialog = new MessageDialog(
                         getShell(),
-                        ResourceNavigatorMessages
-                                .getString("DropAdapter.question"), null, msg, MessageDialog.QUESTION, options, 0); //$NON-NLS-1$
+                        ResourceNavigatorMessages.DropAdapter_question, null, msg, MessageDialog.QUESTION, options, 0);
                 dialog.open();
                 int returnVal = dialog.getReturnCode();
                 String[] returnCodes = { YES, ALL, NO, CANCEL };
@@ -374,18 +368,15 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
      */
     private IStatus validateTarget(Object target, TransferData transferType) {
         if (!(target instanceof IResource)) {
-            return info(ResourceNavigatorMessages
-                    .getString("DropAdapter.targetMustBeResource")); //$NON-NLS-1$
+            return info(ResourceNavigatorMessages.DropAdapter_targetMustBeResource);
         }
         IResource resource = (IResource) target;
         if (!resource.isAccessible()) {
-            return error(ResourceNavigatorMessages
-                    .getString("DropAdapter.canNotDropIntoClosedProject")); //$NON-NLS-1$
+            return error(ResourceNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
         }
         IContainer destination = getActualTarget(resource);
         if (destination.getType() == IResource.ROOT) {
-            return error(ResourceNavigatorMessages
-                    .getString("DropAdapter.resourcesCanNotBeSiblings")); //$NON-NLS-1$
+            return error(ResourceNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
         }
         String message = null;
         // drag within Eclipse?
@@ -393,8 +384,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             IResource[] selectedResources = getSelectedResources();
 
             if (selectedResources.length == 0)
-                message = ResourceNavigatorMessages
-                        .getString("DropAdapter.dropOperationErrorOther"); //$NON-NLS-1$
+                message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
             else {
                 CopyFilesAndFoldersOperation operation;
                 if (lastValidOperation == DND.DROP_COPY) {
