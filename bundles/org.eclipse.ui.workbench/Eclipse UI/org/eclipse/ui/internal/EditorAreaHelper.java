@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -62,7 +63,7 @@ public class EditorAreaHelper {
 		openEditorDropDownHandlerActivation = handlerService.activateHandler(
 				"org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
 				openEditorDropDownHandler, new ActiveShellExpression(shell),
-				ActiveShellExpression.SOURCES);;
+				ActiveShellExpression.SOURCES| ISources.LEGACY_MEDIUM);
     }
 
     /**

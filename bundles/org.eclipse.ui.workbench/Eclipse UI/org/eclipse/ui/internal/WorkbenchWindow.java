@@ -70,6 +70,7 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -480,7 +481,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 String commandId = (String) entry.getKey();
                 IHandler handler = (IHandler) entry.getValue();
 				newHandlers.add(handlerService.activateHandler(commandId,
-						handler, expression, ActiveShellExpression.SOURCES));
+                        handler, expression, ActiveShellExpression.SOURCES
+                                | ISources.LEGACY_LEGACY));
             }
         }
         
