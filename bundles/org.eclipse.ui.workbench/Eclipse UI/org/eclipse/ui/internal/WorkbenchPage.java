@@ -2739,10 +2739,16 @@ public IViewPart showView(final String viewID)
 {
 	return showView(viewID, true);
 }
+
+/*
+ * NOTE: Making showView(string, boolean) public instead of being
+ * private, so debug team can test out showing views on context
+ * changes.
+ */
 /**
  * See IWorkbenchPage.
  */
-private IViewPart showView(final String viewID, final boolean activate) 
+public IViewPart showView(final String viewID, final boolean activate) 
 	throws PartInitException
 {
 	// Run op in busy cursor.
