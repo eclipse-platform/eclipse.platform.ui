@@ -37,25 +37,67 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
  * The table has one column.
  * The viewer has no input, no content provider, a default label provider, 
  * no sorter, and no filters.
+ * <p>
+ * This is equivalent to calling <code>new CheckboxTableViewer(parent, SWT.BORDER, true)</code>.
+ * See this constructor for more details.
+ * </p>
  *
  * @param parent the parent control
  */
 public CheckboxTableViewer(Composite parent) {
-	this(parent, SWT.BORDER);
+	this(parent, SWT.BORDER, true);
 }
 /**
  * Creates a table viewer on a newly-created table control under the given parent.
  * The table control is created using the given SWT style bits, plus the <code>CHECK</code> style bit.
- * The table has one column.
+ * The table has one column. 
  * The viewer has no input, no content provider, a default label provider, 
  * no sorter, and no filters.
+ * <p>
+ * This is equivalent to calling <code>new CheckboxTableViewer(parent, style, true)</code>.
+ * See this constructor for more details.
+ * </p>
  *
  * @param parent the parent control
  * @param style SWT style bits
  */
 public CheckboxTableViewer(Composite parent, int style) {
-	this(createTable(parent, style));
+	this(parent, style, true);
 }
+
+/**
+ * Creates a table viewer on a newly-created table control under the given parent.
+ * The table control is created using the given SWT style bits, plus the <code>CHECK</code> style bit.
+ * The table shows its contents in a single column, with no header.
+ * The viewer has no input, no content provider, a default label provider, 
+ * no sorter, and no filters.
+ * <p>
+ * If <code>createColumn</code> is true, this also adds a <code>TableColumn</code> for the single column, 
+ * and sets a layout on the table which sizes the column to fill the table for its initial sizing, but does nothing 
+ * on subsequent resizes.
+ * If <code>createColumn</code> is false, no <code>TableColumn</code> is added.
+ * <p>
+ * Note that SWT does not require a <code>TableColumn</code> if showing only a single column with no header.
+ * SWT correctly handles the initial sizing and subsequent resizes in this case.
+ * </p>
+ * <p>
+ * If the caller adds its own columns, or uses <code>Table.setHeadersVisible(true)</code>, or needs to handle 
+ * dynamic resizing of the table, it is recommended that it either uses this constructor with
+ * <code>createColumn == false</code>, or that it creates the <code>Table</code> itself, 
+ * specifying the <code>SWT.CHECK</code> style bit with any other style bits needed, and calls 
+ * <code>new CheckboxTableViewer(Table)</code> rather than the other constructors.
+ * </p>
+ *
+ * @param parent the parent control
+ * @param style SWT style bits
+ * @param createColumn flag to create a TableColumn
+ * 
+ * @since 2.0
+ */
+public CheckboxTableViewer(Composite parent, int style, boolean createColumn) {
+	this(createTable(parent, style, createColumn));
+}
+
 /**
  * Creates a table viewer on the given table control.
  * The <code>SWT.CHECK</code> style bit must be set on the given table control.
@@ -81,8 +123,38 @@ public void addCheckStateListener(ICheckStateListener listener) {
  * @return a new table control
  */
 protected static Table createTable(Composite parent, int style) {
-	return new Table(parent, SWT.CHECK | style);
+	Table table = new Table(parent, SWT.CHECK | style);
+	
+	// Although this table column is not needed, and can cause resize problems,
+	// it can't be removed since this would be a breaking change against R1.0.
+	// See bug 6643 for more details.
+	new TableColumn(table, SWT.NONE);
+	TableLayout layout = new TableLayout();
+	layout.addColumnData(new ColumnWeightData(100));
+	table.setLayout(layout);
+	
+	return table;
 }
+
+/**
+ * Creates a new table control showing one column.
+ *
+ * @param parent the parent control
+ * @param style style bits
+ * @return a new table control
+ * 
+ * @since 2.0
+ */
+private static Table createTable(Composite parent, int style, boolean createColumn) {
+	if (createColumn) {
+		// call 1.0 method for backwards compatibility
+		return createTable(parent, style);
+	}
+	else {
+		return new Table(parent, SWT.CHECK | style);
+	}
+}
+
 /**
  * Notifies any check state listeners that a check state changed  has been received.
  * Only listeners registered at the time this method is called are notified.

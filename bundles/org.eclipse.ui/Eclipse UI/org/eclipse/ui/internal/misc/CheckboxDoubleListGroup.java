@@ -145,7 +145,7 @@ protected void createContents(Composite parent,int width,int height) {
  *	@param parent org.eclipse.swt.widgets.Composite
  */
 protected void createList1Viewer(Composite parent) {
-	list1Viewer = new CheckboxTableViewer(parent, SWT.NONE);
+	list1Viewer = new CheckboxTableViewer(parent, SWT.NONE, false);
 	list1Viewer.setContentProvider(list1ContentProvider);
 	list1Viewer.setLabelProvider(list1LabelProvider);
 	list1Viewer.addCheckStateListener(this);
@@ -157,7 +157,7 @@ protected void createList1Viewer(Composite parent) {
  *	@param parent org.eclipse.swt.widgets.Composite
  */
 protected void createList2Viewer(Composite parent) {
-	list2Viewer = new CheckboxTableViewer(parent, SWT.NONE);
+	list2Viewer = new CheckboxTableViewer(parent, SWT.NONE, false);
 	list2Viewer.setContentProvider(list2ContentProvider);
 	list2Viewer.setLabelProvider(list2LabelProvider);
 	list2Viewer.addCheckStateListener(this);

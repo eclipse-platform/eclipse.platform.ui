@@ -188,7 +188,7 @@ protected void createContents(Composite parent, int width, int height, int style
  *	Create this group's list viewer.
  */
 protected void createListViewer(Composite parent, int width, int height) {
-	listViewer = new CheckboxTableViewer(parent, SWT.BORDER);
+	listViewer = new CheckboxTableViewer(parent, SWT.BORDER, false);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = width;
 	data.heightHint = height;

@@ -60,7 +60,7 @@ public void createControl(Composite parent) {
 	Label referenceLabel = new Label(composite, SWT.NONE);
 	referenceLabel.setText(REFERENCED_PROJECTS_TITLE);
 
-	referenceProjectsViewer = new CheckboxTableViewer(composite, SWT.BORDER);
+	referenceProjectsViewer = new CheckboxTableViewer(composite, SWT.BORDER, false);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;

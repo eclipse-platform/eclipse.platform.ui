@@ -52,7 +52,7 @@ protected Control createContents(Composite parent) {
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	listViewer = new CheckboxTableViewer(composite, SWT.TOP | SWT.BORDER);
+	listViewer = new CheckboxTableViewer(composite, SWT.TOP | SWT.BORDER, false);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;
