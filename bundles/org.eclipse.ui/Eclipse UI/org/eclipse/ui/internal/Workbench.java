@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
@@ -227,7 +228,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public EditorHistory getEditorHistory() {
 		if (editorHistory == null) {
-			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store = getPreferenceStore();
 			editorHistory = new EditorHistory(store.getInt(IPreferenceConstants.RECENT_FILES));
 		}
 		return editorHistory;
@@ -295,6 +296,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public PreferenceManager getPreferenceManager() {
 		return WorkbenchPlugin.getDefault().getPreferenceManager();
+	}
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
+	 */
+	public IPreferenceStore getPreferenceStore() {
+		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 	/**
 	 * @return the product info object

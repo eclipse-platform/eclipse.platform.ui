@@ -5,6 +5,7 @@ package org.eclipse.ui;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 
@@ -92,6 +93,13 @@ public IPerspectiveRegistry getPerspectiveRegistry();
  * @return the workbench preference manager
  */
 public PreferenceManager getPreferenceManager();
+/**
+ * Returns the preference store for the workbench.
+ *
+ * @return the workbench preference store
+ * @since 2.0
+ */
+public IPreferenceStore getPreferenceStore();
 /**
  * Returns the shared images for the workbench.
  *
