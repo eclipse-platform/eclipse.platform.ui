@@ -112,7 +112,7 @@ public class EngineResultSection {
 		section.addExpansionListener(new IExpansionListener() {
 			public void expansionStateChanging(ExpansionEvent e) {
 				if (needsUpdating)
-					asyncUpdateResults(true);
+					asyncUpdateResults(true, false);
 			}
 
 			public void expansionStateChanged(ExpansionEvent e) {
@@ -122,7 +122,7 @@ public class EngineResultSection {
 	}
 
 	private void createFormText(Composite parent, FormToolkit toolkit) {
-		searchResults = toolkit.createFormText(parent, true);
+		searchResults = toolkit.createFormText(parent, false);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
 		searchResults.marginHeight = 5;
@@ -146,10 +146,10 @@ public class EngineResultSection {
 				Object href = e.getHref();
 				if (HREF_NEXT.equals(href)) {
 					resultOffset += HITS_PER_PAGE;
-					asyncUpdateResults(false);
+					asyncUpdateResults(false, true);
 				} else if (HREF_PREV.equals(href)) {
 					resultOffset -= HITS_PER_PAGE;
-					asyncUpdateResults(false);
+					asyncUpdateResults(false, true);
 				} else if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
 				} else
@@ -195,7 +195,7 @@ public class EngineResultSection {
 
 	public synchronized void add(ISearchEngineResult match) {
 		hits.add(match);
-		asyncUpdateResults(false);
+		asyncUpdateResults(false, false);
 	}
 
 	/*
@@ -206,15 +206,17 @@ public class EngineResultSection {
 	public synchronized void add(ISearchEngineResult[] matches) {
 		for (int i = 0; i < matches.length; i++)
 			hits.add(matches[i]);
-		asyncUpdateResults(false);
+		asyncUpdateResults(false, false);
 	}
 
-	private void asyncUpdateResults(boolean now) {
+	private void asyncUpdateResults(boolean now, final boolean scrollToBeginning) {
 		Runnable runnable = new Runnable() {
 			public void run() {
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
 					public void run() {
 						updateResults(true);
+						if (scrollToBeginning)
+							part.scrollToBeginning();
 					}
 				});
 			}
@@ -238,7 +240,6 @@ public class EngineResultSection {
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
 		boolean earlyExit = false;
-		// addNavigation(buff);
 
 		for (int i = resultOffset; i < hits.size(); i++) {
 			if (i - resultOffset == HITS_PER_PAGE) {
@@ -320,14 +321,14 @@ public class EngineResultSection {
 				navContainer.setLayoutData(td);
 				// navContainer.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				GridLayout glayout = new GridLayout();
-				glayout.numColumns = 3;
-				glayout.horizontalSpacing = 0;
+				glayout.numColumns = 2;
+				//glayout.horizontalSpacing = 0;
 				// glayout.makeColumnsEqualWidth=true;
 				navContainer.setLayout(glayout);
 				Label sep = toolkit.createLabel(navContainer, null,
 						SWT.SEPARATOR | SWT.HORIZONTAL);
 				GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-				gd.horizontalSpan = 3;
+				gd.horizontalSpan = 2;
 				gd.widthHint = 2;
 				sep.setLayoutData(gd);
 				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
@@ -338,13 +339,13 @@ public class EngineResultSection {
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						resultOffset -= HITS_PER_PAGE;
-						asyncUpdateResults(false);
+						asyncUpdateResults(false, true);
 					}
 				});
-				Label space = toolkit.createLabel(navContainer, null);
-				gd = new GridData(GridData.FILL_HORIZONTAL);
-				gd.widthHint = 5;
-				space.setLayoutData(gd);
+				//Label space = toolkit.createLabel(navContainer, null);
+				//gd = new GridData(GridData.FILL_HORIZONTAL);
+				//gd.widthHint = 5;
+				//space.setLayoutData(gd);
 				nextLink = toolkit
 						.createImageHyperlink(navContainer, SWT.RIGHT);
 				int remainder = Math.min(hits.size() - resultOffset
@@ -352,12 +353,13 @@ public class EngineResultSection {
 				nextLink.setText("Next " + remainder);
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
-				nextLink.setLayoutData(new GridData(
-						GridData.HORIZONTAL_ALIGN_END));
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+				gd.grabExcessHorizontalSpace=true;
+				nextLink.setLayoutData(gd);
 				nextLink.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {
 						resultOffset += HITS_PER_PAGE;
-						asyncUpdateResults(false);
+						asyncUpdateResults(false, true);
 					}
 				});
 			}

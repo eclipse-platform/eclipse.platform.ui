@@ -283,4 +283,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		return false;
 	}
+	void scrollToBeginning() {
+		innerForm.setOrigin(0, 0);
+	}
 }

@@ -12,21 +12,45 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
-import org.eclipse.help.*;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.IndexerJob;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ILayoutExtension;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ReusableHelpPart implements IHelpUIConstants {
@@ -389,7 +413,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		openInfoCenterAction.setText(HelpUIResources.getString("ReusableHelpPart.openInfoCenterAction.label")); //$NON-NLS-1$
 		openAction = new OpenHrefAction("open") { //$NON-NLS-1$
 			protected void busyRun() {
-				doOpen(getTarget(), false);
+				doOpen(getTarget(), getShowDocumentsInPlace());
 			}
 		};
 		openAction.setText(HelpUIResources.getString("ReusableHelpPart.openAction.label")); //$NON-NLS-1$
