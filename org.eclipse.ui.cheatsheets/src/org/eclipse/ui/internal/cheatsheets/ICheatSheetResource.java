@@ -33,8 +33,8 @@ public interface ICheatSheetResource {
 	//
 
 	// CheatSheetPlugin
-	public static final String ERROR_READING_STATE_FILE = "ERROR_READING_STATE_FILE"; //$NON-NLS-1$
-	public static final String ERROR_WRITING_STATE_FILE = "ERROR_WRITING_STATE_FILE"; //$NON-NLS-1$
+	public static final String ERROR_READING_STATE_FILE = "%ERROR_READING_STATE_FILE"; //$NON-NLS-1$
+	public static final String ERROR_WRITING_STATE_FILE = "%ERROR_WRITING_STATE_FILE"; //$NON-NLS-1$
 
 	// CheatSheetCategoryBasedSelectionDialog, CheatSheetSelectionDialog
 	public static final String CHEAT_SHEET_SELECTION_DIALOG_TITLE = "%CHEAT_SHEET_SELECTION_DIALOG_TITLE"; //$NON-NLS-1$
@@ -64,10 +64,13 @@ public interface ICheatSheetResource {
 
 	// CheatSheetViewer
 	public static final String ERROR_RUNNING_ACTION = "%ERROR_RUNNING_ACTION"; //$NON-NLS-1$
+	public static final String ERROR_INVALID_CHEATSHEET_ID = "%ERROR_INVALID_CHEATSHEET_ID"; //$NON-NLS-1$
+	public static final String ERROR_CHEATSHEET_DOESNOT_EXIST = "%ERROR_CHEATSHEET_DOESNOT_EXIST"; //$NON-NLS-1$
+	public static final String INITIAL_VIEW_DIRECTIONS = "%INITIAL_VIEW_DIRECTIONS"; //$NON-NLS-1$
 
 	// ErrorPage
 	public static final String ERROR_LOADING_CHEATSHEET_CONTENT = "%ERROR_LOADING_CHEATSHEET_CONTENT"; //$NON-NLS-1$
-	public static final String ERROR_PAGE_MESSAGE ="%ERROR_PAGE_MESSAGE"; //$NON-NLS-1$
+	public static final String ERROR_PAGE_MESSAGE = "%ERROR_PAGE_MESSAGE"; //$NON-NLS-1$
 
 	// CheatSheetElement, CheatSheetItemExtensionElement, CoreItem
 	public static final String ERROR_LOADING_CLASS_FOR_ACTION = "%ERROR_LOADING_CLASS_FOR_ACTION"; //$NON-NLS-1$
