@@ -27,35 +27,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.0
  * @see org.eclipse.ui.model.IWorkbenchAdapter
  */
-public final class AdaptableList extends ArrayList implements IAdaptable {
+public final class AdaptableList
+	extends ArrayList
+	implements IAdaptable, IWorkbenchAdapter {
 	
-	/**
-	 * Workbench adapter for this list.
-	 */
-	private class WorkbenchAdapter implements IWorkbenchAdapter {
-		public ImageDescriptor getImageDescriptor(Object object) {
-			// list has no image
-			return null;
-		}
-		public String getLabel(Object o) {
-			// list has no label
-			return null;
-		}
-		public Object getParent(Object o) {
-			// list has no parent
-			return null;
-		}
-		public Object[] getChildren(Object o) {
-			// list's elements are the children
-			return toArray();
-		}
-	}
-
-	/**
-	 * Workbench adapter for this list.
-	 */
-	private final WorkbenchAdapter myAdapter = new WorkbenchAdapter();
-
 	/**
 	 * Creates a new adaptable list. All of the elements in the list must 
 	 * implement <code>IAdaptable</code>.
@@ -91,8 +66,40 @@ public final class AdaptableList extends ArrayList implements IAdaptable {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
-			return myAdapter;
+			return this;
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see IWorkbenchAdapter
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		// list has no image
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkbenchAdapter
+	 */
+	public String getLabel(Object o) {
+		// list has no label
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkbenchAdapter
+	 */
+	public Object getParent(Object o) {
+		// list has no parent
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see IWorkbenchAdapter
+	 */
+	public Object[] getChildren(Object o) {
+		// list's elements are the children
+		return toArray();
 	}
 }
