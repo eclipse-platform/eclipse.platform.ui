@@ -231,8 +231,7 @@ import org.eclipse.compare.internal.Utilities;
 	public boolean canFlipToNextPage() {
 		if (true) {
 			// we can't call getNextPage to determine if flipping is allowed since computing
-			// the next page is quite expensive (checking preconditions and creating a
-			// change). So we say yes if the page is complete.
+			// the next page is quite expensive. So we say yes if the page is complete.
 			return isPageComplete();
 		} else {
 			return super.canFlipToNextPage();

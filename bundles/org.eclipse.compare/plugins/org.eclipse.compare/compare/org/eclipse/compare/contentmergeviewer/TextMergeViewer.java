@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
@@ -143,10 +144,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 	// constants
 	/** Width of left and right vertical bar */
-	private static final int MARGIN_WIDTH= 10;
+	private static final int MARGIN_WIDTH= 6;
 	/** Width of center bar */
-	private static final int CENTER_WIDTH= 40;
-	/** */
+	private static final int CENTER_WIDTH= 34;
+	/** Width of birds eye view */
+	private static final int BIRDS_EYE_VIEW_WIDTH= 10;
+	/** Width of birds eye view */
+	private static final int BIRDS_EYE_VIEW_INSET= 1;
+
+	/** line width of change borders */
 	private static final int LW= 1;
 	/** Provide more merge controls in CompareViewerPane toolbar */
 	private static final boolean USE_MORE_CONTROLS= true;
@@ -256,11 +262,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private BufferedCanvas fRightCanvas;
 	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
+	private Canvas fBirdsEyeCanvas;
 		
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
-
+	private Cursor fBirdsEyeCursor;
+					
+					
 	/**
 	 * The position updater used to adapt the positions representing
 	 * the child document ranges to changes of the parent document.
@@ -331,6 +340,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean fIsToken= false;
 		/** child token diffs */
 		ArrayList fDiffs;
+		boolean fIsWhitespace= false;
 
 		/**
 		 * Create Diff from two ranges and an optional parent diff.
@@ -562,6 +572,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		};
 		fComposite.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
+		
+		fBirdsEyeCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 	}
 	
 	private void updateFont(IPreferenceStore ps, Control c) {
@@ -654,6 +666,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fLeftCanvas= null;
 		fRightCanvas= null;
 		fVScrollBar= null;
+		fBirdsEyeCanvas= null;
 
 		unsetDocument(fAncestor);
 		unsetDocument(fLeft);
@@ -671,6 +684,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fFont != null) {
 			fFont.dispose();
 			fFont= null;
+		}
+		
+		if (fBirdsEyeCursor != null) {
+			fBirdsEyeCursor.dispose();
+			fBirdsEyeCursor= null;
 		}
 		
 		super.handleDispose(event);
@@ -737,6 +755,144 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			}
 		);
+		
+		fBirdsEyeCanvas= new BufferedCanvas(composite, SWT.NONE) {
+			public void doPaint(GC gc) {
+				paintBirdsEyeView(this, gc);
+			}
+		};
+		fBirdsEyeCanvas.addMouseListener(
+			new MouseAdapter() {
+				public void mouseDown(MouseEvent e) {
+					Diff diff= handlemouseInBirdsEyeView(fBirdsEyeCanvas, e.y);
+					if (diff != null && diff.fDirection != Differencer.NO_CHANGE) {
+						//fCurrentDiff= null;
+						setCurrentDiff(diff, true);
+					}
+				}
+			}
+		);
+		fBirdsEyeCanvas.addMouseMoveListener(
+			new MouseMoveListener() {
+				
+				private Cursor fLastCursor;
+				
+				public void mouseMove(MouseEvent e) {
+					Cursor cursor= null;
+					Diff diff= handlemouseInBirdsEyeView(fBirdsEyeCanvas, e.y);
+					if (diff != null && diff.fDirection != Differencer.NO_CHANGE)
+						cursor= fBirdsEyeCursor;
+					if (fLastCursor != cursor) {
+						fBirdsEyeCanvas.setCursor(cursor);
+						fLastCursor= cursor;
+					}
+				}
+			}
+		);
+	}
+	
+	private Diff handlemouseInBirdsEyeView(Canvas canvas, int my) {
+		int yy, hh;
+		
+		Point size= canvas.getSize();
+		
+		int virtualHeight= getVirtualHeight();
+		if (virtualHeight < getViewportHeight())
+			return null;
+		
+		int y= 0;
+		if (fAllDiffs != null) {
+			Iterator e= fAllDiffs.iterator();
+			for (int i= 0; e.hasNext(); i++) {
+				Diff diff= (Diff) e.next();
+				int h= diff.getMaxDiffHeight(fShowAncestor);
+				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
+									
+					yy= (y*size.y)/virtualHeight;
+					hh= (h*size.y)/virtualHeight;
+					if (hh < 3)
+						hh= 3;
+						
+					if (my >= yy && my < yy+hh)
+						return diff;
+				}
+				y+= h;
+			}
+		}
+		return null;
+	}
+	
+	private void paintBirdsEyeView(Canvas canvas, GC gc) {
+		
+		Color c;
+		Rectangle r= new Rectangle(0, 0, 0, 0);
+		int yy, hh;
+		
+		Point size= canvas.getSize();
+		
+		int virtualHeight= getVirtualHeight();
+		if (virtualHeight < getViewportHeight())
+			return;
+				
+		int y= 0;
+		if (fAllDiffs != null) {
+			Iterator e= fAllDiffs.iterator();
+			for (int i= 0; e.hasNext(); i++) {
+				Diff diff= (Diff) e.next();
+				int h= diff.getMaxDiffHeight(fShowAncestor);
+								
+				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
+					yy= (y*size.y)/virtualHeight;
+					hh= (h*size.y)/virtualHeight;
+					if (hh < 3)
+						hh= 3;
+					
+					c= getColor(getFillColor(diff));
+					if (c != null) {
+						gc.setBackground(c);
+						gc.fillRectangle(BIRDS_EYE_VIEW_INSET, yy, size.x-(2*BIRDS_EYE_VIEW_INSET),hh);
+					}
+					c= getColor(getStrokeColor(diff));
+					if (c != null) {
+						gc.setForeground(c);
+						r.x= BIRDS_EYE_VIEW_INSET;
+						r.y= yy;
+						r.width= size.x-(2*BIRDS_EYE_VIEW_INSET)-1;
+						r.height= hh;
+						if (diff == fCurrentDiff) {
+							gc.setLineWidth(2);
+							r.x++;
+							r.y++;
+							r.width--;
+							r.height--;
+						} else {
+							gc.setLineWidth(1);
+						}
+						gc.drawRectangle(r);
+					}
+				}
+				
+				y+= h;
+			}
+		}
+		
+		/*
+		if (fVScrollBar != null) {
+			c= Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+			gc.setForeground(c);
+		
+			yy= (fVScrollBar.getSelection()*size.y)/virtualHeight;
+			hh= (fVScrollBar.getThumb()*size.y)/virtualHeight;
+		
+			gc.setLineWidth(1);
+			gc.drawRectangle(0, yy, BIRDS_EYE_VIEW_WIDTH, hh);
+		}
+		*/
+	}
+	
+	private void refreshBirdsEyeView() {
+		if (fBirdsEyeCanvas != null)
+			fBirdsEyeCanvas.redraw();
 	}
 	
 	/**
@@ -1001,6 +1157,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				
 		invalidateLines();
 		updateVScrollBar();
+		refreshBirdsEyeView();
 		
 		if (!emptyInput && !fComposite.isDisposed()) {
 			// delay so that StyledText widget gets a chance to resize itself
@@ -1374,6 +1531,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
   	protected final void handleResizeLeftRight(int x, int y, int width1, int centerWidth, int width2,  int height) {
   				
+  		if (fBirdsEyeCanvas != null)
+  			width2-= BIRDS_EYE_VIEW_WIDTH;
+  			
 		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
 		int scrollbarHeight= trim.height;
 		Composite composite= (Composite) getControl();
@@ -1420,8 +1580,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fScrollCanvas.setBounds(x, y, scrollbarWidth, height-scrollbarHeight);
 		}
 		
+  		if (fBirdsEyeCanvas != null) {
+  			y+= scrollbarHeight;
+  			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
+  		}
+		
 		// doesn't work since TextEditors don't have their correct size yet.
 		updateVScrollBar(); 
+		refreshBirdsEyeView();
 	}
 							
 	/**
@@ -1588,8 +1754,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
 					d= extract2(rDoc, sright, es.rightStart(), es.rightLength());
 				
-					if ((a == null || a.trim().length() == 0) && s.trim().length() == 0 && d.trim().length() == 0)
+					if ((a == null || a.trim().length() == 0) && s.trim().length() == 0 && d.trim().length() == 0) {
+						diff.fIsWhitespace= true;
 						continue;
+					}
 				}
 		
 				if (useChange(kind)) {
@@ -2201,6 +2369,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			updateControls();
 			invalidateLines();
 			updateVScrollBar();
+			refreshBirdsEyeView();
 			
 			selectFirstDiff();
 			
@@ -2245,6 +2414,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 			invalidateLines();
 			updateVScrollBar();
+			refreshBirdsEyeView();
 			
 			selectFirstDiff();
 		}
@@ -2328,6 +2498,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				center.redraw();
 
 			updateVScrollBar();
+			refreshBirdsEyeView();
 		}
 	}
 	
@@ -2430,6 +2601,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Point size= canvas.getSize();
 		int x= 0;
 		int w= fMarginWidth;
+		int w2= w/2;
 			
 		g.setBackground(canvas.getBackground());
 		g.fillRectangle(x, 0, w, size.y);
@@ -2470,19 +2642,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 				g.setBackground(getColor(getFillColor(diff)));
 				if (right)
-					g.fillRectangle(x, y, w-5, h);
+					g.fillRectangle(x, y, w2, h);
 				else
-					g.fillRectangle(x+5, y, w-3, h);
+					g.fillRectangle(x+w2, y, w2, h);
 	
 				g.setBackground(getColor(getStrokeColor(diff)));
 				if (right) {
-					g.fillRectangle(x, y-1, w-4, LW);
-					g.fillRectangle(x+5, y, LW, h);
-					g.fillRectangle(x, y+h-1, w-4, LW);
+					g.fillRectangle(x, y-1, w2+1, LW);
+					g.fillRectangle(x+w2, y, LW, h);
+					g.fillRectangle(x, y+h-1, w2, LW);
 				} else {
-					g.fillRectangle(x+3, y-1, w-3, LW);
-					g.fillRectangle(x+3, y, LW, h);
-					g.fillRectangle(x+3, y+h-1, w-3, LW);
+					g.fillRectangle(x+w2, y-1, w2, LW);
+					g.fillRectangle(x+w2, y, LW, h);
+					g.fillRectangle(x+w2, y+h-1, w2, LW);
 				}
 			}
 		}
@@ -2714,8 +2886,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	private void setCurrentDiff(Diff d, boolean revealAndSelect) {
 
-		if (d == fCurrentDiff)
-			return;
+//		if (d == fCurrentDiff)
+//			return;
 						
 		Diff oldDiff= fCurrentDiff;
 					
@@ -2745,6 +2917,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		updateControls();
 		invalidateLines();
+		refreshBirdsEyeView();
 	}
 	
 	/**
@@ -2878,6 +3051,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		invalidateLines();
 		updateVScrollBar();
 		selectFirstDiff();
+		refreshBirdsEyeView();
 	}
 
 	private void copyDiffLeftToRight() {
@@ -3087,6 +3261,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (allBut == fRight && fRightCanvas != null)
 				fRightCanvas.repaint();
 		}
+		
+		//refreshBirdsEyeView();
 	}
 		
 	/**
@@ -3107,6 +3283,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fVScrollBar != null) {
 			int value= Math.max(0, Math.min(viewPosition, getVirtualHeight() - getViewportHeight()));
 			fVScrollBar.setSelection(value);
+			//refreshBirdEyeView();
 		}
 	}
 

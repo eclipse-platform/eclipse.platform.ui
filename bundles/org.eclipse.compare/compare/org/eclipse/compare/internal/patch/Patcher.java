@@ -209,7 +209,8 @@ public class Patcher {
 					return null;
 					
 				if (reader.lineContentLength(line) == 0) {
-					lines.add(' ' + line);
+					//System.out.println("Warning: found empty line in hunk; ignored");
+					//lines.add(' ' + line);
 					continue;
 				}
 				
