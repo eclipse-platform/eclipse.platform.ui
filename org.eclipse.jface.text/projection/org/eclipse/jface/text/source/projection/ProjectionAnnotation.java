@@ -91,6 +91,13 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		}
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
+	 */
+	public int getLayer() {
+		return IAnnotationPresentation.DEFAULT_LAYER;
+	}
+	
 	private Image getImage(Display display) {
 		initializeImages(display);
 		return isCollapsed() ? fgCollapsedImage : fgExpandedImage;

@@ -52,7 +52,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	}
 	
 	/*
-	 * @see Annotation#paint(GC, Canvas, Rectangle)
+	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 
@@ -81,6 +81,13 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		gc.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		gc.fillRectangle(x, bounds.y, w, b);
 		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
+	 */
+	public int getLayer() {
+		return IAnnotationPresentation.DEFAULT_LAYER;
 	}
 
 	/**

@@ -22,10 +22,15 @@ import org.eclipse.swt.widgets.Canvas;
 public interface IAnnotationPresentation {
 	
 	/**
+	 * The default annotation layer.
+	 */
+	static final int DEFAULT_LAYER= 0;
+
+	
+	/**
 	 * Returns the annotations drawing layer.
 	 *
 	 * @return the annotations drawing layer
-	 * @deprecated will be removed, configuration will only happen via XML, exists to ensure backward compatibility
 	 */
 	int getLayer();
 	

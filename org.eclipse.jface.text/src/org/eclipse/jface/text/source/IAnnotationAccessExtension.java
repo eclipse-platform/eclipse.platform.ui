@@ -27,7 +27,7 @@ public interface IAnnotationAccessExtension {
 	/**
 	 * The default annotation layer.
 	 */
-	static final int DEFAULT_LAYER= 0;
+	static final int DEFAULT_LAYER= IAnnotationPresentation.DEFAULT_LAYER;
 
 	/**
 	 * Returns the label for the given annotation's type.
