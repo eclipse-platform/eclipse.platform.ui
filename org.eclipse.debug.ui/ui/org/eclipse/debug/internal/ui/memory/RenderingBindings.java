@@ -21,19 +21,17 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.AbstractMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
-import org.eclipse.jface.util.ListenerList;
 
 /**
  * Represents a renderingBindings element of a memoryRenderings
@@ -41,7 +39,7 @@ import org.eclipse.jface.util.ListenerList;
  * 
  * @since 3.1
  */
-class RenderingBindings implements IMemoryRenderingBindingsProvider {
+class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implements IMemoryRenderingBindingsProvider {
     
     // element
     protected IConfigurationElement fConfigurationElement;
@@ -57,9 +55,6 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
     // optional exprssion
     private Expression fExpression;
 	
-	// list of listeners
-	private ListenerList fListeners;
-
     // element attribute
     public static final String ATTR_RENDERING_IDS = "renderingIds"; //$NON-NLS-1$
     public static final String ATTR_DEFAULT_IDS = "defaultIds"; //$NON-NLS-1$
@@ -172,7 +167,7 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
 				{
 					fProvider.addListener(new IMemoryRenderingBindingsListener() {
 						public void memoryRenderingBindingsChanged() {
-							fireBindingChangedEvent();
+							fireBindingsChanged();
 						}});
 				}
 	        }
@@ -297,42 +292,5 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
     private IMemoryRenderingManager getManager() { 
         return DebugUITools.getMemoryRenderingManager();
     }
-
-	public void addListener(IMemoryRenderingBindingsListener listener) {
-		if (fListeners == null)
-			fListeners = new ListenerList();
-		
-		fListeners.add(listener);
-	}
-
-	public void removeListener(IMemoryRenderingBindingsListener listener) {
-		if (fListeners != null){
-			fListeners.remove(listener);
-		}
-	}
-	
-	private void fireBindingChangedEvent()
-	{
-		if (fListeners == null)
-			return;
-		
-		Object[] listeners = fListeners.getListeners();
-		
-		for (int i=0; i<listeners.length; i++)
-		{
-			if (listeners[i] instanceof IMemoryRenderingBindingsListener)
-			{
-				final IMemoryRenderingBindingsListener listener = (IMemoryRenderingBindingsListener)listeners[i];
-				ISafeRunnable runnable = new ISafeRunnable () {
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-					public void run() throws Exception {
-						listener.memoryRenderingBindingsChanged();
-					}};
-				Platform.run(runnable);
-			}
-		}
-	}
     
 }
