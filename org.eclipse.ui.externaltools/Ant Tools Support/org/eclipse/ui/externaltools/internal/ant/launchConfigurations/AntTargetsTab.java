@@ -7,7 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,7 +45,6 @@ import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
-	private Button runDefaultTargetButton;
 	private Button upButton;
 	private Button downButton;
 	
@@ -62,6 +60,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Button addButton;
 	private Button removeButton;
 	
+	private static final String TEMP_ATTRIBUTE= "temp"; //$NON-NLS-1$
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -76,17 +76,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gridData);
 		createVerticalSpacer(mainComposite, 1);
 										
-		Composite upperComposite = new Composite(mainComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		upperComposite.setLayout(layout);
-		upperComposite.setLayoutData(gridData);
-		upperComposite.setFont(font);	
-		
-		createRunDefaultTargetButton(upperComposite);
-		
 		Composite middleComposite = new Composite(mainComposite, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -110,29 +99,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		lowerComposite.setFont(font);	
 		
 		createDescriptionField(lowerComposite);
-	}
-	
-	/*
-	 * Enables all the appropriate controls.
-	 */
-	private void allowSelectTargets(boolean enabled, boolean retrieveTargets) {
-		if (! enabled) {
-			if (defaultTarget != null && defaultTarget.getDescription() != null) {
-				descriptionField.setText(defaultTarget.getDescription());	
-			}
-		} else {
-			descriptionField.setText(""); //$NON-NLS-1$
-		}
-		
-	 	executeLabel.setEnabled(enabled);
-	 	executeTargetsTable.getControl().setEnabled(enabled);
-	 	executeTargetsTable.refresh();
-	 	if (enabled && executeTargetsTable.getTable().getItemCount() == 0 && retrieveTargets) {
-	 		executeTargetsTable.setInput(getTargets());
-	 	}
-	 	descriptionLabel.setEnabled(enabled);
-	 	descriptionField.setEnabled(enabled);
-	 	updateButtonEnablement();
 	}
 	
 	/*
@@ -200,12 +166,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					return allTargets;
 				}
 				for (int i=0; i < allTargets.length; i++) {
-					if (! AntUtil.isInternalTarget(allTargets[i])) {
-						if (allTargets[i].isDefault()) {
-							defaultTarget = allTargets[i];
-							runDefaultTargetButton.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_({0})_5"), new Object[] {allTargets[i].getName()})); //NON-NLS-1$ //$NON-NLS-1$
-							break;
-						}
+					if (allTargets[i].isDefault()) {
+						defaultTarget = allTargets[i];
+						break;
 					}
 				}
 			}
@@ -229,10 +192,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private void addTargets() {
 		
 		TargetInfo[] targets= getTargets();
-		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider();
-		if (defaultTarget != null) {
-			labelProvider.setDefaultTargetName(defaultTarget.getName());
-		}					
+		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(null);			
 		SelectionDialog dialog= new ListSelectionDialog(getShell(), targets, new AntTargetContentProvider(), labelProvider, AntLaunchConfigurationMessages.getString("AntTargetsTab.Select_&Ant_Targets__6")); //$NON-NLS-1$
 		if (dialog.open() == SelectionDialog.OK) {
 			getContentProvider().addAll(Arrays.asList(dialog.getResult()));
@@ -300,9 +260,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		executeTargetsTable = new TableViewer(tableComposite,SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		executeTargetsTable.setContentProvider(new AntTargetContentProvider());
 		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(executeTargetsTable);
-		if (defaultTarget != null) {
-			labelProvider.setDefaultTargetName(defaultTarget.getName());
-		}
+		
 		executeTargetsTable.setLabelProvider(labelProvider);
 		gridData = new GridData(GridData.FILL_BOTH);
 		executeTargetsTable.getControl().setLayoutData(gridData);
@@ -348,26 +306,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Creates the checkbox button for the
-	 * "Run default target" preference.
-	 */
-	private void createRunDefaultTargetButton(Composite parent) {
-		runDefaultTargetButton = new Button(parent, SWT.CHECK);
-		// The label that is applied if the default target is unknown
-		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_11")); //$NON-NLS-1$
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		runDefaultTargetButton.setLayoutData(gridData);
-		runDefaultTargetButton.setFont(parent.getFont());
-		runDefaultTargetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				allowSelectTargets(!runDefaultTargetButton.getSelection(), true);
-				updateLaunchConfigurationDialog();
-			}			
-		});
-		runDefaultTargetButton.setSelection(true);
-	}
-	
-	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
@@ -388,8 +326,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
 		}
 		
-		runDefaultTargetButton.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Run_defau&lt_target_11")); //$NON-NLS-1$
-		
 		if (newLocation == null) {
 			allTargets= null;
 			location= newLocation;
@@ -402,18 +338,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			location= newLocation;
 		}
 		
-		runDefaultTargetButton.setSelection(configTargets == null);
-		
 		TargetInfo[] allInfos= getTargets();
 		if (allInfos == null) {
 			executeTargetsTable.setInput(new TargetInfo[0]);
-			allowSelectTargets(configTargets != null, false);
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
-			executeTargetsTable.setInput(new TargetInfo[0]);
-			allowSelectTargets(configTargets != null, false);
+			if (defaultTarget != null) {
+				executeTargetsTable.setInput(new TargetInfo[]{defaultTarget});
+			} else {
+				executeTargetsTable.setInput(new TargetInfo[0]);
+			}
 			return;
 		}
 		
@@ -422,17 +358,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		int found = initializeTargetInfos(allInfos, targetNames, targetInfos);
 
 		if (found != targetNames.length) {
-			executeTargetsTable.setInput(new TargetInfo[0]);
-			allowSelectTargets(!runDefaultTargetButton.getSelection(), true);
+			if (defaultTarget == null) {
+				executeTargetsTable.setInput(new TargetInfo[0]);
+			} else {
+				executeTargetsTable.setInput(new TargetInfo[]{defaultTarget});
+			}
 		} else {
 			executeTargetsTable.setInput(targetInfos);
-			allowSelectTargets(configTargets != null, false);
-		}
-		
-		if (defaultTarget != null) {
-			((AntTargetLabelProvider)executeTargetsTable.getLabelProvider()).setDefaultTargetName(defaultTarget.getName());
-		} else {
-			((AntTargetLabelProvider)executeTargetsTable.getLabelProvider()).setDefaultTargetName(null);
 		}
 	}
 	
@@ -459,19 +391,30 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(TEMP_ATTRIBUTE, (String)null);
+		
 		String targets= null;
-		if (!runDefaultTargetButton.getSelection()) {
-			Object[] items= getContentProvider().getElements(null);
-			StringBuffer buff= new StringBuffer();
-			for (int i = 0; i < items.length; i++) {
-				TargetInfo item = (TargetInfo)items[i];
-				buff.append(item.getName());
-				buff.append(',');
+		Object[] items= getContentProvider().getElements(null);
+		if (items.length == 1) {
+			TargetInfo item = (TargetInfo)items[0];
+			if (item.isDefault()) {
+				configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
+				return;
 			}
-			if (buff.length() > 0) {
-				targets= buff.toString();
-			} 
-		} 
+		} else if (items.length == 0) {
+			configuration.setAttribute(TEMP_ATTRIBUTE, TEMP_ATTRIBUTE);
+			return;
+		}
+		
+		StringBuffer buff= new StringBuffer();
+		for (int i = 0; i < items.length; i++) {
+			TargetInfo item = (TargetInfo)items[i];
+			buff.append(item.getName());
+			buff.append(',');
+		}
+		if (buff.length() > 0) {
+			targets= buff.toString();
+		}  
 
 		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targets);
 	}

@@ -9,12 +9,12 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.util.ArrayList;
-
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
@@ -22,15 +22,10 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  * Ant target label provider
  */
 public class AntTargetLabelProvider extends LabelProvider {
-	private ArrayList selectedTargets = null;
-	private String defaultTargetName = null;
 	private TableViewer viewer= null;
 
 	public AntTargetLabelProvider(TableViewer viewer) {
 		this.viewer= viewer;
-	}
-	
-	public AntTargetLabelProvider() {
 	}
 	
 	/* (non-Javadoc)
@@ -41,28 +36,27 @@ public class AntTargetLabelProvider extends LabelProvider {
 		
 		if (target != null) {
 			StringBuffer result = new StringBuffer(target.getName());
-			if (target.getName().equals(defaultTargetName)) {
-				result.append(" ("); //$NON-NLS-1$;
-				result.append(AntLaunchConfigurationMessages.getString("AntTargetLabelProvider.default_target_1")); //$NON-NLS-1$
-				result.append(")"); //$NON-NLS-1$;
+			if (viewer != null) {
+				TableItem[] items= viewer.getTable().getItems();
+				for (int i = 0; i < items.length; i++) {
+					TableItem item = items[i];
+					TargetInfo info = (TargetInfo)item.getData();
+					if (info == target) {					
+						if (info.isDefault()) {
+							item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
+							result.append(" ("); //$NON-NLS-1$;
+							result.append(AntLaunchConfigurationMessages.getString("AntTargetLabelProvider.default_target_1")); //$NON-NLS-1$
+							result.append(")"); //$NON-NLS-1$;
+						}  else {
+							item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+						}
+						break;
+					} 
+				}
 			} 
 			return result.toString();
 		}
 		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Sets the targets selected in the viewer.
-	 */
-	public void setSelectedTargets(ArrayList value) {
-		selectedTargets = value;
-	}
-
-	/**
-	 * Sets the name of the default target
-	 */
-	public void setDefaultTargetName(String name) {
-		defaultTargetName = name;
 	}
 
 	/**
@@ -74,5 +68,4 @@ public class AntTargetLabelProvider extends LabelProvider {
 		}
 		return null;
 	}
-
 }
