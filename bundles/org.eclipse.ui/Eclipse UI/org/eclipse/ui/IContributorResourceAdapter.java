@@ -19,9 +19,9 @@ public interface IContributorResourceAdapter {
 	 * adapts to. An IContributorResourceAdapter assumes
 	 * that any object passed to it adapts to one equivalent
 	 * resource.
-	 * @return <code>IResource</cdoe> or <code>null</code> if there
+	 * @return <code>IResource</code> or <code>null</code> if there
 	 * 	is no adapted resource for this type.
-	 * @param IAdaptable the adaptable beign queried.
+	 * @param IAdaptable the adaptable being queried.
 	 */
 	
 	public IResource getAdaptedResource(IAdaptable adaptable);
