@@ -114,19 +114,10 @@ be visible in the toolbar or context menu of the view.
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+      	Currently, the org.eclipse.jdt.debug.ui plugin provides the org.eclipse.jdt.debug.ui.javaDebugActionGroup
       </documentation>
    </annotation>
 
