@@ -31,6 +31,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
@@ -255,32 +256,41 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * @param selection the selection to be checked
 	 * @param viewer the viewer displaying a visible region of <code>selection</code>'s document.
 	 * @return <code>true</code>, if <code>selection</code> is contained, <code>false</code> otherwise.
-	 * @throws BadLocationException
 	 */
-	private boolean containedByVisibleRegion(ITextSelection selection, ISourceViewer viewer) throws BadLocationException {
+	private boolean containedByVisibleRegion(ITextSelection selection, ISourceViewer viewer) {
 		int min= selection.getOffset();
 		int max= min + selection.getLength();
 		IDocument document= viewer.getDocument();
-		IRegion visible= viewer.getVisibleRegion();
+		
+		IRegion visible;
+		if (viewer instanceof ITextViewerExtension3)
+			visible= ((ITextViewerExtension3) viewer).getModelCoverage();
+		else
+			visible= viewer.getVisibleRegion();
+		
 		int visOffset= visible.getOffset();
-		if (visOffset > min) {
-			if (document.getLineOfOffset(visOffset) != selection.getStartLine())
-				return false;
-			if (!isWhitespace(document.get(min, visOffset - min))) {
-				showStatus();
-				return false;
+		try {
+			if (visOffset > min) {
+				if (document.getLineOfOffset(visOffset) != selection.getStartLine())
+					return false;
+				if (!isWhitespace(document.get(min, visOffset - min))) {
+					showStatus();
+					return false;
+				}
 			}
-		}
-		int visEnd= visOffset + visible.getLength();
-		if (visEnd < max) {
-			if (document.getLineOfOffset(visEnd) != selection.getEndLine())
-				return false;
-			if (!isWhitespace(document.get(visEnd, max - visEnd))) {
-				showStatus();
-				return false;
+			int visEnd= visOffset + visible.getLength();
+			if (visEnd < max) {
+				if (document.getLineOfOffset(visEnd) != selection.getEndLine())
+					return false;
+				if (!isWhitespace(document.get(visEnd, max - visEnd))) {
+					showStatus();
+					return false;
+				}
 			}
+			return true;
+		} catch (BadLocationException e) {
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -349,12 +359,17 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	 * @param movingArea the selection on <code>document</code> that will be moved.
 	 * @return the region comprising the line that <code>selection</code> will be moved over, without its terminating delimiter.
 	 */
-	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) throws BadLocationException {
+	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) {
 		int skippedLineN= (fUpwards ? selection.getStartLine() - 1 : selection.getEndLine() + 1);
 		if (skippedLineN < 0 || skippedLineN >= document.getNumberOfLines())
 			return null;
-		IRegion line= document.getLineInformation(skippedLineN);
-		return new TextSelection(document, line.getOffset(), line.getLength());
+		try {
+			IRegion line= document.getLineInformation(skippedLineN);
+			return new TextSelection(document, line.getOffset(), line.getLength());
+		} catch (BadLocationException e) {
+			// only happens on concurrent modifications
+			return null;
+		}
 	}
 
 	/**
@@ -397,12 +412,12 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 			return;
 			
 		ITextSelection sel= new TextSelection(document, p.x, p.y);
+			
+		ITextSelection skippedLine= getSkippedLine(document, sel);
+		if (skippedLine == null)
+			return;
 
 		try {
-			
-			ITextSelection skippedLine= getSkippedLine(document, sel);
-			if (skippedLine == null)
-				return;
 
 			ITextSelection movingArea= getMovingSelection(document, sel, viewer);
 			
@@ -450,22 +465,9 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 			beginCompoundEdit(); 
 			if (fCopy) {
 //				fDescription= new EditDescription(offset, 0, insertion.length());
-// 				This is a try for auto-indentation... not so good yet. Wait until we have a suitable "indent line" thing
-//				if (viewer instanceof TextViewer) {
-//					offset= ((TextViewer)viewer).modelOffset2WidgetOffset(offset);
-//					widget.replaceTextRange(offset, 0, insertion);
-//				} else {
-//					document.replace(offset, 0, insertion);
-//				}
 				document.replace(offset, 0, insertion);
 			} else {
 //				fDescription= new EditDescription(offset, insertion.length(), insertion.length());
-//				if (viewer instanceof TextViewer) {
-//					offset= ((TextViewer)viewer).modelOffset2WidgetOffset(offset);
-//					widget.replaceTextRange(offset, insertion.length(), insertion);
-//				} else {
-//					document.replace(offset, insertion.length(), insertion);
-//				}
 				document.replace(offset, insertion.length(), insertion);
 			}
 
@@ -481,7 +483,10 @@ public class MoveLinesAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
-	 * @param event
+	 * Saves the state mask of <code>event</code> for comparison with the next event in order to
+	 * detect key changes in the set of keys pressed by the user.
+	 * 
+	 * @param event the event that triggered this action
 	 */
 	private void updateShortCut(Event event) {
 		fStateMask= event.stateMask;
