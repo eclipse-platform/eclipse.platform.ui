@@ -329,6 +329,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
+		
 		Font font = parent.getFont();
 		
 		debugModelPresentation = DebugUITools.newDebugModelPresentation();
@@ -1032,13 +1035,5 @@ public final class BuilderPropertyPage extends PropertyPage {
 			handleException(e);
 		}
 		return super.performCancel();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
 	}
 }
