@@ -320,7 +320,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Get the user name and password (if provided)
 			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
 			
-			end = location.lastIndexOf(HOST_SEPARATOR);
+			end = location.indexOf(HOST_SEPARATOR, start);
 			String user = null;
 			String password = null;
 			// if end is -1 then there is no host separator meaning that the username is not present
@@ -345,12 +345,19 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			int port = USE_DEFAULT_PORT;
 			// Separate the port and host if there is a port
 			start = host.indexOf(PORT_SEPARATOR);
+			boolean havePort = false;
 			if (start != -1) {
-				// Initially, we used a # between the host and port
-				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
-				port = Integer.parseInt(host.substring(start+1));
-				host = host.substring(0, start);
-			} else {
+				try {
+					// Initially, we used a # between the host and port
+					partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
+					port = Integer.parseInt(host.substring(start+1));
+					host = host.substring(0, start);
+					havePort = true;
+				} catch (NumberFormatException e) {
+					// Ignore this as the #1234 port could be part of a proxy host string
+				}
+			}
+			if (!havePort) {
 				// In the correct CVS format, the port follows the COLON
 				partId = "CVSRepositoryLocation.parsingPort";//$NON-NLS-1$ 
 				int index = end;
@@ -408,7 +415,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// Do some quick checks to provide geberal feedback
 		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");//$NON-NLS-1$ 
 		int secondColon = location.indexOf(COLON, 1);
-		int at = location.lastIndexOf(HOST_SEPARATOR);
+		int at = location.indexOf(HOST_SEPARATOR);
 		if (at != -1) {
 			String user = location.substring(secondColon + 1, at);
 			if (user.equals(""))//$NON-NLS-1$ 
@@ -420,10 +427,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			return new CVSStatus(IStatus.ERROR, formatError);
 		String host = location.substring(at + 1, colon);
 		if (host.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
+			return new CVSStatus(IStatus.ERROR, formatError);
 		String path = location.substring(colon + 1, location.length());
 		if (path.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
+			return new CVSStatus(IStatus.ERROR, formatError);
 				
 		// Do a full parse and see if it passes
 		try {

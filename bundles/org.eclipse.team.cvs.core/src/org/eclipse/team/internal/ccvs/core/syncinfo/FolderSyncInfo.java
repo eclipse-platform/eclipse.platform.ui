@@ -128,7 +128,7 @@ public class FolderSyncInfo {
 	private String getRootDirectory() throws CVSException {
 		try {
 			String root = getRoot();
-			int index = root.lastIndexOf('@');
+			int index = root.indexOf('@');
 			if (index == -1) {
 				// If the username is mising, we have to find the third ':'.
 				index = root.indexOf(':');
