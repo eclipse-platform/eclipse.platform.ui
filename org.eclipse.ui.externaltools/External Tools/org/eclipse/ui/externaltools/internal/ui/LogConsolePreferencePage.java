@@ -18,6 +18,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A page to set the preferences for the console
+ * 
+ * @deprecated This preference page should not be used. To be removed by next release.
  */
 public class LogConsolePreferencePage
 	extends FieldEditorPreferencePage
