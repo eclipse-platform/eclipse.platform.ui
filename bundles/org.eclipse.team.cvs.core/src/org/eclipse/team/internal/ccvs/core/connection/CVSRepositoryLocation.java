@@ -232,7 +232,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			if (modules) {
 				return RemoteModule.getRemoteModules(this, tag, progress);
 			} else {
-				RemoteFolder root = new RemoteFolder(null, this, Path.EMPTY, tag);
+				RemoteFolder root = new RemoteFolder(null, this, "", tag);
 				ICVSRemoteResource[] resources = (ICVSRemoteResource[])root.members(progress);
 				// There is the off chance that there is a file in the root of the repository.
 				// This is not supported by cvs so we need to make sure there are no files
@@ -254,7 +254,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see ICVSRepositoryLocation#getRemoteFolder(String, CVSTag)
 	 */
 	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag) {
-		return new RemoteFolder(null, this, new Path(remotePath), tag);		
+		return new RemoteFolder(null, this, remotePath, tag);		
 	}
 	
 	/*
@@ -262,7 +262,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public ICVSRemoteFile getRemoteFile(String remotePath, CVSTag tag) {
 		IPath path = new Path(remotePath);
-		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, this, path.removeLastSegments(1), tag);
+		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, this, path.removeLastSegments(1).toString(), tag);
 		RemoteFile remoteFile = new RemoteFile(remoteFolder, Update.STATE_ADDED_LOCAL, path.lastSegment(), tag);
 		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });
 		return remoteFile;

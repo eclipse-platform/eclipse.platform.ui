@@ -44,6 +44,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides the implementation of ICVSRemoteFolder
@@ -67,16 +68,16 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/**
 	 * Constructor for RemoteFolder.
 	 */
-	public RemoteFolder(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+	public RemoteFolder(RemoteFolder parent, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
 		this(parent, 
-			repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment(), //$NON-NLS-1$
+			repositoryRelativePath == null ? "" : Util.getLastSegment(repositoryRelativePath), //$NON-NLS-1$
 			repository,
 			repositoryRelativePath,
 			tag, 
 			false);	
 	}
 	
-	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag, boolean isStatic) {
+	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag, boolean isStatic) {
 		this.info = new ResourceSyncInfo(name);
 		this.parent = parent;
 		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
@@ -364,7 +365,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 						}
 						// Convert the folder names to remote resources
 						for (int i=0;i<newRemoteDirectories.size();i++)
-							result.add(new RemoteFolder(RemoteFolder.this, getRepository(), new Path(getRepositoryRelativePath()).append((String)newRemoteDirectories.get(i)), tag));
+							result.add(new RemoteFolder(RemoteFolder.this, getRepository(), Util.appendPath(getRepositoryRelativePath(), (String)newRemoteDirectories.get(i)), tag));
 						children = (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[0]);
 						// Get the revision numbers for the files
 						if (remoteFiles.size() > 0) {
@@ -777,7 +778,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#forTag(CVSTag)
 	 */
 	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
-		return new RemoteFolder((RemoteFolder)parent, info.getName(), repository, new Path(folderInfo.getRepository()), tagName, folderInfo.getIsStatic());
+		return new RemoteFolder((RemoteFolder)parent, info.getName(), repository, folderInfo.getRepository(), tagName, folderInfo.getIsStatic());
 	}
 	
 	/**

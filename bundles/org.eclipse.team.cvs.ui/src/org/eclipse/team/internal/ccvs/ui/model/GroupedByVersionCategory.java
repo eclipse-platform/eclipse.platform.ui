@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -65,7 +64,7 @@ public class GroupedByVersionCategory extends CVSModelElement implements IAdapta
 					module = new RemoteVersionModule(tag, this);
 					remoteVersionModules.put(tag, module);
 				}
-				module.addProject(new RemoteFolder(null, repository, new Path(project), tag));				
+				module.addProject(new RemoteFolder(null, repository, project, tag));				
 			}
 		}
 		return (RemoteVersionModule[])remoteVersionModules.values().toArray(new RemoteVersionModule[0]);				

@@ -12,10 +12,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -28,6 +26,32 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
  * Unsorted static helper-methods 
  */
 public class Util {
+	
+	/**
+	 * Return the last segment of the given path
+	 * @param path
+	 * @return String
+	 */
+	public static String getLastSegment(String path) {
+		int index = path.lastIndexOf(Session.SERVER_SEPARATOR);
+		if (index == -1)
+			return path;
+		else
+			return path.substring(index + 1);
+		
+	}
+	
+	/**
+	 * Return the path without a trailing /
+	 * @param path
+	 * @return String
+	 */
+	public static String asPath(String path) {
+		if (path.endsWith(Session.SERVER_SEPARATOR)) {
+			return path.substring(0, path.length() - Session.SERVER_SEPARATOR.length());
+		}
+		return path;
+	}
 	/**
 	 * Get the extention of the path of resource
 	 * relative to the path of root
@@ -87,13 +111,17 @@ public class Util {
 			if (stringPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
 				return resource.getName();
 			}
-			IPath path = new Path(stringPath);
-			int segments = path.segmentCount();
-			if(segments>split) {				
-				IPath last = path.removeFirstSegments(segments - split);
-				return "..." + IPath.SEPARATOR + last.toString(); //$NON-NLS-1$
+			// Search backwards until split separators are found
+			int count = 0;
+			int index = stringPath.length();
+			while (count++ < split && index != -1) {
+				index = stringPath.lastIndexOf(Session.SERVER_SEPARATOR, index - 1);
 			}
-			return path.toString();
+			if (index == -1) {
+				return stringPath;
+			} else {
+				return Policy.bind("Util.truncatedPath", stringPath.substring(index)); //$NON-NLS-1$
+			}
 		} catch(CVSException e) {
 			return resource.getName();
 		}

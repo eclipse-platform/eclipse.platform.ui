@@ -42,6 +42,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /*
  * This class is responsible for building a remote tree that shows the repository
@@ -209,7 +210,7 @@ public class RemoteFolderTreeBuilder {
 			// NOTE: It is also possible that no messages will be sent (i.e. wasted connection!)
 			remoteRoot =
 				new RemoteFolderTree(null, root.getName(), repository,
-					new Path(root.getFolderSyncInfo().getRepository()),
+					root.getFolderSyncInfo().getRepository(),
 					tagForRemoteFolder(root, tag));
 			session = new Session(repository, remoteRoot, false);
 			session.open(Policy.subMonitorFor(monitor, 10));
@@ -273,7 +274,7 @@ public class RemoteFolderTreeBuilder {
 			// Create a parent for the remote resource
 			remoteRoot =
 				new RemoteFolderTree(null, root.getName(), repository,
-					new Path(root.getFolderSyncInfo().getRepository()),
+					root.getFolderSyncInfo().getRepository(),
 					tagForRemoteFolder(root, tag));
 			// Create the remote resource (using the delta if there is one)
 			RemoteFile remoteFile;
@@ -297,7 +298,7 @@ public class RemoteFolderTreeBuilder {
 			// If there was a delta, ftech the new revision
 			if (!changedFiles.isEmpty()) {
 				// Add the remote folder to the remote folder lookup table (used to update file revisions)
-				remoteFolderTable.put(new Path(remoteRoot.getFolderSyncInfo().getRemoteLocation()), remoteRoot);
+				recordRemoteFolder(remoteRoot);
 				session = new Session(repository, remoteRoot, false);
 				session.open(Policy.subMonitorFor(monitor, 10));
 				try {
@@ -326,7 +327,7 @@ public class RemoteFolderTreeBuilder {
 		Policy.checkCanceled(monitor);
 					
 		// Create a remote folder tree corresponding to the local resource
-		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
+		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, local.getFolderSyncInfo().getRepository(), local.getFolderSyncInfo().getTag());
 
 		// Create a List to contain the created children
 		List children = new ArrayList();
@@ -380,7 +381,7 @@ public class RemoteFolderTreeBuilder {
 		Policy.checkCanceled(monitor);
 		
 		// Add the remote folder to the remote folder lookup table (used to update file revisions)
-		remoteFolderTable.put(new Path(remote.getFolderSyncInfo().getRemoteLocation()), remote);
+		recordRemoteFolder(remote);
 		
 		// Create a map to contain the created children
 		Map children = new HashMap();
@@ -405,7 +406,7 @@ public class RemoteFolderTreeBuilder {
 				if (folder.isCVSFolder() && ! isOrphanedSubtree(session, folder) && (d==null || d.getRevision() != DELETED)) {
 					children.put(folders[i].getName(), 
 						new RemoteFolderTree(remote, folders[i].getName(), repository, 
-							new Path(folder.getFolderSyncInfo().getRepository()), 
+							folder.getFolderSyncInfo().getRepository(), 
 							tagForRemoteFolder(folder,tag)));
 				}
 			}
@@ -440,7 +441,7 @@ public class RemoteFolderTreeBuilder {
 			String revision = d.getRevision();
 			if (revision == FOLDER) {
 				children.put(name, new RemoteFolderTree(remote, repository, 
-					new Path(remote.getRepositoryRelativePath()).append(name), 
+					Util.appendPath(remote.getRepositoryRelativePath(), name), 
 					tagForRemoteFolder(remote, tag)));
 			} else if (revision == ADDED) {
 				children.put(name, new RemoteFile(remote, d.getSyncState(), name, tagForRemoteFolder(remote, tag)));
@@ -700,7 +701,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void updateRevision(IPath path, String revision) throws CVSException {
-		RemoteFolderTree folder = (RemoteFolderTree)remoteFolderTable.get(path.removeLastSegments(1));
+		RemoteFolderTree folder = getRecoredRemoteFolder(path.removeLastSegments(1).toString());
 		if (folder == null) {
 			throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.missingParent", path.toString(), revision));//$NON-NLS-1$
 		}
@@ -725,5 +726,13 @@ public class RemoteFolderTreeBuilder {
 	private boolean isOrphanedSubtree(Session session, ICVSFolder mFolder) throws CVSException {
 		return mFolder.isCVSFolder() && ! mFolder.isManaged() && ! mFolder.equals(session.getLocalRoot()) && mFolder.getParent().isCVSFolder();
 	}
+	
+	private void recordRemoteFolder(RemoteFolderTree remote) throws CVSException {
+		String path = remote.getFolderSyncInfo().getRemoteLocation();
+		remoteFolderTable.put(Util.asPath(path), remote);
+	}
+	
+	private RemoteFolderTree getRecoredRemoteFolder(String path) {
+		return (RemoteFolderTree)remoteFolderTable.get(Util.asPath(path));
+	}
 }
-

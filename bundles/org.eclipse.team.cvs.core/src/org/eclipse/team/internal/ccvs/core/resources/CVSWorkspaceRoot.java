@@ -92,7 +92,7 @@ public class CVSWorkspaceRoot {
 		
 		if (sourceModule == null)
 			sourceModule = project.getName();
-		checkout(new ICVSRemoteFolder[] { new RemoteFolder(null, repository, new Path(sourceModule), tag)},
+		checkout(new ICVSRemoteFolder[] { new RemoteFolder(null, repository, sourceModule, tag)},
 			new IProject[] { project }, monitor);
 	}
 
@@ -332,7 +332,7 @@ public class CVSWorkspaceRoot {
 				moduleName = projectName;
 
 			// Perform the import using a dummy root so the local project is not traversed
-			Session s = new Session(location, new RemoteFolderTree(null, location, Path.EMPTY, null));
+			Session s = new Session(location, new RemoteFolderTree(null, location, Path.EMPTY.toString(), null));
 			s.open(monitor);
 			try {
 				IStatus status = Command.IMPORT.execute(s,
@@ -544,7 +544,7 @@ public class CVSWorkspaceRoot {
 			ICVSFolder folder = (ICVSFolder)resource;
 			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 			if (syncInfo != null) {
-				return new RemoteFolder(null, CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
+				return new RemoteFolder(null, CVSProviderPlugin.getPlugin().getRepository(syncInfo.getRoot()), syncInfo.getRepository(), syncInfo.getTag());
 			}
 		} else {
 			if (resource.isManaged())
@@ -621,7 +621,7 @@ public class CVSWorkspaceRoot {
 			return getRemoteSyncTree(project, tag, progress);
 		} else {
 			progress.beginTask(null, 100);
-			RemoteFolder folder = new RemoteFolder(null, location, new Path(moduleName), tag);
+			RemoteFolder folder = new RemoteFolder(null, location, moduleName, tag);
 			RemoteFolderTree remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, folder.getTag(), Policy.subMonitorFor(progress, 80));
 			CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
 			tree.makeFoldersInSync(Policy.subMonitorFor(progress, 10));

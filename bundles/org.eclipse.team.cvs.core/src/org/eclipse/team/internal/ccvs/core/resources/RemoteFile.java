@@ -255,7 +255,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * Therefore, we need a new parent so that we can fecth the contents of the remote file revision
 	 */
 	public RemoteFile toRevision(String revision) {
-		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), new Path(parent.getRepositoryRelativePath()), parent.getTag());
+		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), parent.getRepositoryRelativePath(), parent.getTag());
 		RemoteFile file = new RemoteFile(newParent, getWorkspaceSyncState(), getName(), revision, CVSTag.DEFAULT);
 		newParent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
@@ -589,7 +589,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public ICVSRemoteResource forTag(CVSTag tag) {
 		RemoteFolderTree remoteFolder = new RemoteFolderTree(null, getRepository(), 
-			new Path(((ICVSRemoteFolder)getParent()).getRepositoryRelativePath()), 
+			((ICVSRemoteFolder)getParent()).getRepositoryRelativePath(), 
 			tag);
 		RemoteFile remoteFile = (RemoteFile)forTag(remoteFolder, tag);
 		remoteFolder.setChildren(new ICVSRemoteResource[] { remoteFile });

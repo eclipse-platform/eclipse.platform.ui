@@ -142,7 +142,7 @@ public class RemoteModule extends RemoteFolder {
 						if ((next.charAt(0) != '&'))
 							files.add(next);
 					}
-					RemoteModule remoteModule = new RemoteModule(moduleName, null, repository, new Path(directory), localOptions, tag, ! files.isEmpty());
+					RemoteModule remoteModule = new RemoteModule(moduleName, null, repository, directory, localOptions, tag, ! files.isEmpty());
 					modules.put(moduleName, remoteModule);
 					if ( ! files.isEmpty()) {
 						ICVSRemoteResource[] children = new ICVSRemoteResource[files.size()];
@@ -187,7 +187,7 @@ public class RemoteModule extends RemoteFolder {
 					} else {
 						RemoteModule child = (RemoteModule)modules.get(expansion[i]);
 						if (child == null) {
-							referencedFolders.add(new RemoteFolder(null, repository, path, tag));
+							referencedFolders.add(new RemoteFolder(null, repository, path.toString(), tag));
 						} else {
 							// Need to check if the child is a module alias
 							if (child.isAlias()) {
@@ -245,11 +245,11 @@ public class RemoteModule extends RemoteFolder {
 		return (RemoteModule[])modules.values().toArray(new RemoteModule[modules.size()]);
 	}
 		
-	public RemoteModule(String label, RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, LocalOption[] localOptions, CVSTag tag, boolean isStatic) {
+	public RemoteModule(String label, RemoteFolder parent, ICVSRepositoryLocation repository, String repositoryRelativePath, LocalOption[] localOptions, CVSTag tag, boolean isStatic) {
 		super(parent, 
 			label, 
 			repository, 
-			repositoryRelativePath == null ? new Path(FolderSyncInfo.VIRTUAL_DIRECTORY) : repositoryRelativePath, 
+			repositoryRelativePath == null ? FolderSyncInfo.VIRTUAL_DIRECTORY : repositoryRelativePath, 
 			tag, 
 			isStatic);
 		this.localOptions = localOptions;
@@ -327,7 +327,7 @@ public class RemoteModule extends RemoteFolder {
 	 * @see ICVSRemoteFolder#forTag(CVSTag)
 	 */
 	public ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName) {
-		RemoteModule r = new RemoteModule(label, (RemoteFolder)parent, getRepository(), new Path(folderInfo.getRepository()), localOptions, tagName, folderInfo.getIsStatic());
+		RemoteModule r = new RemoteModule(label, (RemoteFolder)parent, getRepository(), folderInfo.getRepository(), localOptions, tagName, folderInfo.getIsStatic());
 		r.setExpandable(expandable);
 		if (folderInfo.getIsStatic()) {
 			ICVSRemoteResource[] children = getChildren();

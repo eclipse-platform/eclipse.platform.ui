@@ -5,7 +5,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -21,11 +20,11 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
  */
 public class RemoteFolderTree extends RemoteFolder  {
 	
-	public RemoteFolderTree(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+	public RemoteFolderTree(RemoteFolder parent, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
 		super(parent, repository, repositoryRelativePath, tag);
 	}
 	
-	public RemoteFolderTree(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+	public RemoteFolderTree(RemoteFolder parent, String name, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
 		super(parent, name, repository, repositoryRelativePath, tag, false);
 	}
 
