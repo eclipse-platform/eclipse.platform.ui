@@ -79,13 +79,15 @@
          </mapping>
       </idmap>
    </extension>
+   
    <extension
          point="org.eclipse.compare.structureMergeViewers">
-      <structureMergeViewer
+      <viewer
             extensions="xml,classpath"
             class="org.eclipse.compare.examples.xml.XMLStructureViewerCreator">
-      </structureMergeViewer>
+      </viewer>
    </extension>
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
