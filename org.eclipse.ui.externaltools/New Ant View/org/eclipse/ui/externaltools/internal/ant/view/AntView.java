@@ -195,12 +195,10 @@ public class AntView extends ViewPart {
 	private void createToolbarActions() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.add(runActiveTargetsAction);
-		toolBarMgr.add(new Separator());
 		toolBarMgr.add(addProjectAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 		
 		ToolBarManager projectManager= new ToolBarManager(projectToolBar);
-		projectManager.add(new Separator());
 		projectManager.add(removeProjectAction);
 		projectManager.add(removeAllAction);
 		projectManager.update(true);

@@ -5,6 +5,8 @@ import java.util.Iterator;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class TargetMoveUpAction extends Action implements IUpdate {
@@ -12,7 +14,7 @@ public class TargetMoveUpAction extends Action implements IUpdate {
 	private AntView view;
 
 	public TargetMoveUpAction(AntView view) {
-		super("Move Up");
+		super("Move Up", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_MOVE_UP));
 		setDescription("Move the selected target up in the execution order");
 		this.view= view;
 	}
