@@ -1,12 +1,16 @@
-//
-// TaskDescriptionProviderTest.java
-//
-// Copyright:
-// GEBIT Gesellschaft fuer EDV-Beratung
-// und Informatik-Technologien mbH, 
-// Berlin, Duesseldorf, Frankfurt (Germany) 2002
-// All rights reserved.
-//
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * und Informatik-Technologien mbH, 
+ * Berlin, Duesseldorf, Frankfurt (Germany).
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial implementation
+ *******************************************************************************/
+
 package org.eclipse.ui.externaltools.internal.ant.editor.test;
 
 import junit.framework.Test;
@@ -18,8 +22,6 @@ import org.eclipse.ui.externaltools.internal.ant.editor.TaskDescriptionProvider;
 /**
  * Tests the taks description provider.
  * 
- * @version 25.09.2002
- * @author Alf Schiefelbein
  */
 public class TaskDescriptionProviderTest extends TestCase {
 
@@ -31,8 +33,6 @@ public class TaskDescriptionProviderTest extends TestCase {
         super(arg0);
     }
 
-
-
     /** 
      * Tests getting the description of a task.
      */
@@ -43,7 +43,6 @@ public class TaskDescriptionProviderTest extends TestCase {
         assertTrue(tempDescription.length() > 0);
     }
 
-
     /**
      * Tests getting the description of an attribute.
      */
@@ -53,7 +52,6 @@ public class TaskDescriptionProviderTest extends TestCase {
         assertNotNull(tempDescription);
         assertTrue(tempDescription.length() > 0);
     }
-
     
     /**
      * Tests getting the required value of an attribute.
@@ -65,7 +63,6 @@ public class TaskDescriptionProviderTest extends TestCase {
         assertEquals("yes", tempRequired);
     }
 
-
     public static Test suite() {
         TestSuite suite = new TestSuite("TaskDescriptionProviderTest");
 
@@ -74,5 +71,4 @@ public class TaskDescriptionProviderTest extends TestCase {
         suite.addTest(new TaskDescriptionProviderTest("testGettingTaskDescription"));
         return suite;
     }
-
 }
