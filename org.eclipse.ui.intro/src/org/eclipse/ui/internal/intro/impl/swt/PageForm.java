@@ -184,26 +184,36 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             // update page book with correct PageContentForm composite.
             String pageId = model.getCurrentPageId();
-            if (!categoryPageBook.hasPage(pageId)) {
-                // if we do not have a category form for this page create one.
-                PageContentForm categoryForm = new PageContentForm(toolkit,
-                        model);
-                categoryForm.createPartControl(categoryPageBook,
-                        sharedStyleManager);
-            }
-            categoryPageBook.showPage(model.getCurrentPage().getId());
-
-            // Get cached page subtitle from control data.
-            Composite page = (Composite) categoryPageBook.getCurrentPage();
-            // update main Form title.
-            parentForm.setText(model.getCurrentPage().getTitle());
-            // update this page form's title, ie: Page subtitle, if it exists.
-            pageForm.setText((String) page.getData(PAGE_SUBTITLE));
-
-            //TODO need to transfer focus to the first link in
-            // the page somehow; we may need IIntroPage interface with
-            // a few methods like 'setFocus()' etc.
-            // DG
+            pageChanged(pageId);
         }
+    }
+    
+    /**
+     * This method is called when the current page changes.  It 
+     * creates the PageContentForm if necessary, and handles showing the 
+     * page in the Page Book
+     * @param pageID
+     */
+    public void pageChanged(String pageID){
+    	if (!categoryPageBook.hasPage(pageID)) {
+            // if we do not have a category form for this page create one.
+            PageContentForm categoryForm = new PageContentForm(toolkit,
+                    model);
+            categoryForm.createPartControl(categoryPageBook,
+                    sharedStyleManager);
+        }
+        categoryPageBook.showPage(model.getCurrentPage().getId());
+
+        // Get cached page subtitle from control data.
+        Composite page = (Composite) categoryPageBook.getCurrentPage();
+        // update main Form title.
+        parentForm.setText(model.getCurrentPage().getTitle());
+        // update this page form's title, ie: Page subtitle, if it exists.
+        pageForm.setText((String) page.getData(PAGE_SUBTITLE));
+
+        //TODO need to transfer focus to the first link in
+        // the page somehow; we may need IIntroPage interface with
+        // a few methods like 'setFocus()' etc.
+        // DG
     }
 }

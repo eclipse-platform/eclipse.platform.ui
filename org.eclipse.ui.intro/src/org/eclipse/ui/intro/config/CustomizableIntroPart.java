@@ -119,6 +119,7 @@ public final class CustomizableIntroPart extends IntroPart {
     public void init(IIntroSite site, IMemento memento)
             throws PartInitException {
         init(site);
+        restoreIntroState(memento);
     }
 
     /**
@@ -220,6 +221,28 @@ public final class CustomizableIntroPart extends IntroPart {
     public Control getControl() {
         return container;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		if(presentation != null)
+			presentation.saveState(memento);
+		if(standbyPart != null)
+			standbyPart.saveState(memento);
+	}
+
+	/**
+	 * Restore the saved Intro state.  Delegate the work to 
+	 * the appropriate parts.
+	 * @param memento
+	 */
+	private void restoreIntroState(IMemento memento){
+		if(presentation != null)
+			presentation.restoreState(memento, model);
+		if(standbyPart != null)
+			standbyPart.restoreState(memento, model);
+	}
 }
 
 

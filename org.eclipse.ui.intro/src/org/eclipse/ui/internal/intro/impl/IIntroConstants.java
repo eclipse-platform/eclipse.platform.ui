@@ -17,6 +17,10 @@ public interface IIntroConstants {
     String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
     String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 
+    // Memento constants
+    String INTRO_MEMENTO_TYPE = "introduction";	//$NON-NLS-1$
+    String CURRENT_DYNAMIC_PAGE = "dynamicPageId";	//$NON-NLS-1$
+    String CURRENT_STATIC_PAGE = "staticPageURL";	//$NON-NLS-1$
 
     // Form implementation consts:
     // ---------------------------

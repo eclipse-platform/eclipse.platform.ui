@@ -189,6 +189,21 @@ public class StandbyPart {
         toolkit.dispose();
     }
 
+    /**
+     * Save the current state of the standby part.
+     * @param memento the memento in which to store state information
+     */
+    public void saveState(IMemento memento){
+    }
+    
+    /**
+     * Restore the previous intro state from the provided memento.
+     * @param memento the memento that contains the previous state information
+     * @param model the model to set new state information on
+     */
+    public void restoreState(IMemento memento, IntroModelRoot model){
+    }
+    
     /*
      * Set focus on the IStandbyContentPart that corresponds to the top control
      * in the stack.

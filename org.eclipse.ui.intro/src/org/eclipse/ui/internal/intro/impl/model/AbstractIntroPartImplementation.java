@@ -190,7 +190,36 @@ public abstract class AbstractIntroPartImplementation {
         else
             return false;
     }
-
+    
+    /**
+     * Save the current state of the intro.  Currently, we only store
+     * information about the most recently visited intro page
+     * @param memento
+     */
+    public void saveState(IMemento memento){  
+    	saveCurrentPage(memento);
+    }
+    
+    /**
+     * This method saves the most recently visited dynamic intro page 
+     * in the memento.  If a given implementation requires saving 
+     * alternative information (e.g., information about the most
+     * recently visited static page) it should override this method.
+     * @param memento
+     */
+    protected void saveCurrentPage(IMemento memento) {
+    	IntroModelRoot model = getModelRoot();
+    	
+		if(memento == null || model == null)
+			return;
+		
+		String currentPage = model.getCurrentPageId();
+    	if(currentPage != null && currentPage.length() > 0){
+    		IMemento introMemento = memento.createChild(IIntroConstants.INTRO_MEMENTO_TYPE);
+    		introMemento.putString(IIntroConstants.CURRENT_DYNAMIC_PAGE, currentPage);
+    	}
+    }
+    
     public void setFocus() {
     }
 

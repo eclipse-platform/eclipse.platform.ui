@@ -74,6 +74,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
+    
+    /* Properties restored from the IMemento associated with
+     * the intro view */
+    // the URL of the last visited intro page, if it was a static page
+    private String restoredStaticURL;
+    // the id of the last visited intro page, if it was a dynamic page
+    private String restoredDynamicPageId;
 
     // the config extensions for this model.
     private IConfigurationElement[] configExtensionElements;
@@ -426,6 +433,45 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return currentPageId;
     }
 
+    /**
+     * 
+     * @return returns the id of the last visited dynamic page 
+     * restored from the IMemento associated with this view, or null
+     * if there is no such page
+     */
+    public String getRestoredDynamicPageId(){
+    	return restoredDynamicPageId;
+    }
+    
+    /**
+     * Set the dynamic intro page to be restored when the intro is next
+     * loaded.  This method should only be called from the 
+     * restoreState method on IntroPartPresentation 
+     * @param id
+     */
+    public void setRestoredDynamicPageId(String id){
+    	restoredDynamicPageId = id;
+    }
+    
+    /**
+     * 
+     * @return returns the url of the last visited static page,
+     * restored from the IMemento associated with this view, or null
+     * if there is no such url
+     */
+    public String getRestoredStaticURL(){
+    	return restoredStaticURL;
+    }
+    
+    /**
+     * Set the url of the static intro page to be restored when the 
+     * intro is next loaded.  This method should only be called from the 
+     * restoreState method on IntroPartPresentation 
+     * @param url
+     */
+    public void setRestoredStaticURL(String url){
+    	restoredStaticURL = url;
+    }
 
     /**
      * Sets the current page. If the model does not have a page with the passed

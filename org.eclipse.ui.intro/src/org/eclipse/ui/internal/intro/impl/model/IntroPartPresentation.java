@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
@@ -362,6 +364,56 @@ public class IntroPartPresentation extends AbstractIntroElement {
         return introPart;
     }
 
+    /**
+     * Save the current state of the intro.  Delegate to the implementation
+     * to do the work, as different implementations may have different
+     * requirements.
+     * @param memento the memento in which to store state information
+     */
+    public void saveState(IMemento memento){
+    	if(implementation != null)
+    		implementation.saveState(memento);
+    }
+    
+    /**
+     * Restore the previous intro state from the provided memento.
+     * Currently, we only restore the last visited intro page.
+     * @param memento the memento that contains the previous state information
+     * @param model the model to set new state information on
+     */
+    public void restoreState(IMemento memento, IntroModelRoot model){
+    	if(memento == null || model == null || !model.hasValidConfig())
+			return;	
+    	IMemento introMemento = memento.getChild(IIntroConstants.INTRO_MEMENTO_TYPE);
+		if (introMemento != null) {
+			restoreCurrentPage(introMemento, model);
+		}
+    }
+    
+    /**
+     * Restore the current intro page.  This method simply stores the
+     * previous state data in the model and lets the specific
+     * implementations handle the rest.
+     * @param introMemento 
+     * @param model
+     */
+    protected void restoreCurrentPage(IMemento introMemento, IntroModelRoot model) {
+    	// check if the last page viewed was a static page
+		String staticURL = introMemento.getString(IIntroConstants.CURRENT_STATIC_PAGE);
+		if(staticURL != null) {
+			// set browser URL
+			model.setRestoredStaticURL(staticURL);
+		}
+		else {
+			// check if the last page was a dynamic page
+			String pageId = introMemento.getString(IIntroConstants.CURRENT_DYNAMIC_PAGE);
+			if(pageId != null){
+				model.setRestoredDynamicPageId(pageId);
+				model.setCurrentPageId(pageId);
+			}	
+		}
+    }
+    
     public void setFocus() {
         if (implementation != null)
             implementation.setFocus();
@@ -407,5 +459,5 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public IntroHead getHead() {
         return head;
     }
-
+    
 }
