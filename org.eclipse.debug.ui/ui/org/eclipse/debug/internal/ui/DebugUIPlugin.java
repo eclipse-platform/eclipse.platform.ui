@@ -432,6 +432,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		DebugPreferencePage.initDefaults(prefs);
 		ConsolePreferencePage.initDefaults(prefs);
+		VariableViewsPreferencePage.initDefaults(prefs);
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

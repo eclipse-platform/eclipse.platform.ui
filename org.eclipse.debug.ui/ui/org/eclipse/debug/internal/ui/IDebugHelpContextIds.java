@@ -60,13 +60,7 @@ public interface IDebugHelpContextIds {
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$
 	public static final String CONSOLE_PREFERENCE_PAGE = PREFIX + "console_preference_page_context"; //$NON-NLS-1$
-
-	// Wizard pages
-	public static final String PROJECT_SELECTION_WIZARD_PAGE = PREFIX + "project_selection_wizard_page_context"; //$NON-NLS-1$
-	public static final String LAUNCHER_SELECTION_WIZARD_PAGE = PREFIX + "launcher_selection_wizard_page_context"; //$NON-NLS-1$
-
-	// Wizards
-	public static final String LAUNCH_WIZARD = PREFIX + "launch_wizard_context"; //$NON-NLS-1$
+	public static final String VARIABLE_VIEWS_PREFERENCE_PAGE = PREFIX + "variable_views_preference_page_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
