@@ -41,7 +41,14 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider {
     public ISelectionProvider getSelectionProvider();
 
     /**
-     * Returns the shell for this workbench site.
+     * Returns the shell for this workbench site. Not intended to be called from outside the UI thread.
+     * Clients should call IWorkbench.getDisplay() to gain access to the display rather than calling
+     * getShell().getDisplay().
+     * 
+     * <p>
+     * For compatibility, this method will not throw an exception if called from outside the UI thread,
+     * but the returned Shell may be wrong. 
+     * </p>
      *
      * @return the shell for this workbench site
      */
