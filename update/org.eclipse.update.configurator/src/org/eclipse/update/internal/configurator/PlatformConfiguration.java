@@ -648,7 +648,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 
 	private synchronized void initializeCurrent(Location platformConfigLocation) throws IOException {
-long s = System.currentTimeMillis();
+
 		// Configuration URL was is specified by the OSGi layer. 
 		// Default behavior is to look
 		// for configuration in the specified meta area. If not found, look
@@ -697,8 +697,6 @@ long s = System.currentTimeMillis();
 			Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
 			// releaes concurrent use lock
 			clearConfigurationLock();
-			long e = System.currentTimeMillis();
-			System.out.println("init=" + (e-s));
 		}
 	}
 
