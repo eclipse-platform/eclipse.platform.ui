@@ -17,6 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
@@ -38,7 +39,11 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();		
+		ActionContext context = getContext();
+		IStructuredSelection selection = null;
+		if (context != null) {
+			selection = (IStructuredSelection) context.getSelection();	
+		}	
 		fillOpenWithMenu(menu, selection);
 	}
 
