@@ -87,4 +87,13 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 		return selectedResources;
 	}
 
+	/**
+	 * This is a toolbar action so there are no selected resources.
+	 * 
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+	 */
+	protected IResource[] getSelectedResources() {
+		return new IResource[0];
+	}
+
 }
