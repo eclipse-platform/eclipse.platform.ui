@@ -261,11 +261,9 @@ public final class VerticalRuler implements IVerticalRuler {
 				if (position == null)
 					continue;
 					
-				
 				if (!position.overlapsWith(topLeft, viewPort))
 					continue;
-				
-													
+					
 				try {
 					
 					int offset= position.getOffset();

@@ -1,0 +1,36 @@
+<!-- build script to create a plugin from org.eclipse.ui -->
+<project name="org.eclipse.ui" default="export" basedir="..">
+	<target name="init">
+		<tstamp/>
+		<property name="destdir" value="../../plugin-export" />
+		<property name="plugin"  value="org.eclipse.ui" />
+		<property name="dest"  value="${destdir}/${plugin}" />
+	</target>
+
+	<target name="build" depends="init">
+    	<incremental project="${plugin}" kind="incr"/>
+	</target>
+
+	<target name="export" depends="build">
+		<mkdir dir="${destdir}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		<jar 
+			jarfile="${dest}/workbench.jar"
+			basedir="bin"
+		/>
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
+		<copy todir="${dest}/icons">
+			<fileset dir="icons" />
+		</copy>
+		<zip zipfile="${dest}/workbenchsrc.zip">
+		    <fileset dir="Eclipse JFace Text" />
+		    <fileset dir="Eclipse UI Text Editor" />
+		    <fileset dir="Eclipse UI Editor Support" />
+		    <fileset dir="Eclipse UI" />
+		    <fileset dir="Eclipse UI Standard Components" />
+		    <fileset dir="Eclipse JFace" />
+  		</zip>				
+	</target>
+</project>

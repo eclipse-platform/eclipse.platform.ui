@@ -716,6 +716,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private List fContentActions= new ArrayList(5);
 	/** The actions marked as property dependent */
 	private List fPropertyActions= new ArrayList(5);
+	/** The actions marked as state dependent */
+	private List fStateActions= new ArrayList(5);
 	/** The editor's action activation codes */
 	private List fActivationCodes= new ArrayList(2);
 	/** The verify key listener for activation code triggering */
@@ -1632,6 +1634,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fPropertyActions= null;
 		}
 		
+		if (fStateActions != null) {
+			fStateActions.clear();
+			fStateActions= null;
+		}
+		
 		if (fActivationCodes != null) {
 			fActivationCodeTrigger= null;
 			fActivationCodes.clear();
@@ -1882,9 +1889,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			try {
 				
+				boolean wasReadOnly= isEditorInputReadOnly();
 				extension.updateStateCache(input);
+				
 				if (fSourceViewer != null)
 					fSourceViewer.setEditable(isEditable());
+				
+				if (wasReadOnly != isEditorInputReadOnly())
+					updateStateDependentActions();
 				
 			} catch (CoreException x) {
 				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
@@ -2222,6 +2234,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Marks or unmarks the given action to be updated on state changes.
+	 *
+	 * @param actionId the action id
+	 * @param mark <code>true</code> if the action is state dependent
+	 */
+	public void markAsStateDependentAction(String actionId, boolean mark) {
+		Assert.isNotNull(actionId);
+		if (mark) {
+			if (!fStateActions.contains(actionId))
+				fStateActions.add(actionId);
+		} else
+			fStateActions.remove(actionId);
+	}
+	
+	/**
 	 * Updates all selection dependent actions.
 	 */
 	protected void updateSelectionDependentActions() {
@@ -2249,6 +2276,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void updatePropertyDependentActions() {
 		if (fPropertyActions != null) {
 			Iterator e= fPropertyActions.iterator();
+			while (e.hasNext())
+				updateAction((String) e.next());
+		}
+	}
+	
+	/**
+	 * Updates all state dependent actions.
+	 */
+	protected void updateStateDependentActions() {
+		if (fStateActions != null) {
+			Iterator e= fStateActions.iterator();
 			while (e.hasNext())
 				updateAction((String) e.next());
 		}
@@ -2402,6 +2440,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		
 		markAsPropertyDependentAction(ITextEditorActionConstants.REVERT_TO_SAVED, true);
+		
+		markAsStateDependentAction(ITextEditorActionConstants.UNDO, true);
+		markAsStateDependentAction(ITextEditorActionConstants.REDO, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CUT, true);
+		markAsStateDependentAction(ITextEditorActionConstants.PASTE, true);
+		markAsStateDependentAction(ITextEditorActionConstants.DELETE, true);
+		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
+		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);

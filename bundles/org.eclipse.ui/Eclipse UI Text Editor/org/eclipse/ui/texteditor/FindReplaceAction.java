@@ -179,6 +179,15 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		if (fWorkbenchPart == null && fWorkbenchWindow != null)
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
 			
+		if (fWorkbenchPart instanceof ITextEditorExtension) {
+			ITextEditorExtension extension= (ITextEditorExtension) fWorkbenchPart;
+			if (extension.isEditorInputReadOnly()) {
+				fTarget= null;
+				setEnabled(false);
+				return;
+			}
+		}
+		
 		if (fWorkbenchPart != null)
 			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
 		else

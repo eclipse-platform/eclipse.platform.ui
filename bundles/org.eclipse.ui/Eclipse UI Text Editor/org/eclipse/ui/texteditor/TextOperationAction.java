@@ -68,8 +68,18 @@ public final class TextOperationAction extends TextEditorAction {
 	 * enabled state accordingly.
 	 */
 	public void update() {
-		if (fOperationTarget == null && getTextEditor() != null && fOperationCode != -1)
-			fOperationTarget= (ITextOperationTarget) getTextEditor().getAdapter(ITextOperationTarget.class);
+		
+		ITextEditor editor= getTextEditor();
+		if (editor instanceof ITextEditorExtension) {
+			ITextEditorExtension extension= (ITextEditorExtension) editor;
+			if (extension.isEditorInputReadOnly()) {
+				setEnabled(false);
+				return;
+			}
+		}
+		
+		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
+			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 			
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 		setEnabled(isEnabled);

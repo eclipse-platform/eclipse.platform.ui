@@ -1731,7 +1731,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			if (startLine + lines < endLine)
 				return getTopIndex() + lines - 1;
 				
-			return endLine - getTopIndex();
+			return endLine;
 			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
@@ -1765,8 +1765,14 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 */
 	public int getBottomIndexEndOffset() {
 		try {
+			
 			IRegion line= getDocument().getLineInformation(getBottomIndex());
-			return line.getOffset() + line.getLength() - 1;
+			int bottomEndOffset= line.getOffset() + line.getLength() - 1;
+			
+			IRegion region= getVisibleRegion();
+			int visibleRegionEndOffset=  region.getOffset() + region.getLength() - 1;
+			return visibleRegionEndOffset < bottomEndOffset ? visibleRegionEndOffset : bottomEndOffset;
+				
 		} catch (BadLocationException ex) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getBottomIndexEndOffset")); //$NON-NLS-1$
@@ -2751,20 +2757,36 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * @param presentation the presentation to be added
 	 */
 	private void addPresentation(TextPresentation presentation) {
-				
-		Iterator e= null;
-		StyleRange dfltRange= presentation.getDefaultStyleRange();
-		if (dfltRange != null) {
-			fTextWidget.setStyleRange(dfltRange);
-			e= presentation.getNonDefaultStyleRangeIterator();
-		} else {
-			e= presentation.getAllStyleRangeIterator();
-		}
 		
-		while (e.hasNext()) {
-			StyleRange r= (StyleRange) e.next();
-			fTextWidget.setStyleRange(r);
-		}
+		StyleRange range= presentation.getDefaultStyleRange();
+		if (range != null) {
+			
+			fTextWidget.setStyleRange(range);
+			Iterator e= presentation.getNonDefaultStyleRangeIterator();
+			while (e.hasNext()) {
+				range= (StyleRange) e.next();
+				fTextWidget.setStyleRange(range);
+			}
+		
+		} else {
+			
+			Iterator e= presentation.getAllStyleRangeIterator();
+			
+//			// use optimized StyledText
+//			StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
+//			for (int i= 0; i < ranges.length; i++)
+//				ranges[i]= (StyleRange) e.next();
+//				
+//			IRegion region= presentation.getCoverage();
+//			fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
+			
+			// use unoptimized StyledText
+			while (e.hasNext()) {
+				StyleRange r= (StyleRange) e.next();
+				fTextWidget.setStyleRange(r);
+			}
+			
+		}	
 	}
 	
 	/**

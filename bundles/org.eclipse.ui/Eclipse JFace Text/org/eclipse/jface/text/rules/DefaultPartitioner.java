@@ -199,6 +199,14 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				if (partition.includes(reparseStart)) {
 					partitionStart= partition.getOffset();
 					contentType= partition.getType();
+					if (e.getOffset() == partition.getOffset() + partition.getLength())
+						reparseStart= partitionStart;
+					-- first;
+				} else if (reparseStart == e.getOffset() && reparseStart == partition.getOffset() + partition.getLength()) {
+					partitionStart= partition.getOffset();
+					contentType= partition.getType();
+					reparseStart= partitionStart;
+					-- first;
 				} else {
 					partitionStart= partition.getOffset() + partition.getLength();
 					contentType= IDocument.DEFAULT_CONTENT_TYPE;
@@ -252,15 +260,18 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				}
 				
 				// if position already exists we are done
-				if (d.containsPosition(CONTENT_TYPES_CATEGORY, start, length) && lastScannedPosition > e.getOffset())
-					return createRegion();
-				
-				// insert the new type position
-				try {
-					d.addPosition(CONTENT_TYPES_CATEGORY, new TypedPosition(start, length, contentType));
-					rememberRegion(start, length);
-				} catch (BadPositionCategoryException x) {
-				} catch (BadLocationException x) {
+				if (d.containsPosition(CONTENT_TYPES_CATEGORY, start, length)) {
+					if (lastScannedPosition > e.getOffset())
+						return createRegion();
+					++ first;
+				} else {
+					// insert the new type position
+					try {
+						d.addPosition(CONTENT_TYPES_CATEGORY, new TypedPosition(start, length, contentType));
+						rememberRegion(start, length);
+					} catch (BadPositionCategoryException x) {
+					} catch (BadLocationException x) {
+					}
 				}
 				
 				token= fScanner.nextToken();

@@ -160,7 +160,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 			
 			TextAttribute attribute= getTokenTextAttribute(token);			
 			if (lastAttribute != null && lastAttribute.equals(attribute)) {
-				length += fScanner.getTokenLength();			    
+				length += fScanner.getTokenLength();
 			} else {
 				addRange(presentation, lastStart, length, lastAttribute);
 				lastToken= token;

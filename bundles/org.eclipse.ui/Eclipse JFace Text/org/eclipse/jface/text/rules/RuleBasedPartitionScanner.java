@@ -6,6 +6,9 @@ package org.eclipse.jface.text.rules;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.text.IDocument;
 
 
@@ -56,32 +59,28 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		if (fContentType == null || fRules == null)
 			return super.nextToken();
 		
+		fTokenOffset= fOffset;
+		fColumn= UNDEFINED;
+		boolean resume= (fPartitionOffset < fOffset);
+				
 		IPredicateRule rule;
 		IToken token;
-				
-		int startIndex= -1;
+		
 		for (int i= 0; i < fRules.length; i++) {
 			rule= (IPredicateRule) fRules[i];
-			Object data= rule.getSuccessToken();
-			if (fContentType.equals(data))
-				startIndex= i;
+			token= rule.getSuccessToken();
+			if (fContentType.equals(token.getData())) {
+				if (resume)
+					fTokenOffset= fPartitionOffset;
+				token= rule.evaluate(this, resume);
+				if (!token.isUndefined()) {
+					fContentType= null;
+					return token;
+				}
+			}
 		}
+		
 		fContentType= null;
-		
-		boolean resume= (startIndex > -1);
-		fTokenOffset= resume ? fPartitionOffset : fOffset;
-		fColumn= UNDEFINED;
-					
-		for (int i= Math.max(0, startIndex); i < fRules.length; i++) {
-			rule= (IPredicateRule) fRules[i];
-			token= rule.evaluate(this, resume);
-			if (!token.isUndefined())
-				return token;
-		}
-		
-		if (read() == EOF)
-			return Token.EOF;
-		else
-			return fDefaultReturnToken;
+		return super.nextToken();
 	}
 }

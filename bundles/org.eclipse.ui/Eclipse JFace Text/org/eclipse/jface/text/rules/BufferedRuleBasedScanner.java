@@ -17,7 +17,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	private final static int DEFAULT_BUFFER_SIZE= 500;
 	
 	private int fBufferSize= DEFAULT_BUFFER_SIZE;
-	private char[] fBuffer;
+	private char[] fBuffer= new char[DEFAULT_BUFFER_SIZE];
 	
 	private int fStart;
 	private int fEnd;
@@ -52,6 +52,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	protected void setBufferSize(int size) {
 		Assert.isTrue(size > 0);
 		fBufferSize= size;
+		fBuffer= new char[size];
 	}
 	
 	/**
@@ -70,7 +71,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		try {
 			
 			String content= fDocument.get(fStart, fEnd - fStart);
-			fBuffer= content.toCharArray();
+			content.getChars(0, fEnd - fStart, fBuffer, 0);
 			
 		} catch (BadLocationException x) {
 		}
