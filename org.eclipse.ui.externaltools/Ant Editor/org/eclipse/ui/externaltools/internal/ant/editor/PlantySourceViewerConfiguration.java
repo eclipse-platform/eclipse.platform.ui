@@ -17,6 +17,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -25,6 +26,7 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
@@ -32,6 +34,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.derived.HTMLTextPresenter;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.XMLAnnotationHover;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.XMLTextHover;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.NonRuleBasedDamagerRepairer;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.NotifyingReconciler;
@@ -56,6 +60,8 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         
     private PlantyEditor fEditor;
 
+    private XMLTextHover fTextHover;
+    
     /**
      * Creates an instance with the specified color manager.
      */
@@ -174,4 +180,29 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
 	    reconciler.setDelay(500);
 	    return reconciler;
     }
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+		return new XMLAnnotationHover();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
+		return getInformationControlCreator(true);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		if (fTextHover == null) {
+			fTextHover= new XMLTextHover();
+		}
+		return fTextHover;
+	}
+
 }
