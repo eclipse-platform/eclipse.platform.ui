@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 75886
  *******************************************************************************/
 package org.eclipse.team.internal.ui.dialogs;
 
@@ -17,46 +18,42 @@ import java.util.Map;
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 
 public class PreferencePageContainerDialog extends Dialog implements IPreferencePageContainer {
-
-	private class PageLayout extends Layout {
-		public void layout(Composite composite, boolean force) {
-			Rectangle rect = composite.getClientArea();
-			Control [] children = composite.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				children[i].setSize(rect.width, rect.height);
-			}
-		}
-		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-				return new Point(wHint, hHint);
-			int x= fMinimumPageSize.x;
-			int y= fMinimumPageSize.y;
-			
-			Control[] children= composite.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				Point size= children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
-				x= Math.max(x, size.x);
-				y= Math.max(y, size.y);
-			}				
-			if (wHint != SWT.DEFAULT) x = wHint;
-			if (hHint != SWT.DEFAULT) y = hHint;
-			return new Point(x, y);
-		}	
-	}
 
 	private PreferencePage[] pages;
 	private PreferencePage currentPage;
@@ -296,7 +293,10 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 */
 	private Composite createPageContainer(Composite parent) {
 		Composite result = new Composite(parent, SWT.NULL);
-		result.setLayout(new PageLayout());
+		FillLayout layout = new FillLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 5;
+		result.setLayout(layout);
 		return result;
 	}
 
@@ -385,7 +385,10 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 			    if (isSinglePage()) {
 			        setMessage(Policy.bind("PreferencePageContainerDialog.6")); //$NON-NLS-1$
 			    } else {
-			        setMessage(currentPage.getTitle());
+			    	//remove mnemonic see bug 75886
+			    	String title = currentPage.getTitle();
+			    	title = title.replaceAll("&", "");//$NON-NLS-1$ //$NON-NLS-2$
+			    	setMessage(title);
 			    }
 			} else {
 				setMessage(pageMessage);
