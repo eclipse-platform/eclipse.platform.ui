@@ -29,6 +29,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 
 	Text cvsRsh;
 	Text cvsServer;	
+	Text cvsRshParameters;
 
 	/*
 	 * @see PreferencePage#createContents(Composite)
@@ -74,7 +75,6 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}			
 		});
 		
-		
 		Label l = new Label(composite, SWT.LEFT | SWT.BOLD);
 		l.setText(Policy.bind("ExtMethodPreferencePage_Note__5")); //$NON-NLS-1$
 		l.setFont(JFaceResources.getBannerFont());
@@ -86,6 +86,26 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		l.setLayoutData(data);
 		
+		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
+		
+		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH_Parameters")); //$NON-NLS-1$
+		cvsRshParameters = new Text(composite, SWT.BORDER);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		data.horizontalAlignment = GridData.FILL;
+		cvsRshParameters.setLayoutData(data);
+
+		l = new Label(composite, SWT.LEFT | SWT.BOLD);
+		l.setText(Policy.bind("ExtMethodPreferencePage_Note__5")); //$NON-NLS-1$
+		l.setFont(JFaceResources.getBannerFont());
+		
+		l = new Label(composite, SWT.LEFT);
+		l.setText(Policy.bind("ExtMethodPreferencePage_note_CVS_RSH_Parameters")); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalSpan = 2;
+		data.horizontalAlignment = GridData.FILL;
+		l.setLayoutData(data);
+						
 		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
 		
 		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_SERVER__7")); //$NON-NLS-1$
@@ -115,6 +135,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	protected void initializeDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		cvsRsh.setText(store.getString(ICVSUIConstants.PREF_CVS_RSH));
+		cvsRshParameters.setText(store.getString(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS));
 		cvsServer.setText(store.getString(ICVSUIConstants.PREF_CVS_SERVER));
 	}
 	
@@ -137,8 +158,10 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue(ICVSUIConstants.PREF_CVS_RSH, cvsRsh.getText());
+		store.setValue(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS, cvsRshParameters.getText());
 		store.setValue(ICVSUIConstants.PREF_CVS_SERVER, cvsServer.getText());
 		CVSProviderPlugin.getPlugin().setCvsRshCommand(cvsRsh.getText());
+		CVSProviderPlugin.getPlugin().setCvsRshParameters(cvsRshParameters.getText());
 		CVSProviderPlugin.getPlugin().setCvsServer(cvsServer.getText());
 		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return super.performOk();

@@ -27,14 +27,12 @@ import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
  */
 public class ExtConnection implements IServerConnection {
 
-	// command to start remote cvs in server mode
-	private static final String INVOKE_SVR_CMD = "server"; //$NON-NLS-1$
-	
 	// The default port for rsh
 	private static final int DEFAULT_PORT = 9999;
 
 	// cvs format for the repository (e.g. :extssh:user@host:/home/cvs/repo)
 	private ICVSRepositoryLocation location;
+	private String password;
 
 	// incoming from remote host
 	InputStream inputStream;
@@ -47,7 +45,7 @@ public class ExtConnection implements IServerConnection {
 	
 	protected ExtConnection(ICVSRepositoryLocation location, String password) {
 		this.location = location;
-		// passwork not needed, authentication performed by external tool
+		this.password = password;
 	}
 	
 	/**
@@ -89,25 +87,7 @@ public class ExtConnection implements IServerConnection {
 	 * @see Connection.open()
 	 */
 	public void open(IProgressMonitor monitor) throws IOException {
-		String hostname = location.getHost();
-		String username = location.getUsername();
-		
-		String CVS_RSH = CVSProviderPlugin.getPlugin().getCvsRshCommand();
-		String CVS_SERVER = CVSProviderPlugin.getPlugin().getCvsServer();
-		String[] command = new String[] {CVS_RSH, hostname, "-l", username, CVS_SERVER, INVOKE_SVR_CMD}; //$NON-NLS-1$
-		
-		int port = location.getPort();
-		if (port == location.USE_DEFAULT_PORT)
-			port = DEFAULT_PORT;
-			
-		// The command line doesn't support the use of a port
-		if (port != DEFAULT_PORT)
-			throw new IOException(Policy.bind("EXTServerConnection.invalidPort")); //$NON-NLS-1$
-				
-		if(CVS_RSH == null || CVS_SERVER == null) {
-			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet"));				 //$NON-NLS-1$
-		}
-
+		String[] command = ((CVSRepositoryLocation)location).getExtCommand(password);
 		boolean connected = false;
 		try {
 			process = Runtime.getRuntime().exec(command);
@@ -126,7 +106,7 @@ public class ExtConnection implements IServerConnection {
 				try {
 					close();
 				} finally {
-					throw new IOException(Policy.bind("EXTServerConnection.ioError", CVS_RSH)); //$NON-NLS-1$
+					throw new IOException(Policy.bind("EXTServerConnection.ioError", command[0])); //$NON-NLS-1$
 				}
 			}
 		}

@@ -52,6 +52,7 @@ public interface ICVSUIConstants {
 	public final String PREF_QUIETNESS = "pref_quietness"; //$NON-NLS-1$
 	public final String PREF_SHOW_MODULES = "pref_show_modules"; //$NON-NLS-1$
 	public final String PREF_CVS_RSH = "pref_cvs_rsh"; //$NON-NLS-1$
+	public final String PREF_CVS_RSH_PARAMETERS = "pref_cvs_rsh_parameters"; //$NON-NLS-1$
 	public final String PREF_CVS_SERVER = "pref_cvs_server"; //$NON-NLS-1$
 	public final String PREF_CONSIDER_CONTENTS = "pref_consider_contents"; //$NON-NLS-1$
 	public final String PREF_SHOW_MARKERS = "pref_show_markers"; //$NON-NLS-1$

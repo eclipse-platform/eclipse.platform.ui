@@ -5,12 +5,14 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -92,11 +94,19 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null) ? //$NON-NLS-1$ 
 		false	:(new Boolean(System.getProperty("eclipse.cvs.standalone")).booleanValue()); //$NON-NLS-1$ 
 	
+	// command to start remote cvs in server mode
+	private static final String INVOKE_SVR_CMD = "server"; //$NON-NLS-1$
+	
 	// fields needed for caching the password
 	public static final String INFO_PASSWORD = "org.eclipse.team.cvs.core.password";//$NON-NLS-1$ 
 	public static final String INFO_USERNAME = "org.eclipse.team.cvs.core.username";//$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
 	public static final URL FAKE_URL;
+
+	public static final String USER_VARIABLE = "{user}";
+	public static final String PASSWORD_VARIABLE = "{password}";
+	public static final String HOST_VARIABLE = "{host}";
+	public static final String PORT_VARIABLE = "{port}";
 	
 	static {
 		URL temp = null;
@@ -814,5 +824,55 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public void flushUserInfo() throws CVSException {
 		flushCache();
 	}
+	
+	/*
+	 * Return the command string that is to be used by the EXT connection method.
+	 */
+	String[] getExtCommand(String password) throws IOException {
+		// Get the user specified connection parameters
+		String CVS_RSH = CVSProviderPlugin.getPlugin().getCvsRshCommand();
+		String CVS_RSH_PARAMETERS = CVSProviderPlugin.getPlugin().getCvsRshParameters();
+		String CVS_SERVER = CVSProviderPlugin.getPlugin().getCvsServer();
+		if(CVS_RSH == null || CVS_SERVER == null) {
+			throw new IOException(Policy.bind("EXTServerConnection.varsNotSet"));
+		}
+		
+		// If there is only one token, assume it is the command and use the default parameters and order
+		if (CVS_RSH_PARAMETERS == null || CVS_RSH_PARAMETERS.length() == 0) {
+			if (port != USE_DEFAULT_PORT)
+				throw new IOException(Policy.bind("EXTServerConnection.invalidPort")); //$NON-NLS-1$
+			return new String[] {CVS_RSH, host, "-l", user, CVS_SERVER, INVOKE_SVR_CMD}; //$NON-NLS-1$
+		}
+
+		// Substitute any variables for their appropriate values
+		CVS_RSH_PARAMETERS = stringReplace(CVS_RSH_PARAMETERS, USER_VARIABLE, user);
+		CVS_RSH_PARAMETERS = stringReplace(CVS_RSH_PARAMETERS, PASSWORD_VARIABLE, password);
+		CVS_RSH_PARAMETERS = stringReplace(CVS_RSH_PARAMETERS, HOST_VARIABLE, host);
+		CVS_RSH_PARAMETERS = stringReplace(CVS_RSH_PARAMETERS, PORT_VARIABLE, new Integer(port).toString());
+
+		// Build the command list to be sent to the OS.
+		List commands = new ArrayList();
+		commands.add(CVS_RSH);
+		StringTokenizer tokenizer = new StringTokenizer(CVS_RSH_PARAMETERS);
+		while (tokenizer.hasMoreTokens()) {
+			String next = tokenizer.nextToken();
+			commands.add(next);
+		}
+		commands.add(CVS_SERVER);
+		commands.add(INVOKE_SVR_CMD);
+		return (String[]) commands.toArray(new String[commands.size()]);
+	}
+
+	/*
+	 * Replace all occurances of oldString with newString
+	 */
+	private String stringReplace(String string, String oldString, String newString) {
+		int index = string.toLowerCase().indexOf(oldString);
+		if (index == -1) return string;
+		return stringReplace(
+			string.substring(0, index) + newString + string.substring(index + oldString.length()),
+			oldString, newString);
+	}
+
 
 }

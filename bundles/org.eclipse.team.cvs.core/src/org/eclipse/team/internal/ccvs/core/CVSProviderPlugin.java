@@ -60,6 +60,8 @@ public class CVSProviderPlugin extends Plugin {
 
 	// external command to run for ext connection method
 	public static final String DEFAULT_CVS_RSH = "ssh"; //$NON-NLS-1$
+	// external command parameters
+	public static final String DEFAULT_CVS_RSH_PARAMETERS = "{host} -l {user}"; //$NON-NLS-1$
 	// remote command to run for ext connection method
 	public static final String DEFAULT_CVS_SERVER = "cvs"; //$NON-NLS-1$
 	// determines if empty directories received from the server should be pruned.
@@ -93,6 +95,7 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean replaceUnmanaged = true;
 	private boolean repositoriesAreBinary = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
+	private String cvsRshParameters = DEFAULT_CVS_RSH_PARAMETERS;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
 	private boolean watchEditEnabled = true;
@@ -349,6 +352,22 @@ public class CVSProviderPlugin extends Plugin {
 		this.cvsRshCommand = cvsRshCommand;
 	}
 
+	/**
+	 * Returns the cvsRshParameters.
+	 * @return String
+	 */
+	public String getCvsRshParameters() {
+		return cvsRshParameters;
+	}
+
+	/**
+	 * Sets the cvsRshParameters.
+	 * @param cvsRshParameters The cvsRshParameters to set
+	 */
+	public void setCvsRshParameters(String cvsRshParameters) {
+		this.cvsRshParameters = cvsRshParameters;
+	}
+	
 	/**
 	 * Gets the cvsServer.
 	 * @return Returns a String
