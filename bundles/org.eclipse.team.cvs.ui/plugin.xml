@@ -143,6 +143,12 @@
 				tooltip="%CompareWithVersionAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithVersionAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.replaceWithVersion"
+				label="%ReplaceWithVersionAction.label"
+				tooltip="%ReplaceWithVersionAction.tooltip"
+				menubarPath="replaceWithMenu/replaceWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithVersionAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IFileContributions"
