@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -39,7 +44,7 @@ import org.eclipse.team.internal.ui.PromptingDialog;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class TagAction extends CVSAction {
+public class TagAction extends WorkspaceAction {
 	// The previously remembered tag
 	private static String previousTag = ""; //$NON-NLS-1$
 	
@@ -73,7 +78,7 @@ public class TagAction extends CVSAction {
 		if (result[0] == null) return;
 		
 		// Tag the local resources, divided by project/provider
-		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
+		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Hashtable table = getProviderMapping(resources);
 				Set keySet = table.keySet();
@@ -99,7 +104,7 @@ public class TagAction extends CVSAction {
 				}	
 				previousTag = result[0];				
 			}
-		});
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	
 	/**

@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.merge.MergeWizard;
 
-public class MergeAction extends CVSAction {
+public class MergeAction extends WorkspaceAction {
 
 	/*
 	 * @see CVSAction#execute()

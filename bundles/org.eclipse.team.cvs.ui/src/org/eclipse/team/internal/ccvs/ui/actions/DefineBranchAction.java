@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,12 +30,11 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * DefineTagAction remembers a tag by name
  */
-public class DefineBranchAction extends TeamAction {
+public class DefineBranchAction extends CVSAction {
 	IInputValidator validator = new IInputValidator() {
 		public String isValid(String newText) {
 			IStatus status = CVSTag.validateTagName(newText);
@@ -75,9 +79,9 @@ public class DefineBranchAction extends TeamAction {
 		return new ICVSRepositoryLocation[0];
 	}
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
@@ -93,7 +97,7 @@ public class DefineBranchAction extends TeamAction {
 					}
 				});
 			}
-		}, Policy.bind("DefineBranchAction.tag"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 
 	}
 	/*

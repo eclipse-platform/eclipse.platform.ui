@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -51,7 +56,7 @@ public class AddToWorkspaceAction extends CheckoutAction {
 	/*
 	 * @see CVSAction#execute()
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
@@ -91,7 +96,7 @@ public class AddToWorkspaceAction extends CheckoutAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 	}
 		
 	/*
@@ -105,4 +110,11 @@ public class AddToWorkspaceAction extends CheckoutAction {
 		}
 		return true;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("AddToWorkspaceAction.checkoutFailed"); //$NON-NLS-1$
+	}
+
 }

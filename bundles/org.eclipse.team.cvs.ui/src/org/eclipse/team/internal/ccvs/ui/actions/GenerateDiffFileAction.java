@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
@@ -15,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * Action to generate a patch file using the CVS diff command.
@@ -23,7 +27,7 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
  * NOTE: This is a temporary action and should eventually be replaced
  * by a create patch command in the compare viewer.
  */
-public class GenerateDiffFileAction extends CVSAction {
+public class GenerateDiffFileAction extends WorkspaceAction {
 	/**
 	 * Makes sure that the projects of all selected resources are shared.
 	 * Returns true if all resources are shared, and false otherwise.

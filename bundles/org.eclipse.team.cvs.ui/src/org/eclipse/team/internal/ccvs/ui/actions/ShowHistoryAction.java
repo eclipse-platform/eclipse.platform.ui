@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -23,9 +28,8 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
-public class ShowHistoryAction extends TeamAction {
+public class ShowHistoryAction extends CVSAction {
 	/**
 	 * Returns the selected remote files
 	 */
@@ -58,9 +62,9 @@ public class ShowHistoryAction extends TeamAction {
 		return new ICVSRemoteFile[0];
 	}
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#executeIAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
@@ -69,7 +73,7 @@ public class ShowHistoryAction extends TeamAction {
 					view.showHistory(files[0], null /* no current revision */);
 				}
 			}
-		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()
@@ -78,22 +82,11 @@ public class ShowHistoryAction extends TeamAction {
 		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		return resources.length == 1;
 	}
-	/** (Non-javadoc)
-	 * Method declared on IActionDelegate.
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			this.selection = (IStructuredSelection) selection;
-			//this action can be invoked by double-click, in which case
-			//there is no target action
-			if (action != null) {
-				try {
-					action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					action.setEnabled(false);
-					handle(e, null, null);
-				}
-			}
-		}
+	protected String getErrorTitle() {
+		return Policy.bind("ShowHistoryAction.showHistory"); //$NON-NLS-1$
 	}
+
 }

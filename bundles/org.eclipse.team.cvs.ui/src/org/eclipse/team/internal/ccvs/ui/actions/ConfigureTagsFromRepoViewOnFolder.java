@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -20,13 +25,13 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
-import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
-import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;;
 
 /**
  * DefineTagAction remembers a tag by name
  */
-public class ConfigureTagsFromRepoViewOnFolder extends TeamAction {
+public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
+	
 	/**
 	 * Returns the selected remote folders
 	 */
@@ -55,9 +60,9 @@ public class ConfigureTagsFromRepoViewOnFolder extends TeamAction {
 	}
 
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction@execute(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				final ICVSRemoteFolder[] roots = getSelectedRemoteFolders();
@@ -73,7 +78,7 @@ public class ConfigureTagsFromRepoViewOnFolder extends TeamAction {
 					}
 				});
 			}
-		}, Policy.bind("ConfigureTagsFromRepoViewOnFolderConfiguring_branch_tags_1"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
 	}
 
 	/*
@@ -84,4 +89,11 @@ public class ConfigureTagsFromRepoViewOnFolder extends TeamAction {
 		if (roots.length == 0) return false;
 		return true;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("ConfigureTagsFromRepoViewConfigure_Tag_Error_1"); //$NON-NLS-1$
+	}
+
 }

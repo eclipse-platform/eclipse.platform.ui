@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -27,7 +32,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * DefineTagAction remembers a tag by name
@@ -80,12 +84,13 @@ public class ConfigureTagsFromRepoView extends CVSAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length != 1) return;
 				final Shell shell = getShell();
+				final CVSException[] exception = new CVSException[] { null };
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						try {
@@ -97,12 +102,13 @@ public class ConfigureTagsFromRepoView extends CVSAction {
 							TagConfigurationDialog d = new TagConfigurationDialog(shell, cvsFolders);
 							d.open();
 						} catch(CVSException e) {
-							ErrorDialog.openError(shell, Policy.bind("ConfigureTagsFromRepoViewConfigure_Tag_Error_1"), Policy.bind("ConfigureTagsFromRepoViewError_retreiving_root_folders_from_repository_2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+							exception[0] = e;
 						}
 					}
 				});
+				if (exception[0] != null) throw new InvocationTargetException(exception[0]);
 			}
-		}, Policy.bind("ConfigureTagsFromRepoViewConfiguring_branch_tags_3"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
 	}
 
 	/*
@@ -114,10 +120,11 @@ public class ConfigureTagsFromRepoView extends CVSAction {
 		return true;
 	}
 	
-	/*
-	 * @see CVSAction#needsToSaveDirtyEditors()
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
-	protected boolean needsToSaveDirtyEditors() {
-		return false;
+	protected String getErrorTitle() {
+		return Policy.bind("ConfigureTagsFromRepoViewConfigure_Tag_Error_1"); //$NON-NLS-1$
 	}
+
 }

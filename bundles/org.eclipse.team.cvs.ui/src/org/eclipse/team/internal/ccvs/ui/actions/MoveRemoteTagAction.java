@@ -36,7 +36,6 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public class MoveRemoteTagAction extends TagInRepositoryAction {
 

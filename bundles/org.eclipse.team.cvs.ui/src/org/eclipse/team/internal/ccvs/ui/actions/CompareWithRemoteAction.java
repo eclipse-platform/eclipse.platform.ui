@@ -1,15 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -25,19 +34,23 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class CompareWithRemoteAction extends CompareWithTagAction {
 
-	public void execute(IAction action) {
-		IResource[] resources;
-		resources = getSelectedResources();
-		CVSTag[] tags = new CVSTag[resources.length];
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		final IResource[] resources = getSelectedResources();
+		final CVSTag[] tags = new CVSTag[resources.length];
 		try {
 			for (int i = 0; i < resources.length; i++) {
 				tags[i] = getTag(resources[i]);
 			}
-			CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tags));
 		} catch(CVSException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("CompareWithRemoteAction.compare"),  //$NON-NLS-1$
-								  Policy.bind("CompareWithRemoteAction.noRemoteLong"), e.getStatus()); //$NON-NLS-1$
-		}			
+			throw new InvocationTargetException(e);
+		}	
+		
+		// Show the compare viewer
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tags));
+			}
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);		
 	}
 	
 	protected CVSTag getTag(IResource resource) throws CVSException {
@@ -98,4 +111,11 @@ public class CompareWithRemoteAction extends CompareWithTagAction {
 		}
 		return false;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("CompareWithRemoteAction.compare"); //$NON-NLS-1$
+	}
+
 }

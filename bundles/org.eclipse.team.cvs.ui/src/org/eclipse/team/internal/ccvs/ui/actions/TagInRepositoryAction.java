@@ -74,7 +74,7 @@ public class TagInRepositoryAction extends TagAction {
 		});
 		if (tag[0] == null) return;
 					
-		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
+		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					monitor.beginTask(null, 1000 * resources.length);
@@ -86,7 +86,7 @@ public class TagInRepositoryAction extends TagAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		});
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 
 	/**

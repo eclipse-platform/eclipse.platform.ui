@@ -220,22 +220,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 	
 	/**
-	 * Creates a progress monitor and runs the specified runnable.
-	 * 
-	 * @param parent the parent Shell for the dialog
-	 * @param cancelable if true, the dialog will support cancelation
-	 * @param runnable the runnable
-	 * 
-	 * @exception InvocationTargetException when an exception is thrown from the runnable
-	 * @exception InterruptedException when the progress monitor is cancelled
-	 */
-	public static void runWithProgressDialog(Shell parent, boolean cancelable,
-		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			
-		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
-	}
-	
-	/**
 	 * Returns the image descriptor for the given image ID.
 	 * Returns null if there is no such image.
 	 */

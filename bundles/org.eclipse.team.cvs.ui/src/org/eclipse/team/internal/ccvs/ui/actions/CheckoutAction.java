@@ -45,7 +45,7 @@ public class CheckoutAction extends CVSAction {
 		final ICVSRemoteFolder[] remoteFolders = getSelectedRemoteFolders();
 		final String[][] expansions = new String[1][0];
 		expansions[0] = null;
-		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
+		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					expansions[0] = CVSProviderPlugin.getProvider().getExpansions(remoteFolders, monitor);
@@ -53,7 +53,7 @@ public class CheckoutAction extends CVSAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		});
+		}, true /* cancelable */, PROGRESS_DIALOG);
 		if (expansions[0] == null) return;
 		
 		// If the folder exists, inform the user that it will be overridden
@@ -69,7 +69,7 @@ public class CheckoutAction extends CVSAction {
 													  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
 		if (prompt.promptForMultiple().length != projects.length) return;
 		
-		CVSUIPlugin.runWithProgressDialog(getShell(), true, new IRunnableWithProgress() {
+		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					monitor.beginTask(getTaskName(remoteFolders), 100);
@@ -81,7 +81,7 @@ public class CheckoutAction extends CVSAction {
 					monitor.done();
 				}
 			}
-		});
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 
 	/**

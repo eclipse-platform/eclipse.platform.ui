@@ -42,105 +42,96 @@ import org.eclipse.team.internal.ccvs.ui.BranchPromptDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * BranchAction tags the selected resources with a branch tag specified by the user,
  * and optionally updates the local resources to point to the new branch.
  */
-public class BranchAction extends CVSAction {
+public class BranchAction extends WorkspaceAction {
 
 	/*
 	 * @see CVSAction#execute()
 	 */
-	public void execute(IAction action) {
-		final Shell shell = getShell();
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+
+		// Prompt for the branch tag and whether to start working in the branch
 		final IResource[] resources = getSelectedResources();
 		boolean allSticky = areAllResourcesSticky(resources);
-
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resources[0].getProject());
 		final BranchPromptDialog dialog = new BranchPromptDialog(getShell(),
 											Policy.bind("BranchWizard.title"), //$NON-NLS-1$
 											folder, 
 											allSticky, 
 											calculateInitialVersionName(resources,allSticky));
-		
 		if (dialog.open() != InputDialog.OK) return;		
 		
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					String tagString = dialog.getBranchTagName();
-					boolean update = dialog.getUpdate();
-					String versionString = dialog.getVersionTagName();
-					CVSTag rootVersionTag = null;
-					final CVSTag branchTag = new CVSTag(tagString, CVSTag.BRANCH);
-					if (versionString != null) {
-						rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
-					}
-											
-					// For non-projects determine if the tag being loaded is the same as the resource's parent
-					// If it's not, warn the user that they will have strange sync behavior
-					if (update) {
-						if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
-							return;
-						}
-					}
-									
-					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-					Hashtable table = getProviderMapping(resources);
-					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					MultiStatus status = new MultiStatus(CVSUIPlugin.ID, IStatus.INFO, Policy.bind("BranchWizard.errorBranching"), null); //$NON-NLS-1$
-					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);											
+		// Capture the dialog info in local variables
+		final String tagString = dialog.getBranchTagName();
+		final boolean update = dialog.getUpdate();
+		final String versionString = dialog.getVersionTagName();
+		final CVSTag rootVersionTag = (versionString == null) ? null : new CVSTag(versionString, CVSTag.VERSION);
+		final CVSTag branchTag = new CVSTag(tagString, CVSTag.BRANCH);
+								
+		// For non-projects determine if the tag being loaded is the same as the resource's parent
+		// If it's not, warn the user that they will be mixing tags
+		if (update) {
+			try {
+				if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
+					return;
+				}
+			} catch (CVSException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		
+		// Perform the branch
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+				Hashtable table = getProviderMapping(resources);
+				Set keySet = table.keySet();
+				monitor.beginTask(null, keySet.size() * 1000);
+				Iterator iterator = keySet.iterator();
+				while (iterator.hasNext()) {
+					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+					CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+					List list = (List)table.get(provider);
+					IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);											
+					try {
 						ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
-						try {
-							if (!areAllResourcesSticky(resources)) {													
-								// version everything in workspace with the root version tag specified in dialog
-								provider.makeBranch(providerResources, rootVersionTag, branchTag, update, true, subMonitor);
-							} else {
-								// all resources are versions, use that version as the root of the branch
-								provider.makeBranch(providerResources, null, branchTag, update, true, subMonitor);										
-							}
-							if (rootVersionTag != null || update) {
-								for (int i = 0; i < providerResources.length; i++) {
-									ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(providerResources[i]);
-									if (rootVersionTag != null) {
-										manager.addVersionTags(cvsResource, new CVSTag[] { rootVersionTag });
-									}
-									if (update) {
-										manager.addBranchTags(cvsResource, new CVSTag[] { branchTag });
-									}
+						if (!areAllResourcesSticky(resources)) {													
+							// version everything in workspace with the root version tag specified in dialog
+							provider.makeBranch(providerResources, rootVersionTag, branchTag, update, true, subMonitor);
+						} else {
+							// all resources are versions, use that version as the root of the branch
+							provider.makeBranch(providerResources, null, branchTag, update, true, subMonitor);										
+						}
+						if (rootVersionTag != null || update) {
+							for (int i = 0; i < providerResources.length; i++) {
+								ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(providerResources[i]);
+								if (rootVersionTag != null) {
+									manager.addVersionTags(cvsResource, new CVSTag[] { rootVersionTag });
+								}
+								if (update) {
+									manager.addBranchTags(cvsResource, new CVSTag[] { branchTag });
 								}
 							}
-						} catch (TeamException e) {
-							status.merge(e.getStatus());
 						}
+					} catch (TeamException e) {
+						// Accumulate the status which will be displayed by CVSAction#endOperation(IAction)
+						addStatus(e.getStatus());
 					}
-					if (!status.isOK()) {
-						throw new InvocationTargetException(new CVSException(status));
-					}
-				} catch(CVSException e) {
-					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("BranchWizard.errorBranching"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
-		try {
-			return isSelectionNonOverlapping();
-		} catch(TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-			return false;
-		}
+	protected boolean isEnabled() throws TeamException {
+		return isSelectionNonOverlapping();
 	}
 	
 	/**
@@ -199,5 +190,13 @@ public class BranchAction extends CVSAction {
 		}
 		return versionName;
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("BranchWizard.errorBranching");
+	}
+
 }
 

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -28,12 +33,11 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * RemoveRootAction removes a repository
  */
-public class RemoveRootAction extends TeamAction {
+public class RemoveRootAction extends CVSAction {
 	/**
 	 * Returns the selected remote files
 	 */
@@ -68,7 +72,7 @@ public class RemoveRootAction extends TeamAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
@@ -115,7 +119,7 @@ public class RemoveRootAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind(Policy.bind("RemoveRootAction.removeRoot_3")), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);
 
 	}
 	/*
@@ -125,5 +129,12 @@ public class RemoveRootAction extends TeamAction {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		return roots.length > 0;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("RemoveRootAction.removeRoot_3"); //$NON-NLS-1$
+	}
+
 }
 

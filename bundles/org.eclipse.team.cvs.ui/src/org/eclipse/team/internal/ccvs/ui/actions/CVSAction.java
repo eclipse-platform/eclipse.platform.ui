@@ -12,20 +12,29 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -38,6 +47,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -50,8 +60,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Superclass for all CVS actions. It provides helper enablement
- * methods and common pre-run and post-run hadling.
+ * CVSAction is the common superclass for all CVS actions. It provides
+ * facilities for enablement handling, standard error handling, selection
+ * retrieval and prompting.
  */
 abstract public class CVSAction extends TeamAction {
 	
@@ -59,29 +70,53 @@ abstract public class CVSAction extends TeamAction {
 	
 	/**
 	 * Common run method for all CVS actions.
-	 * 
-	 * [Note: it would be nice to have common CVS error handling
-	 * placed here and have all CVS actions subclass. For example
-	 * error handling UI could provide a retry facility for actions
-	 * if they have failed.]
 	 */
 	final public void run(IAction action) {
-		accumulatedStatus.clear();
-		if(needsToSaveDirtyEditors()) {
-			if(!saveAllEditors()) {
-				return;
-			}
-		}
 		try {
+			if (!beginExecution(action)) return;
 			execute(action);
-			if ( ! accumulatedStatus.isEmpty()) {
-				handle(null);
-			}
+			endExecution();
 		} catch (InvocationTargetException e) {
 			// Handle the exception and any accumulated errors
 			handle(e);
 		} catch (InterruptedException e) {
 			// Show any problems that have occured so far
+			handle(null);
+		}  catch (TeamException e) {
+			// Handle the exception and any accumulated errors
+			handle(e);
+		}
+	}
+
+	/**
+	 * This method gets invoked before the <code>CVSAction#execute(IAction)</code>
+	 * method. It can preform any prechecking and initialization required before 
+	 * the action is executed. Sunclasses may override but must invoke this
+	 * inherited method to ensure proper initialization of this superclass is performed.
+	 * These included prepartion to accumulate IStatus and checking for dirty editors.
+	 */
+	protected boolean beginExecution(IAction action) throws TeamException {
+		accumulatedStatus.clear();
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Actions must override to do their work.
+	 */
+	abstract protected void execute(IAction action) throws InvocationTargetException, InterruptedException;
+
+	/**
+	 * This method gets invoked after <code>CVSAction#execute(IAction)</code>
+	 * if no exception occured. Sunclasses may override but should invoke this
+	 * inherited method to ensure proper handling oy any accumulated IStatus.
+	 */
+	protected void endExecution() throws TeamException {
+		if ( ! accumulatedStatus.isEmpty()) {
 			handle(null);
 		}
 	}
@@ -196,25 +231,58 @@ abstract public class CVSAction extends TeamAction {
 		}
 		ErrorDialog.openError(getShell(), title, message, statusToDisplay);
 	}
-	
+
 	/**
-	 * Actions must override to do their work.
+	 * Convenience method for running an operation with the appropriate progress.
+	 * Any exceptions are propogated so they can be handled by the
+	 * <code>CVSAction#run(IAction)</code> error handling code.
+	 * 
+	 * @param runnable  the runnable which executes the operation
+	 * @param cancelable  indicate if a progress monitor should be cancelable
+	 * @param progressKind  one of PROGRESS_BUSYCURSOR or PROGRESS_DIALOG
 	 */
-	abstract protected void execute(IAction action) throws InvocationTargetException, InterruptedException;
+	final protected void run(final IRunnableWithProgress runnable, boolean cancelable, int progressKind) throws InvocationTargetException, InterruptedException {
+		final Exception[] exceptions = new Exception[] {null};
+		switch (progressKind) {
+			case PROGRESS_BUSYCURSOR :
+				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+					public void run() {
+						try {
+							runnable.run(new NullProgressMonitor());
+						} catch (InvocationTargetException e) {
+							exceptions[0] = e;
+						} catch (InterruptedException e) {
+							exceptions[0] = e;
+						}
+					}
+				});
+				break;
+			case PROGRESS_DIALOG :
+			default :
+				new ProgressMonitorDialog(getShell()).run(cancelable, true, runnable);	
+				break;
+		}
+		if (exceptions[0] != null) {
+			if (exceptions[0] instanceof InvocationTargetException)
+				throw (InvocationTargetException)exceptions[0];
+			else
+				throw (InterruptedException)exceptions[0];
+		}
+	}
 	
 	/**
 	 * Answers if the action would like dirty editors to saved
 	 * based on the CVS preference before running the action. By
-	 * default most CVS action modify the workspace and thus should
-	 * save dirty editors.
+	 * default, CVSActions do not save dirty editors.
 	 */
 	protected boolean needsToSaveDirtyEditors() {
-		return true;
+		return false;
 	}
 	
 	/**
-	 * Answers <code>true</code> if the current selection contains resource that don't
-	 * have overlapping paths and <code>false</code> otherwise. 
+	 * Answers <code>true</code> if the current selection contains only 
+	 * managed resource that don't have overlapping paths and <code>false</code>
+	 * otherwise. 
 	 */
 	protected boolean isSelectionNonOverlapping() throws TeamException {
 		IResource[] resources = getSelectedResources();

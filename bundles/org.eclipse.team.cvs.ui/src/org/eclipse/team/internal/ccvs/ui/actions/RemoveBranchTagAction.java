@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -19,12 +24,11 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * RemoveBranchTagAction removes a tag.
  */
-public class RemoveBranchTagAction extends TeamAction {
+public class RemoveBranchTagAction extends CVSAction {
 	/**
 	 * Returns the selected versions
 	 */
@@ -51,7 +55,7 @@ public class RemoveBranchTagAction extends TeamAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				BranchTag[] tags = getSelectedBranchTags();
@@ -62,8 +66,7 @@ public class RemoveBranchTagAction extends TeamAction {
 					manager.removeBranchTag(tag.getRoot(), new CVSTag[] {tag.getTag()});
 				}
 			}
-		}, Policy.bind("RemoveBranchTagAction.removeTag"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
-
+		}, false, this.PROGRESS_BUSYCURSOR);
 	}
 	/*
 	 * @see TeamAction#isEnabled()

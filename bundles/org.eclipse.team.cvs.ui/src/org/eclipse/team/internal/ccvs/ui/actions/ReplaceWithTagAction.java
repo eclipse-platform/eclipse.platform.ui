@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -32,17 +37,16 @@ import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ui.PromptingDialog;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for replace with tag.
  */
-public class ReplaceWithTagAction extends CVSAction {
+public class ReplaceWithTagAction extends WorkspaceAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		
 		// Setup the holders
 		final IResource[] resource = new IResource[] {null};
@@ -89,7 +93,7 @@ public class ReplaceWithTagAction extends CVSAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
+		}, false /* cancelable */, this.PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
 		
 		if (tag[0] == null) return;
 		
@@ -116,16 +120,11 @@ public class ReplaceWithTagAction extends CVSAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 	}
 	
-	protected boolean isEnabled() {		
-		try {
-			return isSelectionNonOverlapping();
-		} catch(TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-			return false;
-		}
+	protected boolean isEnabled() throws TeamException {		
+		return isSelectionNonOverlapping();
 	}
 	
 	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
@@ -133,4 +132,11 @@ public class ReplaceWithTagAction extends CVSAction {
 		if (tag2 == null) tag2 = CVSTag.DEFAULT;
 		return tag1.equals(tag2);
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("ReplaceWithTagAction.replace"); //$NON-NLS-1$
+	}
+
 }

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
@@ -19,7 +24,7 @@ import org.eclipse.ui.PartInitException;
 /**
  * Action for catchup/release in popup menus.
  */
-public class SyncAction extends CVSAction {
+public class SyncAction extends WorkspaceAction {
 	public void execute(IAction action) {
 		IResource[] resources = getSelectedResources();
 		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);

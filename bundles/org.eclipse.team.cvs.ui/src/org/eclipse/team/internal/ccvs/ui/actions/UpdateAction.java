@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -25,7 +30,6 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -35,11 +39,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * resolve the conflicts. This action is temporary code; it will be removed
  * when a functional synchronize view has been implemented.
  */
-public class UpdateAction extends CVSAction {
+public class UpdateAction extends WorkspaceAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
@@ -61,7 +65,7 @@ public class UpdateAction extends CVSAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("UpdateAction.update"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 
 	}
 	/*
@@ -84,4 +88,11 @@ public class UpdateAction extends CVSAction {
 		}
 		return true;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+	}
+
 }

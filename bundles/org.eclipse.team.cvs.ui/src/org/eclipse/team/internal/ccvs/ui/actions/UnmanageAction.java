@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -38,14 +43,13 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Unmanage action removes the cvs feature from a project and optionally
  * deletes the CVS meta information that is stored on disk.
  */
-public class UnmanageAction extends TeamAction {
+public class UnmanageAction extends WorkspaceAction {
 	
 	static class DeleteProjectDialog extends MessageDialog {
 
@@ -122,19 +126,9 @@ public class UnmanageAction extends TeamAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
-		final Exception[] exceptions = new Exception[] {null};
-		if(confirmDeleteProjects()) {		
-			try {
-				new ProgressMonitorDialog(getShell()).run(true, true, getOperation());
-			} catch (InvocationTargetException e) {
-				exceptions[0] = e;
-			} catch (InterruptedException e) {
-				exceptions[0] = null;
-			}
-		}
-		if (exceptions[0] != null) {
-			handle(exceptions[0], null, Policy.bind("Unmanage.unmanagingError")); //$NON-NLS-1$
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
+		if(confirmDeleteProjects()) {
+			run(getOperation(), true /* cancelable */, PROGRESS_DIALOG);	
 		}
 	}
 
@@ -201,4 +195,11 @@ public class UnmanageAction extends TeamAction {
 		}
 		return true;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("Unmanage.unmanagingError");//$NON-NLS-1$
+	}
+
 }

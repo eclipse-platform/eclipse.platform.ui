@@ -178,6 +178,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			handle(exceptions[0], null, problemMessage);
 		}
 	}
+	
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -185,21 +186,35 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		if (selection instanceof IStructuredSelection) {
 			this.selection = (IStructuredSelection) selection;
 			if (action != null) {
-				try {
-					action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-						// Enable the action to allow the user to discover the problem
-						action.setEnabled(true);
-					} else {
-						action.setEnabled(false);
-						// We should not open a dialog when determining menu enablements so log it instead
-						TeamPlugin.log(e.getStatus());
-					}
-				}
+				setActionEnablement(action);
 			}
 		}
 	}
+	
+	/**
+	 * Method invoked from <code>selectionChanged(IAction, ISelection)</code> 
+	 * to set the enablement status of the action. The instance variable 
+	 * <code>selection</code> will contain the latest selection so the methods
+	 * <code>getSelectedResources()</code> and <code>getSelectedProjects()</code>
+	 * will provide the proper objects.
+	 * 
+	 * This method can be overridden by subclasses but should not be invoked by them.
+	 */
+	protected void setActionEnablement(IAction action) {
+		try {
+			action.setEnabled(isEnabled());
+		} catch (TeamException e) {
+			if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+				// Enable the action to allow the user to discover the problem
+				action.setEnabled(true);
+			} else {
+				action.setEnabled(false);
+				// We should not open a dialog when determining menu enablements so log it instead
+				TeamPlugin.log(e.getStatus());
+			}
+		}
+	}
+	
 	/*
 	 * Method declared on IObjectActionDelegate.
 	 */

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,10 +21,10 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class IgnoreAction extends TeamAction {
+public class IgnoreAction extends WorkspaceAction {
+	
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
@@ -32,7 +37,8 @@ public class IgnoreAction extends TeamAction {
 		}
 		return true;
 	}
-	public void run(final IAction action) {
+	
+	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				IResource[] resources = getSelectedResources();
@@ -49,10 +55,16 @@ public class IgnoreAction extends TeamAction {
 					// fix the action enablement
 					if (action != null) action.setEnabled(isEnabled());
 				} catch (TeamException e) {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
-					return;
+					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("IgnoreAction.ignore"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("IgnoreAction.ignore"); //$NON-NLS-1$
+	}
+
 }

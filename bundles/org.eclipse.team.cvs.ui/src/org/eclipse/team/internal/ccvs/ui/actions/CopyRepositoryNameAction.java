@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,13 +21,12 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 
-public class CopyRepositoryNameAction extends TeamAction {
+public class CopyRepositoryNameAction extends CVSAction {
 	protected boolean isEnabled() throws TeamException {
 		return true;
 	}
-	public void run(IAction action) {
+	public void execute(IAction action) {
 		ICVSRepositoryLocation[] locations = getSelectedRepositories();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.length; i++) {

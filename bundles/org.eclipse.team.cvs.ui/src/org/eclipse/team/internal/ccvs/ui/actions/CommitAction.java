@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -18,18 +23,18 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Action for checking in files to a CVS provider.
  * Prompts the user for a release comment.
  */
-public class CommitAction extends CVSAction {
+public class CommitAction extends WorkspaceAction {
+	
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute(IAction)
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
@@ -42,7 +47,7 @@ public class CommitAction extends CVSAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CommitAction.commitFailed"), PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	
 	/*
@@ -68,4 +73,12 @@ public class CommitAction extends CVSAction {
 	protected String promptForComment(RepositoryManager manager) {
 		return manager.promptForComment(getShell());
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("CommitAction.commitFailed");
+	}
+
 }

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -21,14 +26,13 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
-public class OpenRemoteFileAction extends TeamAction {
+public class OpenRemoteFileAction extends CVSAction {
 	/**
 	 * Returns the selected remote files
 	 */
@@ -65,9 +69,9 @@ public class OpenRemoteFileAction extends TeamAction {
 		return new ICVSRemoteFile[0];
 	}
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see CVSAction#execute(IAction)
 	 */
-	public void run(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 /*				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -109,7 +113,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					}
 				}
 			}
-		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, false, this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/*
 	 * @see TeamAction#isEnabled()
@@ -118,22 +122,5 @@ public class OpenRemoteFileAction extends TeamAction {
 		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		if (resources.length == 0) return false;
 		return true;
-	}
-	/** (Non-javadoc)
-	 * Method declared on IActionDelegate.
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			this.selection = (IStructuredSelection) selection;
-			//this action can be invoked by double-click, in which case
-			//there is no target action
-			if (action != null) {
-				try {
-					action.setEnabled(isEnabled());
-				} catch (TeamException e) {
-					action.setEnabled(false);
-				}
-			}
-		}
 	}
 }

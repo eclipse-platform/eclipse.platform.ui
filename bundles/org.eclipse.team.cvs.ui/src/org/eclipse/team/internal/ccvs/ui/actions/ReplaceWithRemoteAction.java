@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -26,25 +31,24 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class ReplaceWithRemoteAction extends CVSAction {
-	public void execute(IAction action) {
+public class ReplaceWithRemoteAction extends WorkspaceAction {
+	public void execute(IAction action)  throws InvocationTargetException, InterruptedException {
+		PromptingDialog dialog = new PromptingDialog(getShell(), getSelectedResources(), 
+			getPromptCondition(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
+		final IResource[] resources = dialog.promptForMultiple();
+		if(resources.length == 0) {
+			// nothing to do
+			return;
+		}
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					PromptingDialog dialog = new PromptingDialog(getShell(), getSelectedResources(), 
-						getPromptCondition(), Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
-					IResource[] resources = dialog.promptForMultiple();
-					if(resources.length == 0) {
-						// nothing to do
-						return;
-					}
 					// Do the replace
 					Hashtable table = getProviderMapping(resources);
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.beginTask(null, keySet.size() * 1000); //$NON-NLS-1$
 					monitor.setTaskName(Policy.bind("ReplaceWithRemoteAction.replacing")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
@@ -60,7 +64,7 @@ public class ReplaceWithRemoteAction extends CVSAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("ReplaceWithRemoteAction.problemMessage"), PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
@@ -88,4 +92,11 @@ public class ReplaceWithRemoteAction extends CVSAction {
 	protected IPromptCondition getPromptCondition() {
 		return getOverwriteLocalChangesPrompt();
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("ReplaceWithRemoteAction.problemMessage"); //$NON-NLS-1$
+	}
+
 }

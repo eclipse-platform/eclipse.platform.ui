@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
@@ -23,18 +28,18 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * AddAction performs a 'cvs add' command on the selected resources. If a
  * container is selected, its children are recursively added.
  */
-public class AddAction extends CVSAction {
+public class AddAction extends WorkspaceAction {
+	
 	/*
 	 * @see CVSAction#execute()
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {					
@@ -44,7 +49,7 @@ public class AddAction extends CVSAction {
 					monitor.setTaskName(Policy.bind("AddAction.adding")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+						IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 1000);
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
@@ -56,7 +61,7 @@ public class AddAction extends CVSAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("AddAction.add"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 
 	}
 	/*
@@ -76,6 +81,13 @@ public class AddAction extends CVSAction {
 			}
 		}
 		return true;
+	}
+
+	/*
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("AddAction.addFailed"); //$NON-NLS-1$
 	}
 
 }

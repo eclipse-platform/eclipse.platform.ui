@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -42,7 +47,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void execute(IAction action) {
+	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		
 		final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 		if (folders.length != 1) return;
@@ -50,13 +55,11 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		
 		// Fetch the members of the folder to see if they contain a .project file.
 		final boolean[] hasProjectMetaFile = new boolean[] { false };
-		final boolean[] errorOccured = new boolean[] { false };
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					folders[0].members(monitor);
 				} catch (TeamException e) {
-					errorOccured[0] = true;
 					throw new InvocationTargetException(e);
 				}
 				// Check for the existance of the .project file
@@ -78,8 +81,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					}
 				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
-		if (errorOccured[0]) return;
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 		
 		// Prompt outside a workspace runnable so that the project creation delta can be heard
 		IProject newProject = null;
@@ -151,7 +153,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
+		}, true /* cancelable */, this.PROGRESS_DIALOG);
 	}
 	
 	/*
@@ -198,4 +200,11 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 			return newProject;
 		}
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("CheckoutAsAction.checkoutFailed"); //$NON-NLS-1$
+	}
+
 }
