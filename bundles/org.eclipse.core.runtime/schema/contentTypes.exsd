@@ -106,7 +106,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="default-charset" type="string">
             <annotation>
                <documentation>
-                  the default charset for this content type. Should be an empty string, if this content type should not have a default charset even if the parent has one
+                  the default charset for this content type, or an empty string, if this content type should not have a default charset even if the parent has one
                </documentation>
             </annotation>
          </attribute>
@@ -121,7 +121,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;
+                  the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.content.IContentDescriber"/>
