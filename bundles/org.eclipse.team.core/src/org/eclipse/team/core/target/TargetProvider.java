@@ -34,9 +34,11 @@ public abstract class TargetProvider {
 	/**
 	 * Updates the local resource to have the same content as the corresponding remote
 	 * resource. Where the local resource does not exist, this method will create it.
+	 * Where, the remote resource does not exist and the local does, this method will delete
+	 * the local resource.
 	 * <p>
 	 * If the remote resource is a container (e.g. folder or project) this operation is equivalent 
-	 * to getting each non-container member of the remote resource, thereby updating the
+	 * to getting each member of the remote resource, thereby updating the
 	 * content of existing local members, creating local members to receive new remote resources,
 	 * and deleting local members that no longer have a corresponding remote resource.</p>
 	 * <p>
@@ -77,7 +79,15 @@ public abstract class TargetProvider {
 	 * Transfers the content of the local resource to the corresponding remote resource.
 	 * <p>
 	 * If a remote resource does not exist this method creates a new remote resource with the same content
-	 * as the given local resource.  The local resource is said to <i>correspond</i> to the new remote resource.</p>
+	 * as the given local resource.  The local resource is said to <i>correspond</i> to the new remote resource.
+	 * If the local resource doesn't exist and a remote does, the remote resource will be deleted.
+	 * For containers, the remote
+	 * </p>
+	 * <p>
+	 * If the local resource is a container (e.g. folder or project) this operation is equivalent 
+	 * to putting each member of the local resource, thereby updating the
+	 * content of existing remote members, creating remote members to receive new local resources,
+	 * and deleting remote members that no longer have a corresponding local resource.</p>
 	 * <p>
 	 * @param resources an array of local resources to be put.
 	 * @param progress a progress monitor to indicate the duration of the operation, or

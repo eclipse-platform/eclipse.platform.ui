@@ -200,7 +200,7 @@ public abstract class ResourceState {
 	
 	
 	/**
-	 * Check in the receiver. Return a status if the receiver is in the wrong state for the operation to be performed.
+	 * Check in the receiver.
 	 * 
 	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
@@ -211,13 +211,15 @@ public abstract class ResourceState {
 			// The resource must be checked out before it can be checked in.
 			if (!isCheckedOut())
 				throw new TeamException(ITeamStatusConstants.NOT_CHECKED_OUT_STATUS);
-			
-			// Check to see if we can do this without conflict.
-			if (isOutOfDate(Policy.subMonitorFor(progress, 10)))
-				throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
 				
-			// Copy from the local resource to the repository.	
-			upload(Policy.subMonitorFor(progress, 90));
+			if (!hasLocal()) {
+				if (hasRemote(Policy.subMonitorFor(progress, 10))) {
+					delete(Policy.subMonitorFor(progress, 80));
+				}
+			} else {
+				// Copy from the local resource to the repository.
+				upload(Policy.subMonitorFor(progress, 90));
+			}
 			//if we got to here the upload succeeded (didn't throw)
 			checkedOut = false;
 		} finally {
@@ -264,9 +266,9 @@ public abstract class ResourceState {
 	 */
 	public boolean isDirty() {
 		if (!hasLocal())
-			return hasPhantom(); // against API definition?
+			return hasPhantom();
 		if (localBaseTimestamp == EMPTY_LOCALBASETS)
-			return false; // by API definition.
+			return localResource.getType() == IResource.FILE;
 		return localBaseTimestamp != localResource.getModificationStamp();
 	}
 
@@ -276,7 +278,7 @@ public abstract class ResourceState {
 	 */
 	public boolean isOutOfDate(IProgressMonitor monitor) throws TeamException {
 		if (remoteBaseIdentifier.equals(EMPTY_REMOTEBASEID))
-			return false; // by definition.
+			 return (localResource.getType() == IResource.FILE && hasRemote(monitor));
 
 		String releasedIdentifier = null;
 		releasedIdentifier = getReleasedIdentifier(monitor);

@@ -147,12 +147,14 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 					description = CONFLICTING | CHANGE;
 				} else if (!isDirty && !isOutOfDate) {
 					description = OUTGOING | ADDITION;
+				} else if (isDirty && !isOutOfDate) {
+					description = OUTGOING | ADDITION;
 				}
 			}
 		} else {
 			if (!localExists) {
 				// a remote but no local
-				if (!isDirty && !isOutOfDate) {
+				if (!isDirty /* and both out of date and not out of date */) {
 					description = INCOMING | ADDITION;
 				} else if (isDirty && !isOutOfDate) {
 					description = OUTGOING | DELETION;

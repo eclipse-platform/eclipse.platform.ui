@@ -16,6 +16,7 @@ import java.net.URL;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,8 +32,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
 public abstract class SynchronizedTargetProvider extends TargetProvider {
 
 	private static final int CONFIG_FORMAT_VERSION = 2;
-
-	private final int depth = IResource.DEPTH_INFINITE;
 
 	// The location where the target reads/writes against
 	protected Site site;
@@ -125,50 +124,48 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * 
 	 * @see TargetProvider.get(IResource[], int, IProgressMonitor)
 	 */
-	public void get(IResource[] resources, IProgressMonitor progress)
-		throws TeamException {
+	public void get(IResource[] resources, IProgressMonitor progress) throws TeamException {
 		execute(new IIterativeOperation() {
 			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
 				getState(resource).get(depth, progress);
 			}
-		}, resources, depth, progress);
+		}, resources, IResource.DEPTH_INFINITE, progress);
 	}
 	
 	/**
 	 * Get the resource from the provider to the workspace, and remember the fetched
 	 * state as the base state of the resource.
 	 * 
-	 * @see TargetProvider.get(IResource[], int, IProgressMonitor)
+	 * @see TargetProvider.get(IResource, IRemoteTargetResource, IProgressMonitor)
 	 */
-	public void get(IResource resource, final IRemoteTargetResource remote, IProgressMonitor progress)
-		throws TeamException {
+	public void get(IResource resource, final IRemoteTargetResource remote, IProgressMonitor progress) throws TeamException {
 		execute(new IIterativeOperation() {
 			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
-				getState(resource, remote).get(IResource.DEPTH_INFINITE, progress);
+				getState(resource, remote).get(depth, progress);
 			}
-		}, new IResource[] {resource}, IResource.DEPTH_ZERO, progress);
+		}, new IResource[] {resource}, IResource.DEPTH_INFINITE, progress);
 	}
 
 
 	/**
 	 * Put the resources to the remote.
+	 * 
+	 * @see TargetProvider.put(IResource[], IProgressMonitor)
 	 */
-	public void put(IResource[] resources, IProgressMonitor progress)
-		throws TeamException {
+	public void put(IResource[] resources, IProgressMonitor progress) throws TeamException {
 		execute(new IRecursiveOperation() {
 			public void visit(IResource resource, IProgressMonitor progress) throws TeamException {
 				// The resource state must be checked-out.
 				getState(resource).checkin(progress);
 			}
-		}, resources, depth, progress);
+		}, resources, IResource.DEPTH_INFINITE, progress);
 	}
 
-	/**
+	/*
 	 * Delete the corresponding remote resource.
 	 * Note that deletes are always deep.
 	 */
-	public void delete(IResource[] resources, IProgressMonitor progress)
-		throws TeamException {
+	public void delete(IResource[] resources, IProgressMonitor progress) throws TeamException {
 		execute(new IIterativeOperation() {
 			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
 				getState(resource).delete(progress);
@@ -183,6 +180,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @param resource the resource to test.
 	 * @return <code>true</code> if the resource has a different modification
 	 * timestamp, and <code>false</code> otherwise.
+	 * 
 	 * @see TargetProvider#isDirty(IResource)
 	 */
 	public boolean isDirty(IResource resource) {
@@ -201,7 +199,8 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @param resource the resource state to test.
 	 * @return <code>true</code> if the resource base identifier is different to the
 	 * current released state of the resource, and <code>false</code> otherwise.
-	 * @see ITeamSynch#isOutOfDate(IResource)
+	 * 
+	 * @see TargetProvider#isOutOfDate(IResource, IProgressMonitor)
 	 */
 	public boolean isOutOfDate(IResource resource, IProgressMonitor monitor) throws TeamException {
 		ResourceState state = getState(resource);
@@ -214,14 +213,13 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @param resource the resource state to test.
 	 * @return <code>true</code> if the resource has a corresponding remote resource,
 	 * and <code>false</code> otherwise.
-	 * @see ITeamSynch#hasRemote(IResource)
+	 * 
+	 * @see TargetProvider#hasRemote(IResource, IProgressMonitor)
 	 */
 	public boolean hasRemote(IResource resource, IProgressMonitor monitor) throws TeamException {
 		ResourceState state = getState(resource);
 		return state.hasRemote(monitor);
 	}
-	
-	
 
 	/**
 	 * Perform the given operation on the array of resources, each to the
@@ -271,6 +269,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		try {
 			members = getMembers(resource);
 		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) return;
 			throw TeamPlugin.wrapException(e);
 		}
 		if (members.length == 0)
@@ -283,13 +282,14 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 				: IResource.DEPTH_INFINITE;
 				
 		// Collect the responses in the multistatus.
-		for (int i = 0; i < members.length; i++)
+		for (int i = 0; i < members.length; i++) {
 			execute(operation, members[i], childDepth, progress);
+		}
 	}
 
 	/**
 	 * Answers an array of local resource members for the given resource
-	 * or an empty arrray if the resource has no members.
+	 * or an empty array if the resource has no members.
 	 * 
 	 * @param resource the local resource whose members are required.
 	 * @return an array of <code>IResource</code> or an empty array if
@@ -301,7 +301,8 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		} else {
 			return new IResource[0];
 		}
-	}	
+	}
+	
 	/**
 	 * @see TargetProvider#deregister(IProject)
 	 */

@@ -225,14 +225,6 @@ public class TeamTest extends EclipseWorkspaceTest {
 		}
 		file.setContents(new ByteArrayInputStream(bos.toByteArray()), false, false, DEFAULT_MONITOR);
 	}
-	/**
-	 * Add the resources to an existing container and optionally upload them to the remote server
-	 */
-	public IResource[] addResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
-		IResource[] newResources = buildResources(container, hierarchy, false);
-		if (checkin) getProvider(container).put(newResources, DEFAULT_MONITOR);
-		return newResources;
-	}
 	/*
 	 * Get the resources for the given resource names
 	 */
@@ -243,22 +235,6 @@ public class TeamTest extends EclipseWorkspaceTest {
 			if (resources[i] == null) {
 				resources[i] = buildResources(container, new String[] {hierarchy[i]})[0];
 			}
-		}
-		return resources;
-	}
-	/**
-	 * Delete the resources from an existing container and optionally add the changes to the remote server
-	 */
-	public IResource[] deleteResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
-		IResource[] resources = getResources(container, hierarchy);
-		for (int i = 0; i < resources.length; i++) {
-			resources[0].delete(true, null);
-		}
-		if (checkin) {
-		//delete the resources on the server as well.
-			//TargetProvider target=getProvider(container);
-			//IRemoteResource remote=target.getRemoteResourceFor(resources[i]);
-			//Currently the API does not support deletion of remote resources (well, according to Jean-Michael, anyway).
 		}
 		return resources;
 	}

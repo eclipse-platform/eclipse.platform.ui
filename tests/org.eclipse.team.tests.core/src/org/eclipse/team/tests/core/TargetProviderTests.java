@@ -216,22 +216,6 @@ public class TargetProviderTests extends TeamTest {
 			fail("Shouldn't be able to get files that don't exist");
 		} catch (TeamException e) {}
 	}
-	public void testCanGetWithPhantoms() throws CoreException, TeamException {
-		IProject project = getUniqueTestProject("canget");
-		IResource[] resources = buildEmptyResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt" }, false);
-		TargetProvider target = createProvider(project);
-		for (int i = 0; i < resources.length; i++) {
-			assertTrue("Shouldn't be able to retrieve phantom resources.",!target.canGet(resources[i]));
-		}
-	}
-	public void testCanPutWithPhantoms() throws CoreException, TeamException {
-		IProject project = getUniqueTestProject("canput");
-		IResource[] resources = buildEmptyResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt" }, false);
-		TargetProvider target = createProvider(project);
-		for (int i = 0; i < resources.length; i++) {
-			assertTrue("Shouldn't be able to upload phantom resources.",!target.canPut(resources[i]));
-		}
-	}
 	/**
 	 * @see TestCase#setUp()
 	 */

@@ -114,6 +114,25 @@ public class SyncElementTest extends TeamTest {
 		IResource[] resources=getResources(project,resourceNames);
 		provider.put(resources,null);
 	}
+	/**
+	 * Add the resources to an existing container and optionally upload them to the remote server
+	 */
+	public IResource[] addResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
+		IResource[] newResources = buildResources(container, hierarchy, false);
+		if (checkin) getProvider(container).put(newResources, DEFAULT_MONITOR);
+		return newResources;
+	}
+	/**
+	 * Delete the resources from an existing container and optionally add the changes to the remote server
+	 */
+	public IResource[] deleteResources(IProject container, String[] hierarchy, boolean checkin) throws CoreException, TeamException {
+		IResource[] resources = getResources(container, hierarchy);
+		for (int i = 0; i < resources.length; i++) {
+			resources[0].delete(true, null);
+		}
+		if (checkin) getProvider(container).put(resources, DEFAULT_MONITOR);
+		return resources;
+	}
 	/*
 	 * Perform a simple test that checks for the different types of incoming changes
 	 */
@@ -129,7 +148,7 @@ public class SyncElementTest extends TeamTest {
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(copy, new String[] { "folder1/b.txt" }, false);
 		sleep(1500); // Wait so that timestamp of modified file differs from original
-		putResourcesOntoTarget(copy,new String[] { "folder1/a.txt","folder2/folder3/add.txt"/*,"folder1/b.txt"*/ });
+		putResourcesOntoTarget(copy,new String[] { "folder1/a.txt","folder2/folder3/add.txt","folder1/b.txt" });
 
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = getRemoteSyncTree(project, DEFAULT_MONITOR);
@@ -154,6 +173,15 @@ public class SyncElementTest extends TeamTest {
 				IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION });
 
 		// Verify that we are in sync (except for "folder1/b.txt", which was deleted)
+		getResourcesFromTarget(project, 
+			new String[] {
+				"file1.txt",
+				"folder1/",
+				"folder1/a.txt",
+				"folder1/b.txt",
+				"folder2/",
+				"folder2/folder3/",
+				"folder2/folder3/add.txt" });
 		tree = getRemoteSyncTree(project, DEFAULT_MONITOR);
 		assertSyncEquals(
 			"testIncomingChanges",
@@ -321,10 +349,10 @@ public class SyncElementTest extends TeamTest {
 			new String[] { "file.txt", "add1a.txt", "add1b.txt", "add2a.txt", "add2b.txt", "add3.txt" },
 			new int[] {
 				IRemoteSyncElement.IN_SYNC,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
-				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.ADDITION,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION });
 
 		// Release the conflict cases (MERGE is not required for add3.txt but we do it anyway to ensure it doesn't cause problems)
@@ -428,8 +456,8 @@ public class SyncElementTest extends TeamTest {
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
-				IRemoteSyncElement.IN_SYNC,
-				IRemoteSyncElement.IN_SYNC });
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE | IRemoteSyncElement.PSEUDO_CONFLICT,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE | IRemoteSyncElement.PSEUDO_CONFLICT });
 
 		// Catch up to remote changes.
 
@@ -440,7 +468,9 @@ public class SyncElementTest extends TeamTest {
 			"testDeletionConflictsA",
 			tree,
 			new String[] { "delete1.txt", "delete2.txt" },
-			new int[] { IRemoteSyncElement.IN_SYNC, IRemoteSyncElement.IN_SYNC });
+			new int[] {
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE | IRemoteSyncElement.PSEUDO_CONFLICT,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE | IRemoteSyncElement.PSEUDO_CONFLICT });
 		assertDeleted("testDeletionConflictsA", tree, new String[] { "delete3.txt", "delete4.txt", "delete5.txt" });
 
 		// Now redo the test case for case B
@@ -581,15 +611,15 @@ public class SyncElementTest extends TeamTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		IFile file = copy.getFile("file1.txt");
 		sleep(1500); // Wait so that timestamp of modified file differs from original
-		appendText(file, "", true);
+		appendText(file, "a", true);
 		file = copy.getFile("folder1/a.txt");
 		file.setContents(getRandomContents(), false, false, null);
-		putResourcesOntoTarget(project,new String[] { "file1.txt","folder1/a.txt" });
+		putResourcesOntoTarget(copy, new String[] { "file1.txt","folder1/a.txt" });
 
 		// Make the same modifications to the original
 		file = project.getFile("file1.txt");
 		sleep(1500); // Wait so that timestamp of modified file differs from original
-		appendText(file, "", false);
+		appendText(file, "a", false);
 		file = project.getFile("folder1/a.txt");
 		file.setContents(new ByteArrayInputStream("unique text".getBytes()), false, false, null);
 
@@ -661,7 +691,7 @@ public class SyncElementTest extends TeamTest {
 		assertDeleted("testFolderDeletion", tree, new String[] { "folder1/a.txt" });
 
 		// Commit folder1/folder2/file.txt
-		putResourcesOntoTarget(project, new String[] { "folder1/folder2/file.txt" });
+		putResourcesOntoTarget(project, new String[] { "folder1/", "folder1/folder2/", "folder1/folder2/file.txt" });
 
 		// Resync and verify that all are deleted
 		tree = getRemoteSyncTree(project, DEFAULT_MONITOR);

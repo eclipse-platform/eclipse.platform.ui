@@ -35,6 +35,7 @@ public class AllTargetTests extends EclipseWorkspaceTest {
 		TestSuite suite = new TestSuite();
 		suite.addTest(TargetProviderTests.suite());
 		suite.addTest(RemoteResourceTests.suite());
+		suite.addTest(SyncElementTest.suite());
 		return new TargetTestSetup(suite);
 	}
 }
