@@ -525,9 +525,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 */
 	final public IRegion[] computeProjectedMasterRegions(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
-		if (imageRegion != null)
-			return fMapping.toExactOriginRegions(imageRegion);
-		return null;
+		return imageRegion != null ? fMapping.toExactOriginRegions(imageRegion) : null;
 	}
 	
 	/**

@@ -4700,7 +4700,8 @@ public class TextViewer extends Viewer implements
 			if (modelRange.getLength() < 0) {
 				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
 				IRegion result= fInformationMapping.toImageRegion(reversed);
-				return new Region(result.getOffset() + result.getLength(), -result.getLength());
+				if (result != null)
+					return new Region(result.getOffset() + result.getLength(), -result.getLength());
 			}
 			return fInformationMapping.toImageRegion(modelRange);
 			
@@ -4911,7 +4912,8 @@ public class TextViewer extends Viewer implements
 		try {
 			IRegion region= new Region(modelSelection.x, modelSelection.y);
 			region= fInformationMapping.toImageRegion(region);
-			return new Point(region.getOffset(), region.getLength());
+			if (region != null)
+				return new Point(region.getOffset(), region.getLength());
 		} catch (BadLocationException x) {
 		}
 
