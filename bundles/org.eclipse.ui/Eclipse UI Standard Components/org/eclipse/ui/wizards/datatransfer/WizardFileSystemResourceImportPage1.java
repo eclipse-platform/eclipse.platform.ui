@@ -301,8 +301,9 @@ private void updateFromSourceField(){
 }		
 	
 /**
- * Creates and returns a <code>FileSystemElement</code> for the specified
- * file system object. Also create the children.
+ * Creates and returns a <code>FileSystemElement</code> if the specified
+ * file system object merits one.  The criteria for this are:
+ * Also create the children.
  */
 protected MinimizedFileSystemElement createRootElement(
 	Object fileSystemObject,
@@ -310,14 +311,19 @@ protected MinimizedFileSystemElement createRootElement(
 	boolean isContainer = provider.isFolder(fileSystemObject);
 	String elementLabel = provider.getLabel(fileSystemObject);
 
+	// Use an empty label so that display of the element's full name
+	// doesn't include a confusing label
+	MinimizedFileSystemElement dummyParent =
+		new MinimizedFileSystemElement("", null, true);//$NON-NLS-1$
+	dummyParent.setPopulated();
 	MinimizedFileSystemElement result =
-		new MinimizedFileSystemElement(elementLabel, null, isContainer);
+		new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);
 	result.setFileSystemObject(fileSystemObject);
 
 	//Get the files for the element so as to build the first level
 	result.getFiles(provider);
 
-	return result;
+	return dummyParent;
 }
 /**
  *	Create the import source specification widgets
