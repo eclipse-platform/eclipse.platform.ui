@@ -159,7 +159,7 @@ public final void createPartControl(Composite parent) {
 	this.container = createContainer(parent);
 	createPages();
 	// set the active page (page 0 by default), unless it has already been done
-	if (getTabFolder().getSelectionIndex() == -1)
+	if (getActivePage() == -1)
 		setActivePage(0);
 }
 /**
@@ -195,9 +195,6 @@ public void dispose() {
  * @return the active nested editor, or <code>null</code> if none
  */
 protected IEditorPart getActiveEditor() {
-	/* fix for 21988 */
-	if (container.isDisposed())
-		return null;
 	int index = getActivePage();
 	if (index != -1)
 		return getEditor(index);
@@ -213,9 +210,9 @@ protected IEditorPart getActiveEditor() {
  * @return the index of the active page, or -1 if there is no active page
  */
 protected int getActivePage() {
-	// May not have been created yet.
-	if (getTabFolder() != null)
-		return getTabFolder().getSelectionIndex();
+	CTabFolder tabFolder = getTabFolder();
+	if (tabFolder != null && !tabFolder.isDisposed())
+		return tabFolder.getSelectionIndex();
 	return -1;
 }
 /**
