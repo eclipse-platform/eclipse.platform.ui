@@ -34,6 +34,9 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
      */
     public ChangeToPerspectiveMenu(IWorkbenchWindow window, String id) {
         super(window, id);
+        // indicate that a open perspectives submenu has been created
+        ((WorkbenchWindow) window)
+                .addSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU);
         showActive(true);
     }
 

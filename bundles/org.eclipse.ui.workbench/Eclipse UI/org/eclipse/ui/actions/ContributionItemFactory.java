@@ -18,7 +18,6 @@ import org.eclipse.ui.internal.ReopenEditorMenu;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.PinEditorContributionItem;
 
 /**
@@ -96,9 +95,7 @@ public abstract class ContributionItemFactory {
             }
             PinEditorAction action = new PinEditorAction(window);
             action.setId(getId());
-            IContributionItem item = new PinEditorContributionItem(action,
-                    window);
-            return item;
+            return new PinEditorContributionItem(action, window);
         }
     };
 
@@ -115,9 +112,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IContributionItem item = new SwitchToWindowMenu(window, getId(),
-                    true);
-            return item;
+            return new SwitchToWindowMenu(window, getId(), true);
         }
     };
 
@@ -135,11 +130,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            // indicate that a show views submenu has been created
-            ((WorkbenchWindow) window)
-                    .addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
-            IContributionItem item = new ShowViewMenu(window, getId());
-            return item;
+            return new ShowViewMenu(window, getId());
         }
     };
 
@@ -157,8 +148,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IContributionItem item = new ShowInMenu(window, getId());
-            return item;
+            return new ShowInMenu(window, getId());
         }
     };
 
@@ -175,8 +165,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IContributionItem item = new ReopenEditorMenu(window, getId(), true);
-            return item;
+            return new ReopenEditorMenu(window, getId(), true);
         }
     };
 
@@ -196,12 +185,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            // indicate that a open perspectives submenu has been created
-            ((WorkbenchWindow) window)
-                    .addSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU);
-            IContributionItem item = new ChangeToPerspectiveMenu(window,
-                    getId());
-            return item;
+            return new ChangeToPerspectiveMenu(window, getId());
         }
     };
     
@@ -219,9 +203,7 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IContributionItem item = new BaseNewWizardMenu(window,
-                    getId());
-            return item;
+            return new BaseNewWizardMenu(window, getId());
         }
     };
     

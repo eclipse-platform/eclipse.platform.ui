@@ -99,6 +99,9 @@ public class ShowViewMenu extends ContributionItem {
         this.window = window;
         WorkbenchHelp.setHelp(showDlgAction,
                 IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
+        // indicate that a show views submenu has been created
+        ((WorkbenchWindow) window)
+                .addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
     }
 
     public boolean isDirty() {
