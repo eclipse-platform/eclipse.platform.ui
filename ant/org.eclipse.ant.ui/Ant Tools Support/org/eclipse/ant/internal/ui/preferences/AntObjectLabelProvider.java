@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.core.Task;
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -48,14 +49,17 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 			Property prop= (Property) element;
             if (prop.isDefault() && prop.isEclipseRuntimeRequired()) {
                 return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
-            }
-            return null;
+            } 
+            return getPropertyImage();
 		} else if (element instanceof AntObject){
             AntObject object= (AntObject) element;
             if (object.isDefault() && object.isEclipseRuntimeRequired()) {
                 return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
             }
-            return null;
+            if (element instanceof Task) {
+                return getTaskImage();
+            }
+            return getTypeImage();
 		}
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
