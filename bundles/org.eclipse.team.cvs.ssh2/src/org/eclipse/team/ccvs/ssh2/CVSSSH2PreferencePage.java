@@ -1,6 +1,6 @@
 /* -*-mode:java; c-basic-offset:2; -*- */
 /**********************************************************************
-Copyright (c) 2003, Atsuhiko Yamanaka, JCraft,Inc. and others.
+Copyright (c) 2003,2004 Atsuhiko Yamanaka, JCraft,Inc. and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ Contributors:
 package org.eclipse.team.ccvs.ssh2;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -21,14 +22,21 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
-
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.File;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.KeyPair;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
 import org.eclipse.team.ccvs.ssh2.Policy;
 
 public class CVSSSH2PreferencePage extends PreferencePage
@@ -84,6 +92,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private Combo keyTypeCombo;
   private Button ssh2HomeBrowse;
   private Button keyGenerate;
+  private Button keyExport;
   private Button saveKeyPair;
   private Label keyCommentLabel;
   private Text keyCommentText;
@@ -382,8 +391,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     publicKeylabel=new Label(group, SWT.NONE);
     publicKeylabel.setText(Policy.bind("CVSSSH2PreferencePage.39")); //$NON-NLS-1$
     gd=new GridData();
-    gd.horizontalSpan=columnSpan;
+    gd.horizontalSpan=columnSpan-1;
     publicKeylabel.setLayoutData(gd);
+    keyExport=new Button(group, SWT.NULL);
+    keyExport.setText(Policy.bind("CVSSSH2PreferencePage.105")); //$NON-NLS-1$
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+    gd.horizontalSpan=1;
+    keyExport.setLayoutData(gd);
 
     publicKeyText=new Text(group,SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP);
     publicKeyText.setText(""); //$NON-NLS-1$
@@ -593,6 +607,70 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	}
       });
 
+    keyExport.addSelectionListener(new SelectionAdapter(){
+	public void widgetSelected(SelectionEvent e){
+	  if(kpair==null)return;
+
+          setErrorMessage(null);
+
+	  final String[] target=new String[1];
+	  final String title=Policy.bind("CVSSSH2PreferencePage.106");  //$NON-NLS-1$
+	  final String message=Policy.bind("CVSSSH2PreferencePage.107");  //$NON-NLS-1$
+	  Display.getDefault().syncExec(new Runnable(){
+	      public void run(){
+		Display display=Display.getCurrent();
+		Shell shell=new Shell(display);
+		ExportDialog dialog=new ExportDialog(shell, title, message);
+		dialog.open();
+		shell.dispose();
+		target[0]=dialog.getTarget();
+	      }});
+	  if(target[0]==null){
+	    return;
+	  }
+	  String user="";
+	  String host="";
+	  int port=22;
+  
+	  if(target[0].indexOf('@')>0){
+	    user=target[0].substring(0, target[0].indexOf('@'));
+	    host=target[0].substring(target[0].indexOf('@')+1);
+	  }
+          if(host.indexOf(':')>0){
+	    try{port=Integer.parseInt(host.substring(host.indexOf(':')+1));}
+	    catch(NumberFormatException ee) {
+	      port=-1;
+	    }
+	    host=host.substring(0, host.indexOf(':'));
+	  }
+
+	  if(user.length()==0 || 
+	     host.length()==0 ||
+	     port==-1){
+	    setErrorMessage(target[0]+Policy.bind("CVSSSH2PreferencePage.108")); //$NON-NLS-1$
+	    return;
+	  }
+
+	  String options="";
+	  try{
+	    ByteArrayOutputStream bos=new ByteArrayOutputStream();
+	    if(options.length()!=0){
+	      try{bos.write((options+" ").getBytes());}
+	      catch(IOException eeee){}
+	    }
+	    kpair.writePublicKey(bos, kpairComment);
+	    bos.close();
+	    export_via_sftp(user, host, port, 
+			    ".ssh/authorized_keys",
+			    bos.toByteArray());
+	  }
+	  catch(IOException ee){
+	  }
+	  catch(JSchException ee){
+	  }
+
+	}});
+
     saveKeyPair.addSelectionListener(new SelectionAdapter(){
 	public void widgetSelected(SelectionEvent e){
 	  if(kpair==null)return;
@@ -678,6 +756,88 @@ public class CVSSSH2PreferencePage extends PreferencePage
     return group;
   }
 
+  private void export_via_sftp(String user, String host, int port, String target, byte[] pkey) throws JSchException{
+    try{
+
+      /*
+      int i=0;
+      String authorized_keys=target;
+      String dir="";
+      String separator="/";
+      i=target.lastIndexOf("/");
+      if(i<0){
+	i=target.lastIndexOf("\\");
+	if(i>=0){ separator="\\"; }
+      }
+      else{
+      }
+      if(i>=0){
+	authorized_keys=target.substring(i+1);
+	dir=target.substring(0, i+1);
+      }
+      */
+
+      String location=":extssh:dummy@dummy:/";
+      CVSRepositoryLocation crl=CVSRepositoryLocation.fromString(location);
+      IProgressMonitor pm=new org.eclipse.core.runtime.NullProgressMonitor();
+      Session session=JSchSession.getSession(crl, user, "", host, port, pm);
+      Channel channel=session.openChannel("sftp");
+      channel.connect();
+      ChannelSftp c=(ChannelSftp)channel;
+
+      String pwd=c.pwd();
+      SftpATTRS attr=null;
+
+      try{ attr=c.stat(".ssh"); }
+      catch(SftpException ee){ }
+      if(attr==null){
+        try{ c.mkdir(".ssh"); }
+	catch(SftpException ee){
+	  setErrorMessage(ee.message);
+	  return;
+	}
+      }
+      try{ c.cd(".ssh"); }
+      catch(SftpException ee){
+	setErrorMessage(ee.message);
+	return;
+      }
+
+      try{
+	ByteArrayInputStream bis=new ByteArrayInputStream(pkey);
+	c.put(bis, "authorized_keys", null, ChannelSftp.APPEND);
+	bis.close();
+	checkPermission(c, "authorized_keys");
+	checkPermission(c, ".");                // .ssh
+	c.cd("..");                             
+	checkPermission(c, ".");                //  home directory
+      }
+      catch(SftpException ee){
+	//setErrorMessage(debug+ee.message);
+      }
+
+      MessageBox mb=new MessageBox(getShell(),SWT.OK|SWT.ICON_INFORMATION);
+      mb.setText(Policy.bind("CVSSSH2PreferencePage.information")); //$NON-NLS-1$
+      mb.setMessage(Policy.bind("CVSSSH2PreferencePage.109")+(user+"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys"));  //$NON-NLS-1$
+      mb.open();
+
+      session.disconnect();
+    }
+    catch(CVSException eee){
+    }
+    catch(IOException eee){
+      setErrorMessage(eee.toString());
+    }
+  }
+
+  private void checkPermission(ChannelSftp c, String path) throws SftpException{
+    SftpATTRS attr=c.stat(path);
+    int permissions=attr.getPermissions();
+    if((permissions&00022)!=0){
+      permissions&=~00022;
+      c.chmod(permissions,path);
+    } 	
+  }
   private void updateControls() {
     boolean enable=enableProxy.getSelection();
     proxyTypeLabel.setEnabled(enable);
@@ -705,6 +865,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     keyPassphrase1Text.setEnabled(enable);
     keyPassphrase2Label.setEnabled(enable);
     keyPassphrase2Text.setEnabled(enable);
+    keyExport.setEnabled(enable);
     saveKeyPair.setEnabled(enable);
   }
 
@@ -1177,5 +1338,75 @@ public class CVSSSH2PreferencePage extends PreferencePage
     GridData gd=new GridData();
     gd.horizontalSpan=columnSpan;
     label.setLayoutData(gd);
+  }
+}
+
+class ExportDialog extends Dialog {
+  protected Text field;
+  protected String target=null;
+  protected String title=null;
+  protected String message=null;
+
+  public ExportDialog(Shell parentShell, String title, String message) {
+    super(parentShell);
+    this.title=title;
+    this.message=message;
+  }
+
+  protected void configureShell(Shell newShell) {
+    super.configureShell(newShell);
+    newShell.setText(title);
+  }
+
+  public void create() {
+    super.create();
+    field.setFocus();
+  }
+
+  protected Control createDialogArea(Composite parent) {
+    Composite main=new Composite(parent, SWT.NONE);
+    GridLayout layout=new GridLayout();
+    layout.numColumns=3;
+    main.setLayout(layout);
+    main.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+    if (message!=null) {
+      Label messageLabel=new Label(main, SWT.WRAP);
+      messageLabel.setText(message);
+      GridData data=new GridData(GridData.FILL_HORIZONTAL);
+      data.horizontalSpan=3;
+      messageLabel.setLayoutData(data);
+    }
+
+    createTargetFields(main);
+    return main;
+  }
+
+  protected void createTargetFields(Composite parent) {
+    new Label(parent, SWT.NONE).setText("Target site:");
+		
+    field=new Text(parent, SWT.BORDER);
+    GridData data=new GridData(GridData.FILL_HORIZONTAL);
+    data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
+    field.setLayoutData(data);
+    new Label(parent, SWT.NONE);
+  }
+
+  public String getTarget() {
+    return target;
+  }
+
+  protected void okPressed() {
+    String _target=field.getText();
+    if(_target==null || _target.length()==0){
+      return;
+    }
+    target=_target;
+    super.okPressed();
+  }
+
+  protected void cancelPressed() {
+    target=null;
+    super.cancelPressed();
   }
 }
