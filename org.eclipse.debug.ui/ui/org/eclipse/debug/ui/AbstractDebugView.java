@@ -436,7 +436,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 */
 	public void doubleClick(DoubleClickEvent event) {
 		IAction action = getAction(DOUBLE_CLICK_ACTION);
-		if (action != null) {
+		if (action != null && action.isEnabled()) {
 			action.run();
 		}
 	}	

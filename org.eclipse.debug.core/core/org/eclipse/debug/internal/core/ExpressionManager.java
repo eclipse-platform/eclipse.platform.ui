@@ -34,14 +34,6 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 	private Vector fExpressions = new Vector(10);
 	
 	/**
-	 * Map of expression factories by expression.
-	 * Map of <code>IExpression</code> -> <code>String</code> (factory id).
-	 * Only has entries for expressions that are to be
-	 * persisted.
-	 */
-	private HashMap fExpressionFactoryMap = new HashMap(10);
-	
-	/**
 	 * List of expression listeners
 	 */
 	private ListenerList fListeners = new ListenerList(2);
@@ -49,12 +41,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 	/**
 	 * @see IExpressionManager#addExpression(IExpression, String)
 	 */
-	public void addExpression(IExpression expression, String factoryId) {
+	public void addExpression(IExpression expression) {
 		if (getExpressions0().indexOf(expression) == -1) {
 			getExpressions0().add(expression);
-			if (factoryId != null) {
-				fExpressionFactoryMap.put(expression, factoryId);
-			}
 			fireExpressionAdded(expression);
 		}
 	}
@@ -92,7 +81,6 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 	public void removeExpression(IExpression expression) {
 		if (getExpressions0().indexOf(expression) >= 0) {
 			getExpressions0().remove(expression);
-			fExpressionFactoryMap.remove(expression);
 			expression.dispose();
 			fireExpressionRemoved(expression);
 		}
