@@ -6,7 +6,7 @@
    version="3.0.1"
    provider-name="%Plugin.providerName"
    plugin-id="org.eclipse.ui.ide"
-   plugin-version="3.0.0">
+   plugin-version="3.0.1">
 
    <runtime>
       <library name="workbenchwin32.jar">
