@@ -24,7 +24,7 @@ public AllTests(String name) {
 }
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(ModelObjectWriterTest.suite());
+		suite.addTest(ModelObjectReaderWriterTest.suite());
 		suite.addTest(ResourceInfoTest.suite());
 		suite.addTest(WorkspacePreferencesTest.suite());
 		return suite;
