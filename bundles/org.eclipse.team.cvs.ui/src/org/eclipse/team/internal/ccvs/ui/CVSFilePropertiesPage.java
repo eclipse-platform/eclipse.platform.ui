@@ -27,7 +27,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 	 */
 	protected Control createContents(Composite parent) {
 		initialize();
-		
+		noDefaultAndApplyButton();
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
