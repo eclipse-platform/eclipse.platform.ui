@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
@@ -31,7 +32,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * achieve hierarchy.
  * </p>
  */
-public class Category implements IWorkbenchAdapter, IPluginContribution {
+public class Category implements IWorkbenchAdapter, IPluginContribution, IAdaptable {
     /**
      * Name of the miscellaneous category
      */
@@ -41,12 +42,6 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
      * Identifier of the miscellaneous category
      */
     public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
-
-    private static final String ATT_ID = "id"; //$NON-NLS-1$
-
-    private static final String ATT_PARENT = "parentCategory"; //$NON-NLS-1$
-
-    private static final String ATT_NAME = "name"; //$NON-NLS-1$
 
     private String id;
 
@@ -88,19 +83,22 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
      * 
      * @param configElement the <code>IConfigurationElement<code> containing
      * 		the ID, label, and optional parent category path.
-     * @throws a <code>WorkbenchException</code> if the ID or label is <code>null</code
+     * @throws WorkbenchException if the ID or label is <code>null</code
      */
     public Category(IConfigurationElement configElement)
             throws WorkbenchException {
-        id = configElement.getAttribute(ATT_ID);
+        id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
         configurationElement = configElement;
         if (id == null || getLabel() == null)
             throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+
+    /**
+     * Add an element to this category.
+     * 
+     * @param element the element to add
      */
     public void addElement(Object element) {
         if (elements == null)
@@ -141,30 +139,34 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
         return getLabel();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return the id for this category.
+     * @return the id
      */
     public String getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return the label for this category.
+     * 
+     * @return the label
      */
     public String getLabel() {
         return configurationElement == null ? name : configurationElement
-				.getAttribute(ATT_NAME);
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return the parent path for this category.
+     * 
+     * @return the parent path
      */
     public String[] getParentPath() {
     	if (parentPath != null)
     		return parentPath;
     	
-    	String unparsedPath = configurationElement == null ? null
-				: configurationElement.getAttribute(ATT_PARENT);
+    	String unparsedPath = getRawParentPath();
         if (unparsedPath != null) {
             StringTokenizer stok = new StringTokenizer(unparsedPath, "/"); //$NON-NLS-1$
             parentPath = new String[stok.countTokens()];
@@ -175,25 +177,45 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 
         return parentPath;
     }
+    
+    /**
+     * Return the unparsed parent path.  May be <code>null</code>.
+     * 
+     * @return the unparsed parent path or <code>null</code>
+     */
+    public String getRawParentPath() {
+        return configurationElement == null ? null
+                : configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT);
+    }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return the root path for this category.
+     * 
+     * @return the root path
      */
     public String getRootPath() {
         String[] path = getParentPath();
         if (path != null && path.length > 0)
             return path[0];
-        else
-            return id;
+        
+        return id;
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return the elements contained in this category.
+     * 
+     * @return the elements
      */
     public ArrayList getElements() {
         return elements;
     }
 
+    /**
+     * Return whether a given object exists in this category.
+     * 
+     * @param o the object to search for
+     * @return whether the object is in this category
+     */
     public boolean hasElement(Object o) {
         if (elements == null)
             return false;
@@ -202,14 +224,16 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
         return elements.contains(o);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ICategory.
+    /**
+     * Return whether this category has child elements.
+     * 
+     * @return whether this category has child elements
      */
     public boolean hasElements() {
         if (elements != null)
             return !elements.isEmpty();
-        else
-            return false;
+        
+        return false;
     }
 
     /* (non-Javadoc)

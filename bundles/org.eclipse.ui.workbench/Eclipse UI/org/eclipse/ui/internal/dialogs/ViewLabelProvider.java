@@ -19,10 +19,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.Category;
-import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
+/**
+ * Provides labels for view children.
+ */
 public class ViewLabelProvider extends LabelProvider {
     private HashMap images;
 
@@ -59,7 +61,7 @@ public class ViewLabelProvider extends LabelProvider {
                     .getImageDescriptor();
             if (desc != null)
                 return cacheImage(desc);
-        } else if (element instanceof Category) {
+        } else if (element instanceof IViewCategory) {
             ImageDescriptor desc = WorkbenchImages
                     .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
             return cacheImage(desc);
@@ -72,10 +74,10 @@ public class ViewLabelProvider extends LabelProvider {
      */
     public String getText(Object element) {
         String label = WorkbenchMessages.ViewLabel_unknown;
-        if (element instanceof Category)
-            label = ((Category) element).getLabel();
+        if (element instanceof IViewCategory)
+            label = ((IViewCategory) element).getLabel();
         else if (element instanceof IViewDescriptor)
-            label = ((ViewDescriptor) element).getLabel();
+            label = ((IViewDescriptor) element).getLabel();
         return DialogUtil.removeAccel(label);
     }
 }

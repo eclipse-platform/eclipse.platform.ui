@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views;
 
-import org.eclipse.ui.internal.registry.Category;
 
 /**
  * The view registry maintains a list of views explicitly registered
@@ -41,7 +40,7 @@ public interface IViewRegistry {
      * 
      * @return the categories.  Never <code>null</code>.
      */
-    public Category[] getCategories();
+    public IViewCategory[] getCategories();
 
     /**
      * Return a list of views defined in the registry.

@@ -21,12 +21,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read view extensions from the registry.
  */
 public class ViewRegistryReader extends RegistryReader {
-    public static final String TAG_VIEW = "view";//$NON-NLS-1$
-
-    public static final String TAG_CATEGORY = "category";//$NON-NLS-1$
-
-    public static final String TAG_STICKYVIEW = "stickyView";//$NON-NLS-1$
-
     private ViewRegistry viewRegistry;
 
     /**
@@ -41,8 +35,7 @@ public class ViewRegistryReader extends RegistryReader {
      */
     protected void readCategory(IConfigurationElement element) {
         try {
-            Category category = new Category(element);
-            viewRegistry.add(category);
+            viewRegistry.add(new Category(element));
         } catch (CoreException e) {
             // log an error since its not safe to show a dialog here
             WorkbenchPlugin.log(
@@ -54,16 +47,16 @@ public class ViewRegistryReader extends RegistryReader {
      * readElement method comment.
      */
     protected boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(TAG_VIEW)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
             readView(element);
             return true;
         }
-        if (element.getName().equals(TAG_CATEGORY)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
             readCategory(element);
             readElementChildren(element);
             return true;
         }
-        if (element.getName().equals(TAG_STICKYVIEW)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
             readSticky(element);
             return true;
         }
@@ -75,10 +68,8 @@ public class ViewRegistryReader extends RegistryReader {
      * Reads the sticky view element.
      */
     protected void readSticky(IConfigurationElement element) {
-        StickyViewDescriptor desc;
         try {
-            desc = new StickyViewDescriptor(element);
-            viewRegistry.add(desc);
+            viewRegistry.add(new StickyViewDescriptor(element));
         } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
             WorkbenchPlugin.log(
@@ -92,8 +83,7 @@ public class ViewRegistryReader extends RegistryReader {
      */
     protected void readView(IConfigurationElement element) {
         try {
-            ViewDescriptor desc = new ViewDescriptor(element);
-            viewRegistry.add(desc);
+            viewRegistry.add(new ViewDescriptor(element));
         } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
             WorkbenchPlugin.log(
@@ -103,6 +93,8 @@ public class ViewRegistryReader extends RegistryReader {
 
     /**
      * Read the view extensions within a registry.
+     * @param in the extension registry
+     * @param out the view registry
      */
     public void readViews(IExtensionRegistry in, ViewRegistry out) {
         // this does not seem to really ever be throwing an the exception

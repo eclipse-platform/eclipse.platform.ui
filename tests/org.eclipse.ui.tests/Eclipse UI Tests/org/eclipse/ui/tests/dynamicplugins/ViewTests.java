@@ -17,10 +17,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.views.IStickyViewDescriptor;
@@ -60,6 +64,23 @@ public class ViewTests extends DynamicTestCase {
 		
         assertNull(window.getActivePage().findView(VIEW_ID));		
 	}
+    
+    /**
+     * Tests to ensure that the showView handler is removed when the plugin is unloaded.
+     */
+    public void testHandlerRemoval() {
+        IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
+        
+        assertNull(registry.find(VIEW_ID));
+        getBundle();
+        ViewDescriptor desc = (ViewDescriptor) registry.find(VIEW_ID);
+        assertNotNull(desc);
+        HandlerSubmission submission = desc.getHandlerSubmission();
+        ICommand command = PlatformUI.getWorkbench().getCommandSupport().getCommandManager().getCommand(submission.getCommandId());
+        assertTrue(command.isHandled());
+        removeBundle();
+        assertFalse(command.isHandled());
+    }
 
 	public void testViewProperties() {
 		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();

@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.intro.IIntroConstants;
-import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -72,7 +72,7 @@ public class ViewContentProvider implements ITreeContentProvider {
     private Object[] createChildren(Object element) {
         if (element instanceof IViewRegistry) {
             IViewRegistry reg = (IViewRegistry) element;
-            Category[] categories = reg.getCategories();
+            IViewCategory [] categories = reg.getCategories();
 
             ArrayList filtered = new ArrayList();
             for (int i = 0; i < categories.length; i++) {
@@ -81,7 +81,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 
                 filtered.add(categories[i]);
             }
-            categories = (Category[]) filtered.toArray(new Category[filtered
+            categories = (IViewCategory[]) filtered.toArray(new IViewCategory[filtered
                     .size()]);
 
             // if there is only one category, return it's children directly
@@ -89,12 +89,12 @@ public class ViewContentProvider implements ITreeContentProvider {
                 return getChildren(categories[0]);
             }
             return categories;
-        } else if (element instanceof Category) {
-            ArrayList list = ((Category) element).getElements();
-            if (list != null) {
+        } else if (element instanceof IViewCategory) {
+            IViewDescriptor [] views = ((IViewCategory) element).getViews();
+            if (views != null) {
                 ArrayList filtered = new ArrayList();
-                for (Iterator i = list.iterator(); i.hasNext();) {
-                    Object o = i.next();
+                for (int i = 0; i < views.length; i++) {
+                    Object o = views[i];
                     if (WorkbenchActivityHelper.filterItem(o))
                         continue;
                     filtered.add(o);
@@ -120,7 +120,6 @@ public class ViewContentProvider implements ITreeContentProvider {
             if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID)) {
                 i.remove();
             }
-
         }
         return list;
     }
@@ -151,7 +150,7 @@ public class ViewContentProvider implements ITreeContentProvider {
     public boolean hasChildren(java.lang.Object element) {
         if (element instanceof IViewRegistry)
             return true;
-        else if (element instanceof Category) {
+        else if (element instanceof IViewCategory) {
             if (getChildren(element).length > 0)
                 return true;
         }

@@ -21,14 +21,18 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -37,6 +41,75 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
 	
+    /**
+     * Proxies a Category implementation.
+     * 
+     * @since 3.1
+     */
+    private static class ViewCategoryProxy implements IViewCategory, IPluginContribution {
+
+        private Category rawCategory;
+
+        /**
+         * Create a new instance of this class
+         * 
+         * @param rawCategory the category
+         */
+        public ViewCategoryProxy(Category rawCategory) {
+            this.rawCategory = rawCategory;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.views.IViewCategory#getViews()
+         */
+        public IViewDescriptor[] getViews() {
+            ArrayList elements = rawCategory.getElements();
+            if (elements == null)
+                return new IViewDescriptor[0];
+            return (IViewDescriptor[]) elements
+                    .toArray(
+                            new IViewDescriptor[elements.size()]);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.views.IViewCategory#getId()
+         */
+        public String getId() {
+            return rawCategory.getId();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.views.IViewCategory#getPath()
+         */
+        public IPath getPath() {
+            String rawParentPath = rawCategory.getRawParentPath();
+            if (rawParentPath == null)
+                return new Path(""); //$NON-NLS-1$
+            return new Path(rawParentPath);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.views.IViewCategory#getLabel()
+         */
+        public String getLabel() {
+            return rawCategory.getLabel();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.IPluginContribution#getLocalId()
+         */
+        public String getLocalId() {
+            return getId();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.IPluginContribution#getPluginId()
+         */
+        public String getPluginId() {
+            return rawCategory.getPluginId();
+        }
+    }
+    
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_VIEWS; //$NON-NLS-1$
 	
 	/**
@@ -76,6 +149,8 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 
     /**
      * Add a category to the registry.
+     * 
+     * @param desc the descriptor to add
      */
     public void add(Category desc) {
         /* fix for 1877 */
@@ -96,20 +171,24 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 
     /**
      * Add a descriptor to the registry.
+     * 
+     * @param desc the descriptor to add
      */
     public void add(ViewDescriptor desc) {
     	if (views.add(desc)) {
-    		dirtyViewCategoryMappings = true;
-    		PlatformUI.getWorkbench().getExtensionTracker()
-					.registerObject(
-							desc.getConfigurationElement().getDeclaringExtension(),
-							desc,
-							IExtensionTracker.REF_WEAK);
-    	}
+            dirtyViewCategoryMappings = true;
+            PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+                    desc.getConfigurationElement().getDeclaringExtension(),
+                    desc, IExtensionTracker.REF_WEAK);
+            PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+                    desc.getHandlerSubmission());
+        }
     }
-
+    
     /**
      * Add a sticky descriptor to the registry.
+     * 
+     * @param desc the descriptor to add
      */
     public void add(StickyViewDescriptor desc) {
     	if (!sticky.contains(desc)) {
@@ -122,18 +201,20 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     	}
     }
 
-    /**
-     * @param id
-     * @return
-     */
-    private IStickyViewDescriptor findSticky(String id) {
-        for (Iterator i = sticky.iterator(); i.hasNext();) {
-            IStickyViewDescriptor desc = (IStickyViewDescriptor) i.next();
-            if (id.equals(desc.getId()))
-                return desc;
-        }
-        return null;
-    }
+//    /**
+//     * Return the sticky view descriptor.
+//     * 
+//     * @param id the id to searc for 
+//     * @return the sticky view descriptor
+//     */
+//    private IStickyViewDescriptor findSticky(String id) {
+//        for (Iterator i = sticky.iterator(); i.hasNext();) {
+//            IStickyViewDescriptor desc = (IStickyViewDescriptor) i.next();
+//            if (id.equals(desc.getId()))
+//                return desc;
+//        }
+//        return null;
+//    }
 
     /**
      * Find a descriptor in the registry.
@@ -151,6 +232,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 
     /**
      * Find a category with a given name.
+     * 
+     * @param id the id to search for
+     * @return the category or <code>null</code>
      */
     public Category findCategory(String id) {
     	mapViewsToCategories();
@@ -178,11 +262,14 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     /**
      * Get the list of view categories.
      */
-    public Category[] getCategories() {
+    public IViewCategory[] getCategories() {
     	mapViewsToCategories();
         int nSize = categories.size();
-        Category[] retArray = new Category[nSize];
-        categories.toArray(retArray);
+        IViewCategory[] retArray = new IViewCategory[nSize];
+        int i = 0;
+        for (Iterator itr = categories.iterator(); itr.hasNext();) {
+            retArray[i++] = new ViewCategoryProxy((Category) itr.next());
+        }
         return retArray;
     }
 
@@ -195,8 +282,10 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     }
 
     /**
-     * Returns the Misc category.
-     * This may be null if there are no miscellaneous views.
+     * Returns the Misc category. This may be <code>null</code> if there are
+     * no miscellaneous views.
+     * 
+     * @return the misc category or <code>null</code>
      */
     public Category getMiscCategory() {
         return miscCategory;
@@ -233,7 +322,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
 	            String[] catPath = desc.getCategoryPath();
 	            if (catPath != null) {
 	                String rootCat = catPath[0];
-	                cat = (Category) internalFindCategory(rootCat);
+	                cat = internalFindCategory(rootCat);
 	            }
 	            if (cat != null) {
 	                if (!cat.hasElement(desc)) {
@@ -260,6 +349,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
     	}
     }
 
+    /**
+     * Dispose of this registry.
+     */
     public void dispose() {
     	PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
     	PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
@@ -275,6 +367,10 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
             }
             else if (objects[i] instanceof ViewDescriptor) {
                 views.remove(objects[i]);
+                PlatformUI.getWorkbench().getCommandSupport()
+                        .removeHandlerSubmission(
+                                ((ViewDescriptor) objects[i])
+                                        .getHandlerSubmission());
                 dirtyViewCategoryMappings = true;
             }
             else if (objects[i] instanceof Category) {
@@ -298,11 +394,11 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
         IConfigurationElement[] addedElements = addedeExtension.getConfigurationElements();
         for (int i = 0; i < addedElements.length; i++) {
             IConfigurationElement element = addedElements[i];
-    		if (element.getName().equals(ViewRegistryReader.TAG_VIEW)) {
+    		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
     			reader.readView(element);
-    		} else if (element.getName().equals(ViewRegistryReader.TAG_CATEGORY)) {
+    		} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
     			reader.readCategory(element);
-    		} else if (element.getName().equals(ViewRegistryReader.TAG_STICKYVIEW)) {
+    		} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
     			reader.readSticky(element);
     		}			
         }

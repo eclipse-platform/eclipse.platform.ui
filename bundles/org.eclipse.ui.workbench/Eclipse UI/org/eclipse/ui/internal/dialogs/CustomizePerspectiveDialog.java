@@ -99,11 +99,11 @@ import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelPr
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -916,12 +916,12 @@ public class CustomizePerspectiveDialog extends Dialog {
             }
 
             public void widgetSelected(SelectionEvent e) {
-                handleMenuSelected(e);
+                handleMenuSelected();
             }
         });
         menusCombo.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                handleMenuModified(e);
+                handleMenuModified();
             }
         });
         menuCategoriesViewer
@@ -1449,7 +1449,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         updateMenuCategoryCheckedState(selectedMenu);
     }
 
-    void handleMenuModified(ModifyEvent event) {
+    void handleMenuModified() {
         String text = menusCombo.getText();
         String[] items = menusCombo.getItems();
         int itemIndex = -1;
@@ -1465,7 +1465,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         handleMenuSelected(element);
     }
 
-    void handleMenuSelected(SelectionEvent event) {
+    void handleMenuSelected() {
         int i = menusCombo.getSelectionIndex();
         ShortcutMenu element = (ShortcutMenu) rootMenu.children.get(i);
         handleMenuSelected(element);
@@ -1590,18 +1590,18 @@ public class CustomizePerspectiveDialog extends Dialog {
                     ShortcutMenu.ID_VIEW, WorkbenchMessages.ActionSetDialogInput_viewCategory); 
             IViewRegistry viewReg = WorkbenchPlugin.getDefault()
                     .getViewRegistry();
-            Category[] categories = viewReg.getCategories();
+            IViewCategory [] categories = viewReg.getCategories();
             activeIds = Arrays.asList(perspective.getShowViewShortcuts());
             for (int i = 0; i < categories.length; i++) {
-                Category category = categories[i];
+                IViewCategory category = categories[i];
                 if (WorkbenchActivityHelper.filterItem(category))
                     continue;
                 ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category
                         .getId(), category.getLabel());
-                ArrayList views = category.getElements();
+                IViewDescriptor [] views = category.getViews();
                 if (views != null) {
-                    for (int j = 0; j < views.size(); j++) {
-                        IViewDescriptor view = (IViewDescriptor) views.get(j);
+                    for (int j = 0; j < views.length; j++) {
+                        IViewDescriptor view = views[j];
                         if (view.getId().equals(IIntroConstants.INTRO_VIEW_ID))
                             continue;
                         if (WorkbenchActivityHelper.filterItem(view))

@@ -21,9 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.part.NewViewToOldWrapper;
@@ -39,22 +37,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
     private ImageDescriptor imageDescriptor;
 
-    private static final String ATT_ID = "id"; //$NON-NLS-1$
-
-    private static final String ATT_NAME = "name"; //$NON-NLS-1$
-
-    private static final String ATT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
-
-    private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-
-    private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
-
-    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
-    private static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
-
-    private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
-    
     private IConfigurationElement configElement;
 
     private String[] categoryPath;
@@ -77,6 +59,8 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             return getImageDescriptor();
         }
     };
+
+    private HandlerSubmission handlerSubmission;
     
     /**
      * Create a new <code>ViewDescriptor</code> for an extension.
@@ -88,39 +72,33 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             throws CoreException {
         configElement = e;
         loadFromExtension();
-        registerShowViewHandler();
     }
 
+    /**
+     * Return the part descriptor.
+     * 
+     * @return the part descriptor.
+     * @since 3.1
+     */
     public IPartDescriptor getPartDescriptor() {
     	return viewInfo;
     }
     
-    /**
-     * Register the show view handler.
-     *
-     * TODO: This is bad.  This doesn't respect dynamic plugin lifecycle.
-     * This code should be moved to the ViewRegistry.
-     */
-    private void registerShowViewHandler() {
-        IHandler showViewHandler = new ShowViewHandler(getId());
-        HandlerSubmission showViewSubmission = new HandlerSubmission(null,
-                null, null, getId(), showViewHandler, Priority.MEDIUM);
-        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                showViewSubmission);
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
      */
     public IViewPart createView() throws CoreException {
-        Class viewClass = configElement.loadExtensionClass(ATT_CLASS);
+        Class viewClass = configElement
+                .loadExtensionClass(IWorkbenchRegistryConstants.ATT_CLASS);
         
         if (IViewPart.class.isAssignableFrom(viewClass)) {
-            return (IViewPart)WorkbenchPlugin.createExtension(getConfigurationElement(), ATT_CLASS);
-        } else {
-            NewViewToOldWrapper adapter = new NewViewToOldWrapper(getPartDescriptor());
-            return adapter;
+            return (IViewPart) WorkbenchPlugin.createExtension(
+                    getConfigurationElement(),
+                    IWorkbenchRegistryConstants.ATT_CLASS);
         }
+
+        return new NewViewToOldWrapper(getPartDescriptor());
     }
 
     /* (non-Javadoc)
@@ -159,7 +137,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     public ImageDescriptor getImageDescriptor() {
         if (imageDescriptor != null)
             return imageDescriptor;
-        String iconName = configElement.getAttribute(ATT_ICON);
+        String iconName = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         if (iconName == null)
             return null;
         IExtension extension = configElement.getDeclaringExtension();
@@ -173,21 +151,23 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
      */
     public String getLabel() {
-        return configElement.getAttribute(ATT_NAME);
+        return configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAccelerator()
+    /**
+     * Return the accelerator attribute.
+     * 
+     * @return the accelerator attribute
      */
     public String getAccelerator() {
-        return configElement.getAttribute(ATT_ACCELERATOR);
+        return configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ACCELERATOR);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getFastViewWidthRatio()
      */
     public float getFastViewWidthRatio() {
-    	configElement.getAttribute(ATT_RATIO); // check to ensure the element is still valid - exception thrown if it isn't
+    	configElement.getAttribute(IWorkbenchRegistryConstants.ATT_RATIO); // check to ensure the element is still valid - exception thrown if it isn't
         return fastViewWidthRatio;
     }
 
@@ -195,12 +175,14 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * load a view descriptor from the registry.
      */
     private void loadFromExtension() throws CoreException {    	
-        id = configElement.getAttribute(ATT_ID);
+        id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
   
-        String category = configElement.getAttribute(ATT_CATEGORY);
+        String category = configElement.getAttribute(IWorkbenchRegistryConstants.TAG_CATEGORY);
 
         // Sanity check.
-        if ((configElement.getAttribute(ATT_NAME) == null) || (configElement.getAttribute(ATT_CLASS) == null)) {
+        if ((configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null)
+                || (RegistryReader.getClassValue(configElement,
+                        IWorkbenchRegistryConstants.ATT_CLASS) == null)) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
                     .getDeclaringExtension().getNamespace(), 0,
                     "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
@@ -216,7 +198,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             }
         }
         
-        String ratio = configElement.getAttribute(ATT_RATIO);
+        String ratio = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_RATIO);
         if (ratio != null) {
             try {
                 fastViewWidthRatio = new Float(ratio).floatValue();
@@ -263,7 +245,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()
      */
     public boolean getAllowMultiple() {
-    	String string = configElement.getAttribute(ATT_MULTIPLE);    	
+    	String string = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_MULTIPLE);    	
         return string == null ? false : Boolean.valueOf(string).booleanValue();
     }
 
@@ -276,4 +258,19 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		}
 		return null;
 	}
+
+    /**
+     * Return the handler submission for showing this view.
+     * 
+     * @return the handler submission for showing this view
+     * @since 3.1
+     */
+    public HandlerSubmission getHandlerSubmission() {
+        if (handlerSubmission == null) {
+            ShowViewHandler showViewHandler = new ShowViewHandler(getId());
+            handlerSubmission = new HandlerSubmission(null,
+                null, null, getId(), showViewHandler, Priority.MEDIUM);
+        }
+        return handlerSubmission;
+    }
 }

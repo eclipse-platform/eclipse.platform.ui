@@ -21,15 +21,8 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
  * @since 3.0
  */
 public class StickyViewDescriptor implements IStickyViewDescriptor {
-    private static final String ATT_ID = "id"; //$NON-NLS-1$
 
-    private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
-
-    private static final String ATT_CLOSEABLE = "closeable"; //$NON-NLS-1$    
-
-    private static final String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$
-
-	private IConfigurationElement configurationElement;
+    private IConfigurationElement configurationElement;
 
 	private String id;
 
@@ -60,7 +53,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
     public StickyViewDescriptor(IConfigurationElement element)
             throws CoreException {
     	this.configurationElement = element;
-    	id = configurationElement.getAttribute(ATT_ID);
+    	id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id == null)
             throw new CoreException(new Status(IStatus.ERROR, element
                     .getDeclaringExtension().getNamespace(), 0,
@@ -68,16 +61,21 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
     }
     
 	/**
-	 * @return
+     * Return the configuration element.
+     * 
+	 * @return the configuration element
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return configurationElement;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.IStickyViewDescriptor#getLocation()
+     */
     public int getLocation() {
     	int direction = IPageLayout.RIGHT;
     	
-    	String location = configurationElement.getAttribute(ATT_LOCATION);
+    	String location = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_LOCATION);
         if (location != null) {
             if (location.equalsIgnoreCase("left")) //$NON-NLS-1$
                 direction = IPageLayout.LEFT;
@@ -102,7 +100,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
      */
     public boolean isCloseable() {
     	boolean closeable = true;
-    	String closeableString = configurationElement.getAttribute(ATT_CLOSEABLE);
+    	String closeableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLOSEABLE);
         if (closeableString != null) {
             closeable = !closeableString.equals("false"); //$NON-NLS-1$
         }
@@ -114,7 +112,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
      */
     public boolean isMoveable() {
     	boolean moveable = true;
-    	String moveableString = configurationElement.getAttribute(ATT_MOVEABLE);
+    	String moveableString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
         if (moveableString != null) {
             moveable = !moveableString.equals("false"); //$NON-NLS-1$
         }    	

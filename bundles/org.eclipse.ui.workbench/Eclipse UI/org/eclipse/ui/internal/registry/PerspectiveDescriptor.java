@@ -20,9 +20,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -63,23 +60,9 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
     private boolean fixed;
 
-    private ImageDescriptor image;
-
-    static final String ATT_ID = "id";//$NON-NLS-1$
-
-    private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
-
-    private static final String ATT_NAME = "name";//$NON-NLS-1$
-
-    private static final String ATT_ICON = "icon";//$NON-NLS-1$
-
-    private static final String ATT_CLASS = "class";//$NON-NLS-1$
-
-    private static final String ATT_SINGLETON = "singleton";//$NON-NLS-1$
-
-    private static final String ATT_FIXED = "fixed";//$NON-NLS-1$
-
-	private IConfigurationElement configElement;
+    private ImageDescriptor image; 
+    
+    private IConfigurationElement configElement;
 
     /**
      * Create a new empty descriptor.
@@ -137,24 +120,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
                     "Invalid extension (missing label, id or class name): " + getId(),//$NON-NLS-1$
                     null));
         }
-
-        registerOpenPerspectiveHandler();
-    }
-
-    /**
-     * Registers a handler for opening this perspective with the command
-     * service. This method must be called exactly once per perspective
-     * descriptor. This handler must be removed when this perspective descriptor
-     * goes away.
-     * 
-     * @since 3.1
-     */
-    private void registerOpenPerspectiveHandler() {
-        IHandler openPerspectiveHandler = new OpenPerspectiveHandler(getId());
-        HandlerSubmission openPerspectiveSubmission = new HandlerSubmission(
-                null, null, null, getId(), openPerspectiveHandler, Priority.MEDIUM);
-        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                openPerspectiveSubmission);
     }
     
     /**
@@ -181,7 +146,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         if (configElement != null)
             try {
                 return (IPerspectiveFactory) configElement
-                            .createExecutableExtension(ATT_CLASS);
+                            .createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
             } catch (CoreException e) {
                 // do nothing
             }
@@ -210,7 +175,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @return whether or not this perspective is fixed
      */
     public boolean getFixed() {
-        return configElement == null ? fixed : Boolean.valueOf(configElement.getAttribute(ATT_FIXED)).booleanValue();
+        return configElement == null ? fixed : Boolean.valueOf(configElement.getAttribute(IWorkbenchRegistryConstants.ATT_FIXED)).booleanValue();
     }
 
     /* (non-Javadoc)
@@ -226,7 +191,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     public ImageDescriptor getImageDescriptor() {
     	if (image == null) {
             if (configElement != null) {
-                String icon = configElement.getAttribute(ATT_ICON);
+                String icon = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
                 if (icon != null) {
                     image = AbstractUIPlugin.imageDescriptorFromPlugin(
                             configElement.getNamespace(), icon);
@@ -243,7 +208,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @see org.eclipse.ui.IPerspectiveDescriptor#getLabel()
      */
     public String getLabel() {
-        return configElement == null ? label : configElement.getAttribute(ATT_NAME);
+        return configElement == null ? label : configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
     /**
@@ -276,7 +241,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         if (configElement == null)
             return false;
         
-        return Boolean.valueOf(configElement.getAttribute(ATT_DEFAULT)).booleanValue();
+        return Boolean.valueOf(configElement.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT)).booleanValue();
     }
 
     /**
@@ -294,7 +259,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @return whether this perspective is a singleton
      */
     public boolean isSingleton() {
-        return configElement == null ? singleton : configElement.getAttributeAsIs(ATT_SINGLETON) != null;
+        return configElement == null ? singleton : configElement.getAttributeAsIs(IWorkbenchRegistryConstants.ATT_SINGLETON) != null;
     }
 
     /**
@@ -386,6 +351,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * @since 3.1
      */
     public String getClassName() {
-    	return configElement == null ? className : configElement.getAttribute(ATT_CLASS);
+    	return configElement == null ? className : RegistryReader.getClassValue(configElement, IWorkbenchRegistryConstants.ATT_CLASS);
     }
 }

@@ -42,7 +42,7 @@ public class PerspectiveRegistryReader extends RegistryReader {
     protected boolean readElement(IConfigurationElement element) {
         if (element.getName().equals(TAG_LAYOUT)) {
             try {
-                PerspectiveDescriptor desc = new PerspectiveDescriptor(element.getAttribute(PerspectiveDescriptor.ATT_ID), element);
+                PerspectiveDescriptor desc = new PerspectiveDescriptor(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID), element);
                 registry.addPerspective(desc);
             } catch (CoreException e) {
                 // log an error since its not safe to open a dialog here
