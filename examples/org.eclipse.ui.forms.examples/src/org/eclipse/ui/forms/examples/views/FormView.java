@@ -1,7 +1,9 @@
 package org.eclipse.ui.forms.examples.views;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
@@ -85,21 +87,28 @@ public class FormView extends ViewPart {
 		buf.append("Here is some plain text for the text to render; ");
 		buf.append("this text is at <a href=\"http://www.eclipse.org\" nowrap=\"true\">http://www.eclipse.org</a> web site.");
 		buf.append("</p>");
-		buf.append("<p>This line will contain some <b>bold</b> text. ");
+		buf.append("<p>");
+		buf.append("<span color=\"header\" font=\"header\">This text is in header font and color.</span>");
+		buf.append("</p>");
+		buf.append("<p>This line will contain some <b>bold</b> and some <span font=\"code\">source</span> text. ");
 		buf.append("We can also add <img href=\"image\"/> an image. ");
 		buf.append("</p>");
 		buf.append("<li>A default (bulleted) list item.</li>");
+		buf.append("<li>Another bullet list item.</li>");
 		buf.append("<li style=\"text\" value=\"1.\">A list item with text.</li>");
 		buf.append("<li style=\"text\" value=\"2.\">Another list item with text</li>");
 		buf.append("<li style=\"image\" value=\"image\">List item with an image bullet</li>");
 		buf.append("<li style=\"text\" bindent=\"20\" indent=\"40\" value=\"3.\">A list item with text.</li>");
 		buf.append("<li style=\"text\" bindent=\"20\" indent=\"40\" value=\"4.\">A list item with text.</li>");
 		buf.append("</form>");
-		RichText rtext = toolkit.createRichText(form.getBody(), true);
+		FormText rtext = toolkit.createFormText(form.getBody(), true);
 		td = new TableWrapData(TableWrapData.FILL);
 		td.colspan = 2;
 		rtext.setLayoutData(td);
 		rtext.setImage("image", ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
+		rtext.setColor("header", toolkit.getColors().getColor(FormColors.TITLE));
+		rtext.setFont("header", JFaceResources.getHeaderFont());
+		rtext.setFont("code", JFaceResources.getTextFont());
 		rtext.setText(buf.toString(), true, false);
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {

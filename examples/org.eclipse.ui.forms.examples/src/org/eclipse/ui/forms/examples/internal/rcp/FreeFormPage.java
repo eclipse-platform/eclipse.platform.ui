@@ -55,7 +55,7 @@ public class FreeFormPage extends FormPage {
 		td.align = TableWrapData.LEFT;
 		link.setLayoutData(td);
 		createExpandable(form, toolkit);
-		createRichTextSection(form, toolkit);
+		createFormTextSection(form, toolkit);
 	}
 	private void createExpandable(final ScrolledForm form, final FormToolkit toolkit) {
 		final ExpandableComposite exp = toolkit.createExpandableComposite(form
@@ -89,7 +89,7 @@ public class FreeFormPage extends FormPage {
 		exp.setLayoutData(td);
 	}
 	
-	private void createRichTextSection(final ScrolledForm form, FormToolkit toolkit) {
+	private void createFormTextSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
@@ -99,9 +99,9 @@ public class FreeFormPage extends FormPage {
 		section.setToggleColor(
 			toolkit.getColors().getColor(FormColors.SEPARATOR));
 		toolkit.createCompositeSeparator(section);
-		RichText rtext = toolkit.createRichText(section, false);
+		FormText rtext = toolkit.createFormText(section, false);
 		section.setClient(rtext);
-		loadRichText(rtext, toolkit);
+		loadFormText(rtext, toolkit);
 
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
@@ -118,7 +118,7 @@ public class FreeFormPage extends FormPage {
 		section.setLayoutData(td);
 	}
 
-	private void loadRichText(final RichText rtext, FormToolkit toolkit) {
+	private void loadFormText(final FormText rtext, FormToolkit toolkit) {
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				MessageDialog.openInformation(rtext.getShell(), "Eclipse Forms", 
