@@ -8,7 +8,9 @@ package org.eclipse.debug.internal.ui.views;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,6 +42,65 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	private int fNewStreamWriteEnd= 0;
 	protected boolean fNeedsToStartReading= true;
 	
+	class StreamEntry {
+		/**
+		 * Whether written to std out or std err - one of OUT/ERR
+		 */
+		private int fKind = -1;
+		/**
+		 * The text written
+		 */
+		private String fText = null;
+		
+		StreamEntry(String text, int kind) {
+			fText = text;
+			fKind = kind;
+		}
+		
+		/**
+		 * Returns the kind of entry - OUT or ERR
+		 */
+		public int getKind() {
+			return fKind;
+		}
+		
+		/**
+		 * Returns the text written
+		 */
+		public String getText() {
+			return fText;
+		}
+	}
+	
+	/**
+	 * A queue of stream entries written to standard out and standard err.
+	 * Entries appended to the end of the queue and removed from the front.
+	 * Intentionally a vector to obtain synchronization as entries are
+	 * added and removed.
+	 */
+	private Vector fQueue = new Vector(10);
+	
+	/**
+	 * Thread that polls the queue for new output
+	 */
+	private Thread fPollingThread = null;
+	
+	/**
+	 * Whether associated process has terminated
+	 */
+	private boolean fTerminated = false;
+	
+	/**
+	 * Whether to keep polling
+	 */
+	private boolean fPoll = false;
+	
+	/**
+	 * The base number of milliseconds to pause
+	 * between polls.
+	 */
+	private static final long BASE_DELAY= 50L;
+		
 	public static final int OUT= 0;
 	public static final int ERR= 1;
 	
@@ -66,10 +127,12 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		fProcess= process;
 		if (process != null) {
 			fProxy= process.getStreamsProxy();			
+			fTerminated = process.isTerminated();
 			DebugPlugin.getDefault().addDebugEventListener(this);
 			setTextStore(new ConsoleOutputTextStore(2500));
 		} else {
 			fClosed= true;
+			fTerminated = true;
 			setTextStore(new ConsoleOutputTextStore(0));	
 		}
 		setLineTracker(new DefaultLineTracker());
@@ -188,9 +251,66 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 				systemErrAppended(contents);
 			}
 		}
+		Runnable r = new Runnable() {
+			public void run() {
+				pollAndSleep();
+			}
+		};
+		fPoll = true;
+		fPollingThread = new Thread(r, "Console Polling Thread");
+		fPollingThread.start();
+	}
+	
+	/**
+	 * Polls and sleeps until closed or the associated
+	 * process terminates
+	 */
+	protected void pollAndSleep() {
+		while (fPoll && (!fTerminated || !fQueue.isEmpty())) {
+			poll();
+			try {
+				Thread.sleep(BASE_DELAY);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
+	/**
+	 * Polls the queue for new output and updates this document
+	 */
+	protected void poll() {
+		synchronized(fQueue) {
+			StringBuffer buffer = null;
+			StreamEntry prev = null;
+			int processed = 0;
+			int amount = 0;
+			while (processed < fQueue.size() && amount < 256) {
+				StreamEntry entry = (StreamEntry)fQueue.get(processed);
+				if (prev == null) {
+					buffer = new StringBuffer(entry.getText());
+				} else {
+					if (prev.getKind() == entry.getKind()) {
+						buffer.append(entry.getText());
+					} else {
+						appendToDocument(buffer.toString(),prev.getKind());
+						buffer = new StringBuffer(entry.getText());
+					}
+				}
+				prev = entry;
+				processed++;
+				amount+= entry.getText().length();
+			}
+			if (buffer != null) {
+				appendToDocument(buffer.toString(), prev.getKind());
+			}
+			for (int i = 0; i < processed; i++) {
+				fQueue.remove(0);
+			}
+		}
 	}
 
 	protected void stopReading() {
+		fPoll = false;
 		if (fProxy == null) {
 			return;
 		}
@@ -207,7 +327,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 * 
 	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
-	protected void streamAppended(final String text, final int source) {
+	protected void appendToDocument(final String text, final int source) {
 		update(new Runnable() {
 			public void run() {
 				int appendedLength= text.length();
@@ -218,7 +338,15 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			}
 		});
 	}
-		
+	
+	/**
+	 * System out or System error has had text append to it.
+	 * Adds a new entry to the queue.
+	 */
+	protected void streamAppended(String text, int source) {
+		fQueue.add(new StreamEntry(text, source));
+	}
+			
 	/**
 	 * @see IStreamListener#streamAppended(String, IStreamMonitor)
 	 */
@@ -364,6 +492,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	}
 
 	protected void clearDocument() {
+		fQueue.clear();
 		fStyleRanges= new ArrayList(2);
 		set(""); //$NON-NLS-1$
 	}
@@ -395,7 +524,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			if (event.getKind() == DebugEvent.TERMINATE) {
 				Object element= event.getSource();
 				if (element != null && element.equals(fProcess)) {
-					
+					fTerminated = true;
 					update( new Runnable() {
 						public void run() {
 							fireDocumentChanged(new DocumentEvent(ConsoleDocument.this, 0, 0, null));

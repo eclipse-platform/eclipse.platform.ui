@@ -46,11 +46,6 @@ public class OutputStreamMonitor implements IStreamMonitor {
 	private static final int BUFFER_SIZE= 8192;
 
 	/**
-	 * The base number of milliseconds to pause
-	 * between reads.
-	 */
-	private static final long BASE_DELAY= 50L;
-	/**
 	 * Whether or not this monitor has been killed.
 	 * When the monitor is killed, it stops reading
 	 * from the stream immediately.
@@ -119,29 +114,21 @@ public class OutputStreamMonitor implements IStreamMonitor {
 	 */
 	private void read() {
 		byte[] bytes= new byte[BUFFER_SIZE];
-		while (true) {
+		int read = 0;
+		while (read >= 0) {
 			try {
 				if (fKilled) {
 					break;
 				}
-				if (fStream.available() == 0) {
-					if (fThread == null)
-						break;
-				} else {
-					int read= fStream.read(bytes);
-					if (read > 0) {
-						String text= new String(bytes, 0, read);
-						fContents.append(text);
-						fireStreamAppended(text);
-					}
+				read= fStream.read(bytes);
+				if (read > 0) {
+					String text= new String(bytes, 0, read);
+					fContents.append(text);
+					fireStreamAppended(text);
 				}
 			} catch (IOException ioe) {
 				DebugPlugin.log(ioe);
 				return;
-			}
-			try {
-				Thread.sleep(BASE_DELAY);
-			} catch (InterruptedException ie) {
 			}
 		}
 	}
