@@ -42,7 +42,7 @@ public final class ColorUtils {
 	private static String process(String value) {
 		Matcher matcher = BLEND.matcher(value);
 		if (matcher.matches()) {
-			return blend(matcher.group(1).trim(), matcher.group(2).trim());
+			return blend(matcher.group(1), matcher.group(2));
 		}
 		else {
 			try {
@@ -126,6 +126,8 @@ public final class ColorUtils {
     public static String getColorValue(String rawValue) {
 		if (rawValue == null)
 			return null;
+		
+		rawValue = rawValue.trim();
 
 		if (!isDirectValue(rawValue)) {
 			return process(rawValue);
