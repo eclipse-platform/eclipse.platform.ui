@@ -13,6 +13,7 @@ public class UiTestSuite extends TestSuite {
 	 */
 	public UiTestSuite() {
 		addTest(new org.eclipse.ui.tests.api.ApiTestSuite());
+		addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
 	}
 
 }
