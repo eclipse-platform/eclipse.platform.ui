@@ -12,6 +12,7 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -68,9 +69,9 @@ class ImplicitJobs {
 		 * Pops a rule.  Returns true if it was the last rule for this thread job, and false
 		 * otherwise.
 		 */
-		boolean pop() {
-			if (top < 0)
-				throw new IllegalArgumentException("IJobManager.endRule without matching IJobManager.beginRule"); //$NON-NLS-1$
+		boolean pop(ISchedulingRule rule) {
+			if (top < 0 || ruleStack[top] != rule)
+				throw new IllegalArgumentException("IJobManager.endRule without matching IJobManager.beginRule: " + rule); //$NON-NLS-1$
 			ruleStack[top--] = null;
 			return top < 0;
 		}
@@ -158,10 +159,12 @@ class ImplicitJobs {
 	/* (Non-javadoc)
 	 * @see IJobManager#end
 	 */
-	synchronized void end() {
+	synchronized void end(ISchedulingRule rule) {
 		Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
-		if (threadJob != null && threadJob.pop()) {
+		if (threadJob == null)
+			Assert.isTrue(rule == null, "endRule without matching beginRule"); //$NON-NLS-1$
+		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
 			if (threadJob.running) {

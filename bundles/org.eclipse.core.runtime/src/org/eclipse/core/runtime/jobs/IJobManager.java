@@ -85,11 +85,12 @@ public interface IJobManager {
 	 */
 	public Job currentJob();
 	/**
-	 * Ends the application of a rule to the calling thread.  Calls to <tt>end</tt> 
-	 * must be preceded by a matching call to <tt>begin</tt> in the same thread.
+	 * Ends the application of a rule to the calling thread.  Calls to <tt>endRule</tt> 
+	 * must be preceded by a matching call to <tt>beginRule</tt> in the same thread
+	 * with an identical rule instance.
 	 * <p>
-	 * Rules can be nested only if the rule for the inner <tt>begin</tt>
-	 * is contained within the rule for the outer <tt>begin</tt>.  Also, begin/end
+	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
+	 * is contained within the rule for the outer <tt>beginRule</tt>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
 	 * <p>
@@ -100,7 +101,7 @@ public interface IJobManager {
 	 * there is no matching begin, or that does not match the most recent begin.
 	 * @see ISchedulingRule#contains
 	 */
-	public void endRule();
+	public void endRule(ISchedulingRule rule);
 	/**
 	 * Returns all waiting, executing and sleeping jobs belonging
 	 * to the given family. If no jobs are found, an empty array is returned.

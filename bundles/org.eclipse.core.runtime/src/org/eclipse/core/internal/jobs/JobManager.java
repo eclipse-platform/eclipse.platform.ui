@@ -289,8 +289,8 @@ public class JobManager implements IJobManager {
 		if (notify)
 			jobListeners.done(job, result);
 	}
-	public void endRule() {
-		implicitJobs.end();
+	public void endRule(ISchedulingRule rule) {
+		implicitJobs.end(rule);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#find(java.lang.String)
