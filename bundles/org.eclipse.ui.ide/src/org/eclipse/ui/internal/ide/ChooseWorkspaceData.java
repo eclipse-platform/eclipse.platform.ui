@@ -146,7 +146,7 @@ public class ChooseWorkspaceData {
 			recentWorkspaces[0] = selection;
 			for (int i = 1; i < recentWorkspaces.length && oldEntry != null; ++i) {
 				if (selection.equals(oldEntry))
-					return;
+					break;
 				String tmp = recentWorkspaces[i];
 				recentWorkspaces[i] = oldEntry;
 				oldEntry = tmp;
