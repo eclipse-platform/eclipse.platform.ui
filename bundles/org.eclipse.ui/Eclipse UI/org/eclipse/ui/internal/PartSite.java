@@ -45,6 +45,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private String extensionName;
 	private ISelectionProvider selectionProvider;
 	private SubActionBars actionBars;
+	private KeyBindingService keyBindingService;	
 /**
  * EditorContainer constructor comment.
  */
@@ -59,7 +60,9 @@ public PartSite(IWorkbenchPart part, IWorkbenchPage page)
  * Dispose the contributions.
  */
 public void dispose() {
-	// do nothing
+	if (keyBindingService != null) {
+		keyBindingService.dispose();
+	}
 }
 /**
  * Returns the action bars for the part.
@@ -197,4 +200,19 @@ public void setPart(IWorkbenchPart newPart) {
 public void setSelectionProvider(ISelectionProvider provider) {
 	selectionProvider = provider;
 }
+
+/* (non-Javadoc)
+ * Method declared on IEditorSite.
+ */
+public IKeyBindingService getKeyBindingService() {
+	if(keyBindingService == null) {
+		keyBindingService = new KeyBindingService(((WorkbenchWindow)getWorkbenchWindow()).getKeyBindingService(),this);
+		keyBindingService.setActiveAcceleratorScopeId(getInitialScopeId()); //$NON-NLS-1$
+	}	
+	return keyBindingService;
+}
+protected String getInitialScopeId() {
+	return "org.eclipse.ui.globalScope";
+}
+
 }

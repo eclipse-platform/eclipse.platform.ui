@@ -3,10 +3,12 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.internal.*;
 
@@ -27,7 +29,6 @@ public class AcceleratorScope {
 	private HashMap defIdToAccelerator = new HashMap();
 	private HashMap defaultActionToAccelerator = new HashMap();
 	private HashMap defaultAcceleratorToAction = new HashMap();
-	
 	
 	private static AcceleratorMode currentMode;
 	private static AcceleratorMode defaultMode;
@@ -135,16 +136,18 @@ public class AcceleratorScope {
 			currentMode = defaultMode;
 			if(getStatusLineManager(service)!=null)
 				getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
+			service.updateAccelerators(defaultMode == currentMode);				
 		}
+
 	}
 	/**
 	 * Set the current mode and service
 	 */
-	private static void setCurrentMode(KeyBindingService service,AcceleratorMode mode) {
-		if(service == currentService)
+	private static void setCurrentMode(final KeyBindingService service,AcceleratorMode mode) {
+		if(currentMode != mode) {
 			currentMode = mode;
-		else 
-			currentMode = mode;
+			service.updateAccelerators(defaultMode == currentMode);
+		}
 	}
 	/**
 	 * Verify if the current mode was set with this service. Reset the mode
@@ -215,49 +218,39 @@ public class AcceleratorScope {
     	}
     	return false;
     }
-	/*
-	 * Convert and event to an Integer.
-	 */
-	private static int convertEvent(KeyEvent event) {
-		char upper = Character.toUpperCase(event.character);
-		if(((event.stateMask & (SWT.CONTROL | SWT.SHIFT)) != 0) && (event.keyCode == 0)) {
-			if (upper == 0);
-				//TBD: What is the diff between CTRL+SHIFT and CTRL+SHIFT+@
-			if (0 < upper && upper <= 26) 
-				return event.stateMask | upper + 64;
-			if (26 < upper && upper <= 30) 
-				return(event.stateMask & ~SWT.SHIFT) | upper + 64;		
-			if (upper == 31)
-				return (event.stateMask & ~SWT.SHIFT) | (int)'_';
-			if((upper > 32 && upper <= 64) || (upper > 90 && upper != 127))
-				return (event.stateMask & ~SWT.SHIFT) | upper;
-		}
-		return event.stateMask | event.keyCode | upper;
-	}
     /**
-     * Process a key event. Find a action associated with the event
-     * and run the action. Returns true if an action was found otherwise
-     * returns false.
-     */ 
-	public boolean processKey(KeyBindingService service, KeyEvent e) {
-		if(isModifierOnly(e))
-			return false;
+     * Finds the action of mode for the accelerator and runs it.
+     */
+	public boolean processKey(KeyBindingService service, Event e, int acc) {
 		verifyService(service);
-		int event = convertEvent(e);
-		AcceleratorAction a = currentMode.getAction(event);
+		AcceleratorAction a = currentMode.getAction(acc);
 		if(a == null) {
-			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(event));
+			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(acc));
 			resetMode(service);	
 		}
 		if(a == null) {
 			if(currentMode == defaultMode)
-				return false;
+				return service.processEditorAction(e,acc);
 			resetMode(service);
 			return true;
 		}
-		a.run(service,e);
+		a.run(service,e,acc);
 		return true;
 	}
+	/**
+	 * Returns all accelerators for the current mode.
+	 */
+	public int[] getAccelerators() {
+		Integer modeAccs[] = currentMode.getAccelerators();
+		int result[] = new int[modeAccs.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = modeAccs[i].intValue();
+		}
+		return result;
+	}
+	/*
+	 * Returns the status line manager for the current window.
+	 */
 	private static IStatusLineManager getStatusLineManager(KeyBindingService service) {
 		WorkbenchWindow window = (WorkbenchWindow)service.getWindow();
 		if (window != null)
@@ -278,11 +271,11 @@ public class AcceleratorScope {
 		public boolean isMode() {
 			return false;
 		}
-		public void run(KeyBindingService service,KeyEvent e) {
+		public void run(KeyBindingService service,Event e,int acc) {
 			IAction a = service.getAction(id);
-			if((a != null) && (a.isEnabled()))
-				a.run();
-				//a.runWithEvent(e);
+			if((a != null) && (a.isEnabled())) {
+				a.runWithEvent(e);
+			}
 			resetMode(service);
 		}
 	}
@@ -313,16 +306,17 @@ public class AcceleratorScope {
 		public boolean isMode() {
 			return true;
 		}	
-		public void run(KeyBindingService service,KeyEvent e) {
-			setStatusLineMessage(service, e);
+		public void run(KeyBindingService service,Event e,int acc) {
+			if(e != null)
+				setStatusLineMessage(service, acc);
 			setCurrentMode(service,this);
 		}
 		/*
 		 * Displays the appropriate message for the current mode on the status
 		 * line.
 		 */
-		private void setStatusLineMessage(KeyBindingService service, KeyEvent e) {
-			String keyString = Action.convertAccelerator(convertEvent(e));
+		private void setStatusLineMessage(KeyBindingService service, int acc) {
+			String keyString = Action.convertAccelerator(acc);
 			if(currentMode==defaultMode) {
 				getStatusLineManager(service).setMessage(keyString);
 				previousMessage = keyString;
@@ -336,6 +330,11 @@ public class AcceleratorScope {
 		}
 		public void addAction(int keyCode,AcceleratorAction acc) {
 			acceleratorToAction.put(new Integer(keyCode),acc);
+		}
+		public Integer[] getAccelerators() {
+			Set keys = acceleratorToAction.keySet();
+			Integer result[] = new Integer[keys.size()];
+			return (Integer[])keys.toArray(result);
 		}
 	}
 }

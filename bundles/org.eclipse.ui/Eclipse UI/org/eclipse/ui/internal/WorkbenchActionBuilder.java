@@ -129,6 +129,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction rebuildProjectAction;
 	private RetargetAction openProjectAction;
 	private RetargetAction closeProjectAction;
+	
+	private KeyBindingMenu keyBindingMenu;
 // end menu reorg	
 
 	/**
@@ -582,6 +584,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// about should always be at the bottom
 		menu.add(new Separator());
 		menu.add(aboutAction);
+		menu.add(keyBindingMenu = new KeyBindingMenu(window));
 		return menu;
 	}
 	

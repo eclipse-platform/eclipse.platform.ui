@@ -5,12 +5,15 @@ package org.eclipse.ui.internal;
  */
 import java.util.*;
 
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IPropertyListener;
@@ -21,11 +24,10 @@ import org.eclipse.ui.internal.registry.AcceleratorScope;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
- * @version 	1.0
+ * @version 	2.0
  * @author
  */
 public class WWinKeyBindingService {
-	boolean acceleratorsAllowed = true;
 	/* A number increased whenever the action mapping changes so
 	 * its children can keep their mapping in sync with the ones in
 	 * the parent.
@@ -43,6 +45,9 @@ public class WWinKeyBindingService {
 	private KeyBindingService activeService;
 	/* The window this service is managing the accelerators for.*/
 	private WorkbenchWindow window;
+	/* The contribution item added to a menu. Is does not appear to 
+	 * the user. One this menu will have accelerators */
+	private KeyBindingMenu acceleratorsMenu;
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
@@ -51,7 +56,7 @@ public class WWinKeyBindingService {
 		IWorkbenchPage[] pages = window.getPages();
 		final IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
-				update(part);
+				update(part,false);
 			}
 			public void partBroughtToTop(IWorkbenchPart part) {}
 			public void partClosed(IWorkbenchPart part) {}
@@ -76,7 +81,7 @@ public class WWinKeyBindingService {
 					if(page != null) {
 						IWorkbenchPart part = page.getActivePart();
 						if(part != null) {
-							update(part);
+							update(part,true);
 							return;
 						}
 					}
@@ -136,6 +141,10 @@ public class WWinKeyBindingService {
 			if (w.getActiveAcceleratorConfiguration() != null) {
 				w.getActiveAcceleratorConfiguration().initializeScopes();
 			}
+			if(activeService != null) {
+				activeService.getActiveAcceleratorScope().resetMode(activeService);
+				updateAccelerators(true);
+			}
 		}
 	}
 	/**
@@ -160,57 +169,43 @@ public class WWinKeyBindingService {
 	}
 	/**
 	 * Remove or restore the accelerators in the menus.
-	 * If the service is the active part's service.
-	 */	
-   	public void update(KeyBindingService service) {
-   		IWorkbenchPart part = window.getActivePage().getActivePart();
-   		if(part instanceof IEditorPart) {
-   			KeyBindingService currServ = (KeyBindingService)((IEditorPart)part).getEditorSite().getKeyBindingService();
-   			if(currServ == service)
-   				update(part);
-   		}
-   	}
-	/**
-	 * Remove or restore the accelerators in the menus.
 	 */
-   	private void update(IWorkbenchPart part) {
+   	private void update(IWorkbenchPart part,boolean force) {
    		if(part==null)
    			return;
-   		boolean oldAllowed = acceleratorsAllowed;
+   	
    		AcceleratorScope oldScope = null;
    		if(activeService != null)
    			oldScope = activeService.getActiveAcceleratorScope();
    			
-    	IWorkbenchPartSite site = part.getSite();
-    	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
-    	MenuManager menuManager = w.getMenuManager();
-    	if(part instanceof IViewPart) {
-    		activeService = null;
-    		acceleratorsAllowed = true;
-    	} else if(part instanceof IEditorPart) {
-    		activeService = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
-    		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
-    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)))
-    			acceleratorsAllowed = !activeService.isParticipating();
-	   		else
-    			acceleratorsAllowed = true;
-    	}
+    	activeService = (KeyBindingService)part.getSite().getKeyBindingService();
+    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+    	scope.resetMode(activeService);
+		updateAccelerators(true);
+
    		AcceleratorScope newScope = null;
    		if(activeService != null)
    			newScope = activeService.getActiveAcceleratorScope();
 
-    	if((oldAllowed != acceleratorsAllowed) || (oldScope != newScope))
+    	if(force || (oldScope != newScope)) {
+	    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
+   	 		MenuManager menuManager = w.getMenuManager();
  			menuManager.update(IAction.TEXT);
+    	}
     }
-    public boolean acceleratorsAllowed() {
-    	return acceleratorsAllowed;
-    }
+    /**
+     * Returns the definition id for <code>accelerator</code>
+     */
     public String getDefinitionId(int accelerator[]) {
     	if(activeService == null) return null;
     	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
     	if(scope == null) return null;
     	return scope.getDefinitionId(accelerator);
     }
+    /**
+     * Returns the accelerator text which can be shown in the 
+     * menu item's label.
+     */
     public String getAcceleratorText(String definitionId) {
     	if(activeService == null) return null;
     	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
@@ -223,6 +218,9 @@ public class WWinKeyBindingService {
 			return null;
     	return result;
     }
+    /**
+     * Returns the accelerator for the specified action definition id
+     */
     public int[][] getAccelerators(String definitionId) {
     	if(activeService == null) return null;
     	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
@@ -231,5 +229,36 @@ public class WWinKeyBindingService {
 		if(acc == null)
 			return null;
 		return acc.getAccelerators();
-    }     
+    }
+    /** 
+     * Set the <code>acceleratorsMenu</code> which is used to
+     * add items for all accelerators in the current mode.
+     */
+    public void setAcceleratorsMenu(KeyBindingMenu acceleratorsMenu) {
+    	this.acceleratorsMenu = acceleratorsMenu;
+    }
+	/**
+	 * Update the KeyBindingMenu with the current set of accelerators.
+	 */
+	public void updateAccelerators(boolean defaultMode) {
+	   	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+	   	int[] accs;
+	   	if(defaultMode) {
+	   		int[] scopeAccs = scope.getAccelerators();
+	   		int[] editorAccs = activeService.getEditorActions();
+	   		if(editorAccs.length == 0) {
+	   			accs = scopeAccs;
+	   		} else if(scopeAccs.length == 0) {
+	   			accs = editorAccs;
+	   		} else {
+		   		accs = new int[scopeAccs.length + editorAccs.length];
+		   		System.arraycopy(scopeAccs,0,accs,0,scopeAccs.length);
+	   			System.arraycopy(editorAccs,0,accs,scopeAccs.length,editorAccs.length);
+		 	}
+	   	} else {
+	   		accs = scope.getAccelerators();
+	   	}
+		acceleratorsMenu.setAccelerators(accs,scope,activeService,defaultMode);
+	}
+    
 }

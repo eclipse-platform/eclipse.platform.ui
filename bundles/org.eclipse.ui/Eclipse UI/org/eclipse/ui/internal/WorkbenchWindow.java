@@ -523,18 +523,13 @@ private void createShortcutBar(Shell shell) {
 /* (non-Javadoc)
  * Method declared on ApplicationWindow.
  */
-
 protected MenuManager createMenuManager() {
 	final MenuManager result = super.createMenuManager();
 	result.setOverrides(new IContributionManagerOverrides() {
 		public Integer getAccelerator(IContributionItem item) {
-			if(getKeyBindingService().acceleratorsAllowed())
-				return null;
 			return new Integer(0);
 		}
 		public String getAcceleratorText(IContributionItem item) {
-			if(getKeyBindingService().acceleratorsAllowed())
-				return null;
 			if(!(item instanceof ActionContributionItem))
 				return null;
 			ActionContributionItem aci = (ActionContributionItem)item;
@@ -562,8 +557,6 @@ protected MenuManager createMenuManager() {
 			return getKeyBindingService().getAcceleratorText(defId);
 		}
 		public String getText(IContributionItem item) {
-			if(getKeyBindingService().acceleratorsAllowed())
-				return null;
 			if(!(item instanceof MenuManager))
 				return null;
 			MenuManager itemManager = (MenuManager)item;
@@ -576,15 +569,21 @@ protected MenuManager createMenuManager() {
 				} else {
  					return null;		
 				}
-			}	
-			String text = itemManager.getMenu().getParentItem().getText();
+			}
+			
+			String text = itemManager.getMenuText();
 			int index = text.indexOf('&');
-			if (index < 0)
+			if (index < 0 || index == (text.length() -1))
 				return text;
-			else if (index == 0)
+				
+			char altChar = 	Character.toUpperCase(text.charAt(index + 1));
+			String defId = keyBindingService.getDefinitionId(new int[]{SWT.ALT | altChar});
+			if(defId == null)
+				return text;
+				
+			if (index == 0)
 				return text.substring(1);
-			else
-				return text.substring(0, index) + text.substring(index + 1);
+			return text.substring(0, index) + text.substring(index + 1);
 		}
 		public Boolean getEnabled(IContributionItem item) {
 			return null;

@@ -253,6 +253,14 @@ public String getId() {
 public Menu getMenu() {
 	return menu;
 }
+/**
+ * Returns the text shown in the menu.
+ *
+ * @return the menu text
+ */
+public String getMenuText() {
+	return menuText;
+}
 /* (non-Javadoc)
  * Method declared on IContributionManager.
  */

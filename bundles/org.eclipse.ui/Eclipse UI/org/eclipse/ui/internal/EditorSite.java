@@ -15,7 +15,6 @@ public class EditorSite extends PartSite
 {
 	private EditorDescriptor desc;
 	private boolean reuseEditor = true;
-	KeyBindingService keyBindingService;
 	
 /**
  * Constructs an EditorSite for an editor.  The resource editor descriptor
@@ -31,12 +30,6 @@ public EditorSite(IEditorPart editor, WorkbenchPage page,
 	}
 }
 
-public void dispose() {
-	if (keyBindingService != null) {
-		keyBindingService.dispose();
-	}
-	super.dispose();
-}
 /**
  * Returns the editor action bar contributor for this editor.
  * <p>
@@ -66,22 +59,14 @@ public EditorDescriptor getEditorDescriptor() {
 	return desc;
 }
 
-/* (non-Javadoc)
- * Method declared on IEditorSite.
- */
-public IKeyBindingService getKeyBindingService() {
-	if(keyBindingService == null) {
-		keyBindingService = new KeyBindingService(((WorkbenchWindow)getWorkbenchWindow()).getKeyBindingService());
-		keyBindingService.setActiveAcceleratorScopeId("org.eclipse.ui.textEditorScope"); //$NON-NLS-1$
-	}	
-	return keyBindingService;
-}
-
 public boolean getReuseEditor() {
 	return reuseEditor;
 }
 	
 public void setReuseEditor(boolean reuse) {
 	reuseEditor = reuse;
+}
+protected String getInitialScopeId() {
+	return "org.eclipse.ui.textEditorScope";
 }
 }

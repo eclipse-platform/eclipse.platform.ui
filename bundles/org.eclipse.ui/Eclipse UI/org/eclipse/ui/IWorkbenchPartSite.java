@@ -97,4 +97,15 @@ public void registerContextMenu(String menuId, MenuManager menuManager,
  */
 public void registerContextMenu(MenuManager menuManager,
 	ISelectionProvider selectionProvider);
+/**
+ * Returns the key binding service in use.
+ * <p>
+ * The part will access this service to register
+ * all of its actions, to set the active scope.
+ * </p>
+ * 
+ * @return the key binding service in use
+ * @since 2.0
+ */
+public IKeyBindingService getKeyBindingService();
 }

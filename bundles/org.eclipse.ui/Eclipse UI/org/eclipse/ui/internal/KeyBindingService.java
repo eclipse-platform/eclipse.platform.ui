@@ -3,10 +3,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.*;
@@ -17,7 +19,6 @@ import org.eclipse.ui.internal.registry.*;
  * <ul>
  * <li>One instance is created for each editor site</li>
  * <li>Each editor has to register all its actions by calling registerAction()</li>
- * <li>The editor must call process key passing the key event</li>
  * <li>The editor should call setActiveAcceleratorScopeId() once</li>
  * </ul>
  */
@@ -43,13 +44,15 @@ public class KeyBindingService implements IKeyBindingService {
 	 * when it is out of sync.
 	 */
 	private long parentUpdateNumber;
-	/* */
-	private boolean enabled = false;
+	/* Maps acc to action. 
+	 */
+	private HashMap editorActions = new HashMap();
+	
 	/**
 	 * Create an instance of KeyBindingService and initializes 
 	 * it with its parent.
 	 */		
-	public KeyBindingService(WWinKeyBindingService service) {
+	public KeyBindingService(WWinKeyBindingService service,PartSite site) {
 		partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {}
 			public void partBroughtToTop(IWorkbenchPart part) {}
@@ -68,6 +71,8 @@ public class KeyBindingService implements IKeyBindingService {
 		parentUpdateNumber = parent.getUpdateNumber() - 1;
 		service.getWindow().getPartService().addPartListener(partListener);
 		service.getWindow().getShell().addShellListener(shellListener);
+		if(site instanceof EditorSite)
+			initEditorActions((EditorSite)site);
 	}
 	/*
 	 * Merge the actions from its parents with its registered actions
@@ -77,6 +82,44 @@ public class KeyBindingService implements IKeyBindingService {
 		parentUpdateNumber = parent.getUpdateNumber();
 		allDefIdToAction = parent.getMapping();
 		allDefIdToAction.putAll(defIdToAction);
+	}
+	/*
+	 * Initialize a hash map with all editor actions. Used
+	 * for backward compatibility.
+	 */
+	private void initEditorActions(EditorSite site) {
+		EditorMenuManager nenuMgr = (EditorMenuManager)site.getActionBars().getMenuManager();
+		IAction actions[] = nenuMgr.getAllContributedActions();
+		for (int i = 0; i < actions.length; i++) {
+			int acc = actions[i].getAccelerator();
+			if(acc != 0)
+				editorActions.put(new Integer(acc),actions[i]);
+		}
+	}
+	/*
+	 * HACK: Should be deleted once we find a solution
+	 * for editor actions which is not supported by this key 
+	 * binding implementation.
+	 */
+	public boolean processEditorAction(Event e, int acc) {
+		IAction action = (IAction)editorActions.get(new Integer(acc));
+		if(action == null)
+			return false;
+		action.runWithEvent(e);
+		return true;
+	}
+	/*
+	 * HACK: Should be deleted once we find a solution
+	 * for editor actions which is not supported by this key 
+	 * binding implementation.
+	 */
+	public int[] getEditorActions() {
+		int result[] = new int[editorActions.size()];
+		int i = 0;
+		for (Iterator iter = editorActions.keySet().iterator(); iter.hasNext();i++) {
+			result[i] = ((Integer)iter.next()).intValue();
+		}
+		return result;
 	}
 	/** 
 	 * Remove the part listener when the editor site is disposed.
@@ -95,9 +138,7 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#processKey(Event)
 	 */
 	public boolean processKey(KeyEvent event) {
-		if(scope == null)
-			return false;
-    	return scope.processKey(this,event);
+		return false;
     }
 	/*
 	 * @see IKeyBindingService#registerAction(IAction)
@@ -116,8 +157,6 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#registerAction(IAction)
 	 */
 	public void enable(boolean enable) {
-		enabled = enable;
-		parent.update(this);
 	}
     /**
      * Returns the action mapped with the specified <code>definitionId</code>
@@ -134,7 +173,9 @@ public class KeyBindingService implements IKeyBindingService {
 	public String getActiveAcceleratorScopeId() {
     	return scope.getId();
     }
-    
+    /**
+     * Returns the active scope.
+     */
 	public AcceleratorScope getActiveAcceleratorScope() {
     	return scope;
     }
@@ -151,10 +192,10 @@ public class KeyBindingService implements IKeyBindingService {
     	AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
     	scope = registry.getScope(scopeId);
     }
-    /*
-     * Return if this service is participating on the key bindings
-     */       
- 	public boolean isParticipating() {
- 		return (defIdToAction.size() != 0) && enabled;
- 	}
+	/**
+	 * Update the KeyBindingMenu with the current set of accelerators.
+	 */
+	public void updateAccelerators(boolean defaultMode) {
+		parent.updateAccelerators(defaultMode);
+	}
 }

@@ -162,4 +162,31 @@ protected SubMenuManager wrapMenu(IMenuManager menu) {
 	wrappers.add(manager);	
 	return manager;
 }
+
+protected IAction[] getAllContributedActions() {
+	HashSet set = new HashSet();
+	getAllContributedActions(set);
+	return (IAction[])set.toArray(new IAction[set.size()]);	
+}
+protected void getAllContributedActions(HashSet set) {
+	IContributionItem[] items = super.getItems();
+	for (int i = 0; i < items.length; i++)
+		getAllContributedActions(set, items[i]);
+	if(wrappers == null)
+		return;
+	for (Iterator iter = wrappers.iterator(); iter.hasNext();) {
+		EditorMenuManager element = (EditorMenuManager)iter.next();
+		element.getAllContributedActions(set);
+	}
+}
+protected void getAllContributedActions(HashSet set, IContributionItem item) {
+	if(item instanceof MenuManager) {
+		IContributionItem subItems[] = ((MenuManager)item).getItems();
+		for (int j = 0; j < subItems.length; j++)
+			getAllContributedActions(set,subItems[j]);
+	} else if(item instanceof ActionContributionItem) {
+		set.add(((ActionContributionItem)item).getAction());
+	}
+}
+
 }
