@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class ConsolePluginImages {
 	 *		This may mean the same package directory as the package holding this class.
 	 *		The images are declared using this.getClass() to ensure they are looked up via
 	 *		this plugin class.
-	 *	@see JFace's ImageRegistry
+	 *	@see org.eclipse.jface.resource.ImageRegistry
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(ConsolePlugin.getStandardDisplay());
@@ -166,5 +166,3 @@ public class ConsolePluginImages {
 		return new URL(ICON_BASE_URL, iconPath);
 	}
 }
-
-

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public abstract class AbstractConsole implements IConsole {
 		/**
 		 * Notifies listeners of the property change
 		 * 
-		 * @param property the property that has changed
+		 * @param event the event that describes the property that has changed
 		 */
 		public void notify(PropertyChangeEvent event) {
 			if (fListeners == null) {

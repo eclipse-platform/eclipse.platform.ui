@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,9 +64,6 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 *	@param parent org.eclipse.swt.widgets.Composite
 	 *	@param style int
 	 *  @param rootObject java.lang.Object
-	 *	@param childPropertyName java.lang.String
-	 *	@param parentPropertyName java.lang.String
-	 *	@param listPropertyName java.lang.String
 	 *	@param width int
 	 *	@param height int
 	 *  @param allowMultiselection Whether to allow multi-selection in the list viewer.
@@ -246,10 +243,8 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.setInput(root);
 	}
 
-	/**
-	 *	Handle the selection of an item in the tree viewer
-	 *
-	 *	@param selection ISelection
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
