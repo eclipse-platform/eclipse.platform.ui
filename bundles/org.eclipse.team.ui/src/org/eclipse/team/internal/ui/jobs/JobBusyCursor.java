@@ -59,7 +59,9 @@ public class JobBusyCursor implements IJobListener {
 	}
 	
 	public synchronized void dispose() {
-		waitCursor.dispose();
+		if (waitCursor != null) {
+			waitCursor.dispose();
+		}
 		JobStatusHandler.removeJobListener(this, jobType);
 	}
 
