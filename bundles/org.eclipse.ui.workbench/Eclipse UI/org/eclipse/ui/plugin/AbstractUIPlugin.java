@@ -25,6 +25,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.Workbench;
 
 /**
@@ -736,19 +737,19 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * </p>
 	 */
 	protected void refreshPluginActions() {
-		final Workbench wb = (Workbench) PlatformUI.getWorkbench();
-		if (wb != null) {
-			// startup() is not guaranteed to be called in the UI thread,
-			// but refreshPluginActions must run in the UI thread, 
-			// so use asyncExec.  See bug 6623 for more details.
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					wb.refreshPluginActions(
-						getDescriptor().getUniqueIdentifier());
-				}
-			});
-		}
+		// If the workbench is not created yet, this call will fail.
+		PlatformUI.getWorkbench();
+
+		// startup() is not guaranteed to be called in the UI thread,
+		// but refreshPluginActions must run in the UI thread, 
+		// so use asyncExec.  See bug 6623 for more details.
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				WWinPluginAction.refreshActionList();
+			}
+		});
 	}
+	
 	/**
 	 * Saves this plug-in's dialog settings.
 	 * Any problems which arise are silently ignored.

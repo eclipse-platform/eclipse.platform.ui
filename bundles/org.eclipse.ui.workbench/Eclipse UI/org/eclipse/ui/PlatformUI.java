@@ -76,13 +76,6 @@ public final class PlatformUI {
 	 * @issue consider returning an int or Object rather than a boolean
 	 */
 	public static boolean createAndRunWorkbench(WorkbenchAdviser adviser) {
-		if (Workbench.getInstance() != null) {
-			// app already created a workbench
-			throw new IllegalStateException();
-		}
-		// create the workbench instance
-		Workbench workbench = new Workbench(adviser);
-		// run the workbench event loop
-		return workbench.runUI();
+		return Workbench.createAndRunWorkbench(adviser);
 	}
 }

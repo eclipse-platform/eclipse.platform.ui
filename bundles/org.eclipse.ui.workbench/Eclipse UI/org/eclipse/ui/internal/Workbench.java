@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -91,19 +92,32 @@ import org.eclipse.ui.internal.misc.UIStats;
  * Its primary responsability is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
+ * Note that any code that is run during the creation of a workbench instance
+ * should not required access to the display.
+ * </p><p>
  * Note that this internal class changed significantly between 2.1 and 3.0.
  * Applications that used to define subclasses of this internal class need to
  * be rewritten to use the new workbench adviser API.
  * </p>
  */
 public final class Workbench implements IWorkbench {
+	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
+	private static final int RESTORE_CODE_OK = 0;
+	private static final int RESTORE_CODE_RESET = 1;
+	private static final int RESTORE_CODE_EXIT = 2;
+	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
+
+	/**
+	 * Holds onto the only instance of Workbench.
+	 */
 	private static Workbench instance;
 	
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
 	private PerspectiveHistory perspHistory;
-	private boolean runEventLoop;
+	private boolean runEventLoop = true;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
 	private Object returnCode;
@@ -118,10 +132,9 @@ public final class Workbench implements IWorkbench {
 	
 	/**
 	 * Indicates whether workbench state should be saved on close and 
-	 * restore on subsequence open.
+	 * restored on subsequence open.
 	 */
-	private boolean saveAndRestore = 
-		WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE);
+	private boolean saveAndRestore = false;
 	
 	/**
 	 * Adviser providing application-specific configuration and customization
@@ -135,24 +148,17 @@ public final class Workbench implements IWorkbench {
 	 */
 	private WorkbenchConfigurer workbenchConfigurer;
 
-	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
-	private static final int RESTORE_CODE_OK = 0;
-	private static final int RESTORE_CODE_RESET = 1;
-	private static final int RESTORE_CODE_EXIT = 2;
-	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
-
 	/**
 	 * Creates a new workbench.
 	 * 
 	 * @param adviser the application-specific adviser that configures and
 	 * specializes this workbench instance
 	 */
-	public Workbench(WorkbenchAdviser adviser) {
+	private Workbench(WorkbenchAdviser adviser) {
 		super();
 
 		if (instance != null) {
-			throw new IllegalStateException(WorkbenchMessages.getString("Workbench.InvalidAdviser")); //$NON-NLS-1$
+			throw new IllegalStateException(WorkbenchMessages.getString("Workbench.CreatingWorkbenchTwice")); //$NON-NLS-1$
 		}		
 		if (adviser == null) {
 			throw new IllegalArgumentException(WorkbenchMessages.getString("Workbench.InvalidAdviser")); //$NON-NLS-1$
@@ -172,17 +178,42 @@ public final class Workbench implements IWorkbench {
 	}
 	
 	/**
-	 * See IWorkbench
+	 * Creates the workbench and associates it with the given workbench adviser,
+	 * and runs the workbench UI. This entails processing and dispatching
+	 * events until the workbench is closed or restarted.
+	 * <p>
+	 * This method is intended to be called by <code>PlatformUI</code>.
+	 * Fails if the workbench UI has already been created.
+	 * </p>
+	 * 
+	 * @param adviser the application-specific adviser that configures and
+	 * specializes the workbench
+	 * @return <code>true</code> if the workbench was terminated with a call
+	 * to <code>restart</code>, and <code>false</code> otherwise
+	 * 
+	 * @issue consider returning an int or Object rather than a boolean
+	 */
+	public static final boolean createAndRunWorkbench(WorkbenchAdviser adviser) {
+		// create the workbench instance
+		Workbench workbench = new Workbench(adviser);
+		// run the workbench event loop
+		return workbench.runUI();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public void addWindowListener(IWindowListener l) {
 		windowListeners.add(l);
 	}
-	/**
-	 * See IWorkbench
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public void removeWindowListener(IWindowListener l) {
 		windowListeners.remove(l);
 	}
+
 	/**
 	 * Fire window opened event.
 	 */
@@ -264,7 +295,7 @@ public final class Workbench implements IWorkbench {
 				public void run() {
 					XMLMemento mem = recordWorkbenchState();
 					//Save the IMemento to a file.
-					saveWorkbenchState(mem);
+					saveMementoToFile(mem);
 				}
 				public void handleException(Throwable e) {
 					String message;
@@ -299,14 +330,17 @@ public final class Workbench implements IWorkbench {
 		return true;
 	}
 
-	/*
-	 * @see IWorkbench.saveAllEditors(boolean)
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public boolean saveAllEditors(boolean confirm) {
 		final boolean finalConfirm = confirm;
 		final boolean[] result = new boolean[1];
 		result[0] = true;
 
+		if (isStarting)
+			throw new IllegalStateException();
+			
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
@@ -339,6 +373,7 @@ public final class Workbench implements IWorkbench {
 		});
 		return result[0];
 	}
+	
 	/**
 	 * Opens a new workbench window and page with a specific perspective.
 	 *
@@ -359,22 +394,23 @@ public final class Workbench implements IWorkbench {
 		return newWindow;
 	}
 
-	/**
-	 * Closes the workbench.
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public boolean close() {
 		return close(IPlatformRunnable.EXIT_OK);
 	}
-	/**
+	/*
 	 * Closes the workbench, returning the given return code from the run method.
 	 */
-	public boolean close(Object returnCode) {
+	private boolean close(Object returnCode) {
 		return close(returnCode, false);
 	}
 	/**
 	 * Closes the workbench, returning the given return code from the run method.
+	 * If forced, the workbench is closed no matter what.
 	 */
-	public boolean close(Object returnCode, final boolean force) {
+	/* package */ boolean close(Object returnCode, final boolean force) {
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -385,25 +421,14 @@ public final class Workbench implements IWorkbench {
 		return ret[0];
 	}
 	
-	/**
-	 * Creates the action builder for the given window.
-	 * 
-	 * @param window the window
-	 * @return the action builder
-	 */
-	protected WorkbenchActionBuilder createActionBuilder(IWorkbenchWindow window) {
-		return new WorkbenchActionBuilder(window);
-	}
- 
-	
-	/**
-	 * @see IWorkbench
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		// Display will be null if SWT has not been initialized or
 		// this method was called from wrong thread.
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null || isStarting)
 			return null;
 
 		// Look at the current shell and up its parent
@@ -436,40 +461,39 @@ public final class Workbench implements IWorkbench {
 		return null;
 	}
 
-	/**
+	/*
 	 * Returns the editor history.
 	 */
-	public EditorHistory getEditorHistory() {
+	protected EditorHistory getEditorHistory() {
 		if (editorHistory == null) {
 			IPreferenceStore store = getPreferenceStore();
 			editorHistory = new EditorHistory(store.getInt(IPreferenceConstants.RECENT_FILES));
 		}
 		return editorHistory;
 	}
-	/**
+	/*
 	 * Returns the perspective history.
+	 * @issue No one seems to be making use of the history, so why maintain it?
 	 */
-	public PerspectiveHistory getPerspectiveHistory() {
+	protected PerspectiveHistory getPerspectiveHistory() {
 		if (perspHistory == null) {
 			perspHistory = new PerspectiveHistory(getPerspectiveRegistry());
 		}
 		return perspHistory;
 	}
-	/**
-	 * Returns the editor registry for the workbench.
-	 *
-	 * @return the workbench editor registry
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IEditorRegistry getEditorRegistry() {
 		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
 	
-	/**
+	/*
 	 * Returns the number for a new window.  This will be the first
 	 * number > 0 which is not used to identify another window in
 	 * the workbench.
 	 */
-	protected int getNewWindowNumber() {
+	private int getNewWindowNumber() {
 		// Get window list.
 		Window[] windows = windowManager.getWindows();
 		int count = windows.length;
@@ -496,18 +520,15 @@ public final class Workbench implements IWorkbench {
 		return count + 1;
 	}
 	
-	/**
-	 * Returns the perspective registry for the workbench.
-	 *
-	 * @return the workbench perspective registry
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
 		return WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	}
-	/**
-	 * Returns the preference manager for the workbench.
-	 *
-	 * @return the workbench preference manager
+
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public PreferenceManager getPreferenceManager() {
 		return WorkbenchPlugin.getDefault().getPreferenceManager();
@@ -518,12 +539,13 @@ public final class Workbench implements IWorkbench {
 	public IPreferenceStore getPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
-	/**
-	 * Returns the shared images for the workbench.
-	 *
-	 * @return the shared image manager
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public ISharedImages getSharedImages() {
+		if (isStarting)
+			throw new IllegalStateException();
 		return WorkbenchPlugin.getDefault().getSharedImages();
 	}
 	/* (non-Javadoc)
@@ -532,6 +554,7 @@ public final class Workbench implements IWorkbench {
 	public IMarkerHelpRegistry getMarkerHelpRegistry() {
 		return WorkbenchPlugin.getDefault().getMarkerHelpRegistry();
 	}
+	
 	/**
 	 * Returns the window manager for this workbench.
 	 * 
@@ -541,7 +564,7 @@ public final class Workbench implements IWorkbench {
 		return windowManager;
 	}
 
-	/**
+	/*
 	 * Answer the workbench state file.
 	 */
 	private File getWorkbenchStateFile() {
@@ -549,30 +572,34 @@ public final class Workbench implements IWorkbench {
 		path = path.append(DEFAULT_WORKBENCH_STATE_FILENAME);
 		return path.toFile();
 	}
+	
 	/**
 	 * Returns the workbench window count.
 	 * <p>
 	 * @return the workbench window count
 	 */
-	public int getWorkbenchWindowCount() {
+	protected int getWorkbenchWindowCount() {
 		return windowManager.getWindows().length;
 	}
-	/**
-	 * @see IWorkbench
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
+		if (isStarting)
+			return new IWorkbenchWindow[0];
 		Window[] windows = windowManager.getWindows();
 		IWorkbenchWindow[] dwindows = new IWorkbenchWindow[windows.length];
 		System.arraycopy(windows, 0, dwindows, 0, windows.length);
 		return dwindows;
 	}
-	/**
-	 * Implements IWorkbench
-	 *
-	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
-	 * @since 2.0
+	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
+		if (isStarting)
+			throw new IllegalStateException();
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 
@@ -580,20 +607,20 @@ public final class Workbench implements IWorkbench {
 	}
 
 	public void updateActiveKeyBindingService() {
-		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		WorkbenchWindow activeWindow = (WorkbenchWindow) getActiveWorkbenchWindow();
 		
-		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow)
-			((WorkbenchWindow) workbenchWindow).updateContextAndHandlerManager();			
+		if (activeWindow != null)
+			activeWindow.updateContextAndHandlerManager();			
 	}
 		
-	/**
+	/*
 	 * Handles a change to a workbench-specific preference.
 	 */
 	private void handlePreferenceChange(PropertyChangeEvent event) {
 		// TODO: missing implementation
 	}
 
-	/**
+	/*
 	 * Initializes the workbench.
 	 *
 	 * @return true if init succeeded.
@@ -661,7 +688,7 @@ public final class Workbench implements IWorkbench {
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 
-	/**
+	/*
 	 * Initializes the workbench fonts with the stored values.
 	 */
 	private void initializeFonts() {
@@ -692,7 +719,7 @@ public final class Workbench implements IWorkbench {
 		}
 		
 		
-		/**
+		/*
 		 * Now that all of the font have been initialized anything
 		 * that is still at its defaults and has a defaults to
 		 * needs to have its value set in the registry.
@@ -705,7 +732,7 @@ public final class Workbench implements IWorkbench {
 			registry.put(update.getId(),registry.getFontData(update.getDefaultsTo()));
 		}
 	}
-	/**
+	/*
 	 * Installs the given font in the font registry.
 	 * 
 	 * @param fontKey the font key
@@ -719,7 +746,7 @@ public final class Workbench implements IWorkbench {
 		registry.put(fontKey, font);
 	}
 	
-	/**
+	/*
 	 * Initialize the workbench images.
 	 * 
 	 * @since 3.0
@@ -740,7 +767,7 @@ public final class Workbench implements IWorkbench {
 		//}
 	}
 	
-	/**
+	/*
 	 * Initialize the workbench colors.
 	 * 
 	 * @since 3.0
@@ -750,29 +777,30 @@ public final class Workbench implements IWorkbench {
 		WorkbenchColors.startup();
 	}
 
-	/**
+	/*
 	 * Returns true if the workbench is in the process of closing
 	 */
-	public boolean isClosing() {
+	/* package */ boolean isClosing() {
 		return isClosing;
 	}
-	/**
+	
+	/*
 	 * Returns true if the workbench is in the process of starting
 	 */
-	public boolean isStarting() {
+	/* package */ boolean isStarting() {
 		return isStarting;
 	}
 	
- 	/**
+ 	/*
  	 * Creates a new workbench window.
  	 * 
  	 * @return the new workbench window
-     */
- 	protected WorkbenchWindow newWorkbenchWindow() {
+    */
+ 	private WorkbenchWindow newWorkbenchWindow() {
  		return new WorkbenchWindow(getNewWindowNumber());
 	}
 	
-	/**
+	/*
 	 * Create the initial workbench window.
 	 */
 	private void openFirstTimeWindow() {
@@ -794,7 +822,7 @@ public final class Workbench implements IWorkbench {
 		newWindow.open();
 	}
 	
-	/**
+	/*
 	 * Create the workbench UI from a persistence file.
 	 * 
 	 * @return RESTORE_CODE_OK if a window was opened,
@@ -884,17 +912,22 @@ public final class Workbench implements IWorkbench {
 		return result[0];
 	}
 	
-	/**
-	 * Opens a new window and page with the default perspective.
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
+		if (isStarting)
+			throw new IllegalStateException();
 		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 	
-	/**
-	 * Opens a new workbench window and page with a specific perspective.
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) throws WorkbenchException {
+		if (isStarting)
+			throw new IllegalStateException();
+			
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -915,7 +948,7 @@ public final class Workbench implements IWorkbench {
 		}
 	}
 
-	/**
+	/*
 	 * Record the workbench UI in a document
 	 */
 	private XMLMemento recordWorkbenchState() {
@@ -929,13 +962,16 @@ public final class Workbench implements IWorkbench {
 		}
 		return memento;
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
 	public boolean restart() {
-		return close(IPlatformRunnable.EXIT_RESTART); // this is the return code from run() to trigger a restart
+		// this is the return code from run() to trigger a restart
+		return close(IPlatformRunnable.EXIT_RESTART);
 	}
-	/**
+	
+	/*
 	 * Restores the state of the previously saved workbench
 	 */
 	private IStatus restoreState(IMemento memento) {
@@ -1017,7 +1053,8 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns an array of all plugins that extend org.eclipse.ui.startup.
+	 * Returns an array of all plugins that extend the 
+	 * <code>org.eclipse.ui.startup</code> extension point.
 	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
@@ -1032,10 +1069,12 @@ public final class Workbench implements IWorkbench {
 		}
 		return result;
 	}
-	/**
-	 * Starts plugins on startup.
+	
+	/*
+	 * Starts all plugins that extend the <code>org.eclipse.ui.startup</code>
+	 * extension point, and that the user has not disabled via the preference page.
 	 */
-	protected void startPlugins() {
+	private void startPlugins() {
 		Runnable work = new Runnable() {
 			IPreferenceStore store = getPreferenceStore();
 			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
@@ -1074,9 +1113,24 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 * @issue consider returning an int or Object rather than a boolean
 	 */
-	public boolean runUI() {
+	private boolean runUI() {
 		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 
+		// get the primary feature info loaded
+		try {
+			getWorkbenchConfigurer().readPrimaryFeatureAboutInfo();
+		} catch (CoreException e) {
+			WorkbenchPlugin.log("Error reading primary feature's about.ini file", e.getStatus()); //$NON-NLS-1$
+			// @issue we should return a valid return code here indicating something went wrong.
+			return false;
+		}
+		
+		// setup the application name used by SWT to lookup resources on some platforms
+		String appName = getWorkbenchConfigurer().getPrimaryFeatureAboutInfo().getAppName();
+		if (appName != null) {
+			Display.setAppName(appName);
+		}
+		
 		// create the display
 		Display display = null;
 		if (Policy.DEBUG_SWT_GRAPHICS) {
@@ -1087,7 +1141,7 @@ public final class Workbench implements IWorkbench {
 			display = new Display();
 		}
 		
-		// Workaround for 1GEZ9UR and 1GF07HN
+		// workaround for 1GEZ9UR and 1GF07HN
 		display.setWarnings(false);
 		
 		// react to display close event by closing the workhench nicely
@@ -1108,13 +1162,11 @@ public final class Workbench implements IWorkbench {
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
 			
-			// start running the main event loop
-			runEventLoop = initOK;
-			if (runEventLoop) {
-				adviser.postStartup();
-				// may trigger a close/restart
+			// let the adviser run its start up code
+			if (initOK) {
+				adviser.postStartup(); // may trigger a close/restart
 			}
-			if (runEventLoop) {
+			if (initOK && runEventLoop) {
 				// start eager plug-ins
 				startPlugins();
 				
@@ -1141,10 +1193,10 @@ public final class Workbench implements IWorkbench {
 		return (IPlatformRunnable.EXIT_RESTART.equals(returnCode));
 	}
 
-	/**
+	/*
 	 * Runs an event loop for the workbench.
 	 */
-	protected void runEventLoop(Window.IExceptionHandler handler) {
+	private void runEventLoop(Window.IExceptionHandler handler) {
 		Display display = Display.getCurrent();
 		runEventLoop = true;
 		while (runEventLoop) {
@@ -1156,7 +1208,8 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 	}
-	/**
+	
+	/*
 	 * Saves the current state of the workbench so it can be restored later on
 	 */
 	private IStatus saveState(IMemento memento) {
@@ -1179,10 +1232,11 @@ public final class Workbench implements IWorkbench {
 		result.add(getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY))); //$NON-NLS-1$
 		return result;
 	}
-	/**
+	
+	/*
 	 * Save the workbench UI in a persistence file.
 	 */
-	private boolean saveWorkbenchState(XMLMemento memento) {
+	private boolean saveMementoToFile(XMLMemento memento) {
 		// Save it to a file.
 		File stateFile = getWorkbenchStateFile();
 		try {
@@ -1205,6 +1259,9 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException {
+		if (isStarting)
+			throw new IllegalStateException();
+			
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open, then the window
@@ -1291,6 +1348,9 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) throws WorkbenchException {
+		if (isStarting)
+			throw new IllegalStateException();
+			
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open and the same requested
@@ -1392,7 +1452,7 @@ public final class Workbench implements IWorkbench {
 		return newWindow.getActivePage();
 	}
 
-	/**
+	/*
 	 * Shuts down the application.
 	 */
 	private void shutdown() {
@@ -1409,28 +1469,21 @@ public final class Workbench implements IWorkbench {
 		getPreferenceStore().removePropertyChangeListener(preferenceChangeListener);
 	}
 
-	/**
-	 * Creates the action delegate for each action extension contributed by
-	 * a particular plugin.  The delegates are only created if the
-	 * plugin itself has been activated.
-	 *
-	 * @param pluginId the plugin id.
-	 */
-	public void refreshPluginActions(String pluginId) {
-		WWinPluginAction.refreshActionList();
-	}
-	/*
-	 * @see IWorkbench#getDecoratorManager()
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
 	 */
 	public IDecoratorManager getDecoratorManager() {
+		if (isStarting)
+			throw new IllegalStateException();
+			
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
-	/**
+	/*
 	 * Returns the workbench window which was last known being
 	 * the active one, or <code>null</code>.
 	 */
-	protected final WorkbenchWindow getActivatedWindow() {
+	private WorkbenchWindow getActivatedWindow() {
 		if (activatedWindow != null) {
 			Shell shell = activatedWindow.getShell();
 			if (shell != null && !shell.isDisposed()) {
@@ -1441,11 +1494,11 @@ public final class Workbench implements IWorkbench {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Sets the workbench window which was last known being the
 	 * active one, or <code>null</code>.
 	 */
-	protected final void setActivatedWindow(WorkbenchWindow window) {
+	/* package */ void setActivatedWindow(WorkbenchWindow window) {
 		activatedWindow = window;
 	}
 	
@@ -1469,8 +1522,7 @@ public final class Workbench implements IWorkbench {
 	 * Returns the workbench adviser that created this workbench.
 	 * <p>
 	 * This method is declared package-private to prevent a client from 
-	 * downcasting IWorkbench to Workbench and getting hold of
-	 * a configurer that would allow them to tamper with the workbench.
+	 * downcasting IWorkbench to Workbench and getting hold of the adviser.
 	 * </p>
 	 */
 	/* package */ WorkbenchAdviser getAdviser() {

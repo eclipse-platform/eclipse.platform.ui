@@ -13,10 +13,18 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
@@ -47,19 +55,23 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	private Workbench workbench;
 
 	/**
+	 * The configuration information read from the <code>about.ini</code>
+	 * file of the primary feature.
+	 */
+	private AboutInfo aboutInfo = null;
+	
+	/**
 	 * Creates a new workbench configurer.
 	 * <p>
 	 * This method is declared package-private. Clients are passed an instance
 	 * only via {@link WorkbenchAdviser#initialize WorkbenchAdviser.initialize}
 	 * </p>
-	 * @return the workbench
-	 * @see WorkbenchAdviser#getWorkbenchConfigurer
 	 */
-	WorkbenchConfigurer(IWorkbench workbench) {
-		if (workbench == null || !(workbench instanceof Workbench)) {
+	/* package */ WorkbenchConfigurer(Workbench workbench) {
+		if (workbench == null) {
 			throw new IllegalArgumentException();
 		}
-		this.workbench = (Workbench) workbench;
+		this.workbench = workbench;
 	}
 
 	/* (non-javadoc)
@@ -69,6 +81,14 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		return workbench;
 	}
 
+	/* (non-javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getPrimaryFeatureAboutInfo
+	 */
+	public AboutInfo getPrimaryFeatureAboutInfo() {
+		// Assumes readPrimaryFeatureAboutInfo has been called once beforehand.
+		return aboutInfo;
+	}
+	
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbenchWindowManager
 	 */
@@ -123,6 +143,40 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 			extraData.put(key, data);
 		} else {
 			extraData.remove(key);
+		}
+	}
+	
+	/* package */ void readPrimaryFeatureAboutInfo() throws CoreException {
+		if (aboutInfo != null)
+			return;
+			
+		// determine the identifier of the primary feature (application)
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
+		IPlatformConfiguration.IFeatureEntry primaryFeature = conf.findConfiguredFeatureEntry(versionedFeatureId);
+
+		if (primaryFeature == null) {
+			aboutInfo = AboutInfo.create(null, null);
+		} else {
+			String versionedFeaturePluginIdentifier = primaryFeature.getFeaturePluginIdentifier();
+			String versionedFeaturePluginVersion = primaryFeature.getFeaturePluginVersion();
+
+			if (versionedFeaturePluginIdentifier == null) {
+				aboutInfo = AboutInfo.create(null, null);
+			} else {
+				if (versionedFeaturePluginVersion == null) {
+					aboutInfo = AboutInfo.create(versionedFeaturePluginIdentifier, null);
+				} else {
+					PluginVersionIdentifier mainPluginVersion = null;
+					try {
+						mainPluginVersion = new PluginVersionIdentifier(versionedFeaturePluginVersion);
+					} catch (Exception e) {
+						IStatus iniStatus = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, "Unknown plugin version: " + versionedFeatureId, e); //$NON-NLS-1$
+						WorkbenchPlugin.log("Problem obtaining primary feature configuration info", iniStatus); //$NON-NLS-1$
+					}
+					aboutInfo = AboutInfo.create(versionedFeaturePluginIdentifier, mainPluginVersion);
+				}
+			}
 		}
 	}
 }

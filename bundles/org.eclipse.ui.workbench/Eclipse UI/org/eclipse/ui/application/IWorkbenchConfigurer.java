@@ -12,6 +12,7 @@ package org.eclipse.ui.application;
 
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -37,6 +38,14 @@ public interface IWorkbenchConfigurer {
 	 */
 	public IWorkbench getWorkbench();
 
+	/**
+	 * Returns the configuration information found in the
+	 * <code>about.ini</code> file for the primary feature.
+	 * 
+	 * @return the confirguration information for the primary feature
+	 */
+	public AboutInfo getPrimaryFeatureAboutInfo();
+	
 	/**
 	 * Returns the workbench window manager.
 	 *
