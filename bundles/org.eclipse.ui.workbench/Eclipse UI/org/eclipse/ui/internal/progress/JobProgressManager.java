@@ -26,17 +26,14 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * JobProgressManager provides the progress monitor to the 
- * job manager and informs any ProgressContentProviders of changes.
+ * JobProgressManager provides the progress monitor to the job manager and
+ * informs any ProgressContentProviders of changes.
  */
-public class JobProgressManager
-	extends JobChangeAdapter
-	implements IProgressProvider {
-
-	private ArrayList listeners = new ArrayList();
+public class JobProgressManager extends JobChangeAdapter implements IProgressProvider {
 
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
+	private Collection listeners = Collections.synchronizedList(new ArrayList());
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
@@ -64,16 +61,11 @@ public class JobProgressManager
 	private static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
-	static String[] keys =
-		new String[] {
-			PROGRESS_20_KEY,
-			PROGRESS_40_KEY,
-			PROGRESS_60_KEY,
-			PROGRESS_80_KEY,
-			PROGRESS_100_KEY };
+	static String[] keys = new String[] { PROGRESS_20_KEY, PROGRESS_40_KEY, PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY };
 
 	/**
 	 * Get the progress manager currently in use.
+	 * 
 	 * @return JobProgressManager
 	 */
 	public static JobProgressManager getInstance() {
@@ -83,7 +75,7 @@ public class JobProgressManager
 	}
 
 	/**
-	 * The JobMonitor is the inner class that handles the IProgressMonitor 
+	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
 	 */
 	private class JobMonitor implements IProgressMonitor {
@@ -92,30 +84,32 @@ public class JobProgressManager
 
 		/**
 		 * Create a monitor on the supplied job.
+		 * 
 		 * @param newJob
 		 */
 		JobMonitor(Job newJob) {
 			job = newJob;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String,
+		 * int)
 		 */
 		public void beginTask(String taskName, int totalWork) {
 			JobInfo info = getJobInfo(job);
 			info.beginTask(taskName, totalWork);
 			refresh(info);
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-		 */
+		/* (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done() */
 		public void done() {
 			JobInfo info = getJobInfo(job);
 			info.clearTaskInfo();
 			info.clearChildren();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
 			JobInfo info = getJobInfo(job);
@@ -124,22 +118,25 @@ public class JobProgressManager
 				refresh(info);
 			}
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
 			return cancelled;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
 			cancelled = value;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String taskName) {
 
@@ -155,8 +152,9 @@ public class JobProgressManager
 			refresh(info);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
 
@@ -170,24 +168,22 @@ public class JobProgressManager
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+		/*
+		 * (non-Javadoc) @see
+		 * org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-			internalWorked((double) work);
+			internalWorked(work);
 		}
 	}
 
 	/**
-	 * Create a new instance of the receiver.
-	 */
+	 * Create a new instance of the receiver. */
 	JobProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
 		Platform.getJobManager().addJobChangeListener(this);
 		addListener(new StatusLineProgressListener());
-		URL iconsRoot =
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-				new Path(JobProgressManager.PROGRESS_FOLDER));
+		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(new Path(JobProgressManager.PROGRESS_FOLDER));
 
 		try {
 			setUpImage(iconsRoot, PROGRESS_20, PROGRESS_20_KEY);
@@ -209,21 +205,20 @@ public class JobProgressManager
 
 	/**
 	 * Set up the image in the image regsitry.
+	 * 
 	 * @param iconsRoot
-	 * @param fileName 
+	 * @param fileName
 	 * @param key
 	 * @throws MalformedURLException
 	 */
-	private void setUpImage(URL iconsRoot, String fileName, String key)
-		throws MalformedURLException {
-		JFaceResources.getImageRegistry().put(
-			key,
-			ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
+	private void setUpImage(URL iconsRoot, String fileName, String key) throws MalformedURLException {
+		JFaceResources.getImageRegistry().put(key, ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.core.runtime.jobs.IProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public IProgressMonitor createMonitor(Job job) {
 		return new JobMonitor(job);
@@ -231,6 +226,7 @@ public class JobProgressManager
 
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
+	 * 
 	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
@@ -238,15 +234,18 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Remove the supplied IJobProgressManagerListener from the list of listeners.
+	 * Remove the supplied IJobProgressManagerListener from the list of
+	 * listeners.
+	 * 
 	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
 		listeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void scheduled(IJobChangeEvent event) {
 		if (isNeverDisplayedJob(event.getJob()))
@@ -256,16 +255,18 @@ public class JobProgressManager
 		add(info);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void aboutToRun(IJobChangeEvent event) {
 		JobInfo info = getJobInfo(event.getJob());
 		refresh(info);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void done(IJobChangeEvent event) {
 
@@ -273,15 +274,12 @@ public class JobProgressManager
 		if (event.getResult().getSeverity() == IStatus.ERROR) {
 			info.setError(event.getResult());
 				UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					IWorkbenchWindow window =
-						WorkbenchPlugin
-							.getDefault()
-							.getWorkbench()
-							.getActiveWorkbenchWindow();
+					IWorkbenchWindow window = WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 
 					if (window == null)
 						return Status.CANCEL_STATUS;
@@ -300,8 +298,8 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Get the JobInfo for the job. If it does not exist
-	 * create it.
+	 * Get the JobInfo for the job. If it does not exist create it.
+	 * 
 	 * @param job
 	 * @return
 	 */
@@ -315,70 +313,80 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
+	 * Refresh the IJobProgressManagerListeners as a result of a change in
+	 * info.
+	 * 
 	 * @param info
 	 */
 	public void refresh(JobInfo info) {
 
-		Iterator iterator = listeners.iterator();
-		while (iterator.hasNext()) {
-			IJobProgressManagerListener listener =
-				(IJobProgressManagerListener) iterator.next();
-			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
-				listener.refresh(info);
+		synchronized (listeners) {
+			Iterator iterator = listeners.iterator();
+			while (iterator.hasNext()) {
+				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+					listener.refresh(info);
+			}
 		}
-
 	}
 
 	/**
-	 * Refresh all the IJobProgressManagerListener as a result of a change in the whole model.
+	 * Refresh all the IJobProgressManagerListener as a result of a change in
+	 * the whole model.
+	 * 
 	 * @param info
 	 */
 	public void refreshAll() {
-		Iterator iterator = listeners.iterator();
-		while (iterator.hasNext()) {
-			IJobProgressManagerListener listener =
-				(IJobProgressManagerListener) iterator.next();
-			listener.refreshAll();
+		synchronized (listeners) {
+			Iterator iterator = listeners.iterator();
+			while (iterator.hasNext()) {
+				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
+				listener.refreshAll();
+			}
 		}
 
 	}
 
 	/**
 	 * Refresh the content providers as a result of a deletion of info.
+	 * 
 	 * @param info
 	 */
 	public void remove(JobInfo info) {
 
-		Iterator iterator = listeners.iterator();
-		while (iterator.hasNext()) {
-			IJobProgressManagerListener listener =
-				(IJobProgressManagerListener) iterator.next();
-			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
-				listener.remove(info);
+		synchronized (listeners) {
+			Iterator iterator = listeners.iterator();
+			while (iterator.hasNext()) {
+				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+					listener.remove(info);
+			}
 		}
-
 	}
 
 	/**
 	 * Refresh the content providers as a result of an addition of info.
+	 * 
 	 * @param info
 	 */
 	public void add(JobInfo info) {
-		Iterator iterator = listeners.iterator();
-		while (iterator.hasNext()) {
-			IJobProgressManagerListener listener =
-				(IJobProgressManagerListener) iterator.next();
-			if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
-				listener.add(info);
+		synchronized (listeners) {
+			Iterator iterator = listeners.iterator();
+			while (iterator.hasNext()) {
+				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator.next();
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug()))
+					listener.add(info);
+			}
 		}
 
 	}
 
 	/**
 	 * Return whether or not this job is currently displayable.
+	 * 
 	 * @param job
-	 * @param debug If the listener is in debug mode.
+	 * @param debug
+	 *           If the listener is in debug mode.
 	 * @return
 	 */
 	boolean isNonDisplayableJob(Job job, boolean debug) {
@@ -392,6 +400,7 @@ public class JobProgressManager
 
 	/**
 	 * Return whether or not this job is ever displayable.
+	 * 
 	 * @param job
 	 * @return
 	 */
@@ -401,6 +410,7 @@ public class JobProgressManager
 
 	/**
 	 * Get the jobs currently being displayed.
+	 * 
 	 * @return JobInfo[]
 	 */
 	public JobInfo[] getJobInfos() {
@@ -419,6 +429,7 @@ public class JobProgressManager
 
 	/**
 	 * Return whether or not there are any jobs being displayed.
+	 * 
 	 * @return boolean
 	 */
 	public boolean hasJobInfos() {
@@ -432,8 +443,9 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Clear the job out of the list of those being displayed.
-	 * Only do this for jobs that are an error.
+	 * Clear the job out of the list of those being displayed. Only do this for
+	 * jobs that are an error.
+	 * 
 	 * @param job
 	 */
 	void clearJob(Job job) {
@@ -445,17 +457,19 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Clear all of the errors from the list.
-	 */
+	 * Clear all of the errors from the list. */
 	void clearAllErrors() {
 		Collection jobsToDelete = new ArrayList();
-		Iterator keySet = jobs.keySet().iterator();
-		while (keySet.hasNext()) {
-			Object job = keySet.next();
-			JobInfo info = (JobInfo) jobs.get(job);
-			if (info.getErrorStatus() != null)
-				jobsToDelete.add(job);
+		synchronized (jobs) {
+			Iterator keySet = jobs.keySet().iterator();
+			while (keySet.hasNext()) {
+				Object job = keySet.next();
+				JobInfo info = (JobInfo) jobs.get(job);
+				if (info.getErrorStatus() != null)
+					jobsToDelete.add(job);
+			}
 		}
+
 		Iterator deleteSet = jobsToDelete.iterator();
 		while (deleteSet.hasNext()) {
 			jobs.remove(deleteSet.next());
@@ -465,21 +479,27 @@ public class JobProgressManager
 
 	/**
 	 * Return whether or not there are any errors displayed.
+	 * 
 	 * @return
 	 */
 	boolean hasErrorsDisplayed() {
-		Iterator keySet = jobs.keySet().iterator();
-		while (keySet.hasNext()) {
-			Object job = keySet.next();
-			JobInfo info = (JobInfo) jobs.get(job);
-			if (info.getErrorStatus() != null)
-				return true;
+
+		synchronized (jobs) {
+			Iterator keySet = jobs.keySet().iterator();
+			while (keySet.hasNext()) {
+				Object job = keySet.next();
+				JobInfo info = (JobInfo) jobs.get(job);
+				if (info.getErrorStatus() != null)
+					return true;
+			}
 		}
+
 		return false;
 	}
 
 	/**
 	 * Returns the image descriptor with the given relative path.
+	 * 
 	 * @param source
 	 * @return Image
 	 */
@@ -490,8 +510,11 @@ public class JobProgressManager
 
 	/**
 	 * Returns the image descriptor with the given relative path.
-	 * @param fileSystemPath The URL for the file system to the image.
-	 * @param loader - the loader used to get this data
+	 * 
+	 * @param fileSystemPath
+	 *           The URL for the file system to the image.
+	 * @param loader -
+	 *           the loader used to get this data
 	 * @return ImageData[]
 	 */
 	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
@@ -510,8 +533,9 @@ public class JobProgressManager
 	}
 
 	/**
-	 * Get the current image for the receiver. If there is no
-	 * progress yet return null.
+	 * Get the current image for the receiver. If there is no progress yet
+	 * return null.
+	 * 
 	 * @param element
 	 * @return
 	 */
