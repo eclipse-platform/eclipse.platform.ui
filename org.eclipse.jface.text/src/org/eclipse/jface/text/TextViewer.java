@@ -14,6 +14,7 @@ package org.eclipse.jface.text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1452,6 +1453,21 @@ public class TextViewer extends Viewer implements
 			fTextHovers.remove(key);
 
 		ensureHoverControlManagerInstalled();
+	}
+
+	/*
+	 * @see ITextViewerExtension2#removeTextHover(String)
+	 */
+	public void removeTextHover(String contentType) {
+		if (fTextHovers == null)
+			return;
+			
+		Iterator iter= new HashSet(fTextHovers.keySet()).iterator();
+		while (iter.hasNext()) {
+			TextHoverKey key= (TextHoverKey)iter.next();
+			if (key.fContentType.equals(contentType))
+				fTextHovers.remove(key);
+		}
 	}
 	
 	/**

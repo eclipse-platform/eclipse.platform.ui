@@ -29,7 +29,7 @@ public interface ITextViewerExtension2 {
 	  * @since 2.1
 	  */
 	 final int DEFAULT_HOVER_STATE_MASK= 0xff;
-	 
+
 	/**
 	 * Invalidates the viewer's text presentation for the given range.
 	 * 
@@ -49,6 +49,18 @@ public interface ITextViewerExtension2 {
 	 * @since 2.1
 	 */
 	void setTextHover(ITextHover textViewerHover, String contentType, int stateMask);
+
+	/**
+	 * Removes all text hovers for the given content type.
+	 * <p>
+	 * Note: To remove a hover for a given content type and state mask
+	 * use @link #setTextHover(ITextHover, String, int) with <code>null</code>
+	 * as parameter for the text hover.
+	 * </p>
+	 * @param contentType the type for which the hover is registered
+	 * @since 2.1
+	 */
+	void removeTextHover(String contentType);
 	
 	/**
 	 * Returns the currently displayed text hover if any, <code>null</code>
