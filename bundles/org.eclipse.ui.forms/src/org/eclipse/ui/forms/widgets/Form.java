@@ -63,6 +63,8 @@ public class Form extends Composite {
 	private String text;
 	private Composite body;
 	private ToolBarManager toolBarManager;
+	private SizeCache bodyCache = new SizeCache();
+	private SizeCache toolbarCache = new SizeCache();
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
@@ -73,6 +75,12 @@ public class Form extends Composite {
 		}
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
+		    if (flushCache) {
+		        bodyCache.flush();
+		        toolbarCache.flush();
+		    }
+			bodyCache.setControl(body);
+		    
 			int width = 0;
 			int height = 0;
 			if (text != null) {
@@ -92,8 +100,8 @@ public class Form extends Composite {
 			if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
-					Point tbsize = toolBar
-							.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					toolbarCache.setControl(toolBar);
+					Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					if (width != 0)
 						width += TITLE_GAP;
 					width += tbsize.x;
@@ -107,13 +115,21 @@ public class Form extends Composite {
 			int ihHint = hHint;
 			if (ihHint > 0 && ihHint != SWT.DEFAULT)
 				ihHint -= height;
-			Point bsize = body.computeSize(FormUtil.getWidthHint(wHint, body),
-					FormUtil.getHeightHint(ihHint, body), flushCache);
+			
+			
+			Point bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint, body),
+					FormUtil.getHeightHint(ihHint, body));
 			width = Math.max(bsize.x, width);
 			height += bsize.y;
 			return new Point(width, height);
 		}
 		protected void layout(Composite composite, boolean flushCache) {
+		    if (flushCache) {
+		        bodyCache.flush();
+		        toolbarCache.flush();
+		    }
+		    bodyCache.setControl(body);
+		    
 			Rectangle carea = composite.getClientArea();
 			int height = 0;
 			Point tbsize = null;
@@ -121,8 +137,9 @@ public class Form extends Composite {
 			if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
-					tbsize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					toolBar.setBounds(carea.width - 1 - TITLE_HMARGIN
+				    toolbarCache.setControl(toolBar);
+					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
 							- tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
 					height = tbsize.y;
 				}
@@ -140,7 +157,8 @@ public class Form extends Composite {
 			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
-			body.setBounds(0, height, carea.width, carea.height - height);
+			
+			bodyCache.setBounds(0, height, carea.width, carea.height - height);			
 		}
 	}
 	/**

@@ -81,6 +81,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	private int widestColumnWidth;
 	private int[] growingColumns;
 	private int[] growingRows;
+	private LayoutCache cache = new LayoutCache();
+	
 	private class RowSpan {
 		Control child;
 		int row;
@@ -113,6 +115,14 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	 * @see ILayoutExtension
 	 */
 	public int computeMinimumWidth(Composite parent, boolean changed) {
+	    
+		Control[] children = parent.getChildren();
+	    if (changed) {
+	        cache.flush();
+	    }
+		
+	    cache.setControls(children);
+	    
 		changed = true;
 		initializeIfNeeded(parent, changed);
 		if (initialLayout) {
@@ -137,6 +147,13 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	 * @see ILayoutExtension
 	 */
 	public int computeMaximumWidth(Composite parent, boolean changed) {
+		Control[] children = parent.getChildren();
+	    if (changed) {
+	        cache.flush();
+	    }
+		
+	    cache.setControls(children);
+	    
 		changed = true;
 		initializeIfNeeded(parent, changed);
 		if (initialLayout) {
@@ -159,10 +176,18 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	 * @see Layout#layout(Composite, boolean)
 	 */
 	protected void layout(Composite parent, boolean changed) {
+	    
 		Rectangle clientArea = parent.getClientArea();
 		Control[] children = parent.getChildren();
+	    if (changed) {
+	        cache.flush();
+	    }
+		
 		if (children.length == 0)
 			return;
+		
+	    cache.setControls(children);
+		
 		int parentWidth = clientArea.width;
 		changed = true;
 		initializeIfNeeded(parent, changed);
@@ -257,7 +282,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 					if (k < j + span - 1)
 						cwidth += horizontalSpacing;
 				}
-				Point size = computeSize(child, cwidth, td.indent, changed);
+				Point size = computeSize(td.childIndex, cwidth, td.indent);
 				td.compWidth = cwidth;
 				if (td.heightHint != SWT.DEFAULT) {
 					size = new Point(size.x, td.heightHint);
@@ -329,11 +354,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		return widths;
 	}
-	Point computeSize(Control child, int width, int indent, boolean changed) {
+	Point computeSize(int childIndex, int width, int indent) {
 		int widthArg = width - indent;
-		if (!isWrap(child))
+		SizeCache controlCache = cache.getCache(childIndex);
+		if (!isWrap(controlCache.getControl()))
 			widthArg = SWT.DEFAULT;
-		Point size = child.computeSize(widthArg, SWT.DEFAULT, changed);
+		Point size = controlCache.computeSize(widthArg, SWT.DEFAULT);
 		size.x += indent;
 		return size;
 	}
@@ -506,10 +532,17 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	 */
 	protected Point computeSize(Composite parent, int wHint, int hHint,
 			boolean changed) {
+	    
+	    
 		Control[] children = parent.getChildren();
+	    if (changed) {
+	        cache.flush();
+	    }
 		if (children.length == 0) {
 			return new Point(0, 0);
 		}
+	    cache.setControls(children);
+		
 		int parentWidth = wHint;
 		changed = true;
 		initializeIfNeeded(parent, changed);
@@ -584,7 +617,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 				int cy = td.heightHint;
 				if (cy == SWT.DEFAULT) {
-					Point size = computeSize(child, cwidth, td.indent, changed);
+					Point size = computeSize(td.childIndex, cwidth, td.indent);
 					cy = size.y;
 				}
 				RowSpan rowspan = (RowSpan) rowspans.get(child);
@@ -678,21 +711,10 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				if (td.isItemData == false)
 					continue;
 				Control child = children[td.childIndex];
-				int minWidth = -1;
-				if (child instanceof Composite) {
-					Composite cc = (Composite) child;
-					Layout l = cc.getLayout();
-					if (l instanceof ILayoutExtension) {
-						minWidth = ((ILayoutExtension) l).computeMinimumWidth(
-								cc, changed);
-					}
-				}
-				if (minWidth == -1) {
-					int minWHint = isWrap(child) ? 0 : SWT.DEFAULT;
-					Point size = child.computeSize(minWHint, SWT.DEFAULT,
-							changed);
-					minWidth = size.x;
-				}
+				
+				SizeCache childCache = cache.getCache(td.childIndex);
+				int minWidth = childCache.computeMinimumWidth();
+				
 				minWidth += td.indent;
 				if (td.colspan == 1)
 					minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
@@ -755,21 +777,10 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				if (td.isItemData == false)
 					continue;
 				Control child = children[td.childIndex];
-				int maxWidth = SWT.DEFAULT;
-				if (child instanceof Composite) {
-					Composite cc = (Composite) child;
-					Layout l = cc.getLayout();
-					if (l instanceof ILayoutExtension) {
-						maxWidth = ((ILayoutExtension) l).computeMaximumWidth(
-								cc, changed);
-					}
-				} else if (td.maxWidth != SWT.DEFAULT)
-					maxWidth = td.maxWidth;
-				if (maxWidth == SWT.DEFAULT) {
-					Point size = child.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-							changed);
-					maxWidth = size.x;
-				}
+				
+				SizeCache sc = cache.getCache(td.childIndex);
+				int maxWidth = sc.computeMaximumWidth(); 
+				
 				maxWidth += td.indent;
 				if (td.colspan == 1)
 					maxColumnWidths[j] = Math.max(maxColumnWidths[j], maxWidth);

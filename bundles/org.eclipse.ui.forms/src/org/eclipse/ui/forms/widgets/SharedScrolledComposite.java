@@ -11,9 +11,16 @@
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.forms.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 /**
  * This class is used to provide common scrolling services to a number
  * of controls in the toolkit. Classes that extend it are not
@@ -24,6 +31,12 @@ import org.eclipse.ui.internal.forms.widgets.*;
 public abstract class SharedScrolledComposite extends ScrolledComposite {
 	private static final int H_SCROLL_INCREMENT = 5;
 	private static final int V_SCROLL_INCREMENT = 64;
+	private boolean ignoreLayouts = true;
+	private boolean ignoreResizes = false;
+	private boolean expandHorizontal = false;
+	private boolean expandVertical = false;
+	private SizeCache contentCache = new SizeCache();
+	
 	/**
 	 *  Creates the new instance.
 	 * @param parent the parent composite
@@ -33,7 +46,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		super(parent, style);
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
-				reflow(true);
+			    if (!ignoreResizes) {
+			        reflow(false);
+			    }
 			}
 		});
 		initializeScrollBars();
@@ -89,6 +104,36 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		else
 			return super.setFocus();
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Composite#layout(boolean)
+     */
+    public void layout(boolean changed) {
+        if (ignoreLayouts) {
+            return;
+        }
+        
+        ignoreLayouts = true;
+        ignoreResizes = true;
+        super.layout(changed);
+        ignoreResizes = false;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.custom.ScrolledComposite#setExpandHorizontal(boolean)
+     */
+    public void setExpandHorizontal(boolean expand) {
+        expandHorizontal = expand;
+        super.setExpandHorizontal(expand);
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.custom.ScrolledComposite#setExpandVertical(boolean)
+     */
+    public void setExpandVertical(boolean expand) {
+        expandVertical = expand;
+        super.setExpandVertical(expand);
+    }
+    
 	/**
 	 * Recomputes the body layout and the scroll bars. The method should be
 	 * used when changes somewhere in the form body invalidate the current
@@ -101,13 +146,30 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		Rectangle clientArea = getClientArea();
 		if (c == null)
 			return;
-		c.layout(flushCache);
-		Point newSize = c.computeSize(FormUtil
+
+		contentCache.setControl(c);
+		if (flushCache) {
+		    contentCache.flush();
+		}
+		
+		Point newSize = contentCache.computeSize(FormUtil
 				.getWidthHint(clientArea.width, c), FormUtil.getHeightHint(
-				clientArea.height, c), flushCache);
-		c.setSize(newSize);
+						clientArea.height, c));
+		
+		Point currentSize = c.getSize();
+
+		if (!(expandHorizontal && expandVertical)) {
+		    c.setSize(newSize);		    
+		}
+		
 		setMinSize(newSize);
 		FormUtil.updatePageIncrement(this);
+		
+		ignoreLayouts = false;
+		layout(flushCache);
+		ignoreLayouts = true;
+		
+		contentCache.layoutIfNecessary();
 	}
 	private void initializeScrollBars() {
 		ScrollBar hbar = getHorizontalBar();

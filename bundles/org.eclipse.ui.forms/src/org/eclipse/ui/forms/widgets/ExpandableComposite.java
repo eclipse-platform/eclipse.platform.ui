@@ -96,7 +96,32 @@ public class ExpandableComposite extends Composite {
 	protected ToggleHyperlink toggle;
 	protected Control textLabel;
 	private class ExpandableLayout extends Layout implements ILayoutExtension {
+
+		private SizeCache toggleCache = new SizeCache();
+		private SizeCache textClientCache = new SizeCache();
+		private SizeCache textLabelCache = new SizeCache();
+		private SizeCache descriptionCache = new SizeCache();
+		private SizeCache clientCache = new SizeCache();
+	    	    
+	    private void initCache(boolean shouldFlush) {
+	        toggleCache.setControl(toggle);
+	        textClientCache.setControl(textClient);
+	        textLabelCache.setControl(textLabel);
+	        descriptionCache.setControl(getDescriptionControl());
+	        clientCache.setControl(client);
+	        
+	        if (shouldFlush) {
+		        toggleCache.flush();
+		        textClientCache.flush();
+		        textLabelCache.flush();
+		        descriptionCache.flush();
+		        clientCache.flush();
+	        }
+	    }
+	    
 		protected void layout(Composite parent, boolean changed) {
+		    initCache(changed);
+		    
 			Rectangle clientArea = parent.getClientArea();
 			int thmargin = 0;
 			int tvmargin = 0;
@@ -110,20 +135,19 @@ public class ExpandableComposite extends Composite {
 			Point tsize = null;
 			Point tcsize = null;
 			if (toggle != null)
-				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int twidth = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
 			if (textClient !=null)
-				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			if (tcsize!=null)
 				twidth -= tcsize.x + GAP;
 			Point size = null;
 			if (textLabel!=null)
-				size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
+				size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
 			if (textLabel instanceof Label) {
-				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
+				Point defSize = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (defSize.y == size.y) {
 					// One line - pick the smaller of the two widths
 					size.x = Math.min(defSize.x, size.x);
@@ -143,10 +167,10 @@ public class ExpandableComposite extends Composite {
 				x += tsize.x + GAP;
 			}
 			if (textLabel!=null)
-				textLabel.setBounds(x, y, size.x, size.y);
+				textLabelCache.setBounds(x, y, size.x, size.y);
 			if (textClient!=null) {
 				int tcx = clientArea.width - tcsize.x-thmargin;
-				textClient.setBounds(tcx, y, tcsize.x, tcsize.y);
+				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			if (size!=null)
 				y += size.y;
@@ -172,9 +196,8 @@ public class ExpandableComposite extends Composite {
 					Point dsize = null;
 					Control desc = getDescriptionControl();
 					if (desc != null) {
-						dsize = desc.computeSize(areaWidth, SWT.DEFAULT,
-								changed);
-						desc.setBounds(cx, y, dsize.x, dsize.y);
+						dsize = descriptionCache.computeSize(areaWidth, SWT.DEFAULT);
+						descriptionCache.setBounds(cx, y, dsize.x, dsize.y);
 						y += dsize.y + clientVerticalSpacing;
 					}
 					else
@@ -184,17 +207,20 @@ public class ExpandableComposite extends Composite {
 					int cwidth = areaWidth;
 					int cheight = clientArea.height - marginHeight
 							- marginHeight - y;
-					client.setBounds(cx, y, cwidth, cheight);
+					clientCache.setBounds(cx, y, cwidth, cheight);
 				}
 			}
 		}
 		protected Point computeSize(Composite parent, int wHint, int hHint,
 				boolean changed) {
+		    
+		    initCache(changed);
+		    
 			int width = 0, height = 0;
 			Point tsize = null;
 			int twidth = 0;
 			if (toggle != null) {
-				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				twidth = tsize.x + GAP;
 			}
 			int thmargin = 0;
@@ -212,17 +238,16 @@ public class ExpandableComposite extends Composite {
 			
 			Point tcsize = null;
 			if (textClient!=null) {
-				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (innertHint!=SWT.DEFAULT)
 					innertHint -= GAP + tcsize.x;
 			}
 			Point size = null;
 			
 			if (textLabel!=null)
-				size = textLabel.computeSize(innertHint, SWT.DEFAULT, changed);
+				size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
 			if (textLabel instanceof Label) {
-				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
+				Point defSize = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (defSize.y == size.y) {
 					// One line - pick the smaller of the two widths
 					size.x = Math.min(defSize.x, size.x);
@@ -247,8 +272,8 @@ public class ExpandableComposite extends Composite {
 				if ((expansionStyle & CLIENT_INDENT) != 0)
 					cwHint = innerwHint;
 				Point dsize = null;
-				Point csize = client.computeSize(FormUtil.getWidthHint(cwHint,
-						client), SWT.DEFAULT, changed);
+				Point csize = clientCache.computeSize(FormUtil.getWidthHint(cwHint,
+						client), SWT.DEFAULT);
 				if (getDescriptionControl() != null) {
 					int dwHint = cwHint;
 					if (dwHint == SWT.DEFAULT) {
@@ -256,8 +281,7 @@ public class ExpandableComposite extends Composite {
 						if ((expansionStyle & CLIENT_INDENT) != 0)
 							dwHint -= twidth;
 					}
-					dsize = getDescriptionControl().computeSize(dwHint,
-							SWT.DEFAULT, changed);
+					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 				}
 				if (dsize != null) {
 					if ((expansionStyle & CLIENT_INDENT) != 0)
@@ -282,13 +306,16 @@ public class ExpandableComposite extends Composite {
 					+ marginHeight + marginHeight+tvmargin+tvmargin);
 		}
 		public int computeMinimumWidth(Composite parent, boolean changed) {
+		    
+		    initCache(changed);
+		    
 			int width = 0;
 			Point size = null;
 			if (textLabel!=null)
-				size = textLabel.computeSize(5, SWT.DEFAULT, changed);
+				size = textLabelCache.computeSize(5, SWT.DEFAULT);
 			Point tcsize=null;
 			if (textClient!=null) {
-				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			int thmargin = 0;
 			int tvmargin = 0;
@@ -305,16 +332,14 @@ public class ExpandableComposite extends Composite {
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
-					dsize = getDescriptionControl().computeSize(5, SWT.DEFAULT,
-							changed);
+					dsize = descriptionCache.computeSize(5, SWT.DEFAULT);
 					width = Math.max(width, dsize.x);
 				}
 				int cwidth = FormUtil.computeMinimumWidth(client, changed);
 				width = Math.max(width, cwidth);
 			}
 			if (toggle != null) {
-				Point tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
+				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				width += tsize.x + GAP;
 			}
 			return width + marginWidth + marginWidth+thmargin+thmargin;
@@ -326,11 +351,13 @@ public class ExpandableComposite extends Composite {
 		 *      boolean)
 		 */
 		public int computeMaximumWidth(Composite parent, boolean changed) {
+		    
+		    initCache(changed);
+		    
 			int width = 0;
 			Point size = null;
 			if (textLabel!=null)
-				textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-					changed);
+				textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point tcsize=null;
 			int thmargin = 0;
 			int tvmargin = 0;
@@ -340,7 +367,7 @@ public class ExpandableComposite extends Composite {
 				tvmargin = GAP;
 			}			
 			if (textClient!=null) {
-				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			if (size!=null)
 				width = size.x;
@@ -349,16 +376,14 @@ public class ExpandableComposite extends Composite {
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
-					dsize = getDescriptionControl().computeSize(SWT.DEFAULT,
-							SWT.DEFAULT, changed);
+					dsize = descriptionCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					width = Math.max(width, dsize.x);
 				}
 				int cwidth = FormUtil.computeMaximumWidth(client, changed);
 				width = Math.max(width, cwidth);
 			}
 			if (toggle != null) {
-				Point tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
+				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				width += tsize.x + GAP;
 			}
 			return width + marginWidth + marginWidth+thmargin+thmargin;
