@@ -115,7 +115,10 @@ public class NewUpdateSiteDialog extends Dialog {
 	
 		try {
 			URL newURL = new URL(URLDecoder.decode(url.getText().trim()));
-			okButton.setEnabled(!newURL.getProtocol().equals("file")); //$NON-NLS-1$
+			if (url.getEditable())
+				okButton.setEnabled(!newURL.getProtocol().equals("file")); //$NON-NLS-1$
+			else 
+				okButton.setEnabled(true);
 		} catch (Exception e) {
 			okButton.setEnabled(false);
 		}
