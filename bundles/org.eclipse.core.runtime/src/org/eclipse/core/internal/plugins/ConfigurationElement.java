@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
-import java.io.PrintWriter;
 import java.util.*;
 
 public class ConfigurationElement extends ConfigurationElementModel implements IConfigurationElement {

@@ -7,7 +7,6 @@ package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import java.io.PrintWriter;
 
 public class PluginPrerequisite extends PluginPrerequisiteModel implements IPluginPrerequisite {
 /**

@@ -8,7 +8,6 @@ package org.eclipse.core.internal.plugins;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.IModel;
-import java.io.PrintWriter;
 
 public class Library extends LibraryModel implements ILibrary {
   public Library()
