@@ -90,11 +90,14 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	public String getName() throws DebugException;
 
 	/**
-	 * Returns the breakpoint that caused this thread to suspend,
-	 * or <code>null</code> if this thread is not suspended or
-	 * was not suspended by a breakpoint.
+	 * Returns the breakpoints that caused this thread to suspend,
+	 * or an empty collection if this thread is not suspended or
+	 * was not suspended by a breakpoint. Usually a single breakpoint
+	 * will be returned, but this collection can contain more than
+	 * one breakpoint if two breakpoints are at the same location in
+	 * a program.
 	 *
-	 * @return breakpoint that caused suspend, or <code>null</code> if none
+	 * @return breakpoints that caused suspend, possibly empty
 	 */
-	public IBreakpoint getBreakpoint();	
+	public IBreakpoint[] getBreakpoints();	
 }
