@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -145,7 +146,7 @@ public class FilteredList extends Composite {
          */
         public Label(String newString, Image image) {
         	if(newString == null)
-        		this.string = "";
+        		this.string = Util.ZERO_LENGTH_STRING;
         	else
         		this.string = newString;
             this.image = image;

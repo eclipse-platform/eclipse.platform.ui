@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations.newapi;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -25,10 +26,10 @@ public final class PartInfo {
     public boolean dirty;
     
     public PartInfo() {
-        name = "";
-        title = "";
-        contentDescription = "";
-        toolTip = "";
+        name = Util.ZERO_LENGTH_STRING;
+        title = Util.ZERO_LENGTH_STRING;
+        contentDescription = Util.ZERO_LENGTH_STRING;
+        toolTip = Util.ZERO_LENGTH_STRING;
         image = null;
     }
     

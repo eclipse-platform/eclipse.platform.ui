@@ -43,7 +43,7 @@ public class NativeTabItem extends WidgetTabItem {
         
         if (!Util.equals(info.toolTip, oldToolTip)) {
             String toolTip = info.toolTip;
-            if (toolTip.equals("")) {
+            if (toolTip.length() == 0) {
                 toolTip = null;
             }
             widget.setToolTipText(toolTip);

@@ -43,7 +43,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     private StandardSystemToolbar systemToolbar;
     private CLabel title;
     
-    private static final String FULL_TITLE = "part_title";
+    private static final String FULL_TITLE = "part_title"; //$NON-NLS-1$
     
     private Listener selectionListener = new Listener() {
         public void handleEvent(Event e) {

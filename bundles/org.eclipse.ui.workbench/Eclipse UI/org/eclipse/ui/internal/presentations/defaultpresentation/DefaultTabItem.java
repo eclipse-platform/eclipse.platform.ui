@@ -28,13 +28,13 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class DefaultTabItem extends WidgetTabItem {
     
-    public static String DIRTY_PREFIX = "*";
+    public static String DIRTY_PREFIX = "*"; //$NON-NLS-1$
     
     private boolean busy = false;
     private boolean bold = false;
     private Font lastFont = null;
-    private String shortName = "";
-    private String longName = "";
+    private String shortName = Util.ZERO_LENGTH_STRING;
+    private String longName = Util.ZERO_LENGTH_STRING;
     
     public DefaultTabItem(DefaultTabFolder parent, int index, int flags) {
         super(parent.getFolder().createItem(flags, index));
