@@ -353,12 +353,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			
 			if (fVisualAnnotationModel != null && getDocument() != null)
 				fVisualAnnotationModel.disconnect(getDocument());
-			
-			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
-				super.setDocument(document);
-			else
-				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
-			
+						
 			if (annotationModel != null && document != null) {
 				fVisualAnnotationModel= new VisualAnnotationModel(annotationModel);
 				fVisualAnnotationModel.connect(document);
@@ -366,6 +361,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fVisualAnnotationModel= null;
 			}
 			
+			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
+				super.setDocument(document);
+			else
+				super.setDocument(document, visibleRegionOffset, visibleRegionLength);
+				
 			if (fVerticalRuler != null)
 				fVerticalRuler.setModel(fVisualAnnotationModel);
 			

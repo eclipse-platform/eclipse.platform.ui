@@ -453,20 +453,69 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 */
 	public void replace(int position, int length, String text) throws BadLocationException {
 		
-		int lineNumber= getLineNumberOfOffset(position);
-		int insertLineNumber= lineNumber;
+		int firstLine= getLineNumberOfOffset(position);
+		int insertLineNumber= firstLine;
 		
-		if (remove(lineNumber, position, length))
-			-- lineNumber;
+		if (remove(firstLine, position, length))
+			-- firstLine;
 			
-		lineNumber += insert(insertLineNumber, position, text);
+		int lastLine= firstLine + insert(insertLineNumber, position, text);
+		
+//		int lines= fLines.size();
+//		if (lines > 0) {
+//			
+//			// try to collapse the first and the second line if second line is empty
+//			if (0 <= firstLine && firstLine + 1 < lines) {
+//				Line l2= (Line) fLines.get(firstLine + 1);
+//				if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
+//					// line is empty
+//					
+//					// append empty line to precessor
+//					Line l1= (Line) fLines.get(firstLine);
+//					StringBuffer buffer= new StringBuffer();
+//					buffer.append(l1.delimiter);
+//					buffer.append(l2.delimiter);
+//					
+//					// test whether this yields just one line rather then two
+//					DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
+//					if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
+//						l1.length += l2.length;
+//						l1.delimiter += l2.delimiter;
+//						fLines.remove(firstLine + 1);
+//						-- lastLine;
+//					}
+//				}
+//			}
+//			
+//			// try to collapse the last inserted line with the following line
+//			if (lastLine < lines) {
+//				Line l2= (Line) fLines.get(lastLine);
+//				if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
+//					// line is empty
+//					
+//					// append empty line to precessor
+//					Line l1= (Line) fLines.get(lastLine -1);
+//					StringBuffer buffer= new StringBuffer();
+//					buffer.append(l1.delimiter);
+//					buffer.append(l2.delimiter);
+//					
+//					// test whether this yields just one line rather then two
+//					DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
+//					if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
+//						l1.length += l2.length;
+//						l1.delimiter += l2.delimiter;
+//						fLines.remove(lastLine);
+//					}
+//				}
+//			}
+//		}
 		
 		int delta= -length;
 		if (text != null)
 			delta= text.length() + delta;
 		
 		if (delta != 0)
-			adaptLineOffsets(lineNumber, delta);
+			adaptLineOffsets(lastLine, delta);
 	}
 	
 	/*
