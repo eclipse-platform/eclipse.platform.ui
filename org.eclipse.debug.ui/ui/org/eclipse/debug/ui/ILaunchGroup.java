@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A launch group identifies a group of launch configurations by a launch
- * mode and cateogory. The launch configuration dialog can be opened on
+ * mode and category. The launch configuration dialog can be opened on
  * a launch group, and a launch history is maintained for each group.
  * A launch group is defined in plug-in XML via the <code>launchGroups</code>
  * extension point.
