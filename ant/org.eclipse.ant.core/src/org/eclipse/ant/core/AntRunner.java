@@ -311,7 +311,8 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? "Build Failed." : e.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e));
+			IStatus status= new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e);
+			throw new CoreException(status);
 		} finally {
 			if (DEBUG_BUILDFILE_TIMING) {
 				long finishTime = System.currentTimeMillis();
