@@ -38,25 +38,25 @@ public class PluginParser extends DefaultHandler implements IModel {
 	}
 
 	// Valid States
-	private final int IGNORED_ELEMENT_STATE = 0;
-	private final int INITIAL_STATE = 1;
-	private final int PLUGIN_STATE = 2;
-	private final int PLUGIN_RUNTIME_STATE = 3;
-	private final int PLUGIN_REQUIRES_STATE = 4;
-	private final int PLUGIN_EXTENSION_POINT_STATE = 5;
-	private final int PLUGIN_EXTENSION_STATE = 6;
-	private final int RUNTIME_LIBRARY_STATE = 7;
-	private final int LIBRARY_EXPORT_STATE = 8;
-	private final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
-	private final int CONFIGURATION_ELEMENT_STATE = 10;
-	private final int FRAGMENT_STATE = 11;
+	private static final int IGNORED_ELEMENT_STATE = 0;
+	private static final int INITIAL_STATE = 1;
+	private static final int PLUGIN_STATE = 2;
+	private static final int PLUGIN_RUNTIME_STATE = 3;
+	private static final int PLUGIN_REQUIRES_STATE = 4;
+	private static final int PLUGIN_EXTENSION_POINT_STATE = 5;
+	private static final int PLUGIN_EXTENSION_STATE = 6;
+	private static final int RUNTIME_LIBRARY_STATE = 7;
+	private static final int LIBRARY_EXPORT_STATE = 8;
+	private static final int PLUGIN_REQUIRES_IMPORT_STATE = 9;
+	private static final int CONFIGURATION_ELEMENT_STATE = 10;
+	private static final int FRAGMENT_STATE = 11;
 
 	// Keep a group of vectors as a temporary scratch space.  These
 	// vectors will be used to populate arrays in the plugin descriptor
 	// once processing of the XML file is complete.
-	private final int EXTENSION_POINT_INDEX = 0;
-	private final int EXTENSION_INDEX = 1;
-	private final int LAST_INDEX = 1;
+	private static final int EXTENSION_POINT_INDEX = 0;
+	private static final int EXTENSION_INDEX = 1;
+	private static final int LAST_INDEX = 1;
 	private Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
 	
 public PluginParser(Factory factory) {
