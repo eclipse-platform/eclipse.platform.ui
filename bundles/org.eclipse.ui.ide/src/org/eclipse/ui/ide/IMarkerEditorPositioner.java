@@ -11,7 +11,6 @@
 package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * An adapter that converts the marker information to a postion
@@ -25,7 +24,6 @@ public interface IMarkerEditorPositioner {
 	 * editor, and cause the editor to show that position.
 	 * 
 	 * @param marker the resource marker
-	 * @param editor the editor to show the position
 	 */
-	public void gotoPosition(IMarker marker, IEditorPart editor);
+	public void gotoPosition(IMarker marker);
 }
