@@ -8,9 +8,8 @@ package org.eclipse.ant.internal.ui;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.tools.ant.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ant.core.AntRunner;import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 // TBD
 // * Marker mechanism doesn't work for Locations other than
@@ -19,23 +18,32 @@ import org.eclipse.core.runtime.IProgressMonitor;
 // * incremental task shows minimal feedback
 
 public class UIBuildListener implements BuildListener {
+	
+	AntRunner runner;
 	IProgressMonitor fMonitor;
 	Target fTarget;
 	Task fTask;
 	IFile fBuildFile;
+	StringBuffer outputBuffer;
+	int msgOutputLevel;
 	
-	public UIBuildListener(IProgressMonitor monitor, IFile file) {
+	public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
+		this.runner = runner;
 		fMonitor= monitor;
 		fBuildFile= file;
+		outputBuffer = new StringBuffer();
 	}
 	public void buildFinished(BuildEvent be){
 		fMonitor.done();
 		if (be.getException() != null) {
 			handleBuildException(be.getException());
 		}
+		// Should give it to the console
+		System.out.println(new String(outputBuffer));
 	}
 	public void buildStarted(BuildEvent be) {
 		fMonitor.subTask(Policy.bind("monitor.buildStarted"));
+		msgOutputLevel = runner.getOutputMessageLevel();
 		removeMarkers();
 	}
 	private void checkCanceled() {
@@ -81,9 +89,10 @@ public class UIBuildListener implements BuildListener {
 	}
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();
-        if (event.getPriority() <= Project.MSG_INFO) 
-			System.out.println("> "+event.getMessage());
-			
+        if (event.getPriority() <= msgOutputLevel) {
+			//System.out.println("> "+event.getMessage());
+			outputBuffer.append("> "+event.getMessage()+"\n");
+        }
 	}
 
 
@@ -98,6 +107,9 @@ public class UIBuildListener implements BuildListener {
 		checkCanceled();
 		if (be.getException() != null)
 			handleBuildException(be.getException());
+		
+		//	one task is done: say it to the monitor
+		fMonitor.worked(1);
 	}
 	public void targetStarted(BuildEvent be) {
 		checkCanceled();
@@ -114,4 +126,15 @@ public class UIBuildListener implements BuildListener {
 		if (be.getException() != null)
 			handleBuildException(be.getException());
 	}
+	
+	/**
+	 * Returns the output message as a string.
+	 * 
+	 * @return String the output message
+	 */
+	public String getOutputMessage() {
+		return new String(outputBuffer);
+	}
+
+	
 }

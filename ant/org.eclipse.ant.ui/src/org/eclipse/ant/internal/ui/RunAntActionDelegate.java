@@ -7,23 +7,16 @@ package org.eclipse.ant.internal.ui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.ProjectHelper;
+import org.apache.tools.ant.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.EclipseProject;
+import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.viewers.*;import org.eclipse.jface.wizard.WizardDialog;
 
 
 public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRunnableWithProgress {
@@ -86,7 +79,8 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 
 		try {
 			//TBD: should remove the build listener somehow
-			new AntRunner().run(args, new UIBuildListener(monitor, selection));
+			AntRunner runner = new AntRunner();
+			runner.run(args, new UIBuildListener(runner, monitor, selection));
 		} 
 		catch (BuildCanceledException e) {
 			// build was canceled don't propagate exception
@@ -112,6 +106,7 @@ public class RunAntActionDelegate implements IWorkbenchWindowActionDelegate, IRu
 		WizardDialog dialog = new WizardDialog(getShell(),wizard);
 		dialog.create();
 		dialog.open();
+
 	}
 	/*
 	 * @see IWorkbenchActionDelegate

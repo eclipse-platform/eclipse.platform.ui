@@ -6,14 +6,13 @@ public class AntLaunchWizard extends Wizard {
 	private AntLaunchWizardPage page1 = null;		/**	 * The file that contains the Ant script.	 */
 	private IFile antFile = null;
 		/**	 * The string used to separate the previously selected target names in the persistent properties of the file.	 */
-	private final static String SEPARATOR_TARGETS = "\"";		/**	 * The identifier of the property.	 */
-	private final static String PROPERTY_SELECTEDTARGETS = "selectedTargets";
+	private final static String SEPARATOR_TARGETS = "\"";		/**	 * The identifier of the target property.	 */
+	private final static String PROPERTY_SELECTEDTARGETS = "selectedTargets";		/**	 * The identifier of the log property.	 */	private final static String PROPERTY_LOG = "wantToShowLogOnSuccess";
 			/**	 * Creates a new wizard, given the project described in the file and the file itself.	 * 	 * @param project	 * @param antFile	 */
 	public AntLaunchWizard(EclipseProject project,IFile antFile) {
 		super();
 		this.project = project;
-		this.antFile = antFile;		setWindowTitle(Policy.bind("wizard.title"));		//setNeedsProgressMonitor(true);
-	}
+		this.antFile = antFile;		setWindowTitle(Policy.bind("wizard.title"));	}
 	/**	 * Adds pages to the wizard and initialize them.	 * 	 */	
 	public void addPages() {
 		page1 = new AntLaunchWizardPage(project);
@@ -31,7 +30,7 @@ public class AntLaunchWizard extends Wizard {
 				IStatus.WARNING,
 				AntUIPlugin.PI_ANTUI,
 				IStatus.WARNING,
-				Policy.bind("status.targetNotRead", antFile.getFullPath().toString()),
+				Policy.bind("status.targetPropertyNotRead", antFile.getFullPath().toString()),
 				e);
 		}
 				if (propertyString == null)			return new String[0];
@@ -42,39 +41,30 @@ public class AntLaunchWizard extends Wizard {
 			result[index++] = tokenizer.nextToken();
 
 		return result;
-	}
+	}		/**	 * Retrieves (from the persistent properties of the file) the choice of the user	 * to show or not the output log.	 * 	 * @return boolean true if the user wants to show it, false if not	 */		public boolean getWantToShowLogOnSuccess() {		boolean result = false;		try {			String resultString = antFile.getPersistentProperty(				new QualifiedName(AntUIPlugin.PI_ANTUI,PROPERTY_LOG));			if (resultString != null )				result = (resultString.equals("true")) ? true : false;		} catch (CoreException e) {			new Status(				IStatus.WARNING,				AntUIPlugin.PI_ANTUI,				IStatus.WARNING,				Policy.bind("status.logPropertyNotRead", antFile.getFullPath().toString()),				e);		}		return result;	}
 			
 	/**	 * Builds the Ant file according to the selected targets and the arguments given in the command line.	 *	 * @return boolean	 */			
-	public boolean performFinish() {				Vector targetVect = page1.getSelectedTargets();
-		
-		// DON'T NEED IT ANYMORE
-		// project.executeTargets(targetVect);				String[] args = createArgumentsArray(targetVect);		
-//		this.getContainer().run(true,true,new IRunnableWithProgress() {
-//			public void run(IProgressMonitor monitor) {//				
-//				monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);
+	public boolean performFinish() {				final Vector targetVect = page1.getSelectedTargets();		
+		final String[] args = createArgumentsArray(targetVect);				// trick to be able to define the buildListener later		final UIBuildListener[] buildListener = new UIBuildListener[1];		
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {				
+				monitor.beginTask("Running Ant", targetVect.size());
 
 				try {
-					//TBD: should remove the build listener somehow
-					new AntRunner().run(args/*, new UIBuildListener(monitor, antFile)*/);
-				} 
-				catch (BuildCanceledException e) {
-					// build was canceled don't propagate exception
-					return false;
+					AntRunner runner = new AntRunner();					buildListener[0] = new UIBuildListener(runner, monitor, antFile);					runner.run(args, buildListener[0]);
+				}				catch (BuildCanceledException e) {
+					throw new InterruptedException();
 				}
-				catch (Exception e) {
-					//throw new InvocationTargetException(e);					// should do something here					return false;
+				catch (Exception e) {					System.out.println("JE SUIS LA");					throw new InvocationTargetException(e);
+				}				finally {
+					monitor.done();
 				}
-//				finally {
-//					monitor.done();
-//				}
-//			};
-//		});
-
-
+			};
+		};				try {			this.getContainer().run(true,true,runnable);		} catch (InterruptedException e) {			return false;		} catch (InvocationTargetException e) {			// opens a dialog box and shows the problem			AntLogDialog dialog = new AntLogDialog(getShell(),buildListener[0].getOutputMessage()+e.getMessage());			dialog.create();			dialog.open();			return false;		}		
 		// asuming that all went well...
-		storeTargetsOnFile(targetVect);		
+		storeTargetsOnFile(targetVect);		storeWantToShowLogOnSuccess();				// opens a dialog box and shows the log if the user wants it		if (page1.wantToShowLogOnSuccess()) {			AntLogDialog dialog = new AntLogDialog(getShell(),buildListener[0].getOutputMessage());			dialog.create();			dialog.open();		}		
 		return true;
-	}		/**	 * Creates an array that contains all the arguments needed to run AntRunner: 	 * 	- the name of the file to build	 *  - the arguments such as "-verbose", ...	 *  - target names	 * 	 * @param targets the vector that contains the targets built during the parsing	 * @return String[] the tokenized arguments	 */	private String[] createArgumentsArray(Vector targets) {			Vector argsVector = new Vector();		Vector targetVect = targets;		String argString = page1.getArgumentsFromField().trim();				// if there are arguments, then we have to tokenize them		if (argString.length() != 0) {			int indexOfToken;						// Checks if the string starts with a bracket or not so that we know where the composed arguments start			if (argString.charAt(0)=='"') 				indexOfToken = 1;			else				indexOfToken=0;					// First tokenize the command line with the separator bracket			StringTokenizer tokenizer1 = new StringTokenizer(argString,"\"");					while (tokenizer1.hasMoreTokens()) {				if (indexOfToken%2 == 0) {					// this is a string that needs to be tokenized with the separator space					StringTokenizer tokenizer2 = new StringTokenizer(tokenizer1.nextToken()," ");					while (tokenizer2.hasMoreTokens())						argsVector.add(tokenizer2.nextToken());				} else {					argsVector.add(tokenizer1.nextToken());				}				indexOfToken++;			}				}						// Finally create the array of String for AntRunner		String args[] = new String[argsVector.size()+targetVect.size()+2];		int index = 0;		args[index++] = "-buildfile";		args[index++] = antFile.getLocation().toOSString();				Iterator argsIterator = argsVector.iterator();		while (argsIterator.hasNext())			args[index++] = (String) argsIterator.next();		argsIterator = targetVect.iterator();		while (argsIterator.hasNext())			args[index++] = ((Target) argsIterator.next()).getName();					/*//TEST			int i = args.length;		for (int y=0; y<i; y++)			System.out.println("- "+args[y]);*/						return args;			}
+	}		/**	 * Creates an array that contains all the arguments needed to run AntRunner: 	 * 	- the name of the file to build	 *  - the arguments such as "-verbose", ...	 *  - target names	 * 	 * @param targets the vector that contains the targets built during the parsing	 * @return String[] the tokenized arguments	 */	private String[] createArgumentsArray(Vector targets) {			Vector argsVector = new Vector();		Vector targetVect = targets;		String argString = page1.getArgumentsFromField().trim();				// if there are arguments, then we have to tokenize them		if (argString.length() != 0) {			int indexOfToken;						// Checks if the string starts with a bracket or not so that we know where the composed arguments start			if (argString.charAt(0)=='"') 				indexOfToken = 1;			else				indexOfToken=0;					// First tokenize the command line with the separator bracket			StringTokenizer tokenizer1 = new StringTokenizer(argString,"\"");					while (tokenizer1.hasMoreTokens()) {				if (indexOfToken%2 == 0) {					// this is a string that needs to be tokenized with the separator space					StringTokenizer tokenizer2 = new StringTokenizer(tokenizer1.nextToken()," ");					while (tokenizer2.hasMoreTokens())						argsVector.add(tokenizer2.nextToken());				} else {					argsVector.add(tokenizer1.nextToken());				}				indexOfToken++;			}				}						// Finally create the array of String for AntRunner		String args[] = new String[argsVector.size()+targetVect.size()+2];		int index = 0;		args[index++] = "-buildfile";		args[index++] = antFile.getLocation().toOSString();				Iterator argsIterator = argsVector.iterator();		while (argsIterator.hasNext())			args[index++] = (String) argsIterator.next();		argsIterator = targetVect.iterator();		while (argsIterator.hasNext())			args[index++] = ((Target) argsIterator.next()).getName();						return args;			}
 	/**	 * Stores the name of the selected targets in the persistent properties of the file,	 * so that next time the user wants to build this file, those targets are pre-selected.	 * 	 * @param targets the vector that contains the targets built during the parsing	 */
 	protected void storeTargetsOnFile(Vector targets) {
 		StringBuffer targetString = new StringBuffer();
@@ -95,8 +85,8 @@ public class AntLaunchWizard extends Wizard {
 					IStatus.WARNING,
 					AntUIPlugin.PI_ANTUI,
 					IStatus.WARNING,
-					Policy.bind("status.targetNotWritten", antFile.getFullPath().toString()),
+					Policy.bind("status.targetPropertyNotWritten", antFile.getFullPath().toString()),
 					e));
 		}
-	}	/**	 * Returns true if the wizard can finish, i.e. if a target is selected or if an argument 	 * has benn entered in the command line.	 * 	 * @return boolean true if the wizard can finish, false if not	 */		public boolean canFinish() {		return (page1.getSelectedTargets().size() != 0) || (page1.getArgumentsFromField().trim() != "");	}
+	}		/**	 * Stores the user's will concerning the log that shows on success.	 */	protected void storeWantToShowLogOnSuccess() {				try {			antFile.setPersistentProperty(				new QualifiedName(AntUIPlugin.PI_ANTUI,PROPERTY_LOG),				(page1.wantToShowLogOnSuccess()) ? "true" : "false");		} catch (CoreException e) {			AntUIPlugin.getPlugin().getLog().log(				new Status(					IStatus.WARNING,					AntUIPlugin.PI_ANTUI,					IStatus.WARNING,					Policy.bind("status.logPropertyNotWritten", antFile.getFullPath().toString()),					e));		}	}	/**	 * Returns true if the wizard can finish, i.e. if a target is selected or if an argument 	 * has benn entered in the command line.	 * 	 * @return boolean true if the wizard can finish, false if not	 */		public boolean canFinish() {		return (page1.getSelectedTargets().size() != 0) || (page1.getArgumentsFromField().trim() != "");	}
 }
