@@ -389,7 +389,6 @@ public class JobManager implements IJobManager {
 		final List jobs;
 		final int jobCount;
 		synchronized (lock) {
-			//we never want to join sleeping jobs
 			jobs = Collections.synchronizedList(select(family, Job.WAITING | Job.RUNNING | Job.SLEEPING));
 			jobCount = jobs.size();
 			if (jobCount == 0)
