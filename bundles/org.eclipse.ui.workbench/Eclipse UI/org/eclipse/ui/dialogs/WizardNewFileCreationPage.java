@@ -53,7 +53,7 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * </p>
  */
 public class WizardNewFileCreationPage extends WizardPage implements Listener {
-	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 300;
+	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 	// the current resource selection
 	private	IStructuredSelection currentSelection;
 	

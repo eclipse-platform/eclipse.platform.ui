@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * </p>
  */
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
-	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 300;
+	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 	private IStructuredSelection currentSelection;
 	private IContainer currentParent;
 
