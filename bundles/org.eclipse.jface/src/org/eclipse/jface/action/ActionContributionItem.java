@@ -678,14 +678,13 @@ public class ActionContributionItem extends ContributionItem {
 				}
 
 				if (textChanged) {
-					if (showText) {
-						ti.setText(text);
-					}
-					else {
+					String textToSet = showText ? text : ""; //$NON-NLS-1$
+					boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
+					if (rightStyle || !ti.getText().equals(textToSet)) {
 						// In addition to being required to update the text if it
 						// gets nulled out in the action, this is also a workaround 
 						// for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space
-						ti.setText(""); //$NON-NLS-1$
+						ti.setText(textToSet);
 					}
 				}
 
