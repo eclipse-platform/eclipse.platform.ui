@@ -210,7 +210,7 @@ public class SearchServlet extends HttpServlet {
 		 */
 		public void generate(SearchHit[] hits, HttpServletResponse resp) {
 
-			println("<hits>");
+			println("<hits length=\""+hits.length+"\">");
 			pad++;
 			for (int i = 0; i < hits.length; i++) {
 				printPad();
