@@ -126,8 +126,8 @@ public class ColorSchemeService {
         c[0] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
         c[1] = colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
 
-        percent[0] = theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT);
-        vertical = theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL);
+        percent[0] = theme.getInt(IWorkbenchThemeConstants.INACTIVE_TAB_PERCENT);
+        vertical = theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
         
         control.setBackground(c, percent, vertical);		
 
