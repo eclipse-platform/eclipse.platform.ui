@@ -492,6 +492,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
 			while (iter.hasNext()) {
 				Object selection= iter.next();
+
+				//Unpack search result entry
+				if (selection instanceof ISearchResultViewEntry)
+					selection= ((ISearchResultViewEntry)selection).getGroupByKey();
+			
 				if (selection instanceof IResource)
 					scope.add((IResource)selection);
 				else if (selection instanceof IAdaptable) {
