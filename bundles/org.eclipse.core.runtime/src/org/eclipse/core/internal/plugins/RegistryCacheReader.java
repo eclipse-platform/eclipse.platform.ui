@@ -1360,8 +1360,10 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 			try {
 				inByte = in.readByte();
 			} catch (EOFException eofe) {
-				done = true;
-				break;
+				// Don't return a cached registry since this exception is unexpected. In the normal
+				// case we should have hit the END_REGISTRY label.
+				cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.registryCacheEOFException"), eofe)); //$NON-NLS-1$
+				return null;
 			}
 			switch (inByte) {
 				case REGISTRY_LABEL:
