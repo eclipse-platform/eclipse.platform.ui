@@ -1067,52 +1067,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @since 3.1
 	 */
 	public final void editBinding(final Binding binding) {
-		final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
-		String categoryId = null;
-		if (parameterizedCommand != null) {
-			final Command command = parameterizedCommand.getCommand();
-			try {
-				categoryId = command.getCategory().getId();
-			} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
-				// Leave the category identifier as null.
-			}
-		}
-
-		editBinding(categoryId, parameterizedCommand.getId(), binding
-				.getTriggerSequence());
-	}
-
-	/**
-	 * Allows the user to change the key bindings for a particular command.
-	 * Switches the tab to the modify tab, and then selects the category and
-	 * command that corresponds with the given category and command name. It
-	 * then selects the given key sequence and gives focus to the key sequence
-	 * text widget.
-	 * 
-	 * @param categoryId
-	 *            The id of the category for which the key bindings should be
-	 *            edited; if <code>null</code>, then just switch to the
-	 *            modify tab. If the <code>categoryId</code> is undefined or
-	 *            does not correspond to anything in the keys preference page,
-	 *            then this also just switches to the modify tab.
-	 * @param commandId
-	 *            The id of the command for which the key bindings should be
-	 *            edited; if <code>null</code>, then just switch to the
-	 *            modify tab. If the <code>commandId</code> is undefined or
-	 *            does not correspond to anything in the keys preference page,
-	 *            then this also just switches to the modify tab.
-	 * @param triggerSequence
-	 *            The key sequence for the selected item. If <code>null</code>,
-	 *            then just switch to the modify tab.
-	 */
-	public final void editBinding(final String categoryId,
-			final String commandId, final TriggerSequence triggerSequence) {
 		// Switch to the modify tab.
 		tabFolder.setSelection(TAB_INDEX_MODIFY);
 
 		// If there is no command name, stop here.
-		if ((commandId == null) || (categoryId == null)
-				|| (triggerSequence == null)) {
+		if (binding == null) {
 			return;
 		}
 
@@ -1121,12 +1080,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		 * undefined, then we can just stop now. We won't be able to find their
 		 * name.
 		 */
-		final Category category = commandService.getCategory(categoryId);
-		final Command command = commandService.getCommand(commandId);
+		final ParameterizedCommand command = binding.getParameterizedCommand();
 		String categoryName = null;
 		String commandName = null;
 		try {
-			categoryName = category.getName();
+			categoryName = command.getCommand().getCategory().getName();
 			commandName = command.getName();
 		} catch (final NotDefinedException e) {
 			return; // no name
@@ -1179,7 +1137,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		int k = 0;
 		for (; k < items.length; k++) {
 			final String currentKeySequence = items[k].getText(2);
-			if (triggerSequence.format().equals(currentKeySequence)) {
+			if (binding.getTriggerSequence().format()
+					.equals(currentKeySequence)) {
 				break;
 			}
 		}
@@ -1547,7 +1506,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			editBinding(binding);
 
 		} else {
-			editBinding(null, null, null);
+			editBinding(null);
 		}
 	}
 
@@ -2184,7 +2143,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Iterator bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
-			if (!Util.equals(parameterizedCommand, binding.getParameterizedCommand())) {
+			if (!Util.equals(parameterizedCommand, binding
+					.getParameterizedCommand())) {
 				continue; // binding does not match
 			}
 
@@ -2238,7 +2198,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final Binding binding = (Binding) bindingItr.next();
 			final Context context = contextService.getContext(binding
 					.getContextId());
-			final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+			final ParameterizedCommand parameterizedCommand = binding
+					.getParameterizedCommand();
 			final Command command = parameterizedCommand.getCommand();
 			if ((!context.isDefined()) && (!command.isDefined())) {
 				continue;
@@ -2307,7 +2268,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 				 * Get the category name, command name, formatted key sequence
 				 * and context name for the first binding.
 				 */
-				final Command command1 = binding1.getParameterizedCommand().getCommand();
+				final Command command1 = binding1.getParameterizedCommand()
+						.getCommand();
 				String categoryName1 = Util.ZERO_LENGTH_STRING;
 				String commandName1 = Util.ZERO_LENGTH_STRING;
 				try {
@@ -2334,7 +2296,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 				 * Get the category name, command name, formatted key sequence
 				 * and context name for the first binding.
 				 */
-				final Command command2 = binding2.getParameterizedCommand().getCommand();
+				final Command command2 = binding2.getParameterizedCommand()
+						.getCommand();
 				String categoryName2 = Util.ZERO_LENGTH_STRING;
 				String commandName2 = Util.ZERO_LENGTH_STRING;
 				try {
@@ -2408,7 +2371,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final Binding binding = (Binding) keyBindingItr.next();
 
 			// Get the command and category name.
-			final ParameterizedCommand command = binding.getParameterizedCommand();
+			final ParameterizedCommand command = binding
+					.getParameterizedCommand();
 			String commandName = Util.ZERO_LENGTH_STRING;
 			String categoryName = Util.ZERO_LENGTH_STRING;
 			try {
