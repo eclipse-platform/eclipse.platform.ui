@@ -157,6 +157,9 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	 */
 	public void uninstall() {
 		fTextViewer.removeTextInputListener(this);
+		IDocument document= fTextViewer.getDocument();
+		if (document != null)
+			document.removeDocumentListener(this);
 		
 		if (fColor != null) {
 			if (fDisposeColor)
