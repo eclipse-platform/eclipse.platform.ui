@@ -157,7 +157,7 @@ public class DynamicPluginTest extends RuntimeTest {
 		if (packageAdminReference == null)
 			throw new IllegalStateException("No package admin service found");
 		PackageAdmin packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
-		Bundle[] result = packageAdmin.getBundles(symbolicName, version, null);
+		Bundle[] result = packageAdmin.getBundles(symbolicName, version);
 		context.ungetService(packageAdminReference);
 		return result;
 	}
