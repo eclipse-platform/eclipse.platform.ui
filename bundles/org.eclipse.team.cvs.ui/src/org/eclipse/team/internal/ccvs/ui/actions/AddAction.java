@@ -113,4 +113,14 @@ public class AddAction extends WorkspaceAction {
 		return true;
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		// Add to version control should never be enabled for linked resources
+		IResource resource = cvsResource.getIResource();
+		if (resource.isLinked()) return false;
+		return super.isEnabledForCVSResource(cvsResource);
+	}
+
 }
