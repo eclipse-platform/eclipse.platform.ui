@@ -192,7 +192,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 							RepositoryProvider provider = (RepositoryProvider)iter.next();
 							List resourceList = (List)providerMapping.get(provider);
 							final TeamException[] exception = new TeamException[1];
-							trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(
+							trees[i++] = CVSWorkspaceRoot.getRemoteSyncTree(
 								provider.getProject(), 
 								(IResource[]) resourceList.toArray(new IResource[resourceList.size()]),
 								null /* tag */,

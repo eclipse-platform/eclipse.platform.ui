@@ -164,7 +164,7 @@ public class CVSWorkspaceRoot {
 		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(project);
 		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(project);
 		if (remote == null) {
-			return null;
+			return new CVSRemoteSyncElement(true /*three way*/, project, null, null);
 		}
 		ArrayList cvsResources = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
