@@ -85,21 +85,21 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 			return null;
 		}
 		
-		/*
-		 * @see org.eclipse.ui.examples.xmleditor2.model.IProblemRequestor#acceptProblem(org.eclipse.ui.examples.xmleditor2.model.IProblem)
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblem)
 		 */
 		public void acceptProblem(IProblem problem) {
 			fCollectedProblems.add(problem);
 		}
 		
-		/*
-		 * @see org.eclipse.ui.examples.xmleditor2.model.IProblemRequestor#beginReporting()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblem)
 		 */
 		public void beginReporting() {
 		}
 		
-		/*
-		 * @see IProblemRequestor#endReporting()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblem)
 		 */
 		public void endReporting() {
 			boolean temporaryProblemsChanged= false;
