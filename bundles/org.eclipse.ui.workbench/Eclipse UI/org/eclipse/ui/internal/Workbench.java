@@ -20,8 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -90,11 +88,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.commands.CommandManagerEvent;
-import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.contexts.ContextManagerEvent;
-import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
@@ -872,14 +866,7 @@ public final class Workbench implements IWorkbench {
 		workbenchCommandSupport = new WorkbenchCommandSupport(this,
 				bindingManager, commandManager, contextManager);
 		workbenchContextSupport.initialize(); // deferred key binding support
-		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
-				commandManagerListener);
-		
-//      TODO: Possible fix for 84700 (Kim)
-//		workbenchContextSupport.getContextManager().addContextManagerListener(
-//				contextManagerListener);
 		initializeCommandResolver();
-        
 
         addWindowListener(windowListener);
 
@@ -2097,26 +2084,6 @@ public final class Workbench implements IWorkbench {
     public IWorkbenchContextSupport getContextSupport() {
         return workbenchContextSupport;
     }
-
-    private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
-
-        public final void commandManagerChanged(
-                final CommandManagerEvent commandManagerEvent) {
-            updateActiveWorkbenchWindowMenuManager(false);
-        }
-    };
-
-    private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
-
-        public final void contextManagerChanged(
-                final ContextManagerEvent contextManagerEvent) {
-            final Set enabledContextIds = workbenchContextSupport
-                    .getContextManager().getEnabledContextIds();
-            final Map enabledContextTree = workbenchContextSupport
-                    .createFilteredContextTreeFor(enabledContextIds);
-            workbenchCommandSupport.setActiveContextIds(enabledContextTree);
-        }
-    };
 
     private final IWindowListener windowListener = new IWindowListener() {
 

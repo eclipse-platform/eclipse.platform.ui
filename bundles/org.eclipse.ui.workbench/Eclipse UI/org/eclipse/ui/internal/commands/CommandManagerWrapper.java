@@ -263,27 +263,26 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 	 */
 	public final void bindingManagerChanged(final BindingManagerEvent event) {
-		// TODO This causes a "widget is disposed" on start-up.
-//		final boolean schemeDefinitionsChanged = event.isSchemeIdDefined()
-//				|| event.isSchemeIdUndefined();
-//		final Set previousSchemeIds;
-//		if (schemeDefinitionsChanged) {
-//			previousSchemeIds = new HashSet(event.getManager()
-//					.getDefinedSchemeIds());
-//			final String schemeId = event.getSchemeId();
-//			if (event.isSchemeIdDefined()) {
-//				previousSchemeIds.remove(schemeId);
-//			} else {
-//				previousSchemeIds.add(schemeId);
-//			}
-//		} else {
-//			previousSchemeIds = null;
-//		}
-//
-//		fireCommandManagerChanged(new CommandManagerEvent(this, false, event
-//				.hasActiveSchemeChanged(), event.hasLocaleChanged(), event
-//				.hasPlatformChanged(), false, false, event.isSchemeIdDefined()
-//				|| event.isSchemeIdUndefined(), null, null, previousSchemeIds));
+		final boolean schemeDefinitionsChanged = event.isSchemeIdDefined()
+				|| event.isSchemeIdUndefined();
+		final Set previousSchemeIds;
+		if (schemeDefinitionsChanged) {
+			previousSchemeIds = new HashSet(event.getManager()
+					.getDefinedSchemeIds());
+			final String schemeId = event.getSchemeId();
+			if (event.isSchemeIdDefined()) {
+				previousSchemeIds.remove(schemeId);
+			} else {
+				previousSchemeIds.add(schemeId);
+			}
+		} else {
+			previousSchemeIds = null;
+		}
+
+		fireCommandManagerChanged(new CommandManagerEvent(this, false, event
+				.hasActiveSchemeChanged(), event.hasLocaleChanged(), event
+				.hasPlatformChanged(), false, false, event.isSchemeIdDefined()
+				|| event.isSchemeIdUndefined(), null, null, previousSchemeIds));
 	}
 
 	/*
