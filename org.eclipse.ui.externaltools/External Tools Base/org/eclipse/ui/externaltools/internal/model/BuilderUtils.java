@@ -34,15 +34,16 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage;
 
 /**
  * Utility methods for working with external tool project builders.
  */
 public class BuilderUtils {
 
-	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
+	public static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 
+	public static final String BUILDER_FOLDER_NAME= ".externalToolBuilders"; //$NON-NLS-1$
+	
 	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
@@ -74,13 +75,21 @@ public class BuilderUtils {
 		if (configuration == null) {
 			// If the memento failed, try treating the handle as a file name.
 			// This is the format used in 3.0.
-			IPath path= new Path(BuilderPropertyPage.BUILDER_FOLDER_NAME).append(configHandle);
+			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
 			IFile file= project.getFile(path);
 			configuration= manager.getLaunchConfiguration(file);
 		}
 		return configuration;
 	}
 
+	/**
+	 * Returns an <code>ICommand</code> from the given launch configuration.
+	 * 
+	 * @param project the project the ICommand is relevant to
+	 * @param config, the launch configuration to create the command from
+	 * @return the new command. <code>null</code> can be returned if problems occur during
+	 * the translation.
+	 */
 	public static ICommand commandFromLaunchConfig(IProject project, ILaunchConfiguration config) {
 		ICommand newCommand = null;
 		try {
@@ -180,7 +189,7 @@ public class BuilderUtils {
 	 * <code>null</code> if the folder could not be created
 	 */
 	public static IFolder getBuilderFolder(IProject project, boolean create) {
-		IFolder folder = project.getFolder(BuilderPropertyPage.BUILDER_FOLDER_NAME);
+		IFolder folder = project.getFolder(BUILDER_FOLDER_NAME);
 		if (!folder.exists() && create) {
 			try {
 				folder.create(true, true, new NullProgressMonitor());

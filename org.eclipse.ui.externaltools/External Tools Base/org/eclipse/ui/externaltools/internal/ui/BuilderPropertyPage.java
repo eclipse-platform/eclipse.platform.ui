@@ -79,12 +79,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public final class BuilderPropertyPage extends PropertyPage implements ICheckStateListener {
 
-	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
-
 	//locally mark a command's enabled state so it can be processed correctly on performOK
 	private static final String COMMAND_ENABLED= "CommandEnabled"; //$NON-NLS-1$
-	
-	public static final String BUILDER_FOLDER_NAME= ".externalToolBuilders"; //$NON-NLS-1$
 
 	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
 	
@@ -210,7 +206,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				}
 			} else {
 				String builderID = commands[i].getBuilderName();
-				if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(LAUNCH_CONFIG_HANDLE) != null) {
+				if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(BuilderUtils.LAUNCH_CONFIG_HANDLE) != null) {
 					// An invalid external tool entry.
 					element= new ErrorConfig(commands[i]);
 				} else {
