@@ -36,7 +36,7 @@ public interface IResourceStatus extends IStatus {
 	// Information Only [0-32]
 
 	// Warnings [33-65]
-	/** Status code constant (value 32) indicating that a given 
+	/** Status code constant (value 35) indicating that a given 
 	 * nature set does not satisfy its constraints.
  	 * Severity: warning. Category: general.
  	 */
