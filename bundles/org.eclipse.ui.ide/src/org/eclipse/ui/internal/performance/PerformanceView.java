@@ -83,6 +83,8 @@ public class PerformanceView extends ViewPart {
 
 	TableViewer viewer;
 
+	private PerformanceStats.PerformanceListener performanceListener;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -108,11 +110,20 @@ public class PerformanceView extends ViewPart {
 			column.setText(columnHeaders[i]);
 		}
 
-		PerformanceStats.addListener(createPerformanceListener());
+		performanceListener = createPerformanceListener();
+		PerformanceStats.addListener(performanceListener);
 		viewer.setInput(""); //$NON-NLS-1$
 
 		createCommonActions(viewer);
 		createContextMenu(viewer);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		PerformanceStats.removeListener(performanceListener);
+		super.dispose();
 	}
 
 	private PerformanceListener createPerformanceListener() {
