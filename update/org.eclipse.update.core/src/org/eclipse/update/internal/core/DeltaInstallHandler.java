@@ -98,9 +98,13 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 		IPluginEntry oldPlugin,
 		IPluginEntry newPlugin)
 		throws CoreException, IOException {
+		if(newPlugin instanceof PluginEntry && !((PluginEntry)newPlugin).isUnpack()){
+			// partial plug-ins (in patches) must always be unpacked
+			return;
+		}
+		
 		// copy the content of the old plugin over the new one, but only
 		// those files that do not exist on the target
-
 		ContentReference[] oldReferences =
 			oldFeature
 				.getFeatureContentProvider()
