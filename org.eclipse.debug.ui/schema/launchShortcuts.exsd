@@ -173,14 +173,6 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       </complexType>
    </element>
 
-   <element name="enablement" type="string">
-      <annotation>
-         <documentation>
-            Enablement logic using XML expression language. This should use some kind of schema reference.
-         </documentation>
-      </annotation>
-   </element>
-
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
