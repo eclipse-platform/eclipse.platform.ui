@@ -420,7 +420,7 @@
          </accelerator>    
 
          <accelerator
-               key="F9||Ctrl+X U||Ctrl+/"
+               key="F9||Ctrl+X U||Ctrl+/||Ctrl+_"
                id="org.eclipse.ui.edit.undo">
          </accelerator>
          <accelerator
@@ -440,7 +440,7 @@
                id="org.eclipse.ui.edit.paste">
          </accelerator>
          <accelerator
-               key="Ctrl+D"
+               key=""
                id="org.eclipse.ui.edit.delete">
          </accelerator>
          <accelerator
@@ -616,11 +616,11 @@
                id="org.eclipse.ui.edit.text.goto.wordNext">
          </accelerator>
          <accelerator
-               key="Alt+Shift+&lt; || Alt+, || Esc , || Esc Shift+&lt; || Ctrl+X ["
+               key="Alt+&lt; || Alt+, || Esc , || Esc &lt; || Ctrl+X ["
                id="org.eclipse.ui.edit.text.goto.textStart">
          </accelerator>
          <accelerator
-               key="Alt+Shift+&gt; || Alt+. || Esc . || Esc Shift+&gt; || Ctrl+X ]"
+               key="Alt+&gt; || Alt+. || Esc . || Esc &gt; || Ctrl+X ]"
                id="org.eclipse.ui.edit.text.goto.textEnd">
          </accelerator>
          <accelerator
