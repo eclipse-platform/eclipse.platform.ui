@@ -67,4 +67,4 @@ public class PartiallySynchronizedDocument extends Document {
 	synchronized public void set(String text) {
 		super.set(text);
 	}
-};
+}

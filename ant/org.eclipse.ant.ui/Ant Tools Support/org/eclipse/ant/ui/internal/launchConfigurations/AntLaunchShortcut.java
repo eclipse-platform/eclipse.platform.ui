@@ -42,6 +42,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -174,11 +175,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			return null;
 		}
 		IResource file= null;
-		while (file == null || file.getType() != IFile.FILE) {		
+		while (file == null || file.getType() != IResource.FILE) {		
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
 				file= parent.findMember(string);
-				if (file != null && file.getType() == IFile.FILE) {
+				if (file != null && file.getType() == IResource.FILE) {
 					break;
 				}
 			}
@@ -288,7 +289,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;

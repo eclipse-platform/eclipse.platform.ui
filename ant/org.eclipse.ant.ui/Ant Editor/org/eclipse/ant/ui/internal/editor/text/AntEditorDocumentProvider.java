@@ -227,7 +227,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 				
 			super.removeAnnotation(annotation, fireModelChanged);
 		}
-	};
+	}
 	
 	/**
 	 * Remembers a XML document model for each element.
@@ -240,7 +240,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 			super(document, annotationModel, fileSynchronizer);
 			fAntModel= model;
 		}
-	};
+	}
 	
 	/**
 	 * Internal structure for mapping positions to some value. 
@@ -253,7 +253,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		static class Entry {
 			Position fPosition;
 			Object fValue;
-		};
+		}
 			
 		private List fList= new ArrayList(2);
 		private int fAnchor= 0;

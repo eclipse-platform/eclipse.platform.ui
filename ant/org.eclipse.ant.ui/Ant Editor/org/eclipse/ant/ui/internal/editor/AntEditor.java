@@ -77,7 +77,7 @@ public class AntEditor extends TextEditor {
         public void selectionChanged(SelectionChangedEvent event) {
             doSelectionChanged(event);
         }
-    };
+    }
     
 
     /**
