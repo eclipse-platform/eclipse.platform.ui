@@ -96,7 +96,7 @@ final class Command implements ICommand {
 										compareTo = Util.compare((Comparable[]) keyBindingsAsArray, (Comparable[]) command.keyBindingsAsArray);
 											
 										if (compareTo == 0)
-											compareTo = name.compareTo(command.name);	
+											compareTo = Util.compare(name, command.name);	
 									}
 								}
 							}
@@ -124,7 +124,7 @@ final class Command implements ICommand {
 		equals &= id.equals(command.id);
 		equals &= imageBindings.equals(command.imageBindings);
 		equals &= keyBindings.equals(command.keyBindings);
-		equals &= name.equals(command.name);
+		equals &= Util.equals(name, command.name);
 		return equals;
 	}
 
@@ -200,7 +200,7 @@ final class Command implements ICommand {
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + imageBindings.hashCode();
 			hashCode = hashCode * HASH_FACTOR + keyBindings.hashCode();
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
 		}
 			
@@ -369,10 +369,7 @@ final class Command implements ICommand {
 		return false;
 	}
 
-	boolean setName(String name) {
-		if (name == null)
-			throw new NullPointerException();
-		
+	boolean setName(String name) {	
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
 			hashCodeComputed = false;

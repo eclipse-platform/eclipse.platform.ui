@@ -70,7 +70,7 @@ final class Context implements IContext {
 					compareTo = id.compareTo(context.id);			
 				
 					if (compareTo == 0) {
-						compareTo = name.compareTo(context.name);
+						compareTo = Util.compare(name, context.name);
 						
 						if (compareTo == 0)
 							compareTo = Util.compare(parentId, context.parentId);		
@@ -92,7 +92,7 @@ final class Context implements IContext {
 		equals &= defined == context.defined;
 		equals &= Util.equals(description, context.description);
 		equals &= id.equals(context.id);
-		equals &= name.equals(context.name);
+		equals &= Util.equals(name, context.name);
 		equals &= Util.equals(parentId, context.parentId);
 		return equals;
 	}
@@ -132,7 +132,7 @@ final class Context implements IContext {
 			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
@@ -226,9 +226,6 @@ final class Context implements IContext {
 	}
 
 	boolean setName(String name) {
-		if (name == null)
-			throw new NullPointerException();
-		
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
 			hashCodeComputed = false;

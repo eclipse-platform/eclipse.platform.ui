@@ -155,7 +155,7 @@ public final class KeySupport {
                 key |= SWT.SHIFT;
         }
 
-        final NaturalKey naturalKey = keyStroke.getNonModifierKey();
+        final NaturalKey naturalKey = keyStroke.getNaturalKey();
         
         if (naturalKey instanceof CharacterKey)
             key |= ((CharacterKey) naturalKey).getCharacter();

@@ -9,35 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public class NotActiveException extends Exception {
+public interface XCaptureListener {
 
-	/**
-	 * JAVADOC
-	 */	
-	public NotActiveException() {
-	}
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param s
-	 */	
-	public NotActiveException(String s) {
-		super(s);
-	}
+	void capture(XCaptureEvent captureEvent);
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
 /**
  * JAVADOC
@@ -23,7 +23,7 @@ package org.eclipse.ui.internal.commands.old;
  * 
  * @since 3.0
  */
-public class PropertyEvent {
+public class XPropertyEvent {
 
 	private String name;
 
@@ -33,7 +33,7 @@ public class PropertyEvent {
 	 * @param name
 	 * @throws IllegalArgumentException
 	 */	
-	public PropertyEvent(String name)
+	public XPropertyEvent(String name)
 		throws IllegalArgumentException {		
 		super();
 		

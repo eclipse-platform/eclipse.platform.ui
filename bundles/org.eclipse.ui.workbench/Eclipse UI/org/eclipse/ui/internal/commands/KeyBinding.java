@@ -39,10 +39,10 @@ final class KeyBinding implements IKeyBinding {
 
 	public int compareTo(Object object) {
 		KeyBinding keyBinding = (KeyBinding) object;
-		int compareTo = keySequence.compareTo(keyBinding.keySequence);
+		int compareTo = match - keyBinding.match;
 		
 		if (compareTo == 0)
-			compareTo = match - keyBinding.match;
+			compareTo = keySequence.compareTo(keyBinding.keySequence);
 					
 		return compareTo;	
 	}

@@ -29,10 +29,7 @@ final class ImageBindingDefinition implements IImageBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {
-		if (commandId == null || imageStyle == null || imageUri == null || locale == null || platform == null)
-			throw new NullPointerException();
-		
+	ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {	
 		this.commandId = commandId;
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;
@@ -43,19 +40,19 @@ final class ImageBindingDefinition implements IImageBindingDefinition {
 	
 	public int compareTo(Object object) {
 		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;
-		int compareTo = commandId.compareTo(imageBindingDefinition.commandId);
+		int compareTo = Util.compare(commandId, imageBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = imageStyle.compareTo(imageBindingDefinition.imageStyle);			
+			compareTo = Util.compare(imageStyle, imageBindingDefinition.imageStyle);			
 
 			if (compareTo == 0) {		
-				compareTo = imageUri.compareTo(imageBindingDefinition.imageUri);			
+				compareTo = Util.compare(imageUri, imageBindingDefinition.imageUri);			
 
 				if (compareTo == 0) {		
-					compareTo = locale.compareTo(imageBindingDefinition.locale);			
+					compareTo = Util.compare(locale, imageBindingDefinition.locale);			
 
 					if (compareTo == 0) {		
-						compareTo = platform.compareTo(imageBindingDefinition.platform);			
+						compareTo = Util.compare(platform, imageBindingDefinition.platform);			
 		
 						if (compareTo == 0)
 							compareTo = Util.compare(pluginId, imageBindingDefinition.pluginId);								
@@ -73,11 +70,11 @@ final class ImageBindingDefinition implements IImageBindingDefinition {
 
 		ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) object;	
 		boolean equals = true;
-		equals &= commandId.equals(imageBindingDefinition.commandId);
-		equals &= imageStyle.equals(imageBindingDefinition.imageStyle);
-		equals &= imageUri.equals(imageBindingDefinition.imageUri);
-		equals &= locale.equals(imageBindingDefinition.locale);
-		equals &= platform.equals(imageBindingDefinition.platform);
+		equals &= Util.equals(commandId, imageBindingDefinition.commandId);
+		equals &= Util.equals(imageStyle, imageBindingDefinition.imageStyle);
+		equals &= Util.equals(imageUri, imageBindingDefinition.imageUri);
+		equals &= Util.equals(locale, imageBindingDefinition.locale);
+		equals &= Util.equals(platform, imageBindingDefinition.platform);
 		equals &= Util.equals(pluginId, imageBindingDefinition.pluginId);
 		return equals;
 	}
@@ -109,11 +106,11 @@ final class ImageBindingDefinition implements IImageBindingDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + commandId.hashCode();
-			hashCode = hashCode * HASH_FACTOR + imageStyle.hashCode();
-			hashCode = hashCode * HASH_FACTOR + imageUri.hashCode();
-			hashCode = hashCode * HASH_FACTOR + locale.hashCode();
-			hashCode = hashCode * HASH_FACTOR + platform.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageStyle);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageUri);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}

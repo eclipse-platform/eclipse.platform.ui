@@ -31,27 +31,6 @@ public interface ICommandDefinition extends Comparable {
 	 * 
 	 * @return
 	 */	
-	boolean getAllowsContextBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean getAllowsImageBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean getAllowsKeyBindings();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getCategoryId();
 
 	/**

@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.RowLayout;
@@ -57,7 +57,7 @@ class AccelTable {
 		if (accels == null)
 			return false;
 			
-		int accelerator = KeyFilter.acceleratorFromEvent(event);
+		int accelerator = XKeyFilter.acceleratorFromEvent(event);
 
 		for (int i = 0; i < accels.length; i++) {
 			if (accels[i] == accelerator) {
@@ -71,7 +71,7 @@ class AccelTable {
 	}
 }
 
-public class KeyFilter {
+public class XKeyFilter {
 
 	static AccelTable table = new AccelTable();
 	static Listener keyListener = new Listener() {

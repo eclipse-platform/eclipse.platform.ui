@@ -12,8 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
 
 import org.eclipse.swt.SWT;
@@ -38,10 +36,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.old.Manager;
-import org.eclipse.ui.internal.commands.old.Sequence;
-import org.eclipse.ui.internal.commands.old.Stroke;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeySupport;
 
 /**
  * Implements a action to enable the user switch between parts
@@ -291,6 +292,7 @@ public class CyclePartAction extends PageEventAction {
 				int stateMask = e.stateMask;
 				char character = e.character;
 				int accelerator = stateMask | (keyCode != 0 ? keyCode : convertCharacter(character));
+				KeySequence keySequence = KeySequence.getInstance(KeySupport.convertFromSWT(accelerator));
 
 				//System.out.println("\nPRESSED");
 				//printKeyEvent(e);
@@ -298,43 +300,46 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
+				CommandManager commandManager = CommandManager.getInstance();
 
 				if (commandForward != null) {
-					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
-					SortedSet sequenceSet = (SortedSet) commandMap.get(commandForward);
-		
-					if (sequenceSet != null) {
-						Iterator iterator = sequenceSet.iterator();
-						
-						while (iterator.hasNext()) {
-							Sequence sequence = (Sequence) iterator.next();
-							List strokes = sequence.getStrokes();
-							int size = strokes.size();
-
-							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
-								acceleratorForward = true;
-								break;
+					ICommand command = commandManager.getCommand(commandForward);
+					
+					if (command.isDefined()) {
+						try {
+							SortedSet keyBindings = command.getKeyBindings();
+							Iterator iterator = keyBindings.iterator();
+							
+							while (iterator.hasNext()) {
+								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+								
+								if (keyBinding.getKeySequence().equals(keySequence)) {
+									acceleratorForward = true;
+									break;
+								}
 							}
+						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
-
+				
 				if (commandBackward != null) {
-					Map commandMap = Manager.getInstance().getKeyMachine().getCommandMap();		
-					SortedSet sequenceSet = (SortedSet) commandMap.get(commandBackward);
-		
-					if (sequenceSet != null) {
-						Iterator iterator = sequenceSet.iterator();
-						
-						while (iterator.hasNext()) {
-							Sequence sequence = (Sequence) iterator.next();
-							List strokes = sequence.getStrokes();
-							int size = strokes.size();
-
-							if (size > 0 && accelerator == ((Stroke) strokes.get(size - 1)).getValue()) {
-								acceleratorBackward = true;
-								break;
+					ICommand command = commandManager.getCommand(commandBackward);
+					
+					if (command.isDefined()) {
+						try {
+							SortedSet keyBindings = command.getKeyBindings();
+							Iterator iterator = keyBindings.iterator();
+								
+							while (iterator.hasNext()) {
+								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+									
+								if (keyBinding.getKeySequence().equals(keySequence)) {
+									acceleratorBackward = true;
+									break;
+								}
 							}
+						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}

@@ -65,7 +65,7 @@ final class Category implements ICategory {
 				compareTo = id.compareTo(category.id);			
 			
 				if (compareTo == 0)
-					compareTo = name.compareTo(category.name);
+					compareTo = Util.compare(name, category.name);
 			}
 		}
 
@@ -81,7 +81,7 @@ final class Category implements ICategory {
 		equals &= defined == category.defined;
 		equals &= Util.equals(description, category.description);
 		equals &= id.equals(category.id);
-		equals &= name.equals(category.name);
+		equals &= Util.equals(name, category.name);
 		return equals;
 	}
 
@@ -111,7 +111,7 @@ final class Category implements ICategory {
 			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
 		}
 			
@@ -184,9 +184,6 @@ final class Category implements ICategory {
 	}
 
 	boolean setName(String name) {
-		if (name == null)
-			throw new NullPointerException();
-		
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
 			hashCodeComputed = false;

@@ -27,9 +27,6 @@ final class ContextBindingDefinition implements IContextBindingDefinition {
 	private transient String string;
 
 	ContextBindingDefinition(String commandId, String contextId, String pluginId) {
-		if (commandId == null || contextId == null)
-			throw new NullPointerException();
-		
 		this.commandId = commandId;
 		this.contextId = contextId;
 		this.pluginId = pluginId;
@@ -37,10 +34,10 @@ final class ContextBindingDefinition implements IContextBindingDefinition {
 	
 	public int compareTo(Object object) {
 		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;
-		int compareTo = commandId.compareTo(contextBindingDefinition.commandId);
+		int compareTo = Util.compare(commandId, contextBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = contextId.compareTo(contextBindingDefinition.contextId);			
+			compareTo = Util.compare(contextId, contextBindingDefinition.contextId);			
 		
 			if (compareTo == 0)
 				compareTo = Util.compare(pluginId, contextBindingDefinition.pluginId);								
@@ -55,8 +52,8 @@ final class ContextBindingDefinition implements IContextBindingDefinition {
 
 		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;	
 		boolean equals = true;
-		equals &= commandId.equals(contextBindingDefinition.commandId);
-		equals &= contextId.equals(contextBindingDefinition.contextId);
+		equals &= Util.equals(commandId, contextBindingDefinition.commandId);
+		equals &= Util.equals(contextId, contextBindingDefinition.contextId);
 		equals &= Util.equals(pluginId, contextBindingDefinition.pluginId);
 		return equals;
 	}
@@ -76,8 +73,8 @@ final class ContextBindingDefinition implements IContextBindingDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + commandId.hashCode();
-			hashCode = hashCode * HASH_FACTOR + contextId.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}

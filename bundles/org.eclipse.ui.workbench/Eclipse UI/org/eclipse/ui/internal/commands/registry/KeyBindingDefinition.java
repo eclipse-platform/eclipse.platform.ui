@@ -14,7 +14,8 @@ package org.eclipse.ui.internal.commands.registry;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBindingDefinition implements IKeyBindingDefinition {
+//TODO private
+public final class KeyBindingDefinition implements IKeyBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyBindingDefinition.class.getName().hashCode();
@@ -31,10 +32,8 @@ final class KeyBindingDefinition implements IKeyBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
-		if (commandId == null || contextId == null || keyConfigurationId == null || keySequence == null || locale == null || platform == null)
-			throw new NullPointerException();
-		
+	// TODO private
+	public KeyBindingDefinition(String commandId, String contextId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
 		this.commandId = commandId;
 		this.contextId = contextId;
 		this.keyConfigurationId = keyConfigurationId;
@@ -46,22 +45,22 @@ final class KeyBindingDefinition implements IKeyBindingDefinition {
 	
 	public int compareTo(Object object) {
 		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;
-		int compareTo = commandId.compareTo(keyBindingDefinition.commandId);
+		int compareTo = Util.compare(commandId, keyBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
-			compareTo = contextId.compareTo(keyBindingDefinition.contextId);			
+			compareTo = Util.compare(contextId, keyBindingDefinition.contextId);			
 
 			if (compareTo == 0) {		
-				compareTo = keyConfigurationId.compareTo(keyBindingDefinition.keyConfigurationId);			
+				compareTo = Util.compare(keyConfigurationId, keyBindingDefinition.keyConfigurationId);			
 
 				if (compareTo == 0) {
-					compareTo = keySequence.compareTo(keyBindingDefinition.keySequence);
+					compareTo = Util.compare(keySequence, keyBindingDefinition.keySequence);
 
 					if (compareTo == 0) {		
-						compareTo = locale.compareTo(keyBindingDefinition.locale);			
+						compareTo = Util.compare(locale, keyBindingDefinition.locale);			
 	
 						if (compareTo == 0) {		
-							compareTo = platform.compareTo(keyBindingDefinition.platform);			
+							compareTo = Util.compare(platform, keyBindingDefinition.platform);			
 			
 							if (compareTo == 0)
 								compareTo = Util.compare(pluginId, keyBindingDefinition.pluginId);
@@ -80,12 +79,12 @@ final class KeyBindingDefinition implements IKeyBindingDefinition {
 
 		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;	
 		boolean equals = true;
-		equals &= commandId.equals(keyBindingDefinition.commandId);
-		equals &= contextId.equals(keyBindingDefinition.contextId);
-		equals &= keyConfigurationId.equals(keyBindingDefinition.keyConfigurationId);
-		equals &= keySequence.equals(keyBindingDefinition.keySequence);
-		equals &= locale.equals(keyBindingDefinition.locale);
-		equals &= platform.equals(keyBindingDefinition.platform);
+		equals &= Util.equals(commandId, keyBindingDefinition.commandId);
+		equals &= Util.equals(contextId, keyBindingDefinition.contextId);
+		equals &= Util.equals(keyConfigurationId, keyBindingDefinition.keyConfigurationId);
+		equals &= Util.equals(keySequence, keyBindingDefinition.keySequence);
+		equals &= Util.equals(locale, keyBindingDefinition.locale);
+		equals &= Util.equals(platform, keyBindingDefinition.platform);
 		equals &= Util.equals(pluginId, keyBindingDefinition.pluginId);
 		return equals;
 	}
@@ -121,12 +120,12 @@ final class KeyBindingDefinition implements IKeyBindingDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + commandId.hashCode();
-			hashCode = hashCode * HASH_FACTOR + contextId.hashCode();
-			hashCode = hashCode * HASH_FACTOR + keyConfigurationId.hashCode();
-			hashCode = hashCode * HASH_FACTOR + keySequence.hashCode();
-			hashCode = hashCode * HASH_FACTOR + locale.hashCode();
-			hashCode = hashCode * HASH_FACTOR + platform.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}

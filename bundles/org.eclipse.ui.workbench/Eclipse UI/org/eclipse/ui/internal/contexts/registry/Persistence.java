@@ -35,15 +35,7 @@ final class Persistence {
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = Util.ZERO_LENGTH_STRING;
-		
 		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = Util.ZERO_LENGTH_STRING;
-		
 		String parentId = memento.getString(TAG_PARENT_ID);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		return new ContextDefinition(description, id, name, parentId, pluginId);
@@ -84,14 +76,8 @@ final class Persistence {
 		contextDefinitions = new ArrayList(contextDefinitions);
 		Iterator iterator = contextDefinitions.iterator();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			
-			if (object == null)
-				throw new NullPointerException();
-			else if (!(iterator.next() instanceof IContextDefinition))
-				throw new IllegalArgumentException();
-		}		
+		while (iterator.hasNext())
+			Util.assertInstance(iterator.next(), IContextDefinition.class);
 
 		iterator = contextDefinitions.iterator();
 

@@ -40,13 +40,13 @@ final class ImageBinding implements IImageBinding {
 
 	public int compareTo(Object object) {
 		ImageBinding imageBinding = (ImageBinding) object;
-		int compareTo = imageStyle.compareTo(imageBinding.imageStyle);			
+		int compareTo = match - imageBinding.match;		
 
 		if (compareTo == 0) {
-			compareTo = imageStyle.compareTo(imageBinding.imageUri);
+			compareTo = imageStyle.compareTo(imageBinding.imageStyle);	
 		
 			if (compareTo == 0)
-				compareTo = match - imageBinding.match;
+				compareTo = imageStyle.compareTo(imageBinding.imageUri);
 		}
 		
 		return compareTo;	

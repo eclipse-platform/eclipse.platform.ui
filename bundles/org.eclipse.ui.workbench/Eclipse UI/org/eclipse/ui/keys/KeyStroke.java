@@ -272,7 +272,7 @@ public final class KeyStroke implements Comparable {
 	 * 
 	 * @return
 	 */
-	public NaturalKey getNonModifierKey() {
+	public NaturalKey getNaturalKey() {
 		return naturalKey;
 	}
 

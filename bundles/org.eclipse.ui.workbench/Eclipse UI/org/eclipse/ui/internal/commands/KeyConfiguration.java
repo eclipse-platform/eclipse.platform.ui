@@ -70,7 +70,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 					compareTo = id.compareTo(keyConfiguration.id);			
 				
 					if (compareTo == 0) {
-						compareTo = name.compareTo(keyConfiguration.name);
+						compareTo = Util.compare(name, keyConfiguration.name);
 						
 						if (compareTo == 0)
 							compareTo = Util.compare(parentId, keyConfiguration.parentId);		
@@ -92,7 +92,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 		equals &= defined == keyConfiguration.defined;
 		equals &= Util.equals(description, keyConfiguration.description);
 		equals &= id.equals(keyConfiguration.id);
-		equals &= name.equals(keyConfiguration.name);
+		equals &= Util.equals(name, keyConfiguration.name);
 		equals &= Util.equals(parentId, keyConfiguration.parentId);
 		return equals;
 	}
@@ -132,7 +132,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 			hashCode = hashCode * HASH_FACTOR + (defined ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
@@ -225,10 +225,7 @@ final class KeyConfiguration implements IKeyConfiguration {
 		return false;
 	}
 
-	boolean setName(String name) {
-		if (name == null)
-			throw new NullPointerException();
-		
+	boolean setName(String name) {	
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
 			hashCodeComputed = false;

@@ -30,10 +30,7 @@ final class Persistence {
 
 	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
-	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$	
-	final static String TAG_ALLOWS_CONTEXT_BINDINGS = "allowsContextBindings"; //$NON-NLS-1$	
-	final static String TAG_ALLOWS_IMAGE_BINDINGS = "allowsImageBindings"; //$NON-NLS-1$	
-	final static String TAG_ALLOWS_KEY_BINDINGS = "allowsKeyBindings"; //$NON-NLS-1$	
+	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
@@ -66,9 +63,6 @@ final class Persistence {
 		if (keyConfigurationId == null)
 			keyConfigurationId = memento.getString("value"); //$NON-NLS-1$ 
 		// TODO deprecated end
-
-		if (keyConfigurationId == null)
-			keyConfigurationId = Util.ZERO_LENGTH_STRING;
 	
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		
@@ -102,16 +96,8 @@ final class Persistence {
 			throw new NullPointerException();			
 
 		String description = memento.getString(TAG_DESCRIPTION);
-		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = Util.ZERO_LENGTH_STRING;
-		
+		String id = memento.getString(TAG_ID);	
 		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = Util.ZERO_LENGTH_STRING;
-		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		
 		// TODO deprecated start
@@ -142,10 +128,7 @@ final class Persistence {
 	static ICommandDefinition readCommandDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
-			
-		boolean allowsContextBindings = !Boolean.FALSE.toString().equalsIgnoreCase(memento.getString(TAG_ALLOWS_CONTEXT_BINDINGS));
-		boolean allowsImageBindings = !Boolean.FALSE.toString().equalsIgnoreCase(memento.getString(TAG_ALLOWS_IMAGE_BINDINGS));
-		boolean allowsKeyBindings = !Boolean.FALSE.toString().equalsIgnoreCase(memento.getString(TAG_ALLOWS_KEY_BINDINGS));			
+
 		String categoryId = memento.getString(TAG_CATEGORY_ID);
 		
 		// TODO deprecated start
@@ -156,15 +139,7 @@ final class Persistence {
 		String description = memento.getString(TAG_DESCRIPTION);
 		String helpId = memento.getString(TAG_HELP_ID);
 		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = Util.ZERO_LENGTH_STRING;
-		
 		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = Util.ZERO_LENGTH_STRING;
-		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 
 		// TODO deprecated start
@@ -172,7 +147,7 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 		
-		return new CommandDefinition(allowsContextBindings, allowsImageBindings, allowsKeyBindings, categoryId, description, helpId, id, name, pluginId);
+		return new CommandDefinition(categoryId, description, helpId, id, name, pluginId);
 	}
 
 	static List readCommandDefinitions(IMemento memento, String name, String pluginIdOverride) {
@@ -197,15 +172,7 @@ final class Persistence {
 			throw new NullPointerException();			
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
-
-		if (commandId == null)
-			commandId = Util.ZERO_LENGTH_STRING;
-
 		String contextId = memento.getString(TAG_CONTEXT_ID);
-
-		if (contextId == null)
-			contextId = Util.ZERO_LENGTH_STRING;
-
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		return new ContextBindingDefinition(commandId, contextId, pluginId);
 	}
@@ -232,30 +199,10 @@ final class Persistence {
 			throw new NullPointerException();			
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
-
-		if (commandId == null)
-			commandId = Util.ZERO_LENGTH_STRING;
-
 		String imageStyle = memento.getString(TAG_IMAGE_STYLE);
-
-		if (imageStyle == null)
-			imageStyle = Util.ZERO_LENGTH_STRING;
-
 		String imageUri = memento.getString(TAG_IMAGE_URI);
-
-		if (imageUri == null)
-			imageUri = Util.ZERO_LENGTH_STRING;
-
 		String locale = memento.getString(TAG_LOCALE);
-
-		if (locale == null)
-			locale = Util.ZERO_LENGTH_STRING;
-
 		String platform = memento.getString(TAG_PLATFORM);
-
-		if (platform == null)
-			platform = Util.ZERO_LENGTH_STRING;
-
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		return new ImageBindingDefinition(commandId, imageStyle, imageUri, locale, platform, pluginId);
 	}
@@ -288,18 +235,12 @@ final class Persistence {
 			commandId = memento.getString("command"); //$NON-NLS-1$ 
 		// TODO deprecated end		
 
-		if (commandId == null)
-			commandId = Util.ZERO_LENGTH_STRING;
-
 		String contextId = memento.getString(TAG_CONTEXT_ID);
 
 		// TODO deprecated start
 		if (contextId == null)
 			contextId = memento.getString("scope"); //$NON-NLS-1$
 		// TODO deprecated end		
-
-		if (contextId == null)
-			contextId = Util.ZERO_LENGTH_STRING;
 
 		String keyConfigurationId = memento.getString(TAG_KEY_CONFIGURATION_ID);
 
@@ -308,10 +249,7 @@ final class Persistence {
 			keyConfigurationId = memento.getString("configuration"); //$NON-NLS-1$
 		// TODO deprecated end		
 
-		if (keyConfigurationId == null)
-			keyConfigurationId = Util.ZERO_LENGTH_STRING;
-
-		KeySequence keySequence = KeySequence.getInstance();
+		KeySequence keySequence = null;
 		String keySequenceAsString = memento.getString(TAG_KEY_SEQUENCE);
 
 		if (keySequenceAsString != null)
@@ -331,20 +269,11 @@ final class Persistence {
 				if (string != null)
 					keySequence = deprecatedSequenceToKeySequence(parseDeprecatedSequence(string));
 			}			
-			
-		}	
-		// TODO deprecated end
+		// TODO deprecated end			
+		}
 		
 		String locale = memento.getString(TAG_LOCALE);
-
-		if (locale == null)
-			locale = Util.ZERO_LENGTH_STRING;
-
 		String platform = memento.getString(TAG_PLATFORM);
-
-		if (platform == null)
-			platform = Util.ZERO_LENGTH_STRING;
-
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
 		
 		// TODO deprecated start
@@ -378,15 +307,7 @@ final class Persistence {
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = Util.ZERO_LENGTH_STRING;
-		
 		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = Util.ZERO_LENGTH_STRING;
-
 		String parentId = memento.getString(TAG_PARENT_ID);		
 
 		// TODO deprecated start
@@ -475,9 +396,6 @@ final class Persistence {
 		if (memento == null || commandDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_ALLOWS_CONTEXT_BINDINGS, commandDefinition.getAllowsContextBindings() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-		memento.putString(TAG_ALLOWS_IMAGE_BINDINGS, commandDefinition.getAllowsImageBindings() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-		memento.putString(TAG_ALLOWS_KEY_BINDINGS, commandDefinition.getAllowsKeyBindings() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		memento.putString(TAG_CATEGORY_ID, commandDefinition.getCategoryId());
 		memento.putString(TAG_DESCRIPTION, commandDefinition.getDescription());
 		memento.putString(TAG_HELP_ID, commandDefinition.getHelpId());
@@ -562,7 +480,7 @@ final class Persistence {
 		memento.putString(TAG_COMMAND_ID, keyBindingDefinition.getCommandId());
 		memento.putString(TAG_CONTEXT_ID, keyBindingDefinition.getContextId());
 		memento.putString(TAG_KEY_CONFIGURATION_ID, keyBindingDefinition.getKeyConfigurationId());
-		memento.putString(TAG_KEY_SEQUENCE, keyBindingDefinition.getKeySequence().toString());
+		memento.putString(TAG_KEY_SEQUENCE,	keyBindingDefinition.getKeySequence() != null ? keyBindingDefinition.getKeySequence().toString() : null);
 		memento.putString(TAG_LOCALE, keyBindingDefinition.getLocale());
 		memento.putString(TAG_PLATFORM, keyBindingDefinition.getPlatform());
 		memento.putString(TAG_PLUGIN_ID, keyBindingDefinition.getPluginId());

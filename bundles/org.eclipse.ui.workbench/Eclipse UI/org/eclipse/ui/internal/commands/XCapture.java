@@ -20,10 +20,10 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Control;
 
-public final class Capture {
+public final class XCapture {
 
-	public static Capture create() {
-		return new Capture();
+	public static XCapture create() {
+		return new XCapture();
 	}		
 
 	private List captureListeners;
@@ -35,7 +35,7 @@ public final class Capture {
 	private int pen;
 	private List points;	
 	
-	private Capture() {
+	private XCapture() {
 		super();
 		captureListeners = new ArrayList();
 
@@ -49,7 +49,7 @@ public final class Capture {
 					data = mouseEvent.stateMask;
 					pen = mouseEvent.button;
 					points.clear();
-					points.add(new Point(mouseEvent.x, mouseEvent.y));
+					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
 					control.addMouseMoveListener(mouseMoveListener);
 				}
 			}
@@ -57,8 +57,8 @@ public final class Capture {
 			public void mouseUp(MouseEvent mouseEvent) {
 				if (capturing && mouseEvent.button == pen) {
 					control.removeMouseMoveListener(mouseMoveListener);
-					points.add(new Point(mouseEvent.x, mouseEvent.y));
-					CaptureEvent captureEvent = CaptureEvent.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
+					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
+					XCaptureEvent captureEvent = XCaptureEvent.create(data, pen, (XPoint[]) points.toArray(new XPoint[points.size()]));
 					capturing = false;
 					data = 0;
 					pen = 0;
@@ -66,7 +66,7 @@ public final class Capture {
 					Iterator iterator = captureListeners.iterator();
 
 					while (iterator.hasNext())
-						((CaptureListener) iterator.next()).capture(captureEvent);
+						((XCaptureListener) iterator.next()).capture(captureEvent);
 				}
 			}
 		};
@@ -74,14 +74,14 @@ public final class Capture {
 		mouseMoveListener = new MouseMoveListener() {
 			public void mouseMove(MouseEvent mouseEvent) {
 				if (capturing)
-					points.add(new Point(mouseEvent.x, mouseEvent.y));
+					points.add(new XPoint(mouseEvent.x, mouseEvent.y));
 			}
 		};	
 		
 		points = new ArrayList();
 	}
 
-	public void addCaptureListener(CaptureListener captureListener) {
+	public void addCaptureListener(XCaptureListener captureListener) {
 		captureListeners.add(captureListener);	
 	}
 
@@ -89,7 +89,7 @@ public final class Capture {
 		return control;	
 	}
 
-	public void removeCaptureListener(CaptureListener captureListener) {
+	public void removeCaptureListener(XCaptureListener captureListener) {
 		captureListeners.remove(captureListener);			
 	}
 

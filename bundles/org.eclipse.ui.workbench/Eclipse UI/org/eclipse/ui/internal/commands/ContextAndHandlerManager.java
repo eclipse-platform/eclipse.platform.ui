@@ -9,16 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.ContextResolver;
@@ -51,7 +48,8 @@ import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public class ContextAndHandlerManager implements IContextResolver {
 
@@ -123,14 +121,12 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 	private AcceleratorMenu acceleratorMenu;		
 	private WorkbenchWindow workbenchWindow;
-	private Map contextsByCommand;
 	private ICommandManager commandManager;
 	private IContextManager contextManager;
 
 	public ContextAndHandlerManager(WorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;	
-		reset();
 		IWorkbench workbench = workbenchWindow.getWorkbench();
 		commandManager = ((Workbench) workbench).getCommandManager(); // TODO temporary cast
 		commandManager.addCommandManagerListener(commandManagerListener);				
@@ -148,78 +144,89 @@ public class ContextAndHandlerManager implements IContextResolver {
 	}
 
 	private void clear() {		
-		Manager.getInstance().getKeyMachine().setMode(Sequence.create());
+		CommandManager.getInstance().setMode(KeySequence.getInstance());
 		modeContributionItem.setText(""); //$NON-NLS-1$	
 		update();
 	}
 
-	private void pressed(Stroke stroke, Event event) { 
-		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();				
-		List strokes = new ArrayList(keyMachine.getMode().getStrokes());
-		strokes.add(stroke);
-		Sequence childMode = Sequence.create(strokes);		
-		Map sequenceMapForMode = keyMachine.getSequenceMapForMode();				
-		keyMachine.setMode(childMode);
-		Map childSequenceMapForMode = keyMachine.getSequenceMapForMode();
+	// TODO remove event parameter
+	private void pressed(int accelerator, Event event) { 
+		KeyStroke keyStroke = org.eclipse.ui.keys.KeySupport.convertFromSWT(accelerator);		
+		CommandManager commandManager = CommandManager.getInstance();				
+		List keyStrokes = new ArrayList(commandManager.getMode().getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		KeySequence childMode = KeySequence.getInstance(keyStrokes);		
+		Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();				
+		commandManager.setMode(childMode);
+		Map childMatchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
 
-		if (childSequenceMapForMode.isEmpty()) {
-			clear();			
-			org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) ((CommandManager) commandManager).getActionsById().get((String) sequenceMapForMode.get(childMode));
+		if (childMatchesByKeySequenceForMode.isEmpty()) {
+			clear();
+			Match match = (Match) matchesByKeySequenceForMode.get(childMode);
 			
-			if (action != null && action.isEnabled())
-				try {			
-					action.execute(event);
-				} catch (Exception e) {
-					// TODO
-				}
+			if (match != null) {			
+				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) commandManager.getActionsById().get(match.getCommandId());
+				
+				if (action != null && action.isEnabled())
+					try {			
+						action.execute(event);
+					} catch (Exception e) {
+						// TODO
+					}
+			}
 		}
 		else {
-			modeContributionItem.setText(KeySupport.formatSequence(childMode, true));
+			modeContributionItem.setText(childMode.format());
 			update();	
 		}
 	}
 
-	public void update() {
-		List contexts = new ArrayList(contextManager.getActiveContextIds());
-		// TODO: contexts should be sorted somehow to resolve conflicts
-		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
-			
-		try {
-			// TODO: get rid of this
-			if (contexts.size() == 0)
-				contexts.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
+	public boolean inContext(String commandId) {
+		/* TODO
+		if (commandId != null) {
+			ICommand command = commandManager.getCommand(commandId);
 
-			keyMachine.setContexts((String[]) contexts.toArray(new String[contexts.size()]));
-		} catch (IllegalArgumentException eIllegalArgument) {
-			System.err.println(eIllegalArgument);
+			if (command != null) {
+				return command.isDefined() && command.isActive();
+			}
 		}
+		*/		
 
-		Sequence mode = keyMachine.getMode();
-		List strokes = mode.getStrokes();
-		int size = strokes.size();		
-		Map sequenceMapForMode = keyMachine.getSequenceMapForMode();
-		SortedSet strokeSetForMode = new TreeSet();
-		Iterator iterator = sequenceMapForMode.entrySet().iterator();
+		return true;			
+	}
+
+	public void update() {
+		List activeContextIds = new ArrayList(contextManager.getActiveContextIds());				
+		activeContextIds.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);	// TODO remove	
+		CommandManager commandManager = CommandManager.getInstance();
+		commandManager.setActiveContextIds(activeContextIds);
+		KeySequence mode = commandManager.getMode();
+		List keyStrokes = mode.getKeyStrokes();
+		int size = keyStrokes.size();	
+		Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();		
+		SortedSet keyStrokeSetForMode = new TreeSet();
+		Iterator iterator = matchesByKeySequenceForMode.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			Sequence sequence = (Sequence) entry.getKey();
-			String command = (String) entry.getValue();		
+			KeySequence keySequence = (KeySequence) entry.getKey();
+			Match match = (Match) entry.getValue();		
 
-			if (sequence.isChildOf(mode, false)) {
-				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) ((CommandManager) commandManager).getActionsById().get(command);
+			if (match != null && keySequence.isChildOf(mode, false)) {
+				// TODO uncomment?
+				//org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) commandManager.getActionsById().get(match.getCommandId());
 				
-				if (action != null)
-					strokeSetForMode.add(sequence.getStrokes().get(size));	
+				//if (action != null)
+					keyStrokeSetForMode.add(keySequence.getKeyStrokes().get(size));	
 			}
 		}
 		
-		iterator = strokeSetForMode.iterator();
-		int[] accelerators = new int[strokeSetForMode.size()];
+		iterator = keyStrokeSetForMode.iterator();
+		int[] accelerators = new int[keyStrokeSetForMode.size()];
 		int i = 0;
 			   	
 		while (iterator.hasNext())
-			accelerators[i++] = ((Stroke) iterator.next()).getValue();
+			accelerators[i++] = org.eclipse.ui.keys.KeySupport.convertToSWT((KeyStroke) iterator.next());
 		
 		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Shell shell = workbenchWindow.getShell();
@@ -261,8 +268,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 					event.display = selectionEvent.display;
 					event.time = selectionEvent.time;
 					event.widget = selectionEvent.widget;
-					pressed(Stroke.create(selectionEvent.detail), event);
-					//pressed(Stroke.create(selectionEvent.detail));
+					pressed(selectionEvent.detail, event);
 				}
 			});
 		}
@@ -285,61 +291,4 @@ public class ContextAndHandlerManager implements IContextResolver {
 			coolBarManager.update(true);
 		*/
 	}
-
-	public boolean inContext(String commandId) {
-		if (commandId != null) {
-			Set contextIds = (Set) contextsByCommand.get(commandId);
-		
-			if (contextIds != null) {
-				List activeContextIds = contextManager.getActiveContextIds();			
-				Iterator iterator = contextIds.iterator();
-				
-				while (iterator.hasNext()) {
-					String contextId = (String) iterator.next();
-					
-					if (activeContextIds.contains(contextId))
-						return true;
-				}
-
-				return false;				
-			}
-		}
-
-		return true;			
-	}
-	
-	void reset() {
-		AbstractRegistry coreRegistry = CoreRegistry.getInstance();
-		AbstractMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
-			
-		try {
-			coreRegistry.load();
-		} catch (IOException eIO) {
-		}
-	
-		try {
-			preferenceRegistry.load();
-		} catch (IOException eIO) {
-		}		
-
-		List contextBindings = new ArrayList();
-		contextBindings.addAll(coreRegistry.getContextBindings());
-		contextBindings.addAll(preferenceRegistry.getContextBindings());	
-		contextsByCommand = new TreeMap();
-		Iterator iterator = contextBindings.iterator();
-		
-		while (iterator.hasNext()) {		
-			ContextBinding contextBinding = (ContextBinding) iterator.next();
-			String command = contextBinding.getCommand();
-			String context = contextBinding.getContext();			
-			Set set = (Set) contextsByCommand.get(command);
-			
-			if (set == null) {
-				set = new TreeSet();
-				contextsByCommand.put(command, set);
-			}
-			
-			set.add(context);
-		}
-	}	
 }

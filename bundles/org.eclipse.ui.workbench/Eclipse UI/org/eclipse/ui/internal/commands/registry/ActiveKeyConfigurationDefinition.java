@@ -13,7 +13,8 @@ package org.eclipse.ui.internal.commands.registry;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
+// TODO private
+public final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class.getName().hashCode();
@@ -25,17 +26,15 @@ final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationD
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
-		if (keyConfigurationId == null)
-			throw new NullPointerException();
-		
+	// TODO private
+	public ActiveKeyConfigurationDefinition(String keyConfigurationId, String pluginId) {
 		this.keyConfigurationId = keyConfigurationId;
 		this.pluginId = pluginId;
 	}
 	
 	public int compareTo(Object object) {
 		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;
-		int compareTo = keyConfigurationId.compareTo(activeKeyConfigurationDefinition.keyConfigurationId);			
+		int compareTo = Util.compare(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);			
 
 		if (compareTo == 0)
 			compareTo = Util.compare(pluginId, activeKeyConfigurationDefinition.pluginId);								
@@ -49,7 +48,7 @@ final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationD
 
 		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) object;	
 		boolean equals = true;
-		equals &= keyConfigurationId.equals(activeKeyConfigurationDefinition.keyConfigurationId);
+		equals &= Util.equals(keyConfigurationId, activeKeyConfigurationDefinition.keyConfigurationId);
 		equals &= Util.equals(pluginId, activeKeyConfigurationDefinition.pluginId);
 		return equals;
 	}
@@ -65,7 +64,7 @@ final class ActiveKeyConfigurationDefinition implements IActiveKeyConfigurationD
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + keyConfigurationId.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}

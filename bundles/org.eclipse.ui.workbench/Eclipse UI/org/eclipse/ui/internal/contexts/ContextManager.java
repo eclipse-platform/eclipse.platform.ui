@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.contexts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,17 @@ public final class ContextManager implements IContextManager {
 			instance = new ContextManager();
 			
 		return instance;
+	}
+
+	public static void validateContextDefinitions(Collection contextDefinitions) {			
+		Iterator iterator = contextDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
+			
+			if (contextDefinition.getId() == null)
+				iterator.remove();
+		}
 	}
 
 	private List activeContextIds = new ArrayList();
@@ -142,15 +154,17 @@ public final class ContextManager implements IContextManager {
 			notifyContexts(updatedContextIds);	
 	}
 
-	IContextRegistry getPluginContextRegistry() {
+	// TODO private
+	public IContextRegistry getPluginContextRegistry() {
 		return pluginContextRegistry;
 	}
 
-	IContextRegistry getPreferenceContextRegistry() {
+	// TODO private
+	public IContextRegistry getPreferenceContextRegistry() {
 		return preferenceContextRegistry;
 	}
 
-	void loadPluginContextRegistry() {
+	private void loadPluginContextRegistry() {
 		try {
 			pluginContextRegistry.load();
 		} catch (IOException eIO) {
@@ -158,7 +172,7 @@ public final class ContextManager implements IContextManager {
 		}
 	}
 	
-	void loadPreferenceContextRegistry() {
+	private void loadPreferenceContextRegistry() {
 		try {
 			preferenceContextRegistry.load();
 		} catch (IOException eIO) {
@@ -177,7 +191,7 @@ public final class ContextManager implements IContextManager {
 		}			
 	}
 
-	private void notifyContexts(SortedSet contextIds) {	
+	private void notifyContexts(Collection contextIds) {	
 		Iterator iterator = contextIds.iterator();
 		
 		while (iterator.hasNext()) {
@@ -193,7 +207,8 @@ public final class ContextManager implements IContextManager {
 		List contextDefinitions = new ArrayList();
 		contextDefinitions.addAll(pluginContextRegistry.getContextDefinitions());
 		contextDefinitions.addAll(preferenceContextRegistry.getContextDefinitions());
-		SortedMap contextDefinitionsById = ContextDefinition.sortedMapById(contextDefinitions);
+		validateContextDefinitions(contextDefinitions);
+		SortedMap contextDefinitionsById = new TreeMap(ContextDefinition.contextDefinitionsById(contextDefinitions, false));
 		SortedSet definedContextIds = new TreeSet(contextDefinitionsById.keySet());		
 		boolean contextManagerChanged = false;
 
@@ -218,12 +233,12 @@ public final class ContextManager implements IContextManager {
 		IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionsById.get(context.getId());
 		updated |= context.setDefined(contextDefinition != null);
 		updated |= context.setDescription(contextDefinition != null ? contextDefinition.getDescription() : null);
-		updated |= context.setName(contextDefinition != null ? contextDefinition.getName() : Util.ZERO_LENGTH_STRING);
+		updated |= context.setName(contextDefinition != null ? contextDefinition.getName() : null);
 		updated |= context.setParentId(contextDefinition != null ? contextDefinition.getParentId() : null);
 		return updated;
 	}
 
-	private SortedSet updateContexts(SortedSet contextIds) {
+	private SortedSet updateContexts(Collection contextIds) {
 		SortedSet updatedIds = new TreeSet();
 		Iterator iterator = contextIds.iterator();
 		

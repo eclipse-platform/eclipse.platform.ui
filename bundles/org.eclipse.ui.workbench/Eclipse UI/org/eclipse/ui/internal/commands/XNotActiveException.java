@@ -11,7 +11,33 @@
 
 package org.eclipse.ui.internal.commands;
 
-public interface CaptureListener {
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public class XNotActiveException extends Exception {
 
-	void capture(CaptureEvent captureEvent);
+	/**
+	 * JAVADOC
+	 */	
+	public XNotActiveException() {
+	}
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param s
+	 */	
+	public XNotActiveException(String s) {
+		super(s);
+	}
 }

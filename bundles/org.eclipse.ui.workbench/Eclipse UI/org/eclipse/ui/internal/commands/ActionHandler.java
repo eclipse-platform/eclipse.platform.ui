@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
 
@@ -26,7 +26,7 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 		return action;
 	}
 
-	public void addPropertyListener(IPropertyListener propertyListener) {
+	public void addPropertyListener(XPropertyListener propertyListener) {
 	}
 
 	public void execute() {	
@@ -50,6 +50,6 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 		return action.isEnabled();
 	}
 	
-	public void removePropertyListener(IPropertyListener propertyListener) {	
+	public void removePropertyListener(XPropertyListener propertyListener) {	
 	}
 }

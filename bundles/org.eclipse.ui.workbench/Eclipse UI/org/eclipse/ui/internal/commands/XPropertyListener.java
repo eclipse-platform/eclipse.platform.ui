@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.old;
+package org.eclipse.ui.internal.commands;
 
 /**
  * <p>
@@ -21,26 +21,26 @@ package org.eclipse.ui.internal.commands.old;
  * 
  * @since 3.0
  */
-public interface IPropertyListener {
+public interface XPropertyListener {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	
-	void propertyAdded(PropertyEvent propertyEvent);
+	void propertyAdded(XPropertyEvent propertyEvent);
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	
-	void propertyChanged(PropertyEvent propertyEvent);
+	void propertyChanged(XPropertyEvent propertyEvent);
 	
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
 	 */	
-	void propertyRemoved(PropertyEvent propertyEvent);
+	void propertyRemoved(XPropertyEvent propertyEvent);
 }

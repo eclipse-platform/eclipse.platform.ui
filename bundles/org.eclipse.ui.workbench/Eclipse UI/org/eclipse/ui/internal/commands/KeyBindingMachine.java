@@ -33,8 +33,8 @@ final class KeyBindingMachine {
 	private SortedSet[] keyBindings;
 	private Map keyBindingsByCommandId;
 	private Map keyBindingsByCommandIdForMode;	
-	private SortedMap matchesByKeySequence;
-	private SortedMap matchesByKeySequenceForMode;
+	private Map matchesByKeySequence;
+	private Map matchesByKeySequenceForMode;
 	private KeySequence mode;	
 	private boolean solved;
 	private SortedMap tree;
@@ -76,7 +76,7 @@ final class KeyBindingMachine {
 	Map getKeyBindingsByCommandIdForMode() {
 		if (keyBindingsByCommandIdForMode == null) {
 			solve();
-			SortedMap tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeyBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
@@ -95,24 +95,24 @@ final class KeyBindingMachine {
 		return keyBindings[1];	
 	}
 
-	SortedMap getMatchesByKeySequence() {
+	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
 			solve();
-			matchesByKeySequence = Collections.unmodifiableSortedMap(KeyBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
+			matchesByKeySequence = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
 		}
 		
 		return matchesByKeySequence;
 	}
 
-	SortedMap getMatchesByKeySequenceForMode() {
+	Map getMatchesByKeySequenceForMode() {
 		if (matchesByKeySequenceForMode == null) {
 			solve();
-			SortedMap tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeyBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			matchesByKeySequenceForMode = Collections.unmodifiableSortedMap(KeyBindingNode.getMatchesByKeySequence(tree, mode));				
+			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, mode));				
 		}
 		
 		return matchesByKeySequenceForMode;
@@ -127,11 +127,7 @@ final class KeyBindingMachine {
 			throw new NullPointerException();
 
 		activeContextIds = (String[]) activeContextIds.clone();
-		
-		for (int i = 0; i < activeContextIds.length; i++)
-			if (activeContextIds[i] == null)
-				throw new IllegalArgumentException();	
-		
+			
 		if (!Arrays.equals(this.activeContextIds, activeContextIds)) {
 			this.activeContextIds = activeContextIds;
 			invalidateSolution();
@@ -146,11 +142,7 @@ final class KeyBindingMachine {
 			throw new NullPointerException();
 
 		activeKeyConfigurationIds = (String[]) activeKeyConfigurationIds.clone();
-		
-		for (int i = 0; i < activeKeyConfigurationIds.length; i++)
-			if (activeKeyConfigurationIds[i] == null)
-				throw new IllegalArgumentException();	
-		
+			
 		if (!Arrays.equals(this.activeKeyConfigurationIds, activeKeyConfigurationIds)) {
 			this.activeKeyConfigurationIds = activeKeyConfigurationIds;
 			invalidateSolution();
@@ -166,10 +158,6 @@ final class KeyBindingMachine {
 
 		activeLocales = (String[]) activeLocales.clone();
 		
-		for (int i = 0; i < activeLocales.length; i++)
-			if (activeLocales[i] == null)
-				throw new IllegalArgumentException();	
-		
 		if (!Arrays.equals(this.activeLocales, activeLocales)) {
 			this.activeLocales = activeLocales;
 			invalidateSolution();
@@ -184,10 +172,6 @@ final class KeyBindingMachine {
 			throw new NullPointerException();
 
 		activePlatforms = (String[]) activePlatforms.clone();
-		
-		for (int i = 0; i < activePlatforms.length; i++)
-			if (activePlatforms[i] == null)
-				throw new IllegalArgumentException();	
 		
 		if (!Arrays.equals(this.activePlatforms, activePlatforms)) {
 			this.activePlatforms = activePlatforms;

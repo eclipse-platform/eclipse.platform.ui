@@ -295,6 +295,6 @@ public class PartSite implements IWorkbenchPartSite {
 	}
 
 	protected String getInitialScopeId() {
-		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
+		return null;
 	}
 }

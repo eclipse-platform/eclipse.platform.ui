@@ -13,7 +13,8 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class Match {
+// TODO package-private
+public final class Match {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Match.class.getName().hashCode();
@@ -35,10 +36,10 @@ final class Match {
 
 	public int compareTo(Object object) {
 		Match match = (Match) object;
-		int compareTo = Util.compare(commandId, match.commandId);
+		int compareTo = value - match.value;
 		
 		if (compareTo == 0)
-			compareTo = value - match.value;
+			compareTo = Util.compare(commandId, match.commandId);
 					
 		return compareTo;	
 	}

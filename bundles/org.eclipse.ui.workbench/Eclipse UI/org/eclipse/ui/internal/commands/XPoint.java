@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.internal.commands;
 
-public final class Point implements Comparable {
+public final class XPoint implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Point.class.getName().hashCode();
+	private final static int HASH_INITIAL = XPoint.class.getName().hashCode();
 
 	private int x;
 	private int y;
@@ -23,13 +23,13 @@ public final class Point implements Comparable {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	Point(int x, int y) {
+	XPoint(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
 	public int compareTo(Object object) {
-		Point point = (Point) object;
+		XPoint point = (XPoint) object;
 		int compareTo = x - point.x;
 
 		if (compareTo == 0)
@@ -39,10 +39,10 @@ public final class Point implements Comparable {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof Point))
+		if (!(object instanceof XPoint))
 			return false;
 
-		Point point = (Point) object;
+		XPoint point = (XPoint) object;
 		boolean equals = true;
 		equals &= x == point.x;
 		equals &= y == point.y;
