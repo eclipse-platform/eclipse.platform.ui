@@ -56,7 +56,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * otherwise returns false
 	 */
 	public boolean reconcile(boolean isOptimistic) throws CoreException {
-	
+
 		IPlatformConfiguration platformConfig =
 			BootLoader.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.ISiteEntry[] newSiteEntries =
@@ -65,12 +65,12 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			siteLocal.cloneConfigurationSite(null, null, null);
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
 		newFoundFeatures = new ArrayList();
-	
+
 		// sites from the current configuration
 		if (siteLocal.getCurrentConfiguration() != null)
 			oldConfiguredSites =
 				siteLocal.getCurrentConfiguration().getConfiguredSites();
-	
+
 		// TRACE
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
@@ -79,30 +79,29 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					"Old Site :" + oldConfiguredSites[i].getSite().getURL());
 			}
 		}
-	
+
 		// 16215
-		isOptimistic = platformBaseChanged(oldConfiguredSites);	
-	
+		isOptimistic = platformBaseChanged(oldConfiguredSites);
+
 		// check if sites from the platform are new sites or modified sites
 		// if they are new add them, if they are modified, compare them with the old
 		// one and add them
 		for (int siteIndex = 0;
 			siteIndex < newSiteEntries.length;
 			siteIndex++) {
-	
+
 			IPlatformConfiguration.ISiteEntry currentSiteEntry =
 				newSiteEntries[siteIndex];
 			URL resolvedURL = resolveSiteEntry(currentSiteEntry);
 			boolean found = false;
 			IConfiguredSite currentConfigurationSite = null;
-	
+
 			// TRACE
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
-				UpdateManagerPlugin.debug(
-					"New Site?:" + resolvedURL);
+				UpdateManagerPlugin.debug("New Site?:" + resolvedURL);
 			}
-	
+
 			// check if SiteEntry has been possibly modified
 			// if it was part of the previously known configuredSite
 			for (int index = 0;
@@ -111,8 +110,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				currentConfigurationSite = oldConfiguredSites[index];
 				URL currentConfigURL =
 					currentConfigurationSite.getSite().getURL();
-	
-				if (UpdateManagerUtils.sameURL(resolvedURL, currentConfigURL)) {
+
+				if (UpdateManagerUtils
+					.sameURL(resolvedURL, currentConfigURL)) {
 					found = true;
 					ConfiguredSite reconciledConfiguredSite =
 						reconcile(currentConfigurationSite, isOptimistic);
@@ -122,7 +122,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 						reconciledConfiguredSite);
 				}
 			}
-	
+
 			// old site not found, this is a new site, create it
 			if (!found) {
 				// TRACE
@@ -131,9 +131,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					UpdateManagerPlugin.debug(
 						"Configured Site to create:" + resolvedURL);
 				}
-	
+
 				ISite site = SiteManager.getSite(resolvedURL);
-	
+
 				//site policy
 				IPlatformConfiguration.ISitePolicy sitePolicy =
 					currentSiteEntry.getSitePolicy();
@@ -146,7 +146,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					currentSiteEntry.getURL().toExternalForm());
 				configSite.setPreviousPluginPath(
 					currentSiteEntry.getSitePolicy().getList());
-	
+
 				// Add the features to the list of new found features
 				// and configure it based on reconciliation type
 				IFeatureReference[] newFeaturesRef =
@@ -154,7 +154,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				for (int i = 0; i < newFeaturesRef.length; i++) {
 					FeatureReferenceModel newFeatureRefModel =
 						(FeatureReferenceModel) newFeaturesRef[i];
-	
+
 					// TRACE
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
@@ -168,7 +168,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 								+ " as "
 								+ reconciliationType);
 					}
-					
+
 					if (isOptimistic) {
 						configSite
 							.getConfigurationPolicy()
@@ -185,11 +185,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				newDefaultConfiguration.addConfiguredSite(configSite);
 			}
 		}
-	
+
 		// verify we do not have 2 features with different version that
 		// are configured 
 		checkConfiguredFeatures(newDefaultConfiguration);
-	
+
 		// add Activity reconciliation
 		BaseSiteLocalFactory siteLocalFactory = new BaseSiteLocalFactory();
 		ConfigurationActivityModel activity =
@@ -199,12 +199,12 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		activity.setLabel(siteLocal.getLocationURLString());
 		((InstallConfiguration) newDefaultConfiguration).addActivityModel(
 			activity);
-	
+
 		// add the configuration as the currentConfig
 		siteLocal.addConfiguration(newDefaultConfiguration);
 		siteLocal.save();
 
-		return saveNewFeatures();	
+		return saveNewFeatures();
 	}
 
 	/**
@@ -373,14 +373,16 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * Validate we have only one configured feature of a specific id
 	 * per configured site
 	 */
-	public static void checkConfiguredFeatures(IConfiguredSite configuredSite)
+	public static void checkConfiguredFeaturesOld(IConfiguredSite configuredSite)
 		throws CoreException {
+			
+		// NOT USED
 
 		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
 		IFeatureReference[] configuredFeatures = cSite.getConfiguredFeatures();
 		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
 
-				// TRACE
+		// TRACE
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 			UpdateManagerPlugin.debug(
@@ -428,17 +430,14 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		IFeatureReference featureRef1,
 		IFeatureReference featureRef2)
 		throws CoreException {
-			
+
 		// TRACE
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 			UpdateManagerPlugin.debug(
-				"Compare: "
-					+ featureRef1
-					+ " && "
-					+ featureRef2);
+				"Compare: " + featureRef1 + " && " + featureRef2);
 		}
-					
+
 		if (featureRef1 == null)
 			return 0;
 
@@ -448,7 +447,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			feature1 = featureRef1.getFeature();
 			feature2 = featureRef2.getFeature();
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null,e);			
+			UpdateManagerPlugin.warn(null, e);
 			return 0;
 		}
 
@@ -521,25 +520,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 */
 	private boolean saveNewFeatures() throws CoreException {
 
-		if (getFeatureReferences().length==0){
+		if (getFeatureReferences().length == 0) {
 			UpdateManagerPlugin.warn("No new features found");
 			return false;
 		}
-		
+
 		// recompute list of new features to only keep root features [16496]
 		IFeatureReference[] refs = getFeatureReferences();
 		newFoundFeatures = new ArrayList();
 		for (int i = 0; i < refs.length; i++) {
-			IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(refs[i],refs);
-			if (parents.length==0)
+			IFeatureReference[] parents =
+				UpdateManagerUtils.getParentFeatures(refs[i], refs);
+			if (parents.length == 0)
 				newFoundFeatures.add(refs[i]);
 		}
 
-		if (getFeatureReferences().length==0){
-			UpdateManagerPlugin.warn("No root feature found when saving new features");
+		if (getFeatureReferences().length == 0) {
+			UpdateManagerPlugin.warn(
+				"No root feature found when saving new features");
 			return false;
 		}
-		
+
 		date = new Date();
 		String fileName =
 			UpdateManagerUtils.getLocalRandomIdentifier(
@@ -658,64 +659,256 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		}
 		return site.getURL().toExternalForm();
 	}
-	
+
 	/*
 	 * return true if the platformBase URL is not the same
 	 * we thought it is. In this case we should reconcile in an optimistic way 
 	 */
-	 private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites){
-	 	
-	 	if (oldConfiguredSites==null){
-			UpdateManagerPlugin.warn("No previous configured sites. Optimistic reconciliation.");	 		
-	 		return true;
-	 	}
-	 	
-	 	String platformString = "platform:/base/";
-	 	URL platformURL = null;
-	 	try {
-	 		platformURL = new URL(platformString);
-	 	} catch (MalformedURLException e){
-	 		UpdateManagerPlugin.warn("Unable to resolve platform:/base/. Check you are running a Platform",e);
-	 		return true;
-	 	}
-	 	URL resolvedCurrentBaseURL=null;
-	 	try {
-	 	 	resolvedCurrentBaseURL = Platform.resolve(platformURL);
-	 	} catch (IOException e){
-	 		UpdateManagerPlugin.warn("Error while resolving platform:/base/. Check you are running a Platform",e);
-	 		return true;	 		
-	 	}
-	 	
-	 	// find the 'platform:/base/' configuredSite
-	 	int index = 0;
-	 	boolean found = false;
-	 	ConfiguredSite cSite = null;
-	 	while(!found && index<oldConfiguredSites.length){
-	 		if (oldConfiguredSites[index] instanceof ConfiguredSite){
-	 			cSite = (ConfiguredSite) oldConfiguredSites[index];
-	 			if(platformString.equalsIgnoreCase(cSite.getPlatformURLString())){
-	 				found = true;
-	 			}
-	 		}
-	 		index++;
-	 	}
+	private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites) {
 
-		if (!found){
-			UpdateManagerPlugin.warn("Unable to find an old consifured site with platform:/base/ as a platform URL");
+		if (oldConfiguredSites == null) {
+			UpdateManagerPlugin.warn(
+				"No previous configured sites. Optimistic reconciliation.");
 			return true;
 		}
-		
-		if(cSite==null){
-			UpdateManagerPlugin.warn("The configuredSite that contains the platform is null");
+
+		String platformString = "platform:/base/";
+		URL platformURL = null;
+		try {
+			platformURL = new URL(platformString);
+		} catch (MalformedURLException e) {
+			UpdateManagerPlugin.warn(
+				"Unable to resolve platform:/base/. Check you are running a Platform",
+				e);
 			return true;
-		}			
-		
-		if (UpdateManagerUtils.sameURL(resolvedCurrentBaseURL,cSite.getSite().getURL())){
-		UpdateManagerPlugin.warn("Platform URL found are the same:"+resolvedCurrentBaseURL+" : "+cSite.getSite().getURL());				 				
+		}
+		URL resolvedCurrentBaseURL = null;
+		try {
+			resolvedCurrentBaseURL = Platform.resolve(platformURL);
+		} catch (IOException e) {
+			UpdateManagerPlugin.warn(
+				"Error while resolving platform:/base/. Check you are running a Platform",
+				e);
+			return true;
+		}
+
+		// find the 'platform:/base/' configuredSite
+		int index = 0;
+		boolean found = false;
+		ConfiguredSite cSite = null;
+		while (!found && index < oldConfiguredSites.length) {
+			if (oldConfiguredSites[index] instanceof ConfiguredSite) {
+				cSite = (ConfiguredSite) oldConfiguredSites[index];
+				if (platformString
+					.equalsIgnoreCase(cSite.getPlatformURLString())) {
+					found = true;
+				}
+			}
+			index++;
+		}
+
+		if (!found) {
+			UpdateManagerPlugin.warn(
+				"Unable to find an old consifured site with platform:/base/ as a platform URL");
+			return true;
+		}
+
+		if (cSite == null) {
+			UpdateManagerPlugin.warn(
+				"The configuredSite that contains the platform is null");
+			return true;
+		}
+
+		if (UpdateManagerUtils
+			.sameURL(resolvedCurrentBaseURL, cSite.getSite().getURL())) {
+			UpdateManagerPlugin.warn(
+				"Platform URL found are the same:"
+					+ resolvedCurrentBaseURL
+					+ " : "
+					+ cSite.getSite().getURL());
 			return false;
 		}
-				 	
-		UpdateManagerPlugin.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:"+resolvedCurrentBaseURL+" : "+cSite.getSite().getURL());				 	
-	 	return true;
-	 }
+
+		UpdateManagerPlugin.warn(
+			"Platform URL found is different than the one previously saved. Reconcile optimistically:"
+				+ resolvedCurrentBaseURL
+				+ " : "
+				+ cSite.getSite().getURL());
+		return true;
+	}
+
+	/**
+	 * Validate the list of configured features eliminating extra
+	 * entries (if possible). Make sure we do not leave configured
+	 * nested features with "holes" (ie. unconfigured children)
+	 */
+	public static void checkConfiguredFeatures(IConfiguredSite configuredSite)
+		throws CoreException {
+
+		// Note: if we hit errors in the various computation
+		// methods and throw a CoreException, we will not catch it
+		// in this method. Consequently we will not attempt to
+		// unconfigure any "extra" features because we would 
+		// likely get it wrong. The platform will run with extra features
+		// configured. The runtime will eliminate extra plugins based
+		// on runtime binding rules.
+
+		// determine "proposed" list of configured features
+		ConfiguredSite cSite = (ConfiguredSite) configuredSite;		
+		// debug
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug(
+				"Validate configuration of site "
+					+ cSite.getSite().getURL());
+		}
+		IFeatureReference[] configuredRefs = cSite.getConfiguredFeatures();
+		ArrayList configuredFeatures = new ArrayList();
+		for (int i = 0; i < configuredRefs.length; i++) {
+			IFeature feature = configuredRefs[i].getFeature();
+			configuredFeatures.add(feature);	
+			// debug
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+				UpdateManagerPlugin.debug(
+					"   configured feature "
+						+ feature.getVersionedIdentifier().toString());
+			}
+		}
+
+		// find "unique" top level features (latest version)
+		ArrayList features = computeTopFeatures(configuredFeatures);
+
+		// expand features (compute full nesting structures).
+		features = expandFeatures(features);
+
+		// compute extra features
+		ArrayList extras = diff(configuredFeatures, features);
+
+		// unconfigure extra features
+		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
+		for (int i=0; i<extras.size(); i++) {
+			IFeature feature = (IFeature) extras.get(i);
+			IFeatureReference ref = cSite.getSite().getFeatureReference(feature);
+			cPolicy.addUnconfiguredFeatureReference(ref);		
+			// debug
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+				UpdateManagerPlugin.debug(
+					"Unconfiguring \"extra\" feature "
+						+ feature.getVersionedIdentifier().toString());
+			}
+		}
+	}
+
+	private static ArrayList computeTopFeatures(ArrayList features)
+		throws CoreException {
+
+		// start with the features passed in
+		ArrayList result = new ArrayList();
+		result.addAll(features);
+		IFeature[] list = (IFeature[]) result.toArray(new IFeature[0]);
+
+		// remove all features that nest in some other feature
+		for (int i = 0; i < list.length; i++) {
+			IFeatureReference[] children =
+				list[i].getIncludedFeatureReferences();
+			for (int j = 0; j < children.length; j++) {
+				IFeature child = children[j].getFeature();
+				result.remove(child);
+			}
+		}
+
+		// debug
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug("Computed top-level features");
+			for (int i = 0; i < result.size(); i++) {
+				UpdateManagerPlugin.debug(
+					"   "
+						+ ((IFeature) result.get(i))
+							.getVersionedIdentifier()
+							.toString());
+			}
+		}
+
+		// eliminate duplicate versions (keep latest)
+		list = (IFeature[]) result.toArray(new IFeature[0]);
+		for (int i = 0; i < list.length - 1; i++) {
+			IFeature left = list[i];
+			VersionedIdentifier leftVid = left.getVersionedIdentifier();
+			for (int j = i + 1; j < list.length; j++) {
+				IFeature right = list[j];
+				VersionedIdentifier rightVid = right.getVersionedIdentifier();
+				if (leftVid.getIdentifier().equals(rightVid.getIdentifier())) {
+					// duplicate versions ... keep latest
+					if (rightVid
+						.getVersion()
+						.isGreaterOrEqualTo(leftVid.getVersion())) {
+						result.remove(left);
+						// debug
+						if (UpdateManagerPlugin.DEBUG
+							&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+							UpdateManagerPlugin.debug(
+								"Removing \"duplicate\" "
+									+ left.getVersionedIdentifier().toString());
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		// return resulting top level features
+		return result;
+	}
+
+	private static ArrayList expandFeatures(ArrayList features)
+		throws CoreException {
+		ArrayList result = new ArrayList();
+
+		// expand all top level features
+		for (int i = 0; i < features.size(); i++) {
+			expandFeature((IFeature) features.get(i), result);
+		}
+
+		return result;
+	}
+
+	private static void expandFeature(IFeature feature, ArrayList features)
+		throws CoreException {
+
+		// add feature
+		if (!features.contains(feature)) {
+			features.add(feature);		
+			// debug
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+				UpdateManagerPlugin.debug(
+					"Retaining configured feature "
+						+ feature.getVersionedIdentifier().toString());
+			}
+		}
+
+		// add nested children to the list
+		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+		for (int j = 0; j < children.length; j++) {
+			IFeature child = children[j].getFeature();
+			expandFeature(child, features);
+		}
+	}
+	
+	private static ArrayList diff(ArrayList left, ArrayList right) {
+		ArrayList result = new ArrayList();
+		
+		// determine difference (left "minus" right)
+		for (int i=0; i<left.size(); i++) {
+			IFeature feature = (IFeature)left.get(i);
+			if (!right.contains(feature))
+				result.add(feature);			
+		}
+		
+		return result;		
+	}
+
 }
