@@ -527,9 +527,14 @@ protected void update(boolean force, boolean recursive) {
 			mi= menu.getItems();
 			int srcIx= 0;
 			int destIx= 0;
+			
 			for (Iterator e= clean.iterator(); e.hasNext();) { 
 				IContributionItem src= (IContributionItem) e.next();
 				IContributionItem dest;
+
+				if (srcIx < mi.length)
+					while (PERMANENT.equals(mi[srcIx].getData(PERMANENT)))
+						srcIx++;
 					
 				// get corresponding item in SWT widget
 				if (srcIx < mi.length)
