@@ -26,7 +26,8 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 	/**
 	 * Constructor for IconAndMessageDialog.
-	 * @param parentShell
+	 *
+	 * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
 	 */
 	public IconAndMessageDialog(Shell parentShell) {
 		super(parentShell);

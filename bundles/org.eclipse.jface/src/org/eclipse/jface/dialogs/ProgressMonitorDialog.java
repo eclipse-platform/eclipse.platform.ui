@@ -208,7 +208,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
  * The dialog has a standard title and no image. 
  * <code>open</code> is non-blocking.
  *
- * @param parent the parent shell
+ * @param parentShell the parent shell, or <code>null</code> to create a top-level shell
  */
 public ProgressMonitorDialog(Shell parent) {
 	super(parent);
