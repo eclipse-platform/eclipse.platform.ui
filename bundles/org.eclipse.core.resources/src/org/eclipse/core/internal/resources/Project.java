@@ -564,7 +564,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			workspace.beginOperation(true);
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			// close the property store so bogus info is not copied to the destination
+			// close the property store so incorrect info is not copied to the destination
 			getPropertyManager().closePropertyStore(this);
 
 			// copy the meta area for the project

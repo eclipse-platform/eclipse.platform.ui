@@ -182,7 +182,7 @@ public static WorkspaceTreeReader getReader(Workspace workspace, int version) {
 		case ICoreConstants.WORKSPACE_TREE_VERSION_2:
 			return new WorkspaceTreeReader_2(workspace);
 		default:
-			// This one is a temporary hack. The following class should be
+			// The following class should be
 			// removed soon. See comments in WorkspaceTreeReader_0.
 			return new WorkspaceTreeReader_0(workspace);
 	}

@@ -588,7 +588,6 @@ public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws Core
  * <li>changes to persistent properties - immediately</li>
  * <li>markers - <code>save</code></li>
  * <li>synchronizer info - <code>save</code></li>
- * <li>activities - <code>save</code></li>
  * <li>shape of the workspace resource tree - <code>save</code></li>
  * <li>list of active plug-ins - never</li>
  * </ul>
@@ -677,7 +676,7 @@ public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws Core
  *     asked for a new number).
  * </li>
  * <li>The workspace tree, the modified copy of the plug-in save table,
- *     all activities, markers, etc. and all saveable resource tree 
+ *     all markers, etc. and all saveable resource tree 
  *	   snapshots are written to disk as <b>one atomic operation</b>.
  * </li>
  * <li>The long-term lock on the workspace is released.</li>
