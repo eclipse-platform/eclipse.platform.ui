@@ -137,13 +137,13 @@ public class ProjectDescriptionManager {
 		IFile descResource = project.getFile(PROJECT_DESCRIPTION_PATH);		
 		if (descResource.exists() && UPDATE_PROJECT_DESCRIPTION_ON_LOAD) {
 								
-			// If a managed .project files exists, don't read the .vcm_meta
-			ICVSFile coreDescResource = CVSWorkspaceRoot.getCVSFileFor(project.getFile(CORE_PROJECT_DESCRIPTION_PATH));
-			if (coreDescResource.exists() && coreDescResource.isManaged()) {
-				createVCMMetaMarker(descResource);
-				Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
-				return;
-			}
+//			// If a managed .project files exists, don't read the .vcm_meta
+//			ICVSFile coreDescResource = CVSWorkspaceRoot.getCVSFileFor(project.getFile(CORE_PROJECT_DESCRIPTION_PATH));
+//			if (coreDescResource.exists() && coreDescResource.isManaged()) {
+//				createVCMMetaMarker(descResource);
+//				Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
+//				return;
+//			}
 		
 			// update project description file (assuming it has changed)
 			IProjectDescription desc = project.getDescription();
@@ -206,9 +206,9 @@ public class ProjectDescriptionManager {
 	public static void writeProjectDescriptionIfNecessary(CVSTeamProvider provider, IResource resource, IProgressMonitor monitor) throws CVSException {
 		if (resource.getType() == IResource.PROJECT || isProjectDescription(resource)) {
 			IProject project = resource.getProject();
-			if (project.getFile(PROJECT_DESCRIPTION_PATH).exists() /* || ! project.getFile(CORE_PROJECT_DESCRIPTION_PATH).exists() */) {
+	//		if (project.getFile(PROJECT_DESCRIPTION_PATH).exists() /* || ! project.getFile(CORE_PROJECT_DESCRIPTION_PATH).exists() */) {
 				writeProjectDescription(project, monitor);
-			}
+	//		}
 		}
 	}
 
@@ -265,17 +265,17 @@ public class ProjectDescriptionManager {
 	}
 	
 	protected static IMarker createVCMMetaMarker(IResource resource) {
-		try {
-			IMarker[] markers = resource.findMarkers(VCMMETA_MARKER, false, IResource.DEPTH_ZERO);
-   			if (markers.length == 1) {
-   				return markers[0];
-   			}
-			IMarker marker = resource.createMarker(VCMMETA_MARKER);
-			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " file exists in " + resource.getProject().getName() + " but is no longer required and can be deleted");
-			return marker;
-		} catch (CoreException e) {
-			Util.logError("Error creating deletion marker", e);
-		}
+//		try {
+//			IMarker[] markers = resource.findMarkers(VCMMETA_MARKER, false, IResource.DEPTH_ZERO);
+//   			if (markers.length == 1) {
+//   				return markers[0];
+//   			}
+//			IMarker marker = resource.createMarker(VCMMETA_MARKER);
+//			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " file exists in " + resource.getProject().getName() + " but is no longer required and can be deleted");
+//			return marker;
+//		} catch (CoreException e) {
+//			Util.logError("Error creating deletion marker", e);
+//		}
 		return null;
 	}
 }
