@@ -144,6 +144,12 @@
             id="org.eclipse.debug.core.containerType.archive"
             description="%containerDescription.archive">
       </sourceContainerType>      
+      <sourceContainerType
+            name="%containerName.externalArchive"
+			class="org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainerType"
+            id="org.eclipse.debug.core.containerType.externalArchive"
+            description="%containerDescription.externalArchive">
+      </sourceContainerType>      
    </extension>
    
 <!-- ===================================== -->

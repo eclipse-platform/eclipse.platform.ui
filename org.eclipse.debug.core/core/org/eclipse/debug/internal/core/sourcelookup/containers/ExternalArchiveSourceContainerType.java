@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
@@ -23,17 +20,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Archive source container type for archives in the workspace.
+ * External archive source container type.
  * 
  * @since 3.0
  */
-public class ArchiveSourceContainerType extends AbstractSourceContainerTypeDelegate {
+public class ExternalArchiveSourceContainerType extends AbstractSourceContainerTypeDelegate {
 
 	/**
 	 * Unique identifier for the folder source container type
 	 * (value <code>org.eclipse.debug.core.containerType.archive</code>).
 	 */
-	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.archive";	 //$NON-NLS-1$
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.externalArchive";	 //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
@@ -49,8 +46,7 @@ public class ArchiveSourceContainerType extends AbstractSourceContainerTypeDeleg
 				}
 				String detect = element.getAttribute("detectRoot"); //$NON-NLS-1$
 				boolean auto = "true".equals(detect); //$NON-NLS-1$
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(string));
-				return new ArchiveSourceContainer(file, auto);
+				return new ExternalArchiveSourceContainer(string, auto);
 			} else {
 				abort(SourceLookupMessages.getString("ExternalArchiveSourceContainerType.11"), null); //$NON-NLS-1$
 			}
@@ -62,10 +58,10 @@ public class ArchiveSourceContainerType extends AbstractSourceContainerTypeDeleg
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
-		ArchiveSourceContainer archive = (ArchiveSourceContainer) container;
+		ExternalArchiveSourceContainer archive = (ExternalArchiveSourceContainer) container;
 		Document document = SourceLookupUtils.newDocument();
 		Element element = document.createElement("archive"); //$NON-NLS-1$
-		element.setAttribute("path", archive.getFile().getFullPath().toString()); //$NON-NLS-1$
+		element.setAttribute("path", archive.getName()); //$NON-NLS-1$
 		String detectRoot = "false"; //$NON-NLS-1$
 		if (archive.isDetectRoot()) {
 			detectRoot = "true"; //$NON-NLS-1$

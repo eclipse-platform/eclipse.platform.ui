@@ -1729,6 +1729,16 @@
             adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>          
+         <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>                            
     </extension>
 <!-- ========================================= -->
 <!-- Contextual Launch Menu (Work in Progress) -->

@@ -334,8 +334,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 				return;
 			}
 			ILaunchConfigurationWorkingCopy workingCopy = null;			
-			if(configuration == null) 
-			{
+			if(configuration == null) {
 				try{
 					workingCopy = fLocator.getLaunchConfiguration().getWorkingCopy();
 				}catch(CoreException e){ 
@@ -345,8 +344,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 				}
 			}
 			else workingCopy = configuration;	
-			if(workingCopy == null)
-			{
+			if(workingCopy == null) {
 				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.1")); //$NON-NLS-1$
 				return;
 			}
