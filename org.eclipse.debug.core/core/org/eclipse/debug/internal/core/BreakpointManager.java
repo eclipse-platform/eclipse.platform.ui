@@ -158,9 +158,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see IBreakpointManager#getBreakpoint(IMarker)
 	 */
 	public IBreakpoint getBreakpoint(IMarker marker) {
-		if (fBreakpoints == null) {
-			initializeBreakpoints();
-		}
+		// ensure that breakpoints are initialized
+		getBreakpoints0();
 		return (IBreakpoint)fMarkersToBreakpoints.get(marker);
 	}
 
