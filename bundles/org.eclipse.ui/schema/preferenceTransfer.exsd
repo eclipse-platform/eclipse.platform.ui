@@ -138,7 +138,7 @@ of the transfer engine functionality.
          <attribute name="keys" type="string">
             <annotation>
                <documentation>
-                  an attribute specifing a comma separated list of preference keys within the given node to be transferred
+                  an attribute specifing a comma separated list of preference keys within the given node to be transferred, specifying the key attribute without specifying a matching node will result in a runtime error.
                </documentation>
             </annotation>
          </attribute>
