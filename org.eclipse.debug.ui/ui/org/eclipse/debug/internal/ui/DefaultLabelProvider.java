@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.ui;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
@@ -28,6 +29,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -114,8 +116,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 		} else {
 			if (element instanceof IMarker) {
 				return getMarkerImageKey((IMarker)element);
-			} 
-			else if (element instanceof IProcess) {
+			} else if (element instanceof IBreakpoint) {
+				return getBreakpointImageKey((IBreakpoint)element);
+			} else if (element instanceof IProcess) {
 				if (((IProcess) element).isTerminated()) {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED;
 				} else {
@@ -182,6 +185,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else {
 				if (element instanceof IMarker) {
 					label.append(getMarkerText((IMarker) element));
+				} else if (element instanceof IBreakpoint) {
+					label.append(getBreakpointText((IBreakpoint)element));
 				} else if (element instanceof IProcess) {
 					label.append(((IProcess) element).getLabel());
 				} else if (element instanceof ILaunch) {
@@ -220,6 +225,28 @@ public class DefaultLabelProvider implements ILabelProvider {
 		return label.toString();
 	}
 	
+	/**
+	 * Returns default label for a breakpoint.
+	 * 
+	 * @param breakpoint
+	 * @return default label for a breakpoint
+	 */
+	private String getBreakpointText(IBreakpoint breakpoint) {
+		IResource resource = breakpoint.getMarker().getResource();
+		StringBuffer label = new StringBuffer();
+		if (resource != null) {
+			label.append(resource.getName());
+		}
+		if (breakpoint instanceof ILineBreakpoint) {
+			try {
+				int lineNumber = ((ILineBreakpoint)breakpoint).getLineNumber();
+				label.append(MessageFormat.format(DebugUIMessages.getString("DefaultLabelProvider.17"), new String[]{Integer.toString(lineNumber)})); //$NON-NLS-1$
+			} catch (CoreException e) {
+			}
+		}
+		return label.toString();
+	}
+
 	public String getAdapterLabel(Object object) {
 		if (object instanceof IAdaptable) {
 			IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) object).getAdapter(IWorkbenchAdapter.class);
@@ -343,7 +370,20 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
+		}
+		return null;
+	}
+	
+	protected String getBreakpointImageKey(IBreakpoint breakpoint) {
+		if (breakpoint != null && breakpoint.getMarker().exists()) {
+			try {
+				if (breakpoint.isEnabled()) {
+					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
+				} else {
+					return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
+				}
+			} catch (CoreException e) {
+			}
 		}
 		return null;
 	}
