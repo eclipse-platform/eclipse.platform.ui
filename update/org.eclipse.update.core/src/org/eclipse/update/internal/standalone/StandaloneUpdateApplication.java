@@ -3,7 +3,6 @@
  */
 package org.eclipse.update.internal.standalone;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 
 /**

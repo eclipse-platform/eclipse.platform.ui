@@ -37,7 +37,7 @@ import org.eclipse.update.core.*;
  * </ul>
  */
 
-public class UpdateManagerReconciler implements IPlatformRunnable {
+public class UpdateManagerReconciler implements org.eclipse.core.runtime.IPlatformRunnable {
 
 	// NOTE: originalApplication is set to a dummy string to prevent "silent"
 	// failures in case of internal errors
