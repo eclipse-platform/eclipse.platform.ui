@@ -357,29 +357,6 @@ private IStatus validateFileType(File linkTargetFile) {
 	return createStatus(IStatus.OK, "");
 }
 /**
- * Validates the name of the link target
- *
- * @param linkTargetName link target name to validate
- * @return IStatus indicating the validation result. IStatus.OK if the 
- * 	given link target name is valid.
- */
-private IStatus validateLinkTargetName(String linkTargetName) {
-	if ("".equals(linkTargetName)) {//$NON-NLS-1$
-		return createStatus(
-			IStatus.ERROR, 
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetEmpty"));	//$NON-NLS-1$
-	}
-	else {
-		IPath path = new Path("");//$NON-NLS-1$
-		if (path.isValidPath(linkTargetName) == false) {
-			return createStatus(
-				IStatus.ERROR,
-				WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetInvalid"));	//$NON-NLS-1$
-		}
-	}
-	return createStatus(IStatus.OK, "");
-}
-/**
  * Validates this page's controls.
  *
  * @return IStatus indicating the validation result. IStatus.OK if the 

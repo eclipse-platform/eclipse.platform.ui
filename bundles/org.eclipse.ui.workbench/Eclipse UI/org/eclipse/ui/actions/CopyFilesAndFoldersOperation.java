@@ -1046,11 +1046,10 @@ public class CopyFilesAndFoldersOperation {
 			IResource sourceResource = sourceResources[i];
 			IPath sourceLocation = sourceResource.getLocation();
 
-			/*
-			 * Remove once bug 28754 is fixed
-			 */
 			if (sourceLocation == null) {
 				if (sourceResource.isLinked()) {
+					// Don't allow copying linked resources with undefined path 
+					// variables. See bug 28754.
 					return WorkbenchMessages.format(
 						"CopyFilesAndFoldersOperation.missingPathVariable",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
@@ -1060,10 +1059,7 @@ public class CopyFilesAndFoldersOperation {
 						"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
 						new Object[] {sourceResource.getName()});				
 				}
-			}/*
-			  * End remove workaround for bug 28754
-			  */
-			
+			}			
 			if (sourceLocation != null) {
 				if (sourceLocation.equals(destinationLocation)) {
 					return WorkbenchMessages.format(
