@@ -30,6 +30,7 @@ final class Activity implements IActivity {
 	private boolean active;
 	private IActivityEvent activityEvent;
 	private List activityListeners;
+	private ActivityManager activityManager;
 	private boolean defined;
 	private String description;
 	private boolean enabled;
@@ -43,10 +44,11 @@ final class Activity implements IActivity {
 	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 	
-	Activity(String id) {	
-		if (id == null)
+	Activity(ActivityManager activityManager, String id) {	
+		if (activityManager == null || id == null)
 			throw new NullPointerException();
 
+		this.activityManager = activityManager;
 		this.id = id;
 	}
 
@@ -59,6 +61,9 @@ final class Activity implements IActivity {
 		
 		if (!activityListeners.contains(activityListener))
 			activityListeners.add(activityListener);
+		
+		if (!activityListeners.isEmpty())
+			activityManager.getActivitiesWithListeners().add(this);
 	}
 
 	public int compareTo(Object object) {
@@ -195,6 +200,9 @@ final class Activity implements IActivity {
 
 		if (activityListeners != null)
 			activityListeners.remove(activityListener);
+		
+		if (activityListeners.isEmpty())
+			activityManager.getActivitiesWithListeners().remove(this);
 	}
 
 	public String toString() {

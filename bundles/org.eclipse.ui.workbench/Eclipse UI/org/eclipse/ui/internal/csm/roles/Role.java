@@ -27,23 +27,25 @@ final class Role implements IRole {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Role.class.getName().hashCode();
 
-	private IRoleEvent roleEvent;
-	private List roleListeners;
+	private Set activityBindings;
 	private boolean defined;
 	private String description;
 	private String id;
 	private String name;
-	private Set activityBindings;
+	private IRoleEvent roleEvent;
+	private List roleListeners;
+	private RoleManager roleManager;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient IActivityBinding[] activityBindingsAsArray;
 	private transient String string;
 	
-	Role(String id) {	
-		if (id == null)
+	Role(RoleManager roleManager, String id) {	
+		if (roleManager == null || id == null)
 			throw new NullPointerException();
 
+		this.roleManager = roleManager;
 		this.id = id;
 	}
 
@@ -56,23 +58,26 @@ final class Role implements IRole {
 		
 		if (!roleListeners.contains(roleListener))
 			roleListeners.add(roleListener);
+		
+		if (!roleListeners.isEmpty())
+			roleManager.getRolesWithListeners().add(this);		
 	}
 
 	public int compareTo(Object object) {
-		Role role = (Role) object;
-		int compareTo = Util.compare(defined, role.defined);
-
+		Role role = (Role) object;		
+		int compareTo = Util.compare((Comparable[]) activityBindingsAsArray, (Comparable[]) role.activityBindingsAsArray);
+		
 		if (compareTo == 0) {
-			compareTo = Util.compare(description, role.description);
-
-			if (compareTo == 0) {		
-				compareTo = Util.compare(id, role.id);			
-					
-				if (compareTo == 0) {
-					compareTo = Util.compare(name, role.name);
-
-					if (compareTo == 0) 
-						compareTo = Util.compare((Comparable[]) activityBindingsAsArray, (Comparable[]) role.activityBindingsAsArray); 
+			compareTo = Util.compare(defined, role.defined);
+	
+			if (compareTo == 0) {
+				compareTo = Util.compare(description, role.description);
+	
+				if (compareTo == 0) {		
+					compareTo = Util.compare(id, role.id);			
+						
+					if (compareTo == 0)
+						compareTo = Util.compare(name, role.name);
 				}
 			}
 		}
@@ -86,11 +91,11 @@ final class Role implements IRole {
 
 		Role role = (Role) object;	
 		boolean equals = true;
+		equals &= Util.equals(activityBindings, role.activityBindings);		
 		equals &= Util.equals(defined, role.defined);
 		equals &= Util.equals(description, role.description);
 		equals &= Util.equals(id, role.id);
 		equals &= Util.equals(name, role.name);
-		equals &= Util.equals(activityBindings, role.activityBindings);		
 		return equals;
 	}
 
@@ -121,11 +126,11 @@ final class Role implements IRole {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityBindings);
 			hashCodeComputed = true;
 		}
 			
@@ -142,12 +147,17 @@ final class Role implements IRole {
 
 		if (roleListeners != null)
 			roleListeners.remove(roleListener);
+		
+		if (roleListeners.isEmpty())
+			roleManager.getRolesWithListeners().remove(this);		
 	}
 
 	public String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
+			stringBuffer.append(activityBindings);
+			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
@@ -155,8 +165,6 @@ final class Role implements IRole {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(activityBindings);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

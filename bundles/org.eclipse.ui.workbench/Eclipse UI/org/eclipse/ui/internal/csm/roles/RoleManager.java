@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.roles.IActivityBinding;
@@ -37,7 +38,8 @@ public final class RoleManager implements IRoleManager {
 	private IRoleManagerEvent roleManagerEvent;
 	private List roleManagerListeners;	
 	private IRoleRegistry roleRegistry;
-	private Map rolesById = new HashMap();	
+	private Map rolesById = new WeakHashMap();
+	private Set rolesWithListeners = new HashSet();
 
 	public RoleManager() {
 		this(new ExtensionRoleRegistry(Platform.getExtensionRegistry()));
@@ -76,7 +78,7 @@ public final class RoleManager implements IRoleManager {
 		Role role = (Role) rolesById.get(roleId);
 		
 		if (role == null) {
-			role = new Role(roleId);
+			role = new Role(this, roleId);
 			updateRole(role);
 			rolesById.put(roleId, role);
 		}
@@ -96,6 +98,10 @@ public final class RoleManager implements IRoleManager {
 			roleManagerListeners.remove(roleManagerListener);
 	}
 
+	Set getRolesWithListeners() {
+		return rolesWithListeners;
+	}	
+	
 	private void fireRoleManagerChanged() {
 		if (roleManagerListeners != null)
 			for (int i = 0; i < roleManagerListeners.size(); i++) {

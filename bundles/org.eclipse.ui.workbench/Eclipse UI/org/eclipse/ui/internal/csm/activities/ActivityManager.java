@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
@@ -48,7 +49,8 @@ public final class ActivityManager implements IActivityManager {
 	}	
 
 	private Set activeActivityIds = new HashSet();
-	private Map activitiesById = new HashMap();
+	private Map activitiesById = new WeakHashMap();
+	private Set activitiesWithListeners = new HashSet();
 	private Map activityDefinitionsById = new HashMap();
 	private IActivityManagerEvent activityManagerEvent;
 	private List activityManagerListeners;
@@ -98,7 +100,7 @@ public final class ActivityManager implements IActivityManager {
 		Activity activity = (Activity) activitiesById.get(activityId);
 		
 		if (activity == null) {
-			activity = new Activity(activityId);
+			activity = new Activity(this, activityId);
 			updateActivity(activity);
 			activitiesById.put(activityId, activity);
 		}
@@ -170,6 +172,10 @@ public final class ActivityManager implements IActivityManager {
 		if (updatedActivityIds != null)
 			notifyActivities(updatedActivityIds);	
 	}	
+	
+	Set getActivitiesWithListeners() {
+		return activitiesWithListeners;
+	}
 	
 	private void fireActivityManagerChanged() {
 		if (activityManagerListeners != null)
