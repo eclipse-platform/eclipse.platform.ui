@@ -38,6 +38,8 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -67,16 +69,25 @@ public class AddSyncAction extends MergeAction {
 		}
 		List additions = new ArrayList();
 
-		for (int i = 0; i < changed.length; i++) {
-			int kind = changed[i].getKind();
-			// leave the added nodes in the sync view. Their sync state
-			// won't change but the decoration should.
-			IResource resource = changed[i].getResource();
-			if (resource.getType() == resource.FILE) {
-				additions.add(resource);
-			}
-		}
 		try {
+			for (int i = 0; i < changed.length; i++) {
+				int kind = changed[i].getKind();
+				// leave the added nodes in the sync view. Their sync state
+				// won't change but the decoration should.
+				IResource resource = changed[i].getResource();
+				if ((kind & Differencer.DIRECTION_MASK) == ITeamNode.CONFLICTING) {
+					if (resource.getType() == IResource.FOLDER) {
+						makeInSync(changed[i]);
+					} else {
+						makeAdded(changed[i]);
+					}
+				} else {	
+					if (resource.getType() == resource.FILE) {
+						additions.add(resource);
+					}
+				}
+			}
+		
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 			if (additions.size() != 0) {
 				manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
@@ -102,6 +113,19 @@ public class AddSyncAction extends MergeAction {
 		
 		return syncSet;
 	}
+
+	protected void makeAdded(ITeamNode changed)
+		throws TeamException, CVSException {
+		// Fake the add locally since add command will fail
+		makeInSync(changed.getParent());
+		CVSRemoteSyncElement syncElement = (CVSRemoteSyncElement)((TeamFile)changed).getMergeResource().getSyncElement();
+		ICVSResource remote = (ICVSResource)syncElement.getRemote();
+		MutableResourceSyncInfo info = remote.getSyncInfo().cloneMutable();
+		info.setTimeStamp(null);
+		info.setAdded();
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)changed.getResource());
+		cvsFile.setSyncInfo(info);
+	}
 	
 	/**
 	 * Enabled for folders and files that aren't added.
@@ -119,7 +143,6 @@ public class AddSyncAction extends MergeAction {
 	 * Remove all nodes that aren't files and folders that need to be added.
 	 */
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		set.removeConflictingNodes();
 		set.removeIncomingNodes();
 		((CVSSyncSet)set).removeAddedChanges();
 	}	

@@ -216,30 +216,6 @@ public class ForceCommitSyncAction extends MergeAction {
 		
 		return syncSet;
 	}
-	
-	protected void makeInSync(IDiffElement parentElement) throws TeamException {
-		// Recursively make the parent element (and its parents) in sync.
-		// Walk up and find the parents which need to be made in sync too. (For
-		// each parent that doesn't already have sync info).
-		Vector v = new Vector();
-		int parentKind = parentElement.getKind();
-		while (((parentKind & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) &&
-			((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.INCOMING) ||
-			 ((parentKind & Differencer.DIRECTION_MASK) == ITeamNode.CONFLICTING)) {
-			v.add(0, parentElement);
-			parentElement = parentElement.getParent();
-			parentKind = parentElement == null ? 0 : parentElement.getKind();
-		}
-		Iterator parentIt = v.iterator();
-		while (parentIt.hasNext()) {
-			IDiffElement next = (IDiffElement)parentIt.next();
-			if (next instanceof ChangedTeamContainer) {
-				CVSRemoteSyncElement syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)next).getMergeResource().getSyncElement();
-				// Create the sync info
-				syncElement.makeInSync(new NullProgressMonitor());
-			}
-		}
-	}
 
 	protected boolean isEnabled(ITeamNode node) {
 		// The force commit action is enabled only for conflicting and incoming changes

@@ -343,34 +343,6 @@ public class UpdateSyncAction extends MergeAction {
 	protected void runUpdateShallow(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
 	}
-	
-	protected void makeInSync(IDiffElement parentElement) throws TeamException {
-		// Recursively make the parent element (and its parents) in sync.
-		// Walk up and find the parents which need to be made in sync too. (For
-		// each parent that doesn't already have sync info).
-		Vector v = new Vector();
-		int parentKind = parentElement.getKind();
-		int direction = parentKind & Differencer.DIRECTION_MASK;
-		int change = parentKind & Differencer.CHANGE_TYPE_MASK;
-		while ((change == Differencer.ADDITION) && 
-			   ((direction == ITeamNode.INCOMING) || (direction == ITeamNode.CONFLICTING))) {
-			v.add(0, parentElement);
-			parentElement = parentElement.getParent();
-			parentKind = parentElement == null ? 0 : parentElement.getKind();
-			direction = parentKind & Differencer.DIRECTION_MASK;
-		 	change = parentKind & Differencer.CHANGE_TYPE_MASK;
-		}
-		Iterator parentIt = v.iterator();
-		while (parentIt.hasNext()) {
-			IDiffElement next = (IDiffElement)parentIt.next();
-			if (next instanceof ChangedTeamContainer) {
-				CVSRemoteSyncElement syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)next).getMergeResource().getSyncElement();
-				// Create the sync info
-				syncElement.makeInSync(new NullProgressMonitor());
-				((ChangedTeamContainer)next).setKind(IRemoteSyncElement.IN_SYNC);
-			}
-		}
-	}
 		
 	protected IResource[] getIResourcesFrom(ITeamNode[] nodes) {
 		List resources = new ArrayList(nodes.length);

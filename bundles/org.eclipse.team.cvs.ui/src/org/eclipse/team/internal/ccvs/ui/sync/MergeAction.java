@@ -5,10 +5,11 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -313,5 +315,35 @@ abstract class MergeAction extends Action {
 		}
 		// If no matches occured above, we don't have any "real" changes in the given directions
 		return false;
+	}
+	
+	/**
+	 * Recursively make the parent element (and its parents) in sync.
+	 * Walk up and find the parents which need to be made in sync too. (For
+	 * each parent that doesn't already have sync info).
+	 */
+	protected void makeInSync(IDiffElement parentElement) throws TeamException {
+		ArrayList v = new ArrayList();
+		int parentKind = parentElement.getKind();
+		int direction = parentKind & Differencer.DIRECTION_MASK;
+		int change = parentKind & Differencer.CHANGE_TYPE_MASK;
+		while ((change == Differencer.ADDITION) && 
+			   ((direction == ITeamNode.INCOMING) || (direction == ITeamNode.CONFLICTING))) {
+			v.add(0, parentElement);
+			parentElement = parentElement.getParent();
+			parentKind = parentElement == null ? 0 : parentElement.getKind();
+			direction = parentKind & Differencer.DIRECTION_MASK;
+		 	change = parentKind & Differencer.CHANGE_TYPE_MASK;
+		}
+		Iterator parentIt = v.iterator();
+		while (parentIt.hasNext()) {
+			IDiffElement next = (IDiffElement)parentIt.next();
+			if (next instanceof ChangedTeamContainer) {
+				CVSRemoteSyncElement syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)next).getMergeResource().getSyncElement();
+				// Create the sync info
+				syncElement.makeInSync(Policy.monitorFor(null));
+				((ChangedTeamContainer)next).setKind(IRemoteSyncElement.IN_SYNC);
+			}
+		}
 	}
 }
