@@ -242,7 +242,7 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying a target at the command line
+	 * Tests specifying a target at the command line that does not exist.
 	 */
 	public void testSpecifyBadTargetAsArg() throws CoreException {
 		try {
@@ -263,7 +263,7 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying a target at the command line
+	 * Tests specifying a target at the command line with other options
 	 */
 	public void testSpecifyTargetAsArgWithOtherOptions() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3"}, false);
@@ -275,7 +275,7 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying targets at the command line
+	 * Tests specifying targets at the command line with other options
 	 */
 	public void testSpecifyTargetsAsArgWithOtherOptions() throws CoreException {
 		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo2", "echo3"}, false);
@@ -290,7 +290,7 @@ public class OptionTests extends AbstractAntTest {
 	 * Tests specifying a target at the command line and quiet reporting
 	 */
 	public void testSpecifyTargetAsArgAndQuiet() throws CoreException {
-		run("echoing.xml", new String[]{"-quiet", "echo3"}, false);
+		run("echoing.xml", new String[]{"-logfile", "TestLogFile.txt", "echo3", "-quiet"}, false);
 		assertTrue("1 message should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
 	}
 	
@@ -299,6 +299,40 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusD() throws CoreException {
 		run("echoing.xml", new String[]{"-DAntTests=testing", "-Declipse.is.cool=true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	}
+	
+	public void testPropertyFileWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-propertyfile"});
+		} catch (CoreException ce) {
+			return;
+		}
+		assertTrue("You must specify a property filename when using the -propertyfile argument", false);
+	}
+	
+	public void testPropertyFileFileNotFound() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-propertyfile", "qq.txt"});
+		} catch (CoreException ce) {
+			return;
+		}
+		assertTrue("You must specify a property filename when using the -propertyfile argument", false);
+	}
+	
+	public void testPropertyFile() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-propertyfile", getPropertyFileName()});
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "Yep".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing from properties file".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	}
+	
+	public void testPropertyFileWithMinusDTakingPrecedence() throws CoreException {
+		run("echoing.xml", new String[]{"-propertyfile", getPropertyFileName(), "-DAntTests=testing", "-Declipse.is.cool=true"}, false);
 		assertSuccessful();
 		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
 		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));

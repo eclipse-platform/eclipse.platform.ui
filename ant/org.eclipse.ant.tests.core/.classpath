@@ -3,6 +3,7 @@
     <classpathentry kind="src" path="test plugin"/>
     <classpathentry kind="src" path="tests"/>
     <classpathentry kind="src" path="test loggers"/>
+    <classpathentry kind="src" path="test support"/>
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.junit"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>

@@ -23,7 +23,8 @@ import org.eclipse.ui.wizards.datatransfer.*;
  */
 public class ProjectHelper {
 	
-	public static final IPath TEST_SRC_DIR= new Path("test scripts");	
+	public static final IPath TEST_SCRIPTS_DIR= new Path("test scripts");
+	public static final IPath TEST_SUPPORT_DIR= new Path("test support");	
 
 	/**
 	 * Creates a IProject.

@@ -66,6 +66,8 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.tools.ant.*;
+//import org.apache.tools.ant.input.DefaultInputHandler;
+//import org.apache.tools.ant.input.InputHandler;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.runtime.*;
 
@@ -125,6 +127,14 @@ public class InternalAntRunner {
 	protected String[] extraArguments = null;
 	
 	protected boolean scriptExecuted= false;
+	
+	protected List propertyFiles= null;
+	
+	/**
+     * The Ant InputHandler class.  There may be only one input
+     * handler.
+     */
+    private String inputHandlerClassname = null;
 
 	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 
@@ -421,6 +431,7 @@ public class InternalAntRunner {
 			
 			setProperties(getCurrentProject());
 			addBuildListeners(getCurrentProject());
+			addInputHandler(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 
@@ -713,6 +724,18 @@ public class InternalAntRunner {
 		if (args != null) {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
 		}
+		
+	/*	args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		if (args != null) {
+			if (args.length == 0) {
+				throw new BuildException("You must specify a classname when using the -inputhandler argument");
+			} 
+			inputHandlerClassname = args[0];
+		}
+		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		if (args != null) {
+			throw new BuildException("Only one input handler class may be specified.");
+		}*/
 		return true;
 	}
 	
@@ -796,19 +819,6 @@ public class InternalAntRunner {
 			setBuildFileLocation(args[0]);
 		}
 		
-		//MULTIPLE property files are allowed
-		args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
-		if (args != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-propertyfile_option_not_yet_implemented_6"), Project.MSG_INFO); //$NON-NLS-1$
-			return false;
-		}
-		//Only one input handler class may be specified.
-		args= getArgument(commands, "-inputhandler"); //$NON-NLS-1$
-		if (args != null) {
-			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-inputhandler_option_not_yet_implemented_8"), Project.MSG_INFO); //$NON-NLS-1$
-			return false;
-		}
-		
 		args= getArgument(commands, "-find"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_option_not_yet_implemented_10"), Project.MSG_INFO); //$NON-NLS-1$
@@ -884,9 +894,27 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * Processes cmd line properties and adds the user properties to the project
-	 * Any user properties that have been explicitly set are set on the project as well.	 * 	 */
+	 * Processes cmd line properties and adds the user properties
+	 * Any user properties that have been explicitly set are set as well.
+	 * Ensures that -D properties take precedence.	 * 	 */
 	protected void processProperties(List commands) {
+		//MULTIPLE property files are allowed
+		/*String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+		while(args != null) {
+			if (args.length == 0) {
+				String message= InternalAntMessages.getString("You must specify a property filename when using the -propertyfile argument");
+				logMessage(currentProject, message, Project.MSG_ERR); 
+				throw new BuildException(message);
+			} 
+			if (propertyFiles == null) {
+				propertyFiles= new ArrayList();
+			}
+			propertyFiles.add(args[0]);
+			args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+		}
+		if (propertyFiles != null) {
+			loadPropertyFiles();
+		}*/
 		
 		String[] args = (String[]) commands.toArray(new String[commands.size()]);
 		for (int i = 0; i < args.length; i++) {
@@ -913,8 +941,10 @@ public class InternalAntRunner {
 				} else if (i < args.length - 1) {
 					value = args[++i];
 				}
-
-				getCurrentProject().setUserProperty(name, value);
+				if (userProperties == null) {
+					userProperties= new HashMap();
+				}
+				userProperties.put(name, value);
 				commands.remove(args[i]);
 			}
 		}
@@ -1085,4 +1115,64 @@ public class InternalAntRunner {
 		}
 		return null;
 	}
+	
+	/**
+	 * Load all properties from the files 
+	 * specified by -propertyfile.	 */
+	protected void loadPropertyFiles() {
+		Iterator itr= propertyFiles.iterator();
+        while (itr.hasNext()) {
+            String filename= (String) itr.next();
+            Properties props = new Properties();
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(filename);
+                props.load(fis);
+            } catch (IOException e) {
+            	String msg= MessageFormat.format("Could not load property file {0}: {1}", new String[]{filename, e.getMessage()});
+            	throw new BuildException(msg, e);
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e){
+                    }
+                }
+            }
+
+            if (userProperties == null) {
+            	userProperties= new HashMap();
+            }
+            Enumeration propertyNames = props.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+                String name = (String) propertyNames.nextElement();
+            	userProperties.put(name, props.getProperty(name));
+            }
+        }
+	}
+	
+	/**
+     * Creates the InputHandler and adds it to the project.
+     *
+     * @exception BuildException if a specified InputHandler
+     *                           implementation could not be loaded.
+     */
+    private void addInputHandler(Project project) {
+       /* InputHandler handler = null;
+        if (inputHandlerClassname == null) {
+            handler = new DefaultInputHandler();
+        } else {
+            try {
+                handler = (InputHandler)(Class.forName(inputHandlerClassname).newInstance());
+            } catch (ClassCastException e) {
+                String msg = MessageFormat.format("The specified input handler class {0} does not implement the org.apache.tools.ant.input.InputHandler interface", new String[]{inputHandlerClassname});
+                throw new BuildException(msg, e);
+            } catch (Exception e) {
+                String msg = MessageFormat.format("Unable to instantiate specified input handler class {0} : {1}", new String[]{inputHandlerClassname, e.getClass().getName()});
+                throw new BuildException(msg, e);
+            }
+        }
+        project.setInputHandler(handler);*/
+    }
+
 }

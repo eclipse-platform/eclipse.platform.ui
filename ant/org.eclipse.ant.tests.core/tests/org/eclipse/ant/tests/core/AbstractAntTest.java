@@ -130,5 +130,9 @@ public abstract class AbstractAntTest extends TestCase {
 	protected void assertSuccessful() {
 		assertTrue("Build was not flagged as successful: " + getLastMessageLogged(), BUILD_SUCCEESSFUL.equals(getLastMessageLogged()));
 	}
+	
+	protected String getPropertyFileName() {
+		return getProject().getFolder("support").getFile("test.properties").getLocation().toFile().getAbsolutePath();
+	}
 }
 
