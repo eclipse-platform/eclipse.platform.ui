@@ -430,7 +430,7 @@ public void testLongProjectDescription() throws Throwable {
 		createFileInFileSystem(location, stream);
 		ProjectDescription projDesc = reader.read(location);
 		ensureDoesNotExistInFileSystem(location.toFile());
-		assertEquals("1.0", longLocation, projDesc.getLinkLocation(linkName).toOSString());
+		assertEquals("1.0", longLocation, projDesc.getLinkLocation(linkName).toString());
 	} finally {
 		Workspace.clear(location.toFile());
 	}
