@@ -100,19 +100,19 @@ public final class AntDebugUtil {
         }   
         //target dependancy stack 
          if (targetToExecute != null) {
-             Vector buildSequence= (Vector) targetToBuildSequence.get(targetToExecute);
-            int startIndex= buildSequence.indexOf(targetExecuting) + 1;
-            int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
-          
-            Target stackTarget;
-            for (int i = startIndex; i <= dependancyStackDepth; i++) {
-               stackTarget= (Target) buildSequence.get(i);
-               appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation(), false); //$NON-NLS-1$
-           }
-        }
+         	Vector buildSequence= (Vector) targetToBuildSequence.get(targetToExecute);
+         	int startIndex= buildSequence.indexOf(targetExecuting) + 1;
+         	int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
+         	
+         	Target stackTarget;
+         	for (int i = startIndex; i <= dependancyStackDepth; i++) {
+         		stackTarget= (Target) buildSequence.get(i);
+         		appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation(), false); //$NON-NLS-1$
+         	}
+         }
     }
     
-    public static void marshallProperties(StringBuffer propertiesRepresentation, Project project, Map initialProperties, Map lastProperties) {
+    public static void marshallProperties(StringBuffer propertiesRepresentation, Project project, Map initialProperties, Map lastProperties, boolean marshallLineSep) {
         propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
         propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
         Map currentProperties= currentProperties= project.getProperties();
@@ -127,6 +127,9 @@ public final class AntDebugUtil {
         String propertyValue;
         while (iter.hasNext()) {
             propertyName = (String) iter.next();
+            if (!marshallLineSep && propertyName.equals("line.separator")) { //$NON-NLS-1$
+            	continue;
+            }
             if (lastProperties == null || lastProperties.get(propertyName) == null) { //new property
                 propertiesRepresentation.append(propertyName.length());
                 propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);

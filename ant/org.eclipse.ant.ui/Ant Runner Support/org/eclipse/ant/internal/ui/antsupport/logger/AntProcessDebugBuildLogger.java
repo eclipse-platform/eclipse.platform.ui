@@ -92,7 +92,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void taskStarted(BuildEvent event) {
         if (fInitialProperties == null) {//implicit or top level target does not fire targetStarted()
-            initializeBuildSequenceInformation(event);
             fInitialProperties= event.getProject().getProperties();
         }
 		super.taskStarted(event);
@@ -197,9 +196,10 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	public void getProperties() {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
 	    if (!fTasks.isEmpty()) {
-	        AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties);
+	        AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties, true);
+	        fProperties= ((Task)fTasks.peek()).getProject().getProperties();
 	    }
-	    fProperties= ((Task)fTasks.peek()).getProject().getProperties();
+	    
 	    ((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 	}
 
@@ -242,8 +242,10 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
      */
     public void targetStarted(BuildEvent event) {
         if (fInitialProperties == null) {
-            initializeBuildSequenceInformation(event);
             fInitialProperties= event.getProject().getProperties();
+        }
+        if (fTargetToBuildSequence == null) {
+        	initializeBuildSequenceInformation(event);
         }
         super.targetStarted(event);
         fTargetExecuting= event.getTarget();
