@@ -405,7 +405,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     	generateErrorElementHierarchy(anException);
     }
 
-	private void generateErrorElementHierarchy(SAXParseException exception) {
+	protected void generateErrorElementHierarchy(SAXParseException exception) {
 		if (rootElement == null) {
 			rootElement= new XmlElement(exception.getSystemId());
 		}
@@ -419,6 +419,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			}
 		}
 		
+		XmlElement errorNode= generateErrorNode(exception);
+		rootElement.addChildNode(errorNode);
+	}
+
+	protected XmlElement generateErrorNode(SAXParseException exception) {
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
@@ -431,7 +436,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			errorNode.setStartingColumn(locator.getColumnNumber());
 			errorNode.setStartingRow(locator.getLineNumber());
 		}
-		rootElement.addChildNode(errorNode);
+		return errorNode;
 	}
 	
 	/**
@@ -519,4 +524,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		external.getAttributes().removeAll(external.getAttributes());
 		external.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, IAntEditorConstants.TYPE_EXTERNAL));
 	}
+
+	protected void setRootElement(XmlElement rootElement) {
+		this.rootElement= rootElement;
+	}
+
 }

@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.externaltools.internal.ant.editor.DynamicReconciling;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
@@ -76,7 +77,7 @@ import org.xml.sax.SAXParseException;
  */
 public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
 	
-	private IFile file;
+	private Object fInput;
 	private Menu menu;
 	private IAction openEditorAction;
 	
@@ -259,9 +260,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	 */
 	public PlantyContentOutlinePage(IFile aFile) {
 		super();
-		this.file = aFile;
+		setInput(aFile);
 	}
 
+	PlantyContentOutlinePage() {
+		super();
+	}
+	
 	/**  
 	 * Creates the control (outline view) for this page
 	 */
@@ -281,8 +286,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		 * We probably also need our own label provider.
 		 */ 
 		viewer.setLabelProvider(new PlantyLabelProvider());
-		viewer.setInput(getContentOutline(file));
-		viewer.expandToLevel(2);
+		
+		if (!DynamicReconciling.NEW_CODE_PATHS)
+			update();
 		
 		MenuManager manager= new MenuManager("#PopUp"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
@@ -322,16 +328,15 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	 * Returns the root XmlElement, or null if the
 	 * outline could not be generated.
 	 */
-	protected XmlElement getContentOutline(IAdaptable input) {
+	protected XmlElement getContentOutline(Object input) {
 		/*
 		 * What happens here:
 		 * The file is parsed by the SAX Parser.
 		 * The Parser then creates the DOM Tree of the file.
 		 * The root element is returned here.
 		 */
-		IFile tempFile = (IFile)input;
          
-		String tempWholeDocumentString = getFileContentAsString(tempFile);         
+		String tempWholeDocumentString = getContentAsString(input);         
          
 		// Create the parser
 		SAXParser tempParser;
@@ -352,13 +357,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 
 		// Create the handler
 		OutlinePreparingHandler tempHandler = null;
-		IPath location = tempFile.getLocation();
+		IPath location= getLocation(input);
 		try {
 			File tempParentFile = null;
 			if(location != null) {
 				tempParentFile = location.toFile().getParentFile();
 			}
-			tempHandler = new OutlinePreparingHandler(tempParentFile);
+			tempHandler= createOutlinePreparingHandler(tempParentFile);
             
 		} catch (ParserConfigurationException e) {
 			ExternalToolsPlugin.getDefault().log(e);
@@ -398,6 +403,18 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		}
                 
 		return tempElement;
+	}
+
+	protected OutlinePreparingHandler createOutlinePreparingHandler(File tempParentFile) throws ParserConfigurationException {
+		return new OutlinePreparingHandler(tempParentFile);
+	}
+
+	protected IPath getLocation(Object input) {
+		return ((IFile) input).getLocation();
+	}
+
+	protected String getContentAsString(Object input) {
+		return getFileContentAsString((IFile) input);
 	}
 
 	private XmlElement generateExceptionOutline(String wholeDocumentString, Exception e, XmlElement rootElement) {
@@ -580,6 +597,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		}
 		BufferedReader tempBufferedReader = new BufferedReader(tempReader);
 
+		return getReaderContentAsString(tempBufferedReader);
+	}
+
+	protected String getReaderContentAsString(BufferedReader tempBufferedReader) {
 		StringBuffer tempResult = new StringBuffer();
 		try {
 			String tempLine;
@@ -619,8 +640,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	 * Forces the page to update its contents.
 	 */
 	public void update() {
+		if (!DynamicReconciling.NEW_CODE_PATHS)
+			update(getContentOutline((IFile) getInput()));
+	}
+
+	protected void update(XmlElement contentOutline) {
 		getControl().setRedraw(false);
-		getTreeViewer().setInput(getContentOutline(file));
+		getTreeViewer().setInput(contentOutline);
 		getTreeViewer().expandToLevel(2);
 		updateColor();
 		getControl().setRedraw(true);
@@ -658,7 +684,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
-		ISelection selection= new StructuredSelection(file);
+		ISelection selection= new StructuredSelection(getInput());
 		return new ShowInContext(null, selection);
 	}
 	
@@ -671,4 +697,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		}
 		return null;
 	}
+	
+	public Object getInput() {
+		return fInput;
+	}
+
+	public void setInput(Object input) {
+		fInput= input;
+	}
+
 }

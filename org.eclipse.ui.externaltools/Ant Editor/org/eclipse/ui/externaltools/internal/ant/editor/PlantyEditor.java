@@ -13,6 +13,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,8 +32,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
+import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePageNew;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProvider;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProviderNew;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -65,6 +70,8 @@ public class PlantyEditor extends TextEditor {
      * The page that shows the outline.
      */
     protected PlantyContentOutlinePage page;
+    private List fOutlineCreationListeners;
+    private Object fPageLock;
 
 
     /**
@@ -72,7 +79,13 @@ public class PlantyEditor extends TextEditor {
      */
     public PlantyEditor() {
         super();
-        setDocumentProvider(new PlantyDocumentProvider());
+        if (DynamicReconciling.NEW_CODE_PATHS) {
+			fOutlineCreationListeners= new ArrayList();
+			fPageLock= new Object();
+			setDocumentProvider(new PlantyDocumentProviderNew());
+        } else {
+			setDocumentProvider(new PlantyDocumentProvider());
+        }
         setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
     }
 
@@ -93,7 +106,11 @@ public class PlantyEditor extends TextEditor {
 
     public void initializeEditor() {
         // That is where the assistant and its processor is defined
-        setSourceViewerConfiguration(new PlantySourceViewerConfiguration());
+        if (DynamicReconciling.NEW_CODE_PATHS) {
+			setSourceViewerConfiguration(new PlantySourceViewerConfigurationNew(this));
+        } else {
+			setSourceViewerConfiguration(new PlantySourceViewerConfiguration());
+        }
     }
    
 	/* (non-Javadoc)
@@ -105,8 +122,16 @@ public class PlantyEditor extends TextEditor {
         if (key.equals(IContentOutlinePage.class)) {
             IEditorInput input = getEditorInput();
             if (input instanceof IFileEditorInput) {
-                page = new PlantyContentOutlinePage(((IFileEditorInput)input).getFile());
-                page.addSelectionChangedListener(selectionChangedListener);
+            	if (DynamicReconciling.NEW_CODE_PATHS) {
+            		synchronized (fPageLock) {
+						page= new PlantyContentOutlinePageNew();
+						page.addSelectionChangedListener(selectionChangedListener);
+						notifyOutlineCreationListeners();
+            		}
+            	} else {
+					page= new PlantyContentOutlinePage(((IFileEditorInput) input).getFile());
+                	page.addSelectionChangedListener(selectionChangedListener);
+            	}
                 return page;
             }
         }
@@ -215,8 +240,14 @@ public class PlantyEditor extends TextEditor {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		if (page != null) {
+		if (!DynamicReconciling.NEW_CODE_PATHS && page != null) {
 			page.update();
+		}
+	}
+	
+	public PlantyContentOutlinePage getOutlinePage() {
+		synchronized (fPageLock) {
+			return page;
 		}
 	}
 	
@@ -241,4 +272,21 @@ public class PlantyEditor extends TextEditor {
 		}
 		super.handlePreferenceStoreChanged(event);
 	}
+
+	public void addOutlineCreationListener(IOutlineCreationListener listener) {
+		fOutlineCreationListeners.add(listener);
+	}
+
+
+	public void removeOutlineCreationListener(IOutlineCreationListener listener) {
+		fOutlineCreationListeners.remove(listener);
+	}
+	
+	public void notifyOutlineCreationListeners() {
+		Iterator i= new ArrayList(fOutlineCreationListeners).iterator();
+		while (i.hasNext()) {
+			((IOutlineCreationListener) i.next()).outlineCreated();
+		}
+	}
+
 }

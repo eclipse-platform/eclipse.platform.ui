@@ -34,7 +34,7 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
  */
 public class PlantyDocumentProvider extends FileDocumentProvider {
 
-    private IDocumentPartitioner createDocumentPartitioner() {
+    protected IDocumentPartitioner createDocumentPartitioner() {
         DefaultPartitioner partitioner =
             new DefaultPartitioner(
                 new PlantyPartitionScanner(),
