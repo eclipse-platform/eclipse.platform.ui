@@ -20,6 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -57,7 +58,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	//the source actions - up, down, add, remove, restore
 	protected List fActions = new ArrayList(5);
 	//the director that will be used by the tab to manage/store the containers
-	protected AbstractSourceLookupDirector fLocator;
+	protected ISourceLookupDirector fLocator;
 	
 	protected AddContainerAction fAddAction; 
 	
@@ -273,8 +274,18 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		try {
 			ISourceLocator locator = getLaunchManager().newSourceLocator(type);
 			if(!(locator instanceof AbstractSourceLookupDirector)) {
-				setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.0")); //$NON-NLS-1$
-				return; 
+				// migrate to the new source lookup infrastructure
+				memento = null; // don't use old memento
+				type = configuration.getType().getSourceLocatorId();
+				if(type == null) {
+					setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.2")); //$NON-NLS-1$
+					return;
+				}
+				locator = getLaunchManager().newSourceLocator(type);
+				if (!(locator instanceof AbstractSourceLookupDirector)) {
+					setErrorMessage(SourceLookupUIMessages.getString("sourceLookupPanel.2")); //$NON-NLS-1$
+					return;
+				}
 			}
 			fLocator = (AbstractSourceLookupDirector)locator;			
 			if (memento == null) {
@@ -294,7 +305,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	 * Initializes this control based on the settings in the given
 	 * AbstractSourceLookupDirector
 	 */
-	public void initializeFrom(AbstractSourceLookupDirector locator) {
+	public void initializeFrom(ISourceLookupDirector locator) {
 		if(fConfig == null)
 			fConfig = locator.getLaunchConfiguration();
 		fPathViewer.setEntries(locator.getSourceContainers());		

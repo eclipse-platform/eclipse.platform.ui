@@ -1630,37 +1630,6 @@
       </launchConfigurationComparator>
    </extension>
    
-<extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.debug.ui.debugViewContributions">
-         <visibility>
-            <and>
-               <systemProperty
-                     name="org.eclipse.debug.ui.sourceLookupDirectorActive"
-                     value="true">
-               </systemProperty>
-            </and>
-         </visibility>
-         <action
-               label="%manageSourceAction.action"
-               icon="icons\full\clcl16\edtsrclkup_menu.gif"
-               helpContextId="edit_source_lookup_path_action"
-               class="org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction"
-               menubarPath="wsaDebugGroup"
-               id="org.eclipse.debug.ui.sourcelookup.EditSourceLookupPathAction">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.debug.ui.sourceLookupDirectorActive"
-                        value="true">
-                  </systemProperty>
-               </and>
-            </enablement>
-         </action>
-      </viewerContribution>
-   </extension>
 <!-- Editor -->
    <extension
          point="org.eclipse.ui.editors">
@@ -1732,6 +1701,16 @@
             adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
+         <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>         
+         <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>          
     </extension>
 <!-- ========================================= -->
 <!-- Contextual Launch Menu (Work in Progress) -->

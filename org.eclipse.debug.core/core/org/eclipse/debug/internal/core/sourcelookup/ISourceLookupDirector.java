@@ -40,12 +40,21 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	
 	/**
 	 * Returns the source containers currently registered with this 
-	 * director, possible an empty collection.
+	 * director, possibly an empty collection.
 	 * 
 	 * @return the source containers currently registered with this 
-	 * director, possible an empty collection
+	 * director, possibly an empty collection
 	 */
 	public ISourceContainer[] getSourceContainers();
+	
+	/**
+	 * Sets the source containers this source lookup director
+	 * should search when looking for source, possibly an empty collection.
+	 * 
+	 * @param containers the source containers this source lookup director
+	 * should search when looking for source, possibly an empty collection
+	 */
+	public void setSourceContainers(ISourceContainer[] containers);	
 	
 	/**
 	 * Returns whether to search exhaustively for all source elements
@@ -57,6 +66,17 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * with the same name
 	 */
 	public boolean isFindDuplicates();
+	
+	/**
+	 * Sets whether to search exhaustively for all source elements
+	 * with the same name in all registered source containers, or
+	 * whether to stop searching when the first source element matching
+	 * the required name is found.
+	 * 
+	 * @param findDuplicates whether to search exhaustively for all source elements
+	 * with the same name
+	 */
+	public void setFindDuplicates(boolean findDuplicates);	
 	
 	/**
 	 * Notifies this source lookup director that it should initialize

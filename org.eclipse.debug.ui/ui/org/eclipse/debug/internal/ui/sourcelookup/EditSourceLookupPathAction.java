@@ -14,14 +14,16 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The action for editing the source lookup path. Brings up the 
@@ -29,65 +31,43 @@ import org.eclipse.ui.IViewPart;
  * 
  * @since 3.0
  */
-public class EditSourceLookupPathAction implements IViewActionDelegate {
+public class EditSourceLookupPathAction extends SelectionListenerAction {
 	
-	private IDebugView fLaunchView;	
+	private ISourceLookupDirector director = null;
 	
-	/**
-	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart view) {
-		if ((view == null) || !(view instanceof IDebugView))
-			return;
-		else
-			fLaunchView = (IDebugView) view;
+	public EditSourceLookupPathAction() {
+		super(SourceLookupUIMessages.getString("EditSourceLookupPathAction.0")); //$NON-NLS-1$
+		setEnabled(false);
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
+		setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_SRC_LOOKUP_MENU));
 	}
 	
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void run(IAction action) {
-		ISourceLocator locator = null;		
-		Object selectedObject = null;
-		ISelection selection =
-			fLaunchView.getViewSite().getSelectionProvider().getSelection();
-		if (selection != null
-				&& !selection.isEmpty()
-				&& selection instanceof IStructuredSelection)
-			selectedObject =
-				((IStructuredSelection) selection).getFirstElement();
-		else if (selection != null) {
-			selectedObject = selection;
-		} else
-		{ //should never happen - action should not be visible in this case
-			action.setEnabled(false);
-			return; 
+	protected boolean updateSelection(IStructuredSelection selection) {
+		director = null;
+		if (selection.size() == 1) {
+			Object object = selection.getFirstElement();
+			ILaunch launch = null;
+			if (object instanceof IDebugElement) {
+				launch = ((IDebugElement)object).getLaunch();
+			} else if (object instanceof ILaunch) {
+				launch = (ILaunch)object;
+			}
+			if (launch != null && launch.getLaunchConfiguration() != null &&
+					launch.getSourceLocator() instanceof ISourceLookupDirector) {
+				director = (ISourceLookupDirector) launch.getSourceLocator();
+			}
 		}
-		if (selectedObject instanceof ILaunch) {
-			locator = ((ILaunch) selectedObject).getSourceLocator();			
-		} else if (selectedObject instanceof IDebugElement) {
-			locator =
-				((IDebugElement) selectedObject).getLaunch().getSourceLocator();			
-		}
-		if (locator == null || !(locator instanceof AbstractSourceLookupDirector))
-		{	//should never happen - action should not be visible in this case
-			action.setEnabled(false);
-			return; 
-		}
-		Shell shell = DebugUIPlugin.getShell();
-		
-		final EditSourceLookupPathDialog dialog =
-			new EditSourceLookupPathDialog(shell, (AbstractSourceLookupDirector)locator);
-		
+		return director != null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	public void run() {
+		Shell shell = DebugUIPlugin.getShell();		
+		EditSourceLookupPathDialog dialog = new EditSourceLookupPathDialog(shell, director);
 		dialog.open();		
 	}
-	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		//do nothing.  plugin.xml will take care of it
-	}
-	
-	
 }

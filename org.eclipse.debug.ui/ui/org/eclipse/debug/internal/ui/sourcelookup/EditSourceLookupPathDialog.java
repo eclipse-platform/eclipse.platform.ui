@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -34,14 +34,14 @@ public class EditSourceLookupPathDialog extends TitleAreaDialog {
 	
 	private SourceContainerLookupPanel fPanel;
 	//The locator associated with the launch. Will be used to manage the containers.
-	private AbstractSourceLookupDirector fLocator;
+	private ISourceLookupDirector fLocator;
 	
 	/**
 	 * The constructor for the dialog.
 	 * @param shell the shell
 	 * @param locator the locator associated with the launch
 	 */
-	public EditSourceLookupPathDialog(Shell shell, AbstractSourceLookupDirector locator)
+	public EditSourceLookupPathDialog(Shell shell, ISourceLookupDirector locator)
 	{
 		super(shell);					
 		fLocator = locator;
