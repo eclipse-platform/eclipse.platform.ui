@@ -68,6 +68,9 @@ public class Worker extends Thread {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
 					result = handleException(currentJob, e);
+				} catch (ThreadDeath e) {
+					//must not consume thread death
+					throw e;
 				} catch (Error e) {
 					result = handleException(currentJob, e);
 				} finally {
@@ -75,7 +78,7 @@ public class Worker extends Thread {
 					Thread.interrupted();
 					//result must not be null
 					if (result == null)
-						result = handleException(currentJob(), new NullPointerException());
+						result = handleException(currentJob, new NullPointerException());
 					pool.endJob(currentJob, result);
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
 						log(result);
