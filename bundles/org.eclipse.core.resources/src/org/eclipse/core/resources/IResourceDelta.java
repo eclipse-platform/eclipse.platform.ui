@@ -360,7 +360,8 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
 	 * 		been altered, or <code>IResource.touch</code> has been called on 
 	 * 		the resource.</li>
-	 * <li><code>DESCRIPTION</code> - The description of the project has been altered.
+	 * <li><code>DESCRIPTION</code> - The description of the project has been altered,
+	 * 		or <code>IResource.touch</code> has been called on the project.
 	 * 		This flag is only valid for project resources.</li>
 	 * <li><code>OPEN</code> - The project's open/closed state has changed.
 	 * 		If it is not open, it was closed, and vice versa.  This flag is only valid for project resources.</li>

@@ -2039,11 +2039,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Marks this resource as having changed even though its content
 	 * may not have changed. This method can be used to trigger 
 	 * the rebuilding of resources/structures derived from this resource.
-	 * Touching the workspace root has no effect.
-	 * </p>
+	 * Touching the workspace root has no effect. 
 	 * <p>
 	 * This method changes resources; these changes will be reported
-	 * in a subsequent resource change event.
+	 * in a subsequent resource change event. If the resource is a project,
+	 * the change event will indicate a description change.
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
@@ -2062,6 +2062,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceRuleFactory#modifyRule(IResource)
+	 * @see IResourceDelta#CONTENT
+	 * @see IResourceDelta#DESCRIPTION
 	 */
 	public void touch(IProgressMonitor monitor) throws CoreException;
 }
