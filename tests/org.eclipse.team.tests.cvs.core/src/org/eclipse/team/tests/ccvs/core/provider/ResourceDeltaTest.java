@@ -71,13 +71,7 @@ public class ResourceDeltaTest extends EclipseTest {
 	}
 	
 	public void assertAdditionMarkerFor(IResource resource, boolean exists) throws CoreException {
-		if ( ! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) return;
-		IMarker[] markers = resource.findMarkers(AddDeleteMoveListener.ADDITION_MARKER, false, IResource.DEPTH_ZERO);
-		if (exists) {
-   			assertTrue("Addition marker doesn't exist for " + resource.getName(), markers.length == 1);
-		} else {
-   			assertTrue("Addition marker exists for " + resource.getName(), markers.length == 0);
-   		}
+		// Addition markers are no longer used
 	}
 	
 	public void assertDeletionMarkerFor(IResource resource, boolean exists) throws CoreException {
