@@ -6,7 +6,7 @@
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.core.tests.harness"/>
     <classpathentry kind="src" path="/org.eclipse.core.tests.resources"/>
-    <classpathentry kind="lib" path="/org.junit/junit.jar"/>
     <classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="/org.junit"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
