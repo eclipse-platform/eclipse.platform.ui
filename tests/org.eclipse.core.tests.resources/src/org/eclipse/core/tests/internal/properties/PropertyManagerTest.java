@@ -14,8 +14,7 @@ import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.properties.StoredProperty;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 
@@ -33,22 +32,71 @@ public static Test suite() {
 	return new TestSuite(PropertyManagerTest.class);
 }
 public void testCopy() throws Throwable {
-	/* create common objects */
 	PropertyManager manager = new PropertyManager((Workspace) getWorkspace());
-
-	/* server properties */
+	IProject source = projects[0];
+	IFolder sourceFolder = source.getFolder("myfolder");
+	IResource sourceFile = sourceFolder.getFile("myfile.txt");
+	IProject destination = projects[1];
+	IFolder destFolder = destination.getFolder(sourceFolder.getName());
+	IResource destFile = destFolder.getFile(sourceFile.getName());
 	QualifiedName propName = new QualifiedName("test", "prop");
 	String propValue = "this is the property value";
-	manager.setProperty(projects[0], propName, propValue);
-	assertTrue("1.1", manager.getProperty(projects[0], propName).equals(propValue));
-	manager.copy(projects[0], projects[1], IResource.DEPTH_INFINITE);
-	assertTrue("1.2", manager.getProperty(projects[1], propName).equals(propValue));
+
+	/* 
+	 * persistent properties 
+	 */ 
+	manager.setProperty(source, propName, propValue);
+	manager.setProperty(sourceFolder, propName, propValue);
+	manager.setProperty(sourceFile, propName, propValue);
+
+	assertNotNull("1.1", manager.getProperty(source, propName));
+	assertTrue("1.2", manager.getProperty(source, propName).equals(propValue));
+	assertNotNull("1.3", manager.getProperty(sourceFolder, propName));
+	assertTrue("1.4", manager.getProperty(sourceFolder, propName).equals(propValue));
+	assertNotNull("1.5", manager.getProperty(sourceFile, propName));
+	assertTrue("1.6", manager.getProperty(sourceFile, propName).equals(propValue));
+
+	// do the copy at the project level
+	manager.copy(source, destination, IResource.DEPTH_INFINITE);
+
+	assertNotNull("1.7", manager.getProperty(destination, propName));
+	assertTrue("1.8", manager.getProperty(destination, propName).equals(propValue));
+	// FIXME: will fail because of bug 11169.
+	// http://bugs.eclipse.org/bugs/show_bug.cgi?id=11169
+//	assertNotNull("1.9", manager.getProperty(destFolder, propName));
+//	assertTrue("1.10", manager.getProperty(destFolder, propName).equals(propValue));
+//	assertNotNull("1.11", manager.getProperty(destFile, propName));
+//	assertTrue("1.12", manager.getProperty(destFile, propName).equals(propValue));
+
+	// do the same thing but copy at the folder level
+	manager.deleteProperties(source);
+	manager.deleteProperties(destination);
+	assertNull("2.0", manager.getProperty(source, propName));
+	assertNull("2.1", manager.getProperty(sourceFolder, propName));
+	assertNull("2.2", manager.getProperty(sourceFile, propName));
+	assertNull("2.3", manager.getProperty(destination, propName));
+	assertNull("2.4", manager.getProperty(destFolder, propName));
+	assertNull("2.5", manager.getProperty(destFile, propName));
+	manager.setProperty(sourceFolder, propName, propValue);
+	manager.setProperty(sourceFile, propName, propValue);
+	assertNotNull("2.6", manager.getProperty(sourceFolder, propName));
+	assertTrue("2.7", manager.getProperty(sourceFolder, propName).equals(propValue));
+	assertNotNull("2.8", manager.getProperty(sourceFile, propName));
+	assertTrue("2.9", manager.getProperty(sourceFile, propName).equals(propValue));
+	
+	manager.copy(sourceFolder, destFolder, IResource.DEPTH_INFINITE);
+
+	assertNotNull("2.10", manager.getProperty(destFolder, propName));
+	assertTrue("2.11", manager.getProperty(destFolder, propName).equals(propValue));
+	assertNotNull("2.12", manager.getProperty(destFile, propName));
+	assertTrue("2.13", manager.getProperty(destFile, propName).equals(propValue));
+
 	/* test overwrite */
-	propValue = "change property value";
-	manager.setProperty(projects[0], propName, propValue);
-	assertTrue("1.3", manager.getProperty(projects[0], propName).equals(propValue));
-	manager.copy(projects[0], projects[1], IResource.DEPTH_INFINITE);
-	assertTrue("1.4", manager.getProperty(projects[1], propName).equals(propValue));
+	String newPropValue = "change property value";
+	manager.setProperty(source, propName, newPropValue);
+	assertTrue("2.0", manager.getProperty(source, propName).equals(newPropValue));
+	manager.copy(source, destination, IResource.DEPTH_INFINITE);
+	assertTrue("2.1", manager.getProperty(destination, propName).equals(newPropValue));
 }
 public void testDeleteProperties() throws Throwable {
 	/* create common objects */
