@@ -108,18 +108,19 @@ public final class ExternalToolMigration {
 	/*
 	 * 2.0 External Tool Tags
 	 */
-	private static final String TAG_TOOL_TYPE = "!{tool_type}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_NAME = "!{tool_name}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_ARGUMENTS = "!{tool_args}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_DIRECTORY = "!{tool_dir}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_REFRESH = "!{tool_refresh}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_SHOW_LOG = "!{tool_show_log}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_BUILD_TYPES = "!{tool_build_types}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_BLOCK = "!{tool_block}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_TYPE = "!{tool_type}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_NAME = "!{tool_name}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_ARGUMENTS = "!{tool_args}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_DIRECTORY = "!{tool_dir}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_REFRESH = "!{tool_refresh}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_SHOW_LOG = "!{tool_show_log}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_BUILD_TYPES = "!{tool_build_types}"; //$NON-NLS-1$
+	public static final String TAG_TOOL_BLOCK = "!{tool_block}"; //$NON-NLS-1$
 
 	// Known kind of tools
 	private static final String TOOL_TYPE_ANT = "org.eclipse.ui.externaltools.type.ant"; //$NON-NLS-1$
+	private static final String TOOL_TYPE_PROGRAM = "org.eclipse.ui.externaltools.type.program"; //$NON-NLS-1$
 
 	/*
 	 * 2.1 External Tool Keys
@@ -217,8 +218,10 @@ public final class ExternalToolMigration {
 		String type = (String) args.get(TAG_TOOL_TYPE);
 		if (TOOL_TYPE_ANT.equals(type)) {
 			type = TOOL_TYPE_ANT_BUILD;
-		} else {
+		} else if (TOOL_TYPE_PROGRAM.equals(type)){
 			type = IExternalToolConstants.TOOL_TYPE_PROGRAM;
+		} else {
+			return null;
 		}
 
 		String name = (String) args.get(TAG_TOOL_NAME);
@@ -244,45 +247,47 @@ public final class ExternalToolMigration {
 
 		// Update the arguments
 		String arguments = (String) args.get(TAG_TOOL_ARGUMENTS);
-		String targetNames = null;
-		if (arguments != null) {
-			int start = 0;
-			ArrayList targets = new ArrayList();
-			StringBuffer buffer = new StringBuffer();
-			VariableDefinition varDef = extractVariableDefinition(arguments, start);
-			while (varDef.end != -1) {
-				if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
-					targets.add(varDef.argument);
-					buffer.append(arguments.substring(start, varDef.start));
-				} else {
-					buffer.append(arguments.substring(start, varDef.end));
+		if (type.equals(TOOL_TYPE_ANT_BUILD)) {
+			String targetNames = null;
+			if (arguments != null) {
+				int start = 0;
+				ArrayList targets = new ArrayList();
+				StringBuffer buffer = new StringBuffer();
+				VariableDefinition varDef = extractVariableDefinition(arguments, start);
+				while (varDef.end != -1) {
+					if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
+						targets.add(varDef.argument);
+						buffer.append(arguments.substring(start, varDef.start));
+					} else {
+						buffer.append(arguments.substring(start, varDef.end));
+					}
+					start = varDef.end;
+					varDef = extractVariableDefinition(arguments, start);
 				}
-				start = varDef.end;
-				varDef = extractVariableDefinition(arguments, start);
-			}
-			buffer.append(arguments.substring(start, arguments.length()));
-			arguments = buffer.toString();
-
-			buffer.setLength(0);
-			for (int i = 0; i < targets.size(); i++) {
-				String target = (String) targets.get(i);
-				if (target != null && target.length() > 0) {
-					buffer.append(target);
-					buffer.append(","); //$NON-NLS-1$
+				buffer.append(arguments.substring(start, arguments.length()));
+				arguments = buffer.toString();
+	
+				buffer.setLength(0);
+				for (int i = 0; i < targets.size(); i++) {
+					String target = (String) targets.get(i);
+					if (target != null && target.length() > 0) {
+						buffer.append(target);
+						buffer.append(","); //$NON-NLS-1$
+					}
 				}
+				targetNames = buffer.toString();
 			}
-			targetNames = buffer.toString();
+			if (targetNames != null && targetNames.length() > 0) {
+				config.setAttribute(ATTR_ANT_TARGETS, targetNames);
+			}
 		}
-		if (targetNames != null && targetNames.length() > 0) {
-			config.setAttribute(ATTR_ANT_TARGETS, targetNames);
-		}
+		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 
 		// Collect the rest of the information
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) args.get(TAG_TOOL_BUILD_TYPES));
-		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) args.get(TAG_TOOL_DIRECTORY));
 		return config;
 	}
