@@ -575,6 +575,11 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 				 */
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
+					
+					if (info.fModel instanceof AbstractMarkerAnnotationModel) {
+						AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) info.fModel;
+						markerModel.resetMarkers();
+					}
 				}
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
