@@ -5,6 +5,8 @@ package org.eclipse.core.internal.resources;
  * All Rights Reserved.
  */
 
+import java.util.Hashtable;
+
 import org.eclipse.core.resources.WorkspaceLock;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -12,7 +14,8 @@ import org.eclipse.core.internal.utils.*;
 //
 public class WorkManager implements IManager {
 	protected int currentOperationId;
-	protected ThreadLocal identifiers;
+	// we use a Hashtable for the identifiers to avoid concurrency problems
+	protected Hashtable identifiers;
 	protected int nextId;
 	protected Workspace workspace;
 	protected WorkspaceLock workspaceLock;
@@ -35,7 +38,7 @@ public class WorkManager implements IManager {
 	public static final int OPERATION_EMPTY = 0;
 public WorkManager(Workspace workspace) {
 	currentOperationId = OPERATION_NONE;
-	identifiers = new ThreadLocal();
+	identifiers = new Hashtable(10);
 	nextId = 0;
 	this.workspace = workspace;
 	operations = new Queue();
@@ -52,8 +55,13 @@ public synchronized Semaphore acquire() {
 	}
 	return enqueue(new Semaphore(Thread.currentThread()));
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 public void avoidAutoBuild() {
-	getIdentifier().avoidAutoBuild = true;
+	getIdentifier(currentOperationThread).avoidAutoBuild = true;
 }
 /**
  * An operation calls this method and it only returns when the operation
@@ -79,12 +87,18 @@ public synchronized void checkOut() throws CoreException {
 	decrementPreparedOperations();
 	rebalanceNestedOperations();
 	// if this is a nested operation, just return
+	// and do not release the lock
 	if (getPreparedOperationDepth() > 0)
 		return;
 	getWorkspaceLock().release();
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 private void decrementPreparedOperations() {
-	getIdentifier().preparedOperations--;
+	getIdentifier(currentOperationThread).preparedOperations--;
 }
 /**
  * If there is another semaphore with the same runnable in the
@@ -101,16 +115,14 @@ private synchronized Semaphore enqueue(Semaphore newSemaphore) {
 public synchronized Thread getCurrentOperationThread() {
 	return currentOperationThread;
 }
-private Identifier getIdentifier() {
-	Identifier identifier = (Identifier) identifiers.get();
+private Identifier getIdentifier(Thread key) {
+	Assert.isNotNull(key, "The thread should never be null.");//$NON-NLS-1$
+	Identifier identifier = (Identifier) identifiers.get(key);
 	if (identifier == null) {
 		identifier = getNewIdentifier();
-		identifiers.set(identifier);
+		identifiers.put(key, identifier);
 	}
 	return identifier;
-}
-public int getNestedOperationDepth() {
-	return getIdentifier().nestedOperations;
 }
 private Identifier getNewIdentifier() {
 	Identifier identifier = new Identifier();
@@ -121,10 +133,15 @@ private int getNextOperationId() {
 	return ++nextId;
 }
 private int getOperationId() {
-	return getIdentifier().operationId;
+	return getIdentifier(Thread.currentThread()).operationId;
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 public int getPreparedOperationDepth() {
-	return getIdentifier().preparedOperations;
+	return getIdentifier(currentOperationThread).preparedOperations;
 }
 private WorkspaceLock getWorkspaceLock() throws CoreException {
 	if (workspaceLock == null)
@@ -134,16 +151,30 @@ private WorkspaceLock getWorkspaceLock() throws CoreException {
 /**
  * Returns true if the nested operation depth is the same
  * as the prepared operation depth, and false otherwise.
+ *
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
  */
 boolean isBalanced() {
-	Identifier identifier = getIdentifier();
+	Identifier identifier = getIdentifier(currentOperationThread);
 	return identifier.nestedOperations == identifier.preparedOperations;
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 void incrementNestedOperations() {
-	getIdentifier().nestedOperations++;
+	getIdentifier(currentOperationThread).nestedOperations++;
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 private void incrementPreparedOperations() {
-	getIdentifier().preparedOperations++;
+	getIdentifier(currentOperationThread).preparedOperations++;
 }
 /**
  * This method is synchronized with checkIn() and checkOut() that use blocks
@@ -156,15 +187,24 @@ public synchronized boolean isNextOperation(Runnable runnable) {
 	Semaphore next = (Semaphore) operations.peek();
 	return (next != null) && (next.getRunnable() == runnable);
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 public void operationCanceled() {
-	getIdentifier().operationCanceled = true;
+	getIdentifier(currentOperationThread).operationCanceled = true;
 }
 /**
  * Used to make things stable again after an operation has failed between
  * a workspace.prepareOperation() and workspace.beginOperation().
+ * 
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
  */
 public void rebalanceNestedOperations() {
-	Identifier identifier = getIdentifier();
+	Identifier identifier = getIdentifier(currentOperationThread);
 	identifier.nestedOperations = identifier.preparedOperations;
 }
 public synchronized void release() {
@@ -176,10 +216,15 @@ public synchronized void release() {
 }
 private void resetOperationId() {
 	// ensure the operation cache on this thread is null
-	identifiers.set(null);
+	identifiers.remove(currentOperationThread);
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 public void setBuild(boolean build) {
-	Identifier identifier = getIdentifier();
+	Identifier identifier = getIdentifier(currentOperationThread);
 	if (identifier.preparedOperations == identifier.nestedOperations)
 		identifier.shouldBuild = (identifier.shouldBuild || build);
 }
@@ -189,8 +234,13 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 	Assert.isNotNull(lock);
 	workspaceLock = lock;
 }
+/**
+ * This method can only be safelly called from inside a workspace
+ * operation. Should NOT be called from outside a 
+ * prepareOperation/endOperation block.
+ */
 public boolean shouldBuild() {
-	Identifier identifier = getIdentifier();
+	Identifier identifier = getIdentifier(currentOperationThread);
 	if (!identifier.avoidAutoBuild && identifier.shouldBuild) {
 		if (identifier.operationCanceled)
 			return Policy.buildOnCancel;

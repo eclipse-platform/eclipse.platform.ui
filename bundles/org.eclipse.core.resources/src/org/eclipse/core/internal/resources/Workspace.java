@@ -1377,7 +1377,11 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
 	// if a full save was requested, and this is a top-level op, try the save.  Otherwise
 	// fail the operation.
 	if (full) {
-		if (getWorkManager().getPreparedOperationDepth() > 0) {
+		// If the workmanager thread is null or is different than this thread
+		// it is OK to start the save because it will wait until the other thread
+		// is finished. Otherwise, someone in this thread has tried to do a save
+		// inside of an operation (which is not allowed by the spec).
+		if (getWorkManager().getCurrentOperationThread() == Thread.currentThread()) {
 			message = Policy.bind("resources.saveOp");
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 		} 
