@@ -19,8 +19,11 @@ public final class Point implements Comparable {
 	private int x;
 	private int y;
 
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+	private transient String string;
+
 	Point(int x, int y) {
-		super();
 		this.x = x;
 		this.y = y;
 	}
@@ -40,7 +43,10 @@ public final class Point implements Comparable {
 			return false;
 
 		Point point = (Point) object;
-		return x == point.x && y == point.y;
+		boolean equals = true;
+		equals &= x == point.x;
+		equals &= y == point.y;
+		return equals;		
 	}
 
 	public int getX() {
@@ -52,9 +58,27 @@ public final class Point implements Comparable {
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + x;
-		result = result * HASH_FACTOR + y;
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + x;
+			hashCode = hashCode * HASH_FACTOR + y;			
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;		
+	}
+
+	public String toString() {
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(x);
+			stringBuffer.append(',');
+			stringBuffer.append(y);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+	
+		return string;			
 	}
 }

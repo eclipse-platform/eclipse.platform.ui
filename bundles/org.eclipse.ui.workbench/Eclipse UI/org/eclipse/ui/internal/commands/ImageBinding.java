@@ -20,25 +20,34 @@ final class ImageBinding implements IImageBinding {
 
 	private String imageStyle;
 	private String imageUri;
+	private int match;	
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	ImageBinding(String imageStyle, String imageUri) {	
+	ImageBinding(String imageStyle, String imageUri, int match) {	
 		if (imageStyle == null || imageUri == null)
 			throw new NullPointerException();
 
+		if (match < 0)
+			throw new IllegalArgumentException();
+			
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;
+		this.match = match;
 	}
 
 	public int compareTo(Object object) {
 		ImageBinding imageBinding = (ImageBinding) object;
 		int compareTo = imageStyle.compareTo(imageBinding.imageStyle);			
 
-		if (compareTo == 0)
+		if (compareTo == 0) {
 			compareTo = imageStyle.compareTo(imageBinding.imageUri);
+		
+			if (compareTo == 0)
+				compareTo = match - imageBinding.match;
+		}
 		
 		return compareTo;	
 	}
@@ -51,6 +60,7 @@ final class ImageBinding implements IImageBinding {
 		boolean equals = true;
 		equals &= imageStyle.equals(imageBinding.imageStyle);
 		equals &= imageUri.equals(imageBinding.imageUri);
+		equals &= match == imageBinding.match;
 		return equals;
 	}
 
@@ -62,11 +72,16 @@ final class ImageBinding implements IImageBinding {
 		return imageUri;
 	}
 	
+	public int getMatch() {
+		return match;	
+	}	
+	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + imageStyle.hashCode();
 			hashCode = hashCode * HASH_FACTOR + imageUri.hashCode();
+			hashCode = hashCode * HASH_FACTOR + match;				
 			hashCodeComputed = true;
 		}
 			
@@ -80,6 +95,8 @@ final class ImageBinding implements IImageBinding {
 			stringBuffer.append(imageStyle);
 			stringBuffer.append(',');
 			stringBuffer.append(imageUri);
+			stringBuffer.append(',');
+			stringBuffer.append(match);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
