@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -61,7 +60,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		final Iterator enum= selection.iterator();
 		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 		final MultiStatus ms= 
-			new MultiStatus(pluginId, IDebugStatusConstants.REQUEST_FAILED, getStatusMessage(), null); 
+			new MultiStatus(pluginId, DebugException.REQUEST_FAILED, getStatusMessage(), null); 
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				while (enum.hasNext()) {

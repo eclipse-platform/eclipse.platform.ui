@@ -41,9 +41,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -480,7 +480,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				debugPart= (LaunchesView) switchContext.getPage().showView(IDebugUIConstants.ID_PROCESS_VIEW);
 			}
 		} catch (PartInitException pie) {
-			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, pie.getMessage(), pie);
+			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, pie.getMessage(), pie);
 			errorDialog(getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_1"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		switchContext.setDebuggerView(debugPart);
@@ -611,7 +611,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				}
 				switchContext.setPageCreated(true);
 			} catch (WorkbenchException e) {
-				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, e.getMessage(), e);
+				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, e.getMessage(), e);
 				errorDialog(window.getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_3"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._4"), status); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}

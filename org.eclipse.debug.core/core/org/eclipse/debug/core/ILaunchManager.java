@@ -18,10 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * For convenience, a default launcher may be associated with a project.
  * The preference is stored as a persistent property with the project.
- * The debug UI plug-in uses this preference to help determine which 
- * launcher to invoke when the the run or debug button is pressed, based on
- * the selection in the workbench. If a launcher cannot be determined,
- * the user is prompted to choose a launcher.
  * </p>
  * <p>
  * Clients are not intended to implement this interface.

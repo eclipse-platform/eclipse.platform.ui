@@ -90,7 +90,7 @@ public interface ILauncher {
 	 * launcher. This causes the launcher delegate to be instantiated (if
 	 * not already).
 	 *
-	 * @return the underlying launcher extension
+	 * @return the underlying launcher delegate
 	 */
 	ILauncherDelegate getDelegate();
 	

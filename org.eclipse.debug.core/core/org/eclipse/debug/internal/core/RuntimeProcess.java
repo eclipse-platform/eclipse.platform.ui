@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;import java.io.OutputStream;import java.util.HashMap;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.PlatformObject;import org.eclipse.core.runtime.Status;import org.eclipse.debug.core.DebugEvent;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.IDebugConstants;import org.eclipse.debug.core.IDebugStatusConstants;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStreamsProxy;
+import java.io.InputStream;import java.io.OutputStream;import java.util.HashMap;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.PlatformObject;import org.eclipse.core.runtime.Status;import org.eclipse.debug.core.DebugEvent;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.IDebugConstants;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStreamsProxy;
 
 
 /**
@@ -151,7 +151,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			// clean-up
 			fMonitor.killMonitoring();
-			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
 			throw new DebugException(status);
 		}
 	}

@@ -12,9 +12,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -47,7 +47,7 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 		IStructuredSelection es= (IStructuredSelection)selection;
 		final Iterator itr= es.iterator();
 		final MultiStatus ms = new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-			IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
+			DebugException.REQUEST_FAILED, DebugUIMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
  
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {

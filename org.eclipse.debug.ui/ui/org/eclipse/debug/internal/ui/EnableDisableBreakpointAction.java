@@ -10,8 +10,8 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IBreakpointListener;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -46,7 +46,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			return;
 		}
 
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("EnableDisableBreakpointAction.Enable/Disable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIMessages.getString("EnableDisableBreakpointAction.Enable/Disable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		while (enum.hasNext()) {
 			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {

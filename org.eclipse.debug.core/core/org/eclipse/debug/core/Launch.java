@@ -261,7 +261,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 */
 	public final void terminate() throws DebugException {
 		MultiStatus status= 
-			new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugCoreMessages.getString("Launch.terminate_failed"), null); //$NON-NLS-1$
+			new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Launch.terminate_failed"), null); //$NON-NLS-1$
 		IProcess[] ps= getProcesses();
 		
 		// terminate the system processes

@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -39,7 +38,7 @@ public class TerminateAllAction extends Action {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-			IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("TerminateAllAction.Terminate_all_failed_3"), null); //$NON-NLS-1$
+			DebugException.REQUEST_FAILED, DebugUIMessages.getString("TerminateAllAction.Terminate_all_failed_3"), null); //$NON-NLS-1$
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= (ILaunch) launches[i];
 			if (!launch.isTerminated()) {

@@ -17,8 +17,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
@@ -189,7 +189,7 @@ public abstract class ExecutionAction extends Action {
 		} else {
 			launchers= new ArrayList(2);
 
-			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("Error_occurred_retrieving_default_launcher_3"), null); //$NON-NLS-1$
+			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIMessages.getString("Error_occurred_retrieving_default_launcher_3"), null); //$NON-NLS-1$
 			for (int i = 0; i < projects.length; i++) {
 				IProject project= projects[i];
 				ILauncher defaultLauncher= null;
