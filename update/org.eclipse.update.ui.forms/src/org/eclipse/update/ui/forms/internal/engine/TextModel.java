@@ -10,20 +10,23 @@
  *******************************************************************************/
 package org.eclipse.update.ui.forms.internal.engine;
 
-import java.util.Vector;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.ui.forms.internal.*;
-import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.*;
 import java.io.*;
+import java.util.*;
+import javax.xml.parsers.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.w3c.dom.*;
-import org.eclipse.jface.resource.JFaceResources;
+import org.xml.sax.*;
 
 /**
  * @version 	1.0
  * @author
  */
 public class TextModel implements ITextModel {
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
 	Vector paragraphs;
 	IHyperlinkListener urlListener;
 	IHyperlinkSegment[] hyperlinks;
@@ -78,12 +81,17 @@ public class TextModel implements ITextModel {
 
 	public void parseInputStream(InputStream is, boolean expandURLs)
 		throws CoreException {
-		DOMParser parser = new DOMParser();
+			
+		documentBuilderFactory.setNamespaceAware(true);
+	
 		reset();
 		try {
+			DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
 			InputSource source = new InputSource(is);
-			parser.parse(source);
-			processDocument(parser.getDocument(), expandURLs);
+			Document doc = parser.parse(source);
+			processDocument(doc, expandURLs);
+		} catch (ParserConfigurationException e) {
+			FormsPlugin.logException(e);
 		} catch (SAXException e) {
 			FormsPlugin.logException(e);
 		} catch (IOException e) {
