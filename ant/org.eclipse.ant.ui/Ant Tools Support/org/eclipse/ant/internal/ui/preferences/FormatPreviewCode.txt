@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="create-buildfile" default="build">
-<!-- - - - - - - - - - - - - - -->
-<!-- target: build             -->
-<!-- - - - - - - - - - - - - - -->
-<target name="build" description="Display a valid buildfile which 
-greets the user with the value of ${favoriteGreeting}.">
-<echo>Example buildfile that echos</echo>
-<property name="favoriteGreeting" value="buenos dias"/>
-<xml-greeting greeting-text="${favoriteGreeting}"/>
-</target>
+<!-- ================================================ -->
+<!--  Sample buildfile for jar components             -->
+<!--                                                  -->
+<!-- ================================================ -->
+<project name="sample" default="build">
 
-<!-- - - - - - - - - - - - - - -->
-<!-- macrodef: xml-greeting    -->
-<!-- - - - - - - - - - - - - - -->
-<macrodef name="xml-greeting" description="This macrodef echos a hello 
-world to stdout.">
-<attribute name="greeting-text" default="hello world" />
-<sequential>
-<echo message= "@{greeting-text}"> 
-</echo>
-</sequential>
-</macrodef>
+	<!-- - - - - - - - - - - - - - -->
+	<!--  target: init             -->
+	<!-- - - - - - - - - - - - - - -->
+	<target name="init">
+		<property name="${eclipse.home}" location="/home/eclipse" />
+	</target>
+
+	<!-- ========================= -->
+	<!--   target: build           -->
+	<!-- ========================= -->
+	<target name="build"
+	        depends="init"
+	        description="--> compile and jar this component">
+
+		<javac srcdir="${src.home}"
+		       destdir="${build.home}"
+		       debug="${compile.debug}"
+		       deprecation="${compile.deprecation}"
+		       optimize="${compile.optimize}">
+			<classpath refid="compile.classpath" />
+		</javac>
+
+		<jar destfile="${dist.home}/${app.name}.jar"
+		     basedir="${build.home}"
+		     excludes="**/*UT.class" />
+	</target>
+
 </project>
