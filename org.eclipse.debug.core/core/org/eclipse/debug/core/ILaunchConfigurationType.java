@@ -127,14 +127,30 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	
 	/**
 	 * Returns the launch configuration delegate for launch
-	 * configurations of this type. The first time this method
-	 * is called, the delegate is instantiated.
+	 * configurations of this type, for <code>run</code> mode.
+	 * The first time this method is called, the delegate is instantiated.
 	 * 
 	 * @return launch configuration delegate
 	 * @exception CoreException if unable to instantiate the
 	 *  delegate
+	 * @deprecated use <code>getDelegate(String)</code> to specify mode
 	 */	
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
+	
+	/**
+	 * Returns the launch configuration delegate for launch
+	 * configurations of this type, for the specified mode. The first time
+	 * this method is called for a mode, the delegate is instantiated.
+	 * Launch delegates may be contributed to a launch configuration type
+	 * via the extension point <code>org.eclipse.debug.core.launchDelegates</code>
+	 * 
+	 * @param mode launch mode
+	 * @return launch configuration delegate
+	 * @exception CoreException if unable to instantiate the
+	 *  delegate
+	 * @since 3.0
+	 */	
+	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
 	
 	/**
 	 * Returns this launch configuration type's category, or <code>null</code>

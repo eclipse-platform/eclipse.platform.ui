@@ -290,7 +290,15 @@ public interface ILaunchManager {
 	 * result of a move
 	 * @since 2.1
 	 */
-	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);	
+	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);
+
+	/**
+	 * Returns all registered launch modes.
+	 * 
+	 * @return all registered launch modes
+	 * @since 3.0
+	 */
+	public String[] getLaunchModes();	
 }
 
 

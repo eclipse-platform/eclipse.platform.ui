@@ -93,6 +93,22 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_SOURCE_LOCATORS= "sourceLocators";	 //$NON-NLS-1$	
+	
+	/**
+	 * Simple identifier constant (value <code>"launchModes"</code>) for the
+	 * source modes extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_MODES= "launchModes";	 //$NON-NLS-1$	
+	
+	/**
+	 * Simple identifier constant (value <code>"launchDelegates"</code>) for the
+	 * launch delegates extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_DELEGATES= "launchDelegates";	 //$NON-NLS-1$	
 		
 	/**
 	 * Status code indicating an unexpected internal error.

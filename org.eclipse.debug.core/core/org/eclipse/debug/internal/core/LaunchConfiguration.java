@@ -144,7 +144,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-		ILaunchConfigurationDelegate delegate= getDelegate();
+		ILaunchConfigurationDelegate delegate= getDelegate(mode);
 		
 		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
@@ -358,14 +358,15 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	
 	/**
 	 * Returns the launch configuration delegate for this
-	 * launch configuration.
+	 * launch configuration, for the specified launch mode.
 	 * 
+	 * @param mode launch mode
 	 * @return launch configuration delegate
 	 * @exception CoreException if the delegate was unable
 	 *  to be created
 	 */
-	protected ILaunchConfigurationDelegate getDelegate() throws CoreException {
-		return ((LaunchConfigurationType)getType()).getDelegate();
+	protected ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
+		return getType().getDelegate(mode);
 	}
 	
 	/**

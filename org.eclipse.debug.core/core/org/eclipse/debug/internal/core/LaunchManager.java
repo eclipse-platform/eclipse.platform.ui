@@ -114,6 +114,17 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private Map fComparators = null;
 	
 	/**
+	 * Registered launch modes, or <code>null</code> if not initialized.
+	 */
+	private String[] fLaunchModes = null;
+	
+	/**
+	 * List of contributed launch delegates (delegates contributed for existing
+	 * launch configuration types).
+	 */
+	private List fContributedDelegates = null;
+	
+	/**
 	 * Types of notifications
 	 */
 	public static final int ADDED = 0;
@@ -618,6 +629,34 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}		
 	}
 	
+	/**
+	 * Initializes contributed launch delegates (i.e. delegates contributed
+	 * to an existing launch configuration type).
+	 */
+	private void initializeContributedDelegates() {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fContributedDelegates= new ArrayList(infos.length);
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
+			fContributedDelegates.add(delegate);
+		}		
+	}	
+	
+	/**
+	 * Returns a list of launch delegates contributed for existing launch configuration
+	 * types.
+	 * 
+	 * @return list of ContributedDelegate
+	 */
+	protected List getContributedDelegates() {
+		if (fContributedDelegates == null) {
+			initializeContributedDelegates();
+		}
+		return fContributedDelegates;
+	}
 	/**
 	 * Notifies the launch manager that a launch configuration
 	 * has been deleted. The configuration is removed from the
@@ -1406,5 +1445,40 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			fConfiguration = null;
 			fListener = null;			
 		}
-	}			
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
+	 */
+	public String[] getLaunchModes() {
+		if (fLaunchModes == null) {
+			initializeLaunchModes();
+		}
+		return fLaunchModes;
+	}	
+	
+	/**
+	 * Load comparator extensions.
+	 * 
+	 * @exception CoreException if an exception occurrs reading
+	 *  the extensions
+	 */
+	private void initializeLaunchModes() {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fLaunchModes = new String[infos.length];
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			String mode = configurationElement.getAttribute("mode"); //$NON-NLS-1$			
+			if (mode != null) {
+				fLaunchModes[i]= mode;
+			} else {
+				// invalid lauch mode
+				IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
+				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.27"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
+				DebugPlugin.log(s);
+			}
+		}			
+	}
 }

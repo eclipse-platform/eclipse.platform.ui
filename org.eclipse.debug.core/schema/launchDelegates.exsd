@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="launchDelegates" name="Launch Delegates"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch mode. Since launch modes are extensisble, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="launchDelegate" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchDelegate">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this launch delegate.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="delegate" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;ILaunchConfigurationDelegate&lt;/samp&gt;.
+Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="modes" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a comma-separated list of the modes this lauch delegate supports.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  identifier of an existing launch configuration type that this launch delegate is capable of launching.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a launch delegate extension point:
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.launchDelegates&quot;&gt;
+  &lt;launchDelegate
+   id=&quot;com.example.ExampleProfileDelegate&quot;
+   delegate=&quot;com.example.ExampleProfileDelegate&quot;
+   type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
+   modes=&quot;profile&quot;&gt;
+  &lt;/launchDelegate&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified launch delegate is contributed to launch Java applications in profile mode.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>

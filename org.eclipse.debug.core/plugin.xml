@@ -24,6 +24,8 @@
 <extension-point id="breakpoints" name="%breakpointExtensionPointName" schema= "schema/breakpoints.exsd"/>
 <extension-point id="launchConfigurationComparators" name="%launchConfigurationComparatorsExtensionPointName" schema= "schema/launchConfigurationComparators.exsd"/>
 <extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeNameExtensionPointName" schema= "schema/launchConfigurationTypes.exsd"/>
+<extension-point id="launchModes" name="%launchModesExtensionPointName" schema= "schema/launchModes.exsd"/>
+<extension-point id="launchDelegates" name="%launchDelegatesExtensionPointName" schema= "schema/launchDelegates.exsd"/>
 <extension-point id="launchers" name="%launcherExtensionPointName" schema= "schema/launchers.exsd"/>
 <extension-point id="sourceLocators" name="%sourceLocatorsExtensionPointName" schema= "schema/sourceLocators.exsd"/>
 <extension-point id="statusHandlers" name="%statusHandlerExtensionPointName" schema= "schema/statusHandlers.exsd"/>
@@ -45,6 +47,11 @@
 
 <extension point="org.eclipse.team.core.fileTypes">
   <fileTypes extension="launch" type="text"/>
+</extension>
+
+<extension point="org.eclipse.debug.core.launchModes">
+  <launchMode mode="run"/>
+  <launchMode mode="debug"/>
 </extension>
 
 </plugin>
