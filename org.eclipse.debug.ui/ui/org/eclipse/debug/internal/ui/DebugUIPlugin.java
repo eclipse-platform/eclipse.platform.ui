@@ -1158,6 +1158,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * Based on the public attribute.
 	 */
 	public boolean isVisible(ILauncher launcher) {
+		if (launcher == null) {
+			return false;
+		}
 		IConfigurationElement e = launcher.getConfigurationElement();
 		String publc=  e.getAttribute("public"); //$NON-NLS-1$
 		if (publc == null || publc.equals("true")) { //$NON-NLS-1$
