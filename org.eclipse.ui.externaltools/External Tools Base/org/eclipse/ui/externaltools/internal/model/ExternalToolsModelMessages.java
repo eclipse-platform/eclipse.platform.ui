@@ -1,32 +1,38 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class ExternalToolsModelMessages {
+public class ExternalToolsModelMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.model.ExternalToolsModelMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.externaltools.internal.model.ExternalToolsModelMessages"; //$NON-NLS-1$
+	public static String ImageDescriptorRegistry_Allocating_image_for_wrong_display_1;
+	public static String ExternalToolBuilder_Running__0_____1;
+	public static String ExternalToolBuilder_0;
+	public static String BuilderUtils_5;
+	public static String BuilderUtils_6;
+	public static String BuilderUtils_7;
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-
-	private ExternalToolsModelMessages() {
-	}
-
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, ExternalToolsModelMessages.class);
 	}
 }

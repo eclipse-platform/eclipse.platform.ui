@@ -42,24 +42,24 @@ public class EditCommandDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		
-		getShell().setText(ExternalToolsUIMessages.getString("EditCommandDialog.0")); //$NON-NLS-1$
+		getShell().setText(ExternalToolsUIMessages.EditCommandDialog_0); //$NON-NLS-1$
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		Label label= new Label(composite, SWT.NONE);
-		label.setText(ExternalToolsUIMessages.getString("EditCommandDialog.1")); //$NON-NLS-1$
+		label.setText(ExternalToolsUIMessages.EditCommandDialog_1); //$NON-NLS-1$
 		
 		fFullButton = new Button(composite, SWT.CHECK);
-		fFullButton.setText(ExternalToolsUIMessages.getString("EditCommandDialog.2")); //$NON-NLS-1$
+		fFullButton.setText(ExternalToolsUIMessages.EditCommandDialog_2); //$NON-NLS-1$
 		fFullButton.setSelection(fCommand.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
 		fIncrementalButton = new Button(composite, SWT.CHECK);
-		fIncrementalButton.setText(ExternalToolsUIMessages.getString("EditCommandDialog.3")); //$NON-NLS-1$
+		fIncrementalButton.setText(ExternalToolsUIMessages.EditCommandDialog_3); //$NON-NLS-1$
 		fIncrementalButton.setSelection(fCommand.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
 		fAutoButton = new Button(composite, SWT.CHECK);
-		fAutoButton.setText(ExternalToolsUIMessages.getString("EditCommandDialog.4")); //$NON-NLS-1$
+		fAutoButton.setText(ExternalToolsUIMessages.EditCommandDialog_4); //$NON-NLS-1$
 		fAutoButton.setSelection(fCommand.isBuilding(IncrementalProjectBuilder.AUTO_BUILD));
 		
 		fCleanButton = new Button(composite, SWT.CHECK);
-		fCleanButton.setText(ExternalToolsUIMessages.getString("EditCommandDialog.5")); //$NON-NLS-1$
+		fCleanButton.setText(ExternalToolsUIMessages.EditCommandDialog_5); //$NON-NLS-1$
 		fCleanButton.setSelection(fCommand.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
 		applyDialogFont(composite);
 		return composite;
