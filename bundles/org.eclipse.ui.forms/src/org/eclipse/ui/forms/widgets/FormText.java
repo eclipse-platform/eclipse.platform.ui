@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.internal.forms.Policy;
+import org.eclipse.ui.internal.forms.Messages;
 import org.eclipse.ui.internal.forms.widgets.*;
 
 /**
@@ -766,7 +766,7 @@ public final class FormText extends Canvas {
 	private void createMenu() {
 		Menu menu = new Menu(this);
 		final MenuItem copyItem = new MenuItem(menu, SWT.PUSH);
-		copyItem.setText(Policy.getMessage("FormText.copy"));
+		copyItem.setText(Messages.FormText_copy);
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
