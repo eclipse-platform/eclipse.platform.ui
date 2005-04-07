@@ -860,6 +860,21 @@ public class WorkbenchMessages extends NLS {
 	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
 	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
 	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
+
+
+    // ==============================================================================
+    // Content Types preference page
+    // ==============================================================================
+    
+    public static String ContentTypes_lockedFormat;
+    public static String ContentTypes_characterSetLabel;
+    public static String ContentTypes_characterSetUpdateLabel;
+    public static String ContentTypes_fileAssociationsLabel;
+    public static String ContentTypes_fileAssociationsAddLabel;
+    public static String ContentTypes_fileAssociationsRemoveLabel;
+    public static String ContentTypes_contentTypesLabel;
+    public static String ContentTypes_errorDialogMessage;
+    public static String ContentTypes_FileEditorsRelatedLink;
 	
 	
     static {

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide.dialogs;
+package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,9 +48,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -97,7 +97,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 
             if (isPredefined)
                 toString = NLS.bind(
-                        IDEWorkbenchMessages.ContentTypes_lockedFormat,
+                        WorkbenchMessages.ContentTypes_lockedFormat,
                         toString);
 
             return toString;
@@ -276,9 +276,11 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
         
-        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(composite, SWT.NONE,
-                "org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink,//$NON-NLS-1$
-                (IWorkbenchPreferenceContainer) getContainer(),null);
+        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(
+                composite,
+                SWT.NONE,
+                "org.eclipse.ui.preferencePages.FileEditors", WorkbenchMessages.ContentTypes_FileEditorsRelatedLink,//$NON-NLS-1$
+                (IWorkbenchPreferenceContainer) getContainer(), null);
                 
         GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
         contentTypeArea.getControl().setLayoutData(data);
@@ -297,7 +299,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 
         Label label = new Label(composite, SWT.NONE);
         label.setFont(parent.getFont());
-        label.setText(IDEWorkbenchMessages.ContentTypes_characterSetLabel);
+        label.setText(WorkbenchMessages.ContentTypes_characterSetLabel);
         charsetField = new Text(composite, SWT.SINGLE | SWT.BORDER);
         charsetField.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -305,7 +307,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         setButton = new Button(composite, SWT.PUSH);
         setButton.setFont(parent.getFont());
         setButton
-                .setText(IDEWorkbenchMessages.ContentTypes_characterSetUpdateLabel);
+                .setText(WorkbenchMessages.ContentTypes_characterSetUpdateLabel);
         setButton.setEnabled(false);
         setButton.addSelectionListener(new SelectionAdapter() {
             
@@ -353,7 +355,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             Label label = new Label(composite, SWT.NONE);
             label.setFont(composite.getFont());
             label
-                    .setText(IDEWorkbenchMessages.ContentTypes_fileAssociationsLabel);
+                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsLabel);
             GridData data = new GridData();
             data.horizontalSpan = 2;
             label.setLayoutData(data);
@@ -399,7 +401,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             addButton.setFont(composite.getFont());
             setButtonLayoutData(addButton);
             addButton
-                    .setText(IDEWorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
+                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
             addButton.setEnabled(false);
             addButton.addSelectionListener(new SelectionAdapter() {
                 /*
@@ -422,7 +424,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             setButtonLayoutData(removeButton);
             removeButton.setEnabled(false);
             removeButton
-                    .setText(IDEWorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
+                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
             removeButton.addSelectionListener(new SelectionAdapter() {
                 /*
                  * (non-Javadoc)
@@ -433,10 +435,10 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                     IContentType contentType = getSelectedContentType();
                     Spec[] specs = getSelectedSpecs();
                     MultiStatus result = new MultiStatus(
-                            IDEWorkbenchPlugin.IDE_WORKBENCH,
+                            PlatformUI.PLUGIN_ID,
                             0,
                             new IStatus[0],
-                            IDEWorkbenchMessages.ContentTypes_errorDialogMessage,
+                            WorkbenchMessages.ContentTypes_errorDialogMessage,
                             null);
                     for (int i = 0; i < specs.length; i++) {
                         Spec spec = specs[i];
@@ -480,7 +482,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         {
             Label label = new Label(composite, SWT.NONE);
             label.setFont(composite.getFont());
-            label.setText(IDEWorkbenchMessages.ContentTypes_contentTypesLabel);
+            label.setText(WorkbenchMessages.ContentTypes_contentTypesLabel);
             GridData data = new GridData();
             data.horizontalSpan = 2;
             label.setLayoutData(data);
