@@ -748,29 +748,6 @@ public class ReviewPage	extends BannerPage {
 		manager.add(action);
 	}
 
-	public void accept(final IFeature feature) {
-		getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IInstallFeatureOperation job = OperationsManager.getOperationFactory().createInstallOperation( null, feature,null, null, null);
-				ViewerFilter[] filters = treeViewer.getFilters();
-				boolean visible = true;
-
-				for (int i = 0; i < filters.length; i++) {
-					ViewerFilter filter = filters[i];
-					if (!filter.select(treeViewer, null, job)) {
-						visible = false;
-						break;
-					}
-				}
-				if (visible) 
-					updateItemCount(0, -1);
-				
-				jobs.add(job);
-			}
-		});
-	}
-
-
 	private void jobSelected(IStructuredSelection selection) {
 		IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 		IFeature feature = job != null ? job.getFeature() : null;

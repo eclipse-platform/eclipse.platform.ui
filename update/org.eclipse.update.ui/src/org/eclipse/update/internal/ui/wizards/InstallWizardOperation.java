@@ -66,6 +66,13 @@ public class InstallWizardOperation {
 				MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
 				return;
 			}
+            if (job.getUpdates() == null || job.getUpdates().length == 0) {
+                if (job.isUpdate())
+                    MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates"), UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates")); //$NON-NLS-1$ //$NON-NLS-2$
+                else
+                    MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures"), UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures")); //$NON-NLS-1$ //$NON-NLS-2$                
+                return;
+            }
 			InstallWizard2 wizard = new InstallWizard2(job.getSearchRequest(), job.getUpdates(), job.isUpdate());
 			WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
 			dialog.create();
