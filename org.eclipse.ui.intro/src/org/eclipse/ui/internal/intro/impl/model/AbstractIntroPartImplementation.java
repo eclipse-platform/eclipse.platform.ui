@@ -24,6 +24,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelLabelProvider;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
@@ -51,8 +52,7 @@ public abstract class AbstractIntroPartImplementation {
     protected Action backAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin
-                .getString("Browser.backwardButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(Messages.Browser_backwardButton_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
@@ -67,8 +67,7 @@ public abstract class AbstractIntroPartImplementation {
     protected Action forwardAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin
-                .getString("Browser.forwardButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(Messages.Browser_forwardButton_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
@@ -83,7 +82,7 @@ public abstract class AbstractIntroPartImplementation {
     protected Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(Messages.Browser_homeButton_tooltip); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
@@ -98,8 +97,7 @@ public abstract class AbstractIntroPartImplementation {
     protected Action viewIntroModelAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin
-                .getString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(Messages.IntroPart_showContentButton_tooltip);
             setImageDescriptor(ImageUtil
                 .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
         }

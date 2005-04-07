@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.swt.PageStyleManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.IStandbyContentPart;
@@ -39,7 +39,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
     public void createPartControl(Composite parent, FormToolkit toolkit) {
         contentComposite = toolkit.createComposite(parent);
         contentComposite.setLayout(new GridLayout());
-        String text = IntroPlugin.getString("EmptyStandbyContentPart.text"); //$NON-NLS-1$
+        String text = Messages.EmptyStandbyContentPart_text;
         Label label = toolkit.createLabel(contentComposite, text, SWT.NULL);
         label.setFont(PageStyleManager.getBannerFont());
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);

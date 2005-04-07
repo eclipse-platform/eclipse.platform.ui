@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
@@ -65,8 +65,7 @@ public class PageForm implements IIntroConstants {
                 return;
             }
             DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
-                IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                        + " " + url); //$NON-NLS-1$
+                Messages.HyperlinkAdapter_urlIs + " " + url);
         }
 
         public void linkEntered(HyperlinkEvent e) {

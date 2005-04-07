@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
@@ -491,7 +492,7 @@ public class FormIntroPartImplementation extends
 
         GridLayout gl = new GridLayout();
         body.setLayout(gl);
-        String label = IntroPlugin.getString("StaticHTML.welcome"); //$NON-NLS-1$
+        String label = Messages.StaticHTML_welcome;
         Hyperlink link = toolkit.createHyperlink(body, label, SWT.WRAP);
         link.setFont(PageStyleManager.getHeaderFont());
         GridData gd = new GridData(GridData.GRAB_HORIZONTAL

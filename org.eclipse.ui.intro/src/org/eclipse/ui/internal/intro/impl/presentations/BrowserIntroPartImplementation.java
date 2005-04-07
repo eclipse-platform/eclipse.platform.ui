@@ -24,6 +24,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.html.HTMLElement;
 import org.eclipse.ui.internal.intro.impl.html.IntroHTMLGenerator;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
@@ -115,7 +116,7 @@ public class BrowserIntroPartImplementation extends
         addToolBarActions();
 
         if (!getModel().hasValidConfig()) {
-            browser.setText(IntroPlugin.getString("Browser.invalidConfig")); //$NON-NLS-1$
+            browser.setText(Messages.Browser_invalidConfig);
             return;
         }
 

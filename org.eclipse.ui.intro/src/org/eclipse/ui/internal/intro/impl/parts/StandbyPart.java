@@ -27,6 +27,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroStandbyContentPart;
@@ -300,14 +301,14 @@ public class StandbyPart implements IIntroConstants {
     }
 
     private void updateReturnLinkLabel() {
-        String linkText = IntroPlugin.getString("StandbyPart.returnToIntro"); //$NON-NLS-1$
+        String linkText = Messages.StandbyPart_returnToIntro;
         returnLink.setText(linkText);
         AbstractIntroPage page = model.getCurrentPage();
         if (page == null)
             // page will be null in static intro.
             return;
 
-        String toolTip = IntroPlugin.getString("StandbyPart.returnTo"); //$NON-NLS-1$
+        String toolTip = Messages.StandbyPart_returnTo;
         if (page.getTitle() != null)
             toolTip += " " + page.getTitle(); //$NON-NLS-1$
 

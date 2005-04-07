@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
@@ -127,9 +127,8 @@ public class RootPageForm implements IIntroConstants {
                 Util.openBrowser(introLink.getUrl());
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
-                .getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                    + introLink.getUrl());
+            DialogUtil.displayInfoMessage(imageLink.getShell(),
+                Messages.HyperlinkAdapter_urlIs + introLink.getUrl());
         }
 
         public void linkEntered(HyperlinkEvent e) {

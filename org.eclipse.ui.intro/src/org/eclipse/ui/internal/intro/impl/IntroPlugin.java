@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -31,15 +27,9 @@ public class IntroPlugin extends AbstractUIPlugin {
     // The static shared instance.
     private static IntroPlugin inst;
 
-    // There should always be a single instance of all these classes.
-    private ResourceBundle resourceBundle;
-
     // We must keep track of the launch bar so that we can
     // close it if intro is opened from the menu.
     private IntroLaunchBar launchBar;
-
-    // The intro resource bundle.
-    private static String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources"; //$NON-NLS-1$
 
     /**
      * The constructor.
@@ -55,21 +45,6 @@ public class IntroPlugin extends AbstractUIPlugin {
         return inst;
     }
 
-    /**
-     * Returns the string from the plugin's resource bundle, or 'key' if not
-     * found.
-     */
-    public static String getString(String key) {
-        try {
-            ResourceBundle bundle = IntroPlugin.getDefault()
-                .getResourceBundle();
-            return (bundle != null ? bundle.getString(key) : key);
-        } catch (MissingResourceException e) {
-            Log.warning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
-            // ok to return Key.
-            return key;
-        }
-    }
 
     public void closeLaunchBar() {
         if (launchBar != null) {
@@ -82,20 +57,6 @@ public class IntroPlugin extends AbstractUIPlugin {
         this.launchBar = launchBar;
     }
 
-    /**
-     * Utility method to get a resource from the given key, then format it with
-     * the given substitutions. <br>
-     */
-    public static String getFormattedString(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
-    }
-
-    /**
-     * Returns the plugin's resource bundle.
-     */
-    public ResourceBundle getResourceBundle() {
-        return resourceBundle;
-    }
 
     /**
      * @return Returns the extensionPointManager.
@@ -170,14 +131,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         inst = this;
-        try {
-            resourceBundle = ResourceBundle.getBundle(INTRO_RESOURCE_BUNDLE);
-        } catch (MissingResourceException x) {
-            resourceBundle = null;
-            Log.warning("IntroPlugin - unable to load resource bundle"); //$NON-NLS-1$
-        }
-
-
+        Log.info("IntroPlugin - calling start on Intro bundle"); //$NON-NLS-1$
     }
 
     /*

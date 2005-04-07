@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.ui.internal.intro.impl.util.Util;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -76,7 +76,7 @@ public class IntroHTML extends AbstractTextElement {
             image.setParent(this);
             return image;
         } catch (Exception e) {
-            Util.handleException(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
             return null;
         }
     }

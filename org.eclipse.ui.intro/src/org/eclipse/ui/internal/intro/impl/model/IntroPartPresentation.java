@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplemen
 import org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.TextIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.IIntroPart;
 
 /**
@@ -160,7 +159,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             head.setParent(this);
             return head;
         } catch (Exception e) {
-            Util.handleException(e.getMessage(), e);
+            Log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -383,7 +382,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation = (AbstractIntroPartImplementation) configElement
                 .createExecutableExtension("class"); //$NON-NLS-1$
         } catch (Exception e) {
-            Util.handleException("Could not instantiate implementation class " //$NON-NLS-1$
+            Log.error("Could not instantiate implementation class " //$NON-NLS-1$
                     + configElement.getAttribute("class"), e); //$NON-NLS-1$
         }
         return implementation;
@@ -412,7 +411,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             else
                 implementation = new TextIntroPartImplementation();
         } catch (Exception e) {
-            Util.handleException("Could not instantiate implementation " //$NON-NLS-1$
+            Log.error("Could not instantiate implementation " //$NON-NLS-1$
                     + implementationType, e);
         }
         return implementation;

@@ -44,6 +44,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.LaunchBarShortcutElement;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
@@ -61,545 +62,544 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
  * @since 3.1
  */
 public class IntroLaunchBar {
-	private Composite container;
+    private Composite container;
 
-	private Composite handle;
+    private Composite handle;
 
-	private CloseButton closeButton;
+    private CloseButton closeButton;
 
-	private Image handleImage;
+    private Image handleImage;
 
-	private ToolBarManager toolBarManager;
+    private ToolBarManager toolBarManager;
 
-	private int orientation;
+    private int orientation;
 
-	private String lastPageId;
+    private String lastPageId;
 
-	private Action closeAction;
+    private Action closeAction;
 
-	private LaunchBarElement element;
+    private LaunchBarElement element;
 
-	private boolean simple;
+    private boolean simple;
 
-	private String presentationId;
+    private String presentationId;
 
-	static final int[] TOP_LEFT_CORNER = new int[] { 0, 6, 1, 5, 1, 4, 4, 1, 5,
-			1, 6, 0 };
+    static final int[] TOP_LEFT_CORNER = new int[] { 0, 6, 1, 5, 1, 4, 4, 1, 5,
+            1, 6, 0 };
 
-	static final int[] TOP_RIGHT_CORNER = new int[] { -6, 0, -5, 1, -4, 1, -1,
-			4, -1, 5, 0, 6 };
+    static final int[] TOP_RIGHT_CORNER = new int[] { -6, 0, -5, 1, -4, 1, -1,
+            4, -1, 5, 0, 6 };
 
-	static final int[] BOTTOM_LEFT_CORNER = new int[] { 0, -6, 1, -5, 1, -4, 4,
-			-1, 5, -1, 6, 0 };
+    static final int[] BOTTOM_LEFT_CORNER = new int[] { 0, -6, 1, -5, 1, -4, 4,
+            -1, 5, -1, 6, 0 };
 
-	static final int[] BOTTOM_RIGHT_CORNER = new int[] { -6, 0, -5, -1, -4, -1,
-			-1, -4, -1, -5, 0, -6 };
+    static final int[] BOTTOM_RIGHT_CORNER = new int[] { -6, 0, -5, -1, -4, -1,
+            -1, -4, -1, -5, 0, -6 };
 
-	static final int[] SIMPLE_TOP_LEFT_CORNER = new int[] { 0, 2, 1, 1, 2, 0 };
+    static final int[] SIMPLE_TOP_LEFT_CORNER = new int[] { 0, 2, 1, 1, 2, 0 };
 
-	static final int[] SIMPLE_TOP_RIGHT_CORNER = new int[] { -2, 0, -1, 1, 0, 2 };
+    static final int[] SIMPLE_TOP_RIGHT_CORNER = new int[] { -2, 0, -1, 1, 0, 2 };
 
-	static final int[] SIMPLE_BOTTOM_LEFT_CORNER = new int[] { 0, -2, 1, -1, 2,
-			0 };
+    static final int[] SIMPLE_BOTTOM_LEFT_CORNER = new int[] { 0, -2, 1, -1, 2,
+            0 };
 
-	static final int[] SIMPLE_BOTTOM_RIGHT_CORNER = new int[] { -2, 0, -1, -1,
-			0, -2 };
+    static final int[] SIMPLE_BOTTOM_RIGHT_CORNER = new int[] { -2, 0, -1, -1,
+            0, -2 };
 
-	static final int[] CLOSE_POINTS = new int[] { 2, 0, 4, 2, 5, 2, 7, 0, 9, 2,
-			7, 4, 7, 5, 9, 7, 7, 9, 5, 7, 4, 7, 2, 9, 0, 7, 2, 5, 2, 4, 0, 2 };
+    static final int[] CLOSE_POINTS = new int[] { 2, 0, 4, 2, 5, 2, 7, 0, 9, 2,
+            7, 4, 7, 5, 9, 7, 7, 9, 5, 7, 4, 7, 2, 9, 0, 7, 2, 5, 2, 4, 0, 2 };
 
-	static final int CLOSE_FILL = SWT.COLOR_LIST_BACKGROUND;
-	static final RGB CLOSE_HOT_FILL = new RGB(252, 160, 160);
+    static final int CLOSE_FILL = SWT.COLOR_LIST_BACKGROUND;
+    static final RGB CLOSE_HOT_FILL = new RGB(252, 160, 160);
 
-	static final int BUTTON_FG = SWT.COLOR_WIDGET_DARK_SHADOW;
+    static final int BUTTON_FG = SWT.COLOR_WIDGET_DARK_SHADOW;
 
-	private Color fg;
+    private Color fg;
 
-	private Color bg;
-	
-	class CloseButton extends Composite implements MouseListener, MouseTrackListener {
-		private boolean hover;
-		private boolean armed;
-		private Color closeHotBg;
+    private Color bg;
 
-		public CloseButton(Composite parent, int style) {
-			super(parent, style);
-			closeHotBg = new Color(parent.getDisplay(), CLOSE_HOT_FILL);
-			addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					onPaint(e);
-				}
-			});
-			addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					closeHotBg.dispose();
-				}
-			});
-			addMouseListener(this);
-			addMouseTrackListener(this);
-		}
+    class CloseButton extends Composite implements MouseListener,
+            MouseTrackListener {
+        private boolean hover;
+        private boolean armed;
+        private Color closeHotBg;
 
-		public Point computeSize(int wHint, int hHint, boolean changed) {
-			return new Point(10, 12);
-		}
+        public CloseButton(Composite parent, int style) {
+            super(parent, style);
+            closeHotBg = new Color(parent.getDisplay(), CLOSE_HOT_FILL);
+            addPaintListener(new PaintListener() {
+                public void paintControl(PaintEvent e) {
+                    onPaint(e);
+                }
+            });
+            addDisposeListener(new DisposeListener() {
+                public void widgetDisposed(DisposeEvent e) {
+                    closeHotBg.dispose();
+                }
+            });
+            addMouseListener(this);
+            addMouseTrackListener(this);
+        }
 
-		private void onPaint(PaintEvent e) {
-			e.gc.setBackground(hover?closeHotBg:e.display.getSystemColor(CLOSE_FILL));
-			e.gc.fillPolygon(CLOSE_POINTS);
-			e.gc.setForeground(e.display.getSystemColor(BUTTON_FG));
-			e.gc.drawPolygon(CLOSE_POINTS);
-		}
+        public Point computeSize(int wHint, int hHint, boolean changed) {
+            return new Point(10, 12);
+        }
 
-		public void mouseDoubleClick(MouseEvent e) {
-		}
+        private void onPaint(PaintEvent e) {
+            e.gc.setBackground(hover ? closeHotBg : e.display
+                .getSystemColor(CLOSE_FILL));
+            e.gc.fillPolygon(CLOSE_POINTS);
+            e.gc.setForeground(e.display.getSystemColor(BUTTON_FG));
+            e.gc.drawPolygon(CLOSE_POINTS);
+        }
 
-		public void mouseDown(MouseEvent e) {
-			armed = true;
-			redraw();
-		}
+        public void mouseDoubleClick(MouseEvent e) {
+        }
 
-		public void mouseUp(MouseEvent e) {
-			if (armed) {
-				closeAction.run();
-			}
-		}
+        public void mouseDown(MouseEvent e) {
+            armed = true;
+            redraw();
+        }
 
-		public void mouseEnter(MouseEvent e) {
-			hover=true;
-			redraw();
-		}
+        public void mouseUp(MouseEvent e) {
+            if (armed) {
+                closeAction.run();
+            }
+        }
 
-		public void mouseExit(MouseEvent e) {
-			hover=false;
-			armed=false;
-			redraw();
-		}
+        public void mouseEnter(MouseEvent e) {
+            hover = true;
+            redraw();
+        }
 
-		public void mouseHover(MouseEvent e) {
-		}
-	}
+        public void mouseExit(MouseEvent e) {
+            hover = false;
+            armed = false;
+            redraw();
+        }
 
-	class BarLayout extends Layout {
-		protected Point computeSize(Composite composite, int wHint, int hHint,
-				boolean changed) {
-			boolean vertical = (orientation & SWT.VERTICAL) != 0;
-			int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
-			int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
-			int width = 0;
-			int height = 0;
-			Point csize = null;
+        public void mouseHover(MouseEvent e) {
+        }
+    }
 
-			Rectangle ibounds = handleImage != null ? handleImage.getBounds()
-					: null;
+    class BarLayout extends Layout {
+        protected Point computeSize(Composite composite, int wHint, int hHint,
+                boolean changed) {
+            boolean vertical = (orientation & SWT.VERTICAL) != 0;
+            int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
+            int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
+            int width = 0;
+            int height = 0;
+            Point csize = null;
 
-			if (closeButton != null)
-				csize = closeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
-			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
-					SWT.DEFAULT, changed);
+            Rectangle ibounds = handleImage != null ? handleImage.getBounds()
+                    : null;
 
-			if (vertical) {
-				width = tsize.x;
-				if (csize != null)
-					width = Math.max(width, csize.x);
-				height = tsize.y;
-				if (ibounds != null) {
-					height += ibounds.height;
-				}
-				if (csize != null)
-					height += csize.y + CLOSE_SPACING;
-			} else {
-				height = tsize.y;
-				if (csize != null)
-					height = Math.max(height, csize.y);
-				width = tsize.x;
-				if (ibounds != null)
-					width += ibounds.width;
-				if (csize != null)
-					width += csize.x + CLOSE_SPACING;
-			}
-			width += marginWidth + marginWidth;
-			height += marginHeight + marginHeight;
-			return new Point(width, height);
-		}
+            if (closeButton != null)
+                csize = closeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+                    changed);
+            Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
+                SWT.DEFAULT, changed);
 
-		protected void layout(Composite composite, boolean changed) {
-			boolean vertical = (orientation & SWT.VERTICAL) != 0;
-			int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
-			int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
-			Point csize = null;
-			Rectangle ibounds = handleImage != null ? handleImage.getBounds()
-					: null;
-			if (closeButton != null)
-				csize = closeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
-						changed);
-			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
-					SWT.DEFAULT, changed);
-			Rectangle carea = composite.getClientArea();
-			int x = carea.x + marginWidth;
-			int y = carea.y + marginHeight;
+            if (vertical) {
+                width = tsize.x;
+                if (csize != null)
+                    width = Math.max(width, csize.x);
+                height = tsize.y;
+                if (ibounds != null) {
+                    height += ibounds.height;
+                }
+                if (csize != null)
+                    height += csize.y + CLOSE_SPACING;
+            } else {
+                height = tsize.y;
+                if (csize != null)
+                    height = Math.max(height, csize.y);
+                width = tsize.x;
+                if (ibounds != null)
+                    width += ibounds.width;
+                if (csize != null)
+                    width += csize.x + CLOSE_SPACING;
+            }
+            width += marginWidth + marginWidth;
+            height += marginHeight + marginHeight;
+            return new Point(width, height);
+        }
 
-			if (vertical) {
-				if (csize != null) {
-					closeButton.setBounds(carea.x + carea.width - marginWidth
-							- CLOSE_SPACING - csize.x, y, csize.x, csize.y);
-					y += csize.y + CLOSE_SPACING;
-				}
-				if (handle != null && ibounds != null) {
-					handle.setBounds(x, y, carea.width - marginWidth
-							- marginWidth, ibounds.height);
-					y += ibounds.height;
-				}
-				toolBarManager.getControl().setBounds(x, y,
-						carea.width - marginWidth - marginWidth, tsize.y);
-			} else {
-				if (csize != null) {
-					closeButton.setBounds(x, y + CLOSE_SPACING, csize.x,
-							csize.y);
-					x += csize.x + CLOSE_SPACING;
-				}
-				if (handle != null && ibounds != null) {
-					handle.setBounds(x, y, ibounds.width, carea.height
-							- marginHeight - marginHeight);
-					x += ibounds.width;
-				}
-				toolBarManager.getControl().setBounds(x, y, tsize.x,
-						carea.height - marginHeight - marginHeight);
-			}
-		}
-	}
+        protected void layout(Composite composite, boolean changed) {
+            boolean vertical = (orientation & SWT.VERTICAL) != 0;
+            int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
+            int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
+            Point csize = null;
+            Rectangle ibounds = handleImage != null ? handleImage.getBounds()
+                    : null;
+            if (closeButton != null)
+                csize = closeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT,
+                    changed);
+            Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
+                SWT.DEFAULT, changed);
+            Rectangle carea = composite.getClientArea();
+            int x = carea.x + marginWidth;
+            int y = carea.y + marginHeight;
 
-	private static final int CLOSE_SPACING = 1;
+            if (vertical) {
+                if (csize != null) {
+                    closeButton.setBounds(carea.x + carea.width - marginWidth
+                            - CLOSE_SPACING - csize.x, y, csize.x, csize.y);
+                    y += csize.y + CLOSE_SPACING;
+                }
+                if (handle != null && ibounds != null) {
+                    handle.setBounds(x, y, carea.width - marginWidth
+                            - marginWidth, ibounds.height);
+                    y += ibounds.height;
+                }
+                toolBarManager.getControl().setBounds(x, y,
+                    carea.width - marginWidth - marginWidth, tsize.y);
+            } else {
+                if (csize != null) {
+                    closeButton.setBounds(x, y + CLOSE_SPACING, csize.x,
+                        csize.y);
+                    x += csize.x + CLOSE_SPACING;
+                }
+                if (handle != null && ibounds != null) {
+                    handle.setBounds(x, y, ibounds.width, carea.height
+                            - marginHeight - marginHeight);
+                    x += ibounds.width;
+                }
+                toolBarManager.getControl().setBounds(x, y, tsize.x,
+                    carea.height - marginHeight - marginHeight);
+            }
+        }
+    }
 
-	public IntroLaunchBar(int orientation, String lastPageId,
-			LaunchBarElement element) {
-		this.orientation = orientation;
-		this.lastPageId = lastPageId;
-		this.element = element;
-		simple = PlatformUI.getPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-		presentationId = PlatformUI.getPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
-	}
+    private static final int CLOSE_SPACING = 1;
 
-	private boolean isPlain() {
-		return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
-	}
+    public IntroLaunchBar(int orientation, String lastPageId,
+            LaunchBarElement element) {
+        this.orientation = orientation;
+        this.lastPageId = lastPageId;
+        this.element = element;
+        simple = PlatformUI.getPreferenceStore().getBoolean(
+            IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+        presentationId = PlatformUI.getPreferenceStore().getString(
+            IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
+    }
 
-	public void createControl(Composite parent) {
-		container = new Composite(parent, SWT.NULL);
-		computeColors(parent.getDisplay());
-		container.setLayout(new BarLayout());
-		boolean vertical = (orientation & SWT.VERTICAL) != 0;
-		toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
-		if (element.getCreateHandle()) {
-			if (element.getClose()) {
-				closeButton = new CloseButton(container, SWT.NULL);
-				closeButton.setBackground(bg);
-			}
-			handle = new Composite(container, SWT.NULL);
-			ImageDescriptor desc = element.getHandleImageDescriptor();
-			if (desc != null)
-				handleImage = desc.createImage();
-			Rectangle ibounds = handleImage.getBounds();
-			handle.setBackground(bg);
-			handle.addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					onHandlePaint(e);
-				}
-			});
-		}
-		fillToolBar();
-		toolBarManager.createControl(container);
-		ToolBar toolBar = toolBarManager.getControl();
-		if (bg != null)
-			toolBar.setBackground(bg);
-		container.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				onPaint(e);
-			}
-		});
-		MenuManager manager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
-			}
-		};
-		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(listener);
-		Menu contextMenu = manager.createContextMenu(toolBarManager
-				.getControl());
-		toolBarManager.getControl().setMenu(contextMenu);
-		IntroPlugin.getDefault().setLaunchBar(this);
-	}
+    private boolean isPlain() {
+        return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
+    }
 
-	private void onPaint(PaintEvent e) {
-		GC gc = e.gc;
-		Color color = fg;
-		if (color == null) {
-			color = e.display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		}
-		gc.setForeground(color);
-		gc.setBackground(bg);
-		if (isPlain()) {
-			Point size = container.getSize();
-			gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
-		} else {
-			switch (element.getLocation()) {
-			case SWT.LEFT:
-				paintLeft(gc);
-				break;
-			case SWT.RIGHT:
-				paintRight(gc);
-				break;
-			case SWT.BOTTOM:
-				paintBottom(gc);
-				break;
-			}
-		}
-	}
+    public void createControl(Composite parent) {
+        container = new Composite(parent, SWT.NULL);
+        computeColors(parent.getDisplay());
+        container.setLayout(new BarLayout());
+        boolean vertical = (orientation & SWT.VERTICAL) != 0;
+        toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
+        if (element.getCreateHandle()) {
+            if (element.getClose()) {
+                closeButton = new CloseButton(container, SWT.NULL);
+                closeButton.setBackground(bg);
+            }
+            handle = new Composite(container, SWT.NULL);
+            ImageDescriptor desc = element.getHandleImageDescriptor();
+            if (desc != null)
+                handleImage = desc.createImage();
+            Rectangle ibounds = handleImage.getBounds();
+            handle.setBackground(bg);
+            handle.addPaintListener(new PaintListener() {
+                public void paintControl(PaintEvent e) {
+                    onHandlePaint(e);
+                }
+            });
+        }
+        fillToolBar();
+        toolBarManager.createControl(container);
+        ToolBar toolBar = toolBarManager.getControl();
+        if (bg != null)
+            toolBar.setBackground(bg);
+        container.addPaintListener(new PaintListener() {
+            public void paintControl(PaintEvent e) {
+                onPaint(e);
+            }
+        });
+        MenuManager manager = new MenuManager();
+        IMenuListener listener = new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                contextMenuAboutToShow(manager);
+            }
+        };
+        manager.setRemoveAllWhenShown(true);
+        manager.addMenuListener(listener);
+        Menu contextMenu = manager.createContextMenu(toolBarManager
+            .getControl());
+        toolBarManager.getControl().setMenu(contextMenu);
+        IntroPlugin.getDefault().setLaunchBar(this);
+    }
 
-	private void paintLeft(GC gc) {
-		int[] top = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
-		int[] bot = simple ? SIMPLE_BOTTOM_RIGHT_CORNER : BOTTOM_RIGHT_CORNER;
-		int[] shape = new int[top.length + bot.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = size.x - 1;
-		int y = 0;
-		index = fillShape(shape, top, index, x, y, false);
-		y = size.y - 1;
-		index = fillShape(shape, bot, index, x, y, true);
-		shape[index++] = 0;
-		shape[index++] = size.y - 1;
-		shape[index++] = 0;
-		shape[index++] = 0;
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
+    private void onPaint(PaintEvent e) {
+        GC gc = e.gc;
+        Color color = fg;
+        if (color == null) {
+            color = e.display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+        }
+        gc.setForeground(color);
+        gc.setBackground(bg);
+        if (isPlain()) {
+            Point size = container.getSize();
+            gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
+        } else {
+            switch (element.getLocation()) {
+            case SWT.LEFT:
+                paintLeft(gc);
+                break;
+            case SWT.RIGHT:
+                paintRight(gc);
+                break;
+            case SWT.BOTTOM:
+                paintBottom(gc);
+                break;
+            }
+        }
+    }
 
-	private void paintBottom(GC gc) {
-		int[] left = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-		int[] right = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
-		int[] shape = new int[left.length + right.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = 0;
-		int y = 0;
-		index = fillShape(shape, left, index, x, y, false);
-		x = size.x - 1;
-		index = fillShape(shape, right, index, x, y, false);
-		shape[index++] = size.x - 1;
-		shape[index++] = size.y - 1;
-		shape[index++] = 0;
-		shape[index++] = size.y - 1;
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
+    private void paintLeft(GC gc) {
+        int[] top = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
+        int[] bot = simple ? SIMPLE_BOTTOM_RIGHT_CORNER : BOTTOM_RIGHT_CORNER;
+        int[] shape = new int[top.length + bot.length + 4];
+        int index = 0;
+        Point size = container.getSize();
+        int x = size.x - 1;
+        int y = 0;
+        index = fillShape(shape, top, index, x, y, false);
+        y = size.y - 1;
+        index = fillShape(shape, bot, index, x, y, true);
+        shape[index++] = 0;
+        shape[index++] = size.y - 1;
+        shape[index++] = 0;
+        shape[index++] = 0;
+        gc.fillPolygon(shape);
+        gc.drawPolygon(shape);
+    }
 
-	private void paintRight(GC gc) {
-		int[] top = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-		int[] bot = simple ? SIMPLE_BOTTOM_LEFT_CORNER : BOTTOM_LEFT_CORNER;
-		int[] shape = new int[top.length + bot.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = 0;
-		int y = 0;
-		index = fillShape(shape, top, index, x, y, false);
-		shape[index++] = size.x - 1;
-		shape[index++] = 0;
-		shape[index++] = size.x - 1;
-		shape[index++] = size.y - 1;
-		x = 0;
-		y = size.y - 1;
-		fillShape(shape, bot, index, x, y, true);
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
+    private void paintBottom(GC gc) {
+        int[] left = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
+        int[] right = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
+        int[] shape = new int[left.length + right.length + 4];
+        int index = 0;
+        Point size = container.getSize();
+        int x = 0;
+        int y = 0;
+        index = fillShape(shape, left, index, x, y, false);
+        x = size.x - 1;
+        index = fillShape(shape, right, index, x, y, false);
+        shape[index++] = size.x - 1;
+        shape[index++] = size.y - 1;
+        shape[index++] = 0;
+        shape[index++] = size.y - 1;
+        gc.fillPolygon(shape);
+        gc.drawPolygon(shape);
+    }
 
-	private void onHandlePaint(PaintEvent e) {
-		Point size = handle.getSize();
-		int location = element.getLocation();
+    private void paintRight(GC gc) {
+        int[] top = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
+        int[] bot = simple ? SIMPLE_BOTTOM_LEFT_CORNER : BOTTOM_LEFT_CORNER;
+        int[] shape = new int[top.length + bot.length + 4];
+        int index = 0;
+        Point size = container.getSize();
+        int x = 0;
+        int y = 0;
+        index = fillShape(shape, top, index, x, y, false);
+        shape[index++] = size.x - 1;
+        shape[index++] = 0;
+        shape[index++] = size.x - 1;
+        shape[index++] = size.y - 1;
+        x = 0;
+        y = size.y - 1;
+        fillShape(shape, bot, index, x, y, true);
+        gc.fillPolygon(shape);
+        gc.drawPolygon(shape);
+    }
 
-		if (handleImage != null) {
-			Rectangle ibounds = handleImage.getBounds();
-			int x = location == SWT.RIGHT ? size.x - ibounds.width : 0;
-			int y = location == SWT.BOTTOM ? size.y - ibounds.height : 0;
+    private void onHandlePaint(PaintEvent e) {
+        Point size = handle.getSize();
+        int location = element.getLocation();
 
-			for (;;) {
-				e.gc.drawImage(handleImage, x, y);
-				if (location == SWT.LEFT) {
-					x += ibounds.width;
-					if (x + ibounds.width >= size.x)
-						break;
-				} else if (location == SWT.RIGHT) {
-					x -= ibounds.width;
-					if (x <= 0)
-						break;
-				} else if (location == SWT.BOTTOM) {
-					y -= ibounds.height;
-					if (y <= 0)
-						break;
-				}
-			}
-		}
-	}
+        if (handleImage != null) {
+            Rectangle ibounds = handleImage.getBounds();
+            int x = location == SWT.RIGHT ? size.x - ibounds.width : 0;
+            int y = location == SWT.BOTTOM ? size.y - ibounds.height : 0;
 
-	private int fillShape(int[] shape, int[] points, int index, int x, int y,
-			boolean reverse) {
-		int fill = points.length;
-		for (int i = 0; i < points.length / 2; i++) {
-			if (!reverse) {
-				shape[index++] = x + points[2 * i];
-				shape[index++] = y + points[2 * i + 1];
-			} else {
-				shape[index + fill - 2 - 2 * i] = x + points[2 * i];
-				shape[index + fill - 1 - 2 * i] = y + points[2 * i + 1];
-			}
-		}
-		if (reverse) {
-			index += fill;
-		}
-		return index;
-	}
+            for (;;) {
+                e.gc.drawImage(handleImage, x, y);
+                if (location == SWT.LEFT) {
+                    x += ibounds.width;
+                    if (x + ibounds.width >= size.x)
+                        break;
+                } else if (location == SWT.RIGHT) {
+                    x -= ibounds.width;
+                    if (x <= 0)
+                        break;
+                } else if (location == SWT.BOTTOM) {
+                    y -= ibounds.height;
+                    if (y <= 0)
+                        break;
+                }
+            }
+        }
+    }
 
-	private void computeColors(Display display) {
-		if (element.getBackground() != null) {
-			RGB r = SharedStyleManager.parseRGB(element.getBackground());
-			if (r != null)
-				bg = new Color(display, r);
-		}
-		if (element.getForeground() != null) {
-			RGB r = SharedStyleManager.parseRGB(element.getForeground());
-			if (r != null)
-				fg = new Color(display, r);
-		}
-	}
+    private int fillShape(int[] shape, int[] points, int index, int x, int y,
+            boolean reverse) {
+        int fill = points.length;
+        for (int i = 0; i < points.length / 2; i++) {
+            if (!reverse) {
+                shape[index++] = x + points[2 * i];
+                shape[index++] = y + points[2 * i + 1];
+            } else {
+                shape[index + fill - 2 - 2 * i] = x + points[2 * i];
+                shape[index + fill - 1 - 2 * i] = y + points[2 * i + 1];
+            }
+        }
+        if (reverse) {
+            index += fill;
+        }
+        return index;
+    }
 
-	public Control getControl() {
-		return container;
-	}
+    private void computeColors(Display display) {
+        if (element.getBackground() != null) {
+            RGB r = SharedStyleManager.parseRGB(element.getBackground());
+            if (r != null)
+                bg = new Color(display, r);
+        }
+        if (element.getForeground() != null) {
+            RGB r = SharedStyleManager.parseRGB(element.getForeground());
+            if (r != null)
+                fg = new Color(display, r);
+        }
+    }
 
-	public void dispose() {
-		container.dispose();
-		toolBarManager.dispose();
-		toolBarManager.removeAll();
-		toolBarManager = null;
-		container = null;
-		if (bg != null)
-			bg.dispose();
-		if (fg != null)
-			fg.dispose();
-		if (handleImage != null) {
-			handleImage.dispose();
-			handleImage = null;
-		}
-	}
+    public Control getControl() {
+        return container;
+    }
 
-	private void fillToolBar() {
-		Action action;
+    public void dispose() {
+        container.dispose();
+        toolBarManager.dispose();
+        toolBarManager.removeAll();
+        toolBarManager = null;
+        container = null;
+        if (bg != null)
+            bg.dispose();
+        if (fg != null)
+            fg.dispose();
+        if (handleImage != null) {
+            handleImage.dispose();
+            handleImage = null;
+        }
+    }
 
-		closeAction = new Action("close") { //$NON-NLS-1$
-			public void run() {
-				closeLaunchBar(false);
-			}
-		};
-		closeAction
-				.setText(IntroPlugin.getString("IntroLaunchBar.close.label")); //$NON-NLS-1$
-		closeAction.setToolTipText(IntroPlugin
-				.getString("IntroLaunchBar.close.tooltip")); //$NON-NLS-1$
-		/*
-		closeAction.setImageDescriptor(ImageUtil
-				.createImageDescriptor("full/elcl16/close_view.gif")); //$NON-NLS-1$
-				*/
-		if (closeButton!=null)
-			closeButton.setToolTipText(closeAction.getToolTipText());
+    private void fillToolBar() {
+        Action action;
 
-		action = new Action("restore") { //$NON-NLS-1$
-			public void run() {
-				openPage(lastPageId);
-			}
-		};
-		action.setToolTipText(IntroPlugin
-				.getString("IntroLaunchBar.restore.tooltip")); //$NON-NLS-1$
-		action.setImageDescriptor(ImageUtil
-				.createImageDescriptor("full/etool16/restore_welcome.gif")); //$NON-NLS-1$
-		// toolBarManager.add(closeAction);
-		toolBarManager.add(action);
-		toolBarManager.add(new Separator());
-		if (element == null)
-			return;
-		LaunchBarShortcutElement[] shortcuts = element.getShortcuts();
-		for (int i = 0; i < shortcuts.length; i++) {
-			LaunchBarShortcutElement shortcut = shortcuts[i];
-			addShortcut(shortcut, toolBarManager);
-		}
-	}
+        closeAction = new Action("close") { //$NON-NLS-1$
+            public void run() {
+                closeLaunchBar(false);
+            }
+        };
+        closeAction.setText(Messages.IntroLaunchBar_close_label);
+        closeAction.setToolTipText(Messages.IntroLaunchBar_close_tooltip);
+        /*
+         * closeAction.setImageDescriptor(ImageUtil
+         * .createImageDescriptor("full/elcl16/close_view.gif")); //$NON-NLS-1$
+         */
+        if (closeButton != null)
+            closeButton.setToolTipText(closeAction.getToolTipText());
 
-	private void addShortcut(final LaunchBarShortcutElement shortcut,
-			IToolBarManager toolBarManager) {
-		Action action = new Action(shortcut.getToolTip()) {
-			public void run() {
-				executeShortcut(shortcut.getURL());
-			}
-		};
-		action.setImageDescriptor(shortcut.getImageDescriptor());
-		action.setToolTipText(shortcut.getToolTip());
-		toolBarManager.add(action);
-	}
+        action = new Action("restore") { //$NON-NLS-1$
+            public void run() {
+                openPage(lastPageId);
+            }
+        };
+        action.setToolTipText(Messages.IntroLaunchBar_restore_tooltip);
+        action.setImageDescriptor(ImageUtil
+            .createImageDescriptor("full/etool16/restore_welcome.gif")); //$NON-NLS-1$
+        // toolBarManager.add(closeAction);
+        toolBarManager.add(action);
+        toolBarManager.add(new Separator());
+        if (element == null)
+            return;
+        LaunchBarShortcutElement[] shortcuts = element.getShortcuts();
+        for (int i = 0; i < shortcuts.length; i++) {
+            LaunchBarShortcutElement shortcut = shortcuts[i];
+            addShortcut(shortcut, toolBarManager);
+        }
+    }
 
-	public void close() {
-		closeLaunchBar(false);
-	}
+    private void addShortcut(final LaunchBarShortcutElement shortcut,
+            IToolBarManager toolBarManager) {
+        Action action = new Action(shortcut.getToolTip()) {
+            public void run() {
+                executeShortcut(shortcut.getURL());
+            }
+        };
+        action.setImageDescriptor(shortcut.getImageDescriptor());
+        action.setToolTipText(shortcut.getToolTip());
+        toolBarManager.add(action);
+    }
 
-	private IIntroPart closeLaunchBar(boolean restore) {
-		IntroPlugin.getDefault().setLaunchBar(null);
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		IIntroPart intro = null;
-		if (restore) {
-			intro = PlatformUI.getWorkbench().getIntroManager().showIntro(
-					window, false);
-		}
-		if (restore) {
-			CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
-			Rectangle startBounds = Geometry.toDisplay(
-					getControl().getParent(), getControl().getBounds());
-			Rectangle endBounds = Geometry.toDisplay(cpart.getControl()
-					.getParent(), cpart.getControl().getBounds());
+    public void close() {
+        closeLaunchBar(false);
+    }
 
-			RectangleAnimation animation = new RectangleAnimation(window
-					.getShell(), startBounds, endBounds);
-			animation.schedule();
-		}
-		dispose();
-		window.getShell().layout();
-		return intro;
-	}
+    private IIntroPart closeLaunchBar(boolean restore) {
+        IntroPlugin.getDefault().setLaunchBar(null);
+        IWorkbenchWindow window = PlatformUI.getWorkbench()
+            .getActiveWorkbenchWindow();
+        IIntroPart intro = null;
+        if (restore) {
+            intro = PlatformUI.getWorkbench().getIntroManager().showIntro(
+                window, false);
+        }
+        if (restore) {
+            CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
+            Rectangle startBounds = Geometry.toDisplay(
+                getControl().getParent(), getControl().getBounds());
+            Rectangle endBounds = Geometry.toDisplay(cpart.getControl()
+                .getParent(), cpart.getControl().getBounds());
 
-	private void executeShortcut(String url) {
-		IIntroURL introURL = IntroURLFactory.createIntroURL(url);
-		if (introURL != null) {
-			IIntroPart intro = closeLaunchBar(true);
-			if (intro == null)
-				return;
-			introURL.execute();
-		}
-	}
+            RectangleAnimation animation = new RectangleAnimation(window
+                .getShell(), startBounds, endBounds);
+            animation.schedule();
+        }
+        dispose();
+        window.getShell().layout();
+        return intro;
+    }
 
-	private void openPage(String id) {
-		IIntroPart intro = closeLaunchBar(true);
-		if (intro == null)
-			return;
-		StringBuffer url = new StringBuffer();
-		url.append(IntroPlugin.getString("IntroLaunchBar.6")); //$NON-NLS-1$
-		url.append(id);
-		IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
-		if (introURL != null)
-			introURL.execute();
-	}
+    private void executeShortcut(String url) {
+        IIntroURL introURL = IntroURLFactory.createIntroURL(url);
+        if (introURL != null) {
+            IIntroPart intro = closeLaunchBar(true);
+            if (intro == null)
+                return;
+            introURL.execute();
+        }
+    }
 
-	private void contextMenuAboutToShow(IMenuManager manager) {
-		manager.add(closeAction);
-	}
+    private void openPage(String id) {
+        IIntroPart intro = closeLaunchBar(true);
+        if (intro == null)
+            return;
+        StringBuffer url = new StringBuffer();
+        url.append(Messages.IntroLaunchBar_commandBase);
+        url.append(id);
+        IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+        if (introURL != null)
+            introURL.execute();
+    }
+
+    private void contextMenuAboutToShow(IMenuManager manager) {
+        manager.add(closeAction);
+    }
 }

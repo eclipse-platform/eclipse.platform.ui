@@ -27,7 +27,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
@@ -65,8 +65,7 @@ public class PageWidgetFactory {
                 return;
             }
             DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
-                IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                        + " " + url); //$NON-NLS-1$
+                Messages.HyperlinkAdapter_urlIs + " " + url);
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -152,8 +151,7 @@ public class PageWidgetFactory {
                     .concat(
                         "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
                         embddedLink, "\">", //$NON-NLS-1$
-                        IntroPlugin.getString("HTML.embeddedLink"), //$NON-NLS-1$
-                        "</a></p>").toString(); //$NON-NLS-1$
+                        Messages.HTML_embeddedLink, "</a></p>").toString(); //$NON-NLS-1$
                 linkText = generateFormText(linkText);
                 c = createFormText(parent, linkText, null);
             }

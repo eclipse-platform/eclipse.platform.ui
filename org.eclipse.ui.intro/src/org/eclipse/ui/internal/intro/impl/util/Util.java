@@ -23,48 +23,32 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 
 public class Util {
 
-    /**
-     * Handle the exception by logging to the Log. <br>
-     * The errorId is used to NL enable the error message. Pass
-     * <code>null</code> as the messageId to indicate that the error's message
-     * should be shown as the primary message
-     */
-    public static void handleException(String errorId, Exception e) {
-        handleException(errorId, e, null);
-    }
+
 
     /**
      * Handle the exception by logging to the Log. <br>
-     * The errorId is used to NL enable the error message, and the variables are
-     * subsituted in the message. Pass <code>null</code> as the messageId to
-     * indicate that the error's message should be shown as the primary message
+     * Variables are subsituted in the message.
      */
-    public static void handleException(String errorId, Exception e,
+    public static void handleException(String msg, Exception e,
             Object[] variables) {
-        String msg = null;
+        if (msg == null)
+            return;
         if (variables != null) {
             // if variables is not null, errorId will never be null.
-            msg = IntroPlugin.getFormattedString(errorId, variables);
-        } else {
-            if (errorId == null)
-                msg = e.getMessage();
-            else
-                msg = IntroPlugin.getString(errorId);
+            msg = Messages.bind(msg, variables);
         }
         Log.error(msg, e);
     }
 
     /**
      * Handle the exception by displaying an Error Dialog. <br>
-     * The errorId is used to NL enable the error message. Also, the error is
-     * logged by the Log. Pass <code>null</code> as the messageId to indicate
-     * that the error's message should be shown as the primary message
+     * Also, the error is logged by the Log.
      */
-    public static void handleExceptionWithPopUp(Shell parent, String errorId,
+    public static void handleExceptionWithPopUp(Shell parent, String msg,
             Exception e) {
         // if it is a core exception, use ErrorDialog. If the error id is null
         // this translates to giving null to this dialog which is handled by
@@ -72,18 +56,18 @@ public class Util {
         if (e instanceof CoreException) {
             if (parent == null)
                 parent = DialogUtil.getActiveShell();
-            DialogUtil.displayCoreErrorDialog(parent, errorId,
-                (CoreException) e);
+            DialogUtil.displayCoreErrorDialog(parent, msg, (CoreException) e);
 
             return;
         }
+
         // any other exception, use MessageDialog.
         // if errorID is null, use error message.
-        if (errorId == null)
-            errorId = e.getMessage();
+        if (msg == null)
+            msg = e.getMessage();
         if (parent == null)
             parent = DialogUtil.getActiveShell();
-        DialogUtil.displayErrorMessage(parent, errorId, e);
+        DialogUtil.displayErrorMessage(parent, msg, e);
     }
 
     /**
@@ -207,19 +191,6 @@ public class Util {
         }
     }
 
-    /**
-     * Display an error message if opening an external browser failes.
-     */
-    private static void openBrowserError(final Display display,
-            final Exception e) {
-        display.asyncExec(new Runnable() {
-
-            public void run() {
-                DialogUtil.displayErrorMessage(display.getActiveShell(),
-                    IntroPlugin.getString("OpenBroswer.failedToLaunch"), e); //$NON-NLS-1$
-            }
-        });
-    }
 
 
 }

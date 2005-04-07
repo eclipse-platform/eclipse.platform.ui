@@ -14,11 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 
 /**
  * Utiliy class for Pop-Up dialogs. This is an NL enabled utility class (ie: you
@@ -31,17 +32,17 @@ public class DialogUtil {
     /**
      * Displays core error dialog with a message from the Core error status
      * object, and a user message. <br>
-     * The user message is retrieved from the errorID, and is logged using
-     * Log.logError().
+     * The user message is logged using Log.logError().
      */
-    public static void displayCoreErrorDialog(Shell parent, String errorId,
+    public static void displayCoreErrorDialog(Shell parent, String msg,
             CoreException coreEx) {
 
-        String title = IntroPlugin.getString("ErrorDialog.errorTitle"); //$NON-NLS-1$
+        if (msg == null)
+            msg = coreEx.getMessage();
+        String title = Messages.MessageDialog_errorTitle;
         if (parent == null)
             parent = getActiveShell();
         IStatus status = coreEx.getStatus();
-        String msg = IntroPlugin.getString(errorId);
         ErrorDialog.openError(parent, title, msg, status);
         Log.error(msg, coreEx);
     }
@@ -51,26 +52,25 @@ public class DialogUtil {
      */
     public static void displayErrorMessage(Shell parent, String msg,
             Throwable ex) {
-        String title = IntroPlugin.getString("MessageDialog.errorTitle"); //$NON-NLS-1$
+        String title = Messages.MessageDialog_errorTitle;
         if (parent == null)
             parent = getActiveShell();
         MessageDialog.openError(parent, title, msg);
         Log.error(msg, ex);
     }
 
-    /**
-     * Displays error dialog with a message corresponding to the errorId. <br>
-     * The user message is retrieved from the errorID, and is formatted with the
-     * passed variables. Also logs the error using Log.logError().
-     */
-    public static void displayErrorMessage(Shell parent, String errorId,
-            Object[] variables, Throwable ex) {
 
-        String msg = null;
+    /**
+     * Displays error dialog with a message. <br>
+     * The user message is formatted with the passed variables. Also logs the
+     * error using Log.logError().
+     */
+    public static void displayErrorMessage(Shell parent, String msg,
+            Object[] variables, Throwable ex) {
+        if (msg == null)
+            return;
         if (variables != null)
-            msg = IntroPlugin.getFormattedString(errorId, variables);
-        else
-            msg = IntroPlugin.getString(errorId);
+            msg = NLS.bind(msg, variables);
         displayErrorMessage(parent, msg, ex);
     }
 
@@ -80,7 +80,7 @@ public class DialogUtil {
      * and log.
      */
     public static void displayWarningMessage(Shell parent, String msg) {
-        String title = IntroPlugin.getString("MessageDialog.warningTitle"); //$NON-NLS-1$
+        String title = Messages.MessageDialog_warningTitle;
         if (parent == null)
             parent = getActiveShell();
         MessageDialog.openWarning(parent, title, msg);
@@ -88,18 +88,16 @@ public class DialogUtil {
     }
 
     /**
-     * Displays warning dialog with a message corresponding to the errorId. <br>
+     * Displays warning dialog with a message. <br>
      * also logs the info using Log.logWarning().
      */
-    public static void displayWarningMessage(Shell parent, String warningId,
+    public static void displayWarningMessage(Shell parent, String msg,
             Object[] variables) {
-        String msg = null;
+        if (msg == null)
+            return;
         if (variables != null)
-            msg = IntroPlugin.getFormattedString(warningId, variables);
-        else
-            msg = IntroPlugin.getString(warningId);
+            msg = Messages.bind(msg, variables);
         displayWarningMessage(parent, msg);
-
     }
 
     /**
@@ -107,7 +105,7 @@ public class DialogUtil {
      * also logs the info using Log.logInfo().
      */
     public static void displayInfoMessage(Shell parent, String msg) {
-        String title = IntroPlugin.getString("MessageDialog.infoTitle"); //$NON-NLS-1$
+        String title = Messages.MessageDialog_infoTitle;
         if (parent == null)
             parent = getActiveShell();
         MessageDialog.openInformation(parent, title, msg);
@@ -119,13 +117,12 @@ public class DialogUtil {
      * Displays info dialog with a message corresponding to the infoId. <br>
      * also logs the info using Log.logInfo().
      */
-    public static void displayInfoMessage(Shell parent, String infoId,
+    public static void displayInfoMessage(Shell parent, String msg,
             Object[] variables) {
-        String msg = null;
+        if (msg == null)
+            return;
         if (variables != null)
-            msg = IntroPlugin.getFormattedString(infoId, variables);
-        else
-            msg = IntroPlugin.getString(infoId);
+            msg = Messages.bind(msg, variables);
         displayInfoMessage(parent, msg);
     }
 
