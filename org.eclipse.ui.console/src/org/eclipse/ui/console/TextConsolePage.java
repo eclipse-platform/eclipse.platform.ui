@@ -47,6 +47,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.internal.console.ConsoleMessages;
+import org.eclipse.ui.internal.console.ConsoleResourceBundleMessages;
 import org.eclipse.ui.internal.console.FollowHyperlinkAction;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -272,30 +273,30 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected void createActions() {
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
-		action.configureAction(ConsoleMessages.IOConsolePage_0, ConsoleMessages.IOConsolePage_1, ConsoleMessages.IOConsolePage_2);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction("Select &All@Ctrl+A", "Select All", "Select All");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.CUT);
-		action.configureAction(ConsoleMessages.IOConsolePage_3, ConsoleMessages.IOConsolePage_4, ConsoleMessages.IOConsolePage_5);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction("Cut", "Cut", "Cut");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.COPY);
-		action.configureAction(ConsoleMessages.IOConsolePage_6, ConsoleMessages.IOConsolePage_7, ConsoleMessages.IOConsolePage_8); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction("Copy", "Copy", "Copy"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.PASTE);
-		action.configureAction(ConsoleMessages.IOConsolePage_9, ConsoleMessages.IOConsolePage_10, ConsoleMessages.IOConsolePage_11); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction("Paste", ConsoleMessages.IOConsolePage_10, ConsoleMessages.IOConsolePage_11); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
 		fClearOutputAction = new ClearOutputAction(fConsole);
         
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.ui.internal.console.ConsoleResourceBundleMessages"); //$NON-NLS-1$
+        ResourceBundle bundle = ConsoleResourceBundleMessages.getBundle();
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action_", fConsoleView)); //$NON-NLS-1$
 
 		fSelectionActions.add(ActionFactory.CUT.getId());
