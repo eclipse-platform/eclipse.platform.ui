@@ -267,26 +267,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 
 		// Check each property in turn.
 		final Command command = (Command) object;
-		if (!Util.equals(id, command.id)) {
-			return false;
-		}
-		if (!Util.equals(name, command.name)) {
-			return false;
-		}
-		if (!Util.equals(description, command.description)) {
-			return false;
-		}
-		if (!Util.equals(category, command.category)) {
-			return false;
-		}
-		if (!Util.equals(defined, command.defined)) {
-			return false;
-		}
-		if (!Util.equals(handler, command.handler)) {
-			return false;
-		}
-
-		return Util.equals(parameters, command.parameters);
+		return Util.equals(id, command.id);
 	}
 
 	/**
@@ -598,19 +579,19 @@ public final class Command extends NamedHandleObject implements Comparable {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("Command("); //$NON-NLS-1$
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
 			stringBuffer.append(category);
-			stringBuffer.append(',');
-			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
 			stringBuffer.append(',');
 			stringBuffer.append(handler);
 			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
 			stringBuffer.append(parameters);
+            stringBuffer.append(',');
+            stringBuffer.append(defined);
 			stringBuffer.append(')');
 			string = stringBuffer.toString();
 		}

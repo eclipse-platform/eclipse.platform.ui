@@ -403,12 +403,22 @@ public final class ParameterizedCommand implements Comparable {
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
-			hashCode = HASH_INITIAL * HASH_FACTOR
-					+ Util.hashCode(parameterizations);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(parameterizations);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}
 		}
 		return hashCode;
 	}
+    
+    public final String toString() {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append("ParameterizedCommand("); //$NON-NLS-1$
+        buffer.append(command);
+        buffer.append(',');
+        buffer.append(parameterizations);
+        buffer.append(')');
+        return buffer.toString();
+    }
 }

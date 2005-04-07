@@ -165,14 +165,14 @@ public final class Category extends NamedHandleObject {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("Category("); //$NON-NLS-1$
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
 			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(')');
+            stringBuffer.append(')');
 			string = stringBuffer.toString();
 		}
 		return string;
