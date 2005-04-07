@@ -62,7 +62,7 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.JavaArgumentsTab_Exception_occurred_reading_configuration___15 + e.getStatus().getMessage()); //$NON-NLS-1$
 			JDIDebugUIPlugin.log(e);
 		}
 	}
