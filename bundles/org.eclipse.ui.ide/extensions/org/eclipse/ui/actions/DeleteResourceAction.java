@@ -12,13 +12,13 @@ package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -346,14 +346,14 @@ public class DeleteResourceAction extends SelectionListenerAction {
     /**
      * Deletes the given resources.
      */
-    private IStatus delete(IResource[] resourcesToDelete, IProgressMonitor monitor) {
+    private void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException{
         final List exceptions = new ArrayList();
         forceOutOfSyncDelete = false;
         monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
         try {
 	        for (int i = 0; i < resourcesToDelete.length; ++i) {
 	            if (monitor.isCanceled()) {
-	                return Status.CANCEL_STATUS;
+	                throw new OperationCanceledException();
 	            }
 	            try {
 	                delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1,
@@ -362,7 +362,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	                exceptions.add(e);
 	            }
 	        }
-	        return createResult(exceptions);
+	        IStatus result = createResult(exceptions);
+			if (!result.isOK())
+				throw new CoreException(result);
         } finally {
         	monitor.done();
         }
@@ -455,9 +457,19 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
         if (resourcesToDelete.length == 0)
             return;
-    	Job deleteJob = new WorkspaceJob(IDEWorkbenchMessages.DeleteResourceAction_jobName) {
-    		public IStatus runInWorkspace(IProgressMonitor monitor) {
-                return delete(resourcesToDelete, monitor);
+		//use a non-workspace job with a runnable inside so we can avoid periodic updates
+    	Job deleteJob = new Job(IDEWorkbenchMessages.DeleteResourceAction_jobName) {
+    		public IStatus run(IProgressMonitor monitor) {
+				try {
+					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) throws CoreException {
+					        delete(resourcesToDelete, monitor);
+						}
+					},	null, IWorkspace.AVOID_UPDATE, monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
     		}
     	};
     	deleteJob.setRule(getDeleteRule(resourcesToDelete));
