@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -27,12 +23,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -42,7 +34,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener {
 
-    private final Set menuIds = new HashSet();
+    private final String menuID;
 
     private final MenuManager menu;
 
@@ -67,10 +59,10 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
     public PopupMenuExtender(String id, MenuManager menu,
             ISelectionProvider prov, IWorkbenchPart part) {
         super();
+        this.menuID = id;
         this.menu = menu;
         this.selProvider = prov;
         this.part = part;
-        menuIds.add(id);
         menu.addMenuListener(this);
         if (!menu.getRemoveAllWhenShown()) {
             menuWrapper = new SubMenuManager(menu);
@@ -82,113 +74,10 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 
     // getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
     /**
-     * Return the menu identifiers for this extender.
-     * 
-     * @return The set of all identifiers that represent this extender.
+     * Return the menu identifier
      */
-    public Set getMenuIds() {
-        return menuIds;
-    }
-
-    /**
-     * <p>
-     * Adds another menu identifier to this extender. An extender can represent
-     * many menu identifiers. These identifiers should represent the same menu
-     * manager, selection provider and part. Duplicate identifiers are
-     * automatically ignored.
-     * </p>
-     * <p>
-     * For example, it is necessary to filter out duplicate identifiers for
-     * <code>CompilationUnitEditor</code> instances, as these define both
-     * <code>"#CompilationUnitEditorContext"</code> and
-     * <code>"org.eclipse.jdt.ui.CompilationUnitEditor.EditorContext"</code>
-     * as menu identifier for the same pop-up menu. We don't want to contribute
-     * duplicate items in this case.
-     * </p>
-     * 
-     * @param menuId
-     *            The menu identifier to add to this extender; should not be
-     *            <code>null</code>.
-     */
-    public final void addMenuId(final String menuId) {
-        menuIds.add(menuId);
-    }
-
-    /**
-     * Determines whether this extender would be the same as another extender
-     * created with the given values. Two extenders are equivalent if they have
-     * the same menu manager, selection provider and part (i.e., if the menu
-     * they represent is about to show, they would populate it with duplicate
-     * values).
-     * 
-     * @param menuManager
-     *            The menu manager with which to compare; may be
-     *            <code>null</code>.
-     * @param selectionProvider
-     *            The selection provider with which to compare; may be
-     *            <code>null</code>.
-     * @param part
-     *            The part with which to compare; may be <code>null</code>.
-     * @return <code>true</code> if the menu manager, selection provider and
-     *         part are all the same.
-     */
-    public final boolean matches(final MenuManager menuManager,
-            final ISelectionProvider selectionProvider,
-            final IWorkbenchPart part) {
-        return (this.menu == menuManager)
-                && (this.selProvider == selectionProvider)
-                && (this.part == part);
-    }
-
-    /**
-     * Contributes items registered for the currently active editor.
-     */
-    private void addEditorActions(IMenuManager mgr) {
-        ISelectionProvider activeEditor = new ISelectionProvider() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-             */
-            public void addSelectionChangedListener(
-                    ISelectionChangedListener listener) {
-                // TODO Auto-generated method stub
-
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-             */
-            public ISelection getSelection() {
-                if (part instanceof IEditorPart) {
-                    IEditorPart editorPart = (IEditorPart) part;
-                    return new StructuredSelection(new Object[] { editorPart
-                            .getEditorInput() });
-                }
-
-                return new StructuredSelection(new Object[0]);
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-             */
-            public void removeSelectionChangedListener(
-                    ISelectionChangedListener listener) {
-                // TODO Auto-generated method stub
-
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-             */
-            public void setSelection(ISelection selection) {
-                // TODO Auto-generated method stub
-
-            }
-        };
-        if (ObjectActionContributorManager.getManager()
-                .contributeObjectActions(part, mgr, activeEditor)) {
-            mgr.add(new Separator());
-        }
+    public String getMenuId() {
+        return menuID;
     }
 
     /**
@@ -222,7 +111,6 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
-        addEditorActions(mgr);
         addObjectActions(mgr);
         addStaticActions(mgr);
     }
@@ -231,30 +119,13 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
      * Read static items for the context menu.
      */
     private void readStaticActions() {
-    	if (staticActionsRead)
-    		return;
-    	
-    	staticActionsRead = true;
-    	
         // If no menu id provided, then there is no contributions
         // to add. Fix for bug #33140.
-        if (menuIds.isEmpty()) {
-            return;
-        }
-
-        final Iterator menuIdItr = menuIds.iterator();
-        while (menuIdItr.hasNext()) {
-            final String menuId = (String) menuIdItr.next();
-            if ((menuId == null) || (menuId.length() < 1)) { // Bug 33140
-                continue;
-            }
-
+        if (menuID != null && menuID.length() > 0) {
             staticActionBuilder = new ViewerActionBuilder();
-            if (!staticActionBuilder.readViewerContributions(menuId,
-                    selProvider, part)) {
+            if (!staticActionBuilder.readViewerContributions(menuID,
+                    selProvider, part))
                 staticActionBuilder = null;
-            }
-
         }
     }
 
@@ -266,8 +137,8 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
                 .find(IWorkbenchActionConstants.MB_ADDITIONS);
         if (item == null) {
             WorkbenchPlugin
-                    .log("Context menu missing standard group 'org.eclipse.ui.IWorkbenchActionConstants.MB_ADDITIONS'. (menu ids = " //$NON-NLS-1$
-                            + menuIds.toString() + ")  part id = " //$NON-NLS-1$
+                    .log("Context menu missing standard group 'org.eclipse.ui.IWorkbenchActionConstants.MB_ADDITIONS'. (menu id = " //$NON-NLS-1$
+                            + (menuID == null ? "???" : menuID) + ")  part id = " //$NON-NLS-1$ //$NON-NLS-2$
                             + (part == null ? "???" : part.getSite().getId()) //$NON-NLS-1$
                             + ")"); //$NON-NLS-1$
         }
@@ -282,7 +153,6 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
             staticActionBuilder.dispose();
         }
         Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-        menu.removeMenuListener(this);
     }
 
 	/* (non-Javadoc)

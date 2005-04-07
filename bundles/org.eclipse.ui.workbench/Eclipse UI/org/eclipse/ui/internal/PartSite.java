@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -248,35 +247,14 @@ public abstract class PartSite implements IWorkbenchPartSite {
     }
 
     /**
-     * Register a popup menu for extension.
-     */
-    public void registerContextMenu(String menuID, MenuManager menuMgr,
-            ISelectionProvider selProvider) {
-        if (menuExtenders == null) {
-            menuExtenders = new ArrayList(1);
-        }
-        /*
-         * Check to see if the same menu manager and selection provider have
-         * already been used. If they have, then we can just add another menu
-         * identifier to the existing PopupMenuExtender.
-         */
-        final Iterator extenderItr = menuExtenders.iterator();
-        boolean foundMatch = false;
-        while (extenderItr.hasNext()) {
-            final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr
-                    .next();
-            if (existingExtender.matches(menuMgr, selProvider, part)) {
-                existingExtender.addMenuId(menuID);
-                foundMatch = true;
-                break;
-            }
-        }
-
-        if (!foundMatch) {
-            menuExtenders.add(new PopupMenuExtender(menuID, menuMgr,
-                    selProvider, part));
-        }
-    }
+    * Register a popup menu for extension.
+    */
+   public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
+       if (menuExtenders == null) {
+           menuExtenders = new ArrayList(1);
+       }
+       menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider, part));
+   }
 
     /**
      * Register a popup menu with the default id for extension.
@@ -288,23 +266,17 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
     // getContextMenuIds() added by Dan Rubel (dan_rubel@instantiations.com)
     /**
-     * Get the registered popup menu identifiers
-     */
-    public String[] getContextMenuIds() {
-        if (menuExtenders == null)
-            return new String[0];
-        String[] menuIds = new String[menuExtenders.size()];
-        int index = 0;
-        for (Iterator iter = menuExtenders.iterator(); iter.hasNext();) {
-            final PopupMenuExtender extender = (PopupMenuExtender) iter.next();
-            final Set extenderMenuIds = extender.getMenuIds();
-            final Iterator menuIdItr = extenderMenuIds.iterator();
-            while (menuIdItr.hasNext()) {
-                menuIds[index++] = (String) menuIdItr.next();
-            }
-        }
-        return menuIds;
-    }
+    * Get the registered popup menu identifiers
+    */
+   public String[] getContextMenuIds() {
+       if (menuExtenders == null)
+           return new String[0];
+       String[] menuIds = new String[menuExtenders.size()];
+       int index = 0;
+       for (Iterator iter = menuExtenders.iterator(); iter.hasNext();)
+           menuIds[index++] = ((PopupMenuExtender) iter.next()).getMenuId();
+       return menuIds;
+   }
 
     /**
      * Sets the action bars for the part.

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.part;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -94,36 +93,20 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
         registerContextMenu(getId(), menuManager, selProvider);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String, org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String,
+     *      org.eclipse.jface.action.MenuManager,
+     *      org.eclipse.jface.viewers.ISelectionProvider)
      */
     public void registerContextMenu(String menuID, MenuManager menuMgr,
             ISelectionProvider selProvider) {
-        
         if (menuExtenders == null) {
             menuExtenders = new ArrayList(1);
         }
-        /*
-         * Check to see if the same menu manager and selection provider have
-         * already been used. If they have, then we can just add another menu
-         * identifier to the existing PopupMenuExtender.
-         */
-        final Iterator extenderItr = menuExtenders.iterator();
-        boolean foundMatch = false;
-        while (extenderItr.hasNext()) {
-            final PopupMenuExtender existingExtender = (PopupMenuExtender) extenderItr
-                    .next();
-            if (existingExtender.matches(menuMgr, selProvider, part)) {
-                existingExtender.addMenuId(menuID);
-                foundMatch = true;
-                break;
-            }
-        }
-
-        if (!foundMatch) {
-            menuExtenders.add(new PopupMenuExtender(menuID, menuMgr,
-                    selProvider, part));
-        }
+        menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider,
+                part));
     }
     
     /* (non-Javadoc)
