@@ -145,6 +145,7 @@ public class Messages extends NLS {
 	public static String preferences_incompatible;
 	public static String preferences_invalidExtensionSuperclass;
 	public static String preferences_loadException;
+	public static String preferences_matching;
 	public static String preferences_missingClassAttribute;
 	public static String preferences_missingScopeAttribute;
 	public static String preferences_removedNode;
@@ -153,10 +154,10 @@ public class Messages extends NLS {
 	public static String preferences_saveProblems;
 	public static String preferences_validate;
 	public static String preferences_validationException;
-	public static String product_notFound;
-	public static String provider_invalid;
 
 	// Product
+	public static String product_notFound;
+	public static String provider_invalid;
 	public static String provider_invalid_general;
 
 	// URL

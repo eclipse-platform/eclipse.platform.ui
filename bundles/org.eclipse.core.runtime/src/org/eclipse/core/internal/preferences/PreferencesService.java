@@ -941,7 +941,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		try {
 			return internalMatches(tree, filters);
 		} catch (BackingStoreException e) {
-			throw new CoreException(createStatusError("exception matching", e));
+			throw new CoreException(createStatusError(Messages.preferences_matching, e));
 		}
 	}
 
