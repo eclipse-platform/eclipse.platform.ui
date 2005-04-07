@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class UpAction extends SourceContainerAction {
 	
 	public UpAction() {
-		super(SourceLookupUIMessages.getString("sourceTab.upButton"));  //$NON-NLS-1$
+		super(SourceLookupUIMessages.sourceTab_upButton);  //$NON-NLS-1$
 	}
 	/**
 	 * Moves all selected entries up one position (if possible).

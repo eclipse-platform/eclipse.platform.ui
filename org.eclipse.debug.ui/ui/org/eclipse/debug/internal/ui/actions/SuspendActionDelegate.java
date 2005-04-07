@@ -43,20 +43,20 @@ public class SuspendActionDelegate extends AbstractListenerActionDelegate {
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("SuspendActionDelegate.Exceptions_occurred_attempting_to_suspend._2"); //$NON-NLS-1$
+		return ActionMessages.SuspendActionDelegate_Exceptions_occurred_attempting_to_suspend__2; //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.getString("SuspendActionDelegate.Suspend_failed_1"); //$NON-NLS-1$
+		return ActionMessages.SuspendActionDelegate_Suspend_failed_1; //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return ActionMessages.getString("SuspendActionDelegate.Suspend_3"); //$NON-NLS-1$
+		return ActionMessages.SuspendActionDelegate_Suspend_3; //$NON-NLS-1$
 	}
 }

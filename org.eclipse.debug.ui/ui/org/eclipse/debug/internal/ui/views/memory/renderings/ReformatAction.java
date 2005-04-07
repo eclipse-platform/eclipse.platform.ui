@@ -25,12 +25,9 @@ public class ReformatAction extends Action {
 	
 	AbstractTableRendering fRendering;
 	
-	private static final String PREFIX = "ReformatAction."; //$NON-NLS-1$
-	private static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	
 	public ReformatAction(AbstractTableRendering rendering)
 	{
-		super(DebugUIMessages.getString(TITLE));
+		super(DebugUIMessages.ReformatAction_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ReformatAction_context"); //$NON-NLS-1$
 		fRendering = rendering;
 	}

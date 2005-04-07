@@ -19,35 +19,30 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 
-
 /**
  * Set column size of current view tab as the default column size
  * 
  * @since 3.0
  */
-public class SetColumnSizeDefaultAction extends Action
-{
-	private static final String PREFIX = "SetColumnSizeDefaultAction."; //$NON-NLS-1$
-	private static final String LABEL = PREFIX + "Set_as_default"; //$NON-NLS-1$
-	
-	private AbstractTableRendering fRendering;
-	
-	public SetColumnSizeDefaultAction(AbstractTableRendering rendering)
-	{
-		super (DebugUIMessages.getString(LABEL));
-		fRendering = rendering;
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".SetColumnSizeDefaultAction_context"); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
-	public void run()
-	{
-		int numUnits = fRendering.getAddressableUnitPerColumn();
-		
-		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		prefStore.setValue(IDebugPreferenceConstants.PREF_COLUMN_SIZE, numUnits);
-	}
+public class SetColumnSizeDefaultAction extends Action {
+    private AbstractTableRendering fRendering;
+
+    public SetColumnSizeDefaultAction(AbstractTableRendering rendering) {
+        super(DebugUIMessages.SetColumnSizeDefaultAction_Set_as_default);
+        fRendering = rendering;
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".SetColumnSizeDefaultAction_context"); //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.action.IAction#run()
+     */
+    public void run() {
+        int numUnits = fRendering.getAddressableUnitPerColumn();
+
+        IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+        prefStore.setValue(IDebugPreferenceConstants.PREF_COLUMN_SIZE, numUnits);
+    }
 
 }

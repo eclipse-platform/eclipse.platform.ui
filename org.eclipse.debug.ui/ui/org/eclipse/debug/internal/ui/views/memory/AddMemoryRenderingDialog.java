@@ -219,7 +219,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		composite.setLayoutData(comositeSpec);
 		
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Memory_Monitor")); //$NON-NLS-1$
+		textLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_Monitor); //$NON-NLS-1$
 		GridData textLayout = new GridData();
 		textLayout.verticalAlignment=GridData.CENTER;
 		textLayout.horizontalAlignment=GridData.BEGINNING;
@@ -241,7 +241,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		filler.setLayoutData(fillerData);
 		
 		addNew = new Button(composite, SWT.NONE);
-		addNew.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_New")); //$NON-NLS-1$
+		addNew.setText(DebugUIMessages.AddMemoryRenderingDialog_Add_New); //$NON-NLS-1$
 		GridData specButton= new GridData();
 		specButton.horizontalAlignment= GridData.END;
 		specButton.verticalAlignment= GridData.CENTER;
@@ -279,7 +279,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		memoryBlock.addSelectionListener(fSelectionListener);
 		
 		Label renderingLabel = new Label(composite, SWT.NONE);
-		renderingLabel.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Memory_renderings")); //$NON-NLS-1$
+		renderingLabel.setText(DebugUIMessages.AddMemoryRenderingDialog_Memory_renderings); //$NON-NLS-1$
 		GridData renderingLayout = new GridData();
 		renderingLayout.horizontalAlignment = GridData.BEGINNING;
 		renderingLayout.verticalAlignment = GridData.CENTER;
@@ -324,7 +324,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 	public AddMemoryRenderingDialog(Shell parent, IMemoryRenderingSite site) {
 		super(parent);
-		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
+		super.setTitle(DebugUIMessages.AddMemoryRenderingDialog_Add_memory_rendering); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context"); //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fSite = site;
@@ -375,7 +375,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				
 				if (blocks.length <= 0)
 				{
-					combo.add(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_New")); //$NON-NLS-1$
+					combo.add(DebugUIMessages.AddMemoryRenderingDialog_Add_New); //$NON-NLS-1$
 					combo.select(0);
 					return;
 				}
@@ -399,7 +399,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 					text = ((IMemoryBlockExtension)fMemoryBlocks[i]).getExpression();
 					
 					if (text == null)
-						text = DebugUIMessages.getString("AddMemoryRenderingDialog.Unknown"); //$NON-NLS-1$
+						text = DebugUIMessages.AddMemoryRenderingDialog_Unknown; //$NON-NLS-1$
 					
 					if (((IMemoryBlockExtension)fMemoryBlocks[i]).getBigBaseAddress() != null)
 					{

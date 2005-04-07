@@ -69,8 +69,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea(Composite ancestor) {			
 		
-		getShell().setText(SourceLookupUIMessages.getString("addSourceLocation.title")); //$NON-NLS-1$
-		setTitle(SourceLookupUIMessages.getString("addSourceLocation.description")); //$NON-NLS-1$
+		getShell().setText(SourceLookupUIMessages.addSourceLocation_title); //$NON-NLS-1$
+		setTitle(SourceLookupUIMessages.addSourceLocation_description); //$NON-NLS-1$
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
 		
 		Composite parent = new Composite(ancestor, SWT.NULL);

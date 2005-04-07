@@ -32,7 +32,7 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 
-			DebugException.REQUEST_FAILED, ActionMessages.getString("TerminateAllAction.Terminate_all_failed_3"), null); //$NON-NLS-1$
+			DebugException.REQUEST_FAILED, ActionMessages.TerminateAllAction_Terminate_all_failed_3, null); //$NON-NLS-1$
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= launches[i];
 			if (!launch.isTerminated()) {

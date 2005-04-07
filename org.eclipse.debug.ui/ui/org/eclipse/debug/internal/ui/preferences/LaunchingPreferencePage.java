@@ -41,20 +41,20 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 
 		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
-		setDescription(DebugPreferencesMessages.getString("LaunchingPreferencePage.20")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.LaunchingPreferencePage_20); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.getString("LaunchingPreferencePage.1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_1, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createSaveBeforeLaunchEditors();
 		createWaitForBuildEditor();
 		
 		createSpacer(getFieldEditorParent(), 2);
 
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.getString("LaunchingPreferencePage.10"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createSwitchPerspectiveEditor();
 		createRelaunchInDebugMode();
 		createContinueWithCompileErrors();
@@ -71,10 +71,10 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	}
 	
 	private void createLaunchHistoryEditor() {
-		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.getString("DebugPreferencePage.10"), getFieldEditorParent()); //$NON-NLS-1$
+		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, getFieldEditorParent()); //$NON-NLS-1$
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
 		editor.setTextLimit(Integer.toString(historyMax).length());
-		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.getString("DebugPreferencePage.11"), new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
+		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.DebugPreferencePage_11, new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
 		editor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		editor.setValidRange(1, historyMax);		
 		editor.setPropertyChangeListener(new IPropertyChangeListener() {
@@ -87,49 +87,49 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	}
 	
 	private void createSaveBeforeLaunchEditors() {
-		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.getString("LaunchingPreferencePage.2"), 3,  //$NON-NLS-1$
-										new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.3"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-											{DebugPreferencesMessages.getString("LaunchingPreferencePage.4"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-											{DebugPreferencesMessages.getString("LaunchingPreferencePage.5"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
+		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,  //$NON-NLS-1$
+										new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+											{DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+											{DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 										getFieldEditorParent(),
 										true));	
 	}	
 	
 	private void createWaitForBuildEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
-						DebugPreferencesMessages.getString("LaunchingPreferencePage.6"), 3,  //$NON-NLS-1$
-						new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.7"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.8"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-							{DebugPreferencesMessages.getString("LaunchingPreferencePage.9"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
+						DebugPreferencesMessages.LaunchingPreferencePage_6, 3,  //$NON-NLS-1$
+						new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_7, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+							{DebugPreferencesMessages.LaunchingPreferencePage_8, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+							{DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 						getFieldEditorParent(),
 						true));
 	}
 	
 	private void createSwitchPerspectiveEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
-				DebugPreferencesMessages.getString("LaunchingPreferencePage.11"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.12"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("LaunchingPreferencePage.13"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("LaunchingPreferencePage.14"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
+				DebugPreferencesMessages.LaunchingPreferencePage_11, 3, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_12, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.LaunchingPreferencePage_13, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.LaunchingPreferencePage_14, MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}
 	
 	private void createRelaunchInDebugMode() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
-				DebugPreferencesMessages.getString("LaunchingPreferencePage.15"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.16"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.17"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.18"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
+				DebugPreferencesMessages.LaunchingPreferencePage_15, 3, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_16, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+					{DebugPreferencesMessages.LaunchingPreferencePage_17, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+					{DebugPreferencesMessages.LaunchingPreferencePage_18, MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}	
 
 	private void createContinueWithCompileErrors() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
-				DebugPreferencesMessages.getString("LaunchingPreferencePage.21"), 2, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.22"), MessageDialogWithToggle.ALWAYS},  //$NON-NLS-1$
-					{DebugPreferencesMessages.getString("LaunchingPreferencePage.23"), MessageDialogWithToggle.PROMPT}},  //$NON-NLS-1$
+				DebugPreferencesMessages.LaunchingPreferencePage_21, 2, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_22, MessageDialogWithToggle.ALWAYS},  //$NON-NLS-1$
+					{DebugPreferencesMessages.LaunchingPreferencePage_23, MessageDialogWithToggle.PROMPT}},  //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}

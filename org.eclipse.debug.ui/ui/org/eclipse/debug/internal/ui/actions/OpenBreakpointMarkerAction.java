@@ -33,8 +33,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	private IEditorInput input;
 	
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
-		super(selectionProvider, ActionMessages.getString("OpenBreakpointMarkerAction.&Go_to_File_1")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_File_for_Breakpoint_2")); //$NON-NLS-1$
+		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1); //$NON-NLS-1$
+		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2); //$NON-NLS-1$
 		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_OPEN_MARKER));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
@@ -69,7 +69,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
     			try {
     				part= page.openEditor(input, editorId);
     			} catch (PartInitException e) {
-    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.getString("OpenBreakpointMarkerAction.Go_to_Breakpoint_1"), ActionMessages.getString("OpenBreakpointMarkerAction.Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+    				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); //$NON-NLS-1$ //$NON-NLS-2$
     			}
             }
 		}

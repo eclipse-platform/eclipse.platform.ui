@@ -41,7 +41,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
-		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Close_1"), false);  //$NON-NLS-1$
+		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  //$NON-NLS-1$
 	}
 	
 	protected String getShellTitle() {
@@ -49,7 +49,7 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	}
 	
 	protected String getTitleAreaTitle() {
-		return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Modify_attributes_and_launch._1"); //$NON-NLS-1$
+		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1; //$NON-NLS-1$
 	}
 	/**
 	 * @see ILaunchConfigurationDialog#updateButtons()

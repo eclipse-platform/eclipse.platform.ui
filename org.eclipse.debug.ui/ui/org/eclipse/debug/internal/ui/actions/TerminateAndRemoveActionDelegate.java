@@ -48,20 +48,20 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	 * @see AbstractDebugActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Exceptions_occurred_attempting_to_terminate_and_remove_2"); //$NON-NLS-1$
+		return ActionMessages.TerminateAndRemoveActionDelegate_Exceptions_occurred_attempting_to_terminate_and_remove_2; //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_remove_failed_1"); //$NON-NLS-1$
+		return ActionMessages.TerminateAndRemoveActionDelegate_Terminate_and_remove_failed_1; //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return ActionMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_Remove;_3"); //$NON-NLS-1$
+		return ActionMessages.TerminateAndRemoveActionDelegate_Terminate_and_Remove__3; //$NON-NLS-1$
 	}
 }

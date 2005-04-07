@@ -24,7 +24,7 @@ public class StringPrompt extends PromptingResolver {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		InputDialog dialog = new InputDialog(null, StringSubstitutionMessages.getString("StringPromptExpander.0"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
+		InputDialog dialog = new InputDialog(null, StringSubstitutionMessages.StringPromptExpander_0, dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
 		int dialogResult = dialog.open();
 		if (dialogResult == Window.OK) {
 			dialogResultString = dialog.getValue();

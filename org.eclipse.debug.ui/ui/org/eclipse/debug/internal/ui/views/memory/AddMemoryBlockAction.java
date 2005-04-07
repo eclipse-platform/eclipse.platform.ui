@@ -55,13 +55,6 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class AddMemoryBlockAction extends Action implements ISelectionListener, IDebugEventSetListener{
 	
-	private static String PREFIX = "AddMemoryBlockAction."; //$NON-NLS-1$
-	private static String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	private static String TOOLTIP = PREFIX + "tooltip"; //$NON-NLS-1$
-	private static String FAILED = PREFIX + "failed"; //$NON-NLS-1$
-	private static String EXPR_EVAL_FAILED = PREFIX + "expressionEvalFailed";	 //$NON-NLS-1$
-	private static String NO_MEMORY_BLOCK = PREFIX + "noMemoryBlock"; //$NON-NLS-1$
-	
 	protected ISelection fCurrentSelection = null;
 	protected IMemoryBlock fLastMemoryBlock;
 	private boolean fAddDefaultRenderings = true;
@@ -88,9 +81,9 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	 */
 	private void initialize(IMemoryRenderingSite site) {
 		fSite = site;
-		setText(DebugUIMessages.getString(TITLE));
+		setText(DebugUIMessages.AddMemoryBlockAction_title);
 		
-		setToolTipText(DebugUIMessages.getString(TOOLTIP));
+		setToolTipText(DebugUIMessages.AddMemoryBlockAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
@@ -112,7 +105,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	{
 		super(text, style);
 		
-		setToolTipText(DebugUIMessages.getString(TOOLTIP));
+		setToolTipText(DebugUIMessages.AddMemoryBlockAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
@@ -199,7 +192,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 						else
 						{
 							// open error if it failed to retrieve a memory block
-							MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);					
+							MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, DebugUIMessages.AddMemoryBlockAction_noMemoryBlock, null);					
 						}
 					}
 					else
@@ -250,16 +243,16 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 						else
 						{
 							// otherwise open up an error doalog
-							MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(NO_MEMORY_BLOCK), null);
+							MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, DebugUIMessages.AddMemoryBlockAction_noMemoryBlock, null);
 						}
 					}
 				} catch (DebugException e1) {
-					MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), DebugUIMessages.getString(FAILED), e1);
+					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, DebugUIMessages.AddMemoryBlockAction_failed, e1);
 				}
 				catch(NumberFormatException e2)
 				{
-					String message = DebugUIMessages.getString(FAILED) + "\n" + DebugUIMessages.getString(EXPR_EVAL_FAILED); //$NON-NLS-1$
-					MemoryViewUtil.openError(DebugUIMessages.getString(TITLE), message + " " + expression, null); //$NON-NLS-1$
+					String message = DebugUIMessages.AddMemoryBlockAction_failed + "\n" + DebugUIMessages.AddMemoryBlockAction_expressionEvalFailed; //$NON-NLS-1$
+					MemoryViewUtil.openError(DebugUIMessages.AddMemoryBlockAction_title, message + " " + expression, null); //$NON-NLS-1$
 				}
 			}
 		} finally {

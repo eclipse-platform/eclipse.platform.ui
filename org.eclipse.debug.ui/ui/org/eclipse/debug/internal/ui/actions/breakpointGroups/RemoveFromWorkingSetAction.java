@@ -30,7 +30,7 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
      * @param view
      */
     public RemoveFromWorkingSetAction(BreakpointsView view) {
-        super(BreakpointGroupMessages.getString("RemoveFromWorkingSetAction.0"), view); //$NON-NLS-1$
+        super(BreakpointGroupMessages.RemoveFromWorkingSetAction_0, view); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)

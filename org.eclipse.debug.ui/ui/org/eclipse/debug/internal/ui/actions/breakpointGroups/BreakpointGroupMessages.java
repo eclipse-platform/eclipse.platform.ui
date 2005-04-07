@@ -1,34 +1,49 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * 
- */
-public class BreakpointGroupMessages {
-    private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.actions.breakpointGroups.BreakpointGroupMessages";//$NON-NLS-1$
+public class BreakpointGroupMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.actions.breakpointGroups.BreakpointGroupMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2004, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	public static String GroupBreakpointsByAction_0;
+	public static String GroupBreakpointsByAction_1;
+	public static String GroupBreakpointsByDialog_0;
+	public static String GroupBreakpointsByDialog_1;
+	public static String GroupBreakpointsByDialog_2;
+	public static String GroupBreakpointsByDialog_3;
+	public static String GroupBreakpointsByDialog_4;
+	public static String GroupBreakpointsByDialog_5;
+	public static String GroupBreakpointsByDialog_6;
+	public static String GroupBreakpointsByDialog_7;
+	public static String CopyBreakpointsAction_0;
+	public static String CopyBreakpointsAction_1;
+	public static String CopyBreakpointsAction_2;
+	public static String CopyBreakpointsAction_3;
+	public static String PasteBreakpointsAction_0;
+	public static String PasteBreakpointsAction_1;
+	public static String RemoveFromWorkingSetAction_0;
 
-    private BreakpointGroupMessages() {
-    }
-
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, BreakpointGroupMessages.class);
+	}
 }

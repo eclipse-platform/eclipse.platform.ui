@@ -57,7 +57,7 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
     public String getLabel(Object o) {
         StringBuffer name = new StringBuffer(fWorkingSet.getName());
         if (isDefault()) {
-            name.append(DebugUIViewsMessages.getString("WorkingSetCategory.0")); //$NON-NLS-1$
+            name.append(DebugUIViewsMessages.WorkingSetCategory_0); //$NON-NLS-1$
         }
         return name.toString();
     }

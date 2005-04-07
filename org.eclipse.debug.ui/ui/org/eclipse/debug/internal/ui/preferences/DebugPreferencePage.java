@@ -38,7 +38,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 
 		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
 		setPreferenceStore(store);
-		setDescription(DebugPreferencesMessages.getString("DebugPreferencePage.1")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.DebugPreferencePage_1); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -53,24 +53,24 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.getString("DebugPreferencePage.2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.DebugPreferencePage_2, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 2);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.getString("DebugPreferencePage.3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.getString("DebugPreferencePage.26"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.DebugPreferencePage_3, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.DebugPreferencePage_26, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createSwitchPerspectiveOnSuspendEditor();
 
 		createSpacer(getFieldEditorParent(), 2);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.getString("DebugPreferencePage.25"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.DebugPreferencePage_25, SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 2);
-		ColorFieldEditor mem= new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.4"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor mem= new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR, DebugPreferencesMessages.DebugPreferencePage_4, getFieldEditorParent()); //$NON-NLS-1$
 		addField(mem);
-		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.0"), getFieldEditorParent()); //$NON-NLS-1$
+		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, DebugPreferencesMessages.DebugPreferencePage_0, getFieldEditorParent()); //$NON-NLS-1$
 		addField(mem);
-		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.27"), getFieldEditorParent()); //$NON-NLS-1$
+		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR, DebugPreferencesMessages.DebugPreferencePage_27, getFieldEditorParent()); //$NON-NLS-1$
 		addField(mem);
 	}
 
@@ -82,10 +82,10 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	
 	private void createSwitchPerspectiveOnSuspendEditor() {
 		addField(new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
-				DebugPreferencesMessages.getString("DebugPreferencePage.21"), 3, //$NON-NLS-1$
-				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.22"), MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("DebugPreferencePage.23"), MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
-								{DebugPreferencesMessages.getString("DebugPreferencePage.24"), MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
+				DebugPreferencesMessages.DebugPreferencePage_21, 3, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.DebugPreferencePage_22, MessageDialogWithToggle.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.DebugPreferencePage_23, MessageDialogWithToggle.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.DebugPreferencePage_24, MessageDialogWithToggle.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}

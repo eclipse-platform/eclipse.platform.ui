@@ -39,12 +39,6 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 	private Combo expressionInput;
 	private String expression;
 
-	
-	private static final String PREFIX = "GoToAddressDialog."; //$NON-NLS-1$
-	private static final String GO_TO_ADDRESS = PREFIX + "GoToAddress"; //$NON-NLS-1$
-	private static final String ADDRESS = PREFIX + "Address"; //$NON-NLS-1$
-	
-
 	/**
 	 * @param parentShell
 	 */
@@ -67,7 +61,7 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 		parent.setLayoutData(spec2);
 
 		Label textLabel = new Label(parent, SWT.NONE);
-		textLabel.setText(DebugUIMessages.getString(ADDRESS));
+		textLabel.setText(DebugUIMessages.GoToAddressDialog_Address);
 		GridData textLayout = new GridData();
 		textLayout.widthHint = 280;
 		textLabel.setLayoutData(textLayout);
@@ -98,7 +92,7 @@ public class GoToAddressDialog extends Dialog implements ModifyListener{
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		
-		newShell.setText(DebugUIMessages.getString(GO_TO_ADDRESS));
+		newShell.setText(DebugUIMessages.GoToAddressDialog_GoToAddress);
 	}
 	
 	public String getExpression()

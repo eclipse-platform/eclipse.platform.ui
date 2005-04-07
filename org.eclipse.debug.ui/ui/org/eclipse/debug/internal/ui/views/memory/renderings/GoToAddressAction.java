@@ -48,16 +48,10 @@ public class GoToAddressAction extends Action
 {
 	private AbstractTableRendering fRendering;
 	
-	private static final String PREFIX = "GoToAddressAction."; //$NON-NLS-1$
-	private static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	private static final String GO_TO_ADDRESS_FAILED = PREFIX + "Go_to_address_failed"; //$NON-NLS-1$
-	private static final String ADDRESS_IS_INVALID = PREFIX + "Address_is_invalid"; //$NON-NLS-1$
-	private static final String TOOLTIP = PREFIX + "tooltip"; //$NON-NLS-1$
-	
 	public GoToAddressAction(AbstractTableRendering rendering)
 	{		
-		super(DebugUIMessages.getString(TITLE));
-		setToolTipText(DebugUIMessages.getString(TOOLTIP));
+		super(DebugUIMessages.GoToAddressAction_title);
+		setToolTipText(DebugUIMessages.GoToAddressAction_title);
 		
 		fRendering = rendering;
 		
@@ -156,13 +150,13 @@ public class GoToAddressAction extends Action
 		// open error in case of any error
 		catch (DebugException e)
 		{
-			MemoryViewUtil.openError(DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), 
-				DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), e);
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+				DebugUIMessages.GoToAddressAction_Go_to_address_failed, e);
 		}
 		catch (NumberFormatException e1)
 		{
-			MemoryViewUtil.openError(DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), 
-				DebugUIMessages.getString(ADDRESS_IS_INVALID), null);
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+				DebugUIMessages.GoToAddressAction_Address_is_invalid, null);
 		}
 	}
 	
@@ -205,12 +199,12 @@ public class GoToAddressAction extends Action
 				}
 			}
 		} catch (DebugException e) {
-			MemoryViewUtil.openError(DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), 
-			DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), e);
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+			DebugUIMessages.GoToAddressAction_Go_to_address_failed, e);
 		} catch (CoreException e)
 		{
-			MemoryViewUtil.openError(DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), 
-			DebugUIMessages.getString(GO_TO_ADDRESS_FAILED), e);
+			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
+			DebugUIMessages.GoToAddressAction_Go_to_address_failed, e);
 		}
 		finally
 		{

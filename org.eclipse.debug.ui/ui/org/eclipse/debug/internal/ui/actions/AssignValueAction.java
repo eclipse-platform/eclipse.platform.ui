@@ -37,7 +37,7 @@ public class AssignValueAction extends SelectionProviderAction {
 	private ISourceViewer detailsViewer;
 
 	public AssignValueAction(VariablesView varView, ISourceViewer detailViewer) {
-		super(varView.getViewer(), ActionMessages.getString("AssignValueAction.1")); //$NON-NLS-1$
+		super(varView.getViewer(), ActionMessages.AssignValueAction_1); //$NON-NLS-1$
 		variablesView = varView;
 		detailsViewer = detailViewer;
 		setEnabled(false);
@@ -97,7 +97,7 @@ public class AssignValueAction extends SelectionProviderAction {
 				variable.setValue(value);
 			} else {
 			    if (activeShell != null) {
-			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("AssignValueAction.2"), MessageFormat.format(ActionMessages.getString("AssignValueAction.3"), new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.getString("AssignValueAction.4")));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.AssignValueAction_2, MessageFormat.format(ActionMessages.AssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.AssignValueAction_4));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			    }
 			}
 		} catch (DebugException e) {

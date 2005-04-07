@@ -56,7 +56,7 @@ public class FindVariableAction extends Action implements IUpdate {
 	private AbstractListenerActionDelegate fDelegate;
 
     public FindVariableAction(VariablesView view) {
-        setText(ActionMessages.getString("FindVariableAction.0")); //$NON-NLS-1$
+        setText(ActionMessages.FindVariableAction_0); //$NON-NLS-1$
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindVariableAction"); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_VARIABLE_ACTION);
         fDelegate= new FindVariableDelegate();

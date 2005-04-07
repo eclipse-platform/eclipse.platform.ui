@@ -95,7 +95,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 			try {
 				performAction(fTargetAdapter, getTargetSelection(), fActivePart);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.getString("RetargetAction.2"), ActionMessages.getString("RetargetAction.3"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.RetargetAction_2, ActionMessages.RetargetAction_3, e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

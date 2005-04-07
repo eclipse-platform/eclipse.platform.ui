@@ -330,7 +330,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	private void handleBreakpointChecked(final CheckStateChangedEvent event, final IBreakpoint breakpoint) {
 		final boolean enable= event.getChecked();
-        String jobName = enable ? DebugUIViewsMessages.getString("BreakpointsView.0") : DebugUIViewsMessages.getString("BreakpointsView.1"); //$NON-NLS-1$ //$NON-NLS-2$
+        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; //$NON-NLS-1$ //$NON-NLS-2$
         new Job(jobName) {
             protected IStatus run(IProgressMonitor monitor) {
                 try {
@@ -339,9 +339,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 } catch (final CoreException e) {
                     Display.getDefault().asyncExec(new Runnable() {
                         public void run() {
-                            String titleState= enable ? DebugUIViewsMessages.getString("BreakpointsView.6") : DebugUIViewsMessages.getString("BreakpointsView.7"); //$NON-NLS-1$ //$NON-NLS-2$
-                            String messageState= enable ? DebugUIViewsMessages.getString("BreakpointsView.8") : DebugUIViewsMessages.getString("BreakpointsView.9");  //$NON-NLS-1$ //$NON-NLS-2$
-                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.10"), new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.11"), new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
+                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; //$NON-NLS-1$ //$NON-NLS-2$
+                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  //$NON-NLS-1$ //$NON-NLS-2$
+                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
                             // If the breakpoint fails to update, reset its check state.
                             getCheckboxViewer().removeCheckStateListener(fCheckListener);
                             event.getCheckable().setChecked(breakpoint, !event.getChecked());

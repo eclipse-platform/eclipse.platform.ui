@@ -35,10 +35,10 @@ public class RemoveMemoryRenderingAction extends Action
 	public RemoveMemoryRenderingAction(IMemoryRenderingContainer viewPane)
 	{
 		// create action as drop down
-		super(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering"), AS_PUSH_BUTTON); //$NON-NLS-1$
-		setText(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering")); //$NON-NLS-1$
+		super(DebugUIMessages.RemoveMemoryRenderingAction_Remove_rendering, AS_PUSH_BUTTON); //$NON-NLS-1$
+		setText(DebugUIMessages.RemoveMemoryRenderingAction_Remove_rendering); //$NON-NLS-1$
 
-		setToolTipText(DebugUIMessages.getString("RemoveMemoryRenderingAction.Remove_rendering")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.RemoveMemoryRenderingAction_Remove_rendering); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_MEMORY));	
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_REMOVE_MEMORY));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_MEMORY));

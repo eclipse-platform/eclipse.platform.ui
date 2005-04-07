@@ -239,9 +239,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		 */
 		private void updateActionLabel() {
 			if (fIsShowAddressColumn) {
-				setText(DebugUIMessages.getString("ShowAddressColumnAction.0")); //$NON-NLS-1$
+				setText(DebugUIMessages.ShowAddressColumnAction_0); //$NON-NLS-1$
 			} else {
-				setText(DebugUIMessages.getString("ShowAddressColumnAction.1")); //$NON-NLS-1$
+				setText(DebugUIMessages.ShowAddressColumnAction_1); //$NON-NLS-1$
 			}
 		}
 	}
@@ -525,7 +525,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 
 		if (!ok)
 		{
-			DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("AbstractTableRendering.0"), null)); //$NON-NLS-1$
+			DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_0, null)); //$NON-NLS-1$
 			displayError(e);
 			return;
 		}
@@ -612,7 +612,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			{
 				if(((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() == null)
 				{
-					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("AbstractTableRendering.1"), null)); //$NON-NLS-1$
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_1, null)); //$NON-NLS-1$
 					displayError(e);				
 				}
 			}
@@ -954,7 +954,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 		
 		TableColumn column0 = new TableColumn(fTableViewer.getTable(),SWT.LEFT,0);
-		column0.setText(DebugUIMessages.getString("AbstractTableRendering.2")); //$NON-NLS-1$
+		column0.setText(DebugUIMessages.AbstractTableRendering_2); //$NON-NLS-1$
 		
 		// create new byte columns
 		TableColumn [] byteColumns = new TableColumn[bytesPerLine/columnSize];		
@@ -1099,7 +1099,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		styleText = fTextViewer.getTextWidget();
 		
 		if (styleText != null)
-			styleText.setText(DebugUIMessages.getString("AbstractTableRendering.3") + e.getMessage());	 //$NON-NLS-1$
+			styleText.setText(DebugUIMessages.AbstractTableRendering_3 + e.getMessage());	 //$NON-NLS-1$
 		fPageBook.showPage(fTextViewer.getControl());
 		
 		// clear content cache if we need to display error
@@ -1325,7 +1325,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		if (fFormatColumnActions.length > 0)
 		{
 			// Format view tab actions
-			IMenuManager formatMenu = new MenuManager(DebugUIMessages.getString("AbstractTableRendering.5"),  //$NON-NLS-1$
+			IMenuManager formatMenu = new MenuManager(DebugUIMessages.AbstractTableRendering_5,  //$NON-NLS-1$
 				"format"); //$NON-NLS-1$
 			
 			menu.appendToGroup("topMenu", formatMenu); //$NON-NLS-1$
@@ -1429,7 +1429,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			if (fLabel == null)
 			{
-				fLabel = DebugUIMessages.getString("AbstractTableRendering.8"); //$NON-NLS-1$
+				fLabel = DebugUIMessages.AbstractTableRendering_8; //$NON-NLS-1$
 			}
 			
 			try {
@@ -1519,7 +1519,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				address = ((IMemoryBlockExtension)mem).getBigBaseAddress();
 				if (address == null)
 				{	
-					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString("AbstractTableRendering.10"), null)); //$NON-NLS-1$
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.AbstractTableRendering_10, null)); //$NON-NLS-1$
 					displayError(e);
 					return;
 				}
@@ -1786,7 +1786,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				{
 					Status stat = new Status(
 					 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
-					 DebugException.NOT_SUPPORTED, DebugUIMessages.getString("AbstractTableRendering.11"), null  //$NON-NLS-1$
+					 DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  //$NON-NLS-1$
 					);
 					DebugException e = new DebugException(stat);
 					throw e;
@@ -1800,7 +1800,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				{
 					Status stat = new Status(
 					 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
-					 DebugException.NOT_SUPPORTED, DebugUIMessages.getString("AbstractTableRendering.11"), null  //$NON-NLS-1$
+					 DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  //$NON-NLS-1$
 					);
 					DebugException e = new DebugException(stat);
 					throw e;
@@ -2265,8 +2265,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				}
 				catch (NumberFormatException e1)
 				{
-					MemoryViewUtil.openError(DebugUIMessages.getString(TableRenderingCellModifier.TITLE), 
-						DebugUIMessages.getString(TableRenderingCellModifier.DATA_IS_INVALID), null);
+					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, 
+						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
 				}		
 			}
 		});		
@@ -2410,8 +2410,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				}
 				catch (NumberFormatException e1)
 				{
-					MemoryViewUtil.openError(DebugUIMessages.getString(TableRenderingCellModifier.TITLE), 
-						DebugUIMessages.getString(TableRenderingCellModifier.DATA_IS_INVALID), null);
+					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, 
+						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
 					
 					fTableCursor.setSelection(row, col);
 					handleCursorMoved();
@@ -2514,7 +2514,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			goToAddress(baseAddress);
 			topVisibleAddressChanged(baseAddress);
 		} catch (DebugException e) {
-			MemoryViewUtil.openError(DebugUIMessages.getString("AbstractTableRendering.12"), DebugUIMessages.getString("AbstractTableRendering.13"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			MemoryViewUtil.openError(DebugUIMessages.AbstractTableRendering_12, DebugUIMessages.AbstractTableRendering_13, e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

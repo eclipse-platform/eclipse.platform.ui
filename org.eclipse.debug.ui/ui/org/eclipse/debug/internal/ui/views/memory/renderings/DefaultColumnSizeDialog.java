@@ -33,10 +33,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class DefaultColumnSizeDialog extends Dialog {
 
-	private static final String PREFIX = "DefaultColumnSizeDialog."; //$NON-NLS-1$
-	private static final String DEFAULT_COLUMN_SIZE = PREFIX + "DefaultColumnSize"; //$NON-NLS-1$
-	private static final String COLUMN_SIZE = PREFIX + "ColumnSize"; //$NON-NLS-1$
-	
 	IPreferenceStore fPrefStore;
 	Combo fColumnSize;
 	
@@ -57,7 +53,7 @@ public class DefaultColumnSizeDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".DefaultColumnSizeDialog_context"); //$NON-NLS-1$
 		
-		getShell().setText(DebugUIMessages.getString(DEFAULT_COLUMN_SIZE));
+		getShell().setText(DebugUIMessages.DefaultColumnSizeDialog_DefaultColumnSize);
 		
 		Composite content = (Composite) super.createDialogArea(parent);
 		GridLayout layout = new GridLayout();
@@ -65,7 +61,7 @@ public class DefaultColumnSizeDialog extends Dialog {
 		content.setLayout(layout);
 		
 		Label textLabel = new Label(content, SWT.NONE);
-		textLabel.setText(DebugUIMessages.getString(COLUMN_SIZE));
+		textLabel.setText(DebugUIMessages.DefaultColumnSizeDialog_ColumnSize);
 		
 		GridData textLayout = new GridData();
 		textLabel.setLayoutData(textLayout);

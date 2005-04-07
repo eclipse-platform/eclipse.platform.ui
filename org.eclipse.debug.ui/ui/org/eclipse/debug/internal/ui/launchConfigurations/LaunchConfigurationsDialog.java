@@ -277,7 +277,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
-		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Close_1"), false);  //$NON-NLS-1$
+		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  //$NON-NLS-1$
 	}
 	
 	/**
@@ -471,8 +471,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		topComp.setLayout(topLayout);
 		
 		// Set the things that TitleAreaDialog takes care of 
-		setTitle(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Create,_manage,_and_run_launch_configurations_8")); //$NON-NLS-1$
-		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
+		setTitle(LaunchConfigurationsMessages.LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8); //$NON-NLS-1$
+		setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2); //$NON-NLS-1$
 		setModeLabelState();
 		
 		// Create the SashForm that contains the selection area on the left,
@@ -549,7 +549,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		
 		setTreeLabel(new Label(comp, SWT.NONE));
 		getTreeLabel().setFont(font);
-		getTreeLabel().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Con&figurations__1")); //$NON-NLS-1$
+		getTreeLabel().setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Con_figurations__1); //$NON-NLS-1$
 		
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup());
 		fLaunchConfigurationView.createLaunchDialogControl(comp);
@@ -572,10 +572,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		buttonComposite.setLayoutData(gd);
 		buttonComposite.setFont(comp.getFont());
 		
-		final Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
+		final Button newButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13, null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
 		
-		final Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
+		final Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.LaunchConfigurationDialog_Dele_te_14, null); //$NON-NLS-1$
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
 		
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor =
@@ -651,7 +651,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 		GridLayout pmLayout = new GridLayout();
 		setProgressMonitorPart(new ProgressMonitorPart(monitorComposite, pmLayout));
-		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
+		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_3, true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
 		getProgressMonitorCancelButton().setFont(font);
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -679,7 +679,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected String getShellTitle() {
 		String title = DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel());
 		if (title == null) {
-			title = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_18"); //$NON-NLS-1$
+			title = LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configurations_18; //$NON-NLS-1$
 		}
 		return title;
 	}
@@ -1002,19 +1002,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		String message = null;
 		if (getActiveTab() instanceof PerspectivesTab) {
 			try {
-				message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.45"), new String[]{getTabViewer().getWorkingCopy().getType().getName()}); //$NON-NLS-1$
+				message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_45, new String[]{getTabViewer().getWorkingCopy().getType().getName()}); //$NON-NLS-1$
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
 		} else {
-			message = MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___29"), new String[]{getTabViewer().getWorkingCopy().getName()}); //$NON-NLS-1$
+			message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{getTabViewer().getWorkingCopy().getName()}); //$NON-NLS-1$
 		}
 		MessageDialog dialog = new MessageDialog(getShell(), 
-												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Save_changes__31"), //$NON-NLS-1$
+												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_changes__31, //$NON-NLS-1$
 												 null,
 												 message,
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Yes_32"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_33"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_34")}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33, LaunchConfigurationsMessages.LaunchConfigurationDialog_Cancel_34}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 0);
 		// If user clicked 'Cancel' or closed dialog, return false
 		int selectedButton = dialog.open();
@@ -1045,15 +1045,15 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>false</code> otherwise.
 	 */
 	private boolean showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.The_configuration___35"), new String[]{getTabViewer().getWorkingCopy().getName()})); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{getTabViewer().getWorkingCopy().getName()})); //$NON-NLS-1$
 		buffer.append(getTabViewer().getErrorMesssage());
-		buffer.append(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_discard_changes_37")); //$NON-NLS-1$
+		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37); //$NON-NLS-1$
 		MessageDialog dialog = new MessageDialog(getShell(), 
-												 LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Discard_changes__38"), //$NON-NLS-1$
+												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Discard_changes__38, //$NON-NLS-1$
 												 null,
 												 buffer.toString(),
 												 MessageDialog.QUESTION,
-												 new String[] {LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Yes_32"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.No_33")}, //$NON-NLS-1$ //$NON-NLS-2$
+												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33}, //$NON-NLS-1$ //$NON-NLS-2$
 												 1);
 		// If user clicked 'Yes', return true
 		int selectedButton = dialog.open();
@@ -1652,13 +1652,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		String title = null;
 		switch (status.getSeverity()) {
 			case IStatus.ERROR:
-				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Error_1"); //$NON-NLS-1$
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Error_1; //$NON-NLS-1$
 				break;
 			case IStatus.WARNING:
-				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Warning_2"); //$NON-NLS-1$
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Warning_2; //$NON-NLS-1$
 				break;
 			default:
-				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Information_3"); //$NON-NLS-1$
+				title = LaunchConfigurationsMessages.LaunchConfigurationsDialog_Information_3; //$NON-NLS-1$
 				break;
 		}
 		ErrorDialog.openError(getShell(), title, null, status);

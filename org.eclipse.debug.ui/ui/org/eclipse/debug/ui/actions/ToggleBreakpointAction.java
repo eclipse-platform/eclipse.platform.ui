@@ -51,7 +51,7 @@ public class ToggleBreakpointAction extends Action {
 	 * @param rulerInfo specifies location the user has double-clicked 
 	 */
 	public ToggleBreakpointAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
-		super(ActionMessages.getString("ToggleBreakpointAction.0")); //$NON-NLS-1$
+		super(ActionMessages.ToggleBreakpointAction_0); //$NON-NLS-1$
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
@@ -96,7 +96,7 @@ public class ToggleBreakpointAction extends Action {
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
-		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.getString("ToggleBreakpointAction.1"), ActionMessages.getString("ToggleBreakpointAction.2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**

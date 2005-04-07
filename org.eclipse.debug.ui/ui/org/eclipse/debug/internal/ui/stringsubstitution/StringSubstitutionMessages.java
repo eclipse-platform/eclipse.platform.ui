@@ -1,36 +1,67 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * StringSubstitutionMessages
- */
-public class StringSubstitutionMessages {
+public class StringSubstitutionMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages"; //$NON-NLS-1$
+	public static String PromptExpanderBase_0;
+	public static String PromptExpanderBase_1;
+	public static String PromptingResolver_0;
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+	public static String RefreshTab_0;
+	public static String RefreshTab_6;
+	public static String RefreshTab_7;
+	public static String RefreshTab_8;
+	public static String RefreshTab_31;
+	public static String RefreshTab_32;
+	public static String RefreshTab_33;
+	public static String RefreshTab_34;
+	public static String RefreshTab_35;
+	public static String RefreshTab_36;
+	public static String RefreshTab_37;
+	public static String RefreshTab_38;
+	public static String RefreshTab_39;
+	public static String RefreshTab_40;
+	public static String RefreshTab_42;
 
-	private StringSubstitutionMessages() {
-	}
+	public static String ResourceResolver_6;
+	public static String ResourceResolver_7;
+	public static String ResourceResolver_8;
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	public static String ResourceSelector_0;
+
+	public static String StringPromptExpander_0;
+
+	public static String StringVariableSelectionDialog_2;
+	public static String StringVariableSelectionDialog_3;
+	public static String StringVariableSelectionDialog_6;
+	public static String StringVariableSelectionDialog_7;
+	public static String StringVariableSelectionDialog_8;
+	public static String StringVariableSelectionDialog_0;
+	public static String StringVariableSelectionDialog_1;
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, StringSubstitutionMessages.class);
 	}
 }

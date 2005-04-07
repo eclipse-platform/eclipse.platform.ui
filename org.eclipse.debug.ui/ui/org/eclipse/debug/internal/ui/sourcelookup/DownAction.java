@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class DownAction	extends SourceContainerAction {
 	
 	public DownAction() {
-		super(SourceLookupUIMessages.getString("sourceTab.downButton"));  //$NON-NLS-1$
+		super(SourceLookupUIMessages.sourceTab_downButton);  //$NON-NLS-1$
 	}
 	/**
 	 * @see IAction#run()

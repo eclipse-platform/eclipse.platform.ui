@@ -39,9 +39,6 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class TableRenderingContentProvider extends BasicDebugViewContentProvider {
 	
-	private static final String PREFIX = "MemoryViewContentProvider."; //$NON-NLS-1$
-	private static final String UNABLE_TO_RETRIEVE_CONTENT = PREFIX + "Unable_to_retrieve_content"; //$NON-NLS-1$
-		
 	// cached information
 	protected Vector lineCache;
 	
@@ -249,7 +246,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		
 				if(memoryBuffer == null)
 				{
-					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null));
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.MemoryViewContentProvider_Unable_to_retrieve_content, null));
 					throw e;
 				}
 			}
@@ -260,7 +257,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				
 				if (memory == null)
 				{
-					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null));	
+					DebugException e = new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.MemoryViewContentProvider_Unable_to_retrieve_content, null));	
 					throw e;					
 				}
 				

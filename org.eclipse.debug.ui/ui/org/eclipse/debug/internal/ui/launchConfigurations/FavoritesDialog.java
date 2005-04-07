@@ -187,8 +187,8 @@ public class FavoritesDialog extends Dialog {
 		
 		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
 			getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
-			LaunchConfigurationsMessages.getString("FavoritesDialog.7")); //$NON-NLS-1$
-		dialog.setTitle(MessageFormat.format(LaunchConfigurationsMessages.getString("FavoritesDialog.0"), new String[]{getModeLabel()})); //$NON-NLS-1$
+			LaunchConfigurationsMessages.FavoritesDialog_7); //$NON-NLS-1$
+		dialog.setTitle(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_0, new String[]{getModeLabel()})); //$NON-NLS-1$
 		dialog.open();
 		Object[] selection = dialog.getResult();
 		if (selection != null) {
@@ -265,7 +265,7 @@ public class FavoritesDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.getString("FavoritesDialog.1"), new String[]{getModeLabel()})); //$NON-NLS-1$
+		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_1, new String[]{getModeLabel()})); //$NON-NLS-1$
 		createFavoritesArea(composite);
 		return composite;
 	}
@@ -291,14 +291,14 @@ public class FavoritesDialog extends Dialog {
 		topComp.setFont(parent.getFont());
 	
 		// Create "favorite config" area
-		createLabel(topComp, LaunchConfigurationsMessages.getString("FavoritesDialog.2")); //$NON-NLS-1$
+		createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2); //$NON-NLS-1$
 		fFavoritesTable = createTable(topComp, new FavoritesContentProvider());
 		Composite buttonComp = createButtonComposite(topComp);
-		fAddFavoriteButton = createPushButton(buttonComp,LaunchConfigurationsMessages.getString("FavoritesDialog.3")); //$NON-NLS-1$
+		fAddFavoriteButton = createPushButton(buttonComp,LaunchConfigurationsMessages.FavoritesDialog_3); //$NON-NLS-1$
 		fAddFavoriteButton.setEnabled(true);
-		fRemoveFavoritesButton = createPushButton(buttonComp, LaunchConfigurationsMessages.getString("FavoritesDialog.4")); //$NON-NLS-1$
-		fMoveUpButton = createPushButton(buttonComp, LaunchConfigurationsMessages.getString("FavoritesDialog.5")); //$NON-NLS-1$
-		fMoveDownButton = createPushButton(buttonComp, LaunchConfigurationsMessages.getString("FavoritesDialog.6"));  //$NON-NLS-1$
+		fRemoveFavoritesButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_4); //$NON-NLS-1$
+		fMoveUpButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_5); //$NON-NLS-1$
+		fMoveDownButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_6);  //$NON-NLS-1$
 	}
 	
 	/**

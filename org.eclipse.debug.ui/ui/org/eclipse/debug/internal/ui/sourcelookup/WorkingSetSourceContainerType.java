@@ -63,12 +63,12 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 			String name = root.getAttribute("name");//$NON-NLS-1$
 			
 			if (isEmpty(name)) {
-				abort(SourceLookupUIMessages.getString("sourceSearch.initError"),null);//$NON-NLS-1$
+				abort(SourceLookupUIMessages.sourceSearch_initError,null);//$NON-NLS-1$
 			}
 			workingSet = WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSet(name);
 			//check that set still exists
 			if (workingSet == null) {				
-				abort(SourceLookupUIMessages.getString("sourceSearch.initError"), null); //$NON-NLS-1$
+				abort(SourceLookupUIMessages.sourceSearch_initError, null); //$NON-NLS-1$
 			}				
 			return new WorkingSetSourceContainer(workingSet);	
 			
@@ -80,7 +80,7 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 			ex = e;
 		}
 		
-		abort(SourceLookupUIMessages.getString("sourceSearch.initError"), ex);	//$NON-NLS-1$
+		abort(SourceLookupUIMessages.sourceSearch_initError, ex);	//$NON-NLS-1$
 		return null;	
 	}
 

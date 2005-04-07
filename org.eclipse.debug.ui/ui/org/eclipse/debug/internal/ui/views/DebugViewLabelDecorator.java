@@ -116,7 +116,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 	public void computeText(Object element) {
 		synchronized(this) {
 			if (fNextJob == null) {
-				fNextJob= new LabelJob(DebugUIViewsMessages.getString("DebugViewLabelDecorator.0"), fPresentation); //$NON-NLS-1$
+				fNextJob= new LabelJob(DebugUIViewsMessages.DebugViewLabelDecorator_0, fPresentation); //$NON-NLS-1$
 			}
 			fNextJob.computeText(element);
 		}
@@ -286,11 +286,11 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 		 */
 		public IStatus run(IProgressMonitor monitor) {
 			int numElements= fElementQueue.size();
-			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
+			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_1, new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
-				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.1"), new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
+				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_1, new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
 				//if (fNextJob != null) {
-					message.append(MessageFormat.format(DebugUIViewsMessages.getString("DebugViewLabelDecorator.2"), new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
+					message.append(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_2, new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
 				//}
 				monitor.setTaskName(message.toString());
 				int blockSize= 10;

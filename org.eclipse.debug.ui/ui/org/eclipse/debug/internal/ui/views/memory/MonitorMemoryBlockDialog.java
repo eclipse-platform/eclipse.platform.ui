@@ -43,12 +43,6 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	private String length;
 	private boolean needLength = true;
 	
-	private static final String PREFIX = "MonitorMemoryBlockDialog."; //$NON-NLS-1$
-	private static final String ENTER_EXPRESSION = PREFIX + "EnterExpressionToMonitor"; //$NON-NLS-1$
-	private static final String MONITOR_MEMORY = PREFIX + "MonitorMemory"; //$NON-NLS-1$
-	private static final String NUMBER_OF_BYTES = PREFIX + "NumberOfBytes"; //$NON-NLS-1$
-	
-
 	/**
 	 * @param parentShell
 	 */
@@ -75,7 +69,7 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 		parent.setLayoutData(spec2);
 
 		Label textLabel = new Label(parent, SWT.NONE);
-		textLabel.setText(DebugUIMessages.getString(ENTER_EXPRESSION));
+		textLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor);
 		GridData textLayout = new GridData();
 		textLayout.widthHint = 280;
 		textLabel.setLayoutData(textLayout);
@@ -101,7 +95,7 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 		if (needLength)
 		{
 			Label lengthLabel = new Label(parent, SWT.NONE);
-			lengthLabel.setText(DebugUIMessages.getString(NUMBER_OF_BYTES));
+			lengthLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes);
 			GridData lengthLayout = new GridData();
 			lengthLayout.widthHint = 280;
 			lengthLabel.setLayoutData(lengthLayout);
@@ -122,7 +116,7 @@ public class MonitorMemoryBlockDialog extends Dialog implements ModifyListener{
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		
-		newShell.setText(DebugUIMessages.getString(MONITOR_MEMORY));
+		newShell.setText(DebugUIMessages.MonitorMemoryBlockDialog_MonitorMemory);
 	}
 	
 	public String getExpression()

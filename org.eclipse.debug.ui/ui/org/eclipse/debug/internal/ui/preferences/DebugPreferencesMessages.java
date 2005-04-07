@@ -1,33 +1,113 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
- 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class DebugPreferencesMessages {
+public class DebugPreferencesMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.preferences.DebugPreferencesMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.debug.internal.ui.preferences.DebugPreferencesMessages";//$NON-NLS-1$
+	public static String ConsolePreferencePage_Console_settings;
+	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3;
+	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3;
+	public static String ConsolePreferencePage_Standard_Error__3;
+	public static String ConsolePreferencePage_Standard_In__4;
+	public static String ConsolePreferencePage_Standard_Out__2;
+	public static String ConsolePreferencePage_Wrap_text_1;
+	public static String ConsolePreferencePage_Console_width;
+	public static String ConsolePreferencePage_Limit_console_output_1;
+	public static String ConsolePreferencePage_Console_buffer_size__characters___2;
+	public static String ConsolePreferencePage_The_console_buffer_size_must_be_at_least_1000_characters__1;
+	public static String ConsolePreferencePage_console_width;
+	public static String ConsolePreferencePage_12;
+	public static String ConsolePreferencePage_13;
 
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	public static String DebugPreferencePage_1;
+	public static String DebugPreferencePage_2;
+	public static String DebugPreferencePage_3;
+	public static String DebugPreferencePage_0;
+	public static String DebugPreferencePage_4;
+	public static String DebugPreferencePage_10;
+	public static String DebugPreferencePage_11;
+	public static String DebugPreferencePage_21;
+	public static String DebugPreferencePage_22;
+	public static String DebugPreferencePage_23;
+	public static String DebugPreferencePage_24;
+	public static String DebugPreferencePage_25;
+	public static String DebugPreferencePage_26;
+	public static String DebugPreferencePage_27;
 
-	private DebugPreferencesMessages() {
-	}
+	public static String LaunchingPreferencePage_1;
+	public static String LaunchingPreferencePage_2;
+	public static String LaunchingPreferencePage_3;
+	public static String LaunchingPreferencePage_4;
+	public static String LaunchingPreferencePage_5;
+	public static String LaunchingPreferencePage_6;
+	public static String LaunchingPreferencePage_7;
+	public static String LaunchingPreferencePage_8;
+	public static String LaunchingPreferencePage_9;
+	public static String LaunchingPreferencePage_10;
+	public static String LaunchingPreferencePage_11;
+	public static String LaunchingPreferencePage_12;
+	public static String LaunchingPreferencePage_13;
+	public static String LaunchingPreferencePage_14;
+	public static String LaunchingPreferencePage_15;
+	public static String LaunchingPreferencePage_16;
+	public static String LaunchingPreferencePage_17;
+	public static String LaunchingPreferencePage_18;
+	public static String LaunchingPreferencePage_20;
+	public static String LaunchingPreferencePage_21;
+	public static String LaunchingPreferencePage_22;
+	public static String LaunchingPreferencePage_23;
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
+	public static String ProcessPropertyPage_Command_Line__1;
+
+	public static String SimpleVariablePreferencePage_3;
+	public static String SimpleVariablePreferencePage_4;
+	public static String SimpleVariablePreferencePage_5;
+	public static String SimpleVariablePreferencePage_6;
+	public static String SimpleVariablePreferencePage_7;
+	public static String SimpleVariablePreferencePage_8;
+	public static String SimpleVariablePreferencePage_9;
+	public static String SimpleVariablePreferencePage_10;
+	public static String SimpleVariablePreferencePage_11;
+	public static String SimpleVariablePreferencePage_12;
+	public static String SimpleVariablePreferencePage_13;
+	public static String SimpleVariablePreferencePage_14;
+	public static String SimpleVariablePreferencePage_15;
+	public static String SimpleVariablePreferencePage_16;
+	public static String SimpleLaunchVariablePreferencePage_21;
+	public static String SimpleLaunchVariablePreferencePage_22;
+	public static String SimpleLaunchVariablePreferencePage_23;
+	public static String StringVariablePreferencePage_24;
+	public static String StringVariablePreferencePage_25;
+	public static String StringVariablePreferencePage_0;
+	public static String ViewManagementPreferencePage_0;
+	public static String ViewManagementPreferencePage_1;
+	public static String ViewManagementPreferencePage_2;
+	public static String ViewManagementPreferencePage_3;
+	public static String ViewManagementPreferencePage_4;
+	public static String ViewManagementPreferencePage_5;
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, DebugPreferencesMessages.class);
 	}
 }

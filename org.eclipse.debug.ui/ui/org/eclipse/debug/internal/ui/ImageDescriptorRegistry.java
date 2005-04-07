@@ -62,7 +62,7 @@ public class ImageDescriptorRegistry {
 		if (result != null)
 			return result;
 	
-		Assert.isTrue(fDisplay == DebugUIPlugin.getStandardDisplay(), DebugUIMessages.getString("ImageDescriptorRegistry.0")); //$NON-NLS-1$
+		Assert.isTrue(fDisplay == DebugUIPlugin.getStandardDisplay(), DebugUIMessages.ImageDescriptorRegistry_0); //$NON-NLS-1$
 		result= descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);

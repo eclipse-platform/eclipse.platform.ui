@@ -40,18 +40,13 @@ public class PrintTableRenderingAction extends Action
 	private AbstractTableRendering fRendering;
 	private TableViewer fViewer;
 	
-	private static final String PREFIX = "PrintViewTabAction."; //$NON-NLS-1$
-	private static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	private static final String TOOLTIP = PREFIX + "tooltip"; //$NON-NLS-1$
-	private static final String JOB_TITLE = PREFIX + "jobtitle"; //$NON-NLS-1$
-	
 	private static final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
 	
 	public PrintTableRenderingAction(AbstractTableRendering rendering)
 	{
-		super(DebugUIMessages.getString(TITLE));
+		super(DebugUIMessages.PrintViewTabAction_title);
 		fRendering = rendering;
-		setToolTipText(DebugUIMessages.getString(TOOLTIP));
+		setToolTipText(DebugUIMessages.PrintViewTabAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_PRINT_TOP_VIEW_TAB));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_PRINT_TOP_VIEW_TAB));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_PRINT_TOP_VIEW_TAB));		
@@ -178,7 +173,7 @@ public class PrintTableRenderingAction extends Action
 		TableItem[] tableItems = ((Table)fViewer.getControl()).getItems();
 		
 		// start the print job and assign it a title
-		printer.startJob(DebugUIMessages.getString(JOB_TITLE) + fRendering.getLabel());
+		printer.startJob(DebugUIMessages.PrintViewTabAction_jobtitle + fRendering.getLabel());
 		printer.startPage();					// start the first page
 		printTable(tableItems, gc, printer);	// print all rows of the table
 		printer.endPage();						// end the last page

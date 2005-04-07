@@ -338,7 +338,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 	}
 	/** The pattern used to show the position label in the status line. */
-	private final String fPositionLabelPattern= VariablesViewMessages.getString("VariablesView.56"); //$NON-NLS-1$
+	private final String fPositionLabelPattern= VariablesViewMessages.VariablesView_56; //$NON-NLS-1$
 	/** The position label value of the current line. */
 	private final PositionLabelValue fLineLabel= new PositionLabelValue();
 	/** The position label value of the current column. */
@@ -500,7 +500,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			try {
 				svc = mp.newDetailsViewerConfiguration();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getSite().getShell(), VariablesViewMessages.getString("VariablesView.Error_1"), VariablesViewMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(getSite().getShell(), VariablesViewMessages.VariablesView_Error_1, VariablesViewMessages.VariablesView_Unable_to_configure_variable_details_area__2, e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		ISourceViewer detailViewer = getDetailViewer();
@@ -831,7 +831,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.VariablesView_Co_ntent_Assist_3, "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -839,19 +839,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getSite().getKeyBindingService().registerAction(textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.VariablesView_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.COPY);
-		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Copy_8"), "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.VariablesView__Copy_8, "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
-		textAction.configureAction(VariablesViewMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.VariablesView_Cu_t_11, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ActionFactory.CUT.getId(), textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
-		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.configureAction(VariablesViewMessages.VariablesView__Paste_14, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
 		action= new FindVariableAction(this);
@@ -905,7 +905,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 	
 	protected String getToggleActionLabel() {
-		return VariablesViewMessages.getString("VariablesView.41"); //$NON-NLS-1$
+		return VariablesViewMessages.VariablesView_41; //$NON-NLS-1$
 	}
 	
 	/**
@@ -1076,7 +1076,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		} catch (DebugException de) {
             DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
                 public void run() {
-                    getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
+                    getDetailDocument().set(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18); //$NON-NLS-1$
                 }
             });
 		}				
@@ -1119,7 +1119,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 							getModelPresentation().computeDetail(val, VariablesView.this);
 						} catch (DebugException e) {
 							DebugUIPlugin.log(e);
-							getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$	
+							getDetailDocument().set(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18); //$NON-NLS-1$	
 						}
 					} else {
 						fValueSelection = null;

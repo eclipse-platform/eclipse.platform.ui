@@ -38,8 +38,8 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 		}
 		
 		Shell activeShell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.0"); //$NON-NLS-1$
-		String message = LaunchConfigurationsMessages.getString("DebugModePromptStatusHandler.1"); //$NON-NLS-1$
+		String title = LaunchConfigurationsMessages.DebugModePromptStatusHandler_0; //$NON-NLS-1$
+		String message = LaunchConfigurationsMessages.DebugModePromptStatusHandler_1; //$NON-NLS-1$
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		
 		ILaunchConfiguration configuration = (ILaunchConfiguration)source;

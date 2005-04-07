@@ -46,7 +46,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
     private ExpansionJob fExpansionJob = null;
     private SelectionJob fSelectionJob = null;
-    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.getString("RemoteTreeViewer.0")); //$NON-NLS-1$
+    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); //$NON-NLS-1$
 
     class ExpansionJob extends UIJob {
         
@@ -60,7 +60,7 @@ public class RemoteTreeViewer extends TreeViewer {
          * @param target the element to expand
          */
         public ExpansionJob(Object target, Object lock) {
-            super(DebugUIViewsMessages.getString("LaunchViewer.1")); //$NON-NLS-1$
+            super(DebugUIViewsMessages.LaunchViewer_1); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
             element = target;
             parents = new ArrayList();
@@ -125,7 +125,7 @@ public class RemoteTreeViewer extends TreeViewer {
          * @param target the element to select
          */
         public SelectionJob(IStructuredSelection sel, Object lock) {
-            super(DebugUIViewsMessages.getString("LaunchViewer.0")); //$NON-NLS-1$
+            super(DebugUIViewsMessages.LaunchViewer_0); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
             selection = sel;
             first = selection.getFirstElement();

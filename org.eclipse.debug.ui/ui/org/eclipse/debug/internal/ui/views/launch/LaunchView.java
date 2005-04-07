@@ -155,7 +155,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		 * Constructs a new source lookup job.
 		 */
 		public SourceLookupJob() {
-			super(DebugUIViewsMessages.getString("LaunchView.0")); //$NON-NLS-1$
+			super(DebugUIViewsMessages.LaunchView_0); //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
 		}
@@ -189,7 +189,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		 * Constructs a new source display job
 		 */
 		public SourceDisplayJob() {
-			super(DebugUIViewsMessages.getString("LaunchView.1")); //$NON-NLS-1$
+			super(DebugUIViewsMessages.LaunchView_1); //$NON-NLS-1$
 			setSystem(true);
 			setPriority(Job.INTERACTIVE);
 		}
@@ -332,11 +332,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		if (itemsToTerminate) {
 			// Prompt the user to proceed with termination
-			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.getString("LaunchView.Terminate_and_Remove_1"), DebugUIViewsMessages.getString("LaunchView.Terminate_and_remove_selected__2"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_1, DebugUIViewsMessages.LaunchView_Terminate_and_remove_selected__2)) { //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
-		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIViewsMessages.getString("LaunchView.Exceptions_occurred_attempting_to_terminate_and_remove_3"), null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIViewsMessages.LaunchView_Exceptions_occurred_attempting_to_terminate_and_remove_3, null); //$NON-NLS-1$
 		iter= selection.iterator(); 
 		while (iter.hasNext()) {
 			try {
@@ -348,7 +348,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (!status.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.getString("LaunchView.Terminate_and_Remove_4"), DebugUIViewsMessages.getString("LaunchView.Terminate_and_remove_failed_5"), status); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.LaunchView_Terminate_and_Remove_4, DebugUIViewsMessages.LaunchView_Terminate_and_remove_failed_5, status); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				DebugUIPlugin.log(status);
 			}
@@ -407,7 +407,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tv.expandToLevel(2);
 		final Object[] elements = tv.getExpandedElements();
 		// traverse debug model in non UI thread
-		Job initJob = new Job(DebugUIViewsMessages.getString("LaunchView.2")) { //$NON-NLS-1$
+		Job initJob = new Job(DebugUIViewsMessages.LaunchView_2) { //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */

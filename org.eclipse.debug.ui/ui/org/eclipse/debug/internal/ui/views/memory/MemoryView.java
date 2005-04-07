@@ -309,7 +309,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fMemBlkViewer.addSelectionListener(fSelectionProvider);
 		
-		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.getString("MemoryView.Memory_monitors")); //$NON-NLS-1$
+		Control viewerControl = fMemBlkViewer.createViewPane(viewerViewForm, MemoryBlocksTreeViewPane.PANE_ID, DebugUIMessages.MemoryView_Memory_monitors); //$NON-NLS-1$
 		viewerViewForm.setContent(viewerControl);
 		
 		ISelection selection = fMemBlkViewer.getSelectionProvider().getSelection();
@@ -326,7 +326,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		viewerViewForm.setTopRight(viewerToolbar);
 		
 		Label viewerLabel = new Label(viewerViewForm, SWT.WRAP);
-		viewerLabel.setText(DebugUIMessages.getString("MemoryView.Memory_monitors")); //$NON-NLS-1$
+		viewerLabel.setText(DebugUIMessages.MemoryView_Memory_monitors); //$NON-NLS-1$
 		viewerViewForm.setTopLeft(viewerLabel);
 	}
 
@@ -340,7 +340,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		
-		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.getString("MemoryView.Memory_renderings")); //$NON-NLS-1$
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
 		renderingPane.addSelectionListener(fSelectionProvider);
 		

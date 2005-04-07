@@ -37,10 +37,6 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class CopyTableRenderingToClipboardAction extends Action
 {
-	private final String PREFIX = "CopyViewToClipboardAction."; //$NON-NLS-1$
-	private final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	private final String TOOLTIP = PREFIX + "tooltip"; //$NON-NLS-1$
-	
 	private final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
 	
 	private AbstractTableRendering fRendering;
@@ -49,8 +45,8 @@ public class CopyTableRenderingToClipboardAction extends Action
 	{
 		super();
 		fRendering = rendering;
-		setText(DebugUIMessages.getString(TITLE));
-		setToolTipText(DebugUIMessages.getString(TOOLTIP));
+		setText(DebugUIMessages.CopyViewToClipboardAction_title);
+		setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COPY_VIEW_TO_CLIPBOARD));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));

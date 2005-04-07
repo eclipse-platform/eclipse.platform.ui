@@ -25,10 +25,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class FormatColumnAction extends Action
 {
-	private static final String PREFIX = "FormatColumnAction."; //$NON-NLS-1$
-	private static final String UNIT = PREFIX + "unit"; //$NON-NLS-1$
-	private static final String UNITS = PREFIX + "units"; //$NON-NLS-1$
-	
 	AbstractTableRendering fRendering;
 	int fNumBytesPerCol;
 	
@@ -36,9 +32,9 @@ public class FormatColumnAction extends Action
 	{	
 		String label;
 		if (numUnits == 1)
-			label = String.valueOf(numUnits) + " " + DebugUIMessages.getString(UNIT); //$NON-NLS-1$
+			label = String.valueOf(numUnits) + " " + DebugUIMessages.FormatColumnAction_unit; //$NON-NLS-1$
 		else	
-			label = String.valueOf(numUnits) + " " + DebugUIMessages.getString(UNITS); //$NON-NLS-1$
+			label = String.valueOf(numUnits) + " " + DebugUIMessages.FormatColumnAction_units; //$NON-NLS-1$
 		
 		super.setText(label);
 		
