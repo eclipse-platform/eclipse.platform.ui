@@ -565,7 +565,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		// Set the watch/edit preferences defaults and values
 		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
-		store.setDefault(ICVSUIConstants.PREF_EDIT_ACTION, ICVSUIConstants.PREF_EDIT_PROMPT_EDIT);
+		store.setDefault(ICVSUIConstants.PREF_EDIT_ACTION, ICVSUIConstants.PREF_EDIT_IN_BACKGROUND);
 		store.setDefault(ICVSUIConstants.PREF_EDIT_PROMPT, ICVSUIConstants.PREF_EDIT_PROMPT_IF_EDITORS);
 		// Ensure that the preference values in UI match Core
 		store.setValue(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getBoolean(CVSProviderPlugin.READ_ONLY));

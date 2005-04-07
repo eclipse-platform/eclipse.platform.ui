@@ -674,6 +674,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @param recurse indicates whether to recurse (-R) or not (-l)
 	 * @param notifyServer indicates whether to notify the server now, if possible,
 	 *     or defer until the next command.
+	 * @param notifyForWrittable 
 	 * @param notification the temporary watches.
 	 * @param progress progress monitor to provide progress indication/cancellation or <code>null</code>
 	 * @exception CVSException if this method fails.
@@ -681,11 +682,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * 
 	 * @see CVSTeamProvider#unedit
 	 */
-	public void edit(IResource[] resources, boolean recurse, boolean notifyServer, final int notification, IProgressMonitor progress) throws CVSException {
+	public void edit(IResource[] resources, boolean recurse, boolean notifyServer, final boolean notifyForWritable, final int notification, IProgressMonitor progress) throws CVSException {
 		notifyEditUnedit(resources, recurse, notifyServer, new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
-				if (file.isReadOnly())
-					file.edit(notification, Policy.monitorFor(null));
+				if (notifyForWritable || file.isReadOnly())
+					file.edit(notification, notifyForWritable, Policy.monitorFor(null));
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// nothing needs to be done here as the recurse will handle the traversal

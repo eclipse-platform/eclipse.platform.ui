@@ -75,6 +75,7 @@ public class CVSMessages extends NLS {
 	public static String CVSTeamProvider_errorSettingWatchEdit;
 	public static String CVSTeamProvider_errorAddingFileToDiff;
 	public static String CVSTeamProvider_updatingFolder;
+    public static String CVSCoreFileModificationValidator_editJob;
 
 	public static String ResourceDeltaVisitor_visitError;
 

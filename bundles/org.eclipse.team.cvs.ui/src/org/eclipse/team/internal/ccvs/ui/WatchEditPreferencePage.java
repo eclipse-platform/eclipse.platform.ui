@@ -52,8 +52,9 @@ public class WatchEditPreferencePage extends CVSFieldEditorPreferencePage {
 			ICVSUIConstants.PREF_EDIT_ACTION,
 			CVSUIMessages.WatchEditPreferencePage_validateEditSaveAction, //$NON-NLS-1$
 			1,
-			new String[][] {{CVSUIMessages.WatchEditPreferencePage_edit, ICVSUIConstants.PREF_EDIT_PROMPT_EDIT},  //$NON-NLS-1$
-							{CVSUIMessages.WatchEditPreferencePage_highjack, ICVSUIConstants.PREF_EDIT_PROMPT_HIGHJACK}, //$NON-NLS-1$
+			new String[][] {{CVSUIMessages.WatchEditPreferencePage_edit, ICVSUIConstants.PREF_EDIT_PROMPT_EDIT},
+                            {CVSUIMessages.WatchEditPreferencePage_editInBackground, ICVSUIConstants.PREF_EDIT_IN_BACKGROUND},
+							{CVSUIMessages.WatchEditPreferencePage_highjack, ICVSUIConstants.PREF_EDIT_PROMPT_HIGHJACK},
 							}, 	//$NON-NLS-1$ //$NON-NLS-2$
 			getFieldEditorParent(), true);
 		addField(actionEditor);

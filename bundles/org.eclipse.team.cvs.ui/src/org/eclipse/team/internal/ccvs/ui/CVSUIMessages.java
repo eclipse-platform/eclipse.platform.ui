@@ -690,6 +690,7 @@ public class CVSUIMessages extends NLS {
 	public static String WatchEditPreferencePage_checkoutReadOnly;
 	public static String WatchEditPreferencePage_validateEditSaveAction;
 	public static String WatchEditPreferencePage_edit;
+    public static String WatchEditPreferencePage_editInBackground;
 	public static String WatchEditPreferencePage_highjack;
 	public static String WatchEditPreferencePage_editPrompt;
 	public static String WatchEditPreferencePage_neverPrompt;

@@ -107,7 +107,7 @@ public class EclipseTest extends ResourceTest {
 	 */
 	public IResource[] editResources(IContainer container, String[] hierarchy) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		getProvider(container).edit(resources, true /* recurse */, true /* notifyServer */, ICVSFile.NO_NOTIFICATION, DEFAULT_MONITOR);
+		getProvider(container).edit(resources, true /* recurse */, true /* notifyServer */, false /* notifyForWritable */, ICVSFile.NO_NOTIFICATION, DEFAULT_MONITOR);
 		assertReadOnly(resources, false /* isReadOnly */, true /* recurse */);
 		return resources;
 	}

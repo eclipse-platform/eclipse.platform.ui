@@ -501,7 +501,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkout(int)
 	 */
-	public void edit(int notifications, IProgressMonitor monitor) {
+	public void edit(int notifications, boolean notifyForWritable, IProgressMonitor monitor) {
 		// do nothing
 	}
 

@@ -334,8 +334,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#checkout(int)
 	 */
-	public void edit(final int notifications, IProgressMonitor monitor) throws CVSException {
-		if (!isReadOnly()) return;
+	public void edit(final int notifications, boolean notifyForWritable, IProgressMonitor monitor) throws CVSException {
+		if (!notifyForWritable && !isReadOnly()) return;
 		run(new ICVSRunnable() {
 			public void run(IProgressMonitor monitor) throws CVSException {
 				byte[] syncBytes = getSyncBytes();

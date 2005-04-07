@@ -41,7 +41,7 @@ public class EditAction extends WorkspaceAction {
 				
 				executeProviderAction(new IProviderAction() {
 					public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {
-						provider.edit(resources, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
+						provider.edit(resources, false /* recurse */, true /* notify server */, false /* notifyForWritable*/, ICVSFile.NO_NOTIFICATION, monitor);
 						return Team.OK_STATUS;
 					}
 				}, Policy.subMonitorFor(monitor, 75));

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -73,11 +74,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
         if (uiValidator != null) {
             return uiValidator.validateEdit(readOnlyFiles, context);
         } else {
-	        try {
-	            performEdit(readOnlyFiles, new NullProgressMonitor());
-	        } catch (CVSException e) {
-	            return e.getStatus();
-	        }
+	        performEdit(readOnlyFiles);
 	        return Status.OK_STATUS;
         }
     }
@@ -88,21 +85,40 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 		IFile[] readOnlyFiles = getManagedReadOnlyFiles(files);
 		if (readOnlyFiles.length == 0) return Status.OK_STATUS;
 
-		try {
-			performEdit(readOnlyFiles, monitor);
-			return Status.OK_STATUS;
-		} catch (CVSException e) {
-			return e.getStatus();
-		}
+		performEdit(readOnlyFiles);
+		return Status.OK_STATUS;
 	}
 	
-	protected CVSTeamProvider getProvider(IFile[] files) {
+    /*
+     * Perform the headless edit check in the background.
+     * The user will be notified of any errors that occurred.
+     */
+	protected void performEdit(final IFile[] readOnlyFiles) {
+        setWritable(readOnlyFiles);
+        Job job = new Job(CVSMessages.CVSCoreFileModificationValidator_editJob) {
+            protected IStatus run(IProgressMonitor monitor) {
+                try {
+                    performEdit(readOnlyFiles, monitor);
+                } catch (CVSException e) {
+                    return e.getStatus();
+                }
+                return Status.OK_STATUS;
+            }          
+        };
+        scheduleEditJob(job);
+    }
+
+    protected void scheduleEditJob(Job job) {
+        job.schedule();
+    }
+
+    protected CVSTeamProvider getProvider(IFile[] files) {
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(files[0].getProject(), CVSProviderPlugin.getTypeId());
 		return provider;
 	}
 	
 	protected void performEdit(IFile[] files, IProgressMonitor monitor) throws CVSException {
-		getProvider(files).edit(files, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
+		getProvider(files).edit(files, false /* recurse */, true /* notify server */, true /* notify for writtable files */, ICVSFile.NO_NOTIFICATION, monitor);
 	}
 	
 	private boolean needsCheckout(IFile file) {

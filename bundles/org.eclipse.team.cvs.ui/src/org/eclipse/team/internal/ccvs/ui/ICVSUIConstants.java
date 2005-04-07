@@ -126,6 +126,7 @@ public interface ICVSUIConstants {
 	public final String PREF_EDIT_ACTION = "pref_edit_action"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_EDIT = "edit"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_HIGHJACK = "highjack"; //$NON-NLS-1$
+    public final String PREF_EDIT_IN_BACKGROUND = "editInBackground"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT = "pref_edit_prompt"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_NEVER = "never"; //$NON-NLS-1$
 	public final String PREF_EDIT_PROMPT_ALWAYS = "always";	 //$NON-NLS-1$

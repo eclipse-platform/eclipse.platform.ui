@@ -152,8 +152,9 @@ public interface ICVSFile extends ICVSResource, ICVSStorage {
 	 * 
 	 * @param notifications the set of operations for which the local user would like notification
 	 * while the local file is being edited.
+	 * @param notifyForWritable 
 	 */
-	public void edit(int notifications, IProgressMonitor monitor) throws CVSException;
+	public void edit(int notifications, boolean notifyForWritable, IProgressMonitor monitor) throws CVSException;
 
 	/**
 	 * Undo a checkout of the file (analogous to "cvs unedit").

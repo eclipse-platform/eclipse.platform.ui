@@ -67,7 +67,6 @@ public abstract class CVSOperation extends TeamOperation {
 	 * @see org.eclipse.team.ui.TeamOperation#getOperationIcon()
 	 */
 	protected URL getOperationIcon() {
-		URL url = null;
 		try {
 			URL baseURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
 			return  new URL(baseURL, ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE);

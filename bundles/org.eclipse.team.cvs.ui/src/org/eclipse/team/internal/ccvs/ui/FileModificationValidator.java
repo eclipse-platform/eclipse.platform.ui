@@ -11,9 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
@@ -22,6 +25,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * IFileModificationValidator that is pluged into the CVS Repository Provider
@@ -90,6 +94,11 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 				// Must return an error to indicate that it is not OK to edit the files
 				return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, CVSUIMessages.FileModificationValidator_vetoMessage, null); //$NON-NLS-1$;
 			}
+        } else if (isPerformEditInBackground()) {
+            IStatus status = setWritable(files);
+            if (status.isOK())
+                performEdit(files);
+            return status;
 		} else {
 			// Allow the files to be edited without notifying the server
 			return setWritable(files);
@@ -98,7 +107,22 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 		return Status.OK_STATUS;
 		
 	}
-
+    
+    protected void scheduleEditJob(Job job) {
+        job.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+        job.setProperty(IProgressConstants.ICON_PROPERTY, getOperationIcon());
+        super.scheduleEditJob(job);
+    }
+    
+    private URL getOperationIcon() {
+        try {
+            URL baseURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
+            return  new URL(baseURL, ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+    
     private boolean isRunningInUIThread() {
         return Display.getCurrent() != null;
     }
@@ -137,6 +161,10 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 	private boolean isPerformEdit() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_EDIT.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
 	}
+    
+    private boolean isPerformEditInBackground() {
+        return ICVSUIConstants.PREF_EDIT_IN_BACKGROUND.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_ACTION));
+    }
 	
 	private EditorsAction fetchEditors(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
 		final EditorsAction editors = new EditorsAction(getProvider(files), files);
