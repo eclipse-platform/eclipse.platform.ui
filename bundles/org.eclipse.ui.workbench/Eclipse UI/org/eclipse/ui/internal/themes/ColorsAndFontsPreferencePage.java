@@ -405,38 +405,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
                     fonts.put(baseFont, font);
                 }
-                updateColumn(getText(element), font);
                 return font;
             }
 
-            updateColumn(getText(element), JFaceResources.getDialogFont());
             return JFaceResources.getDialogFont();
-        }
-
-        /**
-         * Updates the table font based on the width required to render the 
-         * given text in the given font.  If this value is greater than 
-         * largestFontWidth then the font on the table is set to the provided 
-         * font and largestFotnWidth is updated.  This is required as a 
-         * workaround to bug 56593.
-         */
-        private void updateColumn(String text, Font font) {
-        	
-        	if(text == null)
-        		return;
-        	
-            Display display = tree.getDisplay();
-
-            GC gc = new GC(display);
-            gc.setFont(font);
-
-            int width = gc.stringExtent(text).x;
-            if (width > largestFontWidth) {
-                largestFontWidth = width;
-                if (!tree.isDisposed())
-                    tree.getViewer().getControl().setFont(font);
-            }
-            gc.dispose();
         }
 
         /* (non-Javadoc)
