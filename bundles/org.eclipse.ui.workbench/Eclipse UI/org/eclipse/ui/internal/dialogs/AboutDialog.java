@@ -24,6 +24,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -112,7 +113,11 @@ public class AboutDialog extends ProductInfoDialog {
             new AboutPluginsDialog(getShell(), productName).open();
             break;
         case INFO_ID:
-            new AboutSystemDialog(getShell()).open();
+			BusyIndicator.showWhile(null, new Runnable() {
+				public void run() {
+		            new AboutSystemDialog(getShell()).open();
+				}
+			});
             break;
         default:
             super.buttonPressed(buttonId);
