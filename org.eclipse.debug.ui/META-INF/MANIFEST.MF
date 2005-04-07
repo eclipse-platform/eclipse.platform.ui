@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.ui; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: dtui.jar
 Bundle-Activator: org.eclipse.debug.internal.ui.DebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

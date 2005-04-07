@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.core; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: dtcore.jar
+Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.debug.core.DebugPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
