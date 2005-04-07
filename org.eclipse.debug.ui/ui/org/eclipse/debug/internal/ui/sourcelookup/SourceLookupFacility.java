@@ -281,7 +281,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				    // re-use editor
 					((IReusableEditor)editorForPage).setInput(input);
 					editor = editorForPage;
-					page.bringToTop(editor);
+                    if(!page.isPartVisible(editor)) {
+                        page.bringToTop(editor);
+                    }
 				} else {
 				    // close editor, open a new one
 					editor = openEditor(page, input, id);
