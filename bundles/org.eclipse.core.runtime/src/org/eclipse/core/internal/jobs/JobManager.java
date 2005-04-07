@@ -1077,7 +1077,9 @@ public class JobManager implements IJobManager {
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued(job);
 
-		jobListeners.awake((Job) job);
+		//only notify of wakeup if immediate
+		if (delay == 0)
+			jobListeners.awake((Job) job);
 	}
 
 	/* (non-Javadoc)
