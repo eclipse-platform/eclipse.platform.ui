@@ -604,14 +604,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 			} else {
 				fProposalTable.setItemCount(newLen);
 				fProposalTable.clearAll();
-				if (Platform.WS_GTK.equals(Platform.getWS()) && newLen == 1) {
-					// TODO workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=90258
-					TableItem first= fProposalTable.getItem(0);
-					ICompletionProposal current= proposals[0];
-					first.setText(current.getDisplayString());
-					first.setImage(current.getImage());
-					first.setData(current);
-				}
+			}
+			if (newLen == 1 && Platform.WS_GTK.equals(Platform.getWS())) {
+				// TODO workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=90258
+				TableItem first= fProposalTable.getItem(0);
+				ICompletionProposal current= proposals[0];
+				first.setText(current.getDisplayString());
+				first.setImage(current.getImage());
+				first.setData(current);
 			}
 
 			fFilteredProposals= proposals;
