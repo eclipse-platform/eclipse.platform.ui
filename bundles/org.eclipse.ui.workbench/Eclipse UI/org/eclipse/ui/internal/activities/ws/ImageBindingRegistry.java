@@ -20,16 +20,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @since 3.1
  */
 public class ImageBindingRegistry implements IExtensionChangeHandler {
-
-	static final String ICON = "icon"; //$NON-NLS-1$
-	static final String ID = "id"; //$NON-NLS-1$
-	
 	private String tag; 
 	private ImageRegistry registry = new ImageRegistry();
 	
@@ -54,8 +51,8 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals(tag)) {
-				String id = element.getAttribute(ID);
-				String file = element.getAttribute(ICON);
+				String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				String file = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (file == null || id == null)
 					continue; //ignore - malformed
 				if (registry.getDescriptor(id) == null) { // first come, first serve

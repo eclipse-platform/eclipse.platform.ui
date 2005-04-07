@@ -25,26 +25,27 @@ public class DynamicPluginsTestSuite extends TestSuite {
         return new DynamicPluginsTestSuite();
     }
 
-    /**
-     * Construct the test suite.
-     */
-    public DynamicPluginsTestSuite() {
-        addTest(new TestSuite(ActionSetTests.class));
-    	addTest(new TestSuite(DynamicSupportTests.class));
-        addTest(new TestSuite(BrowserTests.class));
-    	addTest(new TestSuite(PreferencePageTests.class));
-    	addTest(new TestSuite(KeywordTests.class));
-    	addTest(new TestSuite(PropertyPageTests.class));
-    	addTest(new TestSuite(HelpSupportTests.class));
-    	addTest(new TestSuite(EncodingTests.class));
-    	addTest(new TestSuite(DecoratorTests.class));
-    	addTest(new TestSuite(StartupTests.class));
-    	addTest(new TestSuite(EditorTests.class));
-    	addTest(new TestSuite(IntroTests.class));
-        addTest(new TestSuite(PerspectiveTests.class));
-        addTest(new TestSuite(ViewTests.class));
-        addTest(new TestSuite(ActionSetTests.class));
-        addTest(new TestSuite(NewWizardTests.class));
-        addTest(new TestSuite(ObjectContributionTests.class));
-    }
+	/**
+	 * Construct the test suite.
+	 */
+	public DynamicPluginsTestSuite() {
+	    addTest(new TestSuite(ActionSetTests.class));
+		addTest(new TestSuite(ActivitySupportTests.class));
+		addTest(new TestSuite(BrowserTests.class));
+		addTest(new TestSuite(PreferencePageTests.class));
+		addTest(new TestSuite(KeywordTests.class));
+		addTest(new TestSuite(PropertyPageTests.class));
+		addTest(new TestSuite(HelpSupportTests.class));
+		addTest(new TestSuite(EncodingTests.class));
+		addTest(new TestSuite(DecoratorTests.class));
+		addTest(new TestSuite(StartupTests.class));
+		addTest(new TestSuite(EditorTests.class));
+		addTest(new TestSuite(IntroTests.class));
+		addTest(new TestSuite(PerspectiveTests.class));
+		addTest(new TestSuite(ViewTests.class));
+		addTest(new TestSuite(ActionSetTests.class));
+		addTest(new TestSuite(NewWizardTests.class));
+		addTest(new TestSuite(ObjectContributionTests.class));
+		addTest(new TestSuite(DynamicSupportTests.class));
+	}
 }

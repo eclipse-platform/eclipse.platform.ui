@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.activities.ActivityManagerFactory;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
@@ -296,7 +297,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                 });
 		triggerPointManager = new TriggerPointManager();
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
+        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
     }
 
     /* (non-Javadoc)
@@ -350,7 +351,14 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 */
 	private ImageBindingRegistry getActivityImageBindingRegistry() {
 		if (activityImageBindingRegistry == null) {
-			activityImageBindingRegistry = new ImageBindingRegistry("activityImageBinding"); //$NON-NLS-1$			
+			activityImageBindingRegistry = new ImageBindingRegistry(IWorkbenchRegistryConstants.TAG_ACTIVITY_IMAGE_BINDING);
+			PlatformUI
+					.getWorkbench()
+					.getExtensionTracker()
+					.registerHandler(
+							activityImageBindingRegistry,
+							ExtensionTracker
+									.createExtensionPointFilter(getActivitySupportExtensionPoint()));
 		}
 		return activityImageBindingRegistry;
 	}
@@ -362,8 +370,16 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 * @since 3.1
 	 */
 	private ImageBindingRegistry getCategoryImageBindingRegistry() {
-		if (categoryImageBindingRegistry == null) 
-			categoryImageBindingRegistry = new ImageBindingRegistry("categoryImageBinding"); //$NON-NLS-1$
+		if (categoryImageBindingRegistry == null) {
+			categoryImageBindingRegistry = new ImageBindingRegistry(IWorkbenchRegistryConstants.TAG_CATEGORY_IMAGE_BINDING); 
+			PlatformUI
+			.getWorkbench()
+			.getExtensionTracker()
+			.registerHandler(
+					categoryImageBindingRegistry,
+					ExtensionTracker
+							.createExtensionPointFilter(getActivitySupportExtensionPoint()));
+		}
 		return categoryImageBindingRegistry;
 	}
 
@@ -373,10 +389,14 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 * @since 3.1
 	 */
 	public void dispose() {
-		if (activityImageBindingRegistry != null) 
+		if (activityImageBindingRegistry != null) {
 			activityImageBindingRegistry.dispose();
-		if (categoryImageBindingRegistry != null)
+			PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(activityImageBindingRegistry);
+		}
+		if (categoryImageBindingRegistry != null) {
 			categoryImageBindingRegistry.dispose();
+			PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(categoryImageBindingRegistry);
+		}
 		
 		PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
 	}
@@ -438,7 +458,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
      * @return the activity support extension point.
      * @since 3.1
      */
-	private IExtensionPoint getExtensionPointFilter() {
+	private IExtensionPoint getActivitySupportExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(
 				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
 	}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newActivitySupport1"
+   name="newActivitySupport1 Plug-in"
+   version="1.0.0">
+   
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+
+   <extension
+         id="testNewActivitySupportAddition"
+         point="org.eclipse.ui.activitySupport">
+      <categoryImageBinding
+            icon="anything.gif"
+            id="org.eclipse.category2"/>
+      <activityImageBinding
+            icon="anything.gif"
+            id="org.eclipse.activity2"/>
+   </extension>
+ 
+
+</plugin>

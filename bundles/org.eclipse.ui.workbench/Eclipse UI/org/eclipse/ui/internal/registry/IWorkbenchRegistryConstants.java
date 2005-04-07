@@ -84,6 +84,16 @@ public interface IWorkbenchRegistryConstants {
 /* ***** org.eclipse.ui.activitySupport constants ***** */
 	
 	/**
+	 * Category image binding tag.  Value <code>categoryImageBinding</code>.
+	 */
+	public static final String TAG_CATEGORY_IMAGE_BINDING = "categoryImageBinding"; //$NON-NLS-1$
+
+	/**
+	 * Activity image binding tag.  Value <code>activityImageBindingw</code>.
+	 */
+	public static final String TAG_ACTIVITY_IMAGE_BINDING = "activityImageBinding"; //$NON-NLS-1$
+	
+	/**
 	 * Advisor tag.  Value <code>triggerPointAdvisor</code>.
 	 */
 	public static final String TAG_TRIGGERPOINTADVISOR = "triggerPointAdvisor"; //$NON-NLS-1$
