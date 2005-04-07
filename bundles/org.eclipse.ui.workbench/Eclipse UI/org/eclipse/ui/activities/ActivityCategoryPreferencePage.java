@@ -67,9 +67,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Activities preference page that primarily shows categories and can optionally
- * show an advanced dialog that allows fine-tune adjustmenet of activities. You
- * may provide the certain strings to this class via method #2 of
- * {@link org.eclipse.core.runtime.IExecutableExtension}
+ * show an advanced dialog that allows fine-tune adjustmenet of activities. This
+ * page may be used by product developers to provide basic ability to tweak the
+ * enabled activity set. You may provide certain strings to this class via
+ * method #2 of {@link org.eclipse.core.runtime.IExecutableExtension}.
  * 
  * @see #ACTIVITY_NAME
  * @see #ALLOW_ADVANCED
