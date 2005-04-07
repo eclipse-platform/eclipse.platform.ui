@@ -13,14 +13,9 @@ package org.eclipse.jface.text.hyperlink;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,7 +34,6 @@ import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
-import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
@@ -52,7 +46,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 
  * @since 3.1
  */
-public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, PaintListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
+public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
 
 	/**
 	 * A named preference that holds the color used for hyperlinks.
@@ -152,7 +146,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		
 		StyledText text= fTextViewer.getTextWidget();
 		if (text != null && !text.isDisposed()) {
-			text.addPaintListener(this);
 			if (fPreferenceStore != null)
 				fColor= createColor(fPreferenceStore, HYPERLINK_COLOR, text.getDisplay());
 			else if (fRGB != null)
@@ -182,10 +175,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			fCursor.dispose();
 			fCursor= null;
 		}
-		
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null && !text.isDisposed())
-			text.removePaintListener(this);
 
 		if (fTextViewer instanceof ITextViewerExtension4)
 			((ITextViewerExtension4)fTextViewer).removeTextPresentationListener(this);
@@ -207,8 +196,11 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		if (fActiveRegion == null)
 			return;
 		IRegion region= textPresentation.getExtent();
-		if (fActiveRegion.getOffset() + fActiveRegion.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > fActiveRegion.getOffset())
-			textPresentation.mergeStyleRange(new StyleRange(fActiveRegion.getOffset(), fActiveRegion.getLength(), fColor, null));
+		if (fActiveRegion.getOffset() + fActiveRegion.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > fActiveRegion.getOffset()) {
+			StyleRange styleRange= new StyleRange(fActiveRegion.getOffset(), fActiveRegion.getLength(), fColor, null);
+			styleRange.underline= true;
+			textPresentation.mergeStyleRange(styleRange);
+		}
 	}
 	
 	private void highlightRegion(IRegion region) {
@@ -222,25 +214,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		if (text == null || text.isDisposed())
 			return;
 
-		
-		// Underline
-		int offset= 0;
-		int length= 0;
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
-			IRegion widgetRange= extension.modelRange2WidgetRange(region);
-			if (widgetRange == null)
-				return;
-				
-			offset= widgetRange.getOffset();
-			length= widgetRange.getLength();
-			
-		} else {
-			offset= region.getOffset() - fTextViewer.getVisibleRegion().getOffset();
-			length= region.getLength();
-		}
-		text.redrawRange(offset, length, false);
-		
 		// Invalidate region ==> apply text presentation
 		fActiveRegion= region;
 		if (fTextViewer instanceof ITextViewerExtension2)
@@ -287,117 +260,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		else
 			fTextViewer.invalidateTextPresentation();
 		
-		// Remove underline
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-			offset= extension.modelOffset2WidgetOffset(offset);
-		} else {
-			offset -= fTextViewer.getVisibleRegion().getOffset();
-		}
-		try {
-			StyledText text= fTextViewer.getTextWidget();
-
-			text.redrawRange(offset, length, false);
-		} catch (IllegalArgumentException x) {
-			//	ignore - do not log
-		}
-	}
-
-	/*
-	 * @see PaintListener#paintControl(PaintEvent)
-	 */
-	public void paintControl(PaintEvent event) {	
-		if (fActiveRegion == null)
-			return;
-
-		StyledText text= fTextViewer.getTextWidget();
-		if (text == null || text.isDisposed())
-			return;
-			
-		int offset= 0;
-		int length= 0;
-
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
-			IRegion widgetRange= extension.modelRange2WidgetRange(fActiveRegion);
-			if (widgetRange == null)
-				return;
-				
-			offset= widgetRange.getOffset();
-			length= widgetRange.getLength();
-			
-		} else {
-			
-			IRegion region= fTextViewer.getVisibleRegion();			
-			if (!includes(region, fActiveRegion))
-				return;		    
-			
-			offset= fActiveRegion.getOffset() - region.getOffset();
-			length= fActiveRegion.getLength();
-		}
-		
-		// support for BIDI
-		Point minLocation= getMinimumLocation(text, offset, length);
-		Point maxLocation= getMaximumLocation(text, offset, length);
-
-		int x1= minLocation.x;
-		int x2= maxLocation.x - 1;
-		int y= minLocation.y + text.getLineHeight() - 1;
-		
-		GC gc= event.gc;
-		if (fColor != null && !fColor.isDisposed())
-			gc.setForeground(fColor);
-		else if (fColor == null && !(offset < 0 && offset >= text.getCharCount())) {
-			StyleRange style= text.getStyleRangeAtOffset(offset);
-			if (style != null && style.foreground != null)
-				gc.setForeground(style.foreground);
-		}
-		gc.drawLine(x1, y, x2, y);
-	}
-	
-	private Point getMinimumLocation(StyledText text, int offset, int length) {
-		int max= text.getCharCount();
-		Rectangle bounds= text.getBounds();
-		Point minLocation= new Point(bounds.width, bounds.height);
-		for (int i= 0; i <= length; i++) {
-			int k= offset + i;
-			if (k < 0 || k > max)
-				break;
-			
-			Point location= text.getLocationAtOffset(k);
-			if (location.x < minLocation.x)
-				minLocation.x= location.x;			
-			if (location.y < minLocation.y)
-				minLocation.y= location.y;			
-		}	
-		
-		return minLocation;
-	}
-
-	private Point getMaximumLocation(StyledText text, int offset, int length) {
-		int max= text.getCharCount();
-		Point maxLocation= new Point(0, 0);
-
-		for (int i= 0; i <= length; i++) {
-			int k= offset + i;
-			if (k < 0 || k > max)
-				break;
-			
-			Point location= text.getLocationAtOffset(k);
-			if (location.x > maxLocation.x)
-				maxLocation.x= location.x;			
-			if (location.y > maxLocation.y)
-				maxLocation.y= location.y;			
-		}	
-		
-		return maxLocation;
-	}
-	
-	private boolean includes(IRegion region, IRegion position) {
-		return
-			position.getOffset() >= region.getOffset() &&
-			position.getOffset() + position.getLength() <= region.getOffset() + region.getLength();
 	}
 	
 	/*

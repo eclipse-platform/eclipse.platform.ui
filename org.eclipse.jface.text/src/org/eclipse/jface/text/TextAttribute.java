@@ -22,6 +22,21 @@ import org.eclipse.swt.graphics.Color;
  * Clients usually instantiate object of the class.
  */
 public class TextAttribute {
+
+	/**
+	 * Text attribute for strikethrough style.
+	 * (value <code>1 << 29</code>).
+	 * @since 3.1
+	 */
+	public static final int STRIKETHROUGH= 1 << 29;
+	
+	/**
+	 * Text attribute for underline style.
+	 * (value <code>1 << 30</code>)
+	 * @since 3.1
+	 */
+	public static final int UNDERLINE= 1 << 30;
+
 	
 	/** Foreground color */
 	private Color foreground;

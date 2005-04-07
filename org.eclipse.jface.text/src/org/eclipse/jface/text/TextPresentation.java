@@ -439,10 +439,14 @@ public class TextPresentation {
 			if (template.background != null)
 				target.background= template.background;
 			target.fontStyle |= template.fontStyle;
+			target.strikeout= template.strikeout || target.strikeout;
+			target.underline= template.underline || target.underline;
 		} else {
 			target.foreground= template.foreground;
 			target.background= template.background;
 			target.fontStyle= template.fontStyle;
+			target.strikeout= template.strikeout;
+			target.underline= template.underline;
 		}
 	}
 

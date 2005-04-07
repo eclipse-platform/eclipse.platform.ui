@@ -13,6 +13,7 @@ package org.eclipse.jface.text.rules;
 
 
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.SWT;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -38,6 +39,7 @@ import org.eclipse.jface.text.presentation.IPresentationRepairer;
  * @since 2.0
  */
 public class DefaultDamagerRepairer implements IPresentationDamager, IPresentationRepairer {
+	
 	
 	/** The document this object works on */
 	protected IDocument fDocument;
@@ -210,8 +212,14 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 * @param attr the attribute describing the style of the range to be styled
 	 */
 	protected void addRange(TextPresentation presentation, int offset, int length, TextAttribute attr) {
-		if (attr != null)
-			presentation.addStyleRange(new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), attr.getStyle()));
+		if (attr != null) {
+			int style= attr.getStyle();
+			int fontStyle= style & (SWT.ITALIC | SWT.BOLD | SWT.NORMAL);
+			StyleRange styleRange= new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), fontStyle);
+			styleRange.strikeout= (style & TextAttribute.STRIKETHROUGH) != 0;
+			styleRange.underline= (style & TextAttribute.UNDERLINE) != 0;
+			presentation.addStyleRange(styleRange);
+		}
 	}
 }
 
