@@ -50,9 +50,10 @@ public class TaskView extends MarkerView {
     private static final String COMPLETION = "completion"; //$NON-NLS-1$
 
     private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
-            new ColumnPixelData(19, false), new ColumnPixelData(19, false),
-            new ColumnWeightData(200), new ColumnWeightData(75),
-            new ColumnWeightData(150), new ColumnWeightData(60) };
+			new ColumnPixelData(16, false, true),
+			new ColumnPixelData(16, false, true),
+			new ColumnWeightData(200), new ColumnWeightData(75),
+			new ColumnWeightData(150), new ColumnWeightData(60) };
 
     private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 

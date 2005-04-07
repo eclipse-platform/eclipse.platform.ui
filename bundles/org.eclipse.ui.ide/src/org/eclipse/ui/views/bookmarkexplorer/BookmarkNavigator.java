@@ -139,9 +139,9 @@ public class BookmarkNavigator extends ViewPart {
             BookmarkMessages.ColumnLocation_header };
 
     private ColumnLayoutData columnLayouts[] = {
-            new ColumnPixelData(19, false), new ColumnWeightData(200),
-            new ColumnWeightData(75), new ColumnWeightData(150),
-            new ColumnWeightData(60) };
+			new ColumnPixelData(16, false, true), new ColumnWeightData(200),
+			new ColumnWeightData(75), new ColumnWeightData(150),
+			new ColumnWeightData(60) };
 
     // Persistance tags.
     private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$

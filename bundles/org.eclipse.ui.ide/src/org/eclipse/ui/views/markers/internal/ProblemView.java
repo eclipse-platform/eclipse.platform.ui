@@ -34,7 +34,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class ProblemView extends MarkerView {
 
     private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
-            new ColumnPixelData(19, false), new ColumnWeightData(200),
+            new ColumnPixelData(16, false, true), new ColumnWeightData(200),
             new ColumnWeightData(75), new ColumnWeightData(150),
             new ColumnWeightData(60) };
 

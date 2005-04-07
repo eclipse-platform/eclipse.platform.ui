@@ -304,8 +304,8 @@ public class TaskList extends ViewPart {
     };
 
     private ColumnLayoutData columnLayouts[] = {
-            new ColumnPixelData(19, false), new ColumnPixelData(19, false),
-            new ColumnPixelData(19, false), new ColumnWeightData(200),
+            new ColumnPixelData(16, false, true), new ColumnPixelData(16, false, true),
+            new ColumnPixelData(16, false, true), new ColumnWeightData(200),
             new ColumnWeightData(75), new ColumnWeightData(150),
             new ColumnWeightData(60) };
 

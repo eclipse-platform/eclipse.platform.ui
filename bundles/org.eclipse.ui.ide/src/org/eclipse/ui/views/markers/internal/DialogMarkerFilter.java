@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -459,10 +459,10 @@ public class DialogMarkerFilter extends Dialog {
         table.setHeaderVisible(true);
         TableLayout tableLayout = new TableLayout();
         table.setLayout(tableLayout);
-        tableLayout.addColumnData(new ColumnPixelData(150, true));
+        tableLayout.addColumnData(new ColumnWeightData(40, true));
         TableColumn tc = new TableColumn(table, SWT.NONE, 0);
         tc.setText(Messages.getString("filtersDialog.type.columnHeader")); //$NON-NLS-1$
-        tableLayout.addColumnData(new ColumnPixelData(224, true));
+        tableLayout.addColumnData(new ColumnWeightData(60, true));
         tc = new TableColumn(table, SWT.NONE, 1);
         tc.setText(Messages.getString("filtersDialog.superTypecolumnHeader")); //$NON-NLS-1$
         typesViewer = new CheckboxTableViewer(table);
