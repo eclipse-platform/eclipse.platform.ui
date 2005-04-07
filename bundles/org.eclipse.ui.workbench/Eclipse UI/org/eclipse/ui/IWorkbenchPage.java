@@ -524,7 +524,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * regardless of whether they are created by the user or restored from saved 
      * data.
      * </p>
-     *  	 *
+     * 
      * @param input the editor input
      * @param editorId the id of the editor extension to use
      * @param activate if <code>true</code> the editor will be activated
