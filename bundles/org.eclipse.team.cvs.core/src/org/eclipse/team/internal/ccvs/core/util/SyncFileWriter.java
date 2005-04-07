@@ -63,8 +63,10 @@ public class SyncFileWriter {
 	 * If the folder does not have a CVS subdirectory then <code>null</code> is returned.
 	 */
 	public static byte[][] readAllResourceSync(IContainer parent) throws CVSException {
-		IFolder cvsSubDir = getCVSSubdirectory(parent);
-		if (! cvsSubDir.exists()) return null;
+        IFolder cvsSubDir = getCVSSubdirectory(parent);
+        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
+            return null;
+        }
 		
 		if (Policy.DEBUG_METAFILE_CHANGES) {
 			System.out.println("Reading Entries file for " + parent.getFullPath()); //$NON-NLS-1$
@@ -145,14 +147,16 @@ public class SyncFileWriter {
 	 */
 	public static FolderSyncInfo readFolderSync(IContainer folder) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(folder);
-		if (! cvsSubDir.exists()) return null;
+		if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
+            return null;
+        }
 
 		if (Policy.DEBUG_METAFILE_CHANGES) {
 			System.out.println("Reading Root/Repository files for " + folder.getFullPath()); //$NON-NLS-1$
 		}
 		
 		// check to make sure the the cvs folder is hidden
-		if (!cvsSubDir.isTeamPrivateMember()) {
+		if (!cvsSubDir.isTeamPrivateMember() && cvsSubDir.exists()) {
 			try {
 				cvsSubDir.setTeamPrivateMember(true);
 			} catch (CoreException e) {
@@ -280,7 +284,9 @@ public class SyncFileWriter {
 	 */
 	public static NotifyInfo[] readAllNotifyInfo(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
-		if (! cvsSubDir.exists()) return null;
+        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
+            return null;
+        }
 
 		// process Notify file contents
 		String[] entries = readLines(cvsSubDir.getFile(NOTIFY));
@@ -343,7 +349,9 @@ public class SyncFileWriter {
 	 */
 	public static BaserevInfo[] readAllBaserevInfo(IContainer parent) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
-		if (! cvsSubDir.exists()) return null;
+        if (! cvsSubDir.exists() && !cvsSubDir.getLocation().toFile().exists()) {
+            return null;
+        }
 
 		// process Notify file contents
 		String[] entries = readLines(cvsSubDir.getFile(BASEREV));
@@ -419,9 +427,17 @@ public class SyncFileWriter {
 	 * Returns null if the file does not exist, or the empty string if it is blank.
 	 */
 	private static String readFirstLine(IFile file) throws CVSException {
-		if (! file.exists()) return null;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(true)), 512);
+            BufferedReader reader = null;;
+    		if (file.exists()) {
+                reader = new BufferedReader(new InputStreamReader(file.getContents(true)), 512);
+            } else {
+                File ioFile = file.getLocation().toFile();
+                if (ioFile.exists()) {
+                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(ioFile)), 512);
+                }
+            }
+            if (reader == null) return null;
 			try {
 				String line = reader.readLine();
 				if (line == null) return ""; //$NON-NLS-1$
@@ -447,9 +463,18 @@ public class SyncFileWriter {
 	 */
 	private static String[] readLines(IFile file) throws CVSException {
 		try {
-			if(! file.exists()) return null;
-			// Peform a forced read (ignoring out-of-sync)
-			BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(true)));
+            BufferedReader reader = null;;
+            if (file.exists()) {
+                // Peform a forced read (ignoring out-of-sync)
+                reader = new BufferedReader(new InputStreamReader(file.getContents(true)));
+            } else {
+                File ioFile = file.getLocation().toFile();
+                if (ioFile.exists()) {
+                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(ioFile)), 512);
+                }
+            }
+            if (reader == null) return null;
+			
 			List fileContentStore = new ArrayList();
 			try {
 				String line;
