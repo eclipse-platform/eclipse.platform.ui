@@ -12,6 +12,7 @@ package org.eclipse.ui.part;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -123,7 +124,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
     /* (non-Javadoc)
      * Method declared on IStorageEditorInput.
      */
-    public IStorage getStorage() {
+    public IStorage getStorage() throws CoreException {
         return file;
     }
 
