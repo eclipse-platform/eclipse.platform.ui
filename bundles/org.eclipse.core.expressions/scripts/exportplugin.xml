@@ -22,11 +22,10 @@
 		<zip zipfile="${tempdir}/src.zip">
 		    <fileset dir="src" />
   		</zip>		
-		<jar jarfile="${destjar}">
+		<jar jarfile="${destjar}" manifest="META-INF/MANIFEST.MF">
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
-			  <include name="META-INF/**" />
 			</fileset>
 			<fileset dir="bin" />
 			<fileset file="${tempdir}/src.zip" />
