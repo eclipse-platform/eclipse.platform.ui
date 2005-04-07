@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.newapi;
 
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseAll;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseOthers;
+import org.eclipse.ui.internal.presentations.SystemMenuOpenAgain;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -27,6 +29,7 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
 
     private SystemMenuCloseOthers closeOthers;
     private SystemMenuCloseAll closeAll;
+    private SystemMenuOpenAgain openAgain;
     
     /**
      * @param site
@@ -36,8 +39,11 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
         
         closeOthers = new SystemMenuCloseOthers(site);
         closeAll = new SystemMenuCloseAll(site);
+		openAgain = new SystemMenuOpenAgain(site);
         menuManager.add(closeOthers);
         menuManager.add(closeAll);
+		menuManager.add(new Separator());
+		menuManager.add(openAgain);
     }
 
     /* (non-Javadoc)
@@ -47,6 +53,7 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
             IPresentablePart currentSelection) {
         closeOthers.setTarget(currentSelection);
         closeAll.update();
+		openAgain.setTarget(currentSelection);
         super.show(parent, displayCoordinates, currentSelection);
     }
 }

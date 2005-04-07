@@ -49,6 +49,7 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.actions.OpenAgainAction;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
@@ -71,6 +72,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction saveAction;
 
     private IWorkbenchAction saveAllAction;
+
+    private IWorkbenchAction openAgainAction;
 
     private IWorkbenchAction helpContentsAction;
 
@@ -469,13 +472,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(closeAction);
         menu.add(closeAllAction);
+		menu.add(openAgainAction);
         //		menu.add(closeAllSavedAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
         menu.add(new Separator());
         menu.add(saveAction);
         menu.add(saveAsAction);
         menu.add(saveAllAction);
-
         menu.add(revertAction);
         menu.add(new Separator());
         menu.add(moveAction);
@@ -1044,6 +1047,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeAllSavedAction = null;
         saveAction = null;
         saveAllAction = null;
+		openAgainAction = null;
         helpContentsAction = null;
         helpSearchAction = null;
 		dynamicHelpAction = null;
@@ -1198,6 +1202,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         saveAllAction = ActionFactory.SAVE_ALL.create(window);
         register(saveAllAction);
+		
+		openAgainAction = new OpenAgainAction(window);
+		register(openAgainAction);
 
         undoAction = ActionFactory.UNDO.create(window);
         register(undoAction);

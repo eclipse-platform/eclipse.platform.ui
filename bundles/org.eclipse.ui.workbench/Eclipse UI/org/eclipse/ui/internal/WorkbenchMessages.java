@@ -39,6 +39,8 @@ public class WorkbenchMessages extends NLS {
 	public static String CloseAllSavedAction_toolTip;
 	public static String CloseEditorAction_text;
 	public static String CloseEditorAction_toolTip;
+	public static String OpenAgainAction_text;
+	public static String OpenAgainAction_tooltip;
 	public static String SaveAction_text;
 	public static String SaveAction_toolTip;
 	public static String SaveAs_text;
@@ -610,6 +612,7 @@ public class WorkbenchMessages extends NLS {
 	public static String PartPane_close;
 	public static String PartPane_closeOthers;
 	public static String PartPane_closeAll;
+	public static String PartPane_openAgain;
 	public static String EditorManager_unableToRestoreEditorTitle;
 	public static String PluginAction_operationNotAvailableMessage;
 	public static String PluginAction_disabledMessage;
@@ -863,4 +866,5 @@ public class WorkbenchMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, WorkbenchMessages.class);
 	}
+
 }
