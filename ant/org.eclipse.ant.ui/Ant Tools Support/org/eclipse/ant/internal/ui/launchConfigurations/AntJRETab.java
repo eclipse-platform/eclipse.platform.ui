@@ -63,7 +63,7 @@ public class AntJRETab extends JavaJRETab {
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
 			 */
 			public String getDescription() {
-				return AntLaunchConfigurationMessages.getString("AntJRETab.2"); //$NON-NLS-1$
+				return AntLaunchConfigurationMessages.AntJRETab_2; //$NON-NLS-1$
 			}
 		};
 	}
@@ -77,7 +77,7 @@ public class AntJRETab extends JavaJRETab {
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
 			 */
 			public String getDescription() {
-				return AntLaunchConfigurationMessages.getString("AntJRETab.3"); //$NON-NLS-1$
+				return AntLaunchConfigurationMessages.AntJRETab_3; //$NON-NLS-1$
 			}
 		};
 	}

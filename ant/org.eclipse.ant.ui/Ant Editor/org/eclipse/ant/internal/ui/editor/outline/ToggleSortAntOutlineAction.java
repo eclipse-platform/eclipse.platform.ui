@@ -22,10 +22,10 @@ public class ToggleSortAntOutlineAction extends Action {
 	private AntEditorContentOutlinePage fPage;
 	
 	public ToggleSortAntOutlineAction(AntEditorContentOutlinePage page) {
-		super(AntOutlineMessages.getString("ToggleSortAntOutlineAction.0")); //$NON-NLS-1$
+		super(AntOutlineMessages.ToggleSortAntOutlineAction_0); //$NON-NLS-1$
 		fPage = page;
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SORT_OUTLINE));
-		setToolTipText(AntOutlineMessages.getString("ToggleSortAntOutlineAction.0")); //$NON-NLS-1$
+		setToolTipText(AntOutlineMessages.ToggleSortAntOutlineAction_0); //$NON-NLS-1$
 		setChecked(fPage.isSort());
 	}
 	

@@ -103,10 +103,10 @@ public class AntPropertyNode extends AntTaskNode {
             //classFileSetId refs a ClassFileSet which is an optional type that requires
             //BCEL JAR. Currently it is not possible to set these types of properties within the Ant Editor.
             //see bug 71888
-            handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.0")), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
+            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_0), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
         } catch (AntSecurityException se) {
 			//either a system exit or setting of system property was attempted
-            handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.1")), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
+            handleBuildException(new BuildException(AntModelMessages.AntPropertyNode_1), AntEditorPreferenceConstants.PROBLEM_SECURITY); //$NON-NLS-1$
         } finally {
 			getProjectNode().setCurrentConfiguringProperty(null);
 		}

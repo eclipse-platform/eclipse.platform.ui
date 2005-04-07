@@ -92,8 +92,8 @@ public class AntNewJavaProjectPage extends WizardPage {
 	public AntNewJavaProjectPage() {
 		super("newPage"); //$NON-NLS-1$
 		setPageComplete(false);
-		setTitle(DataTransferMessages.getString("AntNewJavaProjectPage.9")); //$NON-NLS-1$
-		setDescription(DataTransferMessages.getString("AntNewJavaProjectPage.10")); //$NON-NLS-1$
+		setTitle(DataTransferMessages.AntNewJavaProjectPage_9); //$NON-NLS-1$
+		setDescription(DataTransferMessages.AntNewJavaProjectPage_10); //$NON-NLS-1$
 
 	}
 	
@@ -139,7 +139,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel.setText(DataTransferMessages.getString("AntNewJavaProjectPage.11")); //$NON-NLS-1$
+		projectContentsLabel.setText(DataTransferMessages.AntNewJavaProjectPage_11); //$NON-NLS-1$
 		projectContentsLabel.setFont(parent.getFont());
 
 		createUserSpecifiedProjectLocationGroup(projectGroup);
@@ -163,7 +163,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setText(DataTransferMessages.getString("AntNewJavaProjectPage.12")); //$NON-NLS-1$
+		projectLabel.setText(DataTransferMessages.AntNewJavaProjectPage_12); //$NON-NLS-1$
 		projectLabel.setFont(dialogFont);
 
 		// new project name entry field
@@ -194,7 +194,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		// browse button
 		fBrowseButton = new Button(projectGroup, SWT.PUSH);
-		fBrowseButton.setText(DataTransferMessages.getString("AntNewJavaProjectPage.13")); //$NON-NLS-1$
+		fBrowseButton.setText(DataTransferMessages.AntNewJavaProjectPage_13); //$NON-NLS-1$
 		fBrowseButton.setFont(dialogFont);
 		setButtonLayoutData(fBrowseButton);
 		
@@ -215,7 +215,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	private String getProjectName(AntProjectNode projectNode) {
 		String projectName= projectNode.getLabel();
 		if (projectName == null) {
-			projectName= DataTransferMessages.getString("AntNewJavaProjectPage.14"); //$NON-NLS-1$
+			projectName= DataTransferMessages.AntNewJavaProjectPage_14; //$NON-NLS-1$
 		}
 		return projectName;
 	}
@@ -279,37 +279,37 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		if (locationFieldContents.equals("")) { //$NON-NLS-1$
 			setErrorMessage(null);
-			setMessage(DataTransferMessages.getString("AntNewJavaProjectPage.15")); //$NON-NLS-1$
+			setMessage(DataTransferMessages.AntNewJavaProjectPage_15); //$NON-NLS-1$
 			return false;
 		}
 
 		IPath path = new Path(""); //$NON-NLS-1$
 		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.16")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_16); //$NON-NLS-1$
 			return false;
 		}
 
 		if (fAntModel == null) {
 			if (getBuildFile(locationFieldContents) == null) {
-				setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.0")); //$NON-NLS-1$
+				setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_0); //$NON-NLS-1$
 				return false;
 			} 
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.17")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_17); //$NON-NLS-1$
 			return false;
 		}
 		
 		if (fAntModel.getProjectNode() == null) {
-		    setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.2")); //$NON-NLS-1$
+		    setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_2); //$NON-NLS-1$
 		    return false;
 		}
 		
 		if (getProjectNameFieldValue().length() == 0) {
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.18")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_18); //$NON-NLS-1$
 			return false;
 		} 
 		IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
 		if (existingProject.exists()) {
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.19")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_19); //$NON-NLS-1$
 			return false;
 		}
 
@@ -357,11 +357,11 @@ public class AntNewJavaProjectPage extends WizardPage {
 		final List javacNodes= new ArrayList();
 		getJavacNodes(javacNodes, projectNode);
 		if (javacNodes.size() > 1) {
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.20")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_20); //$NON-NLS-1$
 			setPageComplete(false);
 			return null;
 		} else if (javacNodes.size() == 0) {
-			setErrorMessage(DataTransferMessages.getString("AntNewJavaProjectPage.1")); //$NON-NLS-1$
+			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_1); //$NON-NLS-1$
 			setPageComplete(false);
 			return null;
 		}
@@ -398,7 +398,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 			    status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, "Error occurred. Check log for details ", t); //$NON-NLS-1$
 			    AntUIPlugin.log(t);
 			}
-			ErrorDialog.openError(getShell(), DataTransferMessages.getString("AntNewJavaProjectPage.21"), //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), DataTransferMessages.AntNewJavaProjectPage_21, //$NON-NLS-1$
 					null, status);
 		}
 		
@@ -420,7 +420,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), DataTransferMessages.getString("AntNewJavaProjectPage.22"), //$NON-NLS-1$
+				ErrorDialog.openError(getShell(), DataTransferMessages.AntNewJavaProjectPage_22, //$NON-NLS-1$
 				null, ((CoreException) t).getStatus());
 			}
 		}

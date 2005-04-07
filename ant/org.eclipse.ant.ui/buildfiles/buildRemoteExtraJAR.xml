@@ -29,7 +29,8 @@
 		<javac target="1.1" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes"
 			classpath="${basedir}/../org.eclipse.swt${version.suffix}/bin;
 									${swt.jar};
-						${basedir}/common_ant_support_bin">
+						${basedir}/common_ant_support_bin;
+						${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar">
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->

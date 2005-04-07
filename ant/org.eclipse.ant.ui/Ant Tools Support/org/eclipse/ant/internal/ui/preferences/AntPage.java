@@ -64,7 +64,7 @@ public abstract class AntPage {
 	protected Button removeButton;
     
 	private final String[] fTableColumnHeaders= {
-	        AntPreferencesMessages.getString("AntPage.0"), AntPreferencesMessages.getString("AntPage.1"), AntPreferencesMessages.getString("AntPage.2"), AntPreferencesMessages.getString("AntPage.3") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	        AntPreferencesMessages.AntPage_0, AntPreferencesMessages.AntPage_1, AntPreferencesMessages.AntPage_2, AntPreferencesMessages.AntPage_3
 	};
 	private final ColumnLayoutData[] fTableColumnLayouts= {
 	        new ColumnWeightData(40),

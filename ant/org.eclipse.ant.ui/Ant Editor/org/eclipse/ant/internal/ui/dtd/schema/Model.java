@@ -59,7 +59,7 @@ public class Model implements IModel {
 	
 	public void addModel(IModel model) {
 		if (fContents != null)
-			throw new IllegalStateException(AntDTDSchemaMessages.getString("Model.model_may_not_be_changed")); //$NON-NLS-1$
+			throw new IllegalStateException(AntDTDSchemaMessages.Model_model_may_not_be_changed); //$NON-NLS-1$
 			
 		if (fContentsList == null)
 			fContentsList = new LinkedList();
@@ -198,7 +198,7 @@ public class Model implements IModel {
 				buf.append(atom.getName());
 				break;
 			default:
-				buf.append(AntDTDSchemaMessages.getString("Model.***UNKNOWN***_2")); //$NON-NLS-1$
+				buf.append(AntDTDSchemaMessages.Model____UNKNOWN____2); //$NON-NLS-1$
 				break;
 		}
 	}

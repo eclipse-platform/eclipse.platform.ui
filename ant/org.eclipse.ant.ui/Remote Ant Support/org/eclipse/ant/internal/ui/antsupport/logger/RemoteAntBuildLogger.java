@@ -151,7 +151,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         
          StringBuffer message= new StringBuffer();
          message.append(StringUtils.LINE_SEP);
-         message.append(RemoteAntMessages.getString("RemoteAntBuildLogger.1")); //$NON-NLS-1$
+         message.append(RemoteAntMessages.RemoteAntBuildLogger_1); //$NON-NLS-1$
          message.append(StringUtils.LINE_SEP);
          if (Project.MSG_VERBOSE <= this.msgOutputLevel || !(exception instanceof BuildException)) {
              message.append(StringUtils.getStackTrace(exception));
@@ -171,13 +171,13 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		long minutes = seconds / 60;
 		seconds= seconds % 60;
 
-		StringBuffer result= new StringBuffer(RemoteAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
+		StringBuffer result= new StringBuffer(RemoteAntMessages.RemoteAntBuildLogger_Total_time); //$NON-NLS-1$
 		if (minutes > 0) {
 			result.append(minutes);
 			if (minutes > 1) {
-				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._minutes_2")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.RemoteAntBuildLogger__minutes_2); //$NON-NLS-1$
 			} else {
-				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._minute_3")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.RemoteAntBuildLogger__minute_3); //$NON-NLS-1$
 			}
 		}
 		if (seconds > 0) {
@@ -187,14 +187,14 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			result.append(seconds);
 	
 			if (seconds > 1) {
-				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._seconds_4")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.RemoteAntBuildLogger__seconds_4); //$NON-NLS-1$
 			} else {
-				result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._second_5")); //$NON-NLS-1$
+				result.append(RemoteAntMessages.RemoteAntBuildLogger__second_5); //$NON-NLS-1$
 			} 
 		}
 		if (seconds == 0 && minutes == 0) {
 			result.append(milliseconds);
-			result.append(RemoteAntMessages.getString("RemoteAntBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
+			result.append(RemoteAntMessages.RemoteAntBuildLogger__milliseconds_6);		 //$NON-NLS-1$
 		}
 		return result.toString();
 	}

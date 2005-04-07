@@ -120,25 +120,25 @@ public class AntClasspathBlock {
 	
 	private void addButtonsToButtonGroup(Composite parent) {
 	
-		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
+		upButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_upButtonTitle); //$NON-NLS-1$;
 		upButton.addSelectionListener(selectionListener);
-		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
+		downButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_downButtonTitle); //$NON-NLS-1$;
 		downButton.addSelectionListener(selectionListener);
-		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
+		removeButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_removeButtonTitle); //$NON-NLS-1$;
 		removeButton.addSelectionListener(selectionListener);
 		
-		addJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle")); //$NON-NLS-1$;
+		addJARButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_addJarButtonTitle); //$NON-NLS-1$;
 		addJARButton.addSelectionListener(selectionListener);
 	
-		addExternalJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.42")); //$NON-NLS-1$
+		addExternalJARButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_42); //$NON-NLS-1$
 		addExternalJARButton.addSelectionListener(selectionListener);
-		addFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
+		addFolderButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_addFolderButtonTitle); //$NON-NLS-1$;
 		addFolderButton.addSelectionListener(selectionListener);
 		
-		addVariableButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.2")); //$NON-NLS-1$
+		addVariableButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_2); //$NON-NLS-1$
 		addVariableButton.addSelectionListener(selectionListener);
 		
-		antHomeButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.30")); //$NON-NLS-1$
+		antHomeButton= container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_30); //$NON-NLS-1$
 		antHomeButton.addSelectionListener(selectionListener);
 	}
 	
@@ -225,7 +225,7 @@ public class AntClasspathBlock {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell());
-		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_1); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String result = dialog.open();
 		if (result != null) {
@@ -290,8 +290,8 @@ public class AntClasspathBlock {
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(treeViewer.getControl().getShell(), lp, cp);
-		dialog.setTitle(AntPreferencesMessages.getString("AntClasspathBlock.44"));  //$NON-NLS-1$
-		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.45")); //$NON-NLS-1$
+		dialog.setTitle(AntPreferencesMessages.AntClasspathBlock_44);  //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_45); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
@@ -466,14 +466,14 @@ public class AntClasspathBlock {
 			rootDir= new File(path, "lib"); //$NON-NLS-1$
 			File parentDir= rootDir.getParentFile();
 			if (parentDir == null || !parentDir.exists()) {
-				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.56")); //$NON-NLS-1$
+				container.setErrorMessage(AntPreferencesMessages.AntClasspathBlock_56); //$NON-NLS-1$
 			} else if (!rootDir.exists()) {
-				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.7")); //$NON-NLS-1$
+				container.setErrorMessage(AntPreferencesMessages.AntClasspathBlock_7); //$NON-NLS-1$
 			} else {
 				invalid= false;
 			}
 		} else {			
-			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.57")); //$NON-NLS-1$
+			container.setErrorMessage(AntPreferencesMessages.AntClasspathBlock_57); //$NON-NLS-1$
 		}
 		if (invalid) {
 			setValidated();
@@ -489,7 +489,7 @@ public class AntClasspathBlock {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell());
-		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.3")); //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_3); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String path = dialog.open();
 		if (path == null) {
@@ -563,13 +563,13 @@ public class AntClasspathBlock {
 					entries= antContentProvider.getModel().getEntries(ClasspathModel.USER);
 					valid= !JARPresent(entries, TOOLS).isEmpty();
 					if (!valid) {
-						MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), AntPreferencesMessages.getString("AntClasspathBlock.33"), false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.AntClasspathBlock_31, AntPreferencesMessages.AntClasspathBlock_32, AntPreferencesMessages.AntClasspathBlock_33, false, AntUIPlugin.getDefault().getPreferenceStore(), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						valid= dialog.getReturnCode() == IDialogConstants.YES_ID;
 					}
 				}
 			}
 			if (!valid) {
-				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.34")); //$NON-NLS-1$
+				container.setErrorMessage(AntPreferencesMessages.AntClasspathBlock_34); //$NON-NLS-1$
 				setValidated();
 			}
 			return valid;

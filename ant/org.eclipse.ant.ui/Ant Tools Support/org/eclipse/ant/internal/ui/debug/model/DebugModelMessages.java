@@ -1,32 +1,45 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class DebugModelMessages {
-	
+public class DebugModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.debug.model.DebugModelMessages";//$NON-NLS-1$
-	
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	
-	private DebugModelMessages() {
-	}
-	
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	//
+	// Copyright (c) 2004, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
+
+	public static String AntDebugTarget_0;
+
+	public static String AntDebugModelPresentation_0;
+	public static String AntDebugModelPresentation_1;
+	public static String AntDebugModelPresentation_2;
+	public static String AntDebugModelPresentation_3;
+	public static String AntDebugModelPresentation_4;
+	public static String AntDebugModelPresentation_5;
+
+	public static String AntLineBreakpoint_0;
+	public static String AntThread_0;
+	public static String AntThread_1;
+	public static String AntThread_2;
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, DebugModelMessages.class);
 	}
 }

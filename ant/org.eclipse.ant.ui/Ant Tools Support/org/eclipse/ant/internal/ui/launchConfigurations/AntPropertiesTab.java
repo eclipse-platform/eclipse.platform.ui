@@ -68,13 +68,13 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		propertiesBlockComposite.setLayout(layout);
 		propertiesBlockComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fAntPropertiesBlock.createControl(propertiesBlockComposite, AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6"), AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$ //$NON-NLS-2$
+		fAntPropertiesBlock.createControl(propertiesBlockComposite, AntLaunchConfigurationMessages.AntPropertiesTab__Properties__6, AntLaunchConfigurationMessages.AntPropertiesTab_Property_f_iles__7); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Dialog.applyDialogFont(top);
 	}
 	
 	private void createChangeProperties(Composite top) {
-		fUseDefaultButton= createCheckButton(top, AntLaunchConfigurationMessages.getString("AntPropertiesTab.6")); //$NON-NLS-1$
+		fUseDefaultButton= createCheckButton(top, AntLaunchConfigurationMessages.AntPropertiesTab_6); //$NON-NLS-1$
 		fUseDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				toggleUseDefaultProperties();
@@ -102,7 +102,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return AntLaunchConfigurationMessages.getString("AntPropertiesTab.P&roperties_8"); //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.AntPropertiesTab_P_roperties_8; //$NON-NLS-1$
 	}
 
 	/**
@@ -116,14 +116,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		try {
 			properties= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
-			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.AntPropertiesTab_Error_reading_configuration_9, ce); //$NON-NLS-1$
 		}
 		
 		String propertyFiles= null;
 		try {
 			propertyFiles= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
-			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.AntPropertiesTab_Error_reading_configuration_9, ce); //$NON-NLS-1$
 		}
 		
 		if (properties == null && propertyFiles == null) {

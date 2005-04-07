@@ -43,16 +43,16 @@ public class AntTypesPage extends AntPage {
 	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#addButtonsToButtonGroup(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
-		createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.2"), ADD_BUTTON); //$NON-NLS-1$
-		editButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.3"), EDIT_BUTTON); //$NON-NLS-1$
-		removeButton = createPushButton(parent, AntPreferencesMessages.getString("AntTypesPage.1"), REMOVE_BUTTON); //$NON-NLS-1$
+		createPushButton(parent, AntPreferencesMessages.AntTypesPage_2, ADD_BUTTON); //$NON-NLS-1$
+		editButton = createPushButton(parent, AntPreferencesMessages.AntTypesPage_3, EDIT_BUTTON); //$NON-NLS-1$
+		removeButton = createPushButton(parent, AntPreferencesMessages.AntTypesPage_1, REMOVE_BUTTON); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Allows the user to enter a custom type.
 	 */
 	protected void add() {
-		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
+		String title = AntPreferencesMessages.AntTypesPage_addTypeDialogTitle; //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.ADD_TYPE_DIALOG);
 		if (dialog.open() == Window.CANCEL) {
 			return;
@@ -70,7 +70,7 @@ public class AntTypesPage extends AntPage {
 	 */
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.getString("AntTypesPage.typesPageTitle")); //$NON-NLS-1$
+		item.setText(AntPreferencesMessages.AntTypesPage_typesPageTitle); //$NON-NLS-1$
 		item.setImage(AntObjectLabelProvider.getTypeImage());
 		item.setData(this);
 		Composite top = new Composite(folder, SWT.NONE);
@@ -87,7 +87,7 @@ public class AntTypesPage extends AntPage {
 	 */
 	protected void edit(IStructuredSelection selection) {
 		Type type = (Type) selection.getFirstElement();
-		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
+		String title = AntPreferencesMessages.AntTypesPage_editTypeDialogTitle; //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TYPE_DIALOG);
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());
@@ -112,8 +112,8 @@ public class AntTypesPage extends AntPage {
 		
 		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryEntries(), names, helpContext);
 		dialog.setTitle(title);
-		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTypesPage.8")); //$NON-NLS-1$
-		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTypesPage.9")); //$NON-NLS-1$
+		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.AntTypesPage_8); //$NON-NLS-1$
+		dialog.setNoNameErrorMsg(AntPreferencesMessages.AntTypesPage_9); //$NON-NLS-1$
 		return dialog;
 	}
 

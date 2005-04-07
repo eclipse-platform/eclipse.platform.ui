@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.List;
 public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage {
 		
 	private final String[][] fContentAssistColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntCodeAssistPreferencePage.backgroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntCodeAssistPreferencePage.foregroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
+		{AntPreferencesMessages.AntCodeAssistPreferencePage_backgroundForCompletionProposals, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
+		{AntPreferencesMessages.AntCodeAssistPreferencePage_foregroundForCompletionProposals, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
 	};
 
 	private List fContentAssistColorList;
@@ -69,13 +69,13 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		contentAssistComposite.setLayout(layout);
 		contentAssistComposite.setFont(font);
 
-		String text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.Insert"); //$NON-NLS-1$
+		String text= AntPreferencesMessages.AntCodeAssistPreferencePage_Insert; //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
 
-		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.0"); //$NON-NLS-1$
+		text= AntPreferencesMessages.AntCodeAssistPreferencePage_0; //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS, 0);
 		
-		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.&Enable_auto_activation_2"); //$NON-NLS-1$
+		text= AntPreferencesMessages.AntCodeAssistPreferencePage__Enable_auto_activation_2; //$NON-NLS-1$
 		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
 		autoactivation.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -84,19 +84,19 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		});		
 		
 		Control[] labelledTextField;
-		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.Auto_activation_&delay__3"); //$NON-NLS-1$
-		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntCodeAssistPreferencePage.empty_input_auto_activation"), AntPreferencesMessages.getString("AntCodeAssistPreferencePage.invalid_input_auto_activation")};  //$NON-NLS-1$//$NON-NLS-2$
+		text= AntPreferencesMessages.AntCodeAssistPreferencePage_Auto_activation__delay__3; //$NON-NLS-1$
+		String[] errorMessages= new String[]{AntPreferencesMessages.AntCodeAssistPreferencePage_empty_input_auto_activation, AntPreferencesMessages.AntCodeAssistPreferencePage_invalid_input_auto_activation};  //$NON-NLS-1$//$NON-NLS-2$
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, errorMessages);
 		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
 		fAutoInsertDelayText= getTextControl(labelledTextField);
 		
-		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.Auto_activation_tri&ggers__4"); //$NON-NLS-1$
+		text= AntPreferencesMessages.AntCodeAssistPreferencePage_Auto_activation_tri_ggers__4; //$NON-NLS-1$
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, null);
 		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertTriggerText= getTextControl(labelledTextField);
 		
 		Label label= new Label(contentAssistComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.getString("AntCodeAssistPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntCodeAssistPreferencePage_Code_assist_colo_r_options__5); //$NON-NLS-1$
 		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -129,7 +129,7 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		stylesComposite.setFont(font);
 		
 		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.6")); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AntEditorPreferencePage_6); //$NON-NLS-1$
 		label.setFont(font);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;

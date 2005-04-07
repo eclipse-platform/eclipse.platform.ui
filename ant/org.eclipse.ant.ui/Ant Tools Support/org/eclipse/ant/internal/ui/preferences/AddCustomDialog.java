@@ -131,7 +131,7 @@ public class AddCustomDialog extends StatusDialog {
 		
 		Label label = new Label(nameContainerGroup, SWT.NONE);
 		label.setFont(topComposite.getFont());
-		label.setText(AntPreferencesMessages.getString("AddCustomDialog.&Name__3")); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.AddCustomDialog__Name__3); //$NON-NLS-1$
 		
 		nameField = new Text(nameContainerGroup, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -173,7 +173,7 @@ public class AddCustomDialog extends StatusDialog {
 		try {
 			file.close();
 		} catch (IOException e) {
-			AntUIPlugin.log(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.Could_not_close_zip_file_{0}_4"), new String[]{file.getName()}), e); //$NON-NLS-1$
+			AntUIPlugin.log(MessageFormat.format(AntPreferencesMessages.AddCustomDialog_Could_not_close_zip_file__0__4, new String[]{file.getName()}), e); //$NON-NLS-1$
 			return false;
 		}
 
@@ -195,7 +195,7 @@ public class AddCustomDialog extends StatusDialog {
 		sourceContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		Label groupLabel = new Label(sourceContainerGroup, SWT.NONE);
-		groupLabel.setText(AntPreferencesMessages.getString("AddCustomDialog.&Location")); //$NON-NLS-1$
+		groupLabel.setText(AntPreferencesMessages.AddCustomDialog__Location); //$NON-NLS-1$
 		groupLabel.setFont(parent.getFont());
 
 		// source name entry field
@@ -270,7 +270,7 @@ public class AddCustomDialog extends StatusDialog {
 			}
 		} 
 		if (selectionGroup.getListTableSelection().isEmpty()) {
-			status.setError(AntPreferencesMessages.getString("AddCustomDialog.mustSelect")); //$NON-NLS-1$
+			status.setError(AntPreferencesMessages.AddCustomDialog_mustSelect); //$NON-NLS-1$
 		}
 		updateStatus(status);
 	}
@@ -428,15 +428,15 @@ public class AddCustomDialog extends StatusDialog {
 			return new ZipFile(expanded);
 		} catch (ZipException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Bad_Format")); //$NON-NLS-1$
+			status.setError(AntPreferencesMessages.AddCustomDialog_Bad_Format); //$NON-NLS-1$
 			updateStatus(status);
 		} catch (IOException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError(AntPreferencesMessages.getString("AddCustomDialog.Unreadable")); //$NON-NLS-1$
+			status.setError(AntPreferencesMessages.AddCustomDialog_Unreadable); //$NON-NLS-1$
 			updateStatus(status);
 		} catch (CoreException e) {
 			StatusInfo status= new StatusInfo();
-			status.setError(AntPreferencesMessages.getString("AddCustomDialog.13")); //$NON-NLS-1$
+			status.setError(AntPreferencesMessages.AddCustomDialog_13); //$NON-NLS-1$
 			updateStatus(status);
 		}
 

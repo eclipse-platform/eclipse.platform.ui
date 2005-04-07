@@ -233,13 +233,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			long minutes = seconds / 60;
 			seconds= seconds % 60;
 		
-			StringBuffer result= new StringBuffer(AntSupportMessages.getString("AntProcessBuildLogger.Total_time")); //$NON-NLS-1$
+			StringBuffer result= new StringBuffer(AntSupportMessages.AntProcessBuildLogger_Total_time); //$NON-NLS-1$
 			if (minutes > 0) {
 				result.append(minutes);
 				if (minutes > 1) {
-					result.append(AntSupportMessages.getString("AntProcessBuildLogger._minutes_2")); //$NON-NLS-1$
+					result.append(AntSupportMessages.AntProcessBuildLogger__minutes_2); //$NON-NLS-1$
 				} else {
-					result.append(AntSupportMessages.getString("AntProcessBuildLogger._minute_3")); //$NON-NLS-1$
+					result.append(AntSupportMessages.AntProcessBuildLogger__minute_3); //$NON-NLS-1$
 				}
 			}
 			if (seconds > 0) {
@@ -249,14 +249,14 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				result.append(seconds);
 			
 				if (seconds > 1) {
-					result.append(AntSupportMessages.getString("AntProcessBuildLogger._seconds_4")); //$NON-NLS-1$
+					result.append(AntSupportMessages.AntProcessBuildLogger__seconds_4); //$NON-NLS-1$
 				} else {
-					result.append(AntSupportMessages.getString("AntProcessBuildLogger._second_5")); //$NON-NLS-1$
+					result.append(AntSupportMessages.AntProcessBuildLogger__second_5); //$NON-NLS-1$
 				} 
 			}
 			if (seconds == 0 && minutes == 0) {
 				result.append(milliseconds);
-				result.append(AntSupportMessages.getString("AntProcessBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
+				result.append(AntSupportMessages.AntProcessBuildLogger__milliseconds_6);		 //$NON-NLS-1$
 			}
 			
 			result.append(System.getProperty("line.separator")); //$NON-NLS-1$

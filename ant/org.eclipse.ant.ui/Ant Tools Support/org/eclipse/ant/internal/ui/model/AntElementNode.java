@@ -507,10 +507,10 @@ public class AntElementNode implements IAdaptable {
 		String path= getFilePath();
 		
 		if (getImportNode() != null) {
-			displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.9"), new String[]{getImportNode().getLabel()})); //$NON-NLS-1$
+			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{getImportNode().getLabel()})); //$NON-NLS-1$
 		} else {
 			String entityName= getAntModel().getEntityName(path);
-			displayName.append(MessageFormat.format(AntModelMessages.getString("AntElementNode.9"), new String[]{entityName})); //$NON-NLS-1$
+			displayName.append(MessageFormat.format(AntModelMessages.AntElementNode_9, new String[]{entityName})); //$NON-NLS-1$
 		}
 	}
 	

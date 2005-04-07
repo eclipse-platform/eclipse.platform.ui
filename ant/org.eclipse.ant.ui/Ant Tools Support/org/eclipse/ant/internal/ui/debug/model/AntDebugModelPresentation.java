@@ -83,13 +83,13 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
                     String lineNumber= Integer.toString(marker.getAttribute(IMarker.LINE_NUMBER, -1));
                     String breakpointString= null;
                     if (breakpoint.isRunToLine()) {
-                        breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.5"), new String[] {lineNumber, fileName}); //$NON-NLS-1$
+                        breakpointString= MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_5, new String[] {lineNumber, fileName}); //$NON-NLS-1$
                     } else {
-                        breakpointString= MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.2"), new String[]{lineNumber, fileName}); //$NON-NLS-1$                            
+                        breakpointString= MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_2, new String[]{lineNumber, fileName}); //$NON-NLS-1$                            
                     }
-                    text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.3"), new String[]{breakpointString})); //$NON-NLS-1$
+                    text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_3, new String[]{breakpointString})); //$NON-NLS-1$
                 } else {
-                    text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
+                    text.append(DebugModelMessages.AntDebugModelPresentation_4); //$NON-NLS-1$
                 }
             }
             
@@ -105,11 +105,11 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
             int lineNumber= frame.getLineNumber();
             String lineNumberString= null;
             if (lineNumber == 0) {
-                lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
+                lineNumberString= DebugModelMessages.AntDebugModelPresentation_0; //$NON-NLS-1$
             } else {
                 lineNumberString= Integer.toString(lineNumber);
             }
-            text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
+            text.append(MessageFormat.format(DebugModelMessages.AntDebugModelPresentation_1, new String[]{lineNumberString})); //$NON-NLS-1$
             return text.toString();
         }
         return null;

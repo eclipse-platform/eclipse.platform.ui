@@ -48,7 +48,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 	 */
 	public void handleInput(InputRequest request) throws BuildException {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$
-			throw new BuildException(RemoteAntMessages.getString("SWTInputHandler.0")); //$NON-NLS-1$
+			throw new BuildException(RemoteAntMessages.SWTInputHandler_0); //$NON-NLS-1$
 		}
 		fFirstValidation= true;
 		fRequest= request;
@@ -64,12 +64,12 @@ public class SWTInputHandler extends DefaultInputHandler {
 		return new Runnable() {
 			public void run() {
 				String prompt = getPrompt(fRequest);
-		       	String title= RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
+		       	String title= RemoteAntMessages.SWTInputHandler_1; //$NON-NLS-1$
 		       	boolean[] result = new boolean[1];
 				open(title, prompt, result);
 		
 				if (!result[0]) {
-					problem[0]= new BuildException(RemoteAntMessages.getString("SWTInputHandler.2")); //$NON-NLS-1$
+					problem[0]= new BuildException(RemoteAntMessages.SWTInputHandler_2); //$NON-NLS-1$
 				}
 			}
 		};
@@ -134,7 +134,7 @@ public class SWTInputHandler extends DefaultInputHandler {
                 errorMessage= ""; //$NON-NLS-1$
                 fFirstValidation= false;
             } else {
-                errorMessage= RemoteAntMessages.getString("SWTInputHandler.3"); //$NON-NLS-1$
+                errorMessage= RemoteAntMessages.SWTInputHandler_3; //$NON-NLS-1$
             } 
        }
        
@@ -157,11 +157,11 @@ public class SWTInputHandler extends DefaultInputHandler {
     
     protected void createButtonsForButtonBar(Composite parent, final boolean[] result) {
     	fOkButton = new Button(parent, SWT.PUSH);
-		fOkButton.setText(RemoteAntMessages.getString("SWTInputHandler.4")); //$NON-NLS-1$
+		fOkButton.setText(RemoteAntMessages.SWTInputHandler_4); //$NON-NLS-1$
 		setButtonLayoutData(fOkButton);
 		
 		Button cancel = new Button(parent, SWT.PUSH);
-		cancel.setText(RemoteAntMessages.getString("SWTInputHandler.5")); //$NON-NLS-1$
+		cancel.setText(RemoteAntMessages.SWTInputHandler_5); //$NON-NLS-1$
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				result[0] = event.widget == fOkButton;

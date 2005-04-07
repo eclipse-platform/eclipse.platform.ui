@@ -125,10 +125,10 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		File lib= libDir.toFile();
 		File parentDir= lib.getParentFile();
 		if (parentDir == null || !parentDir.exists()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.10"), new String[] {antHomeLocation}), null); //$NON-NLS-1$
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_10, new String[] {antHomeLocation}), null); //$NON-NLS-1$
 		}
 		if (!lib.exists() || !lib.isDirectory()) {
-			abort(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.11"), new String[] {antHomeLocation}), null); //$NON-NLS-1$
+			abort(MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_11, new String[] {antHomeLocation}), null); //$NON-NLS-1$
 		}
 		return lib;
 	}
@@ -138,9 +138,9 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	 */
 	public String getName() {
 		if (antHomeLocation == null) {
-			return AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.8"); //$NON-NLS-1$
+			return AntLaunchConfigurationMessages.AntHomeClasspathEntry_8; //$NON-NLS-1$
 		}
-		return MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.9"), new String[]{antHomeLocation}); //$NON-NLS-1$
+		return MessageFormat.format(AntLaunchConfigurationMessages.AntHomeClasspathEntry_9, new String[]{antHomeLocation}); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

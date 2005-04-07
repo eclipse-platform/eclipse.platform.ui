@@ -50,7 +50,7 @@ public class VariableInputDialog extends Dialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(inner, SWT.NONE);
-		label.setText(AntLaunchConfigurationMessages.getString("AddVariableStringAction.2")); //$NON-NLS-1$
+		label.setText(AntLaunchConfigurationMessages.AddVariableStringAction_2); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 
@@ -66,7 +66,7 @@ public class VariableInputDialog extends Dialog {
 		fText.setLayoutData(gd);
 		
 		Button button = new Button(inputComp, SWT.PUSH); 
-		button.setText(AntLaunchConfigurationMessages.getString("AddVariableStringAction.3")); //$NON-NLS-1$
+		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		gd.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -91,7 +91,7 @@ public class VariableInputDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(AntLaunchConfigurationMessages.getString("AddVariableStringAction.4")); //$NON-NLS-1$
+		newShell.setText(AntLaunchConfigurationMessages.AddVariableStringAction_4); //$NON-NLS-1$
 	}
 	
 	private void getVariable() {

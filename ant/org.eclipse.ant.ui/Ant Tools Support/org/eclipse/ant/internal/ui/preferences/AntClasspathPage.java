@@ -107,7 +107,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 */
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.getString("AntClasspathPage.title")); //$NON-NLS-1$;
+		item.setText(AntPreferencesMessages.AntClasspathPage_title); //$NON-NLS-1$;
 		item.setImage(antClasspathBlock.getClasspathImage());
 		item.setData(this);
 		item.setControl(createContents(folder));

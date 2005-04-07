@@ -533,7 +533,7 @@ public class ProjectHelper extends ProjectHelper2 {
         	//XMLReader parser = JAXPUtils.getNamespaceXMLReader();
         	XMLReader parser= getNamespaceXMLReader();
         	if (parser == null) {
-        		throw new BuildException(ProjectHelperMessages.getString("ProjectHelper.0")); //$NON-NLS-1$
+        		throw new BuildException(ProjectHelperMessages.ProjectHelper_0); //$NON-NLS-1$
         	}
             String uri = null;
             if (buildFile != null) {

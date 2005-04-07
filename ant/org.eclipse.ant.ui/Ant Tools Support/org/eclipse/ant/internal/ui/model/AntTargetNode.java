@@ -41,7 +41,7 @@ public class AntTargetNode extends AntElementNode {
 	    if (fLabel == null) {
 	        StringBuffer displayName= new StringBuffer(getTargetName());
 	        if (isDefaultTarget()) {
-	            displayName.append(AntModelMessages.getString("AntTargetNode.2")); //$NON-NLS-1$
+	            displayName.append(AntModelMessages.AntTargetNode_2); //$NON-NLS-1$
 	        }
 	        if (isExternal()) {
 	            appendEntityName(displayName);

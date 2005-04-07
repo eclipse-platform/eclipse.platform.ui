@@ -46,7 +46,8 @@
 					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}/console.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
 			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}.jar;
-					${basedir}/common_ant_support_bin">
+					${basedir}/common_ant_support_bin;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar">			
 			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
