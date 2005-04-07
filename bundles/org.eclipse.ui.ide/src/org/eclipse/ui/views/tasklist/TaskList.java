@@ -463,8 +463,8 @@ public class TaskList extends ViewPart {
 
             if (text && (i == 1 || i == 2)) {
                 tc.pack();
-                columnLayouts[i] = new ColumnPixelData(Math.max(19, tc
-                        .getWidth()), false);
+                columnLayouts[i] = new ColumnPixelData(Math.max(16, tc
+                        .getWidth()), false, true);
             }
 
             tc.setResizable(columnLayouts[i].resizable);

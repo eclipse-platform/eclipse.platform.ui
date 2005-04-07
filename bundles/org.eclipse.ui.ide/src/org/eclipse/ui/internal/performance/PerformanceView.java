@@ -71,8 +71,8 @@ public class PerformanceView extends ViewPart {
 	private ColumnLayoutData columnLayouts[] = { new ColumnWeightData(80), // event
 			new ColumnWeightData(180), // blame
 			new ColumnWeightData(40), // context
-			new ColumnPixelData(65), // count
-			new ColumnPixelData(65) }; // total time
+			new ColumnPixelData(62, true, true), // count
+			new ColumnPixelData(62, true, true) }; // total time
 
 	Clipboard clipboard;
 
