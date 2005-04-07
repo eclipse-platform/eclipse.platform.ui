@@ -11,11 +11,14 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
 
 /**
@@ -47,7 +50,6 @@ public class IntroAction extends Action implements
      * @param window the window to bind the action to. 
      */
     public IntroAction(IWorkbenchWindow window) {
-
         super(IntroMessages.Intro_action_text); 
         if (window == null) {
             throw new IllegalArgumentException();
@@ -64,20 +66,30 @@ public class IntroAction extends Action implements
         workbenchWindow.removePageListener(pageListener);
         workbenchWindow = null;
     }
-
+    
     /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run()
+     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
      */
-    public void run() {
-        workbenchWindow.getWorkbench().getIntroManager().showIntro(
-                workbenchWindow, false);
+    public void runWithEvent(Event event) {        
+        IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
+                .getWorkbench()).getIntroDescriptor();
+        if (introDescriptor == null) {
+            MessageDialog.openWarning(event.display.getActiveShell(),
+                    IntroMessages.Intro_missing_product_title,
+                    IntroMessages.Intro_missing_product_message);
+        } else
+            workbenchWindow.getWorkbench().getIntroManager().showIntro(
+                    workbenchWindow, false);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#getImageDescriptor()
      */
     public ImageDescriptor getImageDescriptor() {
-        return ((Workbench) workbenchWindow.getWorkbench())
-                .getIntroDescriptor().getImageDescriptor();
+        IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
+                .getWorkbench()).getIntroDescriptor();
+        if (introDescriptor == null)
+            return null;
+        return introDescriptor.getImageDescriptor();
     }
 }
