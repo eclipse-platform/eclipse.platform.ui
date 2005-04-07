@@ -39,6 +39,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaModelMarker;
@@ -196,20 +197,29 @@ public class ExportUtil
      */
     public static Set getClasspathProjects(IJavaProject project) throws JavaModelException
     {
-        Set result = new TreeSet(getJavaProjectComparator());
+        Set projects = new TreeSet(getJavaProjectComparator());
         IClasspathEntry entries[] = project.getRawClasspath();
+        addClasspathProjects(projects, project, entries);
+        return projects;
+    }
+    
+    private static void addClasspathProjects(Set projects, IJavaProject project, IClasspathEntry[] entries) throws JavaModelException {
         for (int i = 0; i < entries.length; i++)
         {
-            if (entries[i].getContentKind() == IPackageFragmentRoot.K_SOURCE &&
-                entries[i].getEntryKind() == IClasspathEntry.CPE_PROJECT)
-            {
-                // found required project on build path
-                String subProjectRoot = entries[i].getPath().toString();
-                IJavaProject subProject = ExportUtil.getJavaProject(subProjectRoot);
-                result.add(subProject);
+            IClasspathEntry classpathEntry = entries[i];
+            if (classpathEntry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
+                if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+                    // found required project on build path
+                    String subProjectRoot = classpathEntry.getPath().toString();
+                    IJavaProject subProject = ExportUtil.getJavaProject(subProjectRoot);
+                    projects.add(subProject);
+                } else if ( classpathEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+                    IClasspathContainer container = JavaCore.getClasspathContainer(classpathEntry.getPath(), project);
+                    IClasspathEntry containerEntries[] = container.getClasspathEntries();
+                    addClasspathProjects(projects, project, containerEntries);
+                }
             }
         }
-        return result;
     }
     
     /**
