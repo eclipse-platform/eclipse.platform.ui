@@ -11,13 +11,16 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -31,10 +34,13 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutItem;
 
 /**
@@ -45,10 +51,6 @@ public abstract class ProductInfoDialog extends Dialog {
     private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 
     private AboutItem item;
-
-    private boolean webBrowserOpened;
-
-    private String webBrowser = null;
 
     private Cursor handCursor;
 
@@ -298,41 +300,16 @@ public abstract class ProductInfoDialog extends Dialog {
         return null;
     }
 
-    //TODO: Move browser support from Help system, remove this method
-    private Process openWebBrowser(String href) throws IOException {
-        Process p = null;
-        if (webBrowser == null) {
-            try {
-                webBrowser = "netscape"; //$NON-NLS-1$
-                p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$;
-            } catch (IOException e) {
-                p = null;
-                webBrowser = "mozilla"; //$NON-NLS-1$
-            }
-        }
-
-        if (p == null) {
-            try {
-                p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
-            } catch (IOException e) {
-                p = null;
-                throw e;
-            }
-        }
-        return p;
-    }
-
     /**
      * display an error message
      */
-    private void openWebBrowserError(Display display) {
-        display.asyncExec(new Runnable() {
+    private void openWebBrowserError(final String href, final Throwable t) {
+        getShell().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                MessageDialog
-                        .openError(
-                                getShell(),
-                                WorkbenchMessages.ProductInfoDialog_errorTitle, 
-                                WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser);
+				String title = WorkbenchMessages.ProductInfoDialog_errorTitle;
+				String msg = NLS.bind(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, href);
+				IStatus status = WorkbenchPlugin.getStatus(t);
+                ErrorDialog.openError(getShell(), title, msg, status);
             }
         });
     }
@@ -350,54 +327,17 @@ public abstract class ProductInfoDialog extends Dialog {
             }
             href = "file:///" + href; //$NON-NLS-1$
         }
-        final String localHref = href;
-
-        final Display d = Display.getCurrent();
-        String platform = SWT.getPlatform();
-
-        if ("win32".equals(platform)) { //$NON-NLS-1$
-            Program.launch(localHref);
-        } else if ("carbon".equals(platform)) { //$NON-NLS-1$
-            try {
-                Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
-            } catch (IOException e) {
-                openWebBrowserError(d);
-            }
-        } else {
-            Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
-                public void run() {
-                    try {
-                       /*
-                        * encoding the href as the browser does not open if there
-                        * is a space in the url. Bug 77840
-                        */
-                        String encodedLocalHref = urlEncodeForSpaces(localHref
-                                .toCharArray());
-                        if (webBrowserOpened) {
-                            Runtime
-                                    .getRuntime()
-                                    .exec(
-                                            webBrowser
-                                                    + " -remote openURL(" + encodedLocalHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                        } else {
-                            Process p = openWebBrowser(encodedLocalHref);
-                            webBrowserOpened = true;
-                            try {
-                                if (p != null)
-                                    p.waitFor();
-                            } catch (InterruptedException e) {
-                                openWebBrowserError(d);
-                            } finally {
-                                webBrowserOpened = false;
-                            }
-                        }
-                    } catch (IOException e) {
-                        openWebBrowserError(d);
-                    }
-                }
-            };
-            launcher.start();
-        }
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		try {
+			IWebBrowser browser = support.getExternalBrowser();
+			browser.openURL(new URL(urlEncodeForSpaces(href.toCharArray()))); //$NON-NLS-1$
+		}
+		catch (MalformedURLException e) {
+			openWebBrowserError(href, e);
+		}
+		catch (PartInitException e) {
+			openWebBrowserError(href, e);
+		}
     }
 
     /**

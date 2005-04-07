@@ -219,7 +219,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
 
         File log = new File(filename);
         if (log.exists()) {
-            openLink(filename);
+            openLink("file:///" + filename); //$NON-NLS-1$
             return;
         }
 
