@@ -606,13 +606,17 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		page.addPart(HV_BROWSER, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
+		
 		// context help page
 		page = new HelpPartPage(
 				HV_CONTEXT_HELP_PAGE,
 				HelpUIResources
 						.getString("ReusableHelpPart.contextHelpPage.name"), IHelpUIConstants.IMAGE_FILE_F1TOPIC); //$NON-NLS-1$
-		page.addPart(HV_CONTEXT_HELP, false);
-		page.addPart(HV_SEARCH_RESULT, false, true);
+		//page.addPart(HV_CONTEXT_HELP, false);
+		//page.addPart(HV_SEARCH_RESULT, false, true);
+		page.setVerticalSpacing(0);
+		page.setHorizontalMargin(0);		
+		page.addPart(HV_RELATED_TOPICS, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 	}
@@ -811,7 +815,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 	
 	public void showDynamicHelp(IWorkbenchPart wpart, Control c) {
 		showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE, true);
-		ContextHelpPart part = (ContextHelpPart)findPart(IHelpUIConstants.HV_CONTEXT_HELP);
+		RelatedTopicsPart part = (RelatedTopicsPart)findPart(IHelpUIConstants.HV_RELATED_TOPICS);
 		if (part!=null) {
 			part.handleActivation(c, wpart);
 		}
@@ -945,6 +949,10 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		} else if (id.equals(HV_CONTEXT_HELP)) {
 			part = new ContextHelpPart(parent, mform.getToolkit());
 			((ContextHelpPart) part)
+					.setDefaultText(getDefaultContextHelpText());
+		} else if (id.equals(HV_RELATED_TOPICS)) {
+			part = new RelatedTopicsPart(parent, mform.getToolkit());
+			((RelatedTopicsPart)part)
 					.setDefaultText(getDefaultContextHelpText());
 		} else if (id.equals(HV_BROWSER)) {
 			part = new BrowserPart(parent, mform.getToolkit(), tbm);

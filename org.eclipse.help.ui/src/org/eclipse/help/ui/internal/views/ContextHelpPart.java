@@ -196,15 +196,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				helpText != null, //$NON-NLS-1$
 				false);
 		getSection().layout();
-		parent.reflow();
+		getManagedForm().reflow(true);
 	}
 
 	private void updateDynamicHelp(String expression, Control c) {
 		if (expression == null) {
 			expression = computeDefaultSearchExpression(c);
 		}
-		DynamicHelpPart part = (DynamicHelpPart) parent
-				.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
+		RelatedTopicsPart part = (RelatedTopicsPart) parent
+				.findPart(IHelpUIConstants.HV_RELATED_TOPICS);
 		if (part != null) {
 			if (expression != null)
 				part.startSearch(expression, lastContext);
@@ -414,7 +414,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean hasFocusControl(Control control) {
 		return text.equals(control);
 	}
-
+	
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();

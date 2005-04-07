@@ -62,6 +62,7 @@ public interface IHelpUIConstants {
 	public static final String HV_ALL_TOPICS_PAGE = "all-topics-page"; //$NON-NLS-1$
 	public static final String HV_BOOKMARKS_PAGE = "bookmarks-page"; //$NON-NLS-1$
 	public static final String HV_BROWSER_PAGE = "browser-page"; //$NON-NLS-1$
+	public static final String HV_RELATED_TOPICS = "related-topics"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page"; //$NON-NLS-1$
 
 	static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine"; //$NON-NLS-1$

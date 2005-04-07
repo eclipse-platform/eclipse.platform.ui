@@ -197,7 +197,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			runningJob = null;
 		}
 		searchResults.setText("", false, false); //$NON-NLS-1$
-		parent.reflow();
+		getManagedForm().reflow(true);
 	}
 	
 	public void startSearch(String newPhrase, IContext excludeContext) {
@@ -261,7 +261,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
-		parent.reflow();
+		getManagedForm().reflow(true);
 		runningJob = job;
 		job.schedule();
 	}
@@ -330,7 +330,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			if (!searchResults.isDisposed())
 				searchResults.setText("", false, false); //$NON-NLS-1$
 		if (!searchResults.isDisposed())
-			parent.reflow();
+			getManagedForm().reflow(true);
 	}
 	
 	private boolean isExcluded(String href, IHelpResource [] excludedTopics) {
