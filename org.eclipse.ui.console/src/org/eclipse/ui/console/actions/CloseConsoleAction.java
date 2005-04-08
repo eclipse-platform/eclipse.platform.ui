@@ -19,6 +19,11 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 
 /**
  * Removes a console from the console manager.
+ * <p>
+ * Clients may instantiate this class; this class is not intended to 
+ * be subclassed.
+ * </p>
+ * @since 3.1
  */
 public class CloseConsoleAction extends Action {
     

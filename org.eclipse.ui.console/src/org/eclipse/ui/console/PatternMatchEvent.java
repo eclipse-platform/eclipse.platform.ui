@@ -15,7 +15,9 @@ import java.util.EventObject;
 /**
  * An event describing a pattern match in a text console. The source of the event
  * is a <code>TextConsole</code>.
- * 
+ * <p>
+ * Clients may instantiate this class; not intended to be subclassed.
+ * </p>
  * @see org.eclipse.ui.console.IPatternMatchListener
  * @see org.eclipse.ui.console.TextConsole
  * @since 3.1

@@ -21,7 +21,8 @@ import org.eclipse.swt.graphics.Color;
  * This stream will buffer input that it receives until it has been read.
  * <p>
  * Clients are not intended to instantiate this class directly, instead
- * use <code>IOConsole.getInputStream()</code>.
+ * use <code>IOConsole.getInputStream()</code>. Clients are not intended
+ * to subclass this class.
  * </p>
  * @since 3.1
  *

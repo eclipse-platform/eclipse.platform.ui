@@ -16,7 +16,11 @@ import java.io.IOException;
  * Used to write messages to a message console. A message console may have more
  * than one stream connected to it. Each stream may be displayed in a different
  * color.
- * 
+ * <p>
+ * Clients are not intended to subclass or instantiate this class. Instances
+ * are created via a {@link org.eclipse.ui.console.MessageConsole}.
+ * </p>
+ * </p>
  * @since 3.0
  */
 public class MessageConsoleStream extends IOConsoleOutputStream {

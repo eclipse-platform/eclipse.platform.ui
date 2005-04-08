@@ -21,7 +21,8 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
  * OutputStream used to write to an IOConsole.
  * <p>
  * Clients are not intended to instantiate this class directly, instead
- * use <code>IOConsole.newOutputStream()</code>.
+ * use <code>IOConsole.newOutputStream()</code>. Clients are not intended
+ * to subclass this class.
  * </p>
  * @since 3.1
  */
