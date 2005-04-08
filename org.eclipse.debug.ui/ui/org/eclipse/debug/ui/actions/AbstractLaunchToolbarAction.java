@@ -22,7 +22,9 @@ import org.eclipse.swt.widgets.Menu;
 /**
  * A launch history action that also includes launch shortcut actions (run/debug
  * as), and an action to open the launch configuration dialog.
- * 
+ * <p>
+ * Clients may subclass this class.
+ * </p>
  * @since 2.1
  */
 public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {

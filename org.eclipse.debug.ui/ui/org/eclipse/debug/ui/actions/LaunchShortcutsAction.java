@@ -55,7 +55,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * selection. This action is similar to <code>ContextualLaunchAction</code>
  * except this action is an <code>IAction</code> rather than an action
  * delegate.
- * 
+ * <p>
+ * Clients may subclass this class.
+ * </p>
  * @since 3.1
  */
 public class LaunchShortcutsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
