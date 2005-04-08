@@ -57,9 +57,6 @@ import org.w3c.dom.NodeList;
  * the source director.
  * </p>
  * <p>
- * This class is yet experimental.
- * </p>
- * <p>
  * Clients may subclass this class.
  * </p>
  * @since 3.0

@@ -36,6 +36,11 @@ import org.eclipse.debug.core.DebugPlugin;
  * source path computer to use via the <code>ATTR_SOURCE_PATH_COMPUTER_ID</code>
  * attribute.
  * </p>
+ * <p>
+ * Clients are not intended to implement this interface. Instead, clients contributing
+ * a source path computer provide an implementation of 
+ * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
+ * </p>
  * @since 3.0
  */
 public interface ISourcePathComputer extends ISourcePathComputerDelegate {

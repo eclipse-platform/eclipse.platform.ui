@@ -17,7 +17,9 @@ import org.eclipse.debug.core.DebugException;
  * <code>org.eclipse.debug.core.model.IWatchExpressionDelegate</code>.
  * A watch expression reports the value of the evaluation
  * and any errors or exceptions that occurred.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see org.eclipse.debug.core.model.IWatchExpressionDelegate
  * @since 3.0
  */
