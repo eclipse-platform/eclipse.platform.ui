@@ -13,8 +13,6 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlEvent;
@@ -63,6 +61,8 @@ import org.eclipse.jface.text.TextUtilities;
  * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
  */
 class CompletionProposalPopup implements IContentAssistListener {
+	/** Set to <code>true</code> to use a Table with SWT.VIRTUAL. */
+	private static final boolean USE_VIRTUAL= false;
 	
 	private final class ProposalSelectionListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
@@ -274,14 +274,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
-		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
-		
-		Listener listener= new Listener() {
-			public void handleEvent(Event event) {
-				handleSetData(event);
-			}
-		};
-		fProposalTable.addListener(SWT.SetData, listener);
+		if (USE_VIRTUAL) {
+			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+			
+			Listener listener= new Listener() {
+				public void handleEvent(Event event) {
+					handleSetData(event);
+				}
+			};
+			fProposalTable.addListener(SWT.SetData, listener);
+		} else {
+			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
+		}
 		
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -606,11 +610,26 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fProposalTable.remove(removed);
 				}
 			} else {
-				fProposalTable.setItemCount(newLen);
-				fProposalTable.clearAll();
+				if (USE_VIRTUAL) {
+					fProposalTable.setItemCount(newLen);
+					fProposalTable.clearAll();
+				} else {
+					fProposalTable.setRedraw(false);
+					fProposalTable.setItemCount(newLen);
+					TableItem[] items= fProposalTable.getItems();
+					for (int i= 0; i < items.length; i++) {
+						TableItem item= items[i];
+						ICompletionProposal proposal= proposals[i];
+						item.setText(proposal.getDisplayString());
+						item.setImage(proposal.getImage());
+						item.setData(proposal);
+					}
+					fProposalTable.setRedraw(true);
+				}
 			}
-			if (newLen == 1 && Platform.WS_GTK.equals(Platform.getWS())) {
+			if (USE_VIRTUAL && newLen == 1/* && Platform.WS_GTK.equals(Platform.getWS())*/) {
 				// TODO workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=90258
+				// and perhaps https://bugs.eclipse.org/bugs/show_bug.cgi?id=90763
 				TableItem first= fProposalTable.getItem(0);
 				ICompletionProposal current= proposals[0];
 				first.setText(current.getDisplayString());
@@ -713,7 +732,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			 * the table is still okToUse. See comments below
 			 */
 			fProposalShell.setVisible(true); // may run event loop on GTK
-			// XXX: transfer focus since no verify key listener can be attached
+			// transfer focus since no verify key listener can be attached
 			if (!fContentAssistSubjectControlAdapter.supportsVerifyKeyListener() && Helper.okToUse(fProposalShell))
 				fProposalShell.setFocus(); // may run event loop on GTK ??
 			
