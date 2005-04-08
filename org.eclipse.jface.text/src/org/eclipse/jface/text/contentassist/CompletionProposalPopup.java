@@ -358,11 +358,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 		TableItem item= (TableItem) event.item;
 		int index= fProposalTable.indexOf(item);
 		
-		ICompletionProposal current= fFilteredProposals[index];
-		
-		item.setText(current.getDisplayString());
-		item.setImage(current.getImage());
-		item.setData(current);
+		if (0 <= index && index < fFilteredProposals.length) {
+			ICompletionProposal current= fFilteredProposals[index];
+			
+			item.setText(current.getDisplayString());
+			item.setImage(current.getImage());
+			item.setData(current);
+		} else {
+			// this should not happen, but does on win32
+		}
 	}
 	
 	/**
