@@ -40,6 +40,9 @@ import org.eclipse.debug.core.model.IProcess;
  *   <code>IProcessFactory</code></li>
  * </ul>
  * </p>
+ * <p>
+ * Clients contributing a process factory are intended to implement this interface.
+ * </p>
  * @since 3.0
  */
 
