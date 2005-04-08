@@ -9,27 +9,87 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.widgets.*;
 /**
  * Web browser.
  */
-public class EmbeddedBrowserAdapter implements IBrowser {
+public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	private EmbeddedBrowser browser;
+	// Thread to use in workbench mode on Windows
+	private UIThread2 secondThread;
+	class UIThread2 extends Thread {
+		
+		Display d;
+		
+		boolean runEventLoop = true;
+
+		public UIThread2() {
+			super();
+			setDaemon(true);
+			setName("Help Browser UI");
+		}
+
+		public void run() {
+			d = new Display();
+			while (runEventLoop) {
+				if (!d.readAndDispatch()) {
+					d.sleep();
+				}
+			}
+			d.dispose();
+		}
+		public Display getDisplay() {
+			while (d == null && isAlive()) {
+				try {
+					sleep(40);
+				} catch (InterruptedException ie) {
+				}
+			}
+			return d;
+		}
+		public void dispose() {
+			runEventLoop = false;
+		}
+	}
 	/**
 	 * Adapter constructor.
 	 */
 	public EmbeddedBrowserAdapter() {
 	}
+	public Display getBrowserDisplay() {
+
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
+				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+			if (secondThread == null) {
+				secondThread = new UIThread2();
+				secondThread.start();
+			}
+			return secondThread.getDisplay();
+		} else {
+			return Display.getDefault();
+		}
+	}
+
+	public void browserClosed() {
+		browser=null;
+		if(secondThread!=null){
+			secondThread.dispose();
+			secondThread = null;
+		}
+	}
 	/*
 	 * @see IBrowser#displayURL(String)
 	 */
 	public synchronized void displayURL(final String url) {
-		Display defaultDisplay = Display.getDefault();
-		if (defaultDisplay == Display.getCurrent()) {
+		close();
+		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiDisplayURL(url);
 		} else {
-			defaultDisplay.syncExec(new Runnable() {
+			getBrowserDisplay().syncExec(new Runnable() {
 				public void run() {
 					uiDisplayURL(url);
 				}
@@ -42,18 +102,17 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	 * @param url
 	 */
 	private void uiDisplayURL(final String url) {
-		uiClose();
 		getBrowser().displayUrl(url);
 	}
+
 	/*
 	 * @see IBrowser#close()
 	 */
-	public void close() {
-		Display defaultDisplay = Display.getDefault();
-		if (defaultDisplay == Display.getCurrent()) {
+	public synchronized void close() {
+		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiClose();
 		} else {
-			defaultDisplay.syncExec(new Runnable() {
+			getBrowserDisplay().syncExec(new Runnable() {
 				public void run() {
 					uiClose();
 				}
@@ -64,8 +123,13 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	 * Must be run on UI thread
 	 */
 	private void uiClose() {
-		if (browser != null && !browser.isDisposed())
+		if (browser != null && !browser.isDisposed()){
 			browser.close();
+		}
+		if(secondThread!=null){
+			secondThread.dispose();
+			secondThread=null;
+		}
 	}
 	/**
 	 *  
@@ -73,6 +137,7 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	private EmbeddedBrowser getBrowser() {
 		if (browser == null || browser.isDisposed()) {
 			browser = new EmbeddedBrowser();
+			browser.addCloseListener(this);
 		}
 		return browser;
 	}
@@ -97,12 +162,11 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#setLocation(int, int)
 	 */
-	public void setLocation(final int x, final int y) {
-		Display defaultDisplay = Display.getDefault();
-		if (defaultDisplay == Display.getCurrent()) {
+	public synchronized void setLocation(final int x, final int y) {
+		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetLocation(x, y);
 		} else {
-			defaultDisplay.syncExec(new Runnable() {
+			getBrowserDisplay().syncExec(new Runnable() {
 				public void run() {
 					uiSetLocation(x, y);
 				}
@@ -118,12 +182,11 @@ public class EmbeddedBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
-	public void setSize(final int width, final int height) {
-		Display defaultDisplay = Display.getDefault();
-		if (defaultDisplay == Display.getCurrent()) {
+	public synchronized void setSize(final int width, final int height) {
+		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetSize(width, height);
 		} else {
-			defaultDisplay.syncExec(new Runnable() {
+			getBrowserDisplay().syncExec(new Runnable() {
 				public void run() {
 					uiSetSize(width, height);
 				}

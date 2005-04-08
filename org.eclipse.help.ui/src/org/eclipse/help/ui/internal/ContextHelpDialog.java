@@ -11,9 +11,11 @@
 
 package org.eclipse.help.ui.internal;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.resource.*;
+import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.StyledText;
@@ -314,8 +316,12 @@ public class ContextHelpDialog {
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println("ContextHelpDialog.launchLinks(): closed shell"); //$NON-NLS-1$
 		}
-		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic,
-				isParentModal());
+		BaseHelpSystem.getHelpDisplay().displayHelp(
+				context,
+				selectedTopic,
+				DefaultHelpUI.isDisplayModal(parentShell)
+						&& !Constants.OS_WIN32.equalsIgnoreCase(Platform
+								.getOS()));
 	}
 
 	public synchronized void open() {
@@ -403,12 +409,4 @@ public class ContextHelpDialog {
 		}
 	}
 
-	private boolean isParentModal() {
-		if (parentShell != null) {
-			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL
-					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
-			return isModal;
-		}
-		return false;
-	}
 }

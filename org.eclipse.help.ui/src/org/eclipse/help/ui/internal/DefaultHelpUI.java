@@ -12,14 +12,15 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -323,11 +324,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	}
 
 	private boolean useExternalBrowser(String url) {
-		// Use external when modal window is displayed
-		Display display = Display.getCurrent();
-		if (display != null) {
-			if (insideModalParent(display))
-				return true;
+		// On non Windows platforms, use external when modal window is displayed
+		if (!Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+			Display display = Display.getCurrent();
+			if (display != null) {
+				if (insideModalParent(display))
+					return true;
+			}
 		}
 		// Use external when no help frames are to be displayed, otherwise no
 		// navigation buttons.
@@ -341,16 +344,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	}
 	
 	private boolean insideModalParent(Display display) {
-		Shell activeShell = display.getActiveShell();
-		if (activeShell != null) {
-			Shell shell = activeShell;
-			
-			while (shell!=null) {
-				if ((shell.getStyle() & (SWT.APPLICATION_MODAL
+		return isDisplayModal(display.getActiveShell());
+	}
+
+	public static boolean isDisplayModal(Shell activeShell) {
+		while (activeShell != null) {
+			if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL
 					| SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0)
-					return true;
-				shell = (Shell)shell.getParent();
-			}
+				return true;
+			activeShell = (Shell) activeShell.getParent();
 		}
 		return false;
 	}

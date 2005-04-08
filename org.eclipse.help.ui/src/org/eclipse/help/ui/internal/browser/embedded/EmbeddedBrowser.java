@@ -38,6 +38,7 @@ public class EmbeddedBrowser {
 	private Browser browser;
 	private int x, y, w, h;
 	private long modalRequestTime = 0;
+	private Vector closeListeners = new Vector(1);
 	/**
 	 * Constructor for main help window intance
 	 */
@@ -75,10 +76,11 @@ public class EmbeddedBrowser {
 				store.setValue(BROWSER_HEIGTH, Integer.toString(h));
 				store.setValue(BROWSER_MAXIMIZED, (new Boolean(shell
 						.getMaximized()).toString()));
+				notifyCloseListners();
 			}
 		});
 		browser = new Browser(shell, SWT.NONE);
-		initialize(shell.getDisplay(), browser);
+		initialize(browser);
 		// use saved location and size
 		x = store.getInt(BROWSER_X);
 		y = store.getInt(BROWSER_Y);
@@ -149,7 +151,7 @@ public class EmbeddedBrowser {
 		initializeShell(shell);
 		Browser browser = new Browser(shell, SWT.NONE);
 
-		initialize(shell.getDisplay(), browser);
+		initialize(browser);
 		event.browser = browser;
 
 		browser.addLocationListener(new LocationListener() {
@@ -172,7 +174,7 @@ public class EmbeddedBrowser {
 			s.setImages(shellImages);
 		s.setLayout(new FillLayout());
 	}
-	private void initialize(final Display display, Browser browser) {
+	private void initialize(Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
 				if (System.currentTimeMillis() - modalRequestTime <= 1000) {
@@ -319,5 +321,21 @@ public class EmbeddedBrowser {
 	}
 	public void setSize(int width, int height) {
 		shell.setSize(w, h);
+	}
+	private void notifyCloseListners() {
+		for (Iterator it = closeListeners.iterator(); it.hasNext();) {
+			IBrowserCloseListener listener = (IBrowserCloseListener) it.next();
+			listener.browserClosed();
+		}
+	}
+
+	public void addCloseListener(IBrowserCloseListener listener) {
+		if (!closeListeners.contains(listener)) {
+			closeListeners.add(listener);
+		}
+	}
+
+	public void removeCloseListener(IBrowserCloseListener listener) {
+		closeListeners.remove(listener);
 	}
 }
