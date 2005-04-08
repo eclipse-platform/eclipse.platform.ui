@@ -7,7 +7,10 @@ Bundle-ClassPath: browser.jar
 Bundle-Activator: org.eclipse.ui.internal.browser.WebBrowserUIPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.browser
+Export-Package: org.eclipse.ui.browser,
+ org.eclipse.ui.internal.browser;x-internal:=true,
+ org.eclipse.ui.internal.browser.browsers;x-internal:=true,
+ org.eclipse.ui.internal.browser.macosx;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Eclipse-AutoStart: true
