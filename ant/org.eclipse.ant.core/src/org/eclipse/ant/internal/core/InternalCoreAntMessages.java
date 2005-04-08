@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,16 +13,6 @@ import org.eclipse.osgi.util.NLS;
 
 public class InternalCoreAntMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.core.InternalCoreAntMessages";//$NON-NLS-1$
-	//
-	// Copyright (c) 2000, 2005 IBM Corporation and others.
-	// All rights reserved. This program and the accompanying materials
-	// are made available under the terms of the Eclipse Public License v1.0
-	// which accompanies this distribution, and is available at
-	// http://www.eclipse.org/legal/epl-v10.html
-	//
-	// Contributors:
-	//     IBM Corporation - initial API and implementation
-	//
 
 	public static String AntCorePreferences_Malformed_URL__1;
 	public static String AntCorePreferences_Library_not_specified_for___0__4;
