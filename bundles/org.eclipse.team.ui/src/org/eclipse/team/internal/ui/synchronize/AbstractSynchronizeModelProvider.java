@@ -884,11 +884,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * @param element the element to be added to the viewer
      */
 	protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
-	    if (DEBUG) {
-	        System.out.println("Adding view item " + element.getName()); //$NON-NLS-1$
-	    }
-		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.add(parent, element);		
+        updateHandler.doAdd(parent, element);
 	}
 	
 	/**

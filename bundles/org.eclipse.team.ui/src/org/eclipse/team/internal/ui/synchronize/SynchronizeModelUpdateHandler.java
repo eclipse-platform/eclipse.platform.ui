@@ -136,6 +136,11 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 
     private boolean performingBackgroundUpdate;
     
+    /*
+     * Map used to keep track of additions so they can be added in batch at the end of the update
+     */
+    private Map additionsMap;
+    
 	/**
      * Create the marker update handler.
      */
@@ -578,10 +583,23 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 		            expanded = provider.getExpandedResources();
 		            selected = provider.getSelectedResources();
 		        }
+                if (viewer instanceof AbstractTreeViewer && additionsMap == null)
+                    additionsMap = new HashMap();
 		    }
 			runnable.run();
 		} finally {
 		    if (Utils.canUpdateViewer(viewer)) {
+                if (!additionsMap.isEmpty() && Utils.canUpdateViewer(viewer)) {
+                    for (Iterator iter = additionsMap.keySet().iterator(); iter.hasNext();) {
+                        ISynchronizeModelElement parent = (ISynchronizeModelElement) iter.next();
+                        if (DEBUG) {
+                            System.out.println("Adding child view items of " + parent.getName()); //$NON-NLS-1$
+                        }
+                        List toAdd = (List)additionsMap.get(parent);
+                        ((AbstractTreeViewer)viewer).add(parent, toAdd.toArray(new Object[toAdd.size()]));
+                    }
+                    additionsMap = null;
+                }
 		        if (expanded != null) {
 		            provider.expandResources(expanded);
 		        }
@@ -702,4 +720,30 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 			handleException(e);
 		}
 	}
+    
+    /**
+     * Add the element to the viewer.
+     * @param parent the parent of the element which is already added to the viewer
+     * @param element the element to be added to the viewer
+     */
+    protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
+        if (additionsMap == null) {
+            if (DEBUG) {
+                System.out.println("Added view item " + element.getName()); //$NON-NLS-1$
+            }
+            AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
+            viewer.add(parent, element);
+        } else {
+            // Accumulate the additions
+            if (DEBUG) {
+                System.out.println("Queueing view item for addition " + element.getName()); //$NON-NLS-1$
+            }
+            List toAdd = (List)additionsMap.get(parent);
+            if (toAdd == null) {
+                toAdd = new ArrayList();
+                additionsMap.put(parent, toAdd);
+            }
+            toAdd.add(element);
+        }
+    }
 }
