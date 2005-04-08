@@ -30,6 +30,14 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 		this.name = name;
 		this.tooltip = tooltip;
 	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+	}
 
     protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part) {
         this.part = part;

@@ -58,8 +58,14 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	public IWebBrowser createBrowser(int style, String browserId, String name, String tooltip) throws PartInitException {
 		if (browserId==null) browserId = SHARED_ID;
 		IWebBrowser browser = getExistingWebBrowser(browserId);
-		if (browser != null)
+		if (browser != null) {
+			if (browser instanceof InternalBrowserInstance) {
+				InternalBrowserInstance instance = (InternalBrowserInstance)browser;
+				instance.setName(name);
+				instance.setTooltip(tooltip);
+			}
 			return browser;
+		}
 		
 		IWebBrowser webBrowser = null;
 
