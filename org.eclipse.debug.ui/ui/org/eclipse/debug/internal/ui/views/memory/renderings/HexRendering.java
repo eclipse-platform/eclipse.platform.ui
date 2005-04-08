@@ -57,7 +57,7 @@ public class HexRendering extends AbstractTableRendering {
 	 */
 	public byte[] getBytes(String dataType, BigInteger address,
 			MemoryByte[] currentValues, String data) {
-		byte[] bytes = convertHexStringToByteArray(data);
+		byte[] bytes = convertHexStringToByteArray(data, currentValues.length);
 		
 		return bytes;
 	}
@@ -100,15 +100,26 @@ public class HexRendering extends AbstractTableRendering {
 	/**
 	 * Convert raw memory data to byte array
 	 * @param str
+     * @param numBytes
 	 * @return an array of byte, converted from a hex string
 	 * @throws NumberFormatException
 	 */
-	public byte[] convertHexStringToByteArray(String str) throws NumberFormatException
+	public byte[] convertHexStringToByteArray(String str, int numBytes) throws NumberFormatException
 	{
-		if (str.length() < getNumCharsPerByte())
-			return null;
+        if (str.length() == 0) 
+            return null;
 		
-		byte[] bytes = new byte[str.length()/getNumCharsPerByte()];
+		StringBuffer buf = new StringBuffer(str);
+        
+        // pad string with zeros
+        int requiredPadding =  numBytes * getNumCharsPerByte() - str.length();
+        while (requiredPadding > 0) {
+            buf.insert(0, "0"); //$NON-NLS-1$
+            requiredPadding--;
+        }
+		
+		byte[] bytes = new byte[numBytes];
+		str = buf.toString();
 	
 		// set data in memory
 		for (int i=0; i<bytes.length; i++)
