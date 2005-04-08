@@ -17,15 +17,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
-import org.eclipse.search2.internal.ui.text.PositionTracker;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
@@ -35,10 +26,22 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchPlugin;
+
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class LineAnnotationManagerTest extends TestCase {
 
@@ -65,8 +68,8 @@ public class LineAnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
-		scope.addExtension("*.java");
+		SearchScope scope= SearchScope.newWorkspaceScope();
+		scope.addFileNamePattern("*.java");
 	
 		fLineQuery= new LineBasedFileSearch(scope,  "", "Test");
 	}

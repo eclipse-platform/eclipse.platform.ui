@@ -17,17 +17,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
-import org.eclipse.search.tests.SearchTestPlugin;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
@@ -36,10 +25,25 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
+
+import org.eclipse.search.tests.SearchTestPlugin;
 
 public class AnnotationManagerTest extends TestCase {
 	private FileSearchQuery fQuery1;
@@ -67,8 +71,8 @@ public class AnnotationManagerTest extends TestCase {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
-		scope.addExtension("*.java"); //$NON-NLS-1$
+		SearchScope scope= SearchScope.newWorkspaceScope();
+		scope.addFileNamePattern("*.java"); //$NON-NLS-1$
 		fQuery1= new FileSearchQuery(scope,  "", "Test", false);  //$NON-NLS-1$//$NON-NLS-2$
 		fQuery2= new FileSearchQuery(scope, "", "TestCase", false); //$NON-NLS-1$//$NON-NLS-2$
 	} 

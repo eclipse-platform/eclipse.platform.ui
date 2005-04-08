@@ -16,20 +16,26 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+
 import org.eclipse.core.resources.IFile;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
+
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.IDE;
 
 public class PositionTrackerTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -53,8 +59,8 @@ public class PositionTrackerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
-		scope.addExtension("*.java");
+		SearchScope scope= SearchScope.newWorkspaceScope();
+		scope.addFileNamePattern("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test", false);
 	}
 	
@@ -91,7 +97,7 @@ public class PositionTrackerTest extends TestCase {
 		Match[] matches= result.getMatches(file);
 		try {
 			IDE.openEditor(SearchPlugin.getActivePage(), file);
-			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
+			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath());
 			IDocument doc= fb.getDocument();
 
 			for (int i= 0; i < matches.length; i++) {

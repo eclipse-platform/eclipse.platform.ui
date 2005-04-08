@@ -17,11 +17,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 public class SortingTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -45,8 +46,8 @@ public class SortingTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
-		scope.addExtension("*.java");
+		SearchScope scope= SearchScope.newWorkspaceScope();
+		scope.addFileNamePattern("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test", false);
 	}
 	

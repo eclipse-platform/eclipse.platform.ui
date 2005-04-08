@@ -14,23 +14,28 @@ package org.eclipse.search.tests.filesearch;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.text.FileSearchPage;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
+
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.text.FileSearchPage;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 public class SearchResultPageTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -54,8 +59,8 @@ public class SearchResultPageTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
-		scope.addExtension("*.java");
+		SearchScope scope= SearchScope.newWorkspaceScope();
+		scope.addFileNamePattern("*.java");
 		fQuery1= new FileSearchQuery(scope, "", "Test", false);
 	}
 

@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.tests.ResourceHelper;
 import org.eclipse.search.ui.NewSearchUI;
@@ -52,8 +52,8 @@ public class ResultUpdaterTest extends TestCase {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
 		
-		TextSearchScope scope= new TextSearchScope("xx", new IResource[] { fProject });
-		scope.addExtension("*.java");
+		SearchScope scope= SearchScope.newSearchScope("xx", new IResource[] { fProject });
+		scope.addFileNamePattern("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test", false);
 	}
 	

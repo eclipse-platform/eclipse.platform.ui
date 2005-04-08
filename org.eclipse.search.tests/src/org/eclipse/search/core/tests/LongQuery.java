@@ -28,7 +28,7 @@ public class LongQuery extends NullQuery {
 		fIsRunning= true;
 		while (!monitor.isCanceled()) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// should not happen
 			}

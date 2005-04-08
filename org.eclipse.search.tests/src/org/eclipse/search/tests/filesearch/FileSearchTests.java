@@ -17,10 +17,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
-import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.tests.ResourceHelper;
 
@@ -119,7 +119,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		MatchLocator matchLocator= new MatchLocator("hello", false, true);
 		
-		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
+		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
 		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
@@ -144,7 +144,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		MatchLocator matchLocator= new MatchLocator("mor*", false, false);
 		
-		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
+		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
 		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
@@ -166,7 +166,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		MatchLocator matchLocator= new MatchLocator("mo?e", false, false);
 		
-		TextSearchScope scope= new TextSearchScope("test-project", new IResource[] { fProject });
+		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
 		engine.search(scope, true, collector, matchLocator, true);
 		
 		TestResult[] results= collector.getResults();
@@ -195,7 +195,7 @@ public class FileSearchTests extends TestCase {
 
 			// search in Junit sources
 
-			TextSearchScope scope= new TextSearchScope("test-project", new IResource[] {project});
+			SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] {project});
 			engine.search(scope, true, collector, matchLocator, true);
 
 			TestResult[] results= collector.getResults();
@@ -227,7 +227,7 @@ public class FileSearchTests extends TestCase {
 			TestResultCollector collector= new TestResultCollector();
 			MatchLocator matchLocator= new MatchLocator("hello", false, true);
 
-			TextSearchScope scope= new TextSearchScope("test-project", new IResource[] {fProject});
+			SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] {fProject});
 			engine.search(scope, true, collector, matchLocator, true);
 
 			TestResult[] results= collector.getResults();

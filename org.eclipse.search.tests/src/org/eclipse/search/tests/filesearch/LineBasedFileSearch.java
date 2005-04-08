@@ -11,25 +11,28 @@
 
 package org.eclipse.search.tests.filesearch;
 
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.core.text.MatchLocator;
-import org.eclipse.search.internal.core.text.TextSearchEngine;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-
 import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceProxy;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceProxy;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
+import org.eclipse.search.internal.core.text.MatchLocator;
+import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 /**
  */
@@ -110,10 +113,10 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		}
 	}
 	
-	private final TextSearchScope fScope;
+	private final SearchScope fScope;
 	
 	
-	public LineBasedFileSearch(TextSearchScope scope, String options, String searchString) {
+	public LineBasedFileSearch(SearchScope scope, String options, String searchString) {
 		super(scope, options, searchString, false);
 		fScope= scope;
 	}
