@@ -131,8 +131,9 @@
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0"/>
 		<unzip dest="${build.result.folder}/@dot">
-			<fileset file="jsch-0.1.18.jar"/>
+			<fileset file="jsch-0.1.18.jar" casesensitive="false" excludesfile="META-INF/MANIFEST.MF"/>
 		</unzip>
+		<delete file="${build.result.folder}/@dot/META-INF/Manifest.mf"/>
 		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
 			<fileset dir="${build.result.folder}/@dot" includes="**"			/>
 		</copy>
