@@ -26,7 +26,7 @@ public class SiteBookmark extends NamedModelObject
 	
 	private URL url;
 	transient private ISite site;
-	transient private Vector catalog;
+	transient private Vector catalog = new Vector();
 	transient private SiteCategory otherCategory;
 	private boolean webBookmark;
 	private boolean selected;
