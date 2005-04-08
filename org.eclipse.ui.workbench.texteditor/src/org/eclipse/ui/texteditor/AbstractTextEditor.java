@@ -2993,8 +2993,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			initializeTitle(input);
 			
-			if (fSourceViewer != null)
+			if (fSourceViewer != null) {
 				initializeSourceViewer(input);
+				
+				// reset the undo context for the undo and redo action handlers
+				createUndoRedoActions();
+			}
 
 			if (fIsOverwriting)
 				toggleOverwriteMode();
@@ -3007,6 +3011,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
 		}
 	}
+	
+//	private void updateOperationHistoryActionContext(String actionId, IUndoContext undoContext) {
+//		Action action= getAction(actionId);
+//		if (action instanceof OperationHistoryActionHandler) {
+//			OperationHistoryActionHandler actionHandler= (OperationHistoryActionHandler)action;
+//			action.setContext(undoContext);
+//		}
+//	}
 	
 	/*
 	 * @see EditorPart#setInput(org.eclipse.ui.IEditorInput)
