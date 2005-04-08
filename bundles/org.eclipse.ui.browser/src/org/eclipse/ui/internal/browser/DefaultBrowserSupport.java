@@ -22,6 +22,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
  * Implementation of the workbench browser support.
  */
 public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
+	private static final String SHARED_ID = "org.eclipse.ui.browser";
 	protected HashMap browserIdMap = new HashMap();
 	protected static DefaultBrowserSupport instance;
 
@@ -55,6 +56,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	}
 
 	public IWebBrowser createBrowser(int style, String browserId, String name, String tooltip) throws PartInitException {
+		if (browserId==null) browserId = SHARED_ID;
 		IWebBrowser browser = getExistingWebBrowser(browserId);
 		if (browser != null)
 			return browser;

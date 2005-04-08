@@ -27,6 +27,8 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 
 	public void openURL(URL url) throws PartInitException {
 		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style);
+		input.setName(this.name);
+		input.setToolTipText(this.tooltip);
         WebBrowserEditor editor = (WebBrowserEditor)part;
 		
 		if (editor != null) {

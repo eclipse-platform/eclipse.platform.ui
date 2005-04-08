@@ -98,7 +98,7 @@ public class WebBrowserEditorInput implements IEditorInput, IPersistableElement,
 		name = n;
 	}
 
-	public void setToolTipTest(String t) {
+	public void setToolTipText(String t) {
 		tooltip = t;
 	}
 
