@@ -48,7 +48,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -674,16 +673,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @return returns a newly created <code>TableViewer</code>
 	 */
 	protected TableViewer createTableViewer(Composite parent) {
-		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION) {
-			protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-				getTable().setRedraw(false);
-				try {
-					super.handleLabelProviderChanged(event);
-				} finally {
-					getTable().setRedraw(true);
-				}
-			}
-		};
+		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 
 	/**
