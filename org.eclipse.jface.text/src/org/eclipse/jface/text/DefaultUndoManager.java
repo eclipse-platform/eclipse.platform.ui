@@ -1174,9 +1174,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	public void reset() {
 		if (isConnected()) {
 			initializeCommandStack();
-			if (fCurrent != null) {
-				setNewCurrent();
-			}
+			setNewCurrent();
 			fFoldingIntoCompoundChange= false;
 			fInserting= false;
 			fOverwriting= false;
