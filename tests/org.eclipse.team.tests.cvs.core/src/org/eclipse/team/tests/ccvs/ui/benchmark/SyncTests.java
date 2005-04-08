@@ -60,6 +60,7 @@ public class SyncTests extends BenchmarkTest {
 	 * A parallel project is used to generate incoming changes.
 	 */
 	protected void runTestSync(int size, String globalName, boolean global) throws Exception {
+        openEmptyPerspective();
 	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();

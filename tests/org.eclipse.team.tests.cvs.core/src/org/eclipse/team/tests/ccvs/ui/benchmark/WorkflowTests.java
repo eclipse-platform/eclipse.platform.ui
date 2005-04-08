@@ -62,6 +62,7 @@ public class WorkflowTests extends BenchmarkTest {
 	 * Runs a series of incoming and outgoing workflow-related tests.
 	 */
 	protected void runWorkflowTests(String name, File initialContents, String globalName, int loopCount, boolean global) throws Exception {
+        openEmptyPerspective();
 	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
 	    for (int i = 0; i < loopCount; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();

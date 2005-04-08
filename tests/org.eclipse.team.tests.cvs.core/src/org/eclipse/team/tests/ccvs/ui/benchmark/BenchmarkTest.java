@@ -25,7 +25,12 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
-import org.eclipse.test.performance.*;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.CloseAllPerspectivesAction;
 
 /**
  * Benchmark test superclass
@@ -83,7 +88,6 @@ public abstract class BenchmarkTest extends EclipseTest {
         groups = new HashMap();
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = null;
-        global = false; // Removed until proper baseline can be used
 		if (global) {
 			// Use one meter for all groups - provides a single timing result
 			meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
@@ -183,7 +187,7 @@ public abstract class BenchmarkTest extends EclipseTest {
      */
     protected void syncCommitResources(IResource[] resources, String comment) throws TeamException, CoreException {
        startTask("Synchronize outgoing changes");
-       syncResources(source.createWorkspaceSubscriber(), resources);
+       syncResources(getSyncInfoSource().createWorkspaceSubscriber(), resources);
        endTask();
        // TODO: Commit all outgoing changes that are children of the given resource
        // by extracting them from the subscriber sync set
@@ -198,13 +202,20 @@ public abstract class BenchmarkTest extends EclipseTest {
      */
     protected void syncUpdateResources(IResource[] resources) throws TeamException {
         startTask("Synchronize incoming changes");
-        syncResources(source.createWorkspaceSubscriber(), resources);
+        syncResources(getSyncInfoSource().createWorkspaceSubscriber(), resources);
         endTask();
         // TODO: Update all incoming changes that are children of the given resource
         // by extracting them from the subscriber sync set
         startTask("Update incoming changes");
         updateResources(resources, false);
         endTask();
+    }
+    
+    protected void openEmptyPerspective() throws WorkbenchException {
+        // First close any open perspectives
+        new CloseAllPerspectivesAction(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+        // Now open our empty perspective
+        PlatformUI.getWorkbench().showPerspective("org.eclipse.team.tests.cvs.ui.perspective1", PlatformUI.getWorkbench().getActiveWorkbenchWindow());
     }
 
     /**

@@ -137,4 +137,11 @@
             primary="true">
       </toc>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.team.tests.ccvs.ui.PerspectiveFactory"
+            id="org.eclipse.team.tests.cvs.ui.perspective1"
+            name="CVS Test Perspective"/>
+   </extension>
 </plugin>

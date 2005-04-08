@@ -146,7 +146,7 @@ public class BenchmarkUtils {
 			writeRandomText(gen, os, fileSize);
 		}
 		IFile file = parent.getFile(new Path(fileName));
-		file.create(new ByteArrayInputStream(os.toByteArray()), true, null);
+		file.create(new ByteArrayInputStream(os.toByteArray()), true, new NullProgressMonitor());
 		os.close();
 		return file;
 	}
