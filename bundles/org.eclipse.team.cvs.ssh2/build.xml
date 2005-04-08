@@ -134,6 +134,7 @@
 			<fileset file="jsch-0.1.18.jar" casesensitive="false" excludesfile="META-INF/MANIFEST.MF"/>
 		</unzip>
 		<delete file="${build.result.folder}/@dot/META-INF/Manifest.mf"/>
+		<delete file="${build.result.folder}/@dot/LICENSE.txt"/>
 		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
 			<fileset dir="${build.result.folder}/@dot" includes="**"			/>
 		</copy>
