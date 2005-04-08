@@ -53,7 +53,7 @@ public class TaskDescriptionProvider {
     /**
      * The file that contains all task descriptions.
      */
-    public static final String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.6.0.xml"; //$NON-NLS-1$
+    public static final String TASKS_DESCRIPTION_XML_FILE_NAME = "/org/eclipse/ant/internal/ui/editor/anttasks_1.6.0.xml"; //$NON-NLS-1$
 
     public static final String XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
     public static final String XML_TAG_TASK = "task"; //$NON-NLS-1$
