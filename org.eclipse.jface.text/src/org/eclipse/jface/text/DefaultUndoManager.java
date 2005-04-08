@@ -659,9 +659,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.ABOUT_TO_UNDO:
 			case OperationHistoryEvent.ABOUT_TO_REDO:
-				IUndoableOperation op;
 				// if this is one of our operations
-				if ((op= event.getOperation()).hasContext(fUndoContext) && op instanceof TextCommand) {
+				if (event.getOperation().hasContext(fUndoContext)) {
 					if (fTextViewer instanceof TextViewer)
 						((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
 					listenToTextChanges(false);
