@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,18 +13,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class DebugUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.DebugUIMessages";//$NON-NLS-1$
-	//
-	// Copyright (c) 2000, 2005 IBM Corporation and others.
-	// All rights reserved. This program and the accompanying materials
-	// are made available under the terms of the Eclipse Public License v1.0
-	// which accompanies this distribution, and is available at
-	// http://www.eclipse.org/legal/epl-v10.html
-	//
-	// Contributors:
-	//     IBM Corporation - initial API and implementation
-	//
 
-	public static String DebugUIPlugin_23;
+    public static String DebugUIPlugin_23;
 	public static String DebugUIPlugin_24;
 	public static String DebugUIPlugin_0;
 	public static String DebugUIPlugin_Build_error__Check_log_for_details__2;
