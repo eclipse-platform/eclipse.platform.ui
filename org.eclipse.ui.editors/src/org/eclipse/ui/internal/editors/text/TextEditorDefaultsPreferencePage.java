@@ -173,7 +173,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			if (val instanceof String) {
 				return Integer.parseInt((String) val);
 			}
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(val))); //$NON-NLS-1$
+			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(val))); //$NON-NLS-1$
 		}
 	}
 	
@@ -186,14 +186,18 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			fMin= min;
 		}
 
-		public IStatus validate(Object val) {
+		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
+			if (value instanceof String && ((String)value).length() == 0) {
+				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				return status;
+			}
 			try {
-				int integer= parseInteger(val);
+				int integer= parseInteger(value);
 				if (!rangeCheck(integer))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(integer))); //$NON-NLS-1$
+					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(integer))); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(val))); //$NON-NLS-1$
+					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
 			}
 			return status;
 		}
@@ -279,12 +283,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
+			if (value instanceof String && ((String)value).length() == 0) {
+				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				return status;
+			}
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_range", new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); //$NON-NLS-1$
+					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidRange", new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$
+				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
 			}
 			
 			return status;
@@ -309,10 +317,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	static class BooleanDomain extends Domain {
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
+			if (value instanceof String && ((String)value).length() == 0) {
+				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				return status;
+			}
 			try {
 				parseBoolean(value);
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$)
+				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$)
 			}
 			
 			return status;
@@ -329,7 +341,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					return false;
 			}
 			
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalid_input", String.valueOf(value))); //$NON-NLS-1$
+			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
 		}
 	}
 	
