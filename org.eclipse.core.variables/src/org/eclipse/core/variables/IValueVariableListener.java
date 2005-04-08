@@ -14,7 +14,9 @@ package org.eclipse.core.variables;
  * A string variable listener is notified of variables as they are added
  * and removed from the string variable manager. As well, listeners are
  * notified when a value variable changes value.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IValueVariableListener {

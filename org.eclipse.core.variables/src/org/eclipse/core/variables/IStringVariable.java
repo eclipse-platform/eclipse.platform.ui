@@ -34,6 +34,9 @@ package org.eclipse.core.variables;
  * 		may accept an argument.</li>
  * </ul>
  * </p>
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IStringVariable {

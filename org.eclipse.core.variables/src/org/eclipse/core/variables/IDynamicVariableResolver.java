@@ -15,7 +15,10 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Resolves the value for a dynamic variable. A dynamic variable extension
  * contributes a resolver which must implement this interface.
- * 
+ * <p>
+ * Clients contributing a dynamic variable are intended to provide an implementation
+ * of this interface.
+ * </p>
  * @since 3.0
  */
 public interface IDynamicVariableResolver {

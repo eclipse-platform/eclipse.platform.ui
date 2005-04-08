@@ -14,7 +14,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Registry for string variables.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IStringVariableManager {
