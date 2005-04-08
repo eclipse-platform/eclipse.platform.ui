@@ -139,5 +139,20 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.help.internal.base.HelpBasePreferenceInitializer"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ant.core.antTasks">
+      <antTask
+            library="ant_tasks/helpbase-ant.jar"
+            name="help.buildHelpIndex"
+            class="org.eclipse.help.base.ant.BuildHelpIndex">
+      </antTask>
+   </extension>
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="ant_tasks/helpbase-ant.jar">
+      </extraClasspathEntry>
+   </extension>
 
 </plugin>

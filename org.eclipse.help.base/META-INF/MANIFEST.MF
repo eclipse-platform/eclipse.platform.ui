@@ -21,5 +21,6 @@ Export-Package: org.eclipse.help.browser,
 Require-Bundle: org.apache.lucene,
  org.eclipse.help;visibility:=reexport,
  org.eclipse.help.appserver,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.ant.core
 Eclipse-AutoStart: true
