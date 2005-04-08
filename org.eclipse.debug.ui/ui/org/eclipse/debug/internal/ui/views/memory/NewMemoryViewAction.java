@@ -11,10 +11,14 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,10 +42,41 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 			IWorkbenchPage page = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			IViewPart newView = page.showView(IInternalDebugUIConstants.ID_MEMORY_VIEW, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 			
+			// set initial selection for new view
+			setInitialSelection(newView);
 			setInitialViewSettings(newView);
+			
 		} catch (PartInitException e) {
 			// if view cannot be opened, open error
 			DebugUIPlugin.log(e);
+		}
+	}
+
+	private void setInitialSelection(IViewPart newView) {
+		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
+		if (selection instanceof IStructuredSelection)
+		{
+			IStructuredSelection strucSel = (IStructuredSelection)selection;
+			
+			// return if current selection is empty
+			if (strucSel.isEmpty())
+				return;
+			
+			Object obj = strucSel.getFirstElement();
+			
+			if (obj == null)
+				return;
+			
+			if (obj instanceof IMemoryRendering)
+			{
+				IMemoryBlock memBlock = ((IMemoryRendering)obj).getMemoryBlock();
+				strucSel = new StructuredSelection(memBlock);
+				newView.getSite().getSelectionProvider().setSelection(strucSel);
+			}
+			else if (obj instanceof IMemoryBlock)
+			{
+				newView.getSite().getSelectionProvider().setSelection(strucSel);
+			}
 		}
 	}
 

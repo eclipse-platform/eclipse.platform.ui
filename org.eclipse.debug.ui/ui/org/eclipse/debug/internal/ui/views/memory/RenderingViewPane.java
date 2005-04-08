@@ -868,8 +868,16 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	public void restoreViewPane() {
 		
 		// get current selection from memory view
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
-		IMemoryBlock memoryBlock = getMemoryBlock(selection);
+		
+		ISelection selection = null;
+		if (fParent.getSite().getSelectionProvider() != null)
+			selection = fParent.getSite().getSelectionProvider().getSelection();
+		
+		IMemoryBlock memoryBlock = null;
+		if (selection != null)
+		{
+			memoryBlock = getMemoryBlock(selection);
+		}
 		
 		if (memoryBlock == null)
 		{	
@@ -940,6 +948,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					rendering.init(getInstance(), memoryBlock);
 					new MemoryViewTab(newItem, rendering, this);
 					folder.setSelection(0);
+					setRenderingSelection(rendering);
 				}
 			}
 		}
