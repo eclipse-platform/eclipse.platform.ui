@@ -10,65 +10,52 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
-import java.util.Collection;
-import java.util.Iterator;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.search.internal.core.ISearchScope;
+
+import org.eclipse.search.internal.core.SearchScope;
 
 /**
  * The visitor that does the actual work.
  */
 public class AmountOfWorkCalculator implements IResourceProxyVisitor {
 	
-	private ISearchScope fScope;
+	private SearchScope fScope;
 	private int fFileCount;
 	private boolean fVisitDerived;
 	private final MultiStatus fStatus;
 
-	AmountOfWorkCalculator(MultiStatus status, boolean visitDerived) {
+	AmountOfWorkCalculator(SearchScope scope, MultiStatus status, boolean visitDerived) {
 		fStatus= status;
+		fScope= scope;
 		fVisitDerived= visitDerived;
 	}
 		
 	public boolean visit(IResourceProxy proxy) {
-		if (proxy.getType() == IResource.FILE) {
-			if (shouldVisit(proxy))
-				fFileCount++;
+		if (proxy.getType() != IResource.FILE) {
+			return true;
+		}
+		
+		if ((fVisitDerived || !proxy.isDerived()) && fScope.matchesFileName(proxy.getName())) {
+			fFileCount++;
 		}
 		return true;	
 	}
 	
-	private boolean shouldVisit(IResourceProxy proxy) {
-		if (!fScope.encloses(proxy))
-			return false;
-		return fVisitDerived || !proxy.isDerived();
-	}
-
-	public int process(Collection projects, ISearchScope scope) {
+	public int process() {
 		fFileCount= 0;
-		fScope= scope;
-		
-		Iterator i= projects.iterator();
-		while (i.hasNext()) {
-			IProject project= (IProject)i.next();
-			int save= fFileCount;
+		IResource[] roots= fScope.getRootElements();
+		for (int i= 0; i < roots.length; i++) {
 			try {
-				project.accept(this, IResource.NONE);
+				roots[i].accept(this, 0);
 			} catch (CoreException ex) {
 				fStatus.add(ex.getStatus());
 			}
-			// Project doesn't contain any files that are in scope
-			if (save == fFileCount) {
-				i.remove();
-			}	
 		}
-		
 		return fFileCount;
 	}
 }

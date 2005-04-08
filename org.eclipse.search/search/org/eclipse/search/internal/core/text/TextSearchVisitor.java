@@ -20,24 +20,13 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
-import org.eclipse.search.internal.core.ISearchScope;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -45,6 +34,11 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -57,12 +51,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.search.ui.NewSearchUI;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+
 /**
  * The visitor that does the actual work.
  */
 public class TextSearchVisitor implements IResourceProxyVisitor {
 
-	private ISearchScope fScope;
+	private SearchScope fScope;
 	private ITextSearchResultCollector fCollector;
 	private MatchLocator fLocator;
 	
@@ -77,7 +77,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	private final MultiStatus fStatus;
 	private boolean fAllowNIOSearch;	
 	
-	public TextSearchVisitor(MatchLocator locator, ISearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
+	public TextSearchVisitor(MatchLocator locator, SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		fScope= scope;
 		fCollector= collector;
 		fStatus= status;
@@ -96,14 +96,13 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		fAllowNIOSearch= allowNIOSearch;
 	}
 	
-	public void process(Collection projects) {
+	public void process() {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
 		
-		Iterator i= projects.iterator();
-		while(i.hasNext()) {
-			IProject project= (IProject)i.next();
+		IResource[] roots= fScope.getRootElements();
+		for (int i= 0; i < roots.length; i++) {
 			try {
-				project.accept(this, IResource.NONE);
+				roots[i].accept(this, 0);
 			} catch (CoreException ex) {
 				fStatus.add(ex.getStatus());
 			}
@@ -155,24 +154,19 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		}
 	}
 
-	private boolean shouldVisit(IResourceProxy proxy) {
-		if (!fScope.encloses(proxy))
-			return false;
-		return fVisitDerived || !proxy.isDerived();
-	}
-
 	public boolean visit(IResourceProxy proxy) throws CoreException {
 		if (proxy.getType() != IResource.FILE) {
 			return true; // only interested in files
 		}
 		
-		if (!shouldVisit(proxy))
-			return false;
-
+		if (!fVisitDerived && proxy.isDerived() || !fScope.matchesFileName(proxy.getName())) {
+			return false; // finish, files don't have children
+		}
+		
 		if (fLocator.isEmtpy()) {
-			fCollector.accept(proxy, -1, 0); //$NON-NLS-1$
+			fCollector.accept(proxy, -1, 0); 
 			updateProgressMonitor();
-			return true;
+			return false; // finish, files don't have children
 		}
 		IFile file= (IFile)proxy.requestResource();
 		IDocument document= (IDocument) fDocumentsInEditors.get(file);
@@ -230,14 +224,14 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		} finally {
 			updateProgressMonitor();
 		}		
-		return true;
+		return false; // finish, files don't have children
 	}
 
 	private void updateProgressMonitor() {
 		fNumberOfScannedFiles++;
 		if (fNumberOfScannedFiles < fNumberOfFilesToScan) {
 			if (System.currentTimeMillis() - fLastUpdateTime > 1000) {
-				String[] args= { String.valueOf(fNumberOfScannedFiles + 1),  String.valueOf(fNumberOfFilesToScan)};
+				Object[] args= { new Integer(fNumberOfScannedFiles + 1),  new Integer(fNumberOfFilesToScan)};
 				fProgressMonitor.setTaskName(SearchMessages.getFormattedString("TextSearchVisitor.scanning", args)); //$NON-NLS-1$
 				fLastUpdateTime= System.currentTimeMillis();
 			}

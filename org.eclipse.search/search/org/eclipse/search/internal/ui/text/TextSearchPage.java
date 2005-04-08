@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -70,7 +71,7 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -222,10 +223,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		SearchPatternData patternData= getPatternData();
 	
 		// Setup search scope
-		TextSearchScope scope= null;
+		SearchScope scope= null;
 		switch (getContainer().getSelectedScope()) {
 			case ISearchPageContainer.WORKSPACE_SCOPE:
-				scope= TextSearchScope.newWorkspaceScope();
+				scope= SearchScope.newWorkspaceScope();
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE:
 				scope= getSelectedResourcesScope(false);
@@ -236,10 +237,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
 				String desc= SearchMessages.getFormattedString("WorkingSetScope", ScopePart.toString(workingSets)); //$NON-NLS-1$
-				scope= new TextSearchScope(desc, workingSets);
+				scope= SearchScope.newSearchScope(desc, workingSets);
 		}		
 		NewSearchUI.activateSearchResultView();
-		scope.addExtensions(patternData.fileNamePatterns);
+		String[] fileExtensions= patternData.fileNamePatterns;
+		for (int i= 0; i < fileExtensions.length; i++) {
+			scope.addFileNamePattern(fileExtensions[i]);
+		}
 		return new FileSearchQuery(scope,  getSearchOptions(), patternData.textPattern, fSearchDerived);
 	}
 
@@ -627,10 +631,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return fContainer.getSelection();
 	}
 
-	private TextSearchScope getSelectedResourcesScope(boolean isProjectScope) {
-		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
-		int elementCount= 0;
-		IProject firstProject= null;
+	private SearchScope getSelectedResourcesScope(boolean isProjectScope) {
+		HashSet resources= new HashSet();
+		String firstProjectName= null;
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Iterator iter= ((IStructuredSelection) selection).iterator();
@@ -638,40 +641,43 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				Object curr= iter.next();
 
 				IResource resource= null;			
-				if (curr instanceof IResource)
-					resource= (IResource)curr;
-				else if (curr instanceof IAdaptable) {
-					if (isProjectScope)
+				if (curr instanceof IResource) {
+					resource= (IResource) curr;
+				} else if (curr instanceof IAdaptable) {
+					resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+					if (resource == null && isProjectScope)
 						resource= (IProject) ((IAdaptable)curr).getAdapter(IProject.class);
-					if (resource == null)
-						resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
 				}
 				if (resource != null) {
 					if (isProjectScope) {
 						resource= resource.getProject();
-						if (resource == null || isProjectScope && scope.encloses(resource))
-							continue;
-						if (firstProject == null)
-							firstProject= (IProject)resource;
+						if (firstProjectName == null) {
+							firstProjectName= resource.getName();
+						}
 					}
-					elementCount++;
-					scope.add(resource);
+					resources.add(resource);
 				}
 			}
 		} else if (isProjectScope) {
 			IProject editorProject= getEditorProject();
 			if (editorProject != null)
-				scope.add(editorProject);
+				resources.add(editorProject);
 		}
+
+		String name;
 		if (isProjectScope) {
+			int elementCount= resources.size();
 			if (elementCount > 1)
-				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectsScope", firstProject.getName())); //$NON-NLS-1$
+				name= SearchMessages.getFormattedString("EnclosingProjectsScope", firstProjectName); //$NON-NLS-1$
 			else if (elementCount == 1)
-				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectScope", firstProject.getName())); //$NON-NLS-1$
+				name= SearchMessages.getFormattedString("EnclosingProjectScope", firstProjectName); //$NON-NLS-1$
 			else 
-				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectScope", "")); //$NON-NLS-1$ //$NON-NLS-2$
-		} 
-		return scope;
+				name= SearchMessages.getFormattedString("EnclosingProjectScope", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			name= SearchMessages.getString("SelectionScope"); //$NON-NLS-1$
+		}
+		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
+		return SearchScope.newSearchScope(name, arr);
 	}
 
 	private IProject getEditorProject() {

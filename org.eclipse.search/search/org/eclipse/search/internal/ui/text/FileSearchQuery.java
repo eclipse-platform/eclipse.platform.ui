@@ -10,21 +10,22 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import org.eclipse.search.internal.core.SearchScope;
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.core.text.MatchLocator;
-import org.eclipse.search.internal.core.text.TextSearchEngine;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
+import org.eclipse.search.internal.core.text.MatchLocator;
+import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.ui.SearchMessages;
 
 
 public class FileSearchQuery implements ISearchQuery {
@@ -60,11 +61,11 @@ public class FileSearchQuery implements ISearchQuery {
 
 	private String fSearchString;
 	private String fSearchOptions;
-	private TextSearchScope fScope;
+	private SearchScope fScope;
 	private FileSearchResult fResult;
 	private boolean fVisitDerived;
 
-	public FileSearchQuery(TextSearchScope scope, String options, String searchString, boolean visitDerived) {
+	public FileSearchQuery(SearchScope scope, String options, String searchString, boolean visitDerived) {
 		fVisitDerived= visitDerived;
 		fScope= scope;
 		fSearchOptions= options;
@@ -97,17 +98,17 @@ public class FileSearchQuery implements ISearchQuery {
 	public String getResultLabel(int nMatches) {
 		if (nMatches == 1) {
 			if (fSearchString.length() > 0) {
-				String[] args= new String[] { fSearchString, fScope.getDescription() };
+				Object[] args= { fSearchString, fScope.getDescription() };
 				return SearchMessages.getFormattedString("FileSearchQuery.singularLabel", args); //$NON-NLS-1$;
 			}
-			String[] args= new String[] { fScope.getExtensionsLabel(), fScope.getDescription() };
+			Object[] args= { fScope.getFileNamePatternDescription(), fScope.getDescription() };
 			return SearchMessages.getFormattedString("FileSearchQuery.singularLabel.fileNameSearch", args); //$NON-NLS-1$;
 		}
 		if (fSearchString.length() > 0) {
-			String[] args= new String[] { fSearchString, String.valueOf(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+			Object[] args= { fSearchString, new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
 			return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern", args); //$NON-NLS-1$;
 		}
-		Object[] args= { fScope.getExtensionsLabel(), new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
+		Object[] args= { fScope.getFileNamePatternDescription(), new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
 		return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern.fileNameSearch", args); //$NON-NLS-1$;
 	}
 
@@ -119,7 +120,7 @@ public class FileSearchQuery implements ISearchQuery {
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
 		ITextSearchResultCollector collector= new TextSearchResultCollector(result, monitor);
-		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
+		SearchScope scope= SearchScope.newSearchScope("", new IResource[] { file }); //$NON-NLS-1$
 		return new TextSearchEngine().search(scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 	
