@@ -187,12 +187,15 @@ public class Setup implements Cloneable {
 		if (vmArguments.containsKey("cp") || vmArguments.containsKey("classpath"))
 			// classpath was specified as VM argument
 			return;
-		String installLocation = getEclipseArgument(INSTALL);
-		if (installLocation == null)
-			throw new IllegalStateException("No install location set");
+		String inheritedClassPath = System.getProperty("java.class.path");
+		if (inheritedClassPath == null) {
+			String installLocation = getEclipseArgument(INSTALL);
+			if (installLocation == null)
+				throw new IllegalStateException("Classpath could not be computed");
+			inheritedClassPath = new File(installLocation, "startup.jar").toString();
+		}
 		params.add("-classpath");
-		File classPath = new File(installLocation, "startup.jar");
-		params.add(classPath.toString());
+		params.add(inheritedClassPath);
 	}
 
 	public void fillCommandLine(List commandLine) {
