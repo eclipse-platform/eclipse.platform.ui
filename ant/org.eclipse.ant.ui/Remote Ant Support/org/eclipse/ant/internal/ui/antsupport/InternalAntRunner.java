@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -317,6 +316,7 @@ public class InternalAntRunner {
 		PrintStream originalOut = System.out;
 		InputStream originalIn= System.in;
 		
+		SecurityManager originalSM= System.getSecurityManager();
 		scriptExecuted= true;
 		try {
 			if (argList != null && (argList.remove("-projecthelp") || argList.remove("-p"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -404,6 +404,8 @@ public class InternalAntRunner {
 				printArguments(getCurrentProject());
 			}
 			
+			System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
+			
 			if (targets == null) {
                 targets= new Vector(1);
             }
@@ -412,12 +414,17 @@ public class InternalAntRunner {
             }
             getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
 			getCurrentProject().executeTargets(targets);
-        } catch (Throwable e) {
+		} catch (AntSecurityException e) {
+			//expected
+		} catch (Throwable e) {
 			error = e;
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
 			System.setIn(originalIn);
+			if (System.getSecurityManager() instanceof AntSecurityManager) {
+				System.setSecurityManager(originalSM);
+			}
 			
 			if (!projectHelp) {				
 				fireBuildFinished(getCurrentProject(), error);
