@@ -221,6 +221,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_41;
 	public static String CVSPreferencesPage_42;
 	public static String CVSPreferencesPage_43;
+    public static String CVSPreferencesPage_44;
 	public static String CVSPropertiesPage_virtualModule;
 
 

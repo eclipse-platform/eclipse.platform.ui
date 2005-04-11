@@ -103,6 +103,8 @@ public class CVSProviderPlugin extends Plugin {
 	private static final String CRASH_INDICATION_FILE  = ".running"; //$NON-NLS-1$
 	private boolean crash;
 
+    private boolean autoShareOnImport;
+
 	public synchronized CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
 		if (cvsWorkspaceSubscriber == null) {
 			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
@@ -579,4 +581,12 @@ public class CVSProviderPlugin extends Plugin {
 	public void setUsePlatformLineend(boolean usePlatformLineend) {
 		this.usePlatformLineend = usePlatformLineend;
 	}
+
+    public void setAutoshareOnImport(boolean autoShareOnImport) {
+        this.autoShareOnImport = autoShareOnImport;
+    }
+
+    public boolean isAutoshareOnImport() {
+        return autoShareOnImport;
+    }
 }

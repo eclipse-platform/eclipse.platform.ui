@@ -173,6 +173,7 @@ public class CVSTeamProviderType extends RepositoryProviderType {
 				TeamPlugin.log(IStatus.ERROR, "Could not flag meta-files as team-private for " + cvsDir.getFullPath(), e); //$NON-NLS-1$
 			}
 		}
-		getAutoShareJob().share(project);
+        if (CVSProviderPlugin.getPlugin().isAutoshareOnImport())
+            getAutoShareJob().share(project);
 	}
 }

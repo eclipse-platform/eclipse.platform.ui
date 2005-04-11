@@ -386,10 +386,11 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
 		tab.setText(CVSUIMessages.CVSPreferencesPage_14); //$NON-NLS-1$
 		tab.setControl(composite);
-		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  CVSUIMessages.CVSPreferencesPage_15, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, CVSUIMessages.CVSPreferencesPage_16, IHelpContextIds.PREF_CONFIRM_MOVE_TAG); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, CVSUIMessages.CVSPreferencesPage_17, IHelpContextIds.PREF_DEBUG_PROTOCOL); //$NON-NLS-1$
-		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, CVSUIMessages.CVSPreferencesPage_18, IHelpContextIds.PREF_AUTOREFRESH_TAG); //$NON-NLS-1$
+		new Checkbox(composite, ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION,  CVSUIMessages.CVSPreferencesPage_15, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
+		new Checkbox(composite, ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, CVSUIMessages.CVSPreferencesPage_16, IHelpContextIds.PREF_CONFIRM_MOVE_TAG);
+		new Checkbox(composite, ICVSUIConstants.PREF_DEBUG_PROTOCOL, CVSUIMessages.CVSPreferencesPage_17, IHelpContextIds.PREF_DEBUG_PROTOCOL);
+		new Checkbox(composite, ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, CVSUIMessages.CVSPreferencesPage_18, IHelpContextIds.PREF_AUTOREFRESH_TAG);
+        new Checkbox(composite, ICVSUIConstants.PREF_AUTO_SHARE_ON_IMPORT, CVSUIMessages.CVSPreferencesPage_44, null);
         
         final Composite textComposite= SWTUtils.createHFillComposite(composite, SWTUtils.MARGINS_NONE, 2);
         new TextField(
@@ -574,6 +575,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
 		CVSProviderPlugin.getPlugin().setUsePlatformLineend(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
+        CVSProviderPlugin.getPlugin().setAutoshareOnImport(store.getBoolean(ICVSUIConstants.PREF_AUTO_SHARE_ON_IMPORT));
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
