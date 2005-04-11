@@ -232,7 +232,7 @@ public class WebBrowserEditorInput implements IEditorInput, IPersistableElement,
 		if (name != null)
 			return name;
 		
-		return WebBrowserUIPlugin.getResource("%viewWebBrowserTitle");
+		return Messages.viewWebBrowserTitle;
 	}
 	
 	/*
@@ -255,7 +255,7 @@ public class WebBrowserEditorInput implements IEditorInput, IPersistableElement,
 		if (url != null)
 			return url.toExternalForm();
 		
-		return WebBrowserUIPlugin.getResource("%viewWebBrowserTitle");
+		return Messages.viewWebBrowserTitle;
 	}
 
 	/**

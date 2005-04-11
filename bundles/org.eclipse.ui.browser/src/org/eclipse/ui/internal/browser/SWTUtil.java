@@ -42,7 +42,14 @@ public class SWTUtil {
 		int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
-	
+
+	/**
+	 * Create a new button with the standard size.
+	 * 
+	 * @param comp a component to add the button to
+	 * @param label the button label
+	 * @return a button
+	 */
 	public static Button createButton(Composite comp, String label) {
 		Button b = new Button(comp, SWT.PUSH);
 		b.setText(label);
@@ -54,9 +61,16 @@ public class SWTUtil {
 		return b;
 	}
 	
-	public static Label createLabel(Composite comp, String txt) {
+	/**
+	 * Create a new standard label.
+	 * 
+	 * @param comp a component to add the label to
+	 * @param text the label text
+	 * @return a label
+	 */
+	public static Label createLabel(Composite comp, String text) {
 		Label label = new Label(comp, SWT.NONE);
-		label.setText(txt);
+		label.setText(text);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING));
 		return label;
 	}

@@ -21,6 +21,7 @@ import org.eclipse.ui.browser.IWebBrowser;
  * @since 1.0
  */
 public class BrowserExt implements IBrowserExt {
+	private static final String ATTR_FACTORY_CLASS = "factoryClass";
 	private IConfigurationElement element;
 	private BrowserFactory delegate;
 
@@ -80,8 +81,11 @@ public class BrowserExt implements IBrowserExt {
 
 	protected BrowserFactory getDelegate() {
 		if (delegate == null) {
+			if (element.getAttribute(ATTR_FACTORY_CLASS) == null || element.getAttribute(ATTR_FACTORY_CLASS).length() == 0)
+				return null;
+			
 			try {
-				delegate = (BrowserFactory) element.createExecutableExtension("factoryclass");
+				delegate = (BrowserFactory) element.createExecutableExtension(ATTR_FACTORY_CLASS);
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Could not create delegate" + toString() + ": " + e.getMessage());
 			}

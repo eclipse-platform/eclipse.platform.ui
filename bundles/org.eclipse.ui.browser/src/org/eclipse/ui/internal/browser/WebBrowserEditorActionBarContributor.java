@@ -92,7 +92,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	go.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_GO));
 	   	go.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_GO));
 	   	go.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_GO));
-	   	go.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserGo"));
+	   	go.setToolTipText(Messages.actionWebBrowserGo"));
 	   	toolBarManager.add(go);
    	}
    	
@@ -101,7 +101,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
    	}
    	
    	if (input.isToolbarGlobal()) {
-	   	Action favorites = new Action(WebBrowserUIPlugin.getResource("%actionWebBrowserFavorites"), IAction.AS_DROP_DOWN_MENU) {
+	   	Action favorites = new Action(Messages.actionWebBrowserFavorites"), IAction.AS_DROP_DOWN_MENU) {
 	   		public void run() {
 	   			getWebBrowser().addFavorite();
 	   		}
@@ -135,7 +135,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 							iterator = WebBrowserPreference.getInternalWebBrowserFavorites().iterator();
 							if (!iterator.hasNext()) {
 								MenuItem item = new MenuItem(menu, SWT.NONE);
-								item.setText(WebBrowserUIPlugin.getResource("%actionWebBrowserNoFavorites"));
+								item.setText(Messages.actionWebBrowserNoFavorites"));
 							}
 							while (iterator.hasNext()) {
 								final Favorite f = (Favorite) iterator.next();
@@ -152,7 +152,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 							new MenuItem(menu, SWT.SEPARATOR);
 					
 							MenuItem item = new MenuItem(menu, SWT.NONE);
-							item.setText(WebBrowserUIPlugin.getResource("%actionWebBrowserOrganizeFavorites"));
+							item.setText(Messages.actionWebBrowserOrganizeFavorites"));
 							item.addSelectionListener(new SelectionAdapter() {
 								public void widgetSelected(SelectionEvent event) {
 									OrganizeFavoritesDialog dialog = new OrganizeFavoritesDialog(parent.getShell());
@@ -186,7 +186,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 							iterator = WebBrowserPreference.getInternalWebBrowserFavorites().iterator();
 							if (!iterator.hasNext()) {
 								MenuItem item = new MenuItem(menu, SWT.NONE);
-								item.setText(WebBrowserUIPlugin.getResource("%actionWebBrowserNoFavorites"));
+								item.setText(Messages.actionWebBrowserNoFavorites"));
 							}
 							while (iterator.hasNext()) {
 								final Favorite f = (Favorite) iterator.next();
@@ -203,7 +203,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 							new MenuItem(menu, SWT.SEPARATOR);
 					
 							MenuItem item = new MenuItem(menu, SWT.NONE);
-							item.setText(WebBrowserUIPlugin.getResource("%actionWebBrowserOrganizeFavorites"));
+							item.setText(Messages.actionWebBrowserOrganizeFavorites"));
 							item.addSelectionListener(new SelectionAdapter() {
 								public void widgetSelected(SelectionEvent event) {
 									OrganizeFavoritesDialog dialog = new OrganizeFavoritesDialog(parent.getShell());
@@ -218,7 +218,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	favorites.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_FAVORITES));
 	   	favorites.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_FAVORITES));
 	   	favorites.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_FAVORITES));
-	   	favorites.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserFavorites"));
+	   	favorites.setToolTipText(Messages.actionWebBrowserFavorites"));
 	   	toolBarManager.add(favorites);
 	   	
 	   	back = new Action() {
@@ -229,7 +229,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	back.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_BACKWARD));
 			back.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_BACKWARD));
 			back.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_BACKWARD));
-			back.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserBack"));
+			back.setToolTipText(Messages.actionWebBrowserBack"));
 	   	toolBarManager.add(back);
 	   	
 	   	forward = new Action() {
@@ -240,7 +240,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	forward.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_FORWARD));
 	   	forward.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_FORWARD));
 			forward.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_FORWARD));
-			forward.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserForward"));
+			forward.setToolTipText(Messages.actionWebBrowserForward"));
 	   	toolBarManager.add(forward);
 	   	
 	   	Action stop = new Action() {
@@ -251,7 +251,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	stop.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_STOP));
 	   	stop.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_STOP));
 	   	stop.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_STOP));
-	   	stop.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserStop"));
+	   	stop.setToolTipText(Messages.actionWebBrowserStop"));
 	   	toolBarManager.add(stop);
 	   	
 	   	Action refresh = new Action() {
@@ -262,7 +262,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	   	refresh.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_NAV_REFRESH));
 	   	refresh.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_NAV_REFRESH));
 	   	refresh.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_NAV_REFRESH));
-	   	refresh.setToolTipText(WebBrowserUIPlugin.getResource("%actionWebBrowserRefresh"));
+	   	refresh.setToolTipText(Messages.actionWebBrowserRefresh"));
 	   	toolBarManager.add(refresh);
    	}*/
    	

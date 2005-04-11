@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,37 +48,6 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	 */
 	public static WebBrowserUIPlugin getInstance() {
 		return singleton;
-	}
-
-	/**
-	 * Returns the translated String found with the given key.
-	 *
-	 * @param key java.lang.String
-	 * @return java.lang.String
-	 */
-	public static String getResource(String key) {
-		try {
-			return Platform.getResourceString(getInstance().getBundle(), key);
-		} catch (Exception e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the translated String found with the given key,
-	 * and formatted with the given arguments using java.text.MessageFormat.
-	 *
-	 * @param key java.lang.String
-	 * @param arg java.lang.String
-	 * @return java.lang.String
-	 */
-	public static String getResource(String key, String arg) {
-		try {
-			String text = getResource(key);
-			return MessageFormat.format(text, new String[] { arg });
-		} catch (Exception e) {
-			return key;
-		}
 	}
 
 	/**

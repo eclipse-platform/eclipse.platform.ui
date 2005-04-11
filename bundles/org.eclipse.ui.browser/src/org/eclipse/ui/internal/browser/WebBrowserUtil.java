@@ -73,7 +73,7 @@ public class WebBrowserUtil {
 			d = Display.getDefault();
 	
 		Shell shell = d.getActiveShell();
-		MessageDialog.openError(shell, WebBrowserUIPlugin.getResource("%errorDialogTitle"), message);
+		MessageDialog.openError(shell, Messages.errorDialogTitle, message);
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class WebBrowserUtil {
 			d = Display.getDefault();
 	
 		Shell shell = d.getActiveShell();
-		MessageDialog.openInformation(shell, WebBrowserUIPlugin.getResource("%searchingTaskName"), message);
+		MessageDialog.openInformation(shell, Messages.searchingTaskName, message);
 	}
 
 	/**
@@ -160,12 +160,12 @@ public class WebBrowserUtil {
 		for (int i = 0; i < size; i++) {
 			if (browsers[i].getDefaultLocations() != null && browsers[i].getOS().toLowerCase().indexOf(os) >= 0) {
 				for (int k = 0; k < rootSize; k++) {
-                	int size2 = browsers[i].getDefaultLocations().length;
+					int size2 = browsers[i].getDefaultLocations().length;
 					for (int j = 0; j < size2; j++) {
 						String location = browsers[i].getDefaultLocations()[j];
 						try {
 							File f = new File(roots[k], location);
-                            if (!paths.contains(f.getAbsolutePath().toLowerCase())) {
+							if (!paths.contains(f.getAbsolutePath().toLowerCase())) {
 								if (f.exists()) {
 									BrowserDescriptor browser = new BrowserDescriptor();
 									browser.name = browsers[i].getName();

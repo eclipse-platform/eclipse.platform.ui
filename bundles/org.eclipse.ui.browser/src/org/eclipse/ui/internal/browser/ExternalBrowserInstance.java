@@ -12,10 +12,13 @@ package org.eclipse.ui.internal.browser;
 
 import java.net.URL;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
 /**
  * An instance of a running Web browser.
+ * 
+ * rundll32.exe url.dll,FileProtocolHandler www.ibm.com
  */
 public class ExternalBrowserInstance extends AbstractWebBrowser {
 	protected IBrowserDescriptor browser;
@@ -68,7 +71,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 				process = Runtime.getRuntime().exec(location + " " + params);
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not launch external browser", e);
-			WebBrowserUtil.openError(WebBrowserUIPlugin.getResource("%errorCouldNotLaunchWebBrowser", urlText));
+			WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
 		}
 		Thread thread = new Thread() {
 			public void run() {

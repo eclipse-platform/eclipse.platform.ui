@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -66,9 +67,9 @@ public class BrowserDescriptorDialog extends Dialog {
 		super.configureShell(shell);
 		
 		if (isEdit)
-			shell.setText(WebBrowserUIPlugin.getResource("%editExternalBrowser"));
+			shell.setText(Messages.editExternalBrowser);
 		else
-			shell.setText(WebBrowserUIPlugin.getResource("%createBrowser"));
+			shell.setText(Messages.createBrowser);
 	}
 
 	protected Text createText(Composite comp, String txt, final StringModifyListener listener) {
@@ -99,7 +100,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		else
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_EXTERNAL_ADD);
 		
-		SWTUtil.createLabel(composite, WebBrowserUIPlugin.getResource("%name"));
+		SWTUtil.createLabel(composite, Messages.name);
 		browserNameTextfield = createText(composite, browser.getName(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setName(s);
@@ -109,7 +110,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		
 		new Label(composite, SWT.NONE);
 	
-		SWTUtil.createLabel(composite, WebBrowserUIPlugin.getResource("%location"));
+		SWTUtil.createLabel(composite, Messages.location);
 		browserLocationTextfield = createText(composite, browser.getLocation(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setLocation(s);
@@ -117,11 +118,11 @@ public class BrowserDescriptorDialog extends Dialog {
 			}
 		});		
 		
-		browseButton = SWTUtil.createButton(composite, WebBrowserUIPlugin.getResource("%browse"));
+		browseButton = SWTUtil.createButton(composite, Messages.browse);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-				dialog.setText(WebBrowserUIPlugin.getResource("%browseMessage"));
+				dialog.setText(Messages.browseMessage);
 				
 				String fname = browserLocationTextfield.getText();
 				
@@ -133,7 +134,7 @@ public class BrowserDescriptorDialog extends Dialog {
 			}
 		});
 		
-		SWTUtil.createLabel(composite, WebBrowserUIPlugin.getResource("%parameters"));
+		SWTUtil.createLabel(composite, Messages.parameters);
 		browserParametersTextfield = createText(composite, browser.getParameters(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setParameters(s);
@@ -144,7 +145,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		
 		new Label(composite, SWT.NONE);
 		Label urlLabel = new Label(composite, SWT.NONE);
-		urlLabel.setText(WebBrowserUIPlugin.getResource("%parametersMessage", IBrowserDescriptor.URL_PARAMETER));
+		urlLabel.setText(NLS.bind(Messages.parametersMessage, IBrowserDescriptor.URL_PARAMETER));
 		
 		return composite;
 	}
@@ -157,12 +158,12 @@ public class BrowserDescriptorDialog extends Dialog {
 		try {
 		File file = new File(browser.getLocation());
 			if(!file.isFile()){
-				WebBrowserUtil.openError(WebBrowserUIPlugin.getResource("%locationInvalid"));
+				WebBrowserUtil.openError(Messages.locationInvalid);
 				return;
 			}
 		}
 		catch(Exception e){
-			WebBrowserUtil.openError(WebBrowserUIPlugin.getResource("%locationInvalid"));
+			WebBrowserUtil.openError(Messages.locationInvalid);
 			return;
 		}
 		
