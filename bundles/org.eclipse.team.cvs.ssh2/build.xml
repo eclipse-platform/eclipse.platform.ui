@@ -133,11 +133,10 @@
 		<unzip dest="${build.result.folder}/@dot">
 			<fileset file="jsch-0.1.18.jar"/>
 		</unzip>
-		<delete file="${build.result.folder}/@dot/META-INF/Manifest.mf" casesensitive="false"/>
 		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
 			<fileset dir="${build.result.folder}/@dot" includes="**"			/>
 		</copy>
-		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true" overwrite="true">
+		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
 			<fileset dir="${basedir}" includes="about.html,plugin.xml,plugin.properties,META-INF/"			/>
 		</copy>
 	</target>
