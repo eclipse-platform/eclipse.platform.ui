@@ -199,8 +199,7 @@ public class BrowserViewer extends Composite {
         }
         catch (SWTError e) {
             if (e.code!=SWT.ERROR_NO_HANDLES) {
-                WebBrowserUtil.openError(WebBrowserUIPlugin
-                    .getResource("%errorCouldNotLaunchInternalWebBrowser"));
+                WebBrowserUtil.openError(Messages.errorCouldNotLaunchInternalWebBrowser);
                 return;
             }
             text = new BrowserText(this, this, e);
@@ -304,8 +303,7 @@ public class BrowserViewer extends Composite {
             public void open(WindowEvent event) {
                 Shell shell2 = new Shell(getDisplay());
                 shell2.setLayout(new FillLayout());
-                shell2.setText(WebBrowserUIPlugin
-                        .getResource("%viewWebBrowserTitle"));
+                shell2.setText(Messages.viewWebBrowserTitle);
                 shell2.setImage(getShell().getImage());
                 if (event.location != null)
                     shell2.setLocation(event.location);
@@ -649,8 +647,7 @@ public class BrowserViewer extends Composite {
         go.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_GO));
         go
-                .setToolTipText(WebBrowserUIPlugin
-                        .getResource("%actionWebBrowserGo"));
+                .setToolTipText(Messages.actionWebBrowserGo);
         go.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 setURL(combo.getText());
@@ -674,8 +671,7 @@ public class BrowserViewer extends Composite {
                 .getImage(ImageResource.IMG_CLCL_NAV_BACKWARD));
         back.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_BACKWARD));
-        back.setToolTipText(WebBrowserUIPlugin
-                .getResource("%actionWebBrowserBack"));
+        back.setToolTipText(Messages.actionWebBrowserBack);
         back.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 back();
@@ -689,8 +685,7 @@ public class BrowserViewer extends Composite {
                 .getImage(ImageResource.IMG_CLCL_NAV_FORWARD));
         forward.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_FORWARD));
-        forward.setToolTipText(WebBrowserUIPlugin
-                .getResource("%actionWebBrowserForward"));
+        forward.setToolTipText(Messages.actionWebBrowserForward);
         forward.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 forward();
@@ -704,8 +699,7 @@ public class BrowserViewer extends Composite {
                 .getImage(ImageResource.IMG_CLCL_NAV_STOP));
         stop.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_STOP));
-        stop.setToolTipText(WebBrowserUIPlugin
-                .getResource("%actionWebBrowserStop"));
+        stop.setToolTipText(Messages.actionWebBrowserStop);
         stop.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 stop();
@@ -719,8 +713,7 @@ public class BrowserViewer extends Composite {
                 .getImage(ImageResource.IMG_CLCL_NAV_REFRESH));
         refresh.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_REFRESH));
-        refresh.setToolTipText(WebBrowserUIPlugin
-                .getResource("%actionWebBrowserRefresh"));
+        refresh.setToolTipText(Messages.actionWebBrowserRefresh);
         refresh.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 refresh();

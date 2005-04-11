@@ -83,8 +83,9 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			} else {
 				IBrowserDescriptor ewb = BrowserManager.getInstance()
 						.getCurrentWebBrowser();
-				IBrowserExt ext = WebBrowserUIPlugin.findBrowsers(ewb
-						.getLocation());
+				IBrowserExt ext = null;
+				if (ewb != null)
+					ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
 				if (ext != null)
 					webBrowser = ext.createBrowser(browserId,
 							ewb.getLocation(), ewb.getParameters());

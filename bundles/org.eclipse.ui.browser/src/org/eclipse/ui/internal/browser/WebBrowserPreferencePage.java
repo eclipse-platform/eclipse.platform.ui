@@ -16,24 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -56,30 +38,61 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
 /**
  * The preference page that holds Web browser preferences.
  */
-public class WebBrowserPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class WebBrowserPreferencePage extends PreferencePage implements
+		IWorkbenchPreferencePage {
 	protected Button internal;
-   protected Button external;
+
+	protected Button system;
+
+	protected Button external;
+
 	protected Table table;
+
 	protected CheckboxTableViewer tableViewer;
+
 	protected Button edit;
+
 	protected Button remove;
+
 	protected Button search;
-	
+
 	protected Label location;
+
 	protected Label parameters;
-	
+
 	class BrowserContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			List list = new ArrayList();
-			Iterator iterator = BrowserManager.getInstance().getWebBrowsers().iterator();
+			Iterator iterator = BrowserManager.getInstance().getWebBrowsers()
+					.iterator();
 			while (iterator.hasNext()) {
-				IBrowserDescriptor browser = (IBrowserDescriptor) iterator.next();
+				IBrowserDescriptor browser = (IBrowserDescriptor) iterator
+						.next();
 				list.add(browser);
 			}
 			return list.toArray();
@@ -88,22 +101,22 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// do nothing
 		}
-		
+
 		public void dispose() {
 			// do nothing
 		}
 	}
-	
+
 	class BrowserTableLabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return ImageResource.getImage(ImageResource.IMG_EXTERNAL_BROWSER);
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			IBrowserDescriptor browser = (IBrowserDescriptor)element;
+			IBrowserDescriptor browser = (IBrowserDescriptor) element;
 			return notNull(browser.getName());
 		}
-		
+
 		protected String notNull(String s) {
 			if (s == null)
 				return "";
@@ -117,11 +130,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		public void addListener(ILabelProviderListener listener) {
 			// do nothing
 		}
-		
+
 		public void removeListener(ILabelProviderListener listener) {
 			// do nothing
 		}
-		
+
 		public void dispose() {
 			// do nothing
 		}
@@ -137,13 +150,14 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Create the preference options.
-	 *
-	 * @param parent org.eclipse.swt.widgets.Composite
+	 * 
+	 * @param parent
+	 *            org.eclipse.swt.widgets.Composite
 	 * @return org.eclipse.swt.widgets.Control
 	 */
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -152,76 +166,97 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.VERTICAL_ALIGN_FILL);
 		composite.setLayoutData(data);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
+				ContextIds.PREF_BROWSER);
+
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(Messages.preferenceWebBrowserDescription);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-      
-      internal = new Button(composite, SWT.RADIO);
-      internal.setText(Messages.prefInternalBrowser);
+
+		internal = new Button(composite, SWT.RADIO);
+		internal.setText(Messages.prefInternalBrowser);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		internal.setLayoutData(data);
-		
+
 		if (!WebBrowserUtil.canUseInternalWebBrowser())
 			internal.setEnabled(false);
-      
-      external = new Button(composite, SWT.RADIO);
-      external.setText(Messages.prefExternalBrowser);
+
+		if (WebBrowserUtil.canUseSystemBrowser()) {
+			system = new Button(composite, SWT.RADIO);
+			system.setText(Messages.prefSystemBrowser);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+			data.horizontalSpan = 2;
+			system.setLayoutData(data);
+		}
+
+		external = new Button(composite, SWT.RADIO);
+		external.setText(Messages.prefExternalBrowser);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		external.setLayoutData(data);
-		
+
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.browserList);
-		data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+		data = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.VERTICAL_ALIGN_CENTER);
 		data.horizontalSpan = 2;
 		data.horizontalIndent = 15;
 		label.setLayoutData(data);
-		
-		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
+
+		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL
+				| SWT.H_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		data = new GridData(GridData.FILL_BOTH);
-      data.horizontalIndent = 15;
+		data.horizontalIndent = 15;
 		table.setLayoutData(data);
 		table.setHeaderVisible(false);
 		table.setLinesVisible(false);
-		
+
 		TableLayout tableLayout = new TableLayout();
 		new TableColumn(table, SWT.NONE);
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		table.setLayout(tableLayout);
-		
+
 		tableViewer = new CheckboxTableViewer(table);
 		tableViewer.setContentProvider(new BrowserContentProvider());
 		tableViewer.setLabelProvider(new BrowserTableLabelProvider());
 		tableViewer.setInput("root");
 
-		// uncheck any other elements that might be checked and leave only the element checked to
-		// remain checked since one can only chose one brower at a time to be current.
+		// uncheck any other elements that might be checked and leave only the
+		// element checked to
+		// remain checked since one can only chose one brower at a time to be
+		// current.
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
-				IBrowserDescriptor browser = (IBrowserDescriptor) e.getElement();
+				IBrowserDescriptor browser = (IBrowserDescriptor) e
+						.getElement();
 				BrowserManager.getInstance().setCurrentWebBrowser(browser);
-				
-				// if no other browsers are checked, don't allow the single one currently
-				// checked to become unchecked, and lose a current browser. That is, don't
-				// permit unchecking if no other item is checked which is supposed to be the case.
+
+				// if no other browsers are checked, don't allow the single one
+				// currently
+				// checked to become unchecked, and lose a current browser. That
+				// is, don't
+				// permit unchecking if no other item is checked which is
+				// supposed to be the case.
 				Object[] obj = tableViewer.getCheckedElements();
-			   if (obj.length == 0)
-			    	tableViewer.setChecked(e.getElement(), true);
+				if (obj.length == 0)
+					tableViewer.setChecked(e.getElement(), true);
 			}
 		});
-		
-		// set a default, checked browser based on the current browser. If there is not a
+
+		// set a default, checked browser based on the current browser. If there
+		// is not a
 		// current browser, but the first item exists, use that instead.
-		// This will work currently until workbench shutdown, because current browser is not yet persisted.
-		IBrowserDescriptor browser = BrowserManager.getInstance().getCurrentWebBrowser();
+		// This will work currently until workbench shutdown, because current
+		// browser is not yet persisted.
+		IBrowserDescriptor browser = BrowserManager.getInstance()
+				.getCurrentWebBrowser();
 		if (browser != null)
 			tableViewer.setChecked(browser, true);
 		else {
@@ -229,22 +264,27 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 			if (obj != null)
 				tableViewer.setChecked(obj, true);
 		}
-		
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				boolean sel = !tableViewer.getSelection().isEmpty();
-				remove.setEnabled(sel);
-				edit.setEnabled(sel);
-			}
-		});
-		
+
+		tableViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						boolean sel = !tableViewer.getSelection().isEmpty();
+						remove.setEnabled(sel);
+						edit.setEnabled(sel);
+					}
+				});
+
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
+				IStructuredSelection sel = ((StructuredSelection) tableViewer
+						.getSelection());
 				if (sel.getFirstElement() != null) {
-					IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
-					IBrowserDescriptorWorkingCopy wc = browser2.getWorkingCopy();
-					BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell(), wc);
+					IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
+							.getFirstElement();
+					IBrowserDescriptorWorkingCopy wc = browser2
+							.getWorkingCopy();
+					BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(
+							getShell(), wc);
 					if (dialog.open() != Window.CANCEL) {
 						try {
 							tableViewer.refresh(wc.save());
@@ -255,25 +295,32 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 		});
-		
+
 		table.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL) {
-					IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
+					IStructuredSelection sel = ((StructuredSelection) tableViewer
+							.getSelection());
 					if (sel.getFirstElement() != null) {
-						IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+						IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
+								.getFirstElement();
 						try {
-		               browser2.delete();
+							browser2.delete();
 							tableViewer.remove(browser2);
-							
-							// need here to ensure that if the item deleted was checked, ie. was
-							// the current browser, that the new current browser will be the first in the
-							// list, typically, the internal browser, which cannot be
+
+							// need here to ensure that if the item deleted was
+							// checked, ie. was
+							// the current browser, that the new current browser
+							// will be the first in the
+							// list, typically, the internal browser, which
+							// cannot be
 							// deleted, and be current
-							BrowserManager manager = BrowserManager.getInstance();
+							BrowserManager manager = BrowserManager
+									.getInstance();
 							if (browser2 == manager.getCurrentWebBrowser()) {
 								if (manager.browsers.size() > 0) {
-									IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers.get(0);
+									IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers
+											.get(0);
 									manager.setCurrentWebBrowser(wb);
 									tableViewer.setChecked(wb, true);
 								}
@@ -289,7 +336,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				// ignore
 			}
 		});
-		
+
 		Composite buttonComp = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
 		layout.horizontalSpacing = 0;
@@ -298,26 +345,31 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		buttonComp.setLayout(layout);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_FILL);
 		buttonComp.setLayoutData(data);
-		
+
 		final Button add = SWTUtil.createButton(buttonComp, Messages.add);
 		add.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell());
+				BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(
+						getShell());
 				if (dialog.open() == Window.CANCEL)
 					return;
 				tableViewer.refresh();
 			}
 		});
-		
+
 		edit = SWTUtil.createButton(buttonComp, Messages.edit);
 		edit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
-				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+				IStructuredSelection sel = ((StructuredSelection) tableViewer
+						.getSelection());
+				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
+						.getFirstElement();
 				IBrowserDescriptorWorkingCopy wc = browser2.getWorkingCopy();
-				BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell(), wc);
+				BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(
+						getShell(), wc);
 				if (dialog.open() != Window.CANCEL) {
 					try {
 						tableViewer.refresh(wc.save());
@@ -331,20 +383,25 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		remove = SWTUtil.createButton(buttonComp, Messages.remove);
 		remove.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = ((StructuredSelection) tableViewer.getSelection());
-				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel.getFirstElement();
+				IStructuredSelection sel = ((StructuredSelection) tableViewer
+						.getSelection());
+				IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
+						.getFirstElement();
 				try {
-               browser2.delete();
+					browser2.delete();
 					tableViewer.remove(browser2);
-					
-					// need here to ensure that if the item deleted was checked, ie. was
-					// the current browser, that the new current browser will be the first in the
+
+					// need here to ensure that if the item deleted was checked,
+					// ie. was
+					// the current browser, that the new current browser will be
+					// the first in the
 					// list, typically, the internal browser, which cannot be
 					// deleted, and be current
 					BrowserManager manager = BrowserManager.getInstance();
 					if (browser2 == manager.getCurrentWebBrowser()) {
 						if (manager.browsers.size() > 0) {
-							IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers.get(0);
+							IBrowserDescriptor wb = (IBrowserDescriptor) manager.browsers
+									.get(0);
 							manager.setCurrentWebBrowser(wb);
 							tableViewer.setChecked(wb, true);
 						}
@@ -354,14 +411,15 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 		});
-		
+
 		search = SWTUtil.createButton(buttonComp, Messages.search);
 		data = (GridData) search.getLayoutData();
 		data.verticalIndent = 9;
 		search.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				final List foundBrowsers = new ArrayList();
-				final List existingPaths = WebBrowserUtil.getExternalBrowserPaths();
+				final List existingPaths = WebBrowserUtil
+						.getExternalBrowserPaths();
 
 				// select a target directory for the search
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
@@ -371,13 +429,14 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				String path = dialog.open();
 				if (path == null)
 					return;
-				
+
 				final File rootDir = new File(path);
 				ProgressMonitorDialog pm = new ProgressMonitorDialog(getShell());
 
 				IRunnableWithProgress r = new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
-						monitor.beginTask(Messages.searchingTaskName, IProgressMonitor.UNKNOWN);
+						monitor.beginTask(Messages.searchingTaskName,
+								IProgressMonitor.UNKNOWN);
 						search(rootDir, existingPaths, foundBrowsers, monitor);
 						monitor.done();
 					}
@@ -386,39 +445,46 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				try {
 					pm.run(true, true, r);
 				} catch (InvocationTargetException ex) {
-					Trace.trace(Trace.SEVERE, "Invocation Exception occured running monitor: " + ex);
+					Trace.trace(Trace.SEVERE,
+							"Invocation Exception occured running monitor: "
+									+ ex);
 				} catch (InterruptedException ex) {
-					Trace.trace(Trace.SEVERE, "Interrupted exception occured running monitor: " + ex);
+					Trace.trace(Trace.SEVERE,
+							"Interrupted exception occured running monitor: "
+									+ ex);
 					return;
 				}
-				
+
 				if (pm.getProgressMonitor().isCanceled())
 					return;
-				
+
 				List browsersToCreate = foundBrowsers;
-				
+
 				if (browsersToCreate == null) // cancelled
 					return;
-				
+
 				if (browsersToCreate.isEmpty()) { // no browsers found
 					WebBrowserUtil.openMessage(Messages.searchingNoneFound);
 					return;
 				}
-				
+
 				Iterator iterator = browsersToCreate.iterator();
 				while (iterator.hasNext()) {
-					IBrowserDescriptorWorkingCopy browser2 = (IBrowserDescriptorWorkingCopy) iterator.next();
+					IBrowserDescriptorWorkingCopy browser2 = (IBrowserDescriptorWorkingCopy) iterator
+							.next();
 					browser2.save();
 				}
 				tableViewer.refresh();
 			}
 		});
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(search, ContextIds.PREF_BROWSER_EXTERNAL_SEARCH);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(search,
+				ContextIds.PREF_BROWSER_EXTERNAL_SEARCH);
+
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
-				IBrowserDescriptor browser2 = (IBrowserDescriptor) e.getElement();
+				IBrowserDescriptor browser2 = (IBrowserDescriptor) e
+						.getElement();
 				BrowserManager.getInstance().setCurrentWebBrowser(browser2);
 			}
 		});
@@ -427,7 +493,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 			public void widgetSelected(SelectionEvent e) {
 				boolean inte = !external.getSelection();
 				boolean sel = !tableViewer.getSelection().isEmpty();
-				
+
 				table.setEnabled(!inte);
 				add.setEnabled(!inte);
 				edit.setEnabled(!inte && sel);
@@ -439,31 +505,33 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				// ignore
 			}
 		});
-		internal.setSelection(WebBrowserPreference.isUseInternalBrowser());
-		external.setSelection(!WebBrowserPreference.isUseInternalBrowser());
-		
+		internal.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.INTERNAL);
+		system.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.SYSTEM);		
+		external.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.EXTERNAL);
+
 		boolean sel = !tableViewer.getSelection().isEmpty();
-		boolean inte = WebBrowserPreference.isUseInternalBrowser();
-		table.setEnabled(!inte);
-		add.setEnabled(!inte);
-		edit.setEnabled(!inte && sel);
-		remove.setEnabled(!inte && sel);
-		search.setEnabled(!inte);
-		
+		boolean exte = WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.EXTERNAL;
+		table.setEnabled(exte);
+		add.setEnabled(exte);
+		edit.setEnabled(exte && sel);
+		remove.setEnabled(exte && sel);
+		search.setEnabled(exte);
+
 		Dialog.applyDialogFont(composite);
-		
+
 		return composite;
 	}
-	
+
 	/**
 	 * Initializes this preference page using the passed workbench.
-	 *
-	 * @param workbench the current workbench
+	 * 
+	 * @param workbench
+	 *            the current workbench
 	 */
 	public void init(IWorkbench workbench) {
 		// do nothing
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -472,29 +540,30 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		if (visible)
 			setTitle(Messages.preferenceWebBrowserTitleLong);
 	}
-	
+
 	protected Object getSelection(ISelection sel2) {
 		IStructuredSelection sel = (IStructuredSelection) sel2;
 		return sel.getFirstElement();
 	}
-	
+
 	// Uncheck all the items except the current one that was just checked
 	protected void checkNewDefaultBrowser(Object browser) {
 		TableItem[] children = tableViewer.getTable().getItems();
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
-			
-			if (!(item.getData().equals(browser))) 
+
+			if (!(item.getData().equals(browser)))
 				item.setChecked(false);
 		}
 	}
 
-	protected static void search(File directory, List existingPaths, List foundBrowsers, IProgressMonitor monitor) {
+	protected static void search(File directory, List existingPaths,
+			List foundBrowsers, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
 
 		monitor.subTask(NLS.bind(Messages.searching,
-			new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
+				new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
 		
 		String[] names = directory.list();
 		List subDirs = new ArrayList();
@@ -504,17 +573,15 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 				return;
 
 			File file = new File(directory, names[i]);
-			
+
 			if (existingPaths.contains(file.getAbsolutePath().toLowerCase()))
 				continue;
 
-			IBrowserDescriptorWorkingCopy wc = WebBrowserUtil.createExternalBrowser(file);
-			if (wc != null) {
+			IBrowserDescriptorWorkingCopy wc = WebBrowserUtil
+					.createExternalBrowser(file);
+			if (wc != null)
 				foundBrowsers.add(wc);
-				monitor.subTask(NLS.bind(Messages.searching,
-					new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
-			}
-
+			
 			if (file.isDirectory()) {
 				if (monitor.isCanceled())
 					return;
@@ -529,24 +596,37 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 			}
 		}
 	}
-	
+
 	/**
-	 * Performs special processing when this page's Defaults button has been pressed.
+	 * Performs special processing when this page's Defaults button has been
+	 * pressed.
 	 */
 	protected void performDefaults() {
-		internal.setSelection(WebBrowserPreference.isDefaultUseInternalBrowser());
-		external.setSelection(!WebBrowserPreference.isDefaultUseInternalBrowser());
-	
+		internal.setSelection(WebBrowserPreference
+				.isDefaultUseInternalBrowser());
+		system.setSelection(!WebBrowserPreference.
+				isDefaultUseInternalBrowser() &&
+				WebBrowserPreference.isDefaultUseSystemBrowser());
+		external.setSelection(!WebBrowserPreference.
+				isDefaultUseInternalBrowser() &&
+				!WebBrowserPreference.isDefaultUseSystemBrowser());
+
 		super.performDefaults();
 	}
 
 	/**
-	 * Method declared on IPreferencePage.
-	 * Subclasses should override
+	 * Method declared on IPreferencePage. Subclasses should override
 	 */
 	public boolean performOk() {
-		WebBrowserPreference.setUseInternalBrowser(internal.getSelection());
-		
+		int choice;
+		if (internal.getSelection())
+			choice = WebBrowserPreference.INTERNAL;
+		else if (system.getSelection())
+			choice = WebBrowserPreference.SYSTEM;
+		else
+			choice = WebBrowserPreference.EXTERNAL;
+		WebBrowserPreference.setBrowserChoice(choice);
+
 		return true;
 	}
 }

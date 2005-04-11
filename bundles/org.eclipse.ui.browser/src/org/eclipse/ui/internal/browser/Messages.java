@@ -41,6 +41,7 @@ public class Messages extends NLS {
 	public static String preferenceWebBrowserDescription;
 	public static String prefInternalBrowser;
 	public static String prefExternalBrowser;
+	public static String prefSystemBrowser;
 	public static String browserList;
 	public static String add;
 	public static String edit;

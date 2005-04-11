@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -201,7 +202,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (oldImage != null && !oldImage.isDisposed())
 				oldImage.dispose();
 		} else
-			throw new PartInitException(WebBrowserUIPlugin.getResource("%errorInvalidEditorInput", input.getName()));
+			throw new PartInitException(NLS.bind(Messages.errorInvalidEditorInput, input.getName()));
 		
 		setSite(site);
 		setInput(input);
@@ -326,6 +327,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
                 page.openEditor(input, editorId);
                 return;
             } catch (PartInitException e) {
+					// ignore
             }
         }
         
