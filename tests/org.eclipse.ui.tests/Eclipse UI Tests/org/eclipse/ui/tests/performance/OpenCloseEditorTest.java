@@ -22,33 +22,36 @@ import org.eclipse.ui.ide.IDE;
  */
 public class OpenCloseEditorTest extends BasicPerformanceTest {
 
-    private String extension;
+	private String extension;
 
-    /**
-     * @param tagging
-     * @param testName
-     */
-    public OpenCloseEditorTest(String extension, int tagging) {
-        super ("testOpenAndCloseEditors:" + extension, tagging);
-        this.extension = extension;    
-    }
-    
-    
-    protected void runTest() throws Throwable {
-        IFile file = getProject().getFile("1." + extension);
-        assertTrue(file.exists());
-        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-                   
-        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
-            startMeasuring();
-            IEditorPart part = IDE.openEditor(activePage, file, true);
-            processEvents();
-            activePage.closeEditor(part, false);
-            processEvents();
-            stopMeasuring();
-        }
-        tagIfNecessary("Open/Close Editor", Dimension.CPU_TIME);
-        commitMeasurements();
-        assertPerformance();        
-    }
+	/**
+	 * @param tagging
+	 * @param testName
+	 */
+	public OpenCloseEditorTest(String extension, int tagging) {
+		super("testOpenAndCloseEditors:" + extension, tagging);
+		this.extension = extension;
+	}
+
+	protected void runTest() throws Throwable {
+		IFile file = getProject().getFile("1." + extension);
+		assertTrue(file.exists());
+		IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
+				.getActivePage();
+
+		for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+			startMeasuring();
+			for (int j = 0; j < 10; j++) {
+				IEditorPart part = IDE.openEditor(activePage, file, true);
+				processEvents();
+				activePage.closeEditor(part, false);
+				processEvents();
+				
+			}
+			stopMeasuring();
+		}
+		tagIfNecessary("Open/Close Editor", Dimension.CPU_TIME);
+		commitMeasurements();
+		assertPerformance();
+	}
 }
