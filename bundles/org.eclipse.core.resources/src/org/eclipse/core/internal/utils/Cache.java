@@ -127,7 +127,7 @@ public class Cache {
 	public Cache(int initialCapacity, int maximumCapacity, double threshold) {
 		Assert.isTrue(maximumCapacity >= initialCapacity, "maximum capacity < initial capacity"); //$NON-NLS-1$
 		Assert.isTrue(threshold >= 0 && threshold <= 1, "threshold should be between 0 and 1"); //$NON-NLS-1$
-		Assert.isTrue(initialCapacity > 0, "initial capacity must be zero, or a positive number"); //$NON-NLS-1$
+		Assert.isTrue(initialCapacity > 0, "initial capacity must be greater than zero"); //$NON-NLS-1$
 		entries = new KeyedHashSet(initialCapacity);
 		this.maximumCapacity = maximumCapacity;
 		this.threshold = threshold;
