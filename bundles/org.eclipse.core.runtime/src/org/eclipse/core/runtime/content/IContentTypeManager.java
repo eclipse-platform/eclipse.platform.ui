@@ -195,10 +195,12 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	public IContentType getContentType(String contentTypeIdentifier);
 
 	/**
-	 * Returns a newly created content type matcher using the given content type selection policy.
+	 * Returns a newly created content type matcher using the given content type selection policy
+	 * and preference scope. If the preference scope is <code>null</code>, the default scope 
+	 * is used.
 	 * 
 	 * @param customPolicy a selection policy
-	 * @param context a user preference context to be used by the matcher
+	 * @param context a user preference context to be used by the matcher, or <code>null</code>
 	 * @return a content type matcher that uses the given policy
 	 * @since 3.1 
 	 */
