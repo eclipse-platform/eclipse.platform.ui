@@ -137,8 +137,8 @@
 		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
 			<fileset dir="${build.result.folder}/@dot" includes="**"			/>
 		</copy>
-		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true">
-			<fileset dir="${basedir}" includes="about.html,plugin.xml,plugin.properties,@dot/,META-INF/"			/>
+		<copy todir="${destination.temp.folder}/org.eclipse.team.cvs.ssh2_3.1.0" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}" includes="about.html,plugin.xml,plugin.properties,META-INF/"			/>
 		</copy>
 	</target>
 
