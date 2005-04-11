@@ -81,7 +81,7 @@ public class BrowserExt implements IBrowserExt {
 	protected BrowserFactory getDelegate() {
 		if (delegate == null) {
 			try {
-				delegate = (BrowserFactory) element.createExecutableExtension("class");
+				delegate = (BrowserFactory) element.createExecutableExtension("factoryclass");
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Could not create delegate" + toString() + ": " + e.getMessage());
 			}

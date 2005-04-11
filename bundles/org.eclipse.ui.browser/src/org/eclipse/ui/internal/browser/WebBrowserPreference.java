@@ -18,13 +18,20 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
+
 /**
  * Preferences for the Web browser.
  */
 public class WebBrowserPreference {
 	protected static final String PREF_BROWSER_HISTORY = "webBrowserHistory";
+
 	protected static final String PREF_INTERNAL_WEB_BROWSER_HISTORY = "internalWebBrowserHistory";
-   protected static final String PREF_USE_INTERNAL_BROWSER = "use-internal-browser";
+
+	protected static final String PREF_BROWSER_CHOICE = "browser-choice";
+	
+	public static final int INTERNAL = 0;
+	public static final int SYSTEM = 1;
+	public static final int EXTERNAL = 2;
 
 	/**
 	 * WebBrowserPreference constructor comment.
@@ -41,7 +48,8 @@ public class WebBrowserPreference {
 	public static String getHomePageURL() {
 		try {
 			// get the default home page
-			URL url = WebBrowserUIPlugin.getInstance().getBundle().getEntry("home/home.html");
+			URL url = WebBrowserUIPlugin.getInstance().getBundle().getEntry(
+					"home/home.html");
 			url = Platform.resolve(url);
 			return url.toExternalForm();
 		} catch (Exception e) {
@@ -51,7 +59,7 @@ public class WebBrowserPreference {
 
 	/**
 	 * Returns the preference store.
-	 *
+	 * 
 	 * @return the preference store
 	 */
 	protected static IPreferenceStore getPreferenceStore() {
@@ -64,7 +72,8 @@ public class WebBrowserPreference {
 	 * @return java.util.List
 	 */
 	public static List getInternalWebBrowserHistory() {
-		String temp = getPreferenceStore().getString(PREF_INTERNAL_WEB_BROWSER_HISTORY);
+		String temp = getPreferenceStore().getString(
+				PREF_INTERNAL_WEB_BROWSER_HISTORY);
 		StringTokenizer st = new StringTokenizer(temp, "|*|");
 		List l = new ArrayList();
 		while (st.hasMoreTokens()) {
@@ -73,11 +82,12 @@ public class WebBrowserPreference {
 		}
 		return l;
 	}
-	
+
 	/**
 	 * Sets the Web browser history.
-	 *
-	 * @param list the history
+	 * 
+	 * @param list
+	 *            the history
 	 */
 	public static void setInternalWebBrowserHistory(List list) {
 		StringBuffer sb = new StringBuffer();
@@ -89,7 +99,8 @@ public class WebBrowserPreference {
 				sb.append("|*|");
 			}
 		}
-		getPreferenceStore().setValue(PREF_INTERNAL_WEB_BROWSER_HISTORY, sb.toString());
+		getPreferenceStore().setValue(PREF_INTERNAL_WEB_BROWSER_HISTORY,
+				sb.toString());
 		WebBrowserUIPlugin.getInstance().savePluginPreferences();
 	}
 
@@ -101,23 +112,34 @@ public class WebBrowserPreference {
 	public static boolean isDefaultUseInternalBrowser() {
 		return WebBrowserUtil.canUseInternalWebBrowser();
 	}
-
-   /**
-	 * Returns whether the internal browser is being used
+	
+	/**
+	 * Returns whether the system browser is used by default
 	 * 
-	 * @return true if the internal browser is being used
+	 * @return true if the system browser is used by default
 	 */
-	public static boolean isUseInternalBrowser() {
-		return getPreferenceStore().getBoolean(PREF_USE_INTERNAL_BROWSER);
+	public static boolean isDefaultUseSystemBrowser() {
+		return WebBrowserUtil.canUseSystemBrowser();
 	}
 
 	/**
-	 * Sets whether the internal browser is used
-	 *
-	 * @param b true to use the internal web browser
+	 * Returns whether the internal, system or external browser is being used
+	 * 
+	 * @return one of <code>INTERNAL</code>, <code>EXTERNAL</code> and <code>SYSTEM</code>.
 	 */
-	public static void setUseInternalBrowser(boolean b) {
-		getPreferenceStore().setValue(PREF_USE_INTERNAL_BROWSER, b);
+	public static int getBrowserChoice() {
+		return getPreferenceStore().getInt(PREF_BROWSER_CHOICE);
+	}
+
+	/**
+	 * Sets whether the internal, system and external browser is used
+	 * 
+	 * @param choice
+	 *            </code>INTERNAL</code>, <code>SYSTEM</code> and 
+	 *            <code>EXTERNAL</code>
+	 */
+	public static void setBrowserChoice(int choice) {
+		getPreferenceStore().setValue(PREF_BROWSER_CHOICE, choice);
 		WebBrowserUIPlugin.getInstance().savePluginPreferences();
 	}
 }
