@@ -123,6 +123,7 @@ import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -840,18 +841,22 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(VariablesViewMessages.VariablesView_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.COPY);
 		textAction.configureAction(VariablesViewMessages.VariablesView__Copy_8, "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
 		textAction.configureAction(VariablesViewMessages.VariablesView_Cu_t_11, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setAction(ActionFactory.CUT.getId(), textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
 		textAction.configureAction(VariablesViewMessages.VariablesView__Paste_14, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
 		action= new FindVariableAction(this);
@@ -859,7 +864,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
-		action = new FindReplaceAction(bundle, "find_replace_action.", VariablesView.this);	 //$NON-NLS-1$
+		action = new FindReplaceAction(bundle, "find_replace_action_", VariablesView.this);	 //$NON-NLS-1$
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction("FindReplaceText", action); //$NON-NLS-1$
 		
 		setAction(ActionFactory.FIND.getId(), new Action() {
