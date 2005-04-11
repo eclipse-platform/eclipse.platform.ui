@@ -123,7 +123,7 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		container.setLayout(layout);
 
 		GridData gd;
-		ToolBarManager tbm = new ToolBarManager();
+		ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
 		tbm.createControl(container);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.grabExcessHorizontalSpace = true;
