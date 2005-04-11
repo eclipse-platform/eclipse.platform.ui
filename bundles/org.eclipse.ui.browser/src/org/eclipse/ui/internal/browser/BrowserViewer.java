@@ -25,6 +25,7 @@ import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
+import org.eclipse.swt.browser.VisibilityWindowListener;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -309,12 +310,34 @@ public class BrowserViewer extends Composite {
                     shell2.setLocation(event.location);
                 if (event.size != null)
                     shell2.setSize(event.size);
+					 int style = 0;
+					 if (event.addressBar)
+						 style += LOCATION_BAR;
+					 if (event.toolBar)
+						 style += BUTTON_BAR;
                 BrowserViewer browser2 = new BrowserViewer(shell2, 0);
                 browser2.newWindow = true;
                 event.browser = browser2.browser;
-                shell2.open();
             }
         });
+		  
+		  browser.addVisibilityWindowListener(new VisibilityWindowListener() {
+				public void hide(WindowEvent e) {
+					// ignore
+				}
+				
+				public void show(WindowEvent e) {
+					Browser browser2 = (Browser)e.widget;
+					if (browser2.getParent().getParent() instanceof Shell) {
+						Shell shell = (Shell) browser2.getParent().getParent();
+						if (e.location != null)
+							shell.setLocation(e.location);
+						if (e.size != null)
+							shell.setSize(shell.computeSize(e.size.x, e.size.y));
+						shell.open();
+					}
+				}
+			});
 
         browser.addCloseWindowListener(new CloseWindowListener() {
             public void close(WindowEvent event) {
