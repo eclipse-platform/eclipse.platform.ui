@@ -59,7 +59,6 @@
 		</imageprovider>
 	</extension>
 	
-	<!-- commands and their bindings -->   
 	<extension point="org.eclipse.ui.commands">
 		<category
 			name="%searchCategory.name"
@@ -72,12 +71,6 @@
 			id="org.eclipse.search.ui.openSearchDialog"
 			name= "%ActionDefinition.openSearchDialog.name"
 			description="%ActionDefinition.openSearchDialog.description"
-		/>
-		<keyBinding
-			keySequence="M1+H"
-			contextId="org.eclipse.ui.globalScope"
-			commandId="org.eclipse.search.ui.openSearchDialog"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 
 		<command
@@ -100,25 +93,30 @@
 			name="%ViewCommand.searchView.name"
 			description="%ViewCommand.searchView.description"
 		/>
-		<keyBinding
-            keySequence="Alt+Shift+Q S"
-			contextId="org.eclipse.ui.globalScope"
-			commandId="org.eclipse.search.ui.views.SearchView"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	</extension>
+	
+	<extension point="org.eclipse.ui.bindings">
+		<key
+			sequence="M1+H"
+			commandId="org.eclipse.search.ui.openSearchDialog"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
+		<key
+            sequence="M2+M3+Q S"
+			commandId="org.eclipse.search.ui.views.SearchView"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+		/>
+		<key
 			platform="carbon"
-			keySequence="Alt+Shift+Q S"
-			contextId="org.eclipse.ui.globalScope"
+			sequence="M2+M3+Q S"
 			commandId=""
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
+		<key
 			platform="carbon"
-			keySequence="Command+Alt+Q S"
-			contextId="org.eclipse.ui.globalScope"
+			sequence="COMMAND+ALT+Q S"
 			commandId="org.eclipse.search.ui.views.SearchView"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 	</extension>
 	
