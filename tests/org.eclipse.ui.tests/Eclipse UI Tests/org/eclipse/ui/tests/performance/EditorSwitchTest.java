@@ -20,48 +20,54 @@ import org.eclipse.ui.ide.IDE;
  */
 public class EditorSwitchTest extends BasicPerformanceTest {
 
-    private String extension1;
-    private String extension2;
+	private String extension1;
 
-    /**
-     * Constructor.
-     * 
-     * @param testName
-     *            Test's name.
-     */
-    public EditorSwitchTest(String [] pair) { 
-        super("testEditorSwitch:" + pair[0] + "," + pair[1]);
-        extension1 = pair[0];
-        extension2 = pair[1];
-    }
-	
-    /**
-     * Test editor opening performance. This test always fails.
-     */
-    protected void runTest() throws CoreException {
+	private String extension2;
 
-        // Open both files outside the loop so as not to include
-        // the initial time to open, just switching.
-        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IFile file1 = getProject().getFile("1." + extension1);
-        assertTrue(file1.exists());
-        IFile file2 = getProject().getFile("1." + extension2);
-        assertTrue(file2.exists());
-        IDE.openEditor(activePage, file1, true);
-        IDE.openEditor(activePage, file2, true);
-        processEvents();
+	/**
+	 * Constructor.
+	 * 
+	 * @param testName
+	 *            Test's name.
+	 */
+	public EditorSwitchTest(String[] pair) {
+		super("testEditorSwitch:" + pair[0] + "," + pair[1]);
+		extension1 = pair[0];
+		extension2 = pair[1];
+	}
 
-        // Switch between the two editors one hundred times.
-        for (int i = 0; i < 20; i++) {
-            startMeasuring();
-            IDE.openEditor(activePage, file1, true);
-            processEvents();
-            IDE.openEditor(activePage, file2, true);
-            processEvents();
-            stopMeasuring();
-            EditorTestHelper.calmDown(500, 30000, 500);
-        }
-        commitMeasurements();
-        assertPerformance();
-   }
+	/**
+	 * Test editor opening performance. This test always fails.
+	 */
+	protected void runTest() throws CoreException {
+
+		// Open both files outside the loop so as not to include
+		// the initial time to open, just switching.
+		IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
+				.getActivePage();
+		IFile file1 = getProject().getFile("1." + extension1);
+		assertTrue(file1.exists());
+		IFile file2 = getProject().getFile("1." + extension2);
+		assertTrue(file2.exists());
+		IDE.openEditor(activePage, file1, true);
+		IDE.openEditor(activePage, file2, true);
+		processEvents();
+
+		// Switch between the two editors one hundred times.
+		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+			startMeasuring();
+			for (int j = 0; j < 10; j++) {
+
+				IDE.openEditor(activePage, file1, true);
+				processEvents();
+				IDE.openEditor(activePage, file2, true);
+				processEvents();
+
+			}
+			stopMeasuring();
+			EditorTestHelper.calmDown(500, 30000, 500);
+		}
+		commitMeasurements();
+		assertPerformance();
+	}
 }
