@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.scheduler.*;
-import org.eclipse.update.internal.scheduler.UpdateScheduler;
+import org.eclipse.update.internal.scheduler.UpdateSchedulerPlugin;
 
 public class AutomaticUpdatesPreferencePage
 	extends PreferencePage
@@ -45,12 +45,12 @@ public class AutomaticUpdatesPreferencePage
 		container.setLayout(layout);
 
 		enabledCheck = new Button(container, SWT.CHECK);
-		enabledCheck.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findUpdates")); //$NON-NLS-1$
+		enabledCheck.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_findUpdates); 
 
 		createSpacer(container, 1);
 
 		updateScheduleGroup = new Group(container, SWT.NONE);
-		updateScheduleGroup.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.UpdateSchedule")); //$NON-NLS-1$
+		updateScheduleGroup.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_UpdateSchedule); 
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		updateScheduleGroup.setLayout(layout);
@@ -59,7 +59,7 @@ public class AutomaticUpdatesPreferencePage
 
 		onStartupRadio = new Button(updateScheduleGroup, SWT.RADIO);
 		onStartupRadio.setText(
-			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnStart")); //$NON-NLS-1$
+			UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_findOnStart); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		onStartupRadio.setLayoutData(gd);
@@ -70,7 +70,7 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		onScheduleRadio = new Button(updateScheduleGroup, SWT.RADIO);
-		onScheduleRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnSchedule")); //$NON-NLS-1$
+		onScheduleRadio.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_findOnSchedule); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		onScheduleRadio.setLayoutData(gd);
@@ -88,7 +88,7 @@ public class AutomaticUpdatesPreferencePage
 		dayCombo.setLayoutData(gd);
 		
 		Label label = new Label(updateScheduleGroup, SWT.NULL);
-		label.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.at")); //$NON-NLS-1$
+		label.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_at); 
 		
 		hourCombo = new Combo(updateScheduleGroup, SWT.READ_ONLY);
 		hourCombo.setItems(SchedulerStartup.HOURS);
@@ -99,7 +99,7 @@ public class AutomaticUpdatesPreferencePage
 		createSpacer(container, 1);
 		
 		downloadGroup = new Group(container, SWT.NONE);
-		downloadGroup.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadOptions")); //$NON-NLS-1$
+		downloadGroup.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_downloadOptions); 
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		downloadGroup.setLayout(layout);
@@ -108,7 +108,7 @@ public class AutomaticUpdatesPreferencePage
 
 		searchOnlyRadio = new Button(downloadGroup, SWT.RADIO);
 		searchOnlyRadio.setText(
-			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.searchAndNotify")); //$NON-NLS-1$
+			UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_searchAndNotify); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		searchOnlyRadio.setLayoutData(gd);
@@ -119,7 +119,7 @@ public class AutomaticUpdatesPreferencePage
 		});
 
 		searchAndDownloadRadio = new Button(downloadGroup, SWT.RADIO);
-		searchAndDownloadRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadAndNotify")); //$NON-NLS-1$
+		searchAndDownloadRadio.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_downloadAndNotify); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		searchAndDownloadRadio.setLayoutData(gd);
@@ -149,21 +149,21 @@ public class AutomaticUpdatesPreferencePage
 	}
 
 	private void initialize() {
-		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
-		enabledCheck.setSelection(pref.getBoolean(UpdateScheduler.P_ENABLED));
-		setSchedule(pref.getString(UpdateScheduler.P_SCHEDULE));
+		Preferences pref = UpdateSchedulerPlugin.getDefault().getPluginPreferences();
+		enabledCheck.setSelection(pref.getBoolean(UpdateSchedulerPlugin.P_ENABLED));
+		setSchedule(pref.getString(UpdateSchedulerPlugin.P_SCHEDULE));
 
 		dayCombo.setText(SchedulerStartup.DAYS[getDay(pref)]);
 		hourCombo.setText(SchedulerStartup.HOURS[getHour(pref)]);
 		
-		searchOnlyRadio.setSelection(!pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
-		searchAndDownloadRadio.setSelection(pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
+		searchOnlyRadio.setSelection(!pref.getBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
+		searchAndDownloadRadio.setSelection(pref.getBoolean(UpdateSchedulerPlugin.P_DOWNLOAD));
 
 		pageChanged();
 	}
 
 	private void setSchedule(String value) {
-		if (value.equals(UpdateScheduler.VALUE_ON_STARTUP))
+		if (value.equals(UpdateSchedulerPlugin.VALUE_ON_STARTUP))
 			onStartupRadio.setSelection(true);
 		else
 			onScheduleRadio.setSelection(true);
@@ -183,9 +183,9 @@ public class AutomaticUpdatesPreferencePage
 
 	protected void performDefaults() {
 		super.performDefaults();
-		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
+		Preferences pref = UpdateSchedulerPlugin.getDefault().getPluginPreferences();
 		enabledCheck.setSelection(
-			pref.getDefaultBoolean(UpdateScheduler.P_ENABLED));
+			pref.getDefaultBoolean(UpdateSchedulerPlugin.P_ENABLED));
 	}
 
 	/** 
@@ -193,21 +193,21 @@ public class AutomaticUpdatesPreferencePage
 	 * Subclasses should override
 	 */
 	public boolean performOk() {
-		Preferences pref = UpdateScheduler.getDefault().getPluginPreferences();
-		pref.setValue(UpdateScheduler.P_ENABLED, enabledCheck.getSelection());
+		Preferences pref = UpdateSchedulerPlugin.getDefault().getPluginPreferences();
+		pref.setValue(UpdateSchedulerPlugin.P_ENABLED, enabledCheck.getSelection());
 		if (onStartupRadio.getSelection())
-			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_STARTUP);
+			pref.setValue(UpdateSchedulerPlugin.P_SCHEDULE, UpdateSchedulerPlugin.VALUE_ON_STARTUP);
 		else 
-			pref.setValue(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_SCHEDULE);
+			pref.setValue(UpdateSchedulerPlugin.P_SCHEDULE, UpdateSchedulerPlugin.VALUE_ON_SCHEDULE);
 			
 		pref.setValue(SchedulerStartup.P_DAY, dayCombo.getText());
 		pref.setValue(SchedulerStartup.P_HOUR, hourCombo.getText());
 		
-		pref.setValue(UpdateScheduler.P_DOWNLOAD, searchAndDownloadRadio.getSelection());
+		pref.setValue(UpdateSchedulerPlugin.P_DOWNLOAD, searchAndDownloadRadio.getSelection());
 		
-		UpdateScheduler.getDefault().savePluginPreferences();
+		UpdateSchedulerPlugin.getDefault().savePluginPreferences();
 		
-		UpdateScheduler.getScheduler().scheduleUpdateJob();
+		UpdateSchedulerPlugin.getScheduler().scheduleUpdateJob();
 		return true;
 	}
 	

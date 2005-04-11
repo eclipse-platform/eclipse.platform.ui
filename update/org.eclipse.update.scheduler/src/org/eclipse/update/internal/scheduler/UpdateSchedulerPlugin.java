@@ -24,7 +24,7 @@ import org.osgi.framework.*;
  * This plug-in is loaded on startup to fork a job that
  * searches for new plug-ins.
  */
-public class UpdateScheduler extends AbstractUIPlugin{
+public class UpdateSchedulerPlugin extends AbstractUIPlugin{
 	// Preferences
 	public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 	public static final String P_SCHEDULE = "schedule"; //$NON-NLS-1$
@@ -33,7 +33,7 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false //$NON-NLS-1$
 
 	//The shared instance.
-	private static UpdateScheduler plugin;
+	private static UpdateSchedulerPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
@@ -43,7 +43,7 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	/**
 	 * The constructor.
 	 */
-	public UpdateScheduler() {
+	public UpdateSchedulerPlugin() {
 		plugin = this;
 	}
 
@@ -61,32 +61,8 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	/**
 	 * Returns the shared instance.
 	 */
-	public static UpdateScheduler getDefault() {
+	public static UpdateSchedulerPlugin getDefault() {
 		return plugin;
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getString(String key) {
-		ResourceBundle bundle =
-			UpdateScheduler.getDefault().getResourceBundle();
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getString(key);
-		return java.text.MessageFormat.format(text, args);
-	}
-
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getString(key);
-		return java.text.MessageFormat.format(text, new String[] { arg });
 	}
 
 	public static String getPluginId() {
@@ -141,7 +117,7 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	}
 
 	public static IWorkbenchPage getActivePage() {
-		UpdateScheduler plugin = getDefault();
+		UpdateSchedulerPlugin plugin = getDefault();
 		IWorkbenchWindow window =
 			plugin.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null)
@@ -173,6 +149,6 @@ public class UpdateScheduler extends AbstractUIPlugin{
 	}
 	
 	static void setScheduler(SchedulerStartup scheduler) {
-		UpdateScheduler.scheduler = scheduler;
+		UpdateSchedulerPlugin.scheduler = scheduler;
 	}
 }

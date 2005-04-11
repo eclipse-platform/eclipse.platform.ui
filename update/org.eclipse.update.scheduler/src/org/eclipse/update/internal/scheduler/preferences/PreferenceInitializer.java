@@ -12,7 +12,7 @@ package org.eclipse.update.internal.scheduler.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.update.internal.scheduler.UpdateScheduler;
+import org.eclipse.update.internal.scheduler.UpdateSchedulerPlugin;
 import org.osgi.service.prefs.Preferences;
 
 
@@ -26,9 +26,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	public void initializeDefaultPreferences() {
 		Preferences node = new DefaultScope().getNode("org.eclipse.update.scheduler"); //$NON-NLS-1$
-		node.putBoolean(UpdateScheduler.P_ENABLED, false);
-		node.put(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_STARTUP);
-		node.putBoolean(UpdateScheduler.P_DOWNLOAD, false);
+		node.putBoolean(UpdateSchedulerPlugin.P_ENABLED, false);
+		node.put(UpdateSchedulerPlugin.P_SCHEDULE, UpdateSchedulerPlugin.VALUE_ON_STARTUP);
+		node.putBoolean(UpdateSchedulerPlugin.P_DOWNLOAD, false);
 	}
 
 }
