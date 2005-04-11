@@ -506,7 +506,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			}
 		});
 		internal.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.INTERNAL);
-		system.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.SYSTEM);		
+		if (system != null)
+			system.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.SYSTEM);		
 		external.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.EXTERNAL);
 
 		boolean sel = !tableViewer.getSelection().isEmpty();
@@ -604,7 +605,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		internal.setSelection(WebBrowserPreference
 				.isDefaultUseInternalBrowser());
-		system.setSelection(!WebBrowserPreference.
+		if (system != null)
+			system.setSelection(!WebBrowserPreference.
 				isDefaultUseInternalBrowser() &&
 				WebBrowserPreference.isDefaultUseSystemBrowser());
 		external.setSelection(!WebBrowserPreference.
@@ -621,7 +623,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		int choice;
 		if (internal.getSelection())
 			choice = WebBrowserPreference.INTERNAL;
-		else if (system.getSelection())
+		else if (system != null && system.getSelection())
 			choice = WebBrowserPreference.SYSTEM;
 		else
 			choice = WebBrowserPreference.EXTERNAL;
