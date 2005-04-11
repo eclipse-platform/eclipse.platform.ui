@@ -51,21 +51,16 @@ public class RemoteTreeViewer extends TreeViewer {
     class ExpansionJob extends UIJob {
         
         private Object element;
-        private List parents; // top down
-        private Object lock;
+        private List parents = new ArrayList(); // top down
         
         /**
          * Constucts a job to expand the given element.
          * 
          * @param target the element to expand
          */
-        public ExpansionJob(Object target, Object lock) {
+        public ExpansionJob() {
             super(DebugUIViewsMessages.LaunchViewer_1); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
-            element = target;
-            parents = new ArrayList();
-            this.lock = lock;
-            addAllParents(parents, element);
             setSystem(true);
         }
 
@@ -73,10 +68,10 @@ public class RemoteTreeViewer extends TreeViewer {
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-            if (getControl().isDisposed()) {
+            if (getControl().isDisposed() || element == null) {
                 return Status.OK_STATUS;
             }            
-            synchronized (lock) {
+            synchronized (RemoteTreeViewer.this) {
                 boolean allParentsExpanded = true;
                 Iterator iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
@@ -95,7 +90,7 @@ public class RemoteTreeViewer extends TreeViewer {
                         if (isExpandable(element)) {
     	                    expandToLevel(element, 1);
                         }
-                        fExpansionJob = null;
+                        element = null;
                         return Status.OK_STATUS;
                     }
                 }
@@ -104,10 +99,18 @@ public class RemoteTreeViewer extends TreeViewer {
         }
         
         public void validate(Object object) {
-            if (element.equals(object) || parents.contains(object)) {
-                cancel();
-                fExpansionJob = null;
+            if (element != null) {   
+                if (element.equals(object) || parents.contains(object)) {
+                    cancel();
+                    element = null;
+                }
             }
+        }
+
+        public void setDeferredExpansion(Object toExpand) {
+            element = toExpand;
+            parents.clear();
+            addAllParents(parents, element);
         }
         
     }
@@ -117,21 +120,15 @@ public class RemoteTreeViewer extends TreeViewer {
         private IStructuredSelection selection;
         private Object first;
         private List parents; // top down
-        private Object lock;
         
         /**
          * Constucts a job to select the given element.
          * 
          * @param target the element to select
          */
-        public SelectionJob(IStructuredSelection sel, Object lock) {
+        public SelectionJob() {
             super(DebugUIViewsMessages.LaunchViewer_0); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
-            selection = sel;
-            first = selection.getFirstElement();
-            parents = new ArrayList();
-            this.lock = lock;
-            addAllParents(parents, first);
             setSystem(true);
         }
 
@@ -139,10 +136,10 @@ public class RemoteTreeViewer extends TreeViewer {
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-            if (getControl().isDisposed()) {
+            if (getControl().isDisposed() || selection == null) {
                 return Status.OK_STATUS;
             }
-            synchronized (lock) {
+            synchronized (RemoteTreeViewer.this) {
                 boolean allParentsExpanded = true;
                 Iterator iterator = parents.iterator();
                 while (iterator.hasNext() && !monitor.isCanceled()) {
@@ -158,18 +155,28 @@ public class RemoteTreeViewer extends TreeViewer {
                 if (allParentsExpanded) {
                     if (findItem(first) != null) {
                         setSelection(selection, true);
-                        fSelectionJob = null;
+                        selection = null;
                         return Status.OK_STATUS;
                     }
                 }
+
                 return Status.OK_STATUS;
             }
         }
         
+        public void setDeferredSelection(IStructuredSelection sel) {
+            selection = sel;
+            first = selection.getFirstElement();
+            parents = new ArrayList();
+            addAllParents(parents, first);
+        }
+        
         public void validate(Object object) {
-            if (first.equals(object) || parents.contains(object)) {
-                cancel();
-                fSelectionJob = null;
+            if (first != null) {
+                if (first.equals(object) || parents.contains(object)) {
+                    cancel();
+                    selection = null;
+                }
             }
         }
     }
@@ -197,6 +204,8 @@ public class RemoteTreeViewer extends TreeViewer {
     public RemoteTreeViewer(Composite parent) {
         super(parent);
         addDisposeListener();
+        fExpansionJob = new ExpansionJob();
+        fSelectionJob = new SelectionJob();
     }
 
     /**
@@ -209,6 +218,8 @@ public class RemoteTreeViewer extends TreeViewer {
     public RemoteTreeViewer(Composite parent, int style) {
         super(parent, style);
         addDisposeListener();
+        fExpansionJob = new ExpansionJob();
+        fSelectionJob = new SelectionJob();
     }
 
     /**
@@ -219,6 +230,8 @@ public class RemoteTreeViewer extends TreeViewer {
     public RemoteTreeViewer(Tree tree) {
         super(tree);
         addDisposeListener();
+        fExpansionJob = new ExpansionJob();
+        fSelectionJob = new SelectionJob();
     }
     
     private void addDisposeListener() {
@@ -301,29 +314,23 @@ public class RemoteTreeViewer extends TreeViewer {
     public synchronized void deferExpansion(Object element) {
         TreeItem treeItem = (TreeItem) findItem(element);
         if (treeItem == null) {
-            if (fExpansionJob != null) {
-                fExpansionJob.cancel();
-            }
-            fExpansionJob = new ExpansionJob(element, this);
+            fExpansionJob.setDeferredExpansion(element);
             fExpansionJob.schedule();
         } else {
             if (!getExpanded(treeItem)) {
-                expandToLevel(element, 1);
+                fExpansionJob.setDeferredExpansion(element);
+                fExpansionJob.schedule();
             }
         }
     }
     
     public synchronized void deferSelection(IStructuredSelection selection) {
-        Object element = selection.getFirstElement();
-        if (!selection.isEmpty() && findItem(element) == null) {
-            if (fSelectionJob != null) {
-                fSelectionJob.cancel();
-            }
-            fSelectionJob = new SelectionJob(selection, this);
-            fSelectionJob.schedule();
-        } else {
-            setSelection(selection, true);
+        if (fSelectionJob == null) {
+            fSelectionJob = new SelectionJob();
         }
+        
+        fSelectionJob.setDeferredSelection(selection);
+        fSelectionJob.schedule();        
     }    
 
     private void cancel(Job job) {
