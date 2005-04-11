@@ -123,7 +123,12 @@ public class TarInputStream extends FilterInputStream
 		}
 		if(checksumString.length() == 0) return false;
 		if(checksumString.charAt(0) != '0') checksumString.insert(0, '0');
-		fileChecksum = Long.decode(checksumString.toString()).longValue();
+		try {
+			fileChecksum = Long.decode(checksumString.toString()).longValue();
+		} catch(NumberFormatException exception) {
+			//This is not valid if it cannot be parsed
+			return false;
+		}
 
 		// Blank out the checksum.
 		for(i = 0; i < 8; i++) {
@@ -223,8 +228,12 @@ public class TarInputStream extends FilterInputStream
 			mode.append((char) header[pos + i]);
 		}
 		if(mode.length() > 0 && mode.charAt(0) != '0') mode.insert(0, '0');
-		long fileMode = Long.decode(mode.toString()).longValue();
-		entry.setMode(fileMode);
+		try {
+			long fileMode = Long.decode(mode.toString()).longValue();
+			entry.setMode(fileMode);
+		} catch(NumberFormatException nfe) {
+			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe); //$NON-NLS-1$
+		}
 		
 		pos = 100 + 24;
 		StringBuffer size = new StringBuffer();
@@ -233,7 +242,13 @@ public class TarInputStream extends FilterInputStream
 			size.append((char) header[pos + i]);
 		}
 		if(size.charAt(0) != '0') size.insert(0, '0');
-		int fileSize = Integer.decode(size.toString()).intValue();
+		int fileSize;
+		try {
+			fileSize = Integer.decode(size.toString()).intValue();
+		} catch(NumberFormatException nfe) {
+			throw new TarException(DataTransferMessages.TarImport_invalid_tar_format, nfe); //$NON-NLS-1$
+		}
+
 		entry.setSize(fileSize);
 		nextEOF = fileSize;
 		if(fileSize % 512 > 0) {

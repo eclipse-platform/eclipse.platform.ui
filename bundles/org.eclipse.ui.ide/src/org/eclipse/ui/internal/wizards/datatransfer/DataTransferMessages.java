@@ -128,6 +128,8 @@ public class DataTransferMessages extends NLS {
 	public static String ArchiveExport_saveInZipFormat;
 	public static String ArchiveExport_saveInTarFormat;
 
+	public static String TarImport_invalid_tar_format;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DataTransferMessages.class);
