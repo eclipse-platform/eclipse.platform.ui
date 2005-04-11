@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.console;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -28,15 +26,10 @@ import org.eclipse.ui.console.IConsoleConstants;
 public class ConsolePluginImages {
 
 	/** 
-	 * The image registry containing <code>Image</code>s.
+	 * The image registry containing <code>Image</code>s and the <code>ImageDescriptor</code>s.
 	 */
 	private static ImageRegistry imageRegistry;
-	
-	/**
-	 * A table of all the <code>ImageDescriptor</code>s.
-	 */
-	private static Map imageDescriptors;
-	
+		
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
 
@@ -93,7 +86,6 @@ public class ConsolePluginImages {
 			ConsolePlugin.log(me);
 		}
 		imageRegistry.put(key, desc);
-		imageDescriptors.put(key, desc);
 	}
 	
 	/**
@@ -136,7 +128,6 @@ public class ConsolePluginImages {
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(ConsolePlugin.getStandardDisplay());
-		imageDescriptors = new HashMap(30);
 		declareImages();
 		return imageRegistry;
 	}
@@ -154,10 +145,7 @@ public class ConsolePluginImages {
 	 * or <code>null</code> if it does not exist.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
-		if (imageDescriptors == null) {
-			initializeImageRegistry();
-		}
-		return (ImageDescriptor)imageDescriptors.get(key);
+		return getImageRegistry().getDescriptor(key);
 	}
 	
 	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {

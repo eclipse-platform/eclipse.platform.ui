@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -31,15 +30,10 @@ import org.osgi.framework.Bundle;
 public class DebugPluginImages {
 
 	/** 
-	 * The image registry containing <code>Image</code>s.
+	 * The image registry containing <code>Image</code>s and <code>ImageDescriptor</code>s.
 	 */
 	private static ImageRegistry imageRegistry;
 	
-	/**
-	 * A table of all the <code>ImageDescriptor</code>s.
-	 */
-	private static HashMap imageDescriptors;
-
 	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID"; //$NON-NLS-1$
 	
@@ -223,7 +217,6 @@ public class DebugPluginImages {
 				configTypeID = configElement.getAttribute("type"); //$NON-NLS-1$
 			}			
 			imageRegistry.put(configTypeID, imageDescriptor);				
-			imageDescriptors.put(configTypeID, imageDescriptor);
 		}
 	}
 
@@ -241,7 +234,6 @@ public class DebugPluginImages {
 			DebugUIPlugin.log(me);
 		}
 		imageRegistry.put(key, desc);
-		imageDescriptors.put(key, desc);
 	}
 	
 	/**
@@ -284,7 +276,6 @@ public class DebugPluginImages {
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
-		imageDescriptors = new HashMap(30);
 		declareImages();
 		return imageRegistry;
 	}
@@ -302,10 +293,7 @@ public class DebugPluginImages {
 	 * or <code>null</code> if it does not exist.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
-		if (imageDescriptors == null) {
-			initializeImageRegistry();
-		}
-		return (ImageDescriptor)imageDescriptors.get(key);
+		return getImageRegistry().getDescriptor(key);
 	}
 	
 	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
