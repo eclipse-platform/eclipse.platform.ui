@@ -46,7 +46,8 @@ public class TeamUIMessages extends NLS {
 	public static String SyncInfoCompareInput_0;
 	public static String SyncInfoCompareInput_1;
 	public static String SyncInfoCompareInput_2;
-	public static String SyncInfoCompareInput_tooltip;
+	public static String SyncInfoCompareInput_3;
+    public static String SyncInfoCompareInput_tooltip;
 
 	public static String TeamAction_internal;
 	public static String TextPreferencePage_add;

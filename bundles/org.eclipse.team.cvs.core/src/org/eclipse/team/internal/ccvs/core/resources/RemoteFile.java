@@ -187,6 +187,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	private void internalFetchContents(IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(CVSMessages.RemoteFile_getContents, 100);//$NON-NLS-1$
+        monitor.subTask(CVSMessages.RemoteFile_getContents);
 		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) {
 			// The revision of the remote file is not known so we need to use the tag to get the status of the file
 			CVSTag tag = getSyncInfo().getTag();

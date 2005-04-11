@@ -208,16 +208,20 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		// update the title now that the remote revision number as been fetched
 		// from the server
 		setTitle(getTitle());
+        monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
+        monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
 		try {
 			if (participant != null) {
-			    participant.prepareCompareInput(node, getCompareConfiguration(), monitor);
+			    participant.prepareCompareInput(node, getCompareConfiguration(), Policy.subMonitorFor(monitor, 100));
 			} else {
 			    Utils.updateLabels(node.getSyncInfo(), getCompareConfiguration());
-				node.cacheContents(monitor);
+				node.cacheContents(Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (TeamException e) {
 			throw new InvocationTargetException(e);
-		}
+		} finally {
+            monitor.done();
+        }
 		return node;
 	}
 
