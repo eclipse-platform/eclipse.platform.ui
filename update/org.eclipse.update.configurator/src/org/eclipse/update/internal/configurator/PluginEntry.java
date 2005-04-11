@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
+import org.eclipse.osgi.util.NLS;
+
 
 /**
  */
@@ -124,7 +126,7 @@ public class PluginEntry {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				Utils.log(Messages.getString("PluginEntry.versionError", id, ver)); //$NON-NLS-1$ //$NON-NLS-2$
+				Utils.log(NLS.bind("PluginEntry.versionError", (new String[] { id, ver }))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

@@ -41,6 +41,6 @@ public class ProductProvider implements IProductProvider{
 	 * @see org.eclipse.core.runtime.IProductProvider#getName()
 	 */
 	public String getName() {
-		return Messages.getString("ProductProvider"); //$NON-NLS-1$
+		return Messages.ProductProvider; 
 	}
 }

@@ -16,6 +16,7 @@ import java.net.*;
 
 import javax.xml.parsers.*;
 
+import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
@@ -100,7 +101,7 @@ public class FeatureParser extends DefaultHandler {
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			System.out.println(Messages.getString("FeatureParser.IdOrVersionInvalid", new String[] { id, ver})); //$NON-NLS-1$
+			System.out.println(NLS.bind("FeatureParser.IdOrVersionInvalid", (new String[] { id, ver}))); //$NON-NLS-1$
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
 //			String provider = attributes.getValue("provider-name"); //$NON-NLS-1$

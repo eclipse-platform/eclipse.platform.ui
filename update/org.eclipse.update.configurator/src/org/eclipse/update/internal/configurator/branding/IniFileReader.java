@@ -16,6 +16,7 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.internal.configurator.*;
 import org.osgi.framework.*;
 
@@ -81,7 +82,7 @@ public class IniFileReader {
 		bundle = Platform.getBundle(pluginId);
 		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED || bundle.getState() == Bundle.INSTALLED) {
 			bundle = null; // make it null for other test down the road
-			String message = Messages.getString("IniFileReader.MissingDesc", featureId);  //$NON-NLS-1$
+			String message = NLS.bind("IniFileReader.MissingDesc", (new String[] { featureId }));  //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PID, 0, message, null);
 		}
 
@@ -96,7 +97,7 @@ public class IniFileReader {
 			ioe = e;
 		}
 		if (iniURL == null) {
-			String message = Messages.getString("IniFileReader.OpenINIError", iniFilename);  //$NON-NLS-1$
+			String message = NLS.bind("IniFileReader.OpenINIError", (new String[] { iniFilename }));  //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PID, 0, message, ioe);
 		}
 		
@@ -108,7 +109,7 @@ public class IniFileReader {
 				if (propertiesURL != null)
 					propertiesURL = Platform.resolve(propertiesURL);
 			} catch (IOException e) {
-				String message = Messages.getString("IniFileReader.OpenPropError", propertiesFilename); //$NON-NLS-1$
+				String message = NLS.bind("IniFileReader.OpenPropError", (new String[] { propertiesFilename })); //$NON-NLS-1$
 				return new Status(IStatus.ERROR, PID, 0, message, e);
 			}
 		}
@@ -121,7 +122,7 @@ public class IniFileReader {
 				if (mappingsURL != null)
 					mappingsURL = Platform.resolve(mappingsURL);
 			} catch (IOException e) {
-				String message = Messages.getString("IniFileReader.OpenMapError", mappingsFilename); //$NON-NLS-1$
+				String message = NLS.bind("IniFileReader.OpenMapError", (new String[] { mappingsFilename })); //$NON-NLS-1$
 				return new Status(IStatus.ERROR, PID, 0, message, e);
 			}
 		}
@@ -311,7 +312,7 @@ public class IniFileReader {
 			ini.load(is);
 		} catch (IOException e) {
 			ini = null;
-			String message = Messages.getString("IniFileReader.ReadIniError", iniURL.toExternalForm()); //$NON-NLS-1$
+			String message = NLS.bind("IniFileReader.ReadIniError", (new String[] { iniURL.toExternalForm() })); //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PID, 0, message, e);
 		} finally {
 			try {
@@ -328,7 +329,7 @@ public class IniFileReader {
 				properties = new PropertyResourceBundle(is);
 			} catch (IOException e) {
 				properties = null;
-				String message = Messages.getString("IniFileReader.ReadPropError", propertiesURL.toExternalForm()); //$NON-NLS-1$
+				String message = NLS.bind("IniFileReader.ReadPropError", (new String[] { propertiesURL.toExternalForm() })); //$NON-NLS-1$
 				return new Status(IStatus.ERROR, PID, 0, message, e);
 			} finally {
 				try {
@@ -347,7 +348,7 @@ public class IniFileReader {
 				bundle = new PropertyResourceBundle(is);
 			} catch (IOException e) {
 				bundle = null;
-				String message = Messages.getString("IniFileReader.ReadMapError", mappingsURL.toExternalForm()); //$NON-NLS-1$
+				String message = NLS.bind("IniFileReader.ReadMapError", (new String[] { mappingsURL.toExternalForm() })); //$NON-NLS-1$
 				return new Status(IStatus.ERROR, PID, 0, message, e);
 			} finally {
 				try {

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.service.debug.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
@@ -90,7 +91,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		// where startup was much more disjoint.  Some day that level of decoupling
 		// will return but for now...
 		if (!Platform.isRunning())
-			throw new Exception(Messages.getString("ConfigurationActivator.initialize")); //$NON-NLS-1$
+			throw new Exception(Messages.ConfigurationActivator_initialize); 
 		
 		configLocation = Platform.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
@@ -107,7 +108,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(getInstallURL(), configLocation);
 		if (configuration == null)
-			throw Utils.newCoreException(Messages.getString("ConfigurationActivator.createConfig", configLocation.getURL().toExternalForm()), null); //$NON-NLS-1$
+			throw Utils.newCoreException(NLS.bind("ConfigurationActivator.createConfig", (new String[] { configLocation.getURL().toExternalForm() })), null); //$NON-NLS-1$
 
 		DataInputStream stream = null;
 		try {
@@ -175,7 +176,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 					toRefresh.add(bundlesToUninstall[i]);					
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
-					Utils.log(Messages.getString("ConfigurationActivator.uninstallBundle", bundlesToUninstall[i].getLocation())); //$NON-NLS-1$
+					Utils.log(NLS.bind("ConfigurationActivator.uninstallBundle", (new String[] { bundlesToUninstall[i].getLocation() }))); //$NON-NLS-1$
 				}
 			}
 			
@@ -196,7 +197,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
-						Utils.log(Messages.getString("ConfigurationActivator.installBundle", bundlesToInstall[i]) + "   " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+						Utils.log(NLS.bind("ConfigurationActivator.installBundle", (new String[] { bundlesToInstall[i] })) + "   " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			context.ungetService(reference);
@@ -438,7 +439,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
 	 */
 	public String getName() {
-		return Messages.getString("BundleGroupProvider"); //$NON-NLS-1$
+		return Messages.BundleGroupProvider; 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getBundleGroups()

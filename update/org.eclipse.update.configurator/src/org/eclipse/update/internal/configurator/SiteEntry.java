@@ -17,6 +17,7 @@ import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.configurator.IPlatformConfiguration.*;
 import org.w3c.dom.*;
@@ -276,7 +277,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 						return false;
 					boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
 					if (!valid)
-						Utils.log(Messages.getString("SiteEntry.cannotFindFeatureInDir", f.getAbsolutePath())); //$NON-NLS-1$
+						Utils.log(NLS.bind("SiteEntry.cannotFindFeatureInDir", (new String[] { f.getAbsolutePath() }))); //$NON-NLS-1$
 					return valid;
 				}
 			});
@@ -292,7 +293,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 					if (featureEntry != null)
 						addFeatureEntry(featureEntry);
 				} catch (MalformedURLException e) {
-					Utils.log(Messages.getString("InstalledSiteParser.UnableToCreateURLForFile", featuresDir.getAbsolutePath()));//$NON-NLS-1$
+					Utils.log(NLS.bind("InstalledSiteParser.UnableToCreateURLForFile", (new String[] { featuresDir.getAbsolutePath() })));//$NON-NLS-1$
 				}
 			}
 		}
@@ -373,12 +374,10 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			}
 		} catch (IOException e5) {
 			String pluginFileString2 = pluginURL + "!" + entryName; //$NON-NLS-1$
-			Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing", //$NON-NLS-1$
-					pluginFileString2)); //$NON-NLS-1$
+			Utils.log(NLS.bind("InstalledSiteParser.ErrorAccessing", (new String[] { pluginFileString2 }))); //$NON-NLS-1$
 		} catch (SAXException e3) {
 			String pluginFileString1 = pluginURL + "!" + entryName; //$NON-NLS-1$
-			Utils.log(Messages.getString(
-					"InstalledSiteParser.ErrorParsingFile", pluginFileString1)); //$NON-NLS-1$
+			Utils.log(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString1 }))); //$NON-NLS-1$
 		} finally {
 			if (bundleManifestIn != null) {
 				try {
@@ -443,15 +442,12 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		} catch (IOException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
 			if (ConfigurationActivator.DEBUG)
-				Utils.log(Utils.newStatus(Messages.getString(
-						"InstalledSiteParser.ErrorParsingFile", pluginFileString), e));//$NON-NLS-1$
+				Utils.log(Utils.newStatus(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString })), e));//$NON-NLS-1$
 			else
-				Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing", //$NON-NLS-1$
-						pluginFileString)); //$NON-NLS-1$
+				Utils.log(NLS.bind("InstalledSiteParser.ErrorAccessing", (new String[] { pluginFileString }))); //$NON-NLS-1$
 		} catch (SAXException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
-			Utils.log(Messages.getString(
-					"InstalledSiteParser.ErrorParsingFile", pluginFileString)); //$NON-NLS-1$
+			Utils.log(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString }))); //$NON-NLS-1$
 		}
 	}
 
@@ -515,7 +511,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return pluginsChangeStamp;
 		
 		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
-			Utils.log(Messages.getString("SiteEntry.computePluginStamp", resolvedURL.toExternalForm())); //$NON-NLS-1$
+			Utils.log(NLS.bind("SiteEntry.computePluginStamp", (new String[] { resolvedURL.toExternalForm() }))); //$NON-NLS-1$
 			return 0;
 		}
 
@@ -523,7 +519,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 		File pluginsDir = new File(root, PLUGINS);
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-			Utils.log(Messages.getString("SiteEntry.pluginsDir", pluginsDir.getAbsolutePath())); //$NON-NLS-1$
+			Utils.log(NLS.bind("SiteEntry.pluginsDir", (new String[] { pluginsDir.getAbsolutePath() }))); //$NON-NLS-1$
 			return 0;
 		}
 
@@ -605,7 +601,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				// log error if same feature version/id but a different url
 				if (feature instanceof FeatureEntry && existing instanceof FeatureEntry &&
 						!((FeatureEntry)feature).getURL().equals(((FeatureEntry)existing).getURL()))
-				Utils.log(Messages.getString("SiteEntry.duplicateFeature",getURL().toExternalForm(), existing.getFeatureIdentifier())); //$NON-NLS-1$ //$NON-NLS-2$
+				Utils.log(NLS.bind("SiteEntry.duplicateFeature", (new String[] { getURL().toExternalForm(), existing.getFeatureIdentifier() }))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,60 +10,84 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
-import java.text.MessageFormat;
-import java.util.*;
+import org.eclipse.osgi.util.NLS;
 
-public class Messages {
-	private static String bundleName = "org.eclipse.update.internal.configurator.messages"; //$NON-NLS-1$
-	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+public final class Messages extends NLS {
 
-	/**
-	 * Lookup the message with the given ID in this catalog 
-	 */
-	public static String getString(String id) {
-		return getString(id, (String[]) null);
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string.
-	 */
-	public static String getString(String id, String binding) {
-		return getString(id, new String[] { binding });
-	}
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given strings.
-	 */
-	public static String getString(String id, String binding1, String binding2) {
-		return getString(id, new String[] { binding1, binding2 });
+	private static final String BUNDLE_NAME = "org.eclipse.update.internal.configurator.messages";//$NON-NLS-1$
+
+	private Messages() {
+		// Do not instantiate
 	}
 
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string values.
-	 */
-	public static String getString(String id, String[] bindings) {
-		if (id == null)
-			return "No message available"; //$NON-NLS-1$
-		String message = null;
-		try {
-			message = bundle.getString(id);
-		} catch (MissingResourceException e) {
-			// If we got an exception looking for the message, fail gracefully by just returning
-			// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-			return "Missing message: " + id + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (bindings == null)
-			return message;
-		return MessageFormat.format(message, bindings);
-	}
-	/**
-	 * Print a debug message to the console. If the given boolean is <code>true</code> then
-	 * pre-pend the message with the current date.
-	 */
-	public static void debug(boolean includeDate, String message) {
-		if (includeDate)
-			message = new Date(System.currentTimeMillis()).toString() + " - " + message; //$NON-NLS-1$
-		System.out.println(message);
+	public static String ok;
+	public static String url_badVariant;
+	public static String url_invalidURL;
+	public static String url_createConnection;
+	public static String url_noaccess;
+	public static String cfig_inUse;
+	public static String cfig_failCreateLock;
+	public static String cfig_badUrlArg;
+	public static String cfig_unableToLoad_incomplete;
+	public static String cfig_unableToLoad_noURL;
+	public static String cfig_unableToSave_noURL;
+	public static String cfig_unableToSave;
+	public static String cfig_badVersion;
+	public static String cfg_unableToCreateConfig_ini;
+	public static String platform_running;
+	public static String platform_mustNotBeRunning;
+	public static String platform_notRunning;
+	public static String ignore_plugin;
+	public static String application_notFound;
+	public static String error_fatal;
+	public static String error_boot;
+	public static String error_runtime;
+	public static String error_xerces;
+	public static String error_badNL;
+	public static String InstalledSiteParser_DirectoryDoesNotExist;
+	public static String InstalledSiteParser_UnableToCreateURL;
+	public static String InstalledSiteParser_FileDoesNotExist;
+	public static String InstalledSiteParser_UnableToCreateURLForFile;
+	public static String InstalledSiteParser_ErrorParsingFile;
+	public static String InstalledSiteParser_ErrorAccessing;
+	public static String InstalledSiteParser_date;
+	public static String BundleManifest_noVersion;
+	public static String FeatureParser_IdOrVersionInvalid;
+	public static String BundleGroupProvider;
+	public static String ProductProvider;
+	public static String AboutInfo_notSpecified;
+	public static String ConfigurationActivator_initialize;
+	public static String ConfigurationActivator_createConfig;
+	public static String ConfigurationActivator_uninstallBundle;
+	public static String ConfigurationParser_cannotLoadSharedInstall;
+	public static String ConfigurationActivator_installBundle;
+	public static String PluginEntry_versionError;
+	public static String IniFileReader_MissingDesc;
+	public static String IniFileReader_OpenINIError;
+	public static String IniFileReader_OpenPropError;
+	public static String IniFileReader_OpenMapError;
+	public static String IniFileReader_ReadIniError;
+	public static String IniFileReader_ReadPropError;
+	public static String IniFileReader_ReadMapError;
+	public static String SiteEntry_computePluginStamp;
+	public static String SiteEntry_cannotFindFeatureInDir;
+	public static String SiteEntry_duplicateFeature;
+	public static String SiteEntry_pluginsDir;
+	public static String PlatformConfiguration_expectingPlatformXMLorDirectory;
+	public static String PlatformConfiguration_cannotBackupConfig;
+	public static String PlatformConfiguration_cannotCloseStream;
+	public static String PlatformConfiguration_cannotCloseTempFile;
+	public static String PlatformConfiguration_cannotRenameTempFile;
+	public static String PlatformConfiguration_cannotLoadConfig;
+	public static String PlatformConfiguration_cannotLoadDefaultSite;
+	public static String PlatformConfiguration_cannotFindConfigFile;
+	public static String PlatformConfiguration_cannotSaveNonExistingConfig;
+	public static String HttpResponse_rangeExpected;
+	public static String HttpResponse_wrongRange;
+	public static String PluginParser_plugin_no_id;
+	public static String PluginParser_plugin_no_version;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 }

@@ -16,6 +16,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
@@ -117,9 +118,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException(Messages.getString("InstalledSiteParser.UnableToCreateURL", e.getMessage()), e); //$NON-NLS-1$
+			throw new SAXException(NLS.bind("InstalledSiteParser.UnableToCreateURL", (new String[] { e.getMessage() })), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			throw new SAXException(Messages.getString("InstalledSiteParser.InternalError", e.toString()), e); //$NON-NLS-1$
+			throw new SAXException(NLS.bind("InstalledSiteParser.InternalError", (new String[] { e.toString() })), e); //$NON-NLS-1$
 		}
 	}
 
@@ -283,7 +284,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				config = new Configuration(new Date(time));
 			} catch (NumberFormatException e1) {
 				time = new Date().getTime();
-				Utils.log(Messages.getString("InstalledSiteParser.date", date)); //$NON-NLS-1$
+				Utils.log(NLS.bind("InstalledSiteParser.date", (new String[] { date }))); //$NON-NLS-1$
 				config = new Configuration(); // constructed with current date
 			}
 		}
@@ -301,7 +302,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			}
 		} catch (Exception e) {
 			// could not load from shared install
-			Utils.log(Utils.newStatus(Messages.getString("ConfigurationParser.cannotLoadSharedInstall"), e)); //$NON-NLS-1$
+			Utils.log(Utils.newStatus(Messages.ConfigurationParser_cannotLoadSharedInstall, e)); 
 		}
 
 		String flag = attributes.getValue(CFG_TRANSIENT);
