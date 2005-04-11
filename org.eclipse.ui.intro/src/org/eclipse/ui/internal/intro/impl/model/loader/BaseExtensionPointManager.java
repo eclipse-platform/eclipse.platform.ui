@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 
 /**
  * Base class for handling Intro Extensions.
@@ -56,6 +57,11 @@ public class BaseExtensionPointManager {
 
     protected IntroModelRoot loadModel(String attributeName,
             String attributeValue) {
+        long startTime = 0;
+        // if we need to log performance, capture time.
+        if (Log.logPerformance)
+            startTime = System.currentTimeMillis();
+
         // get all Config extension point contributions. There could be more
         // than one config contribution, but there should only be one that maps
         // to the cached intro part id.
@@ -88,6 +94,12 @@ public class BaseExtensionPointManager {
             // now load all generic config extension. ie: standbyPart and
             // command contributions.
             loadSharedConfigExtensions();
+
+            if (Log.logPerformance)
+                Util.logPerformanceTime(
+                    "IntroPlugin Performance- loading Intro Model took: ",
+                    startTime);
+
             return model;
         }
         return null;

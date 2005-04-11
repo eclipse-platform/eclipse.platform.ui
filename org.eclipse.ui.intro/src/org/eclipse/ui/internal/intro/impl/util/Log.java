@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
  * listerner used is the base one supplied by the platform. Error messages are
  * always logged. Warning messages are only logged when the plugin is in debug
  * mode. Info messages are only logged when the /trace/logInfo debug option is
+ * set to true. Performance reports are only logged when /trace/performance is
  * set to true.
  * 
  */
@@ -31,13 +32,18 @@ public class Log implements IIntroConstants {
     /**
      * This MUST be set to <b>false </b> in production. <br>
      * Used to compile out developement debug messages. <br>
+     * Compiler compiles out code warpped wit this flag as an optimization.
      */
     public static final boolean DEBUG = true;
 
-    /**
-     * Flag that controls logging of information messages
-     */
-    private static boolean logInfo = false;
+
+    // Use these flags to filter out code that may be a performance hit.
+    // Flag that controls logging of warning message
+    public static boolean logWarning = false;
+    // Flag that controls logging of information messages
+    public static boolean logInfo = false;
+    // Flag that controls logging of performance messages
+    public static boolean logPerformance = false;
 
     private final static ILog pluginLog = IntroPlugin.getDefault().getLog();
 
@@ -45,7 +51,9 @@ public class Log implements IIntroConstants {
         // init debug options based on settings defined in ".options" file. If
         // the plugin is not in debug mode, no point setting debug options.
         if (IntroPlugin.getDefault().isDebugging()) {
+            logWarning = true;
             logInfo = getDebugOption("/trace/logInfo"); //$NON-NLS-1$
+            logPerformance = getDebugOption("/trace/logPerformance"); //$NON-NLS-1$
         }
 
     }
@@ -85,14 +93,29 @@ public class Log implements IIntroConstants {
     }
 
     /**
+     * Log an Information message. Note that the message should already be
+     * localized to proper local. These messages are always logged. They are not
+     * controlled by any debug flags. Logging of these messages can be
+     * controlled by the public flags in this class.
+     */
+    public static synchronized void forcedInfo(String message) {
+        if (message == null)
+            message = ""; //$NON-NLS-1$
+        Status infoStatus = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
+            message, null);
+        pluginLog.log(infoStatus);
+    }
+
+
+    /**
      * Log a Warning message. Note that the message should already be localized
      * to proper local. Warning messages are only logged when the plugin is in
      * debug mode.
      */
     public static synchronized void warning(String message) {
-        if (!IntroPlugin.getDefault().isDebugging())
-            // plugin is not in debug mode. Default is to not log warning
-            // messages.
+        if (!logWarning)
+            // no warning messages (ie: plugin is not in debug mode). Default is
+            // to not log warning messages.
             return;
 
         if (message == null)

@@ -144,7 +144,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     protected void loadChildren() {
         children = new Vector();
-        Log.info("Loading Intro plugin model...."); //$NON-NLS-1$
+        if (Log.logInfo)
+            Log.info("Loading Intro plugin model...."); //$NON-NLS-1$
 
         // load presentation first and create the model class for it. If there
         // is more than one presentation, load first one, and log rest.

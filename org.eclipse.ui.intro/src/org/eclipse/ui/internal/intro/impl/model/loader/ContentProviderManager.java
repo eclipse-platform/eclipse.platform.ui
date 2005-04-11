@@ -167,7 +167,8 @@ public class ContentProviderManager {
             provider.dispose();
         }
         contentProviders.clear();
-        Log.info("Cleared Intro model content providers"); //$NON-NLS-1$
+        if (Log.logInfo)
+            Log.info("Cleared Intro model content providers"); //$NON-NLS-1$
     }
 
 

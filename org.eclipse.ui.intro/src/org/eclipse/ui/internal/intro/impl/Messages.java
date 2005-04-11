@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.intro.impl;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources";
+    private static final String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources"; //$NON-NLS-1$
 
     static {
         initializeMessages(INTRO_RESOURCE_BUNDLE, Messages.class);

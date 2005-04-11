@@ -31,6 +31,8 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.IntroPart;
 
@@ -110,13 +112,18 @@ public final class CustomizableIntroPart extends IntroPart implements
             CustomizableIntroPart.class);
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
+
+        // if we are logging performance, set UI creation start time.
+        if (Log.logPerformance)
+            IntroPlugin.getDefault().setUICreationStartTime(
+                System.currentTimeMillis());
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
-     *           org.eclipse.ui.IMemento)
+     *      org.eclipse.ui.IMemento)
      */
     public void init(IIntroSite site, IMemento memento)
             throws PartInitException {
@@ -173,7 +180,17 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation.createPartControl(container);
             // do not create the standby part here for performance.
         }
+
+        // if we are logging performance, log actual UI creation time.
+        if (Log.logPerformance)
+            Util
+                .logPerformanceTime(
+                    "IntroPlugin Performance- creating CustomizableIntroPart took: ",
+                    IntroPlugin.getDefault().gettUICreationStartTime());
     }
+
+
+
 
     /**
      * Determine if we need to recreate a standby part. Return true if we have a
@@ -335,8 +352,8 @@ public final class CustomizableIntroPart extends IntroPart implements
      * Returns the primary control associated with this Intro part.
      * 
      * @return the SWT control which displays this Intro part's content, or
-     *               <code>null</code> if this standby part's controls have not yet
-     *               been created.
+     *         <code>null</code> if this standby part's controls have not yet
+     *         been created.
      */
     public Control getControl() {
         return container;

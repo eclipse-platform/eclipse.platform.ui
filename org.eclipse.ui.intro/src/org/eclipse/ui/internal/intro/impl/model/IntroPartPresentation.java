@@ -217,9 +217,10 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
                 implementation.init(introPart, memento);
                 implementation.createPartControl(parent);
-                Log.info("Loaded config implementation from: " //$NON-NLS-1$
-                        + ModelLoaderUtil.getLogString(implementationElement,
-                            "class")); //$NON-NLS-1$
+                if (Log.logInfo)
+                    Log.info("Loaded config implementation from: " //$NON-NLS-1$
+                            + ModelLoaderUtil.getLogString(
+                                implementationElement, "class")); //$NON-NLS-1$
                 break;
             } catch (SWTError e) {
                 Log.error("Failed to create implementation from: " //$NON-NLS-1$

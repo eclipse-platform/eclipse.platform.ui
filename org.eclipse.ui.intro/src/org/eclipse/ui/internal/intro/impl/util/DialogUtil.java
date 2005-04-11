@@ -101,8 +101,8 @@ public class DialogUtil {
     }
 
     /**
-     * Displays info dialog with a message corresponding to the infoId. <br>
-     * also logs the info using Log.logInfo().
+     * Displays info dialog with a message. Also logs the info using
+     * Log.logInfo().
      */
     public static void displayInfoMessage(Shell parent, String msg) {
         String title = Messages.MessageDialog_infoTitle;
@@ -114,8 +114,8 @@ public class DialogUtil {
     }
 
     /**
-     * Displays info dialog with a message corresponding to the infoId. <br>
-     * also logs the info using Log.logInfo().
+     * Displays info dialog with a message. Also logs the info using
+     * Log.logInfo().
      */
     public static void displayInfoMessage(Shell parent, String msg,
             Object[] variables) {

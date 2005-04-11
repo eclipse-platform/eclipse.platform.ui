@@ -7,7 +7,16 @@ Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.intro.impl.IntroPlugin
 Bundle-Vendor: %provider_name
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.intro.config
+Export-Package: org.eclipse.ui.intro.config,
+ org.eclipse.ui.internal.intro.impl;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.html;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.model;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.model.loader;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.model.viewer;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.parts;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.presentations;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.swt;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.util;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.help,

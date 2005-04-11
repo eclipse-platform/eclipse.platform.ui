@@ -65,10 +65,12 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
-        String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
-            configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
-                logAttribute)).toString();
-        Log.info(msg);
+        if (Log.logInfo) {
+            String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
+                configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
+                    logAttribute)).toString();
+            Log.info(msg);
+        }
 
         if (arraySize != 1) {
             // we have more than one, warn in the log.
@@ -122,16 +124,20 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         Element element = elements[0];
-        String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
-            " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
-        Log.info(msg);
+        if (Log.logInfo) {
+            String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
+                " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
+            Log.info(msg);
+        }
 
         if (arraySize != 1) {
             // we have more than one, warn in the log.
-            for (int i = 1; i < arraySize; i++)
-                // log each extra extension.
-                Log.warning(getLogString(element, logAttribute)
-                        + " ignored due to multiple contributions"); //$NON-NLS-1$
+            for (int i = 1; i < arraySize; i++) {
+                if (Log.logWarning)
+                    // log each extra extension.
+                    Log.warning(getLogString(element, logAttribute)
+                            + " ignored due to multiple contributions"); //$NON-NLS-1$ 
+            }
         }
         return element;
     }
