@@ -183,14 +183,14 @@ public class WebBrowserUtil {
 			}
 		}
 	}
-
+    
     private static File [] getUsableDrives(File [] roots) {
         if (!Platform.getOS().equals(Platform.OS_WIN32))
             return roots;
         ArrayList list = new ArrayList();
         for (int i=0; i<roots.length; i++) {
            String path = roots[i].getAbsolutePath();
-           if (path!=null && path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:"))
+           if (path!=null && path.equals("A:\\") || path.equals("B:\\"))
                continue;
            list.add(roots[i]);
         }
