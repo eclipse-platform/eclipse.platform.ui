@@ -154,7 +154,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			return;
 		}
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-		fDebugState.marshallProperties(propertiesRepresentation, true);
+		fDebugState.marshallProperties(propertiesRepresentation, false);
 		if (fAntDebugTarget.getThreads().length > 0) {
 			((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 		}
@@ -209,5 +209,12 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	public void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
+	 */
+	public StringBuffer unescapeString(StringBuffer propertyValue) {
+		return propertyValue;
 	}	
 }

@@ -25,7 +25,6 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 
 public class AntDebugState implements IDebugBuildLogger {
-	
 	private IDebugBuildLogger fLogger;
 	private Stack fTasks= new Stack();
 	private Task fCurrentTask;
@@ -73,12 +72,8 @@ public class AntDebugState implements IDebugBuildLogger {
 
 	}
 
-	public Map getInitialProperties() {
+	private Map getInitialProperties() {
 		return fInitialProperties;
-	}
-
-	public void setInitialProperties(Map initialProperties) {
-		fInitialProperties= initialProperties;
 	}
 
 	public Task getStepOverTask() {
@@ -90,16 +85,12 @@ public class AntDebugState implements IDebugBuildLogger {
 
 	}
 
-	public boolean considerTargetBreakpoints() {
+	private boolean considerTargetBreakpoints() {
 		return fConsiderTargetBreakpoints;
 	}
 
-	public void setConsiderTargetBreakpoints(boolean considerTargetBreakpoints) {
+	private void setConsiderTargetBreakpoints(boolean considerTargetBreakpoints) {
 		fConsiderTargetBreakpoints= considerTargetBreakpoints;
-	}
-
-	public void setTasks(Stack tasks) {
-		fTasks= tasks;
 	}
 
 	public Stack getTasks() {
@@ -114,11 +105,11 @@ public class AntDebugState implements IDebugBuildLogger {
 		return fShouldSuspend;
 	}
 
-	public Map getTargetToBuildSequence() {
+	private Map getTargetToBuildSequence() {
 		return fTargetToBuildSequence;
 	}
 
-	public void setTargetToBuildSequence(Map sequence) {
+	private void setTargetToBuildSequence(Map sequence) {
 		fTargetToBuildSequence= sequence;
 	}
 
@@ -180,18 +171,18 @@ public class AntDebugState implements IDebugBuildLogger {
 		return null;
 	}
 
-	public boolean isAfterTaskEvent() {
+	private boolean isAfterTaskEvent() {
 		return fIsAfterTaskEvent;
 	}
 
-	public void setAfterTaskEvent(boolean isAfterTaskEvent) {
+	private void setAfterTaskEvent(boolean isAfterTaskEvent) {
 		fIsAfterTaskEvent = isAfterTaskEvent;
 	}
 	
 	public void taskStarted(BuildEvent event) {
 		setAfterTaskEvent(true);
 		if (getInitialProperties() == null) {//implicit or top level target does not fire targetStarted()
-			setInitialProperties(event.getProject().getProperties());
+			fInitialProperties= event.getProject().getProperties();
 		}
 		
 		setCurrentTask(event.getTask());
@@ -223,7 +214,7 @@ public class AntDebugState implements IDebugBuildLogger {
     public void targetStarted(BuildEvent event) {
 		setAfterTaskEvent(false);
         if (getInitialProperties() == null) {
-            setInitialProperties(event.getProject().getProperties());
+            fInitialProperties= event.getProject().getProperties();
         }
         if (getTargetToBuildSequence() == null) {
             setTargetToBuildSequence(new HashMap());
@@ -346,7 +337,7 @@ public class AntDebugState implements IDebugBuildLogger {
 	     }
 	}
 
-	public void marshallProperties(StringBuffer propertiesRepresentation, boolean marshallLineSep) {
+	public void marshallProperties(StringBuffer propertiesRepresentation, boolean escapeLineSep) {
 		if (getTasks().isEmpty()) {
 			return;
 		}
@@ -366,33 +357,28 @@ public class AntDebugState implements IDebugBuildLogger {
 	    Map currentUserProperties= project.getUserProperties();
 	    Iterator iter= currentProperties.keySet().iterator();
 	    String propertyName;
+		String originalPropertyName;
 	    String propertyValue;
 	    while (iter.hasNext()) {
 	        propertyName = (String) iter.next();
-	        if (!marshallLineSep && propertyName.equals("line.separator")) { //$NON-NLS-1$
-	        	continue;
-	        }
+			originalPropertyName= propertyName;
 	        if (lastProperties == null || lastProperties.get(propertyName) == null) { //new property
+				if (escapeLineSep) {
+					propertyName= escapeLineSeparator(propertyName);
+				}
 	            propertiesRepresentation.append(propertyName.length());
 	            propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	            propertiesRepresentation.append(propertyName);
 	            propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	            propertyValue= (String) currentProperties.get(propertyName);
+	            propertyValue= (String) currentProperties.get(originalPropertyName);
+				if (escapeLineSep) {
+					propertyValue= escapeLineSeparator(propertyValue);
+				}
 	            propertiesRepresentation.append(propertyValue.length());
 	            propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	            propertiesRepresentation.append(propertyValue);
+				propertiesRepresentation.append(propertyValue);
 	            propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	            if (initialProperties.get(propertyName) != null) { //properties set before the start of the build
-	                if (currentUserProperties.get(propertyName) == null) {
-	                    propertiesRepresentation.append(DebugMessageIds.PROPERTY_SYSTEM);
-	                } else {
-	                    propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-	                }
-	            } else if (currentUserProperties.get(propertyName) == null){
-	                propertiesRepresentation.append(DebugMessageIds.PROPERTY_RUNTIME);
-	            } else {
-	                propertiesRepresentation.append(DebugMessageIds.PROPERTY_USER);
-	            }
+	            propertiesRepresentation.append(getPropertyType(initialProperties, currentUserProperties, originalPropertyName));
 	            propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	        }
 	    }
@@ -401,7 +387,49 @@ public class AntDebugState implements IDebugBuildLogger {
 		fProperties= currentProperties;
 	}
 
-	public Target initializeBuildSequenceInformation(BuildEvent event, Map targetToBuildSequence) {
+	private int getPropertyType(Map initialProperties, Map currentUserProperties, String propertyName) {
+		if (initialProperties.get(propertyName) != null) { //properties set before the start of the build
+		    if (currentUserProperties.get(propertyName) == null) {
+		        return DebugMessageIds.PROPERTY_SYSTEM;
+		    } 
+			return DebugMessageIds.PROPERTY_USER;
+		} else if (currentUserProperties.get(propertyName) == null){
+		    return DebugMessageIds.PROPERTY_RUNTIME;
+		} else {
+		    return DebugMessageIds.PROPERTY_USER;
+		}
+	}
+
+	private String escapeLineSeparator(String stringToEscape) {
+		if (!(stringToEscape.indexOf('\r') != -1 || stringToEscape.indexOf('\n') != -1 || stringToEscape.indexOf("\\r") != -1 || stringToEscape.indexOf("\\n") != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
+			return stringToEscape;
+		}
+		StringBuffer escapedValue= new StringBuffer(stringToEscape);		
+		for (int i= 0; i < escapedValue.length(); i++) {
+			switch (escapedValue.charAt(i)) {
+			case '\r':
+				escapedValue.replace(i, i+1, "\\r"); //$NON-NLS-1$
+				i++;
+				break;
+			case '\n':
+				escapedValue.replace(i, i+1, "\\n"); //$NON-NLS-1$
+				i++;
+				break;
+			case '\\':
+				if (escapedValue.charAt(i + 1) == 'r' || escapedValue.charAt(i + 1) == 'n') {
+					escapedValue.replace(i, i+1, "\\\\"); //$NON-NLS-1$
+					i++;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		return escapedValue.toString();
+	}
+
+	private Target initializeBuildSequenceInformation(BuildEvent event, Map targetToBuildSequence) {
 	    Project antProject= event.getProject();
 	    Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
 	    Iterator itr= targets.iterator();

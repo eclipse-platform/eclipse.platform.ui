@@ -373,28 +373,35 @@ public class AntThread extends AntDebugElement implements IThread {
 	    	//4 propertyType
 	    	//5 ...
 	    	if (datum.length > 1) { //new properties
-	    		String propertyName;
-	    		String propertyValue;
+	    		StringBuffer propertyName;
+	    		StringBuffer propertyValue;
 	    		int propertyNameLength;
 	    		int propertyValueLength;
 	    		for (int i = 1; i < datum.length; i++) {
 	    			propertyNameLength= Integer.parseInt(datum[i]);
-	    			propertyName= datum[++i];
+	    			propertyName= new StringBuffer(datum[++i]);
 	    			while (propertyName.length() != propertyNameLength) {
-	    				propertyName+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	    				propertyName.append(DebugMessageIds.MESSAGE_DELIMITER);
+						propertyName.append(datum[++i]);
 	    			}
+					
+					propertyName= getAntDebugTarget().getAntDebugController().unescapeString(propertyName);
+					
 	    			propertyValueLength= Integer.parseInt(datum[++i]);
 	    			if (propertyValueLength == 0 && i + 1 == datum.length) { //bug 81299
-	    				propertyValue= ""; //$NON-NLS-1$
+	    				propertyValue= new StringBuffer(""); //$NON-NLS-1$
 	    			} else {
-	    				propertyValue= datum[++i];
+	    				propertyValue= new StringBuffer(datum[++i]);
 	    			}
 	    			while (propertyValue.length() != propertyValueLength) {
-	    				propertyValue+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
+	    				propertyValue.append(DebugMessageIds.MESSAGE_DELIMITER);
+						propertyValue.append(datum[++i]);
 	    			}
 	    			
-	    			int propertyType= Integer.parseInt(datum[++i]);
-	    			addProperty(userProperties, systemProperties, runtimeProperties, propertyName, propertyValue, propertyType);
+					propertyValue= getAntDebugTarget().getAntDebugController().unescapeString(propertyValue);
+					
+					int propertyType= Integer.parseInt(datum[++i]);
+	    			addProperty(userProperties, systemProperties, runtimeProperties, propertyName.toString(), propertyValue.toString(), propertyType);
 	    		}
 	    	}
 	    } finally {

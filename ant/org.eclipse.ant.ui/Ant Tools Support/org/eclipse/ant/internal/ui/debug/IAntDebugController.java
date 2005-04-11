@@ -54,4 +54,13 @@ public interface IAntDebugController {
      * May occur asynchronously depending on implementation.
      */
 	public void getStackFrames();
+
+	/**
+	 * Some strings are escaped when marshalled for socket communication.
+	 * The Ant debug controller will properly unescape these Strings if required.
+	 * 
+	 * @param value The buffer of the string to unescape
+	 * @return The unescaped string
+	 */
+	public StringBuffer unescapeString(StringBuffer value);
 }

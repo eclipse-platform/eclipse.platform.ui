@@ -288,4 +288,37 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	public void getStackFrames() {
 		sendRequest(DebugMessageIds.STACK);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
+	 */
+	public StringBuffer unescapeString(StringBuffer property) {
+		if (property.indexOf("\\r") == -1 && property.indexOf("\\n") == -1) { //$NON-NLS-1$ //$NON-NLS-2$
+			return property;
+		}
+		for (int i= 0; i < property.length(); i++) {
+			if ('\\' == property.charAt(i)) {
+				String newString= ""; //$NON-NLS-1$
+				if ('r' == property.charAt(i + 1)) {
+					if (i-1 > - 1 && '\\' == property.charAt(i-1)) {
+						newString= "r"; //$NON-NLS-1$
+					} else {
+						newString+= '\r';
+					}
+				} else if ('n' == property.charAt(i + 1)) {
+					if (i-1 > - 1 && '\\' == property.charAt(i-1)) {
+						newString= "n"; //$NON-NLS-1$
+					} else {
+						newString+= '\n';
+					}
+					
+				}
+				if (newString.length() > 0) {
+					property.replace(i, i + 2, newString);
+				}
+			}
+		}
+
+		return property;
+	}
 }

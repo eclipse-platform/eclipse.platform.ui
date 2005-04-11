@@ -451,5 +451,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
                 breakpointRemoved(breakpoint, null);
             }
         }
-    }   
+    }
+
+	public IAntDebugController getAntDebugController() {
+		return fController;
+	}   
 }
