@@ -31,12 +31,14 @@ import org.eclipse.ui.PlatformUI;
  */
 public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener {
     
+    IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+    
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
      * working sets and fires property change notification.
      */
-    public WorkingSetBreakpointOrganizer() {
-        PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
+    public WorkingSetBreakpointOrganizer() {    
+        fWorkingSetManager.addPropertyChangeListener(this);
     }
 
     /* (non-Javadoc)
@@ -52,8 +54,7 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
                 parents.add(res);
             }
         }
-        IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-        IWorkingSet[] workingSets = manager.getWorkingSets();
+        IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
             if (!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
@@ -77,7 +78,8 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
     public void dispose() {
-        PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
+        fWorkingSetManager.removePropertyChangeListener(this);
+        fWorkingSetManager = null;
         super.dispose();
     }
     

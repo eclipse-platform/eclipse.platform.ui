@@ -36,12 +36,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener, IBreakpointsListener {
     
+    IWorkingSetManager fWorkingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
      * working sets and fires property change notification.
      */
     public BreakpointSetOrganizer() {
-        PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
+        fWorkingSetManager.addPropertyChangeListener(this);
         DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
     }
@@ -51,8 +52,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
      */
     public IAdaptable[] getCategories(IBreakpoint breakpoint) {
     	List result = new ArrayList();
-        IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-        IWorkingSet[] workingSets = manager.getWorkingSets();
+        IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
             if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
@@ -73,7 +73,8 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
      */
     public void dispose() {
-        PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
+        fWorkingSetManager.removePropertyChangeListener(this);
+        fWorkingSetManager = null;
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
         super.dispose();
@@ -120,7 +121,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
      * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
      */
     public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-        IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
+        IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
             if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) { //$NON-NLS-1$
@@ -257,7 +258,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
      */
     public IAdaptable[] getCategories() {
-        IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
+        IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         List all = new ArrayList();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
