@@ -145,7 +145,6 @@ public class WorkbenchMessages extends NLS {
 	public static String ActionSetDialogInput_viewCategory;
 	public static String ActionSetDialogInput_perspectiveCategory;
 	public static String ActionSetDialogInput_wizardCategory;
-	public static String ActionSetRegistry_otherCategory;
 
 	public static String ActionSetSelection_menuTab;
 	public static String ActionSetSelection_actionSetsTab;
@@ -347,26 +346,6 @@ public class WorkbenchMessages extends NLS {
     public static String PreferenceNode_NotFound;
 	public static String Preference_note;
 
-	// --- Import/Export ---
-	public static String ImportExportPages_browseButton;
-	public static String ImportExportPages_deselectAll;
-	public static String ImportExportPages_errorDirectoryDoesNotExist;
-	public static String ImportExportPages_errorImportFileDoesNotExist;
-	public static String ImportExportPages_exportFileSelect;
-	public static String ImportExportPages_exportSettingsSelect;
-	public static String ImportExportPages_exportTitle;
-	public static String ImportExportPages_exportWindowTitle;
-	public static String ImportExportPages_fileLabel;
-	public static String ImportExportPages_importFileSelect;
-	public static String ImportExportPages_importSettingsSelect;
-	public static String ImportExportPages_importTitle;
-	public static String ImportExportPages_importWindowTitle;
-	public static String ImportExportPages_invertSelection;
-	public static String ImportExportPages_name;
-	public static String ImportExportPages_preferenceFileName;
-	public static String ImportExportPages_selectAll;
-	public static String ImportExportPages_value;
-
 	// --- Workbench ---
 	public static String WorkbenchPreference_showMultipleEditorTabsButton;
 	public static String WorkbenchPreference_showTextOnPerspectiveBar;
@@ -530,9 +509,7 @@ public class WorkbenchMessages extends NLS {
     public static String EditorManager_bad_element_factory;
     public static String EditorManager_create_element_returned_null;
     public static String EditorManager_wrong_createElement_result;
-    public static String EditorManager_editorInputIncorrect;
     
-	public static String EditorPane_errorMessage;
 	public static String EditorPane_pinEditor;
 
 	public static String ExternalEditor_errorMessage;
@@ -826,16 +803,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String WorkbenchEncoding_invalidCharset;
 
-	//==============================================================
-	// Preferences Import and Export
-
-	public static String PreferencesExportDialog_ExportDialogTitle;
-	public static String PreferencesExportDialog_ErrorDialogMessage;
-	public static String PreferencesExportDialog_ConfigurationScope;
-	public static String PreferencesExportDialog_PreferencesListLabel;
-	public static String PreferencesExportDialog_SelectMessage;
-	public static String PreferencesExportDialog_WorkspaceScope;
-	public static String PreferencesExportDialog_PluginLabel;
 	public static String Dynamic_resetPerspectiveMessage;
 	public static String Dynamic_resetPerspectiveTitle;
 
