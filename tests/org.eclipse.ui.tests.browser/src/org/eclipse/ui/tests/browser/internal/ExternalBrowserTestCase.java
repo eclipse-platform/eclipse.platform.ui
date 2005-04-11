@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 
 public class ExternalBrowserTestCase extends TestCase {
 	public void testBrowser() throws Exception {
-		WebBrowserPreference.setUseInternalBrowser(false);
+		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.EXTERNAL);
 		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser("test2");
 		

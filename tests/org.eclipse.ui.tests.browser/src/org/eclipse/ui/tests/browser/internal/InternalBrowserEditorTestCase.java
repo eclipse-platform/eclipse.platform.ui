@@ -25,7 +25,7 @@ public class InternalBrowserEditorTestCase extends TestCase {
 
 	public void testBrowser() throws Exception {
 		shell = WebBrowserTestsPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getShell();
-		WebBrowserPreference.setUseInternalBrowser(true);
+		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
 		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
 		
