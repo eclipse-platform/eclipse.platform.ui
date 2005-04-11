@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		Preferences node = new DefaultScope().getNode("org.eclipse.update.scheduler");
+		Preferences node = new DefaultScope().getNode("org.eclipse.update.scheduler"); //$NON-NLS-1$
 		node.putBoolean(UpdateScheduler.P_ENABLED, false);
 		node.put(UpdateScheduler.P_SCHEDULE, UpdateScheduler.VALUE_ON_STARTUP);
 		node.putBoolean(UpdateScheduler.P_DOWNLOAD, false);
