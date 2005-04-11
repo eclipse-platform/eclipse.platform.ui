@@ -25,6 +25,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 /**
  * @see PropertyPage
@@ -62,7 +63,7 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 				if (filename != null
 					&& (filename.endsWith(".htm") || filename.endsWith(".html"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					Button button = new Button(composite, SWT.PUSH);
-					button.setText(UpdateUI.getString("FeatureCopyrightPropertyPage.showInBrowser")); //$NON-NLS-1$
+					button.setText(UpdateUIMessages.FeatureCopyrightPropertyPage_showInBrowser); 
 					button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 					SWTUtil.setButtonDimensionHint(button);
 					button.addSelectionListener(new SelectionAdapter() {
@@ -72,7 +73,7 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 					});
 				}
 			} else {
-				label.setText(UpdateUI.getString("FeatureCopyrightPropertyPage.noCopyright")); //$NON-NLS-1$
+				label.setText(UpdateUIMessages.FeatureCopyrightPropertyPage_noCopyright); 
 			}
 			Dialog.applyDialogFont(parent);
 		} catch (CoreException e) {

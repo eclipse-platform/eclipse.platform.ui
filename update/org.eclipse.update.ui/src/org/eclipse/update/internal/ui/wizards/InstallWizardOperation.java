@@ -8,6 +8,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.ui.UpdateJob;
 
 public class InstallWizardOperation {
@@ -63,18 +64,18 @@ public class InstallWizardOperation {
 
 		private void openInstallWizard2() {
 			if (InstallWizard2.isRunning()) {
-				MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+				MessageDialog.openInformation(shell, UpdateUIMessages.InstallWizard_isRunningTitle, UpdateUIMessages.InstallWizard_isRunningInfo);
 				return;
 			}
             if (job.getUpdates() == null || job.getUpdates().length == 0) {
                 if (job.isUpdate())
-                    MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates"), UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates")); //$NON-NLS-1$ //$NON-NLS-2$
+                    MessageDialog.openInformation(shell, UpdateUIMessages.InstallWizard_ReviewPage_zeroUpdates, UpdateUIMessages.InstallWizard_ReviewPage_zeroUpdates); 
                 else
-                    MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures"), UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures")); //$NON-NLS-1$ //$NON-NLS-2$                
+                    MessageDialog.openInformation(shell, UpdateUIMessages.InstallWizard_ReviewPage_zeroFeatures, UpdateUIMessages.InstallWizard_ReviewPage_zeroFeatures); 
                 return;
             }
 			InstallWizard2 wizard = new InstallWizard2(job.getSearchRequest(), job.getUpdates(), job.isUpdate());
-			WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
+			WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUIMessages.AutomaticUpdatesJob_Updates); 
 			dialog.create();
 			dialog.open();
 		}

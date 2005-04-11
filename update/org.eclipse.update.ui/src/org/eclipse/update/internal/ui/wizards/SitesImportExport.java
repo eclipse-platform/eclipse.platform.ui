@@ -33,7 +33,7 @@ public class SitesImportExport {
 	public static SiteBookmark[] getImportedBookmarks(Shell parent) {
 		FileDialog dialog = new FileDialog(parent);
 		dialog.setText(
-			UpdateUI.getString("LocalSiteSelector.dialogMessageImport")); //$NON-NLS-1$
+			UpdateUIMessages.LocalSiteSelector_dialogMessageImport); 
 
 		dialog.setFilterExtensions(new String[] { "*.xml", "*" }); //$NON-NLS-1$
 
@@ -46,8 +46,8 @@ public class SitesImportExport {
 			if (siteBookmarks == null || siteBookmarks.length == 0) {
 				MessageDialog.openInformation(
 					parent,
-					UpdateUI.getString("LocalSiteSelector.importInfoTitle"), //$NON-NLS-1$
-					UpdateUI.getString("LocalSiteSelector.importInfoMessage")); //$NON-NLS-1$
+					UpdateUIMessages.LocalSiteSelector_importInfoTitle, 
+					UpdateUIMessages.LocalSiteSelector_importInfoMessage); 
 				bookmarksFile = dialog.open();
 			} else {
 				break;
@@ -59,7 +59,7 @@ public class SitesImportExport {
 	public static void exportBookmarks(Shell parent, SiteBookmark[] siteBookmarks) {
 		FileDialog dialog = new FileDialog(parent, SWT.SAVE);
 		dialog.setText(
-			UpdateUI.getString("LocalSiteSelector.dialogMessageExport")); //$NON-NLS-1$
+			UpdateUIMessages.LocalSiteSelector_dialogMessageExport); 
 
 		dialog.setFileName("bookmarks.xml"); //$NON-NLS-1$
 

@@ -12,6 +12,7 @@ package org.eclipse.update.internal.core;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -66,7 +67,7 @@ public final class FeatureTypeFactory {
 
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(
-					Policy.bind("FeatureTypeFactory.UnableToFindFeatureFactory", type), //$NON-NLS-1$
+					NLS.bind("FeatureTypeFactory.UnableToFindFeatureFactory", (new String[] { type })), //$NON-NLS-1$
 					null);
 		} 
 

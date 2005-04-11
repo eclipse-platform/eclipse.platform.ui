@@ -10,16 +10,28 @@
  *******************************************************************************/
 package org.eclipse.update.ui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteWithMirrors;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.search.IUpdateSearchResultCollector;
+import org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror;
+import org.eclipse.update.search.UpdateSearchRequest;
 
 /**
  * An UpdateJob performs the lookup for new features or updates to the existing features,
@@ -168,7 +180,7 @@ public class UpdateJob extends Job {
             IStatus[] children = (IStatus[]) statusList
                     .toArray(new IStatus[statusList.size()]);
             return new MultiStatus("org.eclipse.update.ui", //$NON-NLS-1$
-                    ISite.SITE_ACCESS_EXCEPTION, children, Policy
+                    ISite.SITE_ACCESS_EXCEPTION, children, Messages
                             .bind("Search.networkProblems"), //$NON-NLS-1$
                     null);
         }

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.search.*;
 
 /**
@@ -33,8 +34,8 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	
 	public ModeSelectionPage(UpdateSearchRequest searchRequest) {
 		super("modeSelection"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString("ModeSelectionPage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("ModeSelectionPage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.ModeSelectionPage_title); 
+		setDescription(UpdateUIMessages.ModeSelectionPage_desc); 
 		this.searchRequest = searchRequest;
 	}
 	
@@ -64,12 +65,12 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		updatesButton = new Button(composite, SWT.RADIO);
-		updatesButton.setText(UpdateUI.getString("ModeSelectionPage.updates")); //$NON-NLS-1$
+		updatesButton.setText(UpdateUIMessages.ModeSelectionPage_updates); 
 		updateMode = !getSettings().getBoolean(P_NEW_FEATURES_MODE);
 		updatesButton.setSelection(updateMode);
 		
 		final Label updatesText = new Label(composite, SWT.WRAP);
-		updatesText.setText(UpdateUI.getString("ModeSelectionPage.updatesText"));
+		updatesText.setText(UpdateUIMessages.ModeSelectionPage_updatesText);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		updatesText.setLayoutData(gd);
@@ -84,7 +85,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		new Label(composite, SWT.NULL);
 		newFeaturesButton = new Button(composite, SWT.RADIO);
 		newFeaturesButton.setSelection(!updateMode);
-		newFeaturesButton.setText(UpdateUI.getString("ModeSelectionPage.newFeatures")); //$NON-NLS-1$
+		newFeaturesButton.setText(UpdateUIMessages.ModeSelectionPage_newFeatures); 
 		newFeaturesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateMode = false;
@@ -93,7 +94,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		});		
 
 		final Label newFeaturesText = new Label(composite, SWT.WRAP);
-		newFeaturesText.setText(UpdateUI.getString("ModeSelectionPage.newFeaturesText"));
+		newFeaturesText.setText(UpdateUIMessages.ModeSelectionPage_newFeaturesText);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		newFeaturesText.setLayoutData(gd);

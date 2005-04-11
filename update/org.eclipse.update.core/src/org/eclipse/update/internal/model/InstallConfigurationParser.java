@@ -9,16 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteFeatureReference;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.internal.configurator.FeatureEntry;
+import org.eclipse.update.internal.configurator.PlatformConfiguration;
+import org.eclipse.update.internal.configurator.SiteEntry;
+import org.eclipse.update.internal.core.Assert;
+import org.eclipse.update.internal.core.BaseSiteLocalFactory;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 
 /**
@@ -124,7 +134,7 @@ public class InstallConfigurationParser {
 			}
 
 		} else {
-			UpdateCore.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception()); //$NON-NLS-1$
+			UpdateCore.log( Messages.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception()); //$NON-NLS-1$
 		}
 
 	}

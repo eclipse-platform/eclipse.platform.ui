@@ -41,7 +41,7 @@ public class NewExtensionLocationAction extends Action {
 		
 		DirectoryDialog dialog =
 			new DirectoryDialog(shell, SWT.APPLICATION_MODAL);
-		dialog.setMessage(UpdateUI.getString("NewExtensionLocationAction.selectExtLocation")); //$NON-NLS-1$
+		dialog.setMessage(UpdateUIMessages.NewExtensionLocationAction_selectExtLocation); 
 
 		String dir = dialog.open();
 		while (dir != null) {
@@ -57,10 +57,8 @@ public class NewExtensionLocationAction extends Action {
 			} else {
 				MessageDialog.openInformation(
 					shell,
-					UpdateUI.getString(
-						"NewExtensionLocationAction.extInfoTitle"), //$NON-NLS-1$
-					UpdateUI.getString(
-						"NewExtensionLocationAction.extInfoMessage")); //$NON-NLS-1$
+					UpdateUIMessages.NewExtensionLocationAction_extInfoTitle, //$NON-NLS-1$
+					UpdateUIMessages.NewExtensionLocationAction_extInfoMessage); //$NON-NLS-1$
 				// re-open the directory dialog
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
@@ -103,7 +101,7 @@ public class NewExtensionLocationAction extends Action {
 			UpdateUI.requestRestart(restartNeeded);
 			return true;
 		} catch (CoreException e) {
-			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
+			String title = UpdateUIMessages.InstallWizard_TargetPage_location_error_title; 
 			ErrorDialog.openError(shell, title, null, e.getStatus());
 			UpdateUI.logException(e,false);
 			return false;

@@ -37,12 +37,12 @@ public class UninstallFeatureAction extends Action {
 			if (status != null)
 				throw new CoreException(status);
 			
-			if (adapter == null || !confirm(UpdateUI.getString("FeatureUninstallAction.uninstallQuestion"))) //$NON-NLS-1$))
+			if (adapter == null || !confirm(UpdateUIMessages.FeatureUninstallAction_uninstallQuestion)) 
 				return;
 
 			// If current config is broken, confirm with the user to continue
 			if (OperationsManager.getValidator().validateCurrentState() != null &&
-					!confirm(UpdateUI.getString("Actions.brokenConfigQuestion"))) //$NON-NLS-1$
+					!confirm(UpdateUIMessages.Actions_brokenConfigQuestion)) 
 				return;
 
 			IOperation uninstallOperation =
@@ -66,13 +66,13 @@ public class UninstallFeatureAction extends Action {
 	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
 			shell,
-			UpdateUI.getString("FeatureUninstallAction.dialogTitle"), //$NON-NLS-1$
+			UpdateUIMessages.FeatureUninstallAction_dialogTitle, 
 			message);
 	}
 
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
 		this.adapter = adapter;
-		setText(UpdateUI.getString("FeatureUninstallAction.uninstall")); //$NON-NLS-1$
+		setText(UpdateUIMessages.FeatureUninstallAction_uninstall); 
 	}
 
 	public boolean canUninstall() {

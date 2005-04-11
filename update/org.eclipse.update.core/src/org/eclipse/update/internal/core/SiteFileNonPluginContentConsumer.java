@@ -12,6 +12,7 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -48,7 +49,7 @@ public class SiteFileNonPluginContentConsumer extends ContentConsumer {
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 			UpdateManagerUtils.checkPermissions(contentReference, featurePath); // 20305
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("GlobalConsumer.ErrorCreatingFile", (new String[] { featurePath })), e); //$NON-NLS-1$
 		} finally {
 			if (inStream != null) {
 				try {

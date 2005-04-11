@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 /**
  * Insert the type's description here.
@@ -37,7 +37,7 @@ public class UpdateSettingsPreferencePage
 	 * The constructor.
 	 */
 	public UpdateSettingsPreferencePage() {
-		setDescription(UpdateUI.getString("UpdateSettingsPreferencePage.description")); //$NON-NLS-1$
+		setDescription(UpdateUIMessages.UpdateSettingsPreferencePage_description); 
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class UpdateSettingsPreferencePage
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		Label label = new Label(container, SWT.NULL);
-		label.setText(UpdateUI.getString("UpdateSettingsPreferencePage.label")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.UpdateSettingsPreferencePage_label); 
 		mappingsFile = new Text(container, SWT.SINGLE | SWT.BORDER);
 
 		initialize();
@@ -81,7 +81,7 @@ public class UpdateSettingsPreferencePage
 				new URL(text);
 			} catch (MalformedURLException e) {
 				setValid(false);
-				setErrorMessage(UpdateUI.getString("UpdateSettingsPreferencePage.invalid")); //$NON-NLS-1$
+				setErrorMessage(UpdateUIMessages.UpdateSettingsPreferencePage_invalid); 
 				return;
 			}
 		}

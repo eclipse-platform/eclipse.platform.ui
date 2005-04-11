@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
@@ -61,7 +62,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		} catch (CoreException e) {
 			throw e;
 		} catch (Exception e) {
-			throw Utilities.newCoreException(Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("FeatureFactory.CreatingError", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
 		} finally {
 			try {
 				if (featureStream != null)
@@ -102,14 +103,14 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private URL validate(URL url) throws CoreException {
 
 		if (url == null)
-			throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.NullURL"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("FeatureExecutableFactory.NullURL"), null); //$NON-NLS-1$
 
 		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))) { //$NON-NLS-1$
 			try {
 				String path = url.getFile() + "/"; //$NON-NLS-1$
 				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("FeatureExecutableFactory.CannotCreateURL", url.toExternalForm()), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("FeatureExecutableFactory.CannotCreateURL", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
 			}
 		}
 		return url;

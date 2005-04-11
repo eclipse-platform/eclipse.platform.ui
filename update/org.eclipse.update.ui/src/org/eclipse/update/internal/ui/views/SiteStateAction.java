@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
@@ -35,7 +36,7 @@ public class SiteStateAction extends Action {
 	public void setSite(IConfiguredSite site) {
 		this.site = site;
 		boolean state = site.isEnabled();
-		setText(state ? UpdateUI.getString("SiteStateAction.disableLabel") : UpdateUI.getString("SiteStateAction.enableLabel")); //$NON-NLS-1$ //$NON-NLS-2$
+		setText(state ? UpdateUIMessages.SiteStateAction_disableLabel : UpdateUIMessages.SiteStateAction_enableLabel); 
 	}
 
 	public void run() {
@@ -67,10 +68,10 @@ public class SiteStateAction extends Action {
 
 	private boolean confirm(boolean newState) {
 		String name = site.getSite().getURL().toString();
-		String enableMessage = UpdateUI.getFormattedMessage("SiteStateAction.enableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
-		String disableMessage = UpdateUI.getFormattedMessage("SiteStateAction.disableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
+		String enableMessage = NLS.bind("SiteStateAction.enableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
+		String disableMessage = NLS.bind("SiteStateAction.disableMessage", name); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String message = newState ? enableMessage : disableMessage;
-		return MessageDialog.openConfirm(shell, UpdateUI.getString("SiteStateAction.dialogTitle"), message); //$NON-NLS-1$
+		return MessageDialog.openConfirm(shell, UpdateUIMessages.SiteStateAction_dialogTitle, message); 
 	}
 }

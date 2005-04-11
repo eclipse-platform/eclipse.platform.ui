@@ -13,6 +13,7 @@ package org.eclipse.update.internal.core;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -67,7 +68,7 @@ public final class SiteTypeFactory {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
-			throw Utilities.newCoreException(Policy.bind("SiteTypeFactory.UnableToFindSiteFactory",type),null); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("SiteTypeFactory.UnableToFindSiteFactory", (new String[] { type })),null); //$NON-NLS-1$
 		} else {
 			IConfigurationElement element = elements[0];
 			result = (ISiteFactory)element.createExecutableExtension("class"); //$NON-NLS-1$

@@ -101,7 +101,7 @@ public class TargetSiteDialog extends Dialog {
 		leftPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
         
 		Label label = new Label(leftPanel, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.siteLabel")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_TargetPage_siteLabel); 
 		createSiteViewer(leftPanel);
 
 		Composite rightPanel = new Composite(client, SWT.NULL);
@@ -119,7 +119,7 @@ public class TargetSiteDialog extends Dialog {
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		addButton = new Button(buttonContainer, SWT.PUSH);
-		addButton.setText(UpdateUI.getString("InstallWizard.TargetPage.new")); //$NON-NLS-1$
+		addButton.setText(UpdateUIMessages.InstallWizard_TargetPage_new); 
 		addButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addTargetLocation();
@@ -130,7 +130,7 @@ public class TargetSiteDialog extends Dialog {
 		SWTUtil.setButtonDimensionHint(addButton);
 		
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
-		deleteButton.setText(UpdateUI.getString("InstallWizard.TargetPage.delete")); //$NON-NLS-1$
+		deleteButton.setText(UpdateUIMessages.InstallWizard_TargetPage_delete); 
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -205,7 +205,7 @@ public class TargetSiteDialog extends Dialog {
 
 	private void addTargetLocation() {
 		DirectoryDialog dd = new DirectoryDialog(getShell());
-		dd.setMessage(UpdateUI.getString("InstallWizard.TargetPage.location.message")); //$NON-NLS-1$
+		dd.setMessage(UpdateUIMessages.InstallWizard_TargetPage_location_message); 
 		String path = dd.open();
 		if (path != null) {
 			addConfiguredSite(getShell(), config, new File(path));
@@ -248,7 +248,7 @@ public class TargetSiteDialog extends Dialog {
             
 			return csite;
 		} catch (CoreException e) {
-			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
+			String title = UpdateUIMessages.InstallWizard_TargetPage_location_error_title; 
 			ErrorDialog.openError(shell, title, null, e.getStatus());
 			UpdateUI.logException(e,false);
 			return null;

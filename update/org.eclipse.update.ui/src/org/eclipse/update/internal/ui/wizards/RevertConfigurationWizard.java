@@ -12,7 +12,6 @@ package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.jface.wizard.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author Wassim Melhem
@@ -23,7 +22,7 @@ public class RevertConfigurationWizard extends Wizard {
 
 	public RevertConfigurationWizard() {
 		super();
-		setWindowTitle(UpdateUI.getString("RevertConfigurationWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(UpdateUIMessages.RevertConfigurationWizard_wtitle); 
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_CONFIG_WIZ);
 	}
 	

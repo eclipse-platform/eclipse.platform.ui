@@ -44,11 +44,11 @@ public class UpdateManagerUI {
 	 */
 	public static void openInstaller(Shell shell) {
 		if (InstallWizard.isRunning()) {
-			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+			MessageDialog.openInformation(shell, UpdateUIMessages.InstallWizard_isRunningTitle, UpdateUIMessages.InstallWizard_isRunningInfo);
 			return;
 		}
 		InstallWizard wizard = new InstallWizard((UpdateSearchRequest) null);
-		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
+		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUIMessages.InstallWizardAction_title); 
 		dialog.create();
 		dialog.open();
 	}

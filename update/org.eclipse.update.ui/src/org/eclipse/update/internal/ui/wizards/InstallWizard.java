@@ -18,6 +18,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.update.internal.search.SiteSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.search.*;
 import org.eclipse.update.ui.UpdateJob;
 
@@ -48,7 +49,7 @@ public class InstallWizard
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(UpdateUIMessages.InstallWizard_wtitle); 
 	}
 
 	public InstallWizard(UpdateSearchRequest searchRequest, ArrayList jobs) {
@@ -106,8 +107,8 @@ public class InstallWizard
             // another update/install job is running, need to wait to finish or cancel old job
             boolean proceed = MessageDialog.openQuestion(
                     UpdateUI.getActiveWorkbenchShell(),
-                    UpdateUI.getString("InstallWizard.anotherJobTitle"),
-                    UpdateUI.getString("InstallWizard.anotherJob")); //$NON-NLS-1$
+                    UpdateUIMessages.InstallWizard_anotherJobTitle,
+                    UpdateUIMessages.InstallWizard_anotherJob); 
             if (!proceed)
                 return false; // cancel this job, and let the old one go on
         }
@@ -122,9 +123,9 @@ public class InstallWizard
 		// The job listener will then install the feature when download is finished.
 
         if (isUpdate())
-            job = new UpdateJob(UpdateUI.getString("InstallWizard.jobName"), false, false);  //$NON-NLS-1$
+            job = new UpdateJob(UpdateUIMessages.InstallWizard_jobName, false, false);  
         else
-            job = new UpdateJob(UpdateUI.getString("InstallWizard.jobName"), searchRequest);  //$NON-NLS-1$    
+            job = new UpdateJob(UpdateUIMessages.InstallWizard_jobName, searchRequest);  
 		job.setUser(true);
 		job.setPriority(Job.INTERACTIVE);
 //		if (wait) {

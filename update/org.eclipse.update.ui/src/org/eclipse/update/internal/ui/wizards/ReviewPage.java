@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -282,7 +283,7 @@ public class ReviewPage	extends BannerPage {
 				if (cycleCandidates == null)
 					cycleCandidates = new ArrayList();
 				if (cycleCandidates.contains(feature))
-					throw Utilities.newCoreException(UpdateUI.getFormattedMessage("InstallWizard.ReviewPage.cycle", feature.getVersionedIdentifier().toString()), null); //$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind("InstallWizard.ReviewPage.cycle", feature.getVersionedIdentifier().toString()), null); //$NON-NLS-1$
 				else
 					cycleCandidates.add(feature);
 				IFeatureReference[] irefs =
@@ -360,8 +361,8 @@ public class ReviewPage	extends BannerPage {
         if (this.jobs==null) this.jobs = new ArrayList();
         this.searchRequest = searchRequest;
         
-		setTitle(UpdateUI.getString("InstallWizard.ReviewPage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.InstallWizard_ReviewPage_title); 
+		setDescription(UpdateUIMessages.InstallWizard_ReviewPage_desc); 
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		setBannerVisible(false);
 	}
@@ -377,8 +378,8 @@ public class ReviewPage	extends BannerPage {
 		// when searching for updates, only nested patches can be shown.
 		// when searching for features, features and patches can be shown
 		String filterText = filterCheck.getText();
-		String filterFeatures = UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures"); //$NON-NLS-1$
-		String filterPatches = UpdateUI.getString("InstallWizard.ReviewPage.filterPatches"); //$NON-NLS-1$
+		String filterFeatures = UpdateUIMessages.InstallWizard_ReviewPage_filterFeatures; 
+		String filterPatches = UpdateUIMessages.InstallWizard_ReviewPage_filterPatches; 
 
 		if (isUpdateSearch && filterText.equals(filterFeatures))
 			filterCheck.setText(filterPatches);
@@ -415,13 +416,13 @@ public class ReviewPage	extends BannerPage {
 				
 				int totalCount = jobs != null ? jobs.size(): 0;
 				if(totalCount >0) {
-					setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$;
-					label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
+					setDescription(UpdateUIMessages.InstallWizard_ReviewPage_desc); 
+					label.setText(UpdateUIMessages.InstallWizard_ReviewPage_label); 
 				} else {
 					if (isUpdateSearch)
-						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates")); //$NON-NLS-1$
+						setDescription(UpdateUIMessages.InstallWizard_ReviewPage_zeroUpdates); 
 					else
-						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroFeatures")); //$NON-NLS-1$
+						setDescription(UpdateUIMessages.InstallWizard_ReviewPage_zeroFeatures); 
 					label.setText("");
 				}
 			}
@@ -448,7 +449,7 @@ public class ReviewPage	extends BannerPage {
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_ReviewPage_label); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -485,7 +486,7 @@ public class ReviewPage	extends BannerPage {
 //		});
 
 		Button button = new Button(buttonContainer, SWT.PUSH);
-		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.deselectAll")); //$NON-NLS-1$
+		button.setText(UpdateUIMessages.InstallWizard_ReviewPage_deselectAll); 
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -499,7 +500,7 @@ public class ReviewPage	extends BannerPage {
 		});
 
 		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
-		moreInfoButton.setText(UpdateUI.getString("InstallWizard.ReviewPage.moreInfo")); //$NON-NLS-1$
+		moreInfoButton.setText(UpdateUIMessages.InstallWizard_ReviewPage_moreInfo); 
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -515,7 +516,7 @@ public class ReviewPage	extends BannerPage {
 		
 		
 		propertiesButton = new Button(buttonContainer, SWT.PUSH);
-		propertiesButton.setText(UpdateUI.getString("InstallWizard.ReviewPage.properties")); //$NON-NLS-1$
+		propertiesButton.setText(UpdateUIMessages.InstallWizard_ReviewPage_properties); 
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -530,7 +531,7 @@ public class ReviewPage	extends BannerPage {
 		propertiesButton.setEnabled(false);
 
 		statusButton = new Button(buttonContainer, SWT.PUSH);
-		statusButton.setText(UpdateUI.getString("InstallWizard.ReviewPage.showStatus")); //$NON-NLS-1$
+		statusButton.setText(UpdateUIMessages.InstallWizard_ReviewPage_showStatus); 
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL
@@ -551,7 +552,7 @@ public class ReviewPage	extends BannerPage {
 		counterLabel.setLayoutData(gd);
 
 		filterOlderVersionCheck = new Button(client, SWT.CHECK);
-		filterOlderVersionCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterOlderFeatures")); //$NON-NLS-1$
+		filterOlderVersionCheck.setText(UpdateUIMessages.InstallWizard_ReviewPage_filterOlderFeatures); 
 		filterOlderVersionCheck.setSelection(true);
 //		tableViewer.addFilter(olderVersionFilter);
 		filterOlderVersionCheck.addSelectionListener(new SelectionAdapter() {
@@ -569,7 +570,7 @@ public class ReviewPage	extends BannerPage {
 		filterOlderVersionCheck.setLayoutData(gd);
 		
 		filterCheck = new Button(client, SWT.CHECK);
-		filterCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures")); //$NON-NLS-1$
+		filterCheck.setText(UpdateUIMessages.InstallWizard_ReviewPage_filterFeatures); 
 		filterCheck.setSelection(false);
 		//tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
@@ -740,7 +741,7 @@ public class ReviewPage	extends BannerPage {
 	
 	private void fillContextMenu(IMenuManager manager) {
 		if (treeViewer.getSelection().isEmpty()) return;
-		Action action = new Action(UpdateUI.getString("InstallWizard.ReviewPage.prop")) { //$NON-NLS-1$
+		Action action = new Action(UpdateUIMessages.InstallWizard_ReviewPage_prop) { 
 			public void run() {
 				handleProperties();
 			}
@@ -791,9 +792,7 @@ public class ReviewPage	extends BannerPage {
 		String total = "" + totalCount; //$NON-NLS-1$
 		String selected = "" + checkedCount; //$NON-NLS-1$
 		counterLabel.setText(
-			UpdateUI.getFormattedMessage(
-				"InstallWizard.ReviewPage.counter", //$NON-NLS-1$
-				new String[] { selected, total }));
+			NLS.bind("InstallWizard.ReviewPage.counter", (new String[] { selected, total })));
 		counterLabel.getParent().layout();
 	}
 
@@ -998,7 +997,7 @@ public class ReviewPage	extends BannerPage {
 				setErrorMessage(singleStatus.getMessage());
 			}else{
 			// 5. not multi or empty multi status
-				setErrorMessage(UpdateUI.getString("InstallWizard.ReviewPage.invalid.long")); //$NON-NLS-1$
+				setErrorMessage(UpdateUIMessages.InstallWizard_ReviewPage_invalid_long); 
 			}
 		}
 	}
@@ -1006,8 +1005,7 @@ public class ReviewPage	extends BannerPage {
 	class StatusDialog extends ErrorDialog {
 //		Button detailsButton;
 		public StatusDialog() {
-			super(getContainer().getShell(), UpdateUI
-					.getString("InstallWizard.ReviewPage.invalid.short"), null, //$NON-NLS-1$
+			super(getContainer().getShell(), UpdateUIMessages.InstallWizard_ReviewPage_invalid_short, null, //$NON-NLS-1$
 					validationStatus, IStatus.OK | IStatus.INFO
 							| IStatus.WARNING | IStatus.ERROR);
 		}

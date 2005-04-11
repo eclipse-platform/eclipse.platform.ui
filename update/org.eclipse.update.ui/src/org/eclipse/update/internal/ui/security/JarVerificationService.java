@@ -75,7 +75,7 @@ public class JarVerificationService implements IVerificationListener {
 				new JarVerificationDialog(shell,page,result);
 		dialog.create();
 		dialog.getShell().setSize(600, 500);
-		dialog.getShell().setText(UpdateUI.getString("JarVerificationDialog.wtitle")); //$NON-NLS-1$
+		dialog.getShell().setText(UpdateUIMessages.JarVerificationDialog_wtitle); 
 		dialog.open();
 		if (dialog.getReturnCode() == JarVerificationDialog.OK) {
 			code = CHOICE_INSTALL_TRUST_ONCE;

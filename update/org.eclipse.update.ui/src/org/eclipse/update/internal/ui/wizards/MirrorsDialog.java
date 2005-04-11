@@ -13,6 +13,7 @@ package org.eclipse.update.internal.ui.wizards;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -72,7 +73,7 @@ public class MirrorsDialog extends Dialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		text.setLayoutData(data);
-		text.setText(UpdateUI.getFormattedMessage("MirrorsDialog.text", siteName));
+		text.setText(NLS.bind("MirrorsDialog.text", siteName));
 		text.setBackground(parent.getBackground());
 		text.setEditable(false);
 		// the text should not receive focus
@@ -111,6 +112,6 @@ public class MirrorsDialog extends Dialog {
 
    protected void configureShell(Shell shell) {
        super.configureShell(shell);
-       shell.setText(UpdateUI.getString("MirrorsDialog.title"));
+       shell.setText(UpdateUIMessages.MirrorsDialog_title);
     }
 }

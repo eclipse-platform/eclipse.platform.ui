@@ -39,8 +39,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static final String P_DISCOVERY_SITES_ENABLED = "discoverySitesEnabled"; //$NON-NLS-1$
 	//The shared instance.
 	private static UpdateUI plugin;
-	//Resource bundle.
-	private ResourceBundle resourceBundle;
 	private UpdateModel model;
 	private UpdateManagerAuthenticator authenticator;
 	private String appServerHost;
@@ -54,13 +52,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	public UpdateUI() {
 
 		plugin = this;
-		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.update.internal.ui.UpdateUIPluginResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
 	/**
@@ -98,36 +89,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (labelProvider == null)
 			labelProvider = new UpdateLabelProvider();
 		return labelProvider;
-	}
-
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getString(String key) {
-		ResourceBundle bundle = UpdateUI.getDefault().getResourceBundle();
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	public static String getFormattedMessage(String key, String[] args) {
-		String text = getString(key);
-		return java.text.MessageFormat.format(text, args);
-	}
-
-	public static String getFormattedMessage(String key, String arg) {
-		String text = getString(key);
-		return java.text.MessageFormat.format(text, new String[] { arg });
-	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
 	}
 
 	/* (non-Javadoc)

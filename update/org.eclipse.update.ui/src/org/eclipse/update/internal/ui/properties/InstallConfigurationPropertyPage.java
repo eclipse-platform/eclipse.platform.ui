@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 /**
  * @see PropertyPage
@@ -34,7 +34,7 @@ public class InstallConfigurationPropertyPage extends PropertyPage implements IW
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.path"), ConfiguratorUtils.getInstallURL().toString()); //$NON-NLS-1$
+		addProperty(composite, UpdateUIMessages.ConfiguredSitePropertyPage_path, ConfiguratorUtils.getInstallURL().toString()); 
 		return composite;
 	}
 	

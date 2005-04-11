@@ -111,7 +111,7 @@ public class InstallLogParser {
 				IStatus.ERROR,
 				UpdateUtils.getPluginId(),
 				IStatus.ERROR,
-				Policy.bind("InstallLogParser.errors"), //$NON-NLS-1$
+				Messages.bind("InstallLogParser.errors"), //$NON-NLS-1$
 				e));
 	}
 	

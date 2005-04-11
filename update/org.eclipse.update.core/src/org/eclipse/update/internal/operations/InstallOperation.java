@@ -13,6 +13,7 @@ package org.eclipse.update.internal.operations;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -85,9 +86,7 @@ public class InstallOperation
 					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
 						// "eat" the error if nested child
 						String message =
-							Policy.bind(
-								KEY_OLD,
-								oldFeature.getLabel());
+							NLS.bind(KEY_OLD, (new String[] { oldFeature.getLabel() }));
 						IStatus status =
 							new Status(
 								IStatus.ERROR,

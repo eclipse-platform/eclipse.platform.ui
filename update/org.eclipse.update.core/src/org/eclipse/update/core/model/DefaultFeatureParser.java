@@ -16,6 +16,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
@@ -142,7 +143,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
-			throw new SAXException(Policy.bind("DefaultFeatureParser.NoFeatureTag")); //$NON-NLS-1$
+			throw new SAXException(Messages.bind("DefaultFeatureParser.NoFeatureTag")); //$NON-NLS-1$
 		else {
 			if (objectStack.peek() instanceof FeatureModel) {
 				return (FeatureModel) objectStack.pop();
@@ -152,7 +153,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				while (iter.hasNext()) {
 					stack = "\r\n" + iter.next().toString() + stack; //$NON-NLS-1$
 				}
-				throw new SAXException(Policy.bind("DefaultFeatureParser.WrongParsingStack", stack));//$NON-NLS-1$
+				throw new SAXException(NLS.bind("DefaultFeatureParser.WrongParsingStack", (new String[] { stack })));//$NON-NLS-1$
 			}
 		}
 	}
@@ -179,7 +180,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
-				internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", localName, getState(currentState)));	//$NON-NLS-1$
+				internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { localName, getState(currentState) })));	//$NON-NLS-1$
 				break;
 
 			case STATE_INITIAL :
@@ -197,7 +198,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_URL :
 				if (URL_ALREADY_SEEN)
-					internalError(Policy.bind("DefaultFeatureParser.TooManyURLtag")); //$NON-NLS-1$
+					internalError(Messages.bind("DefaultFeatureParser.TooManyURLtag")); //$NON-NLS-1$
 				handleURLState(localName, attributes);
 				break;
 
@@ -220,7 +221,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownStartState", Integer.toString(currentState)));	//$NON-NLS-1$
+				internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownStartState", (new String[] { Integer.toString(currentState) })));	//$NON-NLS-1$
 				break;
 		}
 
@@ -250,7 +251,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_INITIAL :
-				internalError(Policy.bind("DefaultFeatureParser.ParsingStackBackToInitialState")); //$NON-NLS-1$
+				internalError(Messages.bind("DefaultFeatureParser.ParsingStackBackToInitialState")); //$NON-NLS-1$
 				break;
 
 			case STATE_FEATURE :
@@ -280,7 +281,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 					InstallHandlerEntryModel handlerModel = (InstallHandlerEntryModel) objectStack.pop();
 					featureModel = (FeatureModel) objectStack.peek();
 					if (featureModel.getInstallHandlerModel() != null)
-						internalError(Policy.bind("DefaultFeatureParser.ElementAlreadySet", getState(state))); //$NON-NLS-1$
+						internalError(NLS.bind("DefaultFeatureParser.ElementAlreadySet", (new String[] { getState(state) }))); //$NON-NLS-1$
 					else
 						featureModel.setInstallHandlerModel(handlerModel);
 				}
@@ -305,14 +306,14 @@ public class DefaultFeatureParser extends DefaultHandler {
 							if (objectStack.peek() instanceof FeatureModel) {
 								featureModel = (FeatureModel) objectStack.peek();
 								if (featureModel.getDescriptionModel() != null)
-									internalError(Policy.bind("DefaultFeatureParser.ElementAlreadySet", getState(state)));	//$NON-NLS-1$
+									internalError(NLS.bind("DefaultFeatureParser.ElementAlreadySet", (new String[] { getState(state) })));	//$NON-NLS-1$
 								else
 									featureModel.setDescriptionModel(info);
 							}
 							break;
 
 						default :
-							internalError(Policy.bind("DefaultFeatureParser.StateIncludeWrongElement", getState(innerState), getState(state)));	//$NON-NLS-1$
+							internalError(NLS.bind("DefaultFeatureParser.StateIncludeWrongElement", (new String[] { getState(innerState), getState(state) })));	//$NON-NLS-1$
 							break;
 
 					}
@@ -338,14 +339,14 @@ public class DefaultFeatureParser extends DefaultHandler {
 							if (objectStack.peek() instanceof FeatureModel) {
 								featureModel = (FeatureModel) objectStack.peek();
 								if (featureModel.getCopyrightModel() != null)
-									internalError(Policy.bind("DefaultFeatureParser.ElementAlreadySet", getState(state)));//$NON-NLS-1$
+									internalError(NLS.bind("DefaultFeatureParser.ElementAlreadySet", (new String[] { getState(state) })));//$NON-NLS-1$
 								else
 									featureModel.setCopyrightModel(info);
 							}
 							break;
 
 						default :
-							internalError(Policy.bind("DefaultFeatureParser.StateIncludeWrongElement", getState(innerState), getState(state)));	//$NON-NLS-1$
+							internalError(NLS.bind("DefaultFeatureParser.StateIncludeWrongElement", (new String[] { getState(innerState), getState(state) })));	//$NON-NLS-1$
 							break;
 
 					}
@@ -372,14 +373,14 @@ public class DefaultFeatureParser extends DefaultHandler {
 							if (objectStack.peek() instanceof FeatureModel) {
 								featureModel = (FeatureModel) objectStack.peek();
 								if (featureModel.getLicenseModel() != null)
-									internalError(Policy.bind("DefaultFeatureParser.ElementAlreadySet", getState(state)));	//$NON-NLS-1$
+									internalError(NLS.bind("DefaultFeatureParser.ElementAlreadySet", (new String[] { getState(state) })));	//$NON-NLS-1$
 								else
 									featureModel.setLicenseModel(info);
 							}
 							break;
 
 						default :
-							internalError(Policy.bind("DefaultFeatureParser.StateIncludeWrongElement", getState(innerState), getState(state)));	//$NON-NLS-1$
+							internalError(NLS.bind("DefaultFeatureParser.StateIncludeWrongElement", (new String[] { getState(innerState), getState(state) })));	//$NON-NLS-1$
 							break;
 
 					}
@@ -398,7 +399,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 					if (objectStack.peek() instanceof FeatureModel) {
 						featureModel = (FeatureModel) objectStack.peek();
 						if (featureModel.getUpdateSiteEntryModel() != null) {
-							internalError(Policy.bind("DefaultFeatureParser.ElementAlreadySet", getState(state)));	//$NON-NLS-1$
+							internalError(NLS.bind("DefaultFeatureParser.ElementAlreadySet", (new String[] { getState(state) })));	//$NON-NLS-1$
 						} else {
 							featureModel.setUpdateSiteEntryModel(info);
 						}
@@ -423,7 +424,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 					featureModel = (FeatureModel) objectStack.peek();
 					ImportModel[] importModels = featureModel.getImportModels();
 					if (importModels.length == 0) {
-						internalError(Policy.bind("DefaultFeatureParser.RequireStateWithoutImportElement")); //$NON-NLS-1$
+						internalError(Messages.bind("DefaultFeatureParser.RequireStateWithoutImportElement")); //$NON-NLS-1$
 					} else {
 						boolean patchMode = false;
 						for (int i = 0; i < importModels.length; i++) {
@@ -432,7 +433,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 								if (patchMode == false)
 									patchMode = true;
 								else {
-									internalError(Policy.bind("DefaultFeatureParser.MultiplePatchImports")); //$NON-NLS-1$
+									internalError(Messages.bind("DefaultFeatureParser.MultiplePatchImports")); //$NON-NLS-1$
 									break;
 								}
 							}
@@ -475,7 +476,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownEndState") + state);//$NON-NLS-1$
+				internalErrorUnknownTag(Messages.bind("DefaultFeatureParser.UnknownEndState") + state);//$NON-NLS-1$
 				break;
 		}
 
@@ -541,7 +542,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_FEATURE));
 			processFeature(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));//$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) })));//$NON-NLS-1$
 	}
 
 	private void handleFeatureState(String elementName, Attributes attributes) throws SAXException {
@@ -573,7 +574,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DATA));
 			processData(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$
 	}
 
 	private void handleURLState(String elementName, Attributes attributes) throws SAXException {
@@ -584,7 +585,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DISCOVERY));
 			processURLInfo(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$
 	}
 
 	private void handleRequiresState(String elementName, Attributes attributes) throws SAXException {
@@ -592,7 +593,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_IMPORT));
 			processImport(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$
 	}
 	private void handleUpdateDiscoveryState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(HANDLER)) {
@@ -629,7 +630,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DISCOVERY));
 			processURLInfo(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$
 	}
 
 
@@ -666,7 +667,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_IMPORT));
 			processImport(attributes);
 		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState))); //$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind("DefaultFeatureParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$
 	}
 
 	/*
@@ -680,7 +681,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", new String[] { id, ver, getState(currentState)}));	//$NON-NLS-1$
+			internalError(NLS.bind("DefaultFeatureParser.IdOrVersionInvalid", (new String[] { id, ver, getState(currentState)})));	//$NON-NLS-1$
 		} else {
 			// create feature model
 			FeatureModel feature = factory.createFeatureModel();
@@ -803,7 +804,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", new String[] { id, ver, getState(currentState)}));	//$NON-NLS-1$
+			internalError(NLS.bind("DefaultFeatureParser.IdOrVersionInvalid", (new String[] { id, ver, getState(currentState)})));	//$NON-NLS-1$
 		}
 
 		IncludedFeatureReferenceModel includedFeature = factory.createIncludedFeatureReferenceModel();
@@ -886,7 +887,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String idMatch = attributes.getValue("id-match"); //$NON-NLS-1$
 
 		if (!(pluginID == null ^ featureID == null)) {
-			internalError(Policy.bind("DefaultFeatureParser.PluginAndFeatureId")); //$NON-NLS-1$
+			internalError(Messages.bind("DefaultFeatureParser.PluginAndFeatureId")); //$NON-NLS-1$
 			return;
 		}
 
@@ -899,7 +900,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		}
 
 		if (id == null || id.trim().equals("")) //$NON-NLS-1$
-			internalError(Policy.bind("DefaultFeatureParser.MissingId", getState(currentState)));//$NON-NLS-1$
+			internalError(NLS.bind("DefaultFeatureParser.MissingId", (new String[] { getState(currentState) })));//$NON-NLS-1$
 		else {
 			ImportModel imp = factory.createImportModel();
 			String ver = attributes.getValue("version"); //$NON-NLS-1$
@@ -910,7 +911,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			if (ver == null) {
 				if (imp.isPatch()) {
-					internalError(Policy.bind("DefaultFeatureParser.MissingPatchVersion")); //$NON-NLS-1$
+					internalError(Messages.bind("DefaultFeatureParser.MissingPatchVersion")); //$NON-NLS-1$
 				}
 				ver = "0.0.0"; //$NON-NLS-1$
 				match = "greaterOrEqual"; //$NON-NLS-1$
@@ -930,11 +931,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 			if (imp.isPatch()) {
 				// patch reference must be perfect.
 				if (match != null && !match.equalsIgnoreCase("perfect")) { //$NON-NLS-1$
-					internalError(Policy.bind("DefaultFeatureParser.wrongMatchForPatch")); //$NON-NLS-1$
+					internalError(Messages.bind("DefaultFeatureParser.wrongMatchForPatch")); //$NON-NLS-1$
 				}
 				if (imp.isFeatureImport() == false) {
 					imp.setPatch(false);
-					internalError(Policy.bind("DefaultFeatureParser.patchWithPlugin")); //$NON-NLS-1$
+					internalError(Messages.bind("DefaultFeatureParser.patchWithPlugin")); //$NON-NLS-1$
 				}
 			}
 
@@ -972,7 +973,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String ver = attributes.getValue("version"); //$NON-NLS-1$
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultFeatureParser.IdOrVersionInvalid", new String[] { id, ver, getState(currentState)}));	//$NON-NLS-1$
+			internalError(NLS.bind("DefaultFeatureParser.IdOrVersionInvalid", (new String[] { id, ver, getState(currentState)})));	//$NON-NLS-1$
 		} else {
 			PluginEntryModel pluginEntry = factory.createPluginEntryModel();
 			pluginEntry.setPluginIdentifier(id);
@@ -1044,7 +1045,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private void processData(Attributes attributes) {
 		String id = attributes.getValue("id"); //$NON-NLS-1$
 		if (id == null || id.trim().equals("")) { //$NON-NLS-1$
-			internalError(Policy.bind("DefaultFeatureParser.MissingId", getState(currentState)));	//$NON-NLS-1$
+			internalError(NLS.bind("DefaultFeatureParser.MissingId", (new String[] { getState(currentState) })));	//$NON-NLS-1$
 		} else {
 			NonPluginEntryModel dataEntry = factory.createNonPluginEntryModel();
 			dataEntry.setIdentifier(id);
@@ -1114,10 +1115,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		String msg;
 		if (name.equals("")) { //$NON-NLS-1$
-			msg = Policy.bind("DefaultFeatureParser.ErrorParsing", ex.getMessage());//$NON-NLS-1$
+			msg = NLS.bind("DefaultFeatureParser.ErrorParsing", (new String[] { ex.getMessage() }));//$NON-NLS-1$
 		} else {
 			String[] values = new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()};
-			msg = Policy.bind("DefaultFeatureParser.ErrorlineColumnMessage", values);//$NON-NLS-1$
+			msg = NLS.bind("DefaultFeatureParser.ErrorlineColumnMessage", values);//$NON-NLS-1$
 		}
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
 	}
@@ -1131,7 +1132,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private void error(IStatus error) {
 
 		if (status == null) {
-			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Policy.bind("DefaultFeatureParser.ErrorParsingFeature"), null);	//$NON-NLS-1$
+			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Messages.bind("DefaultFeatureParser.ErrorParsingFeature"), null);	//$NON-NLS-1$
 		}
 
 		status.add(error);
@@ -1146,7 +1147,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	private void internalError(String message) {
         if (location != null)
-            message += " " + Policy.bind("DefaultFeatureParser.location", location); //$NON-NLS-1$ $NON-NLS-2$
+            message += " " + NLS.bind("DefaultFeatureParser.location", (new String[] { location })); //$NON-NLS-1$ $NON-NLS-2$
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
 	}
 
@@ -1202,7 +1203,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				return "Data"; //$NON-NLS-1$
 
 			default :
-				return Policy.bind("DefaultFeatureParser.UnknownState", Integer.toString(state));//$NON-NLS-1$
+				return NLS.bind("DefaultFeatureParser.UnknownState", (new String[] { Integer.toString(state) }));//$NON-NLS-1$
 		}
 
 	}

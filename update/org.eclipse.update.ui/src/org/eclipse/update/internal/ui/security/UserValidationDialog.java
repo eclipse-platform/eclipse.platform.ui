@@ -81,8 +81,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(UpdateUI
-				.getString("UserVerificationDialog.PasswordRequired")); //$NON-NLS-1$
+		newShell.setText(UpdateUIMessages.UserVerificationDialog_PasswordRequired); //$NON-NLS-1$
 	}
 	/**
 	 */
@@ -102,7 +101,7 @@ public class UserValidationDialog extends Dialog {
 		main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(main, SWT.WRAP);
-		String text = UpdateUI.getString("UserVerificationDialog.ConnectTo") + host; //$NON-NLS-1$
+		String text = UpdateUIMessages.UserVerificationDialog_ConnectTo + host; 
 		text += "\n\n" + message; //$NON-NLS-1$ //$NON-NLS-2$
 		label.setText(text);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -119,8 +118,7 @@ public class UserValidationDialog extends Dialog {
 	 * Creates the three widgets that represent the user name entry area.
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUI
-				.getString("UserVerificationDialog.Password")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_Password); //$NON-NLS-1$
 
 		passwordField = new Text(parent, SWT.BORDER | SWT.PASSWORD);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -133,8 +131,7 @@ public class UserValidationDialog extends Dialog {
 	 * Creates the three widgets that represent the user name entry area.
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(UpdateUI
-				.getString("UserVerificationDialog.UserName")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIMessages.UserVerificationDialog_UserName); //$NON-NLS-1$
 
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

@@ -25,7 +25,7 @@ public class MissingFeature implements IFeature {
 	private IFeatureReference reference;
 	private IFeature parent;
 	private IURLEntry desc;
-	private VersionedIdentifier id = new VersionedIdentifier(UpdateUI.getString("MissingFeature.id"), "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+	private VersionedIdentifier id = new VersionedIdentifier(UpdateUIMessages.MissingFeature_id, "0.0.0"); 
 	public MissingFeature(ISite site, URL url) {
 		this.site = site;
 		this.url = url;
@@ -34,7 +34,7 @@ public class MissingFeature implements IFeature {
 				return null;
 			}
 			public String getAnnotation() {
-				return UpdateUI.getString("MissingFeature.desc.unknown"); //$NON-NLS-1$
+				return UpdateUIMessages.MissingFeature_desc_unknown; 
 			}
 			public Object getAdapter(Class key) {
 				return null;
@@ -59,7 +59,7 @@ public class MissingFeature implements IFeature {
 					return null;
 				}
 				public String getAnnotation() {
-					return UpdateUI.getString("MissingFeature.desc.optional"); //$NON-NLS-1$
+					return UpdateUIMessages.MissingFeature_desc_optional; 
 				}
 				public Object getAdapter(Class key) {
 					return null;
@@ -147,7 +147,7 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
-		return UpdateUI.getString("MissingFeature.provider"); //$NON-NLS-1$
+		return UpdateUIMessages.MissingFeature_provider; 
 	}
 
 	/*

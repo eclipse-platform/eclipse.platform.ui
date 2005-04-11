@@ -22,7 +22,7 @@ import org.eclipse.update.operations.*;
 public class RestartDialog extends MessageDialog {
 	private static final int CONTINUE = 2;
 	private final static String[] yesNo = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL};
-	private final static String[] yesNoApply = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, UpdateUI.getString("ApplyChanges")}; //$NON-NLS-1$
+	private final static String[] yesNoApply = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, UpdateUIMessages.ApplyChanges}; 
 	
 	private int buttonId = 0;
 	
@@ -49,8 +49,8 @@ public class RestartDialog extends MessageDialog {
 	 *    <code>false</code> otherwise
 	 */
 	public static boolean openQuestion(Shell parent, boolean restartIsReallyNeeded) {
-		String title = UpdateUI.getString("RestartTitle"); //$NON-NLS-1$
-		String message = restartIsReallyNeeded ? UpdateUI.getString("RestartMessage"): UpdateUI.getString("OptionalRestartMessage"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title = UpdateUIMessages.RestartTitle; 
+		String message = restartIsReallyNeeded ? UpdateUIMessages.RestartMessage: UpdateUIMessages.OptionalRestartMessage; 
 		RestartDialog dialog = new RestartDialog(parent, title,	message, restartIsReallyNeeded);
 		int button= dialog.open();
 		if (button == 2)

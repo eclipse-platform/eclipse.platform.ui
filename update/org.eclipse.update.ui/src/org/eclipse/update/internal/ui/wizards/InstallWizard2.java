@@ -63,7 +63,7 @@ public class InstallWizard2
         setDefaultPageImageDescriptor(UpdateUIImages.DESC_UPDATE_WIZ);
         setForcePreviousAndNextButtons(true);
         setNeedsProgressMonitor(true);
-        setWindowTitle(UpdateUI.getString("InstallWizard.wtitle")); //$NON-NLS-1$
+        setWindowTitle(UpdateUIMessages.InstallWizard_wtitle); 
 	}
     
 	public int getInstallCount() {
@@ -97,8 +97,8 @@ public class InstallWizard2
 			// another update/install job is running, need to wait to finish or cancel old job
 			boolean proceed = MessageDialog.openQuestion(
 					UpdateUI.getActiveWorkbenchShell(),
-					UpdateUI.getString("InstallWizard.anotherJobTitle"),
-					UpdateUI.getString("InstallWizard.anotherJob")); //$NON-NLS-1$
+					UpdateUIMessages.InstallWizard_anotherJobTitle,
+					UpdateUIMessages.InstallWizard_anotherJob); 
 			if (!proceed)
 				return false; // cancel this job, and let the old one go on
 		}
@@ -319,7 +319,7 @@ public class InstallWizard2
 		jobListener = new UpdateJobChangeListener();
 		Platform.getJobManager().addJobChangeListener(jobListener);
 		
-		job = new Job(UpdateUI.getString("InstallWizard.jobName")) { //$NON-NLS-1$	
+		job = new Job(UpdateUIMessages.InstallWizard_jobName) { 
 			public IStatus run(IProgressMonitor monitor) {
 				if (download(monitor))
 					return Status.OK_STATUS;
@@ -371,7 +371,7 @@ public class InstallWizard2
 		// If download fails, the user is prompted to retry.
 		try {
 			IFeatureOperation[] ops = installOperation.getOperations();
-			monitor.beginTask(UpdateUI.getString("InstallWizard.download"), 3*ops.length);
+			monitor.beginTask(UpdateUIMessages.InstallWizard_download, 3*ops.length);
 			for (int i=0; i<ops.length; i++) {
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
@@ -404,9 +404,9 @@ public class InstallWizard2
 			public void run() {
 				retry[0] =	MessageDialog.openQuestion(
 					UpdateUI.getActiveWorkbenchShell(),
-					UpdateUI.getString("InstallWizard.retryTitle"), //$NON-NLS-1$
+					UpdateUIMessages.InstallWizard_retryTitle, 
 					e.getMessage()+"\n" //$NON-NLS-1$
-						+ UpdateUI.getString("InstallWizard.retry")); //$NON-NLS-1$
+						+ UpdateUIMessages.InstallWizard_retry); 
 			}
 		});
 		return retry[0];

@@ -169,7 +169,7 @@ public class Utilities {
 		long offset = UpdateManagerUtils.copy(is, os, monitor, 0);
 		if (offset != -1) {
 			if (monitor.isCanceled()) {
-				String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+				String msg = Messages.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
 				throw new InstallAbortedException(msg, null);
 			} else {
 				throw new IOException();

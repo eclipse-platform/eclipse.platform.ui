@@ -18,6 +18,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.search.*;
 
 public class DiscoveryFolder extends BookmarkFolder {
@@ -26,7 +27,7 @@ public class DiscoveryFolder extends BookmarkFolder {
     UpdatePolicy updatePolicy = new UpdatePolicy();
 	
 	public DiscoveryFolder() {
-		super(UpdateUI.getString("DiscoveryFolder.name")); //$NON-NLS-1$
+		super(UpdateUIMessages.DiscoveryFolder_name); 
 		setModel(UpdateUI.getDefault().getUpdateModel());
 	}
 	public void initialize() {

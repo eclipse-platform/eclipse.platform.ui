@@ -48,7 +48,7 @@ public class URLEntry extends URLEntryModel implements IURLEntry {
 	public String toString() {
 		String result = "IURLEntry: "; //$NON-NLS-1$
 		String URLString =
-			(getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm();	//$NON-NLS-1$
+			(getURL() == null) ? Messages.bind("Feature.NoURL") : getURL().toExternalForm();	//$NON-NLS-1$
 		result =
 			result
 				+ ((getAnnotation() == null) ? URLString : getAnnotation() + " : " + URLString); //$NON-NLS-1$

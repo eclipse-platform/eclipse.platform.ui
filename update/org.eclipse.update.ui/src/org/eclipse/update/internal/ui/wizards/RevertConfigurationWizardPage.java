@@ -43,8 +43,8 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 	public RevertConfigurationWizardPage() {
 		super("RevertConfiguration"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString("RevertConfigurationWizardPage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("RevertConfigurationWizardPage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.RevertConfigurationWizardPage_title); 
+		setDescription(UpdateUIMessages.RevertConfigurationWizardPage_desc); 
 		blueBGColor = new Color(null, 238,238,255);
 		
 	}
@@ -72,7 +72,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		tableContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(tableContainer, SWT.NONE);
-		label.setText(UpdateUI.getString("RevertConfigurationWizardPage.label")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.RevertConfigurationWizardPage_label); 
 
 		Table table = new Table(tableContainer, SWT.BORDER | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -152,7 +152,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(
-			UpdateUI.getString("RevertConfigurationWizardPage.activities")); //$NON-NLS-1$
+			UpdateUIMessages.RevertConfigurationWizardPage_activities); 
 
 		TableLayoutComposite tlComposite= new TableLayoutComposite(composite, SWT.NONE);
 		tlComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -198,7 +198,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			MessageDialog.openQuestion(
 				shell,
 				shell.getText(),
-				UpdateUI.getString("RevertConfigurationWizardPage.question")); //$NON-NLS-1$
+				UpdateUIMessages.RevertConfigurationWizardPage_question); 
 		if (!result)
 			return false;
 

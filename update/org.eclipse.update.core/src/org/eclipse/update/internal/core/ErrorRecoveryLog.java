@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
 
@@ -133,7 +134,7 @@ public class ErrorRecoveryLog {
 			UpdateCore.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							 //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }), //$NON-NLS-1$
+				NLS.bind("UpdateManagerUtils.UnableToLog", (new Object[] { logFile })), //$NON-NLS-1$
 				e);
 		}
 		
@@ -162,7 +163,7 @@ public class ErrorRecoveryLog {
 			index++;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }), //$NON-NLS-1$
+				NLS.bind("UpdateManagerUtils.UnableToLog", (new Object[] { logFile })), //$NON-NLS-1$
 				e);
 		}
 	}
@@ -233,7 +234,7 @@ public class ErrorRecoveryLog {
 	 */
 	public IStatus recover(){
 		
-		IStatus mainStatus = createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.recoveringStatus"),null); //$NON-NLS-1$
+		IStatus mainStatus = createStatus(IStatus.OK,Messages.bind("ErrorRecoveryLog.recoveringStatus"),null); //$NON-NLS-1$
 		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),mainStatus.getMessage(),null);
 
 		//check if recovery is on
@@ -244,7 +245,7 @@ public class ErrorRecoveryLog {
 		
 		File logFile = getRecoveryLogFile();
 		if (!logFile.exists()){
-			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindLogFile")+logFile,null)); //$NON-NLS-1$
+			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.cannotFindLogFile")+logFile,null)); //$NON-NLS-1$
 			return multi;
 		}
 		
@@ -256,7 +257,7 @@ public class ErrorRecoveryLog {
 			prop.load(in);
 		} catch (IOException e){
 			UpdateCore.warn("Unable to read:"+logFile,e); //$NON-NLS-1$
-			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noPropertyFile")+logFile,e)); //$NON-NLS-1$
+			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noPropertyFile")+logFile,e)); //$NON-NLS-1$
 			return multi;
 		} finally {
 			if (in != null)
@@ -277,7 +278,7 @@ public class ErrorRecoveryLog {
 		
 		String recovery = prop.getProperty(LOG_ENTRY_KEY+"0"); //$NON-NLS-1$
 		if (recovery==null){
-			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noLogEntry")+logFile,null)); //$NON-NLS-1$
+			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noLogEntry")+logFile,null)); //$NON-NLS-1$
 			return multi;			
 		}
 	
@@ -291,7 +292,7 @@ public class ErrorRecoveryLog {
 			return multi;
 		}
 
-		multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noRecoveryToExecute")+logFile,null)); //$NON-NLS-1$
+		multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noRecoveryToExecute")+logFile,null)); //$NON-NLS-1$
 		return multi;	
 	}
 	
@@ -348,7 +349,7 @@ public class ErrorRecoveryLog {
 	 		}
 	 		if (val==null){
 	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index); //$NON-NLS-1$
-	 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
+	 			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
 				return multi;
 	 		}
 	 		// process recovery finished
@@ -402,7 +403,7 @@ public class ErrorRecoveryLog {
 	  	}
 	  	
 	  	if (index==-1){
-	  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
+	  		return createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
 	  	}
 	  	
 	  	String oldName = val.substring(index+1);
@@ -418,10 +419,10 @@ public class ErrorRecoveryLog {
 	  	if (!oldFile.exists()){
 	  		if (newFile.exists()){
 	  			// ok the file has been renamed apparently
-			  	return createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.fileAlreadyRenamed")+newFile,null);	  				 //$NON-NLS-1$
+			  	return createStatus(IStatus.OK,Messages.bind("ErrorRecoveryLog.fileAlreadyRenamed")+newFile,null);	  				 //$NON-NLS-1$
 	  		} else {
 	  			// the file doesn't exist, log as problem, and force the removal of the feature
-		  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null);	  			 //$NON-NLS-1$
+		  		return createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null);	  			 //$NON-NLS-1$
 	  		}
 	  	} 	
 	  	
@@ -433,10 +434,10 @@ public class ErrorRecoveryLog {
 		sucess = oldFile.renameTo(newFile);
 			
 		if(!sucess){
-			String msg =(Policy.bind("ErrorRecoveryLog.oldToNew")+oldFile+newFile); //$NON-NLS-1$
+			String msg =(Messages.bind("ErrorRecoveryLog.oldToNew")+oldFile+newFile); //$NON-NLS-1$
 			return createStatus(IStatus.ERROR,msg,null);
 		}
-		return createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.renamed")+oldFile+Policy.bind("ErrorRecoveryLog.to")+newFile,null); //$NON-NLS-1$ //$NON-NLS-2$
+		return createStatus(IStatus.OK,Messages.bind("ErrorRecoveryLog.renamed")+oldFile+Messages.bind("ErrorRecoveryLog.to")+newFile,null); //$NON-NLS-1$ //$NON-NLS-2$
 	  }
 	  
 	 /*
@@ -454,14 +455,14 @@ public class ErrorRecoveryLog {
 	  	}
 	  	
 	  	if (index==-1){
-	  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
+	  		return createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
 	  	}
 	  	
 	  	String oldName = val.substring(index+1);
 	  	File oldFile = new File(oldName);
 	  	if (!oldFile.exists()){
   			// the jar or directory doesn't exist, log as problem, and force the removal of the feature
-	  		multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null));	  			 //$NON-NLS-1$
+	  		multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null));	  			 //$NON-NLS-1$
 	  		return multi;
 	  	} 		  	
 		multi.addAll(removeFromFileSystem(oldFile));
@@ -479,7 +480,7 @@ public class ErrorRecoveryLog {
 		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);		 //$NON-NLS-1$
 		
 		if (!file.exists()){
-			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noFiletoRemove")+file,null)); //$NON-NLS-1$
+			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.noFiletoRemove")+file,null)); //$NON-NLS-1$
 			return multi;
 		}
 			
@@ -518,7 +519,7 @@ public class ErrorRecoveryLog {
 	 	
 	 	if (!values.contains(END_ABOUT_REMOVE)){
 	 		// finish install by renaming
- 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.removeFeature"),null)); //$NON-NLS-1$
+ 			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.removeFeature"),null)); //$NON-NLS-1$
 				return multi;
 	 	} else {
 	 		// finish install by renaming
@@ -537,7 +538,7 @@ public class ErrorRecoveryLog {
 	 		}
 	 		if (val==null){
 	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index); //$NON-NLS-1$
-	 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
+	 			multi.add(createStatus(IStatus.ERROR,Messages.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
 				return multi;
 	 		}
 	 		// process recovery finished

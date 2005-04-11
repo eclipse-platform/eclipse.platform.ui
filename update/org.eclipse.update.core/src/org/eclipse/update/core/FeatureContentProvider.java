@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
@@ -208,7 +209,7 @@ public abstract class FeatureContentProvider
 			if (monitor != null) {
 				monitor.saveState();
 				monitor.setTaskName(
-					Policy.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
+					Messages.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
@@ -250,9 +251,7 @@ public abstract class FeatureContentProvider
 						inputLength = ref.getInputSize(); 
 					} catch (IOException e) {
 						throw Utilities.newCoreException(
-							Policy.bind(
-								"FeatureContentProvider.UnableToRetrieve", //$NON-NLS-1$
-								new Object[] { ref }),
+							NLS.bind("FeatureContentProvider.UnableToRetrieve", (new Object[] { ref })),
 							e);
 					}
 
@@ -262,9 +261,7 @@ public abstract class FeatureContentProvider
 								new FileOutputStream(localFile));
 					} catch (FileNotFoundException e) {
 						throw Utilities.newCoreException(
-							Policy.bind(
-								"FeatureContentProvider.UnableToCreate", //$NON-NLS-1$
-								new Object[] { localFile }),
+							NLS.bind("FeatureContentProvider.UnableToCreate", (new Object[] { localFile })),
 							e);
 					}
 				}
@@ -288,13 +285,11 @@ public abstract class FeatureContentProvider
 								new FileFragment(localFile, bytesCopied));
 					}
 					if (monitor.isCanceled()) {
-						String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+						String msg = Messages.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
 						throw new InstallAbortedException(msg, null);
 					} else {
 						throw new FeatureDownloadException(
-							Policy.bind(
-								"FeatureContentProvider.ExceptionDownloading", //$NON-NLS-1$
-								new Object[] { getURL().toExternalForm()}),
+							NLS.bind("FeatureContentProvider.ExceptionDownloading", (new Object[] { getURL().toExternalForm()})),
 							new IOException());
 					}
 				} else {
@@ -315,9 +310,7 @@ public abstract class FeatureContentProvider
 				Utilities.mapLocalFile(key, localFile);
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
-					Policy.bind(
-						"FeatureContentProvider.UnableToCreate", //$NON-NLS-1$
-						new Object[] { localFile }),
+					NLS.bind("FeatureContentProvider.UnableToCreate", (new Object[] { localFile })),
 					e);
 			} finally {
 				//Do not close IS if user cancel,

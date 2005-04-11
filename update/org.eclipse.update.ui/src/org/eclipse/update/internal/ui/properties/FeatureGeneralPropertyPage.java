@@ -20,7 +20,7 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 public class FeatureGeneralPropertyPage
 	extends PropertyPage
@@ -62,25 +62,25 @@ public class FeatureGeneralPropertyPage
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 
-		addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.name"), feature.getLabel()); //$NON-NLS-1$
+		addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_name, feature.getLabel()); 
 		addField(
 			composite,
-			UpdateUI.getString("FeatureGeneralPropertyPage.id"), //$NON-NLS-1$
+			UpdateUIMessages.FeatureGeneralPropertyPage_id, 
 			feature.getVersionedIdentifier().getIdentifier());
 		addField(
 			composite,
-			UpdateUI.getString("FeatureGeneralPropertyPage.version"), //$NON-NLS-1$
+			UpdateUIMessages.FeatureGeneralPropertyPage_version, 
 			feature.getVersionedIdentifier().getVersion().toString());
-		addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.provider"), feature.getProvider()); //$NON-NLS-1$
+		addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_provider, feature.getProvider()); 
 		long size = feature.getInstallSize();
 		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, UpdateUI.getString("FeatureGeneralPropertyPage.size"), new Long(size).toString() + " " + UpdateUI.getString("FeatureGeneralPropertyPage.Kilobytes")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_size, new Long(size).toString() + " " + UpdateUIMessages.FeatureGeneralPropertyPage_Kilobytes); 
 
 	}
 	
 	private void addSupportedPlatformsSection(IFeature feature, Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(UpdateUI.getString("FeatureGeneralPropertyPage.platforms")); //$NON-NLS-1$
+		group.setText(UpdateUIMessages.FeatureGeneralPropertyPage_platforms); 
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -89,16 +89,16 @@ public class FeatureGeneralPropertyPage
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.os") + extractValue(feature.getOS())); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.FeatureGeneralPropertyPage_os + extractValue(feature.getOS())); 
 
 		label = new Label(group, SWT.NONE);
-		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.ws") + extractValue(feature.getWS())); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.FeatureGeneralPropertyPage_ws + extractValue(feature.getWS())); 
 
 		label = new Label(group, SWT.NONE);
-		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.arch") + extractValue(feature.getOSArch())); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.FeatureGeneralPropertyPage_arch + extractValue(feature.getOSArch())); 
 
 		label = new Label(group, SWT.NONE);
-		label.setText(UpdateUI.getString("FeatureGeneralPropertyPage.nl") + extractValue(feature.getNL())); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.FeatureGeneralPropertyPage_nl + extractValue(feature.getNL())); 
 	}
 
 	private void addField(Composite parent, String property, String value) {
@@ -114,7 +114,7 @@ public class FeatureGeneralPropertyPage
 	}
 	private String extractValue(String value) {
 		if (value == null || value.equals("*")) //$NON-NLS-1$
-			return UpdateUI.getString("FeatureGeneralPropertyPage.all"); //$NON-NLS-1$
+			return UpdateUIMessages.FeatureGeneralPropertyPage_all; 
 		return value;
 	}
 
@@ -124,7 +124,7 @@ public class FeatureGeneralPropertyPage
 			String annotation = description.getAnnotation();
 			if (annotation != null && annotation.length() > 0) {
 				Group group = new Group(parent, SWT.NONE);
-				group.setText(UpdateUI.getString("FeatureGeneralPropertyPage.desc")); //$NON-NLS-1$
+				group.setText(UpdateUIMessages.FeatureGeneralPropertyPage_desc); 
 				group.setLayout(new GridLayout());
 				group.setLayoutData(new GridData(GridData.FILL_BOTH));
 

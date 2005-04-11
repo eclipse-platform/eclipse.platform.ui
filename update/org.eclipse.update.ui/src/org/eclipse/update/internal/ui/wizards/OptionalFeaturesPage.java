@@ -9,35 +9,42 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.internal.operations.FeatureHierarchyElement;
+import org.eclipse.update.internal.operations.JobRoot;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
-	// NL keys
-	private static final String KEY_TITLE =
-		"InstallWizard.OptionalFeaturesPage.title"; //$NON-NLS-1$
-	private static final String KEY_DESC =
-		"InstallWizard.OptionalFeaturesPage.desc"; //$NON-NLS-1$
-	private static final String KEY_TREE_LABEL =
-		"InstallWizard.OptionalFeaturesPage.treeLabel"; //$NON-NLS-1$
-	private static final String KEY_SELECT_ALL =
-		"InstallWizard.OptionalFeaturesPage.selectAll"; //$NON-NLS-1$
-	private static final String KEY_DESELECT_ALL =
-		"InstallWizard.OptionalFeaturesPage.deselectAll"; //$NON-NLS-1$
 	private CheckboxTreeViewer treeViewer;
 	private Button selectAllButton;
 	private Button deselectAllButton;
@@ -108,8 +115,8 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	 */
 	public OptionalFeaturesPage(IInstallConfiguration config) {
 		super("OptionalFeatures"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString(KEY_TITLE));
-		setDescription(UpdateUI.getString(KEY_DESC));
+		setTitle(UpdateUIMessages.InstallWizard_OptionalFeaturesPage_title);
+		setDescription(UpdateUIMessages.InstallWizard_OptionalFeaturesPage_desc);
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
@@ -142,7 +149,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 				selectAll(true);
 			}
 		});
-		selectAllButton.setText(UpdateUI.getString(KEY_SELECT_ALL));
+		selectAllButton.setText(UpdateUIMessages.InstallWizard_OptionalFeaturesPage_selectAll);
 		GridData gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -155,13 +162,13 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 				selectAll(false);
 			}
 		});
-		deselectAllButton.setText(UpdateUI.getString(KEY_DESELECT_ALL));
+		deselectAllButton.setText(UpdateUIMessages.InstallWizard_OptionalFeaturesPage_deselectAll);
 		gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deselectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2"); //$NON-NLS-1$
 		
 		Dialog.applyDialogFont(parent);
 		
@@ -170,7 +177,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 
 	private void createCheckboxTreeViewer(Composite parent) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(UpdateUI.getString(KEY_TREE_LABEL));
+		label.setText(UpdateUIMessages.InstallWizard_OptionalFeaturesPage_treeLabel);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

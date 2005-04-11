@@ -55,13 +55,13 @@ public class JarVerificationDialog extends TitleAreaDialog {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUI.getString("JarVerificationDialog.Install"), //$NON-NLS-1$
+					UpdateUIMessages.JarVerificationDialog_Install, 
 					false);
 			} else {
 				createButton(
 					parent,
 					IDialogConstants.OK_ID,
-					UpdateUI.getString("JarVerificationDialog.Continue"), //$NON-NLS-1$
+					UpdateUIMessages.JarVerificationDialog_Continue, 
 					false);				
 			}
 			// Radio button: Install all without prompting
@@ -69,7 +69,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 			createButton(
 				parent,
 				IDialogConstants.YES_TO_ALL_ID,
-				UpdateUI.getString("JarVerificationDialog.InstallAll"), //$NON-NLS-1$
+				UpdateUIMessages.JarVerificationDialog_InstallAll, 
 				false);		
 			
 			// Radio button: Cancel installation
@@ -77,13 +77,13 @@ public class JarVerificationDialog extends TitleAreaDialog {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUI.getString("JarVerificationDialog.Cancel"), //$NON-NLS-1$
+				UpdateUIMessages.JarVerificationDialog_Cancel, 
 				true);							
 		} else {
 			createButton(
 				parent,
 				IDialogConstants.CANCEL_ID,
-				UpdateUI.getString("JarVerificationDialog.Cancel"), //$NON-NLS-1$
+				UpdateUIMessages.JarVerificationDialog_Cancel, 
 				true);
 		}
 		getButton(IDialogConstants.CANCEL_ID).setFocus();
@@ -95,7 +95,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite compositeParent = (Composite)super.createDialogArea(parent);
 		setTitleImage(this.getImage());
-		setTitle(UpdateUI.getString("JarVerificationDialog.Title")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.JarVerificationDialog_Title); 
 		
 		_DialogPage.createControl(compositeParent);
 		pageContainer=(Composite)_DialogPage.getControl();

@@ -17,7 +17,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 /**
  * @see PropertyPage
@@ -37,18 +37,18 @@ public class ConfiguredSitePropertyPage extends PropertyPage implements IWorkben
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.path"), csite.getSite().getURL().toString()); //$NON-NLS-1$
-		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.type"), getLocationType(csite)); //$NON-NLS-1$
-		addProperty(composite, UpdateUI.getString("ConfiguredSitePropertyPage.enabled"), csite.isEnabled()?UpdateUI.getString("ConfiguredSitePropertyPage.yes"):UpdateUI.getString("ConfiguredSitePropertyPage.no")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		addProperty(composite, UpdateUIMessages.ConfiguredSitePropertyPage_path, csite.getSite().getURL().toString()); 
+		addProperty(composite, UpdateUIMessages.ConfiguredSitePropertyPage_type, getLocationType(csite)); 
+		addProperty(composite, UpdateUIMessages.ConfiguredSitePropertyPage_enabled, csite.isEnabled()?UpdateUIMessages.ConfiguredSitePropertyPage_yes:UpdateUIMessages.ConfiguredSitePropertyPage_no); 
 		return composite;
 	}
 	
 	private String getLocationType(IConfiguredSite csite) {
 		if (csite.isExtensionSite())
-			return UpdateUI.getString("ConfiguredSitePropertyPage.extension"); //$NON-NLS-1$
+			return UpdateUIMessages.ConfiguredSitePropertyPage_extension; 
 		if (csite.isProductSite())
-			return UpdateUI.getString("ConfiguredSitePropertyPage.product"); //$NON-NLS-1$
-		return UpdateUI.getString("ConfiguredSitePropertyPage.unknown"); //$NON-NLS-1$
+			return UpdateUIMessages.ConfiguredSitePropertyPage_product; 
+		return UpdateUIMessages.ConfiguredSitePropertyPage_unknown; 
 	}
 	
 	private void addProperty(Composite parent, String key, String value) {

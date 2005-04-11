@@ -16,6 +16,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
@@ -95,7 +96,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// ConfigSite is read only 
 		if (!isUpdatable()) {
-			String errorMessage = Policy.bind("ConfiguredSite.NonInstallableSite", getSite().getURL().toExternalForm()); //$NON-NLS-1$
+			String errorMessage = NLS.bind("ConfiguredSite.NonInstallableSite", (new String[] { getSite().getURL().toExternalForm() })); //$NON-NLS-1$
 			IStatus status = verifyUpdatableStatus();
 			if (status != null)
 				errorMessage += " " + status.getMessage(); //$NON-NLS-1$
@@ -104,7 +105,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// feature is null
 		if (feature == null) {
-			String errorMessage = Policy.bind("ConfiguredSite.NullFeatureToInstall"); //$NON-NLS-1$
+			String errorMessage = Messages.bind("ConfiguredSite.NullFeatureToInstall"); //$NON-NLS-1$
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
@@ -166,7 +167,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// ConfigSite is read only
 		if (!isUpdatable()) {
-			String errorMessage = Policy.bind("ConfiguredSite.NonUninstallableSite", getSite().getURL().toExternalForm()); //$NON-NLS-1$
+			String errorMessage = NLS.bind("ConfiguredSite.NonUninstallableSite", (new String[] { getSite().getURL().toExternalForm() })); //$NON-NLS-1$
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
@@ -194,11 +195,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (getConfigurationPolicy().isConfigured(referenceToRemove)) {
 					IFeature featureToRemove = ((IFeatureReference) referenceToRemove).getFeature(null);
 					String featureLabel = (featureToRemove == null) ? null : featureToRemove.getLabel();
-					throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature" //$NON-NLS-1$
-					, featureLabel), null);
+					throw Utilities.newCoreException(NLS.bind("ConfiguredSite.UnableToRemoveConfiguredFeature", (new String[] { featureLabel })), null);
 				}
 			} else {
-				throw Utilities.newCoreException(Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()), //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("ConfiguredSite.UnableToFindFeature", (new String[] { feature.getURL().toString() })), //$NON-NLS-1$
 				null);
 			}
 
@@ -491,8 +491,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				// log no feature to unconfigure
 				String url = element.getURL().toString();
 				ISite site = element.getSite();
-				String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite"); //$NON-NLS-1$
-				UpdateCore.warn(Policy.bind("ConfiguredSite.CannotFindFeatureToUnconfigure", url, siteString), e); //$NON-NLS-1$ 
+				String siteString = (site != null) ? site.getURL().toExternalForm() : Messages.bind("ConfiguredSite.NoSite"); //$NON-NLS-1$
+				UpdateCore.warn(NLS.bind("ConfiguredSite.CannotFindFeatureToUnconfigure", (new String[] { url, siteString })), e); //$NON-NLS-1$ 
 			}
 		}
 		//} // end USER_EXCLUDE
@@ -517,7 +517,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					// notify we cannot find the feature
 					UpdateCore.warn(null, e);
 					String featureString = configuredFeatures[i].getURL().toExternalForm();
-					if (!handler.reportProblem(Policy.bind("ConfiguredSite.CannotFindFeatureToConfigure", featureString))) { //$NON-NLS-1$
+					if (!handler.reportProblem(NLS.bind("ConfiguredSite.CannotFindFeatureToConfigure", (new String[] { featureString })))) { //$NON-NLS-1$
 						throw new InterruptedException();
 					}
 				}
@@ -547,12 +547,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 								String msg = "Error verifying existence of plugin:" + currentFeaturePluginEntry.getVersionedIdentifier().toString(); //$NON-NLS-1$
 								UpdateCore.log(msg, new Exception());
 
-								String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite");	//$NON-NLS-1$
-								String errorLabel = Policy.bind("ConfiguredSite.CannotFindPluginEntry", currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString);	//$NON-NLS-1$ //$NON-NLS-2$
+								String siteString = (site != null) ? site.getURL().toExternalForm() : Messages.bind("ConfiguredSite.NoSite");	//$NON-NLS-1$
+								String errorLabel = NLS.bind("ConfiguredSite.CannotFindPluginEntry", (new String[] { currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString }));	//$NON-NLS-1$ //$NON-NLS-2$
 								if (handler == null) {
 									throw new InterruptedException(errorLabel);
 								}
-								if (!handler.reportProblem(Policy.bind(errorLabel))) {
+								if (!handler.reportProblem(Messages.bind(errorLabel))) {
 									throw new InterruptedException();
 								}
 							} // end if not found in site
@@ -684,7 +684,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
 		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
 		if (result != null && (result.length != 0)) {
-			String msg = Policy.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
+			String msg = Messages.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
 			MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_UNHAPPY, msg, null);
 
 			for (int k = 0; k < result.length; k++) {
@@ -693,7 +693,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (id != null) {
 					values = new Object[] { id.getIdentifier(), id.getVersion()};
 				}
-				String msg1 = Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values); //$NON-NLS-1$
+				String msg1 = NLS.bind("ConfiguredSite.MissingPluginsBrokenFeature", values); //$NON-NLS-1$
 				UpdateCore.warn(msg1);
 				IStatus status = createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null);
 				multi.add(status);
@@ -703,7 +703,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// check os, arch, and ws
 
-		String msg = Policy.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
+		String msg = Messages.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
 		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY, msg, null);
 	}
 
@@ -746,12 +746,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		URL siteURL = getSite().getURL();
 		if (siteURL == null) {
-			verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.SiteURLNull"), null); //$NON-NLS-1$
+			verifyStatus = createStatus(IStatus.ERROR, Messages.bind("ConfiguredSite.SiteURLNull"), null); //$NON-NLS-1$
 			return verifyStatus;
 		}
 
 		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) { //$NON-NLS-1$
-			verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.NonLocalSite"), null); //$NON-NLS-1$
+			verifyStatus = createStatus(IStatus.ERROR, Messages.bind("ConfiguredSite.NonLocalSite"), null); //$NON-NLS-1$
 			return verifyStatus;
 		}
 
@@ -765,19 +765,19 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		String productName = getProductName(file);
 		if (productName != null) {
 			if (!productName.equals(getProductIdentifier("id", getProductFile()))) { //$NON-NLS-1$
-				verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.NotSameProductId", productName), null); //$NON-NLS-1$
+				verifyStatus = createStatus(IStatus.ERROR, NLS.bind("ConfiguredSite.NotSameProductId", (new String[] { productName })), null); //$NON-NLS-1$
 				return verifyStatus;
 			}
 		} else {
 			File container = getSiteContaining(file);
 			if (container != null) {
-				verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.ContainedInAnotherSite", container.getAbsolutePath()), null); //$NON-NLS-1$
+				verifyStatus = createStatus(IStatus.ERROR, NLS.bind("ConfiguredSite.ContainedInAnotherSite", (new String[] { container.getAbsolutePath() })), null); //$NON-NLS-1$
 				return verifyStatus;
 			}
 		}
 
 		if (!canWrite(file)) {
-			verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.ReadOnlySite"), null); //$NON-NLS-1$
+			verifyStatus = createStatus(IStatus.ERROR, Messages.bind("ConfiguredSite.ReadOnlySite"), null); //$NON-NLS-1$
 			return verifyStatus;
 		}
 
@@ -1078,10 +1078,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					return true;
 			}
 		} catch (MalformedURLException e) {
-			String msg = Policy.bind("ConfiguredSite.UnableResolveURL", platformString); //$NON-NLS-1$
+			String msg = NLS.bind("ConfiguredSite.UnableResolveURL", (new String[] { platformString })); //$NON-NLS-1$
 			throw Utilities.newCoreException(msg, e);
 		} catch (IOException e) {
-			String msg = Policy.bind("ConfiguredSite.UnableToAccessSite", new Object[] { siteURL }); //$NON-NLS-1$
+			String msg = NLS.bind("ConfiguredSite.UnableToAccessSite", (new Object[] { siteURL })); //$NON-NLS-1$
 			throw Utilities.newCoreException(msg, e);
 		}
 

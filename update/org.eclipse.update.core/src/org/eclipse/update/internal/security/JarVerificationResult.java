@@ -16,8 +16,9 @@ import java.security.cert.Certificate;
 import java.text.*;
 import java.util.*;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.internal.core.Messages;
 
 /**
  * Result of the service
@@ -187,14 +188,14 @@ public class JarVerificationResult implements IVerificationResult {
 		StringBuffer strb = new StringBuffer();
 		strb.append(issuerString(certIssuer.getSubjectDN()));
 		strb.append("\r\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()))); //$NON-NLS-1$
+		strb.append(NLS.bind("JarVerificationResult.ValidBetween", (new String[] { dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()) }))); //$NON-NLS-1$
 		strb.append(checkValidity(certIssuer));
 		signerInfo = strb.toString();
 		if (certIssuer != null && !certIssuer.equals(certRoot)) {
 			strb = new StringBuffer();	
 			strb.append(issuerString(certIssuer.getIssuerDN()));
 			strb.append("\r\n"); //$NON-NLS-1$
-			strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()))); //$NON-NLS-1$ 
+			strb.append(NLS.bind("JarVerificationResult.ValidBetween", (new String[] { dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()) }))); //$NON-NLS-1$ 
 			strb.append(checkValidity(certRoot));
 			verifierInfo = strb.toString();
 		}
@@ -209,11 +210,11 @@ public class JarVerificationResult implements IVerificationResult {
 		try {
 			cert.checkValidity();
 		} catch (CertificateExpiredException e) {
-			return ("\r\n" + Policy.bind("JarVerificationResult.ExpiredCertificate")); //$NON-NLS-1$ //$NON-NLS-2$ 
+			return ("\r\n" + Messages.bind("JarVerificationResult.ExpiredCertificate")); //$NON-NLS-1$ //$NON-NLS-2$ 
 		} catch (CertificateNotYetValidException e) {
-			return ("\r\n" + Policy.bind("JarVerificationResult.CertificateNotYetValid")); //$NON-NLS-1$ //$NON-NLS-2$ 
+			return ("\r\n" + Messages.bind("JarVerificationResult.CertificateNotYetValid")); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}
-		return ("\r\n" + Policy.bind("JarVerificationResult.CertificateValid")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ("\r\n" + Messages.bind("JarVerificationResult.CertificateValid")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*

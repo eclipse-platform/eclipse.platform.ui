@@ -13,6 +13,7 @@ package org.eclipse.update.core;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.internal.core.*;
 
 /**
@@ -258,11 +259,8 @@ public class InstallMonitor implements IProgressMonitor {
 			long totalK = totalCopyCount / 1024;
 			String msg =
 				(totalK <= 0)
-					? Policy.bind("InstallMonitor.DownloadSize", Long.toString(countK)) //$NON-NLS-1$
-					: Policy.bind(
-						"InstallMonitor.DownloadSizeLong", //$NON-NLS-1$
-						Long.toString(countK),
-						Long.toString(totalK));
+					? NLS.bind("InstallMonitor.DownloadSize", (new String[] { Long.toString(countK) })) //$NON-NLS-1$
+					: NLS.bind("InstallMonitor.DownloadSizeLong", (new String[] { Long.toString(countK), Long.toString(totalK) }));
 			monitor.subTask(subTaskString + msg);
 		}
 	}

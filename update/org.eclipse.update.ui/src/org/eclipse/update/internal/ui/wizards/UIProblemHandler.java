@@ -23,7 +23,7 @@ public class UIProblemHandler implements IProblemHandler {
 	 * @see IProblemHandler#reportProblem(String)
 	 */
 	public boolean reportProblem(String problemText) {
-		String title = UpdateUI.getString("Revert.ProblemDialog.title"); //$NON-NLS-1$
+		String title = UpdateUIMessages.Revert_ProblemDialog_title; 
 		return MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(), title, problemText);
 	}
 }

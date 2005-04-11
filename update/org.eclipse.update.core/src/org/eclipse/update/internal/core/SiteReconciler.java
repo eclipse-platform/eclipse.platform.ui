@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
@@ -42,7 +43,7 @@ public class SiteReconciler extends ModelObject {
 		try {
 			resolvedURL = Platform.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToResolve", newSiteEntry.getURL().toExternalForm()), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("SiteLocal.UnableToResolve", (new String[] { newSiteEntry.getURL().toExternalForm() })), e);	//$NON-NLS-1$
 		}
 		return resolvedURL;
 	}

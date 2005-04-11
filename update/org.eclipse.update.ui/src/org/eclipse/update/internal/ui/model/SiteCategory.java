@@ -33,7 +33,7 @@ public class SiteCategory extends UIModelObject {
 		public OtherCategory() {
 			entry = new IURLEntry() {
 				public String getAnnotation() {
-					return UpdateUI.getString("SiteCategory.other.description"); //$NON-NLS-1$
+					return UpdateUIMessages.SiteCategory_other_description; 
 				}
 				public URL getURL() {
 					return null;
@@ -63,7 +63,7 @@ public class SiteCategory extends UIModelObject {
 	public SiteCategory(SiteBookmark bookmark, String name, ICategory category) {
 		this.bookmark = bookmark;
 		if (category == null) {
-			this.name = UpdateUI.getString("SiteCategory.other.label"); //$NON-NLS-1$
+			this.name = UpdateUIMessages.SiteCategory_other_label; 
 			this.category = new OtherCategory();
 		} else {
 			this.name = name;
@@ -116,7 +116,7 @@ public class SiteCategory extends UIModelObject {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(
-					UpdateUI.getString("SiteBookmark.downloading"), //$NON-NLS-1$
+					UpdateUIMessages.SiteBookmark_downloading, 
 					featureCount);
 				for (int i = 0; i < children.size(); i++) {
 					Object child = children.get(i);

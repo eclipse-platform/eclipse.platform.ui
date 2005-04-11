@@ -262,8 +262,7 @@ public class UpdateCore extends Plugin {
 		super.start(context);
 		this.context = context;
 
-		Policy.localize("org.eclipse.update.internal.core.messages"); //$NON-NLS-1$
-		DEBUG = getBooleanDebugOption("org.eclipse.update.core/debug", false); //$NON-NLS-1$
+        DEBUG = getBooleanDebugOption("org.eclipse.update.core/debug", false); //$NON-NLS-1$
 
 		if (DEBUG) {
 			DEBUG_SHOW_WARNINGS = getBooleanDebugOption("org.eclipse.update.core/debug/warning", false); //$NON-NLS-1$

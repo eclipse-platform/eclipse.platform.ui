@@ -17,6 +17,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.*;
@@ -107,20 +108,18 @@ public class UpdatePolicy {
 			loaded = true;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"SiteURLFactory.UnableToAccessSiteStream", //$NON-NLS-1$
-					mapFile == null ? "" : mapFile.toExternalForm()), //$NON-NLS-1$
+				NLS.bind("SiteURLFactory.UnableToAccessSiteStream", (new String[] { mapFile == null ? "" : mapFile.toExternalForm() })), //$NON-NLS-1$
 				ISite.SITE_ACCESS_EXCEPTION,
 				e);
 		} catch (SAXException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
+				Messages.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
 				0,
 				e);
 
 		} catch(ParserConfigurationException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
+				Messages.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
 				0,
 				e);
 		} finally {
@@ -219,7 +218,7 @@ public class UpdatePolicy {
 		reset();
 		
 		if (root.getNodeName().equals(TAG_POLICY)==false)
-			throwCoreException("'"+TAG_POLICY+Policy.bind("UpdatePolicy.policyExpected"), null); //$NON-NLS-1$ //$NON-NLS-2$
+			throwCoreException("'"+TAG_POLICY+Messages.bind("UpdatePolicy.policyExpected"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				
 		NodeList nodes = root.getChildNodes();
 		
@@ -252,14 +251,14 @@ public class UpdatePolicy {
 			URL url = new URL(decodedValue);
 			addUpdateEntry(pattern, url, type);
 		} catch (MalformedURLException e) {
-			throwCoreException(Policy.bind("UpdatePolicy.invalidURL")+urlName, null); //$NON-NLS-1$
+			throwCoreException(Messages.bind("UpdatePolicy.invalidURL")+urlName, null); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
 	
 	private void assertNotNull(String name, String value) throws CoreException {
 		if (value==null)
-			throwCoreException(name+Policy.bind("UpdatePolicy.nameNoNull"), null); //$NON-NLS-1$
+			throwCoreException(name+Messages.bind("UpdatePolicy.nameNoNull"), null); //$NON-NLS-1$
 	}
 	
 	private String getAttribute(Node node, String name) {
@@ -296,7 +295,7 @@ public class UpdatePolicy {
 	}
 	
 	private void throwCoreException(String message, Throwable e) throws CoreException {
-		String fullMessage = Policy.bind("UpdatePolicy.UpdatePolicy")+message; //$NON-NLS-1$
+		String fullMessage = Messages.bind("UpdatePolicy.UpdatePolicy")+message; //$NON-NLS-1$
 		throw Utilities.newCoreException(fullMessage, 0, e);
 	}
 }

@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * This class manages threads that are dispatched to 
@@ -153,9 +154,7 @@ public class ConnectionThreadManager {
 						IStatus.ERROR,
 						pluginId,
 						IStatus.OK,
-						Policy.bind(
-							"ConnectionThreadManager.unresponsiveURL", //$NON-NLS-1$
-							url),
+						NLS.bind("ConnectionThreadManager.unresponsiveURL", (new String[] { url })),
 						null);
 				children.add(status);
 			}
@@ -164,7 +163,7 @@ public class ConnectionThreadManager {
 					pluginId,
 					IStatus.OK,
 					(IStatus[]) children.toArray(new IStatus[children.size()]),
-					Policy.bind("ConnectionThreadManager.tooManyConnections"), //$NON-NLS-1$
+					Messages.bind("ConnectionThreadManager.tooManyConnections"), //$NON-NLS-1$
 					null);
 			throw new CoreException(parentStatus);
 		}

@@ -24,6 +24,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 
 public class FeatureLicensePropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
@@ -53,7 +54,7 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				String filename = (url != null) ? url.getFile() : null;
 				if (filename != null && (filename.endsWith(".htm") || url.getFile().endsWith(".html"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					Button button = new Button(composite, SWT.PUSH);
-					button.setText(UpdateUI.getString("FeatureLicensePropertyPage.showInBrowser")); //$NON-NLS-1$
+					button.setText(UpdateUIMessages.FeatureLicensePropertyPage_showInBrowser); 
 					button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 					SWTUtil.setButtonDimensionHint(button);
 					button.addSelectionListener(new SelectionAdapter() {
@@ -64,7 +65,7 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				}
 			} else {
 				Label label = new Label(composite, SWT.NULL);
-				label.setText(UpdateUI.getString("FeatureLicensePropertyPage.noLicense")); //$NON-NLS-1$
+				label.setText(UpdateUIMessages.FeatureLicensePropertyPage_noLicense); 
 			}
 			
 			Dialog.applyDialogFont(parent);

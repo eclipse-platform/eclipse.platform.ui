@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
@@ -57,7 +58,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			URL newURL = new URL(getSite().getURL(), path);
 			featurePath = newURL.getFile();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURL") + e.getMessage(), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("SiteFileContentConsumer.UnableToCreateURL") + e.getMessage(), e);	//$NON-NLS-1$
 		}
 		return featurePath;
 	}
@@ -105,7 +106,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			oldPath = featurePath.replace(File.separatorChar, '/');
 			File localFile = new File(oldPath);
 			if (localFile.exists()) {
-				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("UpdateManagerUtils.FileAlreadyExists", (new Object[] { localFile })), null); //$NON-NLS-1$
 			}
 			featurePath = ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
 			newPath = featurePath;
@@ -118,7 +119,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			UpdateManagerUtils.checkPermissions(contentReference, featurePath); // 20305
 			installedFiles.add(featurePath);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", featurePath), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("GlobalConsumer.ErrorCreatingFile", (new String[] { featurePath })), e); //$NON-NLS-1$
 		} finally {
 			if (inStream != null) {
 				try {
@@ -148,7 +149,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURLForFile", file.getAbsolutePath()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("SiteFileContentConsumer.UnableToCreateURLForFile", (new String[] { file.getAbsolutePath() })), e); //$NON-NLS-1$
 		}
 
 		//rename file back 
@@ -165,7 +166,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", newPath, oldPath); //$NON-NLS-1$
+				String msg = NLS.bind("ContentConsumer.UnableToRename", (new String[] { newPath, oldPath })); //$NON-NLS-1$
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -222,7 +223,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = Policy.bind("Unable to delete", oldPath); //$NON-NLS-1$
+			String msg = NLS.bind("Unable to delete", (new String[] { oldPath })); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		} else {
 			// remove the feature files;
@@ -278,7 +279,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	
 				String urlString = (getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";	//$NON-NLS-1$
 				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
-				throw Utilities.newCoreException(Policy.bind("SiteFile.UnableToCreateURL", urlString), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("SiteFile.UnableToCreateURL", (new String[] { urlString })), e);	//$NON-NLS-1$
 			}
 		}
 		return;

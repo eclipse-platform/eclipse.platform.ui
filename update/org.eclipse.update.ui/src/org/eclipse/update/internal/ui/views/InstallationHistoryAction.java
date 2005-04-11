@@ -98,8 +98,8 @@ public class InstallationHistoryAction extends Action {
 			addCSS();
 			htmlLog.println("</head>"); //$NON-NLS-1$
 			htmlLog.println("<body>"); //$NON-NLS-1$
-			String title = UpdateUI.getString("InstallationHistoryAction.title"); //$NON-NLS-1$
-			String desc = UpdateUI.getString("InstallationHistoryAction.desc"); //$NON-NLS-1$
+			String title = UpdateUIMessages.InstallationHistoryAction_title; 
+			String desc = UpdateUIMessages.InstallationHistoryAction_desc; 
 			htmlLog.println("<h1 class=title>"+title+"</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
 			htmlLog.println("<p class=bodyText>"+desc+"</p>"); //$NON-NLS-1$ //$NON-NLS-2$
 			
@@ -203,16 +203,16 @@ public class InstallationHistoryAction extends Action {
 	private void addActivityHeader() {
 		htmlLog.print("<tr class=header>"); //$NON-NLS-1$
 		htmlLog.print("<td class=log-header>"); //$NON-NLS-1$
-		htmlLog.print(UpdateUI.getString("InstallationHistoryAction.dateTime")); //$NON-NLS-1$
+		htmlLog.print(UpdateUIMessages.InstallationHistoryAction_dateTime); 
 		htmlLog.print("</td>"); //$NON-NLS-1$
 		htmlLog.print("<td class=log-header>"); //$NON-NLS-1$
-		htmlLog.print(UpdateUI.getString("InstallationHistoryAction.target")); //$NON-NLS-1$
+		htmlLog.print(UpdateUIMessages.InstallationHistoryAction_target); 
 		htmlLog.print("</td>"); //$NON-NLS-1$
 		htmlLog.print("<td class=log-header>"); //$NON-NLS-1$
-		htmlLog.print(UpdateUI.getString("InstallationHistoryAction.action")); //$NON-NLS-1$
+		htmlLog.print(UpdateUIMessages.InstallationHistoryAction_action); 
 		htmlLog.print("</td>"); //$NON-NLS-1$
 		htmlLog.print("<td class=log-header>"); //$NON-NLS-1$
-		htmlLog.print(UpdateUI.getString("InstallationHistoryAction.status")); //$NON-NLS-1$
+		htmlLog.print(UpdateUIMessages.InstallationHistoryAction_status); 
 		htmlLog.println("</td></tr>"); //$NON-NLS-1$
 	}
 
@@ -239,7 +239,7 @@ public class InstallationHistoryAction extends Action {
 				IStatus.ERROR,
 				UpdateUI.getPluginId(),
 				IStatus.ERROR,
-				UpdateUI.getString("InstallationHistoryAction.errors"), //$NON-NLS-1$
+				UpdateUIMessages.InstallationHistoryAction_errors, 
 				e));
 	}
 

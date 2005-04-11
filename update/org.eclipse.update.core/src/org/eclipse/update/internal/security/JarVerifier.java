@@ -19,9 +19,9 @@ import java.util.jar.*;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * The JarVerifier will check the integrity of the JAR.
@@ -71,11 +71,11 @@ public class JarVerifier extends Verifier {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
 					} catch (NoSuchAlgorithmException e) {
-						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToFindEncryption", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToFindEncryption", (new String[] { handle.getLocation().toExternalForm() })), e); //$NON-NLS-1$
 					} catch (CertificateException e) {
-						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToLoadCertificate", handle.getLocation().toExternalForm()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToLoadCertificate", (new String[] { handle.getLocation().toExternalForm() })), e); //$NON-NLS-1$
 					} catch (KeyStoreException e) {
-						throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToFindProviderForKeystore", handle.getType()), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToFindProviderForKeystore", (new String[] { handle.getType() })), e); //$NON-NLS-1$
 					} finally {
 						if (in != null) {
 							try {
@@ -131,9 +131,9 @@ public class JarVerifier extends Verifier {
 					}
 				}
 			} catch (ZipException e){
-				throw Utilities.newCoreException(Policy.bind("JarVerifier.InvalidJar", jarReference.toString()), e); //$NON-NLS-1$				
+				throw Utilities.newCoreException(NLS.bind("JarVerifier.InvalidJar", (new String[] { jarReference.toString() })), e); //$NON-NLS-1$				
 			} catch (IOException e) {
-				throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToAccessJar", jarReference.toString()), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToAccessJar", (new String[] { jarReference.toString() })), e); //$NON-NLS-1$
 			}
 		}
 
@@ -161,7 +161,7 @@ public class JarVerifier extends Verifier {
 				}
 			}
 		} catch (KeyStoreException e) {
-			throw Utilities.newCoreException(Policy.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -177,7 +177,7 @@ public class JarVerifier extends Verifier {
 		JarEntry currentEntry = null;
 		InputStream in = null;
 		if (monitor != null)
-			monitor.setTaskName(Policy.bind("JarVerifier.Verify", identifier == null ? jarFile.getName(): identifier)); //$NON-NLS-1$ 
+			monitor.setTaskName(NLS.bind("JarVerifier.Verify", (new String[] { identifier == null ? jarFile.getName(): identifier }))); //$NON-NLS-1$ 
 
 		try {
 			while (entries.hasMoreElements()) {
@@ -356,7 +356,7 @@ public class JarVerifier extends Verifier {
 				else
 					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
-				Exception e = new Exception(Policy.bind("JarVerifier.InvalidFile", file)); //$NON-NLS-1$
+				Exception e = new Exception(NLS.bind("JarVerifier.InvalidFile", (new String[] { file }))); //$NON-NLS-1$
 				result.setResultException(e);
 				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 				UpdateCore.warn(null,e);

@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
@@ -69,9 +70,9 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 			site.resolve(url, url);
 			site.markReadOnly();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteURLFactory.UnableToCreateURL", url == null ? "" : url.toExternalForm()), e);	//$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind("SiteURLFactory.UnableToCreateURL", (new String[] { url == null ? "" : url.toExternalForm() })), e);	//$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteURLFactory.UnableToAccessSiteStream", url == null ? "" : url.toExternalForm()), ISite.SITE_ACCESS_EXCEPTION, e);	//$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind("SiteURLFactory.UnableToAccessSiteStream", (new String[] { url == null ? "" : url.toExternalForm() })), ISite.SITE_ACCESS_EXCEPTION, e);	//$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			if (siteStream != null) {
 				try {

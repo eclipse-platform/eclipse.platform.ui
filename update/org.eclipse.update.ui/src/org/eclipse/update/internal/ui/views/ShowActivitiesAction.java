@@ -12,7 +12,7 @@ package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.internal.ui.wizards.ShowActivitiesDialog;
 
 public class ShowActivitiesAction extends Action {
@@ -26,7 +26,7 @@ public class ShowActivitiesAction extends Action {
 	public void run() {
 		ShowActivitiesDialog dialog = new ShowActivitiesDialog(shell);
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getString("ShowActivitiesDialog.title")); //$NON-NLS-1$
+		dialog.getShell().setText(UpdateUIMessages.ShowActivitiesDialog_title); 
 		dialog.open();
 	}
 }

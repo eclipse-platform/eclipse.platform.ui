@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
@@ -428,7 +429,7 @@ public class Feature extends FeatureModel implements IFeature {
 					pluginsToInstall[i].getVersionedIdentifier();
 				String pluginID =
 					(pluginVerId == null) ? "" : pluginVerId.getIdentifier(); //$NON-NLS-1$
-				msg = Policy.bind("Feature.TaskInstallPluginFiles", pluginID); //$NON-NLS-1$
+				msg = NLS.bind("Feature.TaskInstallPluginFiles", (new String[] { pluginID })); //$NON-NLS-1$
 
 				for (int j = 0; j < references.length; j++) {
 					setMonitorTaskName(
@@ -456,7 +457,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 				String msg = ""; //$NON-NLS-1$
 				subMonitor = new SubProgressMonitor(monitor, 1);
-				msg = Policy.bind("Feature.TaskInstallFeatureFiles"); //$NON-NLS-1$
+				msg = Messages.bind("Feature.TaskInstallFeatureFiles"); //$NON-NLS-1$
 
 				for (int i = 0; i < references.length; i++) {
 					setMonitorTaskName(
@@ -522,13 +523,13 @@ public class Feature extends FeatureModel implements IFeature {
 			// and an error occured during abort
 			if (originalException != null) {
 				throw Utilities.newCoreException(
-					Policy.bind("InstallHandler.error", this.getLabel()), //$NON-NLS-1$
+					NLS.bind("InstallHandler.error", (new String[] { this.getLabel() })), //$NON-NLS-1$
 					originalException);
 			}
 
 			if (newException != null)
 				throw Utilities.newCoreException(
-					Policy.bind("InstallHandler.error", this.getLabel()), //$NON-NLS-1$
+					NLS.bind("InstallHandler.error", (new String[] { this.getLabel() })), //$NON-NLS-1$
 					newException);
 
 			if (abortedException != null) {
@@ -726,9 +727,7 @@ public class Feature extends FeatureModel implements IFeature {
 		throws CoreException {
 		if (featureContentProvider == null) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"Feature.NoContentProvider", //$NON-NLS-1$
-					getVersionedIdentifier().toString()),
+				NLS.bind("Feature.NoContentProvider", (new String[] { getVersionedIdentifier().toString() })),
 				null);	
 		}
 		return this.featureContentProvider;
@@ -756,7 +755,7 @@ public class Feature extends FeatureModel implements IFeature {
 			String featureURLString =
 				(getURL() != null) ? getURL().toExternalForm() : ""; //$NON-NLS-1$
 			throw Utilities.newCoreException(
-				Policy.bind("Feature.SiteAlreadySet", featureURLString), //$NON-NLS-1$
+				NLS.bind("Feature.SiteAlreadySet", (new String[] { featureURLString })), //$NON-NLS-1$
 				null);
 		}
 		this.site = site;
@@ -782,14 +781,11 @@ public class Feature extends FeatureModel implements IFeature {
 	public String toString() {
 		String URLString =
 			(getURL() == null)
-				? Policy.bind("Feature.NoURL") //$NON-NLS-1$
+				? Messages.bind("Feature.NoURL") //$NON-NLS-1$
 				: getURL().toExternalForm();
 
 		String verString =
-			Policy.bind(
-				"Feature.FeatureVersionToString", //$NON-NLS-1$
-				URLString,
-				getVersionedIdentifier().toString());
+			NLS.bind("Feature.FeatureVersionToString", (new String[] { URLString, getVersionedIdentifier().toString() }));
 		String label = getLabel() == null ? "" : getLabel(); //$NON-NLS-1$
 		return verString + " [" + label + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -798,7 +794,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * Installation has been cancelled, abort and revert
 	 */
 	private void abort() throws CoreException {
-		String msg = Policy.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+		String msg = Messages.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
 		throw new InstallAbortedException(msg, null);
 	}
 
@@ -888,9 +884,7 @@ public class Feature extends FeatureModel implements IFeature {
 			return newRef;
 		} catch (Exception e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"Feature.UnableToInitializeFeatureReference", //$NON-NLS-1$
-					identifier.toString()),
+				NLS.bind("Feature.UnableToInitializeFeatureReference", (new String[] { identifier.toString() })),
 				e);
 		}
 	}
@@ -949,14 +943,14 @@ public class Feature extends FeatureModel implements IFeature {
 					int result = verificationListener.prompt(vr);
 
 					if (result == IVerificationListener.CHOICE_ABORT) {
-						String msg = Policy.bind("JarVerificationService.CancelInstall"); //$NON-NLS-1$
+						String msg = Messages.bind("JarVerificationService.CancelInstall"); //$NON-NLS-1$
 						Exception e = vr.getVerificationException();
 						throw new InstallAbortedException(msg, e);
 					}
 					if (result == IVerificationListener.CHOICE_ERROR) {
 						throw Utilities
 							.newCoreException(
-								Policy.bind(
+								Messages.bind(
 									"JarVerificationService.UnsucessfulVerification"),	//$NON-NLS-1$
 						vr.getVerificationException());
 					}

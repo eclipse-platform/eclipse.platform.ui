@@ -11,6 +11,7 @@
 package org.eclipse.update.core;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
@@ -135,8 +136,7 @@ public class IncludedFeatureReference
 	 */
 	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
 		if (isUninstalled())
-			throw new CoreException(new Status(IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, Policy.bind("IncludedFeatureReference.featureUninstalled", //$NON-NLS-1$
-					getFeatureIdentifier()), null));
+			throw new CoreException(new Status(IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, NLS.bind("IncludedFeatureReference.featureUninstalled", (new String[] { getFeatureIdentifier() })), null));
 		else
 			return super.getFeature(monitor);
 	}

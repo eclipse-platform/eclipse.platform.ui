@@ -35,7 +35,7 @@ public class LocalSiteSelector {
 	public static SiteBookmark getLocaLSite(Shell parent) {
 		DirectoryDialog dialog = new DirectoryDialog(parent);
 		dialog.setMessage(
-			UpdateUI.getString("LocalSiteSelector.dialogMessage")); //$NON-NLS-1$
+			UpdateUIMessages.LocalSiteSelector_dialogMessage); 
 		dialog.setFilterPath(lastLocation);
 		String dir = dialog.open();
 
@@ -48,8 +48,8 @@ public class LocalSiteSelector {
 			} else {
 				MessageDialog.openInformation(
 					parent,
-					UpdateUI.getString("LocalSiteSelector.dirInfoTitle"), //$NON-NLS-1$
-					UpdateUI.getString("LocalSiteSelector.dirInfoMessage")); //$NON-NLS-1$
+					UpdateUIMessages.LocalSiteSelector_dirInfoTitle, 
+					UpdateUIMessages.LocalSiteSelector_dirInfoMessage); 
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
 			}
@@ -59,7 +59,7 @@ public class LocalSiteSelector {
 	public static SiteBookmark getLocaLZippedSite(Shell parent) {
 		FileDialog dialog = new FileDialog(parent);
 		dialog.setText(
-			UpdateUI.getString("LocalSiteSelector.dialogMessagezip")); //$NON-NLS-1$
+			UpdateUIMessages.LocalSiteSelector_dialogMessagezip); 
 		//dialog.setFilterExtensions(new String[] { "*.zip", "*.jar" });
 		// //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
@@ -74,8 +74,8 @@ public class LocalSiteSelector {
 			} else {
 				MessageDialog.openInformation(
 					parent,
-					UpdateUI.getString("LocalSiteSelector.zipInfoTitle"), //$NON-NLS-1$
-					UpdateUI.getString("LocalSiteSelector.zipInfoMessage")); //$NON-NLS-1$
+					UpdateUIMessages.LocalSiteSelector_zipInfoTitle, 
+					UpdateUIMessages.LocalSiteSelector_zipInfoMessage); 
 				zip = dialog.open();
 			}
 		}

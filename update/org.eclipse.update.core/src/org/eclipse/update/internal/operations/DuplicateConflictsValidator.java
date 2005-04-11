@@ -13,6 +13,7 @@ package org.eclipse.update.internal.operations;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -64,9 +65,7 @@ public class DuplicateConflictsValidator  {
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			String location = configSite.getSite().getURL().getFile();
-			return Policy.bind(
-				KEY_CONFLICT,
-				new String[] { version, location });
+			return NLS.bind(KEY_CONFLICT, (new String[] { version, location }));
 		}
 	}
 

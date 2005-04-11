@@ -13,6 +13,7 @@ package org.eclipse.update.core;
 import java.io.*;
 import java.net.*;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.URLEncoder;
 
@@ -146,7 +147,7 @@ public class ContentReference {
 			length=response.getContentLength();
 			return is;
 		} else
-			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
+			throw new IOException(NLS.bind("ContentReference.UnableToCreateInputStream", (new String[] { this.toString() }))); //$NON-NLS-1$
 	}
 	/**
 	 * Creates an input stream for the reference.
@@ -166,7 +167,7 @@ public class ContentReference {
 			length=offset + response.getContentLength();
 			return is;
 		} else
-			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream", this.toString())); //$NON-NLS-1$
+			throw new IOException(NLS.bind("ContentReference.UnableToCreateInputStream", (new String[] { this.toString() }))); //$NON-NLS-1$
 	}
 	
 	/**
@@ -233,10 +234,10 @@ public class ContentReference {
 			if (result.exists())
 				return result;
 			else 
-				throw new IOException(Policy.bind("ContentReference.FileDoesNotExist", this.toString())); //$NON-NLS-1$ 			
+				throw new IOException(NLS.bind("ContentReference.FileDoesNotExist", (new String[] { this.toString() }))); //$NON-NLS-1$ 			
 		}
 
-		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsFile", this.toString())); //$NON-NLS-1$ 
+		throw new IOException(NLS.bind("ContentReference.UnableToReturnReferenceAsFile", (new String[] { this.toString() }))); //$NON-NLS-1$ 
 	}
 
 	/**
@@ -253,7 +254,7 @@ public class ContentReference {
 		if (file != null)
 			return file.toURL();
 
-		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsURL", this.toString())); //$NON-NLS-1$
+		throw new IOException(NLS.bind("ContentReference.UnableToReturnReferenceAsURL", (new String[] { this.toString() }))); //$NON-NLS-1$
 	}
 
 	/**

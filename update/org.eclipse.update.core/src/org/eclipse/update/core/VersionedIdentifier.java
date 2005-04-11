@@ -11,6 +11,7 @@
 package org.eclipse.update.core;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.internal.core.*;
 
 /**
@@ -45,7 +46,7 @@ public class VersionedIdentifier {
 	public VersionedIdentifier(String id, String versionName) {
 		if (id == null	|| (id = id.trim()).equals("")) //$NON-NLS-1$
 			throw new IllegalArgumentException(
-				Policy.bind("VersionedIdentifier.IdOrVersionNull", id, versionName)); //$NON-NLS-1$
+				NLS.bind("VersionedIdentifier.IdOrVersionNull", (new String[] { id, versionName }))); //$NON-NLS-1$
 		this.id = id;
 		// 15707
 		if (versionName != null){

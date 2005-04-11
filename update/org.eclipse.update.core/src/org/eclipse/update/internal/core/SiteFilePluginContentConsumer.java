@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -74,7 +75,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				String originalName = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(originalName);
 				if (localFile.exists()) {
-					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null); //$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind("UpdateManagerUtils.FileAlreadyExists", (new Object[] { localFile })), null); //$NON-NLS-1$
 				}
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				renames.put(pluginPath, originalName);
@@ -85,7 +86,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			UpdateManagerUtils.checkPermissions(contentReference, pluginPath); // 20305
 			installedFiles.add(pluginPath);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile", pluginPath), e);//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("GlobalConsumer.ErrorCreatingFile", (new String[] { pluginPath })), e);//$NON-NLS-1$
 		} finally {
 			if (inStream != null) {
 				try {
@@ -120,7 +121,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", temporary, original); //$NON-NLS-1$
+				String msg = NLS.bind("ContentConsumer.UnableToRename", (new String[] { temporary, original })); //$NON-NLS-1$
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -151,7 +152,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			File fileToRemove = new File(originalName);
 			if (fileToRemove.exists()) {
 				if(!fileToRemove.delete()){
-					String msg = Policy.bind("Unable to delete", originalName); //$NON-NLS-1$
+					String msg = NLS.bind("Unable to delete", (new String[] { originalName })); //$NON-NLS-1$
 					UpdateCore.log(msg, null);	
 					success = false;
 				}

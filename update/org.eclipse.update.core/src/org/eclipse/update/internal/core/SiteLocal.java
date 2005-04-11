@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
@@ -62,7 +63,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 			parseLocalSiteFile(currentPlatformConfiguration, localSite);
 
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + CONFIG_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind("SiteLocal.UnableToCreateURLFor", (new String[] { localSite.getLocationURLString() + " & " + CONFIG_FILE })), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	
 		return localSite;
@@ -196,7 +197,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		try {
 			return new InstallConfiguration(getCurrentConfiguration());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.cloneConfig"), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("SiteLocal.cloneConfig"), e); //$NON-NLS-1$
 		}
 	}
 

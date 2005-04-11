@@ -129,8 +129,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	public SitePage(UpdateSearchRequest searchRequest) {
 		super("SitePage"); //$NON-NLS-1$
         this.searchRequest = searchRequest;
-		setTitle(UpdateUI.getString("SitePage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("SitePage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.SitePage_title); 
+		setDescription(UpdateUIMessages.SitePage_desc); 
 		UpdateUI.getDefault().getLabelProvider().connect(this);
     	envFilter = new EnvironmentFilter();
 
@@ -167,7 +167,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString("SitePage.label")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.SitePage_label); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -182,7 +182,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		buttonContainer.setLayout(layout);
 
 		addSiteButton = new Button(buttonContainer, SWT.PUSH);
-		addSiteButton.setText(UpdateUI.getString("SitePage.addUpdateSite")); //$NON-NLS-1$
+		addSiteButton.setText(UpdateUIMessages.SitePage_addUpdateSite); 
 		addSiteButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addSiteButton);
@@ -193,7 +193,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		addLocalButton = new Button(buttonContainer, SWT.PUSH);
-		addLocalButton.setText(UpdateUI.getString("SitePage.addLocalSite")); //$NON-NLS-1$
+		addLocalButton.setText(UpdateUIMessages.SitePage_addLocalSite); 
 		addLocalButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addLocalButton);
@@ -204,7 +204,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		addLocalZippedButton = new Button(buttonContainer, SWT.PUSH);
-		addLocalZippedButton.setText(UpdateUI.getString("SitePage.addLocalZippedSite")); //$NON-NLS-1$
+		addLocalZippedButton.setText(UpdateUIMessages.SitePage_addLocalZippedSite); 
 		addLocalZippedButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addLocalZippedButton);
@@ -218,7 +218,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		new Label(buttonContainer, SWT.None);
 		
 		editButton = new Button(buttonContainer, SWT.PUSH);
-		editButton.setText(UpdateUI.getString("SitePage.edit")); //$NON-NLS-1$
+		editButton.setText(UpdateUIMessages.SitePage_edit); 
 		editButton.setEnabled(false);
 		editButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(editButton);
@@ -229,7 +229,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		removeButton = new Button(buttonContainer, SWT.PUSH);
-		removeButton.setText(UpdateUI.getString("SitePage.remove")); //$NON-NLS-1$
+		removeButton.setText(UpdateUIMessages.SitePage_remove); 
 		removeButton.setEnabled(false);
 		removeButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -244,7 +244,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		new Label(buttonContainer, SWT.None);
 		
 		importButton = new Button(buttonContainer, SWT.PUSH);
-		importButton.setText(UpdateUI.getString("SitePage.import")); //$NON-NLS-1$
+		importButton.setText(UpdateUIMessages.SitePage_import); 
 		importButton.setLayoutData(
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(importButton);
@@ -255,7 +255,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 		
 		exportButton = new Button(buttonContainer, SWT.PUSH);
-		exportButton.setText(UpdateUI.getString("SitePage.export")); //$NON-NLS-1$
+		exportButton.setText(UpdateUIMessages.SitePage_export); 
 		exportButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(exportButton);
 		exportButton.addSelectionListener(new SelectionAdapter() {
@@ -276,7 +276,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		descLabel.setLayoutData(gd);
 		
 		envFilterCheck = new Button(client, SWT.CHECK);
-		envFilterCheck.setText(UpdateUI.getString("SitePage.ignore")); //$NON-NLS-1$
+		envFilterCheck.setText(UpdateUIMessages.SitePage_ignore); 
 		envFilterCheck.setSelection(true);
 		toggleEnvFilter(true);
 		envFilterCheck.addSelectionListener(new SelectionAdapter() {
@@ -349,7 +349,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleAddSite() {
 		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell());
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getString("SitePage.new")); //$NON-NLS-1$
+		dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
 		if (dialog.open() == NewUpdateSiteDialog.OK)
 			updateSearchRequest();
 	}
@@ -396,10 +396,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				boolean answer = MessageDialog
 								.openQuestion(
 										getShell(),
-										UpdateUI
-												.getString("SitePage.remove.location.conf.title"), //$NON-NLS-1$
-										UpdateUI
-												.getString("SitePage.remove.location.conf")	//$NON-NLS-1$
+										UpdateUIMessages.SitePage_remove_location_conf_title, //$NON-NLS-1$
+										UpdateUIMessages.SitePage_remove_location_conf
 												+ " " + selName); //$NON-NLS-1$
 
 				if (answer && !bookmark.isReadOnly()) {
@@ -417,7 +415,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		URL oldURL = bookmark.getURL();
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
-		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title = bookmark.isLocal() ? UpdateUIMessages.SitePage_dialogEditLocal : UpdateUIMessages.SitePage_dialogEditUpdateSite; 
 																																				  // //$NON-NLS-2$
 		dialog.getShell().setText(title);
 		if (dialog.open() == EditSiteDialog.OK ) {
@@ -456,8 +454,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private int handleNameEdit(SiteBookmark bookmark) {
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, true);
 		dialog.create();
-		String title = bookmark.isLocal() ? UpdateUI
-				.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title = bookmark.isLocal() ? UpdateUIMessages.SitePage_dialogEditLocal : UpdateUIMessages.SitePage_dialogEditUpdateSite; 
 		// //$NON-NLS-2$
 		dialog.getShell().setText(title);
 		int rc = dialog.open();

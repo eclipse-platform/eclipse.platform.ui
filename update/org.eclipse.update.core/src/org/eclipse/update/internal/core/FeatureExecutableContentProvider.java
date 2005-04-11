@@ -16,6 +16,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -47,7 +48,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File pluginPath = new File(result);
 		if (!pluginPath.exists())
 			throw new IOException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));	//$NON-NLS-1$
+				NLS.bind("FeatureExecutableContentProvider.FileDoesNotExist", (new String[] { result })));	//$NON-NLS-1$
 
 		return result;
 	}
@@ -64,7 +65,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File pluginDir = new File(result);
 		if (!pluginDir.exists())
 			throw new IOException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result)); //$NON-NLS-1$
+				NLS.bind("FeatureExecutableContentProvider.FileDoesNotExist", (new String[] { result }))); //$NON-NLS-1$
 
 		return result;
 	}
@@ -78,9 +79,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
 		if (!dir.isDirectory()) {
 			String msg =
-				Policy.bind(
-					"FeatureExecutableContentProvider.InvalidDirectory", //$NON-NLS-1$
-					dir.getAbsolutePath());
+				NLS.bind("FeatureExecutableContentProvider.InvalidDirectory", (new String[] { dir.getAbsolutePath() }));
 
 			throw new IOException(msg);
 
@@ -117,9 +116,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToCreateURLFor", //$NON-NLS-1$
-					getURL().toExternalForm() + " " + Feature.FEATURE_XML), //$NON-NLS-1$
+				NLS.bind("FeatureExecutableContentProvider.UnableToCreateURLFor", (new String[] { getURL().toExternalForm() + " " + Feature.FEATURE_XML })), //$NON-NLS-1$
 				e);
 		}
 		return result;
@@ -153,9 +150,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToRetrievePluginEntry", //$NON-NLS-1$
-						pluginEntry.getVersionedIdentifier().toString()),
+					NLS.bind("FeatureExecutableContentProvider.UnableToRetrievePluginEntry", (new String[] { pluginEntry.getVersionedIdentifier().toString() })),
 					e);
 		}
 		return result;
@@ -181,7 +176,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		File nonPluginData = new File(fileString);
 		if (!nonPluginData.exists())
 			throw Utilities.newCoreException(
-				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", fileString), //$NON-NLS-1$
+				NLS.bind("FeatureExecutableContentProvider.FileDoesNotExist", (new String[] { fileString })), //$NON-NLS-1$
 				null); 
 
 		try {
@@ -189,9 +184,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 				new ContentReference(nonPluginEntry.getIdentifier(), nonPluginData.toURL());
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry", //$NON-NLS-1$
-					nonPluginEntry.getIdentifier().toString()),
+				NLS.bind("FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry", (new String[] { nonPluginEntry.getIdentifier().toString() })),
 				e);
 		}
 		return result;
@@ -223,9 +216,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
-					"FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef", //$NON-NLS-1$
-					getFeature().getVersionedIdentifier().toString()),
+				NLS.bind("FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef", (new String[] { getFeature().getVersionedIdentifier().toString() })),
 				e);
 		}
 		return result;
@@ -259,7 +250,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind(
+				Messages.bind(
 					"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef") //$NON-NLS-1$
 					+ pluginEntry.getVersionedIdentifier().toString(),
 				e);

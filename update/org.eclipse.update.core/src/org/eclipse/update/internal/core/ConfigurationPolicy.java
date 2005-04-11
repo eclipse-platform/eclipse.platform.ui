@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
@@ -151,9 +152,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), originalException); //$NON-NLS-1$
 			if (newException != null)
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), newException); //$NON-NLS-1$
 		}
 	}
 
@@ -251,9 +252,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), originalException); //$NON-NLS-1$
 			if (newException != null)
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), newException); //$NON-NLS-1$
 		}
 
 		if (!success) {

@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.osgi.framework.*;
@@ -281,7 +282,7 @@ public class UpdateManagerUtils {
 		}
 
 		if (!file.delete()) {
-			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());	//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = NLS.bind("UpdateManagerUtils.UnableToRemoveFile", (new String[] { file.getAbsolutePath() }));	//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateCore.log(msg, new Exception());
 		}
 	}
@@ -301,7 +302,7 @@ public class UpdateManagerUtils {
 			}
 		}
 		if (!file.delete()) {
-			String msg = Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());	//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = NLS.bind("UpdateManagerUtils.UnableToRemoveFile", (new String[] { file.getAbsolutePath() }));	//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateCore.log(msg, new Exception());
 		}
 	}
@@ -520,7 +521,7 @@ public class UpdateManagerUtils {
 
 			if (result != IStatusCodes.HTTP_OK) {
 				String serverMsg = response.getStatusMessage();
-				throw new IOException(Policy.bind("ContentReference.HttpNok", new Object[] { new Integer(result), serverMsg, url })); //$NON-NLS-1$						
+				throw new IOException(NLS.bind("ContentReference.HttpNok", (new Object[] { new Integer(result), serverMsg, url }))); //$NON-NLS-1$						
 			}
 	}
 
@@ -870,12 +871,12 @@ public static class Writer {
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
 			if(expectedLength>0 && offset!=expectedLength)
-				throw new IOException(Policy.bind("UpdateManagerUtils.inputStreamEnded", String.valueOf(offset), String.valueOf(expectedLength))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				throw new IOException(NLS.bind("UpdateManagerUtils.inputStreamEnded", (new String[] { String.valueOf(offset), String.valueOf(expectedLength) }))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return -1;
 		} catch(IOException e){
 			// Log the actual error, as this is no longer
 			// passed up the calling stack
-			UpdateCore.log(Policy.bind("UpdateManagerUtils.copy") + offset, e); //$NON-NLS-1$
+			UpdateCore.log(Messages.bind("UpdateManagerUtils.copy") + offset, e); //$NON-NLS-1$
 			return offset;
 		} finally {
 			freeBuffer(buf);

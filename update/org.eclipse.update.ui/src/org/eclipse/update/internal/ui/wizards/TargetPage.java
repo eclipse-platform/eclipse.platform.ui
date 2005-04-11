@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -114,8 +115,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	 */
 	public TargetPage(IInstallConfiguration config) {
 		super("Target"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString("InstallWizard.TargetPage.title")); //$NON-NLS-1$
-		setDescription(UpdateUI.getString("InstallWizard.TargetPage.desc")); //$NON-NLS-1$
+		setTitle(UpdateUIMessages.InstallWizard_TargetPage_title); 
+		setDescription(UpdateUIMessages.InstallWizard_TargetPage_desc); 
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
@@ -140,11 +141,11 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.jobsLabel")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_TargetPage_jobsLabel); 
 		createJobViewer(client);
 
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.location")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_TargetPage_location); 
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         label.setLayoutData(gd);
 
@@ -154,7 +155,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
         installLocation.setLayoutData(gd);
         
         changeLocation = new Button(client, SWT.PUSH);
-        changeLocation.setText(UpdateUI.getString("InstallWizard.TargetPage.location.change")); //$NON-NLS-1$
+        changeLocation.setText(UpdateUIMessages.InstallWizard_TargetPage_location_change); 
         changeLocation.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) jobViewer.getSelection();
@@ -169,7 +170,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
                 SWTUtil.setDialogSize(dialog, 400, 300);
                 
-                dialog.getShell().setText(UpdateUI.getString("SitePage.new")); //$NON-NLS-1$
+                dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
                 dialog.open();
                 setTargetLocation(job);
                 pageChanged();
@@ -186,11 +187,11 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 2;
 		status.setLayout(layout);
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.requiredSpace")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_TargetPage_requiredSpace); 
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.availableSpace")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.InstallWizard_TargetPage_availableSpace); 
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -233,7 +234,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
-			errorMessage = UpdateUI.getString("InstallWizard.TargetPage.location.empty"); //$NON-NLS-1$
+			errorMessage = UpdateUIMessages.InstallWizard_TargetPage_location_empty; 
 		setErrorMessage(errorMessage);
 		setPageComplete(!empty);
 	}
@@ -250,16 +251,16 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		long available = LocalSystemInfo.getFreeSpace(file);
 		long required = computeRequiredSizeFor(site);
 		if (required <= 0)
-			requiredSpaceLabel.setText(UpdateUI.getString("InstallWizard.TargetPage.unknownSize")); //$NON-NLS-1$
+			requiredSpaceLabel.setText(UpdateUIMessages.InstallWizard_TargetPage_unknownSize); 
 		else
 			requiredSpaceLabel.setText(
-				UpdateUI.getFormattedMessage("InstallWizard.TargetPage.size", "" + required)); //$NON-NLS-1$ //$NON-NLS-2$
+				NLS.bind("InstallWizard.TargetPage.size", "" + required)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
-			availableSpaceLabel.setText(UpdateUI.getString("InstallWizard.TargetPage.unknownSize")); //$NON-NLS-1$
+			availableSpaceLabel.setText(UpdateUIMessages.InstallWizard_TargetPage_unknownSize); 
 		else
 			availableSpaceLabel.setText(
-				UpdateUI.getFormattedMessage("InstallWizard.TargetPage.size", "" + available)); //$NON-NLS-1$ //$NON-NLS-2$
+				NLS.bind("InstallWizard.TargetPage.size", "" + available)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private long computeRequiredSizeFor(IConfiguredSite site) {
@@ -293,11 +294,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				if (patchedFeatureJob != null
 					&& patchedFeatureJob.getTargetSite() != null
 					&& !jobs[i].getTargetSite().equals(patchedFeatureJob.getTargetSite())) {
-					String msg = UpdateUI.getFormattedMessage(
-						"InstallWizard.TargetPage.patchError", //$NON-NLS-1$
-						new String[] {
-							feature.getLabel(),
-							patchedFeatureJob.getFeature().getLabel()});
+					String msg = NLS.bind("InstallWizard.TargetPage.patchError", (new String[] {
+                    feature.getLabel(),
+                    patchedFeatureJob.getFeature().getLabel()}));
 					setErrorMessage(msg);
 					setPageComplete(false);
 					return;
@@ -306,12 +305,10 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				IFeature patchedFeature = UpdateUtils.getPatchedFeature(feature);
 				if (patchedFeature != null  
 					&& !jobs[i].getTargetSite().equals(patchedFeature.getSite().getCurrentConfiguredSite())) {
-					String msg = UpdateUI.getFormattedMessage(
-							"InstallWizard.TargetPage.patchError2", //$NON-NLS-1$
-							new String[] {
-								feature.getLabel(),
-								patchedFeature.getLabel(),
-								patchedFeature.getSite().getCurrentConfiguredSite().getSite().getURL().getFile()});
+					String msg = NLS.bind("InstallWizard.TargetPage.patchError2", (new String[] {
+                    feature.getLabel(),
+                    patchedFeature.getLabel(),
+                    patchedFeature.getSite().getCurrentConfiguredSite().getSite().getURL().getFile()}));
 					setErrorMessage(msg);
 					setPageComplete(false);
 					return;

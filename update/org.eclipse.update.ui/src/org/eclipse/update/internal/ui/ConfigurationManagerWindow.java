@@ -84,11 +84,11 @@ public class ConfigurationManagerWindow
 
 	private void addActions() {
 		IMenuManager menuBar = getMenuBarManager();
-		IMenuManager fileMenu = new MenuManager(UpdateUI.getString("ConfigurationManagerWindow.fileMenu")); //$NON-NLS-1$
+		IMenuManager fileMenu = new MenuManager(UpdateUIMessages.ConfigurationManagerWindow_fileMenu); 
 		menuBar.add(fileMenu);
 
 		propertiesAction = new GlobalAction();
-		propertiesAction.setText(UpdateUI.getString("ConfigurationManagerWindow.properties")); //$NON-NLS-1$
+		propertiesAction.setText(UpdateUIMessages.ConfigurationManagerWindow_properties); 
 		propertiesAction.setEnabled(false);
 
 		fileMenu.add(propertiesAction);
@@ -99,7 +99,7 @@ public class ConfigurationManagerWindow
 				close();
 			}
 		};
-		closeAction.setText(UpdateUI.getString("ConfigurationManagerWindow.close")); //$NON-NLS-1$
+		closeAction.setText(UpdateUIMessages.ConfigurationManagerWindow_close); 
 		fileMenu.add(closeAction);
 	}
 	
@@ -163,7 +163,7 @@ public class ConfigurationManagerWindow
 	public void create() {
 		super.create();
 		// set the title
-		getShell().setText(UpdateUI.getString("ConfigurationManagerAction.title")); //$NON-NLS-1$
+		getShell().setText(UpdateUIMessages.ConfigurationManagerAction_title); 
 		getShell().setSize(800, 600);
 	}
 	

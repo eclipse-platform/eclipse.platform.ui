@@ -86,14 +86,14 @@ public class ShowActivitiesDialog extends Dialog {
 		container.setLayoutData(gd);
 		try {
 			Label targetLabel = new Label(container, SWT.NONE);
-			targetLabel.setText(UpdateUI.getString("ShowActivitiesDialog.date")); //$NON-NLS-1$
+			targetLabel.setText(UpdateUIMessages.ShowActivitiesDialog_date); 
 			Label target = new Label(container, SWT.NONE);
 			DateFormat df = DateFormat.getDateTimeInstance();
 			String localizedDate = df.format(SiteManager.getLocalSite().getCurrentConfiguration().getCreationDate());
 			target.setText(localizedDate);
 			
 			Label urlLabel = new Label(container, SWT.NONE);
-			urlLabel.setText(UpdateUI.getString("ShowActivitiesDialog.loc")); //$NON-NLS-1$
+			urlLabel.setText(UpdateUIMessages.ShowActivitiesDialog_loc); 
 			Label url = new Label(container, SWT.NONE);
 			url.setText(((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).getURL().getFile());
 			
@@ -117,7 +117,7 @@ public class ShowActivitiesDialog extends Dialog {
 
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(UpdateUI.getString("ShowActivitiesDialog.label")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.ShowActivitiesDialog_label); 
 		activitiesViewer = ActivitiesTableViewer.createViewer(composite, true);
 
 		TableLayout layout = new TableLayout();

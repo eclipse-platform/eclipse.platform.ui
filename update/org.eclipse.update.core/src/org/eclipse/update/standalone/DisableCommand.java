@@ -14,6 +14,7 @@ import java.lang.reflect.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -51,7 +52,7 @@ public class DisableCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
 				}
 				targetSite =
 					SiteManager
@@ -70,7 +71,7 @@ public class DisableCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
-				throw new Exception(Policy.bind("Standalone.noFeatures3", featureId)); //$NON-NLS-1$
+				throw new Exception(NLS.bind("Standalone.noFeatures3", (new String[] { featureId }))); //$NON-NLS-1$
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -86,7 +87,7 @@ public class DisableCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				throw new Exception(Policy.bind("Standalone.noFeatures4", featureId, version)); //$NON-NLS-1$
+				throw new Exception(NLS.bind("Standalone.noFeatures4", (new String[] { featureId, version }))); //$NON-NLS-1$
 			}
 
 		} catch (MalformedURLException e) {

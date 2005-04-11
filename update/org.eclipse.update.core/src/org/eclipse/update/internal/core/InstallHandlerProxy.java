@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.osgi.framework.*;
 
@@ -138,18 +139,18 @@ public class InstallHandlerProxy implements IInstallHandler {
 			handler.initialize(type, feature, entry, monitor);
 		} catch (ClassNotFoundException e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.notFound", feature.getLabel()), //$NON-NLS-1$
+				NLS.bind("InstallHandler.notFound", (new String[] { feature.getLabel() })), //$NON-NLS-1$
 				e);
 
 		} catch (ClassCastException e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.invalidHandler", feature.getLabel()), //$NON-NLS-1$
+				NLS.bind("InstallHandler.invalidHandler", (new String[] { feature.getLabel() })), //$NON-NLS-1$
 				e);
 		} catch (CoreException e) {
 			handleExceptionInInit(null, e);
 		} catch (Exception e) {
 			handleExceptionInInit(
-				Policy.bind("InstallHandler.unableToCreateHandler", feature.getLabel()), //$NON-NLS-1$
+				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { feature.getLabel() })), //$NON-NLS-1$
 				e);
 		}
 
@@ -445,7 +446,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else
 			ce =
 				Utilities.newCoreException(
-					Policy.bind("InstallHandler.callException", feature.getLabel()), //$NON-NLS-1$
+					NLS.bind("InstallHandler.callException", (new String[] { feature.getLabel() })), //$NON-NLS-1$
 					e);
 		
 		if (isUndoAction()) {
@@ -491,7 +492,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			base = baseRef.asURL();
 		if (base == null)
 			throw Utilities.newCoreException(
-				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()), //$NON-NLS-1$
+				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { this.feature.getLabel() })), //$NON-NLS-1$
 				null);
 
 
@@ -540,7 +541,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			reg.getConfigurationElementsFor(EXT_PLUGIN, EXT_POINT, name);
 		if (handlerExtension == null || handlerExtension.length <= 0)
 			throw Utilities.newCoreException(
-				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()), //$NON-NLS-1$
+				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { this.feature.getLabel() })), //$NON-NLS-1$
 				null);
 
 		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class"); //$NON-NLS-1$

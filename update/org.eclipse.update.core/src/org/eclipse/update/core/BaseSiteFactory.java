@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
@@ -69,7 +70,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 		} catch (MissingResourceException e) {
 			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCore.warn(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
+			UpdateCore.warn(NLS.bind("BaseSiteFactory.CannotRetriveParentDirectory", (new String[] { url.toExternalForm() })));  //$NON-NLS-1$
 		}
 
 		return bundle;

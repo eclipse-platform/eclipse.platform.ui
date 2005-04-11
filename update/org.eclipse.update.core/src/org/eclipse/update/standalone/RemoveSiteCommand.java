@@ -42,7 +42,7 @@ public class RemoveSiteCommand extends ScriptedCommand {
 				if (!sitePath.getName().equals("eclipse")) //$NON-NLS-1$
 					sitePath = new File(sitePath, "eclipse"); //$NON-NLS-1$
 				if (!sitePath.exists())
-					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
 					
 				IConfiguredSite[] csites = SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites();
 				for (int i=0; i<csites.length; i++) {
@@ -54,9 +54,9 @@ public class RemoveSiteCommand extends ScriptedCommand {
 				}
 				
 				if (csite == null)
-					throw new Exception(Policy.bind("Standalone.noConfiguredSite") + toSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.noConfiguredSite") + toSite); //$NON-NLS-1$
 			} else {
-				throw new Exception(Policy.bind("Standalone.noSite3")); //$NON-NLS-1$
+				throw new Exception(Messages.bind("Standalone.noSite3")); //$NON-NLS-1$
 			}
 		
 		} catch (Exception e) {

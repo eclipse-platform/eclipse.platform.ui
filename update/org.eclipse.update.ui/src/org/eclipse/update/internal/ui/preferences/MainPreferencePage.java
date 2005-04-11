@@ -27,6 +27,7 @@ import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 /**
  * Insert the type's description here.
@@ -80,13 +81,13 @@ public class MainPreferencePage
 		mainComposite.setLayout(layout);
 
 		Label historySizeLabel = new Label(mainComposite, SWT.NONE);
-		historySizeLabel.setText(UpdateUI.getString("MainPreferencePage.historySize")); //$NON-NLS-1$
+		historySizeLabel.setText(UpdateUIMessages.MainPreferencePage_historySize); 
 		historySizeText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		historySizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		checkSignatureCheckbox =
 			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
-		checkSignatureCheckbox.setText(UpdateUI.getString("MainPreferencePage.checkSignature")); //$NON-NLS-1$
+		checkSignatureCheckbox.setText(UpdateUIMessages.MainPreferencePage_checkSignature); 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		checkSignatureCheckbox.setLayoutData(gd);
@@ -101,22 +102,22 @@ public class MainPreferencePage
 		createSpacer(mainComposite, 2);
 
 		Group group = new Group(mainComposite, SWT.NONE);
-		group.setText(UpdateUI.getString("MainPreferencePage.updateVersions")); //$NON-NLS-1$
+		group.setText(UpdateUIMessages.MainPreferencePage_updateVersions); 
 		group.setLayout(new GridLayout());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
 
 		equivalentButton = new Button(group, SWT.RADIO);
-		equivalentButton.setText(UpdateUI.getString("MainPreferencePage.updateVersions.equivalent")); //$NON-NLS-1$
+		equivalentButton.setText(UpdateUIMessages.MainPreferencePage_updateVersions_equivalent); 
 
 		compatibleButton = new Button(group, SWT.RADIO);
-		compatibleButton.setText(UpdateUI.getString("MainPreferencePage.updateVersions.compatible")); //$NON-NLS-1$
+		compatibleButton.setText(UpdateUIMessages.MainPreferencePage_updateVersions_compatible); 
 
 		createSpacer(mainComposite, 2);
 
 		group = new Group(mainComposite, SWT.NONE);
-		group.setText(UpdateUI.getString("MainPreferencePage.updatePolicy")); //$NON-NLS-1$
+		group.setText(UpdateUIMessages.MainPreferencePage_updatePolicy); 
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -125,7 +126,7 @@ public class MainPreferencePage
 		group.setLayoutData(gd);
 
 		Label label = new Label(group, SWT.NULL);
-		label.setText(UpdateUI.getString("MainPreferencePage.updatePolicyURL")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.MainPreferencePage_updatePolicyURL); 
 		updatePolicyText = new Text(group, SWT.SINGLE | SWT.BORDER);
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -156,7 +157,7 @@ public class MainPreferencePage
 
 	protected void createHttpProxy(Composite composite, int columnSpan) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(UpdateUI.getString("MainPreferencePage.proxyGroup")); //$NON-NLS-1$
+		group.setText(UpdateUIMessages.MainPreferencePage_proxyGroup); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -165,19 +166,19 @@ public class MainPreferencePage
 		group.setLayoutData(gd);
 
 		enableHttpProxy = new Button(group, SWT.CHECK);
-		enableHttpProxy.setText(UpdateUI.getString("MainPreferencePage.enableHttpProxy")); //$NON-NLS-1$
+		enableHttpProxy.setText(UpdateUIMessages.MainPreferencePage_enableHttpProxy); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		enableHttpProxy.setLayoutData(gd);
 
 		httpProxyHostLabel = new Label(group, SWT.NONE);
-		httpProxyHostLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyHost")); //$NON-NLS-1$
+		httpProxyHostLabel.setText(UpdateUIMessages.MainPreferencePage_httpProxyHost); 
 
 		httpProxyHostText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		httpProxyHostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		httpProxyPortLabel = new Label(group, SWT.NONE);
-		httpProxyPortLabel.setText(UpdateUI.getString("MainPreferencePage.httpProxyPort")); //$NON-NLS-1$
+		httpProxyPortLabel.setText(UpdateUIMessages.MainPreferencePage_httpProxyPort); 
 
 		httpProxyPortText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		httpProxyPortText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -200,7 +201,7 @@ public class MainPreferencePage
 				} catch (NumberFormatException nfe) {
 				}
 				MainPreferencePage.this.setValid(false);
-				setErrorMessage(UpdateUI.getString("MainPreferencePage.invalidPort")); //$NON-NLS-1$
+				setErrorMessage(UpdateUIMessages.MainPreferencePage_invalidPort); 
 			}
 		});
 
@@ -299,7 +300,7 @@ public class MainPreferencePage
 				new URL(text);
 			} catch (MalformedURLException e) {
 				setValid(false);
-				setErrorMessage(UpdateUI.getString("UpdateSettingsPreferencePage.invalid")); //$NON-NLS-1$
+				setErrorMessage(UpdateUIMessages.UpdateSettingsPreferencePage_invalid); 
 				return;
 			}
 		}
@@ -329,7 +330,7 @@ public class MainPreferencePage
 	}
 
 	private void warnSignatureCheck(Shell shell) {
-		MessageDialog.openWarning(shell, UpdateUI.getString("MainPreferencePage.digitalSignature.title"), //$NON-NLS-1$
-		UpdateUI.getString("MainPreferencePage.digitalSignature.message")); //$NON-NLS-1$
+		MessageDialog.openWarning(shell, UpdateUIMessages.MainPreferencePage_digitalSignature_title, 
+		UpdateUIMessages.MainPreferencePage_digitalSignature_message); 
 	}
 }

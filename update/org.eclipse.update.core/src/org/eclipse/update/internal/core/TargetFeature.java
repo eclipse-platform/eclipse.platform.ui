@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 
 /**
@@ -44,7 +45,7 @@ public class TargetFeature extends Feature {
 	 */
 	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		if (this.contentConsumer == null) {
-			throw Utilities.newCoreException( Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$
+			throw Utilities.newCoreException( NLS.bind("Feature.NoFeatureContentConsumer", (new String[] { getURL().toExternalForm() })), null); //$NON-NLS-1$
 		}
 		return contentConsumer;
 	}

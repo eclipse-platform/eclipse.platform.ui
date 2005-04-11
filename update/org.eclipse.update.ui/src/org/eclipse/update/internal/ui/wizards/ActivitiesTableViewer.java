@@ -100,23 +100,23 @@ public class ActivitiesTableViewer{
 			int action = activity.getAction();
 			switch (action) {
 				case IActivity.ACTION_CONFIGURE :
-					return UpdateUI.getString("ActivitiesTableViewer.enabled"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_enabled; 
 				case IActivity.ACTION_FEATURE_INSTALL :
-					return UpdateUI.getString("ActivitiesTableViewer.featureInstalled"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_featureInstalled; 
 				case IActivity.ACTION_FEATURE_REMOVE :
-					return UpdateUI.getString("ActivitiesTableViewer.featureRemoved"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_featureRemoved; 
 				case IActivity.ACTION_SITE_INSTALL :
-					return UpdateUI.getString("ActivitiesTableViewer.siteInstalled"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_siteInstalled; 
 				case IActivity.ACTION_SITE_REMOVE :
-					return UpdateUI.getString("ActivitiesTableViewer.siteRemoved"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_siteRemoved; 
 				case IActivity.ACTION_UNCONFIGURE :
-					return UpdateUI.getString("ActivitiesTableViewer.disabled"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_disabled; 
 				case IActivity.ACTION_REVERT :
-					return UpdateUI.getString("ActivitiesTableViewer.revert"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_revert; 
 				case IActivity.ACTION_RECONCILIATION :
-					return UpdateUI.getString("ActivitiesTableViewer.reconcile"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_reconcile; 
 				default :
-					return UpdateUI.getString("ActivitiesTableViewer.unknown"); //$NON-NLS-1$
+					return UpdateUIMessages.ActivitiesTableViewer_unknown; 
 			}
 		}
 	}
@@ -131,13 +131,13 @@ public class ActivitiesTableViewer{
 		TableColumn column = new TableColumn(table, SWT.NONE);
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText(UpdateUI.getString("ActivitiesTableViewer.date")); //$NON-NLS-1$
+		column.setText(UpdateUIMessages.ActivitiesTableViewer_date); 
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText(UpdateUI.getString("ActivitiesTableViewer.target")); //$NON-NLS-1$
+		column.setText(UpdateUIMessages.ActivitiesTableViewer_target); 
 
 		column = new TableColumn(table, SWT.NONE);
-		column.setText(UpdateUI.getString("ActivitiesTableViewer.action")); //$NON-NLS-1$
+		column.setText(UpdateUIMessages.ActivitiesTableViewer_action); 
 
 		TableViewer activitiesViewer = new TableViewer(table);
 		activitiesViewer.setLabelProvider(new ActivitiesLabelProvider());

@@ -21,6 +21,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.operations.*;
 
 /**
@@ -55,7 +56,7 @@ public class FeatureStatusPropertyPage
 			IFeature feature = adapter.getFeature(null);
 			
 			if (OperationsManager.findPendingOperation(feature) != null) {
-				message.setText(UpdateUI.getString("FeatureStatusPropertyPage.pendingChanges")); //$NON-NLS-1$
+				message.setText(UpdateUIMessages.FeatureStatusPropertyPage_pendingChanges); 
 				return composite;
 			}
 			
@@ -64,7 +65,7 @@ public class FeatureStatusPropertyPage
 			if (severity == IStatus.ERROR
 				&& getStatusCode(feature, status) == IFeature.STATUS_HAPPY) {
 				severity = IStatus.OK;
-				message.setText(UpdateUI.getString("FeatureStatusPropertyPage.goodConfiguration")); //$NON-NLS-1$
+				message.setText(UpdateUIMessages.FeatureStatusPropertyPage_goodConfiguration); 
 			} else {
 				message.setText(status.getMessage());
 			}
@@ -77,7 +78,7 @@ public class FeatureStatusPropertyPage
 					comp.setLayoutData(gd);
 
 					Label label = new Label(comp, SWT.NONE);
-					label.setText(UpdateUI.getString("FeatureStatusPropertyPage.reason")); //$NON-NLS-1$
+					label.setText(UpdateUIMessages.FeatureStatusPropertyPage_reason); 
 
 					Text text =
 						new Text(comp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
@@ -120,10 +121,10 @@ public class FeatureStatusPropertyPage
 			String message = ""; //$NON-NLS-1$
 			if (((MissingFeature) feature).isOptional()) {
 				severity = IStatus.OK;
-				message = UpdateUI.getString("FeatureStatusPropertyPage.missingOptional"); //$NON-NLS-1$
+				message = UpdateUIMessages.FeatureStatusPropertyPage_missingOptional; 
 			} else {
 				severity = IStatus.ERROR;
-				message = UpdateUI.getString("FeatureStatusPropertyPage.missing"); //$NON-NLS-1$
+				message = UpdateUIMessages.FeatureStatusPropertyPage_missing; 
 			}
 			return new Status(severity, UpdateUI.PLUGIN_ID, IStatus.OK, message, null);
 		}

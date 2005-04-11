@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 
@@ -63,7 +64,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		}  catch (CoreException e){
 			throw e;
 		} catch (Exception e) { 
-			throw Utilities.newCoreException(Policy.bind("FeatureFactory.CreatingError", url.toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("FeatureFactory.CreatingError", (new String[] { url.toExternalForm() })), e); //$NON-NLS-1$
 		}finally {
 			try {
 				if (featureStream!=null)	

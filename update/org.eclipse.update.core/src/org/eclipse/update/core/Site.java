@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
@@ -161,9 +162,9 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 		//DEBUG:
 		if (!found) {
 			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>"; //$NON-NLS-1$
-			UpdateCore.warn(Policy.bind("Site.CannotFindCategory", key, URLString)); //$NON-NLS-1$ //$NON-NLS-2$
+			UpdateCore.warn(NLS.bind("Site.CannotFindCategory", (new String[] { key, URLString }))); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateCore.warn(Policy.bind("Site.NoCategories"));	//$NON-NLS-1$
+				UpdateCore.warn(Messages.bind("Site.NoCategories"));	//$NON-NLS-1$
 		}
 
 		return result;
@@ -273,7 +274,7 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 	 */
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
-			throw Utilities.newCoreException(Policy.bind("Site.NoContentProvider"), null);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("Site.NoContentProvider"), null);	//$NON-NLS-1$
 		}
 		return siteContentProvider;
 	}

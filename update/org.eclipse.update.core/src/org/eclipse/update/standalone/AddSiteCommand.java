@@ -40,18 +40,18 @@ public class AddSiteCommand extends ScriptedCommand {
 			if (fromSite != null) {
 				sitePath = new File(fromSite);
 				if (!sitePath.exists())
-					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 					
 				URL fromSiteURL = sitePath.toURL();
 				site = SiteManager.getSite(fromSiteURL, null);
 				if (site == null) {
-					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 				}
 				IConfiguredSite csite = site.getCurrentConfiguredSite();
 				if (csite != null)
-					throw new Exception(Policy.bind("Standalone.siteConfigured") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.bind("Standalone.siteConfigured") + fromSite); //$NON-NLS-1$
 			} else {
-				throw new Exception(Policy.bind("Standalone.noSite3") ); //$NON-NLS-1$
+				throw new Exception(Messages.bind("Standalone.noSite3") ); //$NON-NLS-1$
 			}		
 		} catch (Exception e) {
 			throw e;

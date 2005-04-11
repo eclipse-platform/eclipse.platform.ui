@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.security.*;
 
@@ -89,7 +90,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		// the manifest has not been found
 		String[] values = new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
-		throw Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.NoManifestFile", values), new Exception()); //$NON-NLS-1$ 
+		throw Utilities.newCoreException(NLS.bind("FeaturePackagedContentProvider.NoManifestFile", values), new Exception()); //$NON-NLS-1$ 
 
 	}
 
@@ -245,7 +246,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		List result = new ArrayList();
 
 		if (!dir.isDirectory())
-			throw new IOException(Policy.bind("FeaturePackagedContentProvider.InvalidDirectory", dir.getPath())); //$NON-NLS-1$
+			throw new IOException(NLS.bind("FeaturePackagedContentProvider.InvalidDirectory", (new String[] { dir.getPath() }))); //$NON-NLS-1$
 
 		File[] files = dir.listFiles();
 		if (files != null) // be careful since it can be null
@@ -266,7 +267,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		String[] values = new String[] { obj };
 
-		return Utilities.newCoreException(Policy.bind("FeaturePackagedContentProvider.ErrorRetrieving", values), e); //$NON-NLS-1$	 	
+		return Utilities.newCoreException(NLS.bind("FeaturePackagedContentProvider.ErrorRetrieving", values), e); //$NON-NLS-1$	 	
 
 	}
 

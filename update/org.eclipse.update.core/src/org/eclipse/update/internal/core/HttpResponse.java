@@ -160,10 +160,10 @@ public class HttpResponse implements Response {
 		//System.out.println("Content-Range=" + range);
 		if (range == null) {
 			//System.err.println("Server does not support ranges");
-			throw new IOException(Policy.bind("HttpResponse.rangeExpected")); //$NON-NLS-1$
+			throw new IOException(Messages.bind("HttpResponse.rangeExpected")); //$NON-NLS-1$
 		} else if (!range.startsWith("bytes " + offset + "-")) { //$NON-NLS-1$ //$NON-NLS-2$
 			//System.err.println("Server returned wrong range");
-			throw new IOException(Policy.bind("HttpResponse.wrongRange")); //$NON-NLS-1$
+			throw new IOException(Messages.bind("HttpResponse.wrongRange")); //$NON-NLS-1$
 		}
 	}
 }

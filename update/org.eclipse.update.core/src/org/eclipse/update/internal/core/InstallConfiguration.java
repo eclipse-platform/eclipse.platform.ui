@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
@@ -114,7 +115,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 		
 		if (isDuplicateSite(file))
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.location.exists", file.getPath()),null); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("InstallConfiguration.location.exists", (new String[] { file.getPath() })),null); //$NON-NLS-1$
 		ISite site = InternalSiteManager.createSite(file);
 
 		//create a config site around the site
@@ -123,11 +124,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
 
 		if (configSite.isNativelyLinked()) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.AlreadyNativelyLinked"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.AlreadyNativelyLinked"), null); //$NON-NLS-1$
 		}
 		
 		if (configSite.isProductSite()) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.AlreadyProductSite"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.AlreadyProductSite"), null); //$NON-NLS-1$
 		}
 		
 		if (site != null) {
@@ -390,7 +391,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			resetActivities();
 			return isRestartNeeded(runtimeConfiguration);
 		} catch (IOException e) {
-			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);	//$NON-NLS-1$
+			CoreException exc = Utilities.newCoreException(NLS.bind("InstallConfiguration.UnableToSavePlatformConfiguration", (new String[] { runtimeConfiguration.getConfigurationLocation().toExternalForm() })), e);	//$NON-NLS-1$
 			UpdateCore.warn("",exc); //$NON-NLS-1$
 		}
 		return true;
@@ -416,9 +417,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		try {
 			urlToCheck = new URL(cSite.getPlatformURLString());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", cSite.getPlatformURLString()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("InstallConfiguration.UnableToCreateURL", (new String[] { cSite.getPlatformURLString() })), e); //$NON-NLS-1$
 		} catch (ClassCastException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCast"), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.UnableToCast"), e);	//$NON-NLS-1$
 		}
 
 		// update runtime configuration [18520]
@@ -517,15 +518,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			try {
 				urlToCheck = new URL(configurationSites[i].getPlatformURLString());
 			} catch (MalformedURLException e) {
-				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCreateURL", configurationSites[i].getPlatformURLString()), e); //$NON-NLS-1$
+				UpdateCore.warn(NLS.bind("InstallConfiguration.UnableToCreateURL", (new String[] { configurationSites[i].getPlatformURLString() })), e); //$NON-NLS-1$
 			} catch (ClassCastException e) {
-				UpdateCore.warn(Policy.bind("InstallConfiguration.UnableToCast"), e);//$NON-NLS-1$
+				UpdateCore.warn(Messages.bind("InstallConfiguration.UnableToCast"), e);//$NON-NLS-1$
 			}
 
 			// if the URL doesn't exits log it
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry == null) {
-				UpdateCore.warn(Policy.bind("Unable to find site {0} in platform configuration {1}.", urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm())); //$NON-NLS-1$
+				UpdateCore.warn(NLS.bind("Unable to find site {0} in platform configuration {1}.", (new String[] { urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() }))); //$NON-NLS-1$
 			}
 		}
 	}
@@ -689,7 +690,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			return result;
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCreateURL", rootString), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind("InstallConfiguration.UnableToCreateURL", (new String[] { rootString })), e);	//$NON-NLS-1$
 		}
 	}
 

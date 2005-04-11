@@ -73,7 +73,7 @@ public class BatchInstallOperation
 				listener.beforeExecute(this, null);
 			
 			monitor.beginTask(
-				Policy.bind(KEY_INSTALLING),
+				Messages.bind(KEY_INSTALLING),
 				operations.length);
 			for (int i = 0; i < operations.length; i++) {
 				SubProgressMonitor subMonitor =

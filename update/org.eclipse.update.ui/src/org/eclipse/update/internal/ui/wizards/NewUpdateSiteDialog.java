@@ -67,7 +67,7 @@ public class NewUpdateSiteDialog extends Dialog {
 		composite.setLayoutData(data);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(UpdateUI.getString("NewUpdateSiteDialog.name")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.NewUpdateSiteDialog_name); 
 		
 		name = new Text(composite, SWT.BORDER);
 		name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -78,7 +78,7 @@ public class NewUpdateSiteDialog extends Dialog {
 		});
 		
 		label = new Label(composite, SWT.NONE);
-		label.setText(UpdateUI.getString("NewUpdateSiteDialog.url")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.NewUpdateSiteDialog_url); 
 		
 		url = new Text(composite, SWT.BORDER);
 		url.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

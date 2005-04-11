@@ -13,6 +13,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -71,12 +72,12 @@ public class UpdateCommand extends ScriptedCommand {
 						getConfiguration(),
 						featureId);
 				if (targetSite == null) {
-					throw new Exception(Policy.bind("Standalone.noConfigSiteForFeature", featureId)); //$NON-NLS-1$
+					throw new Exception(NLS.bind("Standalone.noConfigSiteForFeature", (new String[] { featureId }))); //$NON-NLS-1$
 				}
 				IFeature[] currentFeatures =
 					UpdateUtils.searchSite(featureId, targetSite, true);
 				if (currentFeatures == null || currentFeatures.length == 0) {
-					throw new Exception(Policy.bind("Standalone.noFeatures3", featureId)); //$NON-NLS-1$
+					throw new Exception(NLS.bind("Standalone.noFeatures3", (new String[] { featureId }))); //$NON-NLS-1$
 				}
 				this.currentFeature = currentFeatures[0];
 			} else {
@@ -123,12 +124,12 @@ public class UpdateCommand extends ScriptedCommand {
 			return false;
 		}
 		try {
-			monitor.beginTask(Policy.bind("Standalone.updating"), 4);  //$NON-NLS-1$
+			monitor.beginTask(Messages.bind("Standalone.updating"), 4);  //$NON-NLS-1$
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.noUpdate", featureId),	null));  //$NON-NLS-1$
+				UpdateCore.log(Utilities.newCoreException(NLS.bind("Standalone.noUpdate", (new String[] { featureId })),	null));  //$NON-NLS-1$
 				return false;
 			}
 
@@ -139,7 +140,7 @@ public class UpdateCommand extends ScriptedCommand {
 					getConfiguration());
 			if (conflicts != null) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.duplicate"), null)); //$NON-NLS-1$
+				UpdateCore.log(Utilities.newCoreException(Messages.bind("Standalone.duplicate"), null)); //$NON-NLS-1$
 				return false;
 			}
 			
@@ -159,16 +160,16 @@ public class UpdateCommand extends ScriptedCommand {
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
-						Policy.bind("Standalone.feature") //$NON-NLS-1$
+						Messages.bind("Standalone.feature") //$NON-NLS-1$
 						+ featureId
 						+ " " //$NON-NLS-1$
-						+ Policy.bind("Standalone.updated")); //$NON-NLS-1$
+						+ Messages.bind("Standalone.updated")); //$NON-NLS-1$
 				return true;
 			} catch (Exception e) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(
 					Utilities.newCoreException(
-							Policy.bind("Standalone.noUpdate", featureId),  //$NON-NLS-1$
+							NLS.bind("Standalone.noUpdate", (new String[] { featureId })),  //$NON-NLS-1$
 						e));
 				return false;
 			}
@@ -178,7 +179,7 @@ public class UpdateCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println(Policy.bind("Standalone.connection")); //$NON-NLS-1$
+				System.out.println(Messages.bind("Standalone.connection")); //$NON-NLS-1$
 			} else {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(ce);

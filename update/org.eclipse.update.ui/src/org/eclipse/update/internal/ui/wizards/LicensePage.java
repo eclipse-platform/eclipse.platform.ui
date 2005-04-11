@@ -10,24 +10,25 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class LicensePage extends WizardPage implements IDynamicPage {
-	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$
-	private static final String KEY_DESC = "InstallWizard.LicensePage.desc"; //$NON-NLS-1$
-	private static final String KEY_DESC2 = "InstallWizard.LicensePage.desc2"; //$NON-NLS-1$
-	private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept"; //$NON-NLS-1$
-	private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline"; //$NON-NLS-1$
-	private static final String KEY_ACCEPT2 = "InstallWizard.LicensePage.accept2"; //$NON-NLS-1$
-	private static final String KEY_DECLINE2 = "InstallWizard.LicensePage.decline2"; //$NON-NLS-1$
 	private boolean multiLicenseMode = false;
 	private IInstallFeatureOperation[] jobs;
 	private Text text;
@@ -38,13 +39,12 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 	 */
 	public LicensePage(boolean multiLicenseMode) {
 		super("License"); //$NON-NLS-1$
-		setTitle(UpdateUI.getString(KEY_TITLE));
+		setTitle(UpdateUIMessages.InstallWizard_LicensePage_title);
 		setPageComplete(false);
 		this.multiLicenseMode = multiLicenseMode;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		setDescription(
-			UpdateUI.getString(
-				multiLicenseMode ? KEY_DESC2 : KEY_DESC));
+		setDescription(multiLicenseMode ?UpdateUIMessages.InstallWizard_LicensePage_desc2 : 
+            UpdateUIMessages.InstallWizard_LicensePage_desc);
 	}
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
@@ -103,16 +103,16 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		buttonContainer.setLayoutData(gd);
 
 		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
-		acceptButton.setText(
-			UpdateUI.getString(multiLicenseMode ? KEY_ACCEPT2 : KEY_ACCEPT));
+		acceptButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_accept
+                : UpdateUIMessages.InstallWizard_LicensePage_accept);
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(acceptButton.getSelection());
 			}
 		});
 		Button declineButton = new Button(buttonContainer, SWT.RADIO);
-		declineButton.setText(
-			UpdateUI.getString(multiLicenseMode ? KEY_DECLINE2 : KEY_DECLINE));
+		declineButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_decline2
+                : UpdateUIMessages.InstallWizard_LicensePage_decline);
 		declineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(acceptButton.getSelection());

@@ -47,11 +47,11 @@ public class FindUpdatesAction extends Action {
 		
 		// If current config is broken, confirm with the user to continue
 		if (OperationsManager.getValidator().validateCurrentState() != null &&
-				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion"))) //$NON-NLS-1$
+				!confirm(UpdateUIMessages.Actions_brokenConfigQuestion)) 
 			return;
 			
 		if (InstallWizard.isRunning()) {
-			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+			MessageDialog.openInformation(shell, UpdateUIMessages.InstallWizard_isRunningTitle, UpdateUIMessages.InstallWizard_isRunningInfo);
 			return;
 		}
 		
@@ -63,7 +63,7 @@ public class FindUpdatesAction extends Action {
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				InstallWizard wizard = new InstallWizard(searchRequest);
-				WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("FindUpdatesAction.updates")); //$NON-NLS-1$
+				WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUIMessages.FindUpdatesAction_updates); 
 				dialog.create();
 				dialog.open();				
 			}
@@ -73,7 +73,7 @@ public class FindUpdatesAction extends Action {
 	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
 			shell,
-			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
+			UpdateUIMessages.FeatureStateAction_dialogTitle, 
 			message);
 	}
 }

@@ -120,11 +120,10 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			return getFeatureDescription((IFeatureAdapter) object);
 		}
 		if (object instanceof IConfiguredSiteAdapter) {
-			return UpdateUI.getString("ConfigurationPreviewForm.install"); //$NON-NLS-1$
+			return UpdateUIMessages.ConfigurationPreviewForm_install; 
 		}
 		if (object instanceof ILocalSite) {
-			return UpdateUI
-					.getString("ConfigurationPreviewForm.configDescription"); //$NON-NLS-1$
+			return UpdateUIMessages.ConfigurationPreviewForm_configDescription; //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -140,7 +139,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 						return text;
 					else {
 						String link = " <a href=\"" + url //$NON-NLS-1$
-								+ "\">"+UpdateUI.getString("MoreInfoGenerator.moreInfo")+"</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								+ "\">"+UpdateUIMessages.MoreInfoGenerator_moreInfo+"</a>"; 
 						String fullText = "<form><p>" + text + link //$NON-NLS-1$
 								+ "</p></form>"; //$NON-NLS-1$ //$NON-NLS-2$
 						return fullText;
@@ -165,7 +164,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			return "<form/>"; //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form><p><b>"); //$NON-NLS-1$
-		buf.append(UpdateUI.getString("ConfigurationPreviewForm.AvailableTasks")); //$NON-NLS-1$
+		buf.append(UpdateUIMessages.ConfigurationPreviewForm_AvailableTasks); 
 		buf.append("</b></p>"); //$NON-NLS-1$
 		for (int i = 0; i < tasks.length; i++) {
 			IPreviewTask task = tasks[i];

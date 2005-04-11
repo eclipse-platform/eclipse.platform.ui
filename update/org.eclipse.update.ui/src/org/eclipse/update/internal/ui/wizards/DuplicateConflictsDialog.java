@@ -80,9 +80,9 @@ public class DuplicateConflictsDialog extends MessageDialog {
 	public DuplicateConflictsDialog(Shell shell, ArrayList conflicts) {
 		super(
 			shell,
-			UpdateUI.getString("DuplicateConflictsDialog.title"), //$NON-NLS-1$
+			UpdateUIMessages.DuplicateConflictsDialog_title, 
 			null,
-			UpdateUI.getString("DuplicateConflictsDialog.message"), //$NON-NLS-1$
+			UpdateUIMessages.DuplicateConflictsDialog_message, 
 			WARNING,
 			new String[] {
 				IDialogConstants.YES_LABEL,
@@ -104,7 +104,7 @@ public class DuplicateConflictsDialog extends MessageDialog {
 		client.setLayout(layout);
 
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUI.getString("DuplicateConflictsDialog.treeLabel")); //$NON-NLS-1$
+		label.setText(UpdateUIMessages.DuplicateConflictsDialog_treeLabel); 
 
 		treeViewer = new TreeViewer(client, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);

@@ -13,6 +13,7 @@ package org.eclipse.update.core;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
@@ -144,7 +145,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 			try {
 				resolve(url, null);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("FeatureReference.UnableToResolveURL", url.toExternalForm()), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind("FeatureReference.UnableToResolveURL", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
 			}
 		}
 	}
