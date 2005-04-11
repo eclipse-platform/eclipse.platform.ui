@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.externaltools; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: externaltools.jar
 Bundle-Activator: org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
