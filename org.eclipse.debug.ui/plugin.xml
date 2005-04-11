@@ -1021,6 +1021,7 @@
          <action
                label="%CopyToClipboardAction.label"
                icon="icons/full/elcl16/copy_edit_co.gif"
+               definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
                menubarPath="editGroup"
@@ -1217,6 +1218,7 @@
          <action
                label="%SelectAll.label"
                helpContextId="select_all_breakpoints_action_context"
+               definitionId="org.eclipse.ui.edit.selectAll"
                class="org.eclipse.debug.internal.ui.actions.SelectAllBreakpointsAction"
                menubarPath="breakpointGroup"
                id="org.eclipse.debug.ui.actions.SelectAllBreakpointsAction">
@@ -1266,6 +1268,7 @@
          <action
                label="%CopyVariablesToClipboardAction.label"
                icon="icons/full/elcl16/copy_edit_co.gif"
+               definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
                menubarPath="variableGroup"
@@ -1277,6 +1280,7 @@
          <action
                label="%SelectAll.label"
                helpContextId="select_all_variables_action_context"
+               definitionId="org.eclipse.ui.edit.selectAll"
                class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction"
                menubarPath="variableGroup"
                id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
@@ -1312,6 +1316,7 @@
          <action
                label="%CopyVariablesToClipboardAction.label"
                icon="icons/full/elcl16/copy_edit_co.gif"
+               definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
                class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
                menubarPath="expressionGroup"
@@ -1323,6 +1328,7 @@
          <action
                label="%SelectAll.label"
                helpContextId="select_all_expressions_action_context"
+               definitionId="org.eclipse.ui.edit.selectAll"
                class="org.eclipse.debug.internal.ui.actions.SelectAllExpressionsAction"
                menubarPath="expressionGroup"
                id="org.eclipse.debug.ui.actions.SelectAllExpressionsAction">
@@ -1335,6 +1341,7 @@
          <action
                menubarPath="variableGroup"
                class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+               definitionId="org.eclipse.ui.edit.copy"
                icon="icons/full/elcl16/copy_edit_co.gif"
                label="%CopyVariablesToClipboardAction.label"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
@@ -1347,6 +1354,7 @@
                class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction"
                label="%SelectAll.label"
                menubarPath="variableGroup"
+               definitionId="org.eclipse.ui.edit.selectAll"
                helpContextId="select_all_variables_action_context"
                id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
          </action>

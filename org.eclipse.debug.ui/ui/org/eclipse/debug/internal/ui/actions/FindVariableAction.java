@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * Action which prompts the user to help them find a variable in
@@ -59,6 +60,7 @@ public class FindVariableAction extends Action implements IUpdate {
         setText(ActionMessages.FindVariableAction_0); //$NON-NLS-1$
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindVariableAction"); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_VARIABLE_ACTION);
+		setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
         fDelegate= new FindVariableDelegate();
         fDelegate.init(view);
         fDelegate.setAction(this);
