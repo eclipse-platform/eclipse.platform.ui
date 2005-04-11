@@ -29,6 +29,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.StringUtils;
+import org.eclipse.ant.internal.ui.antsupport.AntSecurityException;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
@@ -145,7 +146,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	
 	protected void handleException(BuildEvent event) {
 		Throwable exception = event.getException();
-		if (exception == null) {
+		if (exception == null || exception instanceof AntSecurityException) {
 			return;
 		}
         
