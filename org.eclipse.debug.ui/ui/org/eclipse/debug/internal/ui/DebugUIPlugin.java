@@ -343,6 +343,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
+            if (fProcessConsoleManager != null) {
+                fProcessConsoleManager.shutdown();
+            }
             
             BreakpointOrganizerManager.getDefault().shutdown();
             
@@ -352,9 +355,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fLaunchConfigurationManager != null) {
 				fLaunchConfigurationManager.shutdown();
 			}
-			if (fProcessConsoleManager != null) {
-				fProcessConsoleManager.shutdown();
-			}
+			
 			if (fStepFilterManager != null) {
 				fStepFilterManager.shutdown();
 			}

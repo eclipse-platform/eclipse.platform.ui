@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.console.ConsoleManager;
 import org.eclipse.ui.internal.console.ConsolePluginImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The console plug-in class.
@@ -161,5 +162,16 @@ public class ConsolePlugin extends AbstractUIPlugin {
      */
     public static ImageDescriptor getImageDescriptor(String key) {
         return ConsolePluginImages.getImageDescriptor(key);
+    }
+    
+    
+    public void stop(BundleContext context) throws Exception {
+        IConsole[] consoles = fConsoleManager.getConsoles();
+        if (consoles != null) {
+            fConsoleManager.removeConsoles(consoles);
+        }
+        super.stop(context);
     }    
+    
+    
 }

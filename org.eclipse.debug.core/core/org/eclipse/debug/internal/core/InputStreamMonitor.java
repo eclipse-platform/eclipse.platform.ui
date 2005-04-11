@@ -80,6 +80,7 @@ public class InputStreamMonitor {
 					write();
 				}
 			}, DebugCoreMessages.InputStreamMonitor_label); //$NON-NLS-1$
+            fThread.setDaemon(true);
 			fThread.start();
 		}
 	}

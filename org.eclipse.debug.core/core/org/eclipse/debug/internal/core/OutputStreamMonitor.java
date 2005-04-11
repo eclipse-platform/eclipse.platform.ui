@@ -191,6 +191,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 					read();
 				}
 			}, DebugCoreMessages.OutputStreamMonitor_label); //$NON-NLS-1$
+            fThread.setDaemon(true);
 			fThread.start();
 		}
 	}

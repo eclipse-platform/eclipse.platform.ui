@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -67,8 +66,6 @@ public class ConsoleManager implements IConsoleManager {
     private List fPageParticipants;
 
     private List fConsoleFactoryExtensions;
-	
-    private IWindowListener fWindowListener;
     
     private boolean fWarnQueued = false;
     
@@ -125,23 +122,7 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}	
 	
-	
-	public ConsoleManager() {
-	    fWindowListener = new IWindowListener() {
-            public void windowActivated(IWorkbenchWindow window) {
-            }
-            public void windowDeactivated(IWorkbenchWindow window) {   
-            }
-            public void windowOpened(IWorkbenchWindow window) {   
-            }
-            public void windowClosed(IWorkbenchWindow window) {
-                removeConsoles((IConsole[]) fConsoles.toArray(new IConsole[0]));
-            }
-	    };
-	    
-	    ConsolePlugin.getDefault().getWorkbench().addWindowListener(fWindowListener);
-	}
-	
+		
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
