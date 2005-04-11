@@ -299,13 +299,17 @@ public class ProgressManagerUtil {
         if (currentWindow == null)
             return;
         WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-        Rectangle end = internalWindow.getProgressRegion().getControl()
-                .getBounds();
+		
+		ProgressRegion progressRegion = internalWindow.getProgressRegion();
+		if (progressRegion == null)
+			return;
+        Rectangle endPosition = progressRegion.getControl().getBounds();
+		
         Point windowLocation = internalWindow.getShell().getLocation();
-        end.x += windowLocation.x;
-        end.y += windowLocation.y;
+		endPosition.x += windowLocation.x;
+		endPosition.y += windowLocation.y;
         RectangleAnimation animation = new RectangleAnimation(internalWindow
-                .getShell(), startPosition, end);
+                .getShell(), startPosition, endPosition);
         animation.schedule();
     }
 
@@ -323,12 +327,16 @@ public class ProgressManagerUtil {
             return;
         WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
         Point windowLocation = internalWindow.getShell().getLocation();
-        Rectangle region = internalWindow.getProgressRegion().getControl()
-                .getBounds();
-        region.x += windowLocation.x;
-        region.y += windowLocation.y;
-        RectangleAnimation animation = new RectangleAnimation(internalWindow
-                .getShell(), region, endPosition);
+		
+		ProgressRegion progressRegion = internalWindow.getProgressRegion();
+		if (progressRegion == null)
+			return;
+        Rectangle startPosition = progressRegion.getControl().getBounds();
+		startPosition.x += windowLocation.x;
+		startPosition.y += windowLocation.y;
+        
+		RectangleAnimation animation = new RectangleAnimation(internalWindow
+                .getShell(), startPosition, endPosition);
         animation.schedule();
     }
 	

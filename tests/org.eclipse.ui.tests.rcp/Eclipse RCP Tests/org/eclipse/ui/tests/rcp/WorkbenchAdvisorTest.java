@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.rcp;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -21,15 +22,12 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 
 public class WorkbenchAdvisorTest extends TestCase {
 
-    // TODO: When this bug is fixed, remove this constant to enable the tests that
-    //       are affected by it.
-    public static final boolean isBug67891Fixed = false;
-
-    public WorkbenchAdvisorTest(String name) {
+      public WorkbenchAdvisorTest(String name) {
         super(name);
     }
 
@@ -202,8 +200,6 @@ public class WorkbenchAdvisorTest extends TestCase {
      * things from in there.
      */
     public void testCloseFromPostStartup() {
-        if (!isBug67891Fixed)
-            return;
 
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
             public void postStartup() {
@@ -247,6 +243,29 @@ public class WorkbenchAdvisorTest extends TestCase {
                 assertEquals(FILL_STATUS_LINE, flags & FILL_STATUS_LINE);
                 assertEquals(0, flags & FILL_PROXY);
             }
+        };
+
+        int code = PlatformUI.createAndRunWorkbench(display, wa);
+        assertEquals(PlatformUI.RETURN_OK, code);
+    }
+	
+    public void testEmptyProgressRegion() {
+        WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
+			public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
+				super.preWindowOpen(configurer);
+				configurer.setShowProgressIndicator(false);
+			}
+
+			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+				try {
+					ProgressManagerUtil.animateUp(new Rectangle(0, 0, 100, 50));
+				}
+				catch (NullPointerException e) {
+					// we shouldn't get here
+					assertTrue(false);
+				}
+			}
+				
         };
 
         int code = PlatformUI.createAndRunWorkbench(display, wa);
