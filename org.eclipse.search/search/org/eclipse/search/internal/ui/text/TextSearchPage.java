@@ -81,6 +81,7 @@ import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class TextSearchPage extends DialogPage implements ISearchPage, IReplacePage {
 
+	private static final int HISTORY_SIZE= 12;
 	public static final String EXTENSION_POINT_ID= "org.eclipse.search.internal.ui.text.TextSearchPage"; //$NON-NLS-1$
 
 	// Dialog store id constants
@@ -749,7 +750,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
 		
-		int historySize= Math.min(fPreviousSearchPatterns.size(), 6);
+		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);
 		s.put(STORE_HISTORY_SIZE, historySize);
 		for (int i= 0; i < historySize; i++) {
 			IDialogSettings histSettings= s.addNewSection(STORE_HISTORY + i);
