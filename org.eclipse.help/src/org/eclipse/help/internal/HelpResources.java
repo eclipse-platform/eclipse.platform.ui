@@ -10,64 +10,21 @@
  *******************************************************************************/
 package org.eclipse.help.internal;
 
-import java.text.*;
-import java.util.*;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Uses a resource bundle to load images and strings from a property file.
  */
 public class HelpResources {
-	private static ResourceBundle resBundle;
-	static {
-		resBundle = ResourceBundle.getBundle(HelpResources.class.getName());
-	}
 	/**
 	 * Resources constructor.
 	 */
 	public HelpResources() {
 		super();
 	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name) {
-		try {
-			return resBundle.getString(name);
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-	}
-
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0, String replace1) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-	}
-
 	private static Locale getDefaultLocale() {
 		String nl = Platform.getNL();
 		// sanity test
