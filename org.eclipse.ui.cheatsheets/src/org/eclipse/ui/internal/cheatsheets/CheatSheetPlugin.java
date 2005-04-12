@@ -105,23 +105,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		return image;
 	}
 
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		//we have this in the code, but resourceBundle is never used.
-		//we are leaving it in for the future in case it is needed.
-		if (!resourceBundleInitialized) {
-			// only try to initialize once 
-			resourceBundleInitialized = true;
-			try {
-				resourceBundle = ResourceBundle.getBundle(ICheatSheetResource.CHEAT_SHEET_RESOURCE_ID);
-			} catch (MissingResourceException x) {
-				resourceBundle = null;
-			}
-		}
-		return resourceBundle;
-	}
+
 
 	/**
 	 * Returns the CheatSheetHistory
