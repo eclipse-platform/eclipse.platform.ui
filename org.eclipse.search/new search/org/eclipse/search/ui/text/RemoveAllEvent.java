@@ -14,6 +14,10 @@ import org.eclipse.search.ui.SearchResultEvent;
 /**
  * An event indicating that all matches have been removed from a <code>AbstractTextSearchResult</code>.
  * 
+ * <p>
+ * Clients may instantiate or subclass this class.
+ * </p>
+ * 
  * @since 3.0
  */
 public class RemoveAllEvent extends SearchResultEvent {

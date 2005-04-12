@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="Search Support">
+ <plugin id="org.eclipse.search" />
+
+ <package name="org.eclipse.search.ui">
+   <type name= "IActionGroupFactory"/>
+   <type name= "IContextMenuConstants" implement="false"/>
+   <type name= "IContextMenuContributor"/>
+   <type name= "IGroupByKeyComputer"/>
+   <type name= "IReplacePage"/>
+   <type name= "IQueryListener"/>
+   <type name= "ISearchPage"/>
+   <type name= "ISearchPageContainer" implement="false"/>
+   <type name= "ISearchPageScoreComputer"/>
+   <type name= "ISearchResultView" implement="false"/>
+   <type name= "ISearchResultViewEntry" implement="false"/>
+   <type name= "ISearchQuery"/>
+   <type name= "ISearchResult"/>
+   <type name= "ISearchResultListener"/>
+   <type name= "ISearchResultPage"/>
+   <type name= "ISearchResultViewPart" implement="false"/>
+   <type name= "NewSearchUI" subclass="false" instantiate="false"/>
+   <type name= "SearchResultEvent" instantiate="false"/>
+   <type name= "SearchUI" subclass="false" instantiate="false"/>
+ </package>
+
+ <package name="org.eclipse.search.ui.text">
+   <type name= "AbstractTextSearchResult" instantiate="false"/>
+   <type name= "AbstractTextSearchViewPage" instantiate="false"/>
+   <type name= "IEditorMatchAdapter"/>
+   <type name= "IFileMatchAdapter"/>
+   <type name= "ISearchEditorAccess"/>
+   <type name= "Match"/>
+   <type name= "MatchEvent"/>
+   <type name= "RemoveAllEvent"/>
+ </package>
+ 
+ <component-depends unrestricted="true"/>
+</component>

@@ -20,6 +20,8 @@ package org.eclipse.search.ui;
  * For example, a Java-specific search page score computer could test
  * if the page is a Java search page and returns high scores
  * for Java elements as selection input.
+ * 
+ * Intended to be implemented.
  * </p>
  */
 public interface ISearchPageScoreComputer {

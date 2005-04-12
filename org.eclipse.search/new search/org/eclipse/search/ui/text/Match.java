@@ -13,7 +13,7 @@ package org.eclipse.search.ui.text;
 import org.eclipse.jface.util.Assert;
 
 /**
- * A textual match in a given object. This class may be subclassed (to add
+ * A textual match in a given object. This class may be instantiated and also subclassed (to add
  * additional match state like accuracy, etc). The element a match is reported
  * against is assumed to contain the match, and the UI will group matches
  * against the same element together. A match has an offset and a length which

@@ -16,7 +16,7 @@ import org.eclipse.search.ui.SearchResultEvent;
  * class are sent when <code>Match</code> es are added or removed from an
  * <code>AbstractTextSearchResult</code>.
  * <p>
- * Clients may subclass this class.
+ * Clients may instantiate or subclass this class.
  * </p>
  * @since 3.0
  */
