@@ -65,6 +65,7 @@ public class Messages extends NLS {
 	public static String ok;
 
 	// parsing/resolve
+	public static String parse_nonSingleton;
 	public static String parse_badPrereqOnFrag;
 	public static String parse_doubleSeparatorVersion;
 	public static String parse_duplicateFragment;

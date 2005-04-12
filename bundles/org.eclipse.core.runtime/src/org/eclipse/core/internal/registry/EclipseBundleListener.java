@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
@@ -111,8 +112,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	/**
-	 * Tries to create a bundle model from a plugin/fragment manifest in the
-	 * bundle.
+	 * Tries to create a bundle model from a plugin/fragment manifest in the bundle.
 	 */
 	private Contribution getBundleModel(Bundle bundle) {
 		// bail out if system bundle
@@ -121,6 +121,27 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		// bail out if the bundle does not have a symbolic name
 		if (bundle.getSymbolicName() == null)
 			return null;
+		
+		//If the bundle is not a singleton, then it is not added
+		String symbolicNameHeader = (String) bundle.getHeaders("").get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
+		try {
+			if (symbolicNameHeader != null) {
+				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
+				if (symbolicNameElements.length > 0) {
+					String singleton = symbolicNameElements[0].getDirective(Constants.SINGLETON_DIRECTIVE);
+					if (! "true".equalsIgnoreCase(singleton)) { //$NON-NLS-1$
+						if (InternalPlatform.DEBUG_REGISTRY) {
+							String message = NLS.bind(Messages.parse_nonSingleton, bundle.getLocation());
+							InternalPlatform.getDefault().log(new Status(IStatus.INFO, Platform.PI_RUNTIME, 0, message, null));
+						}
+						return null;
+					}
+				}
+			}
+		} catch (BundleException e1) {
+			//This can't happen because the fwk would have rejected the bundle
+		}
+		
 		InputStream is = null;
 		String manifestType = null;
 		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);
