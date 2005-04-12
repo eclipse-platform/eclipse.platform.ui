@@ -14,6 +14,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
@@ -340,7 +341,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 								SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
 								if (s != null && s.getStartButton() != null) {
 									s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-									s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
+									s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 								}
 	
 							}
@@ -404,7 +405,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			
 			// Log the exception
 			String stateFile = saveHelper.getStateFile(currentID).toOSString();
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_APPLYING_STATE_DATA_LOG, new Object[] {stateFile, currentID});
+			String message = NLS.bind(Messages.ERROR_APPLYING_STATE_DATA_LOG, (new Object[] {stateFile, currentID}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 
@@ -422,7 +423,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			viewItemList = new ArrayList();
 			
 			// Create the errorpage to show the user
-			createErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_APPLYING_STATE_DATA));
+			createErrorPage(Messages.ERROR_APPLYING_STATE_DATA);
 
 			return false;
 		}
@@ -515,7 +516,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		});
 
 		howToBegin = new Label(control, SWT.WRAP);
-		howToBegin.setText(CheatSheetPlugin.getResourceString(ICheatSheetResource.INITIAL_VIEW_DIRECTIONS));
+		howToBegin.setText(Messages.INITIAL_VIEW_DIRECTIONS);
 		howToBegin.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Display display = parent.getDisplay();
@@ -633,7 +634,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			// Exception thrown during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
 			if(invalidCheatSheetId) {
-				createErrorPage(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CHEATSHEET_DOESNOT_EXIST));
+				createErrorPage(Messages.ERROR_CHEATSHEET_DOESNOT_EXIST);
 			} else {
 				createErrorPage(null);
 			}
@@ -730,7 +731,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				}
 			}
 		} catch (RuntimeException e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_RUNNING_ACTION, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 		} finally {
@@ -750,13 +751,13 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-					s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
+					s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 					advanceSubItem(link, true, subItemIndex);
 					saveCurrentSheet();
 				}
 			}
 		} catch (RuntimeException e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), e);
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_RUNNING_ACTION, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 		} finally {
@@ -852,7 +853,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 			element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
 			if(element == null) {
-				String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_INVALID_CHEATSHEET_ID, new Object[] {id});
+				String message = NLS.bind(Messages.ERROR_INVALID_CHEATSHEET_ID, (new Object[] {id}));
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 				invalidCheatSheetId = true;

@@ -20,6 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.views.*;
 import org.w3c.dom.*;
@@ -149,7 +150,7 @@ public class CheatSheetSaveHelper {
 			readURL = filePath.toFile().toURL();
 			doc = readXMLFile(readURL);
 		} catch (MalformedURLException mue) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_STATEFILE_URL, new Object[] {readURL});
+			String message = NLS.bind(Messages.ERROR_CREATING_STATEFILE_URL, (new Object[] {readURL}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, mue);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			return null;
@@ -197,7 +198,7 @@ public class CheatSheetSaveHelper {
 						String data = csmDatanl.item(i).getFirstChild().getNodeValue();
 						ht.put(key, data);
 					} catch(Exception e) {
-						String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_READING_MANAGERDATA_FROM_STATEFILE, new Object[] {key, currentID});
+						String message = NLS.bind(Messages.ERROR_READING_MANAGERDATA_FROM_STATEFILE, (new Object[] {key, currentID}));
 						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 						CheatSheetPlugin.getPlugin().getLog().log(status);
 					}
@@ -349,7 +350,7 @@ public class CheatSheetSaveHelper {
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.transform(domSource, streamResult);
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_SAVING_STATEFILE_URL, new Object[] {csID});
+			String message = NLS.bind(Messages.ERROR_SAVING_STATEFILE_URL, (new Object[] {csID}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}

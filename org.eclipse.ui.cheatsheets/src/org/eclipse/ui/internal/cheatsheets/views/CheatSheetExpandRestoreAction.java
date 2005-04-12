@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 
 /**
  * Action used to enable / disable method filter properties
@@ -44,9 +43,9 @@ public class CheatSheetExpandRestoreAction extends Action {
 		super.setChecked(value);
 		collapsed = value;
 		if(value) {
-			setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTORE_ALL_TOOLTIP));
+			setToolTipText(Messages.RESTORE_ALL_TOOLTIP);
 		} else {
-			setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP));
+			setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
 		}
 	}
 }

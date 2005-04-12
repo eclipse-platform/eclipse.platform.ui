@@ -62,7 +62,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	protected final static String TAG_ITEM_EXTENSION = "itemExtension"; //$NON-NLS-1$
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
-	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = CheatSheetPlugin.getResourceString(ICheatSheetResource.CHEAT_SHEET_OTHER_CATEGORY);
+	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = Messages.CHEAT_SHEET_OTHER_CATEGORY;
 
 	/**
 	 * Returns a list of cheatsheets, project and not.

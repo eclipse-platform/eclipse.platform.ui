@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets;
 
 import java.io.*;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -35,7 +34,7 @@ import org.osgi.framework.BundleContext;
 public class CheatSheetPlugin extends AbstractUIPlugin {
 
 	//The shared instance of this plugin.
-	private static CheatSheetPlugin plugin;
+	static CheatSheetPlugin plugin;
 
 	//Resource bundle.
 	private boolean resourceBundleInitialized = false;
@@ -57,36 +56,10 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key) {
-		try {
-			if(plugin != null) {
-				return Platform.getResourceString(plugin.getBundle(), key);
-			}
-		} catch (MissingResourceException e) {
-		}
-		return key;
-	}
-
-	/**
 	 * Returns the shared instance.
 	 */
 	public static CheatSheetPlugin getPlugin() {
 		return plugin;
-	}
-
-	/**
-	 * Returns the formatted message for the given key in
-	 * the resource bundle. 
-	 *
-	 * @param key the resource name
-	 * @param args the message arguments
-	 * @return the string
-	 */
-	public static String formatResourceString(String key, Object[] args) {
-		return MessageFormat.format(getResourceString(key), args);
 	}
 
 	/**
@@ -135,7 +108,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 			try {
 				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			} catch (Exception e) {
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_DOCUMENT_BUILDER), e);
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_CREATING_DOCUMENT_BUILDER, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -212,7 +185,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				} catch (FileNotFoundException e) {
 					// Do nothing, the file will not exist the first time the workbench in used.
 				} catch (Exception e) {
-					String message = getResourceString(ICheatSheetResource.ERROR_READING_STATE_FILE);
+					String message = Messages.ERROR_READING_STATE_FILE;
 					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 				} finally {
@@ -221,14 +194,14 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 							reader.close();
 					} catch (IOException e) {
 						// Not much to do, just catch the exception and keep going.
-						String message = getResourceString(ICheatSheetResource.ERROR_READING_STATE_FILE);
+						String message = Messages.ERROR_READING_STATE_FILE;
 						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 						CheatSheetPlugin.getPlugin().getLog().log(status);
 					}
 				}
 			}
 			public void handleException(Throwable e) {
-				String message = getResourceString(ICheatSheetResource.ERROR_READING_STATE_FILE);
+				String message = Messages.ERROR_READING_STATE_FILE;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
@@ -258,7 +231,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 					memento.save(writer);
 				} catch (IOException e) {
 					stateFile.delete();
-					String message = getResourceString(ICheatSheetResource.ERROR_WRITING_STATE_FILE);
+					String message = Messages.ERROR_WRITING_STATE_FILE;
 					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 				} finally {
@@ -266,14 +239,14 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 						if (writer != null)
 							writer.close();
 					} catch (IOException e) {
-						String message = getResourceString(ICheatSheetResource.ERROR_WRITING_STATE_FILE);
+						String message = Messages.ERROR_WRITING_STATE_FILE;
 						IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 						CheatSheetPlugin.getPlugin().getLog().log(status);
 					}
 				}
 			}
 			public void handleException(Throwable e) {
-				String message = getResourceString(ICheatSheetResource.ERROR_WRITING_STATE_FILE);
+				String message = Messages.ERROR_WRITING_STATE_FILE;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}

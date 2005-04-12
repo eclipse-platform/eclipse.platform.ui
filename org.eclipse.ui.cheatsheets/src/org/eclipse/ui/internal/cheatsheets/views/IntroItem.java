@@ -33,13 +33,13 @@ public class IntroItem extends ViewItem {
 
 	/*package*/ void setStartImage() {
 		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START));
-		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
+		startButton.setToolTipText(Messages.START_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
 	/*package*/ void setRestartImage() {
 		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RESTART));
-		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_CHEATSHEET_TOOLTIP));
+		startButton.setToolTipText(Messages.RESTART_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
@@ -64,7 +64,7 @@ public class IntroItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
+		startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
 		toolkit.adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {

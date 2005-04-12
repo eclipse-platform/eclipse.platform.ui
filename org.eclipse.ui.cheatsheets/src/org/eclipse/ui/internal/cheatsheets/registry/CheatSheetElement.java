@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.cheatsheets.registry;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
@@ -154,7 +155,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 			Bundle bundle = Platform.getBundle(pluginId);
 			extClass = bundle.loadClass(listenerClass);
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_LOADING_CLASS, new Object[] {listenerClass});
+			String message = NLS.bind(Messages.ERROR_LOADING_CLASS, (new Object[] {listenerClass}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
@@ -163,7 +164,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 				listener = (CheatSheetListener) extClass.newInstance();
 			}
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_CLASS, new Object[] {listenerClass});
+			String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {listenerClass}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}

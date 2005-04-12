@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 
 /**
@@ -103,10 +104,10 @@ public final class OpenCheatSheetAction extends Action {
 					view.setInput(id, name, url);
 				}
 			} catch (PartInitException pie) {
-				String message = CheatSheetPlugin.getResourceString(ICheatSheetResource.LAUNCH_SHEET_ERROR);
+				String message = Messages.LAUNCH_SHEET_ERROR;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, pie);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(window.getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.CHEAT_SHEET_ERROR_OPENING), null, pie.getStatus());
+				org.eclipse.jface.dialogs.ErrorDialog.openError(window.getShell(), Messages.CHEAT_SHEET_ERROR_OPENING, null, pie.getStatus());
 				return;
 			}
 		}

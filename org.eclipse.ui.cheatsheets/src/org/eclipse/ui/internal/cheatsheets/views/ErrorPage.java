@@ -31,7 +31,7 @@ public class ErrorPage extends Page {
 
 		String errorString = null;
 		if(message == null) {
-			errorString = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PAGE_MESSAGE);
+			errorString = Messages.ERROR_PAGE_MESSAGE;
 		} else {
 			errorString = message;
 		}
@@ -46,6 +46,6 @@ public class ErrorPage extends Page {
 	 * @param parent the SWT parent for the title area composite
 	 */
 	protected String getTitle() {
-		return CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CHEATSHEET_CONTENT);
+		return Messages.ERROR_LOADING_CHEATSHEET_CONTENT;
 	}
 }

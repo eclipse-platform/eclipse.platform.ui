@@ -41,8 +41,8 @@ public class CheatSheetView extends ViewPart {
 		URL collapseExpandURL = CheatSheetPlugin.getPlugin().find(new Path(collapseExpandFile));
 		ImageDescriptor collapseExpandImage = ImageDescriptor.createFromURL(collapseExpandURL);
 	
-		expandRestoreAction = new CheatSheetExpandRestoreAction(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP), false, viewer);
-		expandRestoreAction.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP));
+		expandRestoreAction = new CheatSheetExpandRestoreAction(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP, false, viewer);
+		expandRestoreAction.setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
 		expandRestoreAction.setImageDescriptor(collapseExpandImage);
 		tbmanager.add(expandRestoreAction);
 

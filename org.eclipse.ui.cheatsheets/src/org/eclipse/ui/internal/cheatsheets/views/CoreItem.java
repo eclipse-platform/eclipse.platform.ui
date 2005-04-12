@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -63,7 +64,7 @@ public class CoreItem extends ViewItem {
 
 	private void createButtons(Action action) {
 		if (action != null ) {
-			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -72,7 +73,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (item.isSkip()) {
-			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -81,7 +82,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (action == null || action.isConfirm()) {
-			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -139,7 +140,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = null;
 		if (subAction != null) {
 			added++;
-			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			final ImageHyperlink finalStartButton = startButton;
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -150,7 +151,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (sub.isSkip()) {
 			added++;
-			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -160,7 +161,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (subAction == null || subAction.isConfirm()) {
 			added++;
-			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -217,8 +218,8 @@ public class CoreItem extends ViewItem {
 				if(control instanceof ImageHyperlink) {
 					String toolTipText = control.getToolTipText();
 					if( toolTipText != null &&
-						(toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP)) ||
-						 toolTipText.equals(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP)))) {
+						(toolTipText.equals(Messages.PERFORM_TASK_TOOLTIP) ||
+						 toolTipText.equals(Messages.RESTART_TASK_TOOLTIP))) {
 						return (ImageHyperlink)control;
 					}
 				}
@@ -239,9 +240,9 @@ public class CoreItem extends ViewItem {
 				handleSubButtons();
 			}catch(Exception e){
 				//Need to log exception here. 
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.LESS_THAN_2_SUBITEMS, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), null, status);
+				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.LESS_THAN_2_SUBITEMS, null, status);
 			}
 		}
 
@@ -290,11 +291,11 @@ public class CoreItem extends ViewItem {
 				String values = repeatedSubItem.getValues();
 				values = viewer.getManager().getVariableData(values);
 				if(values == null || values.length() <= 0 || (values.startsWith("${") && values.endsWith("}"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_DATA_MISSING_LOG, new Object[] {repeatedSubItem.getValues()});
+					String message = NLS.bind(Messages.ERROR_DATA_MISSING_LOG, (new Object[] {repeatedSubItem.getValues()}));
 					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 
-					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_DATA_MISSING), null);
+					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_DATA_MISSING, null);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 					org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 					break;
@@ -318,11 +319,11 @@ public class CoreItem extends ViewItem {
 				SubItem selectedSubItem = sub.getSelectedSubItem();
 
 				if(selectedSubItem == null) {
-					String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CONDITIONAL_DATA_MISSING_LOG, new Object[] {sub.getCondition(), getItem().getTitle()});
+					String message = NLS.bind(Messages.ERROR_CONDITIONAL_DATA_MISSING_LOG, (new Object[] {sub.getCondition(), getItem().getTitle()}));
 					IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 
-					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_DATA_MISSING), null);
+					status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_DATA_MISSING, null);
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 					org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 					break;
@@ -379,7 +380,7 @@ public class CoreItem extends ViewItem {
 		ArrayList sublist = item.getSubItems();
 		
 		if(sublist == null || sublist.size()<=1)
-			throw new Exception(ICheatSheetResource.LESS_THAN_2_SUBITEMS);
+			throw new Exception(Messages.LESS_THAN_2_SUBITEMS);
 		
 		createSubItemButtonComposite();
 
@@ -448,10 +449,10 @@ public class CoreItem extends ViewItem {
 	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION, new Object[] {pluginId});
+			String message = NLS.bind(Messages.ERROR_FINDING_PLUGIN_FOR_ACTION, (new Object[] {pluginId}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		Class actionClass;
@@ -459,19 +460,19 @@ public class CoreItem extends ViewItem {
 		try {
 			actionClass = bundle.loadClass(className);
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION, new Object[] {className});
+			String message = NLS.bind(Messages.ERROR_LOADING_CLASS_FOR_ACTION, (new Object[] {className}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		try {
 			action = (IAction) actionClass.newInstance();
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION, new Object[] {className});
+			String message = NLS.bind(Messages.ERROR_CREATING_CLASS_FOR_ACTION, (new Object[] {className}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_RUNNING_ACTION), status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, Messages.ERROR_RUNNING_ACTION, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 
@@ -564,7 +565,7 @@ public class CoreItem extends ViewItem {
 					s.getIconLabel().setImage(null);
 				if(s.startButton != null) {
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
-					s.getStartButton().setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+					s.getStartButton().setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 				}
 			}					
 		}	
@@ -574,7 +575,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
-			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
+			startButton.setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 		}
 	}
 
@@ -582,7 +583,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
 			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));
-			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			startButton.setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 		}
 	}
 }

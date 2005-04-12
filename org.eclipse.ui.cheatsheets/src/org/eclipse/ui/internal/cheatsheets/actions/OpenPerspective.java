@@ -50,7 +50,7 @@ public class OpenPerspective extends Action implements ICheatSheetAction {
 			IPerspectiveDescriptor perspective = workbench.getPerspectiveRegistry().findPerspectiveWithId(params[0]);
 			page.setPerspective(perspective);
 		} catch(Exception e) {
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_PERSPECTIVE), null);
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_OPENING_PERSPECTIVE, null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 	}

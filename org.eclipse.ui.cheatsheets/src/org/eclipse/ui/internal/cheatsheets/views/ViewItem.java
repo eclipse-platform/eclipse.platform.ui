@@ -17,10 +17,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
@@ -142,7 +142,7 @@ public abstract class ViewItem {
 		if(item.getContextId() != null || item.getHref() != null) {
 			// adjust the layout count
 			number++;
-			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
+			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, Messages.HELP_BUTTON_TOOLTIP);
 			toolkit.adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -328,7 +328,7 @@ public abstract class ViewItem {
 			return;
 		}
 
-		WorkbenchHelp.displayHelpResource(item.getHref());
+		PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(item.getHref());
 	}
 
 	/**
@@ -346,7 +346,7 @@ public abstract class ViewItem {
 			Point point = widget.getDisplay().getCursorLocation();
 			point = new Point(point.x + 15, point.y);
 			// display the help
-			WorkbenchHelp.displayContext(context, point.x, point.y);
+            PlatformUI.getWorkbench().getHelpSystem().displayContext(context, point.x, point.y);
 		}
 	}
 

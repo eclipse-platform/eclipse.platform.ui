@@ -92,8 +92,8 @@ public class CheatSheetSelectionDialog extends SelectionDialog {
 	public CheatSheetSelectionDialog(Shell shell) {
 		super(shell);
 
-		setTitle(CheatSheetPlugin.getResourceString(ICheatSheetResource.CHEAT_SHEET_SELECTION_DIALOG_TITLE));
-		setMessage(CheatSheetPlugin.getResourceString(ICheatSheetResource.CHEAT_SHEET_SELECTION_DIALOG_MSG));
+		setTitle(Messages.CHEAT_SHEET_SELECTION_DIALOG_TITLE);
+		setMessage(Messages.CHEAT_SHEET_SELECTION_DIALOG_MSG);
 		
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}

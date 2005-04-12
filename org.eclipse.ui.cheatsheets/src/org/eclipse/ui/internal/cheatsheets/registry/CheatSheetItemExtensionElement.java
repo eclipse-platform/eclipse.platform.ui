@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.cheatsheets.registry;
 
 import java.lang.reflect.Constructor;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.model.*;
@@ -106,7 +107,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 			Bundle bundle = Platform.getBundle(pluginId);
 			extClass = bundle.loadClass(className);
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_LOADING_CLASS, new Object[] {className});
+			String message = NLS.bind(Messages.ERROR_LOADING_CLASS, (new Object[] {className}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
@@ -117,7 +118,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
 			}
 		} catch (Exception e) {
-			String message = CheatSheetPlugin.formatResourceString(ICheatSheetResource.ERROR_CREATING_CLASS, new Object[] {className});
+			String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
