@@ -10,3 +10,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help.base,
  org.eclipse.core.runtime
 Eclipse-AutoStart: true
+Export-Package: org.eclipse.help.internal.webapp;x-internal:=true,
+ org.eclipse.help.internal.webapp.data;x-internal:=true,
+ org.eclipse.help.internal.webapp.servlet;x-internal:=true
