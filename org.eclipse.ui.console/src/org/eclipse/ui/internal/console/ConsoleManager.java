@@ -223,13 +223,33 @@ public class ConsoleManager implements IConsoleManager {
                                 if (!(part instanceof IConsoleView)) {
                                     continue;
                                 } 
-                                consoleFound = true;
-                                consoleView = (IConsoleView) part;
                                 
-                                boolean bringToTop = shouldBringToTop(console, consoleView);
-                                if (bringToTop) {
+								consoleFound = true;
+                                consoleView = (IConsoleView) part;
+								
+								IViewPart viewPart = viewRef.getView(false);
+								IViewPart[] stackedViews = null;
+								boolean consoleVisibleInStack = false;
+								if (viewPart != null) {
+									// get a list of views currently stacked
+									// with the found console view
+									stackedViews = page.getViewStack(viewPart);
+
+									for (int j = 0; j < stackedViews.length; j++)
+										if (page.isPartVisible(stackedViews[j])
+												&& stackedViews[j] instanceof IConsoleView) {
+											consoleVisibleInStack = true;
+											break;
+										}
+								}
+
+								// a console view should not be brought to the top if 
+								// another console view from the same stack is already at the top
+							    boolean bringToTop = shouldBringToTop(console, consoleView);
+                                if (bringToTop && !consoleVisibleInStack) {
                                     page.bringToTop(consoleView);
                                 }
+							
                                 consoleView.display(console);        
                             }
                         }
