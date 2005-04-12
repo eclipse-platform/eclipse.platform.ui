@@ -120,14 +120,14 @@ public class InfoCenterPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(HelpUIResources.getString("InfoCenterPage.url")); //$NON-NLS-1$
+		label.setText(Messages.InfoCenterPage_url); 
 
 		urlText = new Text(parent, SWT.BORDER);
 		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
 
 		searchAll = new Button(parent, SWT.RADIO);
-		searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
+		searchAll.setText(Messages.selectAll); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
@@ -139,7 +139,7 @@ public class InfoCenterPage extends RootScopePage {
 		});
 
 		searchSelected = new Button(parent, SWT.RADIO);
-		searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
+		searchSelected.setText(Messages.selectWorkingSet); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
@@ -152,7 +152,7 @@ public class InfoCenterPage extends RootScopePage {
 
 		label = new Label(parent, SWT.WRAP);
 		label.setFont(font);
-		label.setText(HelpUIResources.getString("WorkingSetContent")); //$NON-NLS-1$
+		label.setText(Messages.WorkingSetContent); 
 		gd = new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.VERTICAL_ALIGN_CENTER);
@@ -217,9 +217,9 @@ public class InfoCenterPage extends RootScopePage {
 			load(reader);
 			reader.close();
 		} catch (MalformedURLException e) {
-			HelpUIPlugin.logError(HelpUIResources.getString("InfoCenterPage.invalidURL"), e); //$NON-NLS-1$
+			HelpUIPlugin.logError(Messages.InfoCenterPage_invalidURL, e); 
 		} catch (IOException e) {
-			HelpUIPlugin.logError(HelpUIResources.getString("InfoCenterPage.tocError"), e); //$NON-NLS-1$
+			HelpUIPlugin.logError(Messages.InfoCenterPage_tocError, e); 
 		} finally {
 			if (is != null) {
 				try {

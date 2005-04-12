@@ -33,6 +33,7 @@ import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionManager;
@@ -51,6 +52,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -573,7 +575,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		// federated search page
 		HelpPartPage page = new HelpPartPage(
 				HV_FSEARCH_PAGE,
-				HelpUIResources.getString("ReusableHelpPart.searchPage.name"), IHelpUIConstants.IMAGE_HELP_SEARCH); //$NON-NLS-1$
+				Messages.ReusableHelpPart_searchPage_name, IHelpUIConstants.IMAGE_HELP_SEARCH); 
 		page.setVerticalSpacing(0);
 		page.addPart(HV_FSEARCH, false);
 		page.addPart(HV_FSEARCH_RESULT, true);
@@ -583,8 +585,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		// all topics page
 		page = new HelpPartPage(
 				HV_ALL_TOPICS_PAGE,
-				HelpUIResources
-						.getString("ReusableHelpPart.allTopicsPage.name"), IHelpUIConstants.IMAGE_TOC_CLOSED); //$NON-NLS-1$
+				Messages.ReusableHelpPart_allTopicsPage_name, IHelpUIConstants.IMAGE_TOC_CLOSED); //$NON-NLS-1$
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_TOPIC_TREE, true);
@@ -592,8 +593,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		pages.add(page);
 
 		// bookmarks page
-		page = new HelpPartPage(HV_BOOKMARKS_PAGE, HelpUIResources
-				.getString("ReusableHelpPart.bookmarksPage.name"), //$NON-NLS-1$
+		page = new HelpPartPage(HV_BOOKMARKS_PAGE, Messages.ReusableHelpPart_bookmarksPage_name, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_BOOKMARKS); //$NON-NLS-1$
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
@@ -610,8 +610,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		// context help page
 		page = new HelpPartPage(
 				HV_CONTEXT_HELP_PAGE,
-				HelpUIResources
-						.getString("ReusableHelpPart.contextHelpPage.name"), IHelpUIConstants.IMAGE_FILE_F1TOPIC); //$NON-NLS-1$
+				Messages.ReusableHelpPart_contextHelpPage_name, IHelpUIConstants.IMAGE_FILE_F1TOPIC); //$NON-NLS-1$
 		//page.addPart(HV_CONTEXT_HELP, false);
 		//page.addPart(HV_SEARCH_RESULT, false, true);
 		page.setVerticalSpacing(0);
@@ -643,10 +642,8 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backAction.setEnabled(false);
-		backAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.back.label")); //$NON-NLS-1$
-		backAction.setToolTipText(HelpUIResources
-				.getString("ReusableHelpPart.back.tooltip")); //$NON-NLS-1$
+		backAction.setText(Messages.ReusableHelpPart_back_label); //$NON-NLS-1$
+		backAction.setToolTipText(Messages.ReusableHelpPart_back_tooltip); //$NON-NLS-1$
 		backAction.setId("back"); //$NON-NLS-1$
 
 		nextAction = new Action("next") { //$NON-NLS-1$
@@ -654,8 +651,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				doNext();
 			}
 		};
-		nextAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.forward.label")); //$NON-NLS-1$
+		nextAction.setText(Messages.ReusableHelpPart_forward_label); //$NON-NLS-1$
 		nextAction.setImageDescriptor(PlatformUI.getWorkbench()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));
@@ -663,8 +659,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
-		nextAction.setToolTipText(HelpUIResources
-				.getString("ReusableHelpPart.forward.tooltip")); //$NON-NLS-1$
+		nextAction.setToolTipText(Messages.ReusableHelpPart_forward_tooltip); //$NON-NLS-1$
 		nextAction.setId("next"); //$NON-NLS-1$
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
@@ -674,33 +669,27 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp();
 			}
 		};
-		openInfoCenterAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.openInfoCenterAction.label")); //$NON-NLS-1$
+		openInfoCenterAction.setText(Messages.ReusableHelpPart_openInfoCenterAction_label); //$NON-NLS-1$
 		openAction = new OpenHrefAction("open") { //$NON-NLS-1$
 			protected void busyRun() {
 				doOpen(getTarget(), getShowDocumentsInPlace());
 			}
 		};
-		openAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.openAction.label")); //$NON-NLS-1$
-		openInHelpAction = new OpenHrefAction(HelpUIResources
-				.getString("ReusableHelpPart.openInHelpAction.label")) { //$NON-NLS-1$
+		openAction.setText(Messages.ReusableHelpPart_openAction_label); //$NON-NLS-1$
+		openInHelpAction = new OpenHrefAction(Messages.ReusableHelpPart_openInHelpAction_label) { //$NON-NLS-1$
 			protected void busyRun() {
 				doOpenInHelp(getTarget());
 			}
 		};
-		openInHelpAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.openInHelpContentsAction.label")); //$NON-NLS-1$
+		openInHelpAction.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label); //$NON-NLS-1$
 		copyAction = new CopyAction();
-		copyAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.copyAction.label")); //$NON-NLS-1$
+		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); //$NON-NLS-1$
 		bookmarkAction = new OpenHrefAction("bookmark") {
 			protected void busyRun() {
 				doBookmark(getTarget());
 			}
 		};
-		bookmarkAction.setText(HelpUIResources
-				.getString("ReusableHelpPart.bookmarkAction.label")); //$NON-NLS-1$
+		bookmarkAction.setText(Messages.ReusableHelpPart_bookmarkAction_label); //$NON-NLS-1$
 		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		if (actionBars != null && actionBars.getMenuManager() != null)
 			contributeToDropDownMenu(actionBars.getMenuManager());
@@ -718,8 +707,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			};
 			showAllAction.setImageDescriptor(HelpUIResources
 						.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_ALL));
-			showAllAction.setToolTipText(HelpUIResources
-						.getString("AllTopicsPart.showAll.tooltip")); //$NON-NLS-1$
+			showAllAction.setToolTipText(Messages.AllTopicsPart_showAll_tooltip); //$NON-NLS-1$
 			toolBarManager.insertBefore("back", showAllAction); //$NON-NLS-1$
 			toolBarManager.insertBefore("back", new Separator()); //$NON-NLS-1$
 			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
@@ -1299,8 +1287,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (label != null && href != null) {
-				String message = HelpUIResources.getString(
-						"ReusableHelpPart.status", label, href); //$NON-NLS-1$
+				String message = NLS.bind("ReusableHelpPart.status", label, href); //$NON-NLS-1$
 				mng.setMessage(message);
 			} else if (label != null)
 				mng.setMessage(label);
@@ -1370,9 +1357,9 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			if (value.length()==0) {
 				MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
 						null,
-						HelpUIResources.getString("AskShowAll.dialogTitle"), //$NON-NLS-1$
-						HelpUIResources.getString("AskShowAll.message"), //$NON-NLS-1$
-						HelpUIResources.getString("AskShowAll.toggleMessage"), //$NON-NLS-1$
+						Messages.AskShowAll_dialogTitle, 
+						Messages.AskShowAll_message, 
+						Messages.AskShowAll_toggleMessage, 
 						false, store, PROMPT_KEY);
 				if (dialog.getReturnCode()!=MessageDialogWithToggle.OK) {
 					showAllAction.setChecked(false);

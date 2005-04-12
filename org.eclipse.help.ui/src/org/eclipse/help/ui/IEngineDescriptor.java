@@ -23,66 +23,65 @@ import java.util.Dictionary;
  */
 
 public interface IEngineDescriptor {
-	/**
-	 * Returns the unique identifier of this engine instance.
-	 * 
-	 * @return the unique engine identifier
-	 */
-	String getId();
+    /**
+     * Returns the unique identifier of this engine instance.
+     * 
+     * @return the unique engine identifier
+     */
+    String getId();
 
-	/**
-	 * Returns the unique identifier of the engine type of which this is an
-	 * instance.
-	 * 
-	 * @return the engine type identifier
-	 */
-	String getEngineTypeId();
+    /**
+     * Returns the unique identifier of the engine type of which this is an
+     * instance.
+     * 
+     * @return the engine type identifier
+     */
+    String getEngineTypeId();
 
-	/**
-	 * Returns the label of this engine for rendering in the UI.
-	 * 
-	 * @return the engine label
-	 */
-	String getLabel();
+    /**
+     * Returns the label of this engine for rendering in the UI.
+     * 
+     * @return the engine label
+     */
+    String getLabel();
 
-	/**
-	 * Changes the label of this engine. This method does nothing for engine
-	 * descriptors that are not user-defined.
-	 * 
-	 * @param label
-	 *            the new engine label
-	 */
-	void setLabel(String label);
+    /**
+     * Changes the label of this engine. This method does nothing for engine
+     * descriptors that are not user-defined.
+     * 
+     * @param label
+     *            the new engine label
+     */
+    void setLabel(String label);
 
-	/**
-	 * 
-	 * @return
-	 */
-	String getDescription();
+    /**
+     * @return
+     */
+    String getDescription();
 
-	/**
-	 * Changes the description of this engine. This method does nothing for
-	 * engine descriptors that are not user-defined.
-	 * 
-	 * @param desc
-	 *            the new engine description
-	 */
-	void setDescription(String desc);
+    /**
+     * Changes the description of this engine. This method does nothing for
+     * engine descriptors that are not user-defined.
+     * 
+     * @param desc
+     *            the new engine description
+     */
+    void setDescription(String desc);
 
-	/**
-	 * Returns the parameters used to configure this engine according to the
-	 * valid parameters for the associated engine type.
-	 * 
-	 * @return the parameter dictionary
-	 */
-	Dictionary getParameters();
+    /**
+     * Returns the parameters used to configure this engine according to the
+     * valid parameters for the associated engine type.
+     * 
+     * @return the parameter dictionary
+     */
+    Dictionary getParameters();
 
-	/**
-	 * Tests whether this engine is provided as an extension point contribution
-	 * or is created by the user in the scope settings dialog.
-	 * 
-	 * @return <code>true</code> if the engine is user defined, or
-	 *         <code>false</code> otherwise.
-	 */
-	boolean isUserDefined();
+    /**
+     * Tests whether this engine is provided as an extension point contribution
+     * or is created by the user in the scope settings dialog.
+     * 
+     * @return <code>true</code> if the engine is user defined, or
+     *         <code>false</code> otherwise.
+     */
+    boolean isUserDefined();
 }

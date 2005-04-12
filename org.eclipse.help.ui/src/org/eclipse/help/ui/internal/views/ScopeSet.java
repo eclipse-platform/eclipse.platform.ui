@@ -29,7 +29,7 @@ public class ScopeSet {
 	private int defaultSet = -1;
 	
 	public ScopeSet() {
-		this(HelpUIResources.getString("ScopeSet.default")); //$NON-NLS-1$
+		this(Messages.ScopeSet_default); 
 		defaultSet = 1;
 	}
 	

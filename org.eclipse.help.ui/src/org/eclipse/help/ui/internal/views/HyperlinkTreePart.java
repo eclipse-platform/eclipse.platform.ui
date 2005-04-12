@@ -193,8 +193,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		};
 		collapseAllAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
-		collapseAllAction.setToolTipText(HelpUIResources
-				.getString("AllTopicsPart.collapseAll.tooltip")); //$NON-NLS-1$
+		collapseAllAction.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); //$NON-NLS-1$
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}

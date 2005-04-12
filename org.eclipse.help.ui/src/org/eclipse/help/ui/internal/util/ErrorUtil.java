@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.util;
 
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.util.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.util.IErrorUtil;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Utiliy class for common error displaying tasks.
@@ -43,7 +45,7 @@ public class ErrorUtil implements IErrorUtil {
 	 *            error message to display and log.
 	 */
 	public static void displayErrorDialog(String msg) {
-		String title = HelpUIResources.getString("Help_Error"); //$NON-NLS-1$
+		String title = Messages.Help_Error; 
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {
@@ -61,7 +63,7 @@ public class ErrorUtil implements IErrorUtil {
 	 *            error message to display.
 	 */
 	public static void displayInfoDialog(String msg) {
-		String title = HelpUIResources.getString("Help_Info"); //$NON-NLS-1$
+		String title = Messages.Help_Info; 
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {
@@ -81,7 +83,7 @@ public class ErrorUtil implements IErrorUtil {
 	 * @return which button(Yes/No) was pressed by user
 	 */
 	public static boolean displayQuestionDialog(String msg) {
-		String title = HelpUIResources.getString("Help_Question"); //$NON-NLS-1$
+		String title = Messages.Help_Question; 
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		Shell shell;
 		if (workbenchWindow != null) {

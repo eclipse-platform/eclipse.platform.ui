@@ -203,7 +203,7 @@ public class ContextHelpDialog {
 			styledText = context.getText();
 		}
 		if (styledText == null) // no description found in context objects.
-			styledText = HelpUIResources.getString("WW002"); //$NON-NLS-1$
+			styledText = Messages.WW002; 
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {

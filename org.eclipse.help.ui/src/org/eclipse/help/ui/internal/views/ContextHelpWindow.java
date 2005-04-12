@@ -11,8 +11,8 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.IContext;
-import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
@@ -135,8 +135,7 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		helpPart = new ReusableHelpPart(PlatformUI.getWorkbench()
 				.getProgressService());
 		helpPart.init(null, tbm, null);
-		helpPart.setDefaultContextHelpText(HelpUIResources
-				.getString("HelpView.defaultText")); //$NON-NLS-1$		
+		helpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); //$NON-NLS-1$		
 		helpPart.createControl(container, toolkit);
 		helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		hookListeners();

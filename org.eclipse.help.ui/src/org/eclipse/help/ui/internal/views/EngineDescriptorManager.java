@@ -95,7 +95,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			writer.flush();
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(HelpUIResources.getString("EngineDescriptorManager.errorSaving"), e); //$NON-NLS-1$
+			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorSaving, e); 
 		}
 		finally {
 			if (osw!=null) {
@@ -123,7 +123,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			load(fileName);
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(HelpUIResources.getString("EngineDescriptorManager.errorLoading"), e); //$NON-NLS-1$
+			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorLoading, e); 
 		}
 	}
 

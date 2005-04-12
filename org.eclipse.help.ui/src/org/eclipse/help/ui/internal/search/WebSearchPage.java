@@ -12,7 +12,7 @@
 package org.eclipse.help.ui.internal.search;
 
 import org.eclipse.help.ui.RootScopePage;
-import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -37,7 +37,7 @@ public class WebSearchPage extends RootScopePage {
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(HelpUIResources.getString("WebSearchPage.label")); //$NON-NLS-1$
+		label.setText(Messages.WebSearchPage_label); 
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		urlText = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL
@@ -54,7 +54,7 @@ public class WebSearchPage extends RootScopePage {
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
 		new Label(parent, SWT.NULL);
 		label = new Label(parent, SWT.WRAP);
-		label.setText(HelpUIResources.getString("WebSearchPage.info")); //$NON-NLS-1$
+		label.setText(Messages.WebSearchPage_info); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);

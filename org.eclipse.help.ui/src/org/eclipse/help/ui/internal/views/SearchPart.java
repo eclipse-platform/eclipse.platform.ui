@@ -22,6 +22,7 @@ import org.eclipse.help.search.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -109,9 +110,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			if (!searchInProgress)
 				goButton.setEnabled(true);
 			if (searchInProgress)
-				goButton.setText(HelpUIResources.getString("SearchPart.stop")); //$NON-NLS-1$
+				goButton.setText(Messages.SearchPart_stop); 
 			else
-				goButton.setText(HelpUIResources.getString("SearchPart.go")); //$NON-NLS-1$
+				goButton.setText(Messages.SearchPart_go); 
 			goButton.getParent().layout();
 		}
 	}
@@ -172,7 +173,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				 */
 			}
 		});
-		goButton = toolkit.createButton(container, HelpUIResources.getString("SearchPart.go"), SWT.PUSH); //$NON-NLS-1$
+		goButton = toolkit.createButton(container, Messages.SearchPart_go, SWT.PUSH); 
 		goButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleButtonPressed();
@@ -194,7 +195,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		});
 		scopeSection = toolkit.createSection(container, Section.TWISTIE
 				| Section.COMPACT | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
-		scopeSection.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
+		scopeSection.setText(Messages.limit_to); 
 		td = new TableWrapData();
 		td.colspan = 2;
 		td.align = TableWrapData.FILL;
@@ -216,8 +217,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
 		advancedLink = toolkit
-				.createHyperlink(parent, HelpUIResources
-						.getString("FederatedSearchPart.advanced"), SWT.NULL); //$NON-NLS-1$
+				.createHyperlink(parent, Messages.FederatedSearchPart_advanced, SWT.NULL); //$NON-NLS-1$
 		advancedLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
@@ -236,8 +236,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				doChangeScopeSet();
 			}
 		});
-		scopeSetLink.setToolTipText(HelpUIResources
-				.getString("FederatedSearchPart.changeScopeSet")); //$NON-NLS-1$
+		scopeSetLink.setToolTipText(Messages.FederatedSearchPart_changeScopeSet); //$NON-NLS-1$
 		section.setTextClient(scopeSetLink);
 		ScopeSet active = scopeSetManager.getActiveSet();
 		setActiveScopeSet(active);
@@ -254,28 +253,28 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p>"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("expression")); //$NON-NLS-1$
+		buff.append(Messages.expression); 
 		if (searchWordTextExpanded) {
 			buff.append(" <a href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
 			buff.append("\" alt=\""); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchPart.collapse")); //$NON-NLS-1$
+			buff.append(Messages.SearchPart_collapse); 
 			buff.append("\">&lt;&lt;</a>"); //$NON-NLS-1$
 			buff.append("</p><p>"); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("expression_label")); //$NON-NLS-1$
+			buff.append(Messages.expression_label); 
 			buff.append("</p><p>"); //$NON-NLS-1$
 			buff.append("<img href=\""); //$NON-NLS-1$
 			buff.append(IHelpUIConstants.IMAGE_HELP);
 			buff.append("\"/> "); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
 			buff.append(HREF_SEARCH_HELP);
-			buff.append(HelpUIResources.getString("SearchPart.learnMore")); //$NON-NLS-1$
+			buff.append(Messages.SearchPart_learnMore); 
 			buff.append("</a>"); //$NON-NLS-1$
 		} else {
 			buff.append(" <a href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
 			buff.append("\" alt=\""); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchPart.expand")); //$NON-NLS-1$
+			buff.append(Messages.SearchPart_expand); 
 			buff.append("\">&gt;&gt;</a>"); //$NON-NLS-1$
 		}
 		buff.append("</p>"); //$NON-NLS-1$
@@ -465,7 +464,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				.getShell(), manager, descManager);
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
+		dialog.getShell().setText(NLS.bind("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
 		dialog.open();
 		updateMasters(set);
 	}
@@ -475,7 +474,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				scopeSetManager, descManager);
 		dialog.setInput(scopeSetManager);
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("ScopeSetDialog.wtitle")); //$NON-NLS-1$
+		dialog.getShell().setText(Messages.ScopeSetDialog_wtitle); 
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();
 			if (set != null)

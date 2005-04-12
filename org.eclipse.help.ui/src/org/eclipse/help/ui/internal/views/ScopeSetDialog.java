@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
@@ -176,10 +177,10 @@ public class ScopeSetDialog extends ListDialog {
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace= true;
 		composite.setData(data);
-    	newButton = createButton(buttonComposite, NEW_ID, HelpUIResources.getString("ScopeSetDialog.new"), false); //$NON-NLS-1$
-       	renameButton = createButton(buttonComposite, RENAME_ID, HelpUIResources.getString("ScopeSetDialog.rename"), false); //$NON-NLS-1$
-       	editButton = createButton(buttonComposite, EDIT_ID, HelpUIResources.getString("ScopeSetDialog.edit"), false); //$NON-NLS-1$
-       	removeButton = createButton(buttonComposite, REMOVE_ID, HelpUIResources.getString("ScopeSetDialog.remove"), false); //$NON-NLS-1$
+    	newButton = createButton(buttonComposite, NEW_ID, Messages.ScopeSetDialog_new, false); 
+       	renameButton = createButton(buttonComposite, RENAME_ID, Messages.ScopeSetDialog_rename, false); 
+       	editButton = createButton(buttonComposite, EDIT_ID, Messages.ScopeSetDialog_edit, false); 
+       	removeButton = createButton(buttonComposite, REMOVE_ID, Messages.ScopeSetDialog_remove, false); 
        	updateButtons();
     }
 	
@@ -252,7 +253,7 @@ public class ScopeSetDialog extends ListDialog {
 			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.create();
-			dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
+			dialog.getShell().setText(NLS.bind("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
 			dialog.open();
 		}
 	}
@@ -282,7 +283,7 @@ public class ScopeSetDialog extends ListDialog {
 			dialog.addOldName(set.getName());
 		}
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("RenameDialog.wtitle")); //$NON-NLS-1$
+		dialog.getShell().setText(Messages.RenameDialog_wtitle); 
 		if (dialog.open()==RenameDialog.OK) {
 			return dialog.getNewName();
 		}

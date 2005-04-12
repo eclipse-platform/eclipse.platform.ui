@@ -9,12 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 /**
@@ -22,10 +23,6 @@ import org.osgi.framework.Bundle;
  * class needs to properly use the desired locale.
  */
 public class HelpUIResources {
-	private static ResourceBundle resBundle;
-	static {
-		resBundle = ResourceBundle.getBundle(HelpUIResources.class.getName());
-	}
 	/**
 	 * WorkbenchResources constructor comment.
 	 */
@@ -82,109 +79,5 @@ public class HelpUIResources {
 		//Ensure we have the descriptor
 		getImageDescriptor(name);
 		return registry.get(name);
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name) {
-		try {
-			return resBundle.getString(name);
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0, String replace1) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0,
-			String replace1, String replace2) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1,
-							replace2});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0,
-			String replace1, String replace2, String replace3) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1,
-							replace2, replace3});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0,
-			String replace1, String replace2, String replace3, String replace4) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1,
-							replace2, replace3, replace4});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
-	}
-	/**
-	 * Returns a string from a property file
-	 */
-	public static String getString(String name, String replace0,
-			String replace1, String replace2, String replace3, String replace4,
-			String replace5) {
-		try {
-			String stringFromPropertiesFile = resBundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0, replace1,
-							replace2, replace3, replace4, replace5});
-			return stringFromPropertiesFile;
-		} catch (Exception e) {
-			return name;
-		}
-
 	}
 }

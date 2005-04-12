@@ -82,7 +82,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				| Section.TITLE_BAR);
 		// configure section
 		Section section = getSection();
-		section.setText(HelpUIResources.getString("SearchPart.title")); //$NON-NLS-1$
+		section.setText(Messages.SearchPart_title); 
 		section.marginWidth = 5;
 		section.addExpansionListener(new IExpansionListener() {
 			public void expansionStateChanging(ExpansionEvent e) {
@@ -211,7 +211,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	
 	private void startInPlaceSearch(final String phrase,
 			final IContext excludeContext) {
-		Job job = new Job(HelpUIResources.getString("SearchPart.dynamicJob")) { //$NON-NLS-1$
+		Job job = new Job(Messages.SearchPart_dynamicJob) { 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					try {
@@ -252,12 +252,12 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		buff.append("<p><span color=\""); //$NON-NLS-1$
 		buff.append(FormColors.TITLE);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
+		buff.append(Messages.SearchResultsPart_progress); 
 		buff.append("</span>"); //$NON-NLS-1$
 		buff.append("<a href=\""); //$NON-NLS-1$
 		buff.append(CANCEL_HREF);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$
+		buff.append(Messages.SearchResultsPart_cancel); 
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
@@ -289,7 +289,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			buff.append("<p><span color=\""); //$NON-NLS-1$
 			buff.append(FormColors.TITLE);
 			buff.append("\">"); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
+			buff.append(Messages.SearchResultsPart_label); 
 			buff.append("</span></p>"); //$NON-NLS-1$
 			resultSorter.sort(null, hits);
 			IHelpResource [] excludedTopics = excludeContext!=null?excludeContext.getRelatedTopics():null;
@@ -319,8 +319,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append(" <a href=\""); //$NON-NLS-1$
 				buff.append(MORE_HREF);
 				buff.append("\">"); //$NON-NLS-1$
-				buff.append(HelpUIResources
-						.getString("SearchResultsPart.moreResults")); //$NON-NLS-1$
+				buff.append(Messages.SearchResultsPart_moreResults); //$NON-NLS-1$
 				buff.append("</a></p>"); //$NON-NLS-1$
 			}
 			buff.append("</form>"); //$NON-NLS-1$

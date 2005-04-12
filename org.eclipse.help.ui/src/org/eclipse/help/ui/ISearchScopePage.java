@@ -19,14 +19,14 @@ import org.eclipse.jface.preference.IPreferencePage;
  * @since 3.1
  */
 public interface ISearchScopePage extends IPreferencePage {
-	/**
-	 * Initializes the search scope page.
-	 * 
-	 * @param ed
-	 *            the descriptor of the engine associated with this page
-	 * @param scopeSetName
-	 *            the name of the current scope set that is used to group data
-	 *            shown in this page
-	 */
-	void init(IEngineDescriptor ed, String scopeSetName);
+    /**
+     * Initializes the search scope page.
+     * 
+     * @param ed
+     *            the descriptor of the engine associated with this page
+     * @param scopeSetName
+     *            the name of the current scope set that is used to group data
+     *            shown in this page
+     */
+    void init(IEngineDescriptor ed, String scopeSetName);
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.wizard.Wizard;
 
 public class NewEngineWizard extends Wizard {
@@ -18,7 +18,7 @@ public class NewEngineWizard extends Wizard {
 	private EngineTypeWizardPage selectionPage;
 
 	public NewEngineWizard(EngineTypeDescriptor [] engineTypes) {
-		setWindowTitle(HelpUIResources.getString("NewEngineWizard.wtitle")); //$NON-NLS-1$
+		setWindowTitle(Messages.NewEngineWizard_wtitle); 
 		this.engineTypes = engineTypes;
 	}
 

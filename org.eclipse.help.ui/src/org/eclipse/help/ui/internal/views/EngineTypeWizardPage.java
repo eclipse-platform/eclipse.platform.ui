@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -57,8 +57,8 @@ public class EngineTypeWizardPage extends WizardPage {
 
 	public EngineTypeWizardPage(EngineTypeDescriptor[] engineTypes) {
 		super("engineType"); //$NON-NLS-1$
-		setTitle(HelpUIResources.getString("EngineTypeWizardPage.title")); //$NON-NLS-1$
-		setDescription(HelpUIResources.getString("EngineTypeWizardPage.desc")); //$NON-NLS-1$
+		setTitle(Messages.EngineTypeWizardPage_title); 
+		setDescription(Messages.EngineTypeWizardPage_desc); 
 		this.engineTypes = engineTypes;
 	}
 
@@ -67,7 +67,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(HelpUIResources.getString("EngineTypeWizardPage.label")); //$NON-NLS-1$
+		label.setText(Messages.EngineTypeWizardPage_label); 
 		tableViewer = new TableViewer(container);
 		tableViewer.setContentProvider(new EngineContentProvider());
 		tableViewer.setLabelProvider(new EngineLabelProvider());

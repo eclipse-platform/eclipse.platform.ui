@@ -47,8 +47,7 @@ public class AppserverPreferencePage extends PreferencePage
 		mainComposite.setLayout(layout);
 
 		Label label = new Label(mainComposite, SWT.NONE);
-		label.setText(HelpUIResources
-				.getString("AppserverPreferencePage.description")); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_description); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -63,8 +62,7 @@ public class AppserverPreferencePage extends PreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(HelpUIResources
-				.getString("AppserverPreferencePage.hostDescription")); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_hostDescription); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -94,8 +92,7 @@ public class AppserverPreferencePage extends PreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setFont(font);
-		label.setText(HelpUIResources
-				.getString("AppserverPreferencePage.portDescription")); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_portDescription); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -135,8 +132,7 @@ public class AppserverPreferencePage extends PreferencePage
 				} catch (NumberFormatException nfe) {
 				}
 				AppserverPreferencePage.this.setValid(false);
-				setErrorMessage(HelpUIResources
-						.getString("AppserverPreferencePage.invalidPort")); //$NON-NLS-1$
+				setErrorMessage(Messages.AppserverPreferencePage_invalidPort); //$NON-NLS-1$
 			}
 		});
 
@@ -149,8 +145,7 @@ public class AppserverPreferencePage extends PreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label
-				.setText(HelpUIResources
-						.getString("AppserverPreferencePage.Note")); //$NON-NLS-1$
+				.setText(Messages.AppserverPreferencePage_Note); //$NON-NLS-1$
 		// Make this bold
 		FontData[] fontData = font.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
@@ -169,8 +164,7 @@ public class AppserverPreferencePage extends PreferencePage
 		label.setLayoutData(data);
 
 		label = new Label(mainComposite, SWT.NONE);
-		label.setText(HelpUIResources
-				.getString("AppserverPreferencePage.requireRestart")); //$NON-NLS-1$
+		label.setText(Messages.AppserverPreferencePage_requireRestart); //$NON-NLS-1$
 		data = new GridData();
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);

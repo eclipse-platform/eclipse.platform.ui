@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -163,7 +164,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				});
 			}
 		};
-		showExternalAction.setToolTipText(HelpUIResources.getString("BrowserPart.showExternalTooltip")); //$NON-NLS-1$
+		showExternalAction.setToolTipText(Messages.BrowserPart_showExternalTooltip); 
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
 		bookmarkAction = new Action() {
@@ -171,7 +172,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BaseHelpSystem.getBookmarkManager().addBookmark(url, title);
 			}
 		};
-		bookmarkAction.setToolTipText(HelpUIResources.getString("BrowserPart.bookmarkTooltip")); //$NON-NLS-1$
+		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip); 
 		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$

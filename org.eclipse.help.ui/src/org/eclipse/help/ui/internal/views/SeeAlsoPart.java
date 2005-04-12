@@ -72,24 +72,24 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		buf.append("<p><span color=\""); //$NON-NLS-1$
 		buf.append(FormColors.TITLE);
 		buf.append("\">"); //$NON-NLS-1$
-		buf.append(HelpUIResources.getString("SeeAlsoPart.goto")); //$NON-NLS-1$
+		buf.append(Messages.SeeAlsoPart_goto); 
 		buf.append("</span></p>"); //$NON-NLS-1$
 		buf.append("<p>"); //$NON-NLS-1$
 		int [] counter = new int[1];
 		if ((parent.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
-			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.allTopics"), IHelpUIConstants.HV_ALL_TOPICS_PAGE, //$NON-NLS-1$
+			addPageLink(buf, counter, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE, 
 				IHelpUIConstants.IMAGE_TOC_OPEN);
 		if ((parent.getStyle() & ReusableHelpPart.SEARCH) != 0) {
-			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.search"), IHelpUIConstants.HV_FSEARCH_PAGE, //$NON-NLS-1$
+			addPageLink(buf, counter, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE, 
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
 		}
 		if ((parent.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
-			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.contextHelp"), //$NON-NLS-1$
+			addPageLink(buf, counter, Messages.SeeAlsoPart_contextHelp, 
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
 				IHelpUIConstants.IMAGE_CONTAINER);
 		}
 		if ((parent.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
-			addPageLink(buf, counter, HelpUIResources.getString("SeeAlsoPart.bookmarks"), //$NON-NLS-1$
+			addPageLink(buf, counter, Messages.SeeAlsoPart_bookmarks, 
 				IHelpUIConstants.HV_BOOKMARKS_PAGE,
 				IHelpUIConstants.IMAGE_BOOKMARKS);
 		}

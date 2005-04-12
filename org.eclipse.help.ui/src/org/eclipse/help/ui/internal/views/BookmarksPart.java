@@ -86,7 +86,7 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	class BookmarksLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof BookmarkManager)
-				return HelpUIResources.getString("BookmarksPart.savedTopics"); //$NON-NLS-1$
+				return Messages.BookmarksPart_savedTopics; 
 			if (obj instanceof IHelpResource)
 				return ((IHelpResource) obj).getLabel();
 			return super.getText(obj);
@@ -132,7 +132,7 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 				}
 			}
 		};
-		deleteAction.setText(HelpUIResources.getString("BookmarksPart.delete")); //$NON-NLS-1$
+		deleteAction.setText(Messages.BookmarksPart_delete); 
 		deleteAction.setEnabled(false);
 	}
 	
@@ -165,7 +165,7 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 					});
 				}
 			};
-			action.setText(HelpUIResources.getString("BookmarksPart.deleteAll")); //$NON-NLS-1$
+			action.setText(Messages.BookmarksPart_deleteAll); 
 			manager.add(action);
 			value=true;
 		}

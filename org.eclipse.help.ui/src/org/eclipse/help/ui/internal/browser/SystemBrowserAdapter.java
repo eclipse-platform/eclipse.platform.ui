@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.browser;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.program.*;
 
 /**
@@ -45,9 +46,7 @@ public class SystemBrowserAdapter implements IBrowser {
 									+ url
 									+ ".  Change the file association or choose a different help web browser in the preferences.", //$NON-NLS-1$
 							null);
-			ErrorUtil.displayErrorDialog(HelpUIResources.getString(
-					"SystemBrowser.noProgramForURL", //$NON-NLS-1$
-					url));
+			ErrorUtil.displayErrorDialog(NLS.bind("SystemBrowser.noProgramForURL", url));
 		}
 		//		} else {
 		//			Program b = Program.findProgram("html");

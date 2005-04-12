@@ -87,7 +87,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		container.setLayoutData(gd);
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(HelpUIResources.getString("RenameDialog.label")); //$NON-NLS-1$
+		label.setText(Messages.RenameDialog_label); 
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
@@ -127,8 +127,7 @@ public class RenameDialog extends SelectionStatusDialog {
 						IStatus.ERROR,
 						HelpUIPlugin.PLUGIN_ID,
 						IStatus.ERROR,
-						HelpUIResources.getString(
-							"RenameDialog.validationError"), //$NON-NLS-1$
+						Messages.RenameDialog_validationError, //$NON-NLS-1$
 						null);
 				updateStatus(status);
 				okButton.setEnabled(false);

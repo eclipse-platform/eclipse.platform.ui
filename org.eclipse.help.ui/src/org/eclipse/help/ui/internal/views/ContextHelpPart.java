@@ -17,6 +17,7 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -50,7 +51,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				| Section.TITLE_BAR);
 		Section section = getSection();
 		section.marginWidth = 5;
-		section.setText(HelpUIResources.getString("ContextHelpPart.about")); //$NON-NLS-1$
+		section.setText(Messages.ContextHelpPart_about); 
 		Composite container = toolkit.createComposite(section);
 		section.setClient(container);
 		section.addExpansionListener(new ExpansionAdapter() {
@@ -186,9 +187,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private void updateTitle() {
 		if (lastPart!=null)
-			getSection().setText(HelpUIResources.getString("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName())); //$NON-NLS-1$
+			getSection().setText(NLS.bind("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName())); //$NON-NLS-1$
 		else
-			getSection().setText(HelpUIResources.getString("ContextHelpPart.about")); //$NON-NLS-1$
+			getSection().setText(Messages.ContextHelpPart_about); 
 	}
 
 	private void updateText(String helpText) {
@@ -233,7 +234,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					if (part != null) {
 						buff.append("\""); //$NON-NLS-1$
 						if (part instanceof IViewPart)
-							buff.append(HelpUIResources.getString("ContextHelpPart.query.view", part.getSite().getRegisteredName())); //$NON-NLS-1$
+							buff.append(NLS.bind("ContextHelpPart.query.view", part.getSite().getRegisteredName())); //$NON-NLS-1$
 						buff.append("\" "); //$NON-NLS-1$
 					}
 					IPerspectiveDescriptor persp = page.getPerspective();
@@ -241,7 +242,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						if (buff.length() > 0)
 							buff.append("OR "); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
-						buff.append(HelpUIResources.getString("ContextHelpPart.query.perspective", persp.getLabel())); //$NON-NLS-1$
+						buff.append(NLS.bind("ContextHelpPart.query.perspective", persp.getLabel())); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
 					}
 				}
@@ -345,7 +346,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private void addCategory(StringBuffer sbuf, String category) {
 		if (category==null)
-			category = HelpUIResources.getString("ContextHelpPart.seeAlso");//$NON-NLS-1$
+			category = Messages.ContextHelpPart_seeAlso;
 		sbuf.append("<p><span color=\""); //$NON-NLS-1$
 		sbuf.append(FormColors.TITLE);
 		sbuf.append("\">"); //$NON-NLS-1$

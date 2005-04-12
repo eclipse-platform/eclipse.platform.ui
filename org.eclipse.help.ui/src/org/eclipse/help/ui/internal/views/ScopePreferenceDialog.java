@@ -12,7 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
-import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
@@ -61,10 +61,10 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		gd.horizontalSpan = 2;
 		treeControl.setLayoutData(gd);
 
-		Button lbutton = createButton(container, NEW_ID, HelpUIResources.getString("ScopePreferenceDialog.new"), false); //$NON-NLS-1$
+		Button lbutton = createButton(container, NEW_ID, Messages.ScopePreferenceDialog_new, false); 
 		gd = (GridData)lbutton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		Button rbutton = createButton(container, DELETE_ID, HelpUIResources.getString("ScopePreferenceDialog.delete"), false); //$NON-NLS-1$
+		Button rbutton = createButton(container, DELETE_ID, Messages.ScopePreferenceDialog_delete, false); 
 		rbutton.setEnabled(false);
 		gd = (GridData)rbutton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.*;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
@@ -235,8 +236,8 @@ public class EmbeddedBrowser {
 	private static String getWindowTitle() {
 		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault() //$NON-NLS-1$
 				.getPluginPreferences().getString("windowTitlePrefix"))) { //$NON-NLS-1$
-			return HelpUIResources.getString("browserTitle", BaseHelpSystem //$NON-NLS-1$
-					.getProductName());
+			return NLS.bind("browserTitle", BaseHelpSystem //$NON-NLS-1$
+            .getProductName());
 		} else {
 			return BaseHelpSystem.getProductName();
 		}

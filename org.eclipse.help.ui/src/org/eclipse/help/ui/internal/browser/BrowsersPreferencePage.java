@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
-import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
@@ -71,14 +71,13 @@ public class BrowsersPreferencePage extends PreferencePage
 		layout.marginWidth = 0;
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NULL);
-		description.setText(HelpUIResources.getString("select_browser")); //$NON-NLS-1$
+		description.setText(Messages.select_browser); 
 		//createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
 					.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
-			alwaysExternal.setText(HelpUIResources
-					.getString("use_only_external_browser")); //$NON-NLS-1$
+			alwaysExternal.setText(Messages.use_only_external_browser); //$NON-NLS-1$
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
 							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
@@ -153,7 +152,7 @@ public class BrowsersPreferencePage extends PreferencePage
 			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,
 					SWT.WRAP,
 					WBROWSER_PAGE_ID,
-					HelpUIResources.getString("BrowsersPreferencePage.message"), //$NON-NLS-1$
+					Messages.BrowsersPreferencePage_message, 
 					(IWorkbenchPreferenceContainer)getContainer(),
 					null);
 	        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -167,11 +166,11 @@ public class BrowsersPreferencePage extends PreferencePage
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(HelpUIResources.getString("BrowsersPreferencePage.wgroup")); //$NON-NLS-1$
+		group.setText(Messages.BrowsersPreferencePage_wgroup); 
 		whelpAsViewButton = new Button(group, SWT.RADIO);
-		whelpAsViewButton.setText(HelpUIResources.getString("BrowsersPreferencePage.view")); //$NON-NLS-1$
+		whelpAsViewButton.setText(Messages.BrowsersPreferencePage_view); 
 		whelpAsInfopopButton = new Button(group, SWT.RADIO);
-		whelpAsInfopopButton.setText(HelpUIResources.getString("BrowsersPreferencePage.winfopop")); //$NON-NLS-1$
+		whelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_winfopop); 
 		boolean winfopop = HelpBasePlugin.getDefault()
 		.getPluginPreferences().getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
 		whelpAsViewButton.setSelection(!winfopop);
@@ -183,11 +182,11 @@ public class BrowsersPreferencePage extends PreferencePage
 		group = new Group(parent, SWT.NONE);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 		group.setLayout(layout);
-		group.setText(HelpUIResources.getString("BrowsersPreferencePage.dgroup")); //$NON-NLS-1$
+		group.setText(Messages.BrowsersPreferencePage_dgroup); 
 		dhelpAsWindowButton = new Button(group, SWT.RADIO);
-		dhelpAsWindowButton.setText(HelpUIResources.getString("BrowsersPreferencePage.window")); //$NON-NLS-1$
+		dhelpAsWindowButton.setText(Messages.BrowsersPreferencePage_window); 
 		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
-		dhelpAsInfopopButton.setText(HelpUIResources.getString("BrowsersPreferencePage.dinfopop")); //$NON-NLS-1$
+		dhelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_dinfopop); 
 		boolean dinfopop = HelpUIPlugin.getDefault()
 		.getPluginPreferences().getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
