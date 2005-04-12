@@ -124,11 +124,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
 
 		if (configSite.isNativelyLinked()) {
-			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.AlreadyNativelyLinked"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.InstallConfiguration_AlreadyNativelyLinked, null); 
 		}
 		
 		if (configSite.isProductSite()) {
-			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.AlreadyProductSite"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.InstallConfiguration_AlreadyProductSite, null); 
 		}
 		
 		if (site != null) {
@@ -419,7 +419,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(NLS.bind("InstallConfiguration.UnableToCreateURL", (new String[] { cSite.getPlatformURLString() })), e); //$NON-NLS-1$
 		} catch (ClassCastException e) {
-			throw Utilities.newCoreException(Messages.bind("InstallConfiguration.UnableToCast"), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.InstallConfiguration_UnableToCast, e);	
 		}
 
 		// update runtime configuration [18520]
@@ -520,7 +520,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			} catch (MalformedURLException e) {
 				UpdateCore.warn(NLS.bind("InstallConfiguration.UnableToCreateURL", (new String[] { configurationSites[i].getPlatformURLString() })), e); //$NON-NLS-1$
 			} catch (ClassCastException e) {
-				UpdateCore.warn(Messages.bind("InstallConfiguration.UnableToCast"), e);//$NON-NLS-1$
+				UpdateCore.warn(Messages.InstallConfiguration_UnableToCast, e);
 			}
 
 			// if the URL doesn't exits log it

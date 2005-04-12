@@ -31,38 +31,6 @@ import org.osgi.framework.*;
  *  
  */
 public class OperationValidator implements IOperationValidator {
-	private static final String KEY_ROOT_MESSAGE =
-		"ActivityConstraints.rootMessage"; //$NON-NLS-1$
-	private static final String KEY_ROOT_MESSAGE_INIT =
-		"ActivityConstraints.rootMessageInitial"; //$NON-NLS-1$
-	private static final String KEY_CHILD_MESSAGE =
-		"ActivityConstraints.childMessage"; //$NON-NLS-1$
-	private static final String KEY_PLATFORM = "ActivityConstraints.platform"; //$NON-NLS-1$
-	private static final String KEY_PRIMARY = "ActivityConstraints.primary"; //$NON-NLS-1$
-	private static final String KEY_OS = "ActivityConstraints.os"; //$NON-NLS-1$
-	private static final String KEY_WS = "ActivityConstraints.ws"; //$NON-NLS-1$
-	private static final String KEY_ARCH = "ActivityConstraints.arch"; //$NON-NLS-1$
-	private static final String KEY_PREREQ = "ActivityConstraints.prereq"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_PLUGIN =
-		"ActivityConstaints.prereq.plugin"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_FEATURE =
-		"ActivityConstaints.prereq.feature"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_PERFECT =
-		"ActivityConstraints.prereqPerfect"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_EQUIVALENT =
-		"ActivityConstraints.prereqEquivalent"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_COMPATIBLE =
-		"ActivityConstraints.prereqCompatible"; //$NON-NLS-1$
-	private static final String KEY_PREREQ_GREATER =
-		"ActivityConstraints.prereqGreaterOrEqual"; //$NON-NLS-1$
-	private static final String KEY_OPTIONAL_CHILD =
-		"ActivityConstraints.optionalChild"; //$NON-NLS-1$
-	private static final String KEY_CYCLE = "ActivityConstraints.cycle"; //$NON-NLS-1$
-	private static final String KEY_CONFLICT = "ActivityConstraints.conflict"; //$NON-NLS-1$
-	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive"; //$NON-NLS-1$
-	private static final String KEY_NO_LICENSE =
-		"ActivityConstraints.noLicense"; //$NON-NLS-1$
-
 	/**
 	 * Checks if the platform configuration has been modified outside this program.
 	 * @return the error status, or null if no errors
@@ -73,7 +41,7 @@ public class OperationValidator implements IOperationValidator {
 		
 		// report status
 		if (status.size() > 0)
-			return createMultiStatus(KEY_ROOT_MESSAGE, status, IStatus.ERROR);
+			return createMultiStatus(Messages.ActivityConstraints_rootMessage, status, IStatus.ERROR);
 		return null;
 	}
 	
@@ -199,7 +167,7 @@ public class OperationValidator implements IOperationValidator {
 
 		// report status
 		if (status.size() > 0)
-			return createMultiStatus(KEY_ROOT_MESSAGE, status, IStatus.ERROR);
+			return createMultiStatus(Messages.ActivityConstraints_rootMessage, status, IStatus.ERROR);
 		return null;
 	}
 
@@ -340,7 +308,7 @@ public class OperationValidator implements IOperationValidator {
 						createStatus(
 							newFeature,
 							FeatureStatus.CODE_EXCLUSIVE,
-							Messages.bind(KEY_EXCLUSIVE)));
+							Messages.ActivityConstraints_exclusive));
 					continue;
 				}
 				checkForCycles(newFeature, null, features);
@@ -410,7 +378,7 @@ public class OperationValidator implements IOperationValidator {
 				status.add(createStatus(
 								null,
 								FeatureStatus.CODE_OTHER,
-								Messages.bind("ActivityConstraints.platformModified"))); //$NON-NLS-1$
+								Messages.ActivityConstraints_platformModified)); 
 		} catch (IOException e) {
 			// ignore
 		}
@@ -487,7 +455,7 @@ public class OperationValidator implements IOperationValidator {
 		// check for <includes> cycle
 		if (visitedFeatures.contains(feature)) {
 			IStatus status =
-			createStatus(top, FeatureStatus.CODE_CYCLE, Messages.bind(KEY_CYCLE));
+			createStatus(top, FeatureStatus.CODE_CYCLE, Messages.ActivityConstraints_cycle);
 			throw new CoreException(status);
 		} else {
 			// keep track of visited features so we can detect cycles
@@ -528,7 +496,7 @@ public class OperationValidator implements IOperationValidator {
 				return;
 		}
 		status.add(
-			createStatus(feature, FeatureStatus.CODE_OTHER, Messages.bind(KEY_NO_LICENSE)));
+			createStatus(feature, FeatureStatus.CODE_OTHER, Messages.ActivityConstraints_noLicense));
 	}
 
 	/*
@@ -661,7 +629,7 @@ public class OperationValidator implements IOperationValidator {
 		
 		// check for <includes> cycle
 		if (candidates.contains(feature)) {
-			String msg = NLS.bind(KEY_CYCLE, (new String[] {feature.getLabel(), 
+			String msg = NLS.bind("ActivityConstraints.cycle", (new String[] {feature.getLabel(), 
             feature.getVersionedIdentifier().toString()}));
 			IStatus status = createStatus(feature, FeatureStatus.CODE_CYCLE, msg);
 			throw new CoreException(status);
@@ -723,7 +691,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.bind(KEY_OS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.ActivityConstraints_os);
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -733,7 +701,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.bind(KEY_WS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.ActivityConstraints_ws);
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -743,7 +711,7 @@ public class OperationValidator implements IOperationValidator {
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
 					IStatus s =
-						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.bind(KEY_ARCH));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, Messages.ActivityConstraints_arch);
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -777,7 +745,7 @@ public class OperationValidator implements IOperationValidator {
 		
 		if (!found) {
 			IStatus s =
-				createStatus(null, FeatureStatus.CODE_OTHER, Messages.bind(KEY_PLATFORM));
+				createStatus(null, FeatureStatus.CODE_OTHER, Messages.ActivityConstraints_platform);
 			if (!status.contains(s))
 				status.add(s);
 		}
@@ -805,7 +773,7 @@ public class OperationValidator implements IOperationValidator {
 					return;
 			}
 	
-			IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, Messages.bind(KEY_PRIMARY));
+			IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, Messages.ActivityConstraints_primary);
 			if (!status.contains(s))
 				status.add(s);
 		} else {
@@ -824,7 +792,7 @@ public class OperationValidator implements IOperationValidator {
 				}
 			}
 			IStatus s =
-				createStatus(null, FeatureStatus.CODE_OTHER, Messages.bind(KEY_PRIMARY));
+				createStatus(null, FeatureStatus.CODE_OTHER, Messages.ActivityConstraints_primary);
 			if (!status.contains(s))
 				status.add(s);
 		}
@@ -911,36 +879,36 @@ public class OperationValidator implements IOperationValidator {
 					// report status
 					String target =
 						featurePrereq
-							? Messages.bind(KEY_PREREQ_FEATURE)
-							: Messages.bind(KEY_PREREQ_PLUGIN);
+							? Messages.ActivityConstaints_prereq_feature
+							: Messages.ActivityConstaints_prereq_plugin;
 					int errorCode = featurePrereq
 							? FeatureStatus.CODE_PREREQ_FEATURE
 							: FeatureStatus.CODE_PREREQ_PLUGIN;
 					String msg =
-						NLS.bind(KEY_PREREQ, (new String[] { target, id }));
+						NLS.bind("ActivityConstraints.prereq", (new String[] { target, id }));
 
 					if (!ignoreVersion) {
 						if (rule == IImport.RULE_PERFECT)
 							msg =
-								NLS.bind(KEY_PREREQ_PERFECT, (new String[] {
+								NLS.bind("ActivityConstraints.prereqPerfect", (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_EQUIVALENT)
 							msg =
-								NLS.bind(KEY_PREREQ_EQUIVALENT, (new String[] {
+								NLS.bind("ActivityConstraints.prereqEquivalent", (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_COMPATIBLE)
 							msg =
-								NLS.bind(KEY_PREREQ_COMPATIBLE, (new String[] {
+								NLS.bind("ActivityConstraints.prereqCompatible", (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
-								NLS.bind(KEY_PREREQ_GREATER, (new String[] {
+								NLS.bind("ActivityConstraints.prereqGreaterOrEqual", (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
@@ -1023,7 +991,7 @@ public class OperationValidator implements IOperationValidator {
 		if (included) {
 			// feature is included as optional but
 			// no parent is currently configured.
-			String msg = Messages.bind(KEY_OPTIONAL_CHILD);
+			String msg = Messages.ActivityConstraints_optionalChild;
 			status.add(createStatus(feature, FeatureStatus.CODE_OPTIONAL_CHILD, msg));
 		} else {
 			//feature is root - can be configured
@@ -1133,12 +1101,11 @@ public class OperationValidator implements IOperationValidator {
 //	}
 
 	private static IStatus createMultiStatus(
-		String rootKey,
+		String message,
 		ArrayList children,
 		int code) {
 		IStatus[] carray =
 			(IStatus[]) children.toArray(new IStatus[children.size()]);
-		String message = Messages.bind(rootKey);
 		return new MultiStatus(
 			UpdateCore.getPlugin().getBundle().getSymbolicName(),
 			code,
@@ -1156,7 +1123,7 @@ public class OperationValidator implements IOperationValidator {
 			PluginVersionIdentifier version =
 				feature.getVersionedIdentifier().getVersion();
 			fullMessage =
-				NLS.bind(KEY_CHILD_MESSAGE, (new String[] {
+				NLS.bind("ActivityConstraints.childMessage", (new String[] {
                 feature.getLabel(),
                 version.toString(),
                 message }));
@@ -1191,8 +1158,7 @@ public class OperationValidator implements IOperationValidator {
 			if (status.size() == 0) {
 				return null; // all fine
 			} else {
-				return createMultiStatus(
-					KEY_ROOT_MESSAGE,
+				return createMultiStatus(Messages.ActivityConstraints_rootMessage,
 					status,
 					IStatus.ERROR);
 				// error after operation
@@ -1203,7 +1169,7 @@ public class OperationValidator implements IOperationValidator {
 			} else {
 				if (isBetterStatus(beforeStatus, status)) {
 					return createMultiStatus(
-						"ActivityConstraints.warning", //$NON-NLS-1$
+						Messages.ActivityConstraints_warning,
 						beforeStatus,
 						IStatus.WARNING);
 					// errors may be fixed
@@ -1220,7 +1186,7 @@ public class OperationValidator implements IOperationValidator {
 							status,
 							IStatus.ERROR));
 					return createMultiStatus(
-						KEY_ROOT_MESSAGE_INIT,
+						"ActivityConstraints.rootMessageInitial",
 						combined,
 						IStatus.ERROR);
 				}

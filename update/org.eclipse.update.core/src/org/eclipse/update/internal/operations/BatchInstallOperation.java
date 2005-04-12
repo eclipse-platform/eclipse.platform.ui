@@ -22,7 +22,6 @@ public class BatchInstallOperation
 	extends Operation
 	implements IBatchOperation {
 		
-	private static final String KEY_INSTALLING = "OperationsManager.installing"; //$NON-NLS-1$
 	protected IInstallFeatureOperation[] operations;
 
 	public BatchInstallOperation(IInstallFeatureOperation[] operations) {
@@ -73,7 +72,7 @@ public class BatchInstallOperation
 				listener.beforeExecute(this, null);
 			
 			monitor.beginTask(
-				Messages.bind(KEY_INSTALLING),
+				Messages.OperationsManager_installing,
 				operations.length);
 			for (int i = 0; i < operations.length; i++) {
 				SubProgressMonitor subMonitor =

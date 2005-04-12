@@ -164,7 +164,7 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>"; //$NON-NLS-1$
 			UpdateCore.warn(NLS.bind("Site.CannotFindCategory", (new String[] { key, URLString }))); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateCore.warn(Messages.bind("Site.NoCategories"));	//$NON-NLS-1$
+				UpdateCore.warn(Messages.Site_NoCategories);	
 		}
 
 		return result;
@@ -274,7 +274,7 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 	 */
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
-			throw Utilities.newCoreException(Messages.bind("Site.NoContentProvider"), null);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.Site_NoContentProvider, null);	
 		}
 		return siteContentProvider;
 	}

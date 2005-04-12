@@ -87,9 +87,9 @@ public class SiteModelFactory {
 				throw (InvalidSiteTypeException) e.getException();
 			}
 
-			throw Utilities.newCoreException(Messages.bind("SiteModelObject.ErrorParsingSiteStream"),e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.SiteModelObject_ErrorParsingSiteStream,e); 
 		} catch (IOException e){
-			throw Utilities.newCoreException(Messages.bind("SiteModelObject.ErrorAccessingSiteStream"),e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.SiteModelObject_ErrorAccessingSiteStream,e); 
 		}
 		return result;
 	}

@@ -41,7 +41,7 @@ public class CmdLineArgs {
 					StandaloneUpdateApplication.exceptionLogged();
 					UpdateCore.log(
 						Utilities.newCoreException(
-							Messages.bind("Standalone.invalidCmd") + args[i + 1], //$NON-NLS-1$
+							Messages.Standalone_invalidCmd + args[i + 1], 
 							null));
 					return;
 				}

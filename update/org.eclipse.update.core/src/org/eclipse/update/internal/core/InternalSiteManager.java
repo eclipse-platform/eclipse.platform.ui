@@ -132,7 +132,7 @@ public class InternalSiteManager {
 		}
 
 		//PERF: if file: <path>/ and directory exists then consider executable
-		monitor.beginTask(Messages.bind("InternalSiteManager.ConnectingToSite"), 8); //$NON-NLS-1$
+		monitor.beginTask(Messages.InternalSiteManager_ConnectingToSite, 8); 
 		if (fileProtocol && directoryExists) {
 			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
 			monitor.worked(4); // only one attempt
@@ -151,7 +151,7 @@ public class InternalSiteManager {
 						site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
 					} catch (CoreException retryException) {
 						IStatus firstStatus = preservedException.getStatus();
-						MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Messages.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
+						MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Messages.InternalSiteManager_FailedRetryAccessingSite, retryException); 
 						multi.addAll(firstStatus);
 						throw preservedException;
 					}

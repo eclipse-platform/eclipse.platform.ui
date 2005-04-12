@@ -89,7 +89,7 @@ public class FeatureModelFactory {
                 throw new CoreException(status);
             }
         } catch (IOException e) {
-            throw Utilities.newCoreException(Messages.bind("FeatureModelFactory.ErrorAccesingFeatureStream"), e); //$NON-NLS-1$
+            throw Utilities.newCoreException(Messages.FeatureModelFactory_ErrorAccesingFeatureStream, e); 
         }
         return featureModel;
     }

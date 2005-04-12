@@ -85,7 +85,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(NLS.bind("SiteFileFactory.UnableToCreateURL", (new String[] { url == null ? "" : url.toExternalForm() })), e);	//$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Messages.bind("SiteFileFactory.UnableToAccessSite"),ISite.SITE_ACCESS_EXCEPTION, e);//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.SiteFileFactory_UnableToAccessSite,ISite.SITE_ACCESS_EXCEPTION, e);
 		} finally {
 			try {
 				if (siteStream != null)

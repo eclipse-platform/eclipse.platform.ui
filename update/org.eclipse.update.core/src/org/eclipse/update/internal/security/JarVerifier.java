@@ -161,7 +161,7 @@ public class JarVerifier extends Verifier {
 				}
 			}
 		} catch (KeyStoreException e) {
-			throw Utilities.newCoreException(Messages.bind("JarVerifier.KeyStoreNotLoaded"), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.JarVerifier_KeyStoreNotLoaded, e); 
 		}
 		return false;
 	}

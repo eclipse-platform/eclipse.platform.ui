@@ -103,7 +103,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private URL validate(URL url) throws CoreException {
 
 		if (url == null)
-			throw Utilities.newCoreException(Messages.bind("FeatureExecutableFactory.NullURL"), null); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.FeatureExecutableFactory_NullURL, null); 
 
 		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))) { //$NON-NLS-1$
 			try {

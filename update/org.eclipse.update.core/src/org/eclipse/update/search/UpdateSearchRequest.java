@@ -214,7 +214,7 @@ public class UpdateSearchRequest {
 			int ntasks = nsearchsites + queries.length * candidates.length;
 			if (updateMapURL!=null) ntasks++;
 
-			monitor.beginTask(Messages.bind("UpdateSearchRequest.searching"), ntasks); //$NON-NLS-1$
+			monitor.beginTask(Messages.UpdateSearchRequest_searching, ntasks); 
 
 			try {
 				UpdatePolicy updatePolicy=null;
@@ -288,7 +288,7 @@ public class UpdateSearchRequest {
 					"org.eclipse.update.core", //$NON-NLS-1$
 					ISite.SITE_ACCESS_EXCEPTION,
 					children,
-					Messages.bind("Search.networkProblems"), //$NON-NLS-1$
+					Messages.Search_networkProblems, 
 					null);
 			throw new CoreException(multiStatus);
 		}
@@ -321,7 +321,7 @@ public class UpdateSearchRequest {
 		SubProgressMonitor monitor,
 		boolean checkMirrors)
 		throws CoreException {
-		String text = Messages.bind("UpdateSearchRequest.contacting") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$
+		String text = Messages.UpdateSearchRequest_contacting + siteAdapter.getLabel() + "..."; 
 		monitor.subTask(text);
 		monitor.beginTask("", 10); //$NON-NLS-1$
 		URL siteURL = siteAdapter.getURL();
@@ -361,7 +361,7 @@ public class UpdateSearchRequest {
 			return status;
 		}
 
-		text = Messages.bind("UpdateSearchRequest.checking") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$
+		text = Messages.UpdateSearchRequest_checking + siteAdapter.getLabel() + "..."; 
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		query.run(

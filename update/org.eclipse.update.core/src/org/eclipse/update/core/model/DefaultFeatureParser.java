@@ -143,7 +143,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
-			throw new SAXException(Messages.bind("DefaultFeatureParser.NoFeatureTag")); //$NON-NLS-1$
+			throw new SAXException(Messages.DefaultFeatureParser_NoFeatureTag); 
 		else {
 			if (objectStack.peek() instanceof FeatureModel) {
 				return (FeatureModel) objectStack.pop();
@@ -198,7 +198,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			case STATE_URL :
 				if (URL_ALREADY_SEEN)
-					internalError(Messages.bind("DefaultFeatureParser.TooManyURLtag")); //$NON-NLS-1$
+					internalError(Messages.DefaultFeatureParser_TooManyURLtag); 
 				handleURLState(localName, attributes);
 				break;
 
@@ -251,7 +251,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_INITIAL :
-				internalError(Messages.bind("DefaultFeatureParser.ParsingStackBackToInitialState")); //$NON-NLS-1$
+				internalError(Messages.DefaultFeatureParser_ParsingStackBackToInitialState); 
 				break;
 
 			case STATE_FEATURE :
@@ -424,7 +424,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 					featureModel = (FeatureModel) objectStack.peek();
 					ImportModel[] importModels = featureModel.getImportModels();
 					if (importModels.length == 0) {
-						internalError(Messages.bind("DefaultFeatureParser.RequireStateWithoutImportElement")); //$NON-NLS-1$
+						internalError(Messages.DefaultFeatureParser_RequireStateWithoutImportElement); 
 					} else {
 						boolean patchMode = false;
 						for (int i = 0; i < importModels.length; i++) {
@@ -433,7 +433,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 								if (patchMode == false)
 									patchMode = true;
 								else {
-									internalError(Messages.bind("DefaultFeatureParser.MultiplePatchImports")); //$NON-NLS-1$
+									internalError(Messages.DefaultFeatureParser_MultiplePatchImports); 
 									break;
 								}
 							}
@@ -476,7 +476,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag(Messages.bind("DefaultFeatureParser.UnknownEndState") + state);//$NON-NLS-1$
+				internalErrorUnknownTag(Messages.DefaultFeatureParser_UnknownEndState + state);
 				break;
 		}
 
@@ -887,7 +887,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String idMatch = attributes.getValue("id-match"); //$NON-NLS-1$
 
 		if (!(pluginID == null ^ featureID == null)) {
-			internalError(Messages.bind("DefaultFeatureParser.PluginAndFeatureId")); //$NON-NLS-1$
+			internalError(Messages.DefaultFeatureParser_PluginAndFeatureId); 
 			return;
 		}
 
@@ -911,7 +911,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			if (ver == null) {
 				if (imp.isPatch()) {
-					internalError(Messages.bind("DefaultFeatureParser.MissingPatchVersion")); //$NON-NLS-1$
+					internalError(Messages.DefaultFeatureParser_MissingPatchVersion); 
 				}
 				ver = "0.0.0"; //$NON-NLS-1$
 				match = "greaterOrEqual"; //$NON-NLS-1$
@@ -931,11 +931,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 			if (imp.isPatch()) {
 				// patch reference must be perfect.
 				if (match != null && !match.equalsIgnoreCase("perfect")) { //$NON-NLS-1$
-					internalError(Messages.bind("DefaultFeatureParser.wrongMatchForPatch")); //$NON-NLS-1$
+					internalError(Messages.DefaultFeatureParser_wrongMatchForPatch); 
 				}
 				if (imp.isFeatureImport() == false) {
 					imp.setPatch(false);
-					internalError(Messages.bind("DefaultFeatureParser.patchWithPlugin")); //$NON-NLS-1$
+					internalError(Messages.DefaultFeatureParser_patchWithPlugin); 
 				}
 			}
 
@@ -1132,7 +1132,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private void error(IStatus error) {
 
 		if (status == null) {
-			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Messages.bind("DefaultFeatureParser.ErrorParsingFeature"), null);	//$NON-NLS-1$
+			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Messages.DefaultFeatureParser_ErrorParsingFeature, null);	
 		}
 
 		status.add(error);

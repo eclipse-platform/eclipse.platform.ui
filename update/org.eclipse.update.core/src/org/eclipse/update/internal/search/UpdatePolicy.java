@@ -113,13 +113,13 @@ public class UpdatePolicy {
 				e);
 		} catch (SAXException e) {
 			throw Utilities.newCoreException(
-				Messages.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
+				Messages.UpdatePolicy_parsePolicy, 
 				0,
 				e);
 
 		} catch(ParserConfigurationException e) {
 			throw Utilities.newCoreException(
-				Messages.bind("UpdatePolicy.parsePolicy"), //$NON-NLS-1$
+				Messages.UpdatePolicy_parsePolicy, 
 				0,
 				e);
 		} finally {
@@ -218,7 +218,7 @@ public class UpdatePolicy {
 		reset();
 		
 		if (root.getNodeName().equals(TAG_POLICY)==false)
-			throwCoreException("'"+TAG_POLICY+Messages.bind("UpdatePolicy.policyExpected"), null); //$NON-NLS-1$ //$NON-NLS-2$
+			throwCoreException("'"+TAG_POLICY+Messages.UpdatePolicy_policyExpected, null); 
 				
 		NodeList nodes = root.getChildNodes();
 		
@@ -251,14 +251,14 @@ public class UpdatePolicy {
 			URL url = new URL(decodedValue);
 			addUpdateEntry(pattern, url, type);
 		} catch (MalformedURLException e) {
-			throwCoreException(Messages.bind("UpdatePolicy.invalidURL")+urlName, null); //$NON-NLS-1$
+			throwCoreException(Messages.UpdatePolicy_invalidURL+urlName, null); 
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
 	
 	private void assertNotNull(String name, String value) throws CoreException {
 		if (value==null)
-			throwCoreException(name+Messages.bind("UpdatePolicy.nameNoNull"), null); //$NON-NLS-1$
+			throwCoreException(name+Messages.UpdatePolicy_nameNoNull, null); 
 	}
 	
 	private String getAttribute(Node node, String name) {
@@ -295,7 +295,7 @@ public class UpdatePolicy {
 	}
 	
 	private void throwCoreException(String message, Throwable e) throws CoreException {
-		String fullMessage = Messages.bind("UpdatePolicy.UpdatePolicy")+message; //$NON-NLS-1$
+		String fullMessage = Messages.UpdatePolicy_UpdatePolicy+message; 
 		throw Utilities.newCoreException(fullMessage, 0, e);
 	}
 }

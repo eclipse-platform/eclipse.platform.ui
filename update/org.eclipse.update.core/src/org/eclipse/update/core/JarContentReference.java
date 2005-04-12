@@ -176,7 +176,7 @@ public class JarContentReference extends ContentReference {
 		try {
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName(Messages.bind("JarContentReference.Unpacking"));	//$NON-NLS-1$
+				monitor.setTaskName(Messages.JarContentReference_Unpacking);	
 				monitor.subTask(this.getIdentifier());
 				monitor.showCopyDetails(false);
 			}

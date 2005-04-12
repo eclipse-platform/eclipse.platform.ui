@@ -58,7 +58,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			URL newURL = new URL(getSite().getURL(), path);
 			featurePath = newURL.getFile();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Messages.bind("SiteFileContentConsumer.UnableToCreateURL") + e.getMessage(), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.SiteFileContentConsumer_UnableToCreateURL + e.getMessage(), e);	
 		}
 		return featurePath;
 	}

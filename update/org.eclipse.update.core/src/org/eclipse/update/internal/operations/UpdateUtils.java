@@ -525,7 +525,7 @@ public class UpdateUtils {
 	 * Load the update map using the map URL found in the scope.
 	 */	
 	public static IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask(Messages.bind("UpdateSearchRequest.loadingPolicy")); //$NON-NLS-1$
+		monitor.subTask(Messages.UpdateSearchRequest_loadingPolicy); 
 		try {
 			map.load(url, monitor);
 			monitor.worked(1);

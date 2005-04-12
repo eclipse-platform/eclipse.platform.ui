@@ -180,8 +180,7 @@ public class UpdateJob extends Job {
             IStatus[] children = (IStatus[]) statusList
                     .toArray(new IStatus[statusList.size()]);
             return new MultiStatus("org.eclipse.update.ui", //$NON-NLS-1$
-                    ISite.SITE_ACCESS_EXCEPTION, children, Messages
-                            .bind("Search.networkProblems"), //$NON-NLS-1$
+                    ISite.SITE_ACCESS_EXCEPTION, children, Messages.Search_networkProblems, //$NON-NLS-1$
                     null);
         }
     }

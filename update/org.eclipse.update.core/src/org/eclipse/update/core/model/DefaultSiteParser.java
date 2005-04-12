@@ -125,7 +125,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
-			throw new SAXException(Messages.bind("DefaultSiteParser.NoSiteTag"));	//$NON-NLS-1$
+			throw new SAXException(Messages.DefaultSiteParser_NoSiteTag);	
 		else {
 			if (objectStack.peek() instanceof SiteModel) {
 				return (SiteModel) objectStack.pop();
@@ -227,7 +227,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 
 			case STATE_INITIAL :
-				internalError(Messages.bind("DefaultSiteParser.ParsingStackBackToInitialState"));	//$NON-NLS-1$
+				internalError(Messages.DefaultSiteParser_ParsingStackBackToInitialState);	
 				break;
 
 			case STATE_SITE :
@@ -362,7 +362,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else {
 			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) })));	//$NON-NLS-1$
 			// what we received was not a site.xml, no need to continue
-			throw new SAXException(Messages.bind("DefaultSiteParser.InvalidXMLStream")); //$NON-NLS-1$
+			throw new SAXException(Messages.DefaultSiteParser_InvalidXMLStream); 
 		}
 
 	}
@@ -673,7 +673,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void error(IStatus error) {
 
 		if (status == null) {
-			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Messages.bind("DefaultSiteParser.ErrorParsingSite"), null);//$NON-NLS-1$
+			status = new MultiStatus(PLUGIN_ID, Platform.PARSE_PROBLEM, Messages.DefaultSiteParser_ErrorParsingSite, null);
 		}
 
 		status.add(error);
@@ -730,7 +730,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				return "Description / Site"; //$NON-NLS-1$
 
 			default :
-				return Messages.bind("DefaultSiteParser.UnknownState"); //$NON-NLS-1$
+				return Messages.DefaultSiteParser_UnknownState; 
 		}
 	}
 	private boolean leadingSpace(String str) {
@@ -778,7 +778,7 @@ public class DefaultSiteParser extends DefaultHandler {
 					|| mirrorsURL.startsWith("file://")
 					|| mirrorsURL.startsWith("ftp://")
 					|| mirrorsURL.startsWith("jar://")))
-		    	UpdateCore.log(Messages.bind("DefaultSiteParser.mirrors"), e);
+		    	UpdateCore.log(Messages.DefaultSiteParser_mirrors, e);
 			return null;
 		}
 	}

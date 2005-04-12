@@ -111,7 +111,7 @@ public class InstallLogParser {
 				IStatus.ERROR,
 				UpdateUtils.getPluginId(),
 				IStatus.ERROR,
-				Messages.bind("InstallLogParser.errors"), //$NON-NLS-1$
+				Messages.InstallLogParser_errors, 
 				e));
 	}
 	

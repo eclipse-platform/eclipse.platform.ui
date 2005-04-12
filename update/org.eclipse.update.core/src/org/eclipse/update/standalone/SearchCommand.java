@@ -58,7 +58,7 @@ public class SearchCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask(Messages.bind("Standalone.searching") + remoteSiteURL.toExternalForm(), 4); //$NON-NLS-1$
+			monitor.beginTask(Messages.Standalone_searching + remoteSiteURL.toExternalForm(), 4); 
 			searchRequest.performSearch(collector, monitor);
 			return true;
 		} catch (CoreException ce) {
@@ -67,7 +67,7 @@ public class SearchCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println(Messages.bind("Standalone.connection")); //$NON-NLS-1$
+				System.out.println(Messages.Standalone_connection); 
 			} else {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(ce);

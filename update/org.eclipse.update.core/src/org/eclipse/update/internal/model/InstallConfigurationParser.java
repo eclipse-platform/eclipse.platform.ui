@@ -134,7 +134,7 @@ public class InstallConfigurationParser {
 			}
 
 		} else {
-			UpdateCore.log( Messages.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception()); //$NON-NLS-1$
+			UpdateCore.log( Messages.InstallConfigurationParser_FeatureReferenceNoURL, new Exception()); 
 		}
 
 	}

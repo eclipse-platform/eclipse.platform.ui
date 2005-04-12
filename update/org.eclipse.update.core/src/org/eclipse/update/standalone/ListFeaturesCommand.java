@@ -39,16 +39,16 @@ public class ListFeaturesCommand extends ScriptedCommand {
 			if (fromSite != null) {
 				File sitePath = new File(fromSite);
 				if (!sitePath.exists())
-					throw new Exception(Messages.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.Standalone_noSite + fromSite); 
 					
 				URL fromSiteURL = sitePath.toURL();
 				ISite site = SiteManager.getSite(fromSiteURL, null);
 				if (site == null) {
-					throw new Exception(Messages.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.Standalone_noSite + fromSite); 
 				}
 				IConfiguredSite csite = site.getCurrentConfiguredSite();
 				if (csite == null)
-					throw new Exception(Messages.bind("Standalone.noConfiguredSite") + fromSite); //$NON-NLS-1$
+					throw new Exception(Messages.Standalone_noConfiguredSite + fromSite); 
 				sites = new IConfiguredSite[] { csite };
 			} 
 		

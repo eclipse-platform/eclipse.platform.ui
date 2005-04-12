@@ -52,7 +52,7 @@ public class EnableCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					throw new Exception(Messages.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
+					throw new Exception(Messages.Standalone_noSite + toSite); 
 				}
 				targetSite =
 					SiteManager

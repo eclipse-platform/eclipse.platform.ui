@@ -457,7 +457,7 @@ public class Feature extends FeatureModel implements IFeature {
 
 				String msg = ""; //$NON-NLS-1$
 				subMonitor = new SubProgressMonitor(monitor, 1);
-				msg = Messages.bind("Feature.TaskInstallFeatureFiles"); //$NON-NLS-1$
+				msg = Messages.Feature_TaskInstallFeatureFiles; 
 
 				for (int i = 0; i < references.length; i++) {
 					setMonitorTaskName(
@@ -781,7 +781,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public String toString() {
 		String URLString =
 			(getURL() == null)
-				? Messages.bind("Feature.NoURL") //$NON-NLS-1$
+				? Messages.Feature_NoURL
 				: getURL().toExternalForm();
 
 		String verString =
@@ -794,7 +794,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * Installation has been cancelled, abort and revert
 	 */
 	private void abort() throws CoreException {
-		String msg = Messages.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+		String msg = Messages.Feature_InstallationCancelled; 
 		throw new InstallAbortedException(msg, null);
 	}
 
@@ -943,15 +943,14 @@ public class Feature extends FeatureModel implements IFeature {
 					int result = verificationListener.prompt(vr);
 
 					if (result == IVerificationListener.CHOICE_ABORT) {
-						String msg = Messages.bind("JarVerificationService.CancelInstall"); //$NON-NLS-1$
+						String msg = Messages.JarVerificationService_CancelInstall; 
 						Exception e = vr.getVerificationException();
 						throw new InstallAbortedException(msg, e);
 					}
 					if (result == IVerificationListener.CHOICE_ERROR) {
 						throw Utilities
 							.newCoreException(
-								Messages.bind(
-									"JarVerificationService.UnsucessfulVerification"),	//$NON-NLS-1$
+								Messages.JarVerificationService_UnsucessfulVerification,	//$NON-NLS-1$
 						vr.getVerificationException());
 					}
 				}

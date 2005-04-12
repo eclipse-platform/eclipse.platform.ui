@@ -49,14 +49,14 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 				if (loggedException) {
 					System.out.println(NLS.bind("Standalone.cmdCompleteWithErrors", (new String[] { Platform.getLogFileLocation().toOSString() })));//$NON-NLS-1$
 				} else {
-					System.out.println(Messages.bind("Standalone.cmdOK")); //$NON-NLS-1$
+					System.out.println(Messages.Standalone_cmdOK); 
 				}
 				return IPlatformRunnable.EXIT_OK;
 			} else {
 				if (loggedException) {
 					System.out.println(NLS.bind("Standalone.cmdFailed", (new String[] { Platform.getLogFileLocation().toOSString() }))); //$NON-NLS-1$
 				} else {
-					System.out.println(Messages.bind("Standalone.cmdFailedNoLog"));//$NON-NLS-1$
+					System.out.println(Messages.Standalone_cmdFailedNoLog);
 				}
 				return EXIT_ERROR;
 			}

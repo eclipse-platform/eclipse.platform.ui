@@ -209,7 +209,7 @@ public abstract class FeatureContentProvider
 			if (monitor != null) {
 				monitor.saveState();
 				monitor.setTaskName(
-					Messages.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
+					Messages.FeatureContentProvider_Downloading); 
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
@@ -285,7 +285,7 @@ public abstract class FeatureContentProvider
 								new FileFragment(localFile, bytesCopied));
 					}
 					if (monitor.isCanceled()) {
-						String msg = Messages.bind("Feature.InstallationCancelled"); //$NON-NLS-1$
+						String msg = Messages.Feature_InstallationCancelled; 
 						throw new InstallAbortedException(msg, null);
 					} else {
 						throw new FeatureDownloadException(

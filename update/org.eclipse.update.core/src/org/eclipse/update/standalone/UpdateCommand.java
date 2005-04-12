@@ -124,7 +124,7 @@ public class UpdateCommand extends ScriptedCommand {
 			return false;
 		}
 		try {
-			monitor.beginTask(Messages.bind("Standalone.updating"), 4);  //$NON-NLS-1$
+			monitor.beginTask(Messages.Standalone_updating, 4);  
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
@@ -140,7 +140,7 @@ public class UpdateCommand extends ScriptedCommand {
 					getConfiguration());
 			if (conflicts != null) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(Utilities.newCoreException(Messages.bind("Standalone.duplicate"), null)); //$NON-NLS-1$
+				UpdateCore.log(Utilities.newCoreException(Messages.Standalone_duplicate, null)); 
 				return false;
 			}
 			
@@ -160,10 +160,10 @@ public class UpdateCommand extends ScriptedCommand {
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
-						Messages.bind("Standalone.feature") //$NON-NLS-1$
+						Messages.Standalone_feature
 						+ featureId
 						+ " " //$NON-NLS-1$
-						+ Messages.bind("Standalone.updated")); //$NON-NLS-1$
+						+ Messages.Standalone_updated); 
 				return true;
 			} catch (Exception e) {
 				StandaloneUpdateApplication.exceptionLogged();
@@ -179,7 +179,7 @@ public class UpdateCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println(Messages.bind("Standalone.connection")); //$NON-NLS-1$
+				System.out.println(Messages.Standalone_connection); 
 			} else {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(ce);

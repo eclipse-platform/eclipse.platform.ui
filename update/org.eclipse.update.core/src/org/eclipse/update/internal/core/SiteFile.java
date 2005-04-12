@@ -152,7 +152,7 @@ public class SiteFile extends Site {
 			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
 
 			if (monitor != null) {
-				monitor.beginTask(Messages.bind("SiteFile.Removing") + feature.getLabel(), pluginsToRemove.length + 1);	//$NON-NLS-1$
+				monitor.beginTask(Messages.SiteFile_Removing + feature.getLabel(), pluginsToRemove.length + 1);	
 			}
 
 			// remove feature reference from the site

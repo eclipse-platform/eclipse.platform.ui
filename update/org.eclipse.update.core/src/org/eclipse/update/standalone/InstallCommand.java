@@ -87,7 +87,7 @@ public class InstallCommand extends ScriptedCommand {
 			// are we still checking for sites? forget about it
 			if (targetSite == null)
 				throw Utilities.newCoreException(
-						Messages.bind("Standalone.cannotInstall") + featureId + " " + version, //$NON-NLS-1$ //$NON-NLS-2$
+						Messages.Standalone_cannotInstall + featureId + " " + version, 
 						null);
 			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
@@ -119,18 +119,18 @@ public class InstallCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask(Messages.bind("Standalone.installing"), 4); //$NON-NLS-1$
+			monitor.beginTask(Messages.Standalone_installing, 4); 
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				throw Utilities.newCoreException(
-					Messages.bind("Standalone.feature") //$NON-NLS-1$
+					Messages.Standalone_feature
 						+ featureId
 						+ " " //$NON-NLS-1$
 						+ version
-						+ Messages.bind("Standalone.notFound") //$NON-NLS-1$
+						+ Messages.Standalone_notFound
 						+ remoteSiteURL
-						+ Messages.bind("Standalone.newerInstalled"), //$NON-NLS-1$
+						+ Messages.Standalone_newerInstalled, 
 					null);
 			}
 
@@ -140,7 +140,7 @@ public class InstallCommand extends ScriptedCommand {
 					operations,
 					getConfiguration());
 			if (conflicts != null) {
-				throw Utilities.newCoreException(Messages.bind("Standalone.duplicate"), null); //$NON-NLS-1$
+				throw Utilities.newCoreException(Messages.Standalone_duplicate, null); 
 			}
 
 			if (isVerifyOnly()) {
@@ -161,15 +161,15 @@ public class InstallCommand extends ScriptedCommand {
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
-					Messages.bind("Standalone.feature") //$NON-NLS-1$
+					Messages.Standalone_feature
 						+ featureId
 						+ " " //$NON-NLS-1$
 						+ version
-						+ Messages.bind("Standalone.installed")); //$NON-NLS-1$
+						+ Messages.Standalone_installed); 
 				return true;
 			} catch (Exception e) {
 				throw Utilities.newCoreException(
-					Messages.bind("Standalone.cannotInstall") + featureId + " " + version, //$NON-NLS-1$ //$NON-NLS-2$
+					Messages.Standalone_cannotInstall + featureId + " " + version, 
 					e);
 			}
 		} catch (CoreException ce) {
@@ -204,7 +204,7 @@ public class InstallCommand extends ScriptedCommand {
 		URL toSiteURL = sitePath.toURL();
 		ISite site = SiteManager.getSite(toSiteURL, null);
 		if (site == null) {
-			throw new Exception(Messages.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
+			throw new Exception(Messages.Standalone_noSite + toSite); 
 		}
 		IConfiguredSite csite = site.getCurrentConfiguredSite();
 		if (csite == null) {

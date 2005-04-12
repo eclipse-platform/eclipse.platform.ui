@@ -126,7 +126,7 @@ public class SiteStatusAnalyzer {
 
 		// consider disable
 		// check the current feature
-		String msg = Messages.bind("SiteLocal.FeatureDisable"); //$NON-NLS-1$
+		String msg = Messages.SiteLocal_FeatureDisable; 
 		int code = IFeature.STATUS_DISABLED;
 		IStatus featureStatus = getStatus(feature);
 		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -190,19 +190,19 @@ public class SiteStatusAnalyzer {
 		// set message
 		switch (code) {
 			case IFeature.STATUS_HAPPY :
-				msg = Messages.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
+				msg = Messages.SiteLocal_FeatureHappy; 
 				break;
 			case IFeature.STATUS_UNHAPPY :
-				msg = Messages.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
+				msg = Messages.SiteLocal_FeatureUnHappy; 
 				break;
 			case IFeature.STATUS_AMBIGUOUS :
-				msg = Messages.bind("SiteLocal.FeatureAmbiguous"); //$NON-NLS-1$
+				msg = Messages.SiteLocal_FeatureAmbiguous; 
 				break;
 			case IFeature.STATUS_DISABLED :
-				msg = Messages.bind("SiteLocal.FeatureDisable"); //$NON-NLS-1$
+				msg = Messages.SiteLocal_FeatureDisable; 
 				break;
 			default :
-				msg = Messages.bind("SiteLocal.FeatureStatusUnknown"); //$NON-NLS-1$
+				msg = Messages.SiteLocal_FeatureStatusUnknown; 
 				break;
 		}
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -216,8 +216,8 @@ public class SiteStatusAnalyzer {
 	private IStatus status(IPluginEntry[] featurePlugins) {
 		VersionedIdentifier featurePluginID;
 
-		String happyMSG = Messages.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
-		String ambiguousMSG = Messages.bind("SiteLocal.FeatureAmbiguous"); //$NON-NLS-1$
+		String happyMSG = Messages.SiteLocal_FeatureHappy; 
+		String ambiguousMSG = Messages.SiteLocal_FeatureAmbiguous; 
 		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null); //$NON-NLS-1$
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
@@ -266,7 +266,7 @@ public class SiteStatusAnalyzer {
 					multi.addAll(tempmulti);
 				} else {
 					if (multi.getCode() != IFeature.STATUS_UNHAPPY) {
-						String unhappyMSG = Messages.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
+						String unhappyMSG = Messages.SiteLocal_FeatureUnHappy; 
 						MultiStatus newMulti = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_UNHAPPY, unhappyMSG, null);
 						newMulti.addAll(multi);
 						multi = newMulti;

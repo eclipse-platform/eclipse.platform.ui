@@ -54,7 +54,7 @@ public abstract class ModelObject extends PlatformObject {
 	 * @since 2.0
 	 */
 	protected final void assertIsWriteable() {
-		Assert.isTrue(!isReadOnly(), Messages.bind("ModelObject.ModelReadOnly"));	//$NON-NLS-1$
+		Assert.isTrue(!isReadOnly(), Messages.ModelObject_ModelReadOnly);	
 	}
 
 	/**

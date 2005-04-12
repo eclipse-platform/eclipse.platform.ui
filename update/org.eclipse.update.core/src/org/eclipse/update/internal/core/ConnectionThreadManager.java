@@ -163,7 +163,7 @@ public class ConnectionThreadManager {
 					pluginId,
 					IStatus.OK,
 					(IStatus[]) children.toArray(new IStatus[children.size()]),
-					Messages.bind("ConnectionThreadManager.tooManyConnections"), //$NON-NLS-1$
+					Messages.ConnectionThreadManager_tooManyConnections, 
 					null);
 			throw new CoreException(parentStatus);
 		}

@@ -306,7 +306,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				continue;
 			// do not accept updates without a license
 			if (!UpdateUtils.hasLicense(job.getFeature())) {
-				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Messages.bind("DefaultFeatureParser.NoLicenseText"), null); //$NON-NLS-1$ //$NON-NLS-2$
+				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Messages.DefaultFeatureParser_NoLicenseText, null); 
 				continue;
 			}
 			IStatus status;
@@ -346,7 +346,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			}
 		} catch (CoreException e) {
 			UpdateCore.log(
-				Messages.bind("UpdatesSearchCategory.errorSearchingForUpdates"), //$NON-NLS-1$
+				Messages.UpdatesSearchCategory_errorSearchingForUpdates, 
 				e);
 		}
 	}

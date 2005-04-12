@@ -250,8 +250,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Messages.bind(
-					"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef") //$NON-NLS-1$
+				Messages.FeatureExecutableContentProvider_UnableToRetriveArchiveContentRef
 					+ pluginEntry.getVersionedIdentifier().toString(),
 				e);
 		}

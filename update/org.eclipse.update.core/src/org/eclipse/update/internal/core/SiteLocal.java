@@ -197,7 +197,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		try {
 			return new InstallConfiguration(getCurrentConfiguration());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Messages.bind("SiteLocal.cloneConfig"), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Messages.SiteLocal_cloneConfig, e); 
 		}
 	}
 

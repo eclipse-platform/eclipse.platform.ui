@@ -876,7 +876,7 @@ public static class Writer {
 		} catch(IOException e){
 			// Log the actual error, as this is no longer
 			// passed up the calling stack
-			UpdateCore.log(Messages.bind("UpdateManagerUtils.copy") + offset, e); //$NON-NLS-1$
+			UpdateCore.log(Messages.UpdateManagerUtils_copy + offset, e); 
 			return offset;
 		} finally {
 			freeBuffer(buf);
