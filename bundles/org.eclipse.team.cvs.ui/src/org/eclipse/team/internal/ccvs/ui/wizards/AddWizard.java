@@ -68,12 +68,14 @@ public class AddWizard extends ResizableWizard {
                                         if (!file.isManaged()) {
                                             if (!file.isIgnored() || file.equals(resource)) {
                                                 final String extension= ((IFile)resource).getFileExtension();
-                                                if (extension != null && !manager.isKnownExtension(extension)) {
-                                                    unadded.add(resource);
-                                                } else {
-                                                    final String name= file.getName();
-                                                    if (extension == null && name != null && !manager.isKnownFilename(name))
+                                                if (manager.getType((IFile)resource) == Team.UNKNOWN) {
+                                                    if (extension != null && !manager.isKnownExtension(extension)) {
                                                         unadded.add(resource);
+                                                    } else {
+                                                        final String name= file.getName();
+                                                        if (extension == null && name != null && !manager.isKnownFilename(name))
+                                                            unadded.add(resource);
+                                                    }
                                                 }
                                             }
                                         }

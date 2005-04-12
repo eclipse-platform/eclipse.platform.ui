@@ -14,9 +14,12 @@ package org.eclipse.team.internal.core;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.team.core.*;
 
 /**
@@ -120,6 +123,7 @@ public class FileContentManager implements IFileContentManager {
     
     private final UserStringMappings fUserExtensionMappings, fUserNameMappings;
     private PluginStringMappings fPluginExtensionMappings;//, fPluginNameMappings;
+    private IContentType textContentType;
     
     public FileContentManager() {
         fUserExtensionMappings= new UserExtensionMappings(PREF_TEAM_EXTENSION_TYPES);
@@ -174,8 +178,30 @@ public class FileContentManager implements IFileContentManager {
         final String extension= getFileExtension(name);
         if (extension != null && (type= getTypeForExtension(extension)) != Team.UNKNOWN)
             return type;
+        
+        if (storage instanceof IFile) {
+            IFile file = (IFile) storage;
+            try {
+                IContentDescription desc = file.getContentDescription();
+                if (desc != null) {
+                    IContentType contentType = desc.getContentType();
+                    IContentType textType = getTextContentType();
+                    if (contentType.isKindOf(textType)) {
+                        return Team.TEXT;
+                    }
+                }
+            } catch (CoreException e) {
+                // Ignore
+            }
+        }
 
         return Team.UNKNOWN;
+    }
+
+    private IContentType getTextContentType() {
+        if (textContentType == null)
+            textContentType = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+        return textContentType;
     }
     
     public IStringMapping[] getDefaultNameMappings() {

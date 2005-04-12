@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -310,14 +311,17 @@ public class CommitWizard extends ResizableWizard {
             
             final SyncInfo info = (SyncInfo)iter.next();
             
-            final String extension= info.getLocal().getFileExtension();
-            if (extension != null && !manager.isKnownExtension(extension)) {
-                extensions.add(extension);
+            IResource local = info.getLocal();
+            if (local instanceof IFile && manager.getType((IFile)local) == Team.UNKNOWN) {
+                final String extension= local.getFileExtension();
+                if (extension != null && !manager.isKnownExtension(extension)) {
+                    extensions.add(extension);
+                }
+                
+                final String name= local.getName();
+                if (extension == null && name != null && !manager.isKnownFilename(name))
+                    names.add(name);
             }
-            
-            final String name= info.getLocal().getName();
-            if (extension == null && name != null && !manager.isKnownFilename(name))
-                names.add(name);
         }
     }
     
