@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
@@ -66,7 +66,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		GridLayout layout = new GridLayout();
 		client.setLayout(layout);
 		
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.LicensePage2"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.LicensePage2"); //$NON-NLS-1$
 
 		if (multiLicenseMode) {
 			layout.numColumns = 3;

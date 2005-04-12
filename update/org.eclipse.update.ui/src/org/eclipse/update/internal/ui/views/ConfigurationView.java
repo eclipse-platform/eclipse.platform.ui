@@ -25,9 +25,9 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.branding.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -413,7 +413,7 @@ public class ConfigurationView
 			}
 		};
 		OperationsManager.addUpdateModelChangedListener(modelListener);
-		WorkbenchHelp.setHelp(
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			getControl(),
 			"org.eclipse.update.ui.ConfigurationView"); //$NON-NLS-1$
 	}
@@ -491,7 +491,7 @@ public class ConfigurationView
 		siteStateAction = new SiteStateAction(getConfigurationWindow().getShell());
 
 		revertAction = new RevertConfigurationAction(getConfigurationWindow().getShell(),UpdateUIMessages.ConfigurationView_revertLabel); 
-		WorkbenchHelp.setHelp(
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			revertAction,
 			"org.eclipse.update.ui.CofigurationView_revertAction"); //$NON-NLS-1$
 
@@ -510,7 +510,7 @@ public class ConfigurationView
 			new PropertyDialogAction(
 				getConfigurationWindow().getShell(),
 				treeViewer);
-		WorkbenchHelp.setHelp(
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			propertiesAction,
 			"org.eclipse.update.ui.CofigurationView_propertiesAction"); //$NON-NLS-1$
 
@@ -527,7 +527,7 @@ public class ConfigurationView
 			new FindUpdatesAction(getControl().getShell(), UpdateUIMessages.ConfigurationView_findUpdates); 
 
 		showActivitiesAction = new ShowActivitiesAction(getControl().getShell(), UpdateUIMessages.ConfigurationView_showActivitiesLabel); 
-		WorkbenchHelp.setHelp(
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			showActivitiesAction,
 			"org.eclipse.update.ui.ConfigurationView_showActivitiesAction"); //$NON-NLS-1$
 
@@ -588,7 +588,7 @@ public class ConfigurationView
 				treeViewer.refresh();
 			}
 		};
-		WorkbenchHelp.setHelp(
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			showUnconfFeaturesAction,
 			"org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction"); //$NON-NLS-1$
 		showUnconfFeaturesAction.setText(UpdateUIMessages.ConfigurationView_showDisabled); 

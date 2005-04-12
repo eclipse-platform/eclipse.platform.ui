@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.internal.ui.wizards.BannerPage;
@@ -56,7 +56,7 @@ public class JarVerificationPage extends BannerPage {
 	 * Method declared on Dialog.
 	 */
 	protected Control createContents(Composite compositeParent) {
-		WorkbenchHelp.setHelp(compositeParent, "org.eclipse.update.ui.JarVerificationPage"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(compositeParent, "org.eclipse.update.ui.JarVerificationPage"); //$NON-NLS-1$
 		// Composite: Client
 		//------------------
 		Composite compositeClient = new Composite(compositeParent, SWT.NULL);

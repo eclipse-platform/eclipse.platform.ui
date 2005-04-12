@@ -22,7 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -195,7 +195,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
 		
 		Dialog.applyDialogFont(parent);
 		

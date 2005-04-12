@@ -15,7 +15,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.*;
 
 /**
@@ -110,7 +110,7 @@ public class UserValidationDialog extends Dialog {
 
 		createUsernameFields(main);
 		createPasswordFields(main);
-		WorkbenchHelp.setHelp(main,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(main,
 				"org.eclipse.update.ui.UserValidationDialog"); //$NON-NLS-1$
 		return main;
 	}

@@ -13,9 +13,9 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -94,7 +94,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 		//factory.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_ROLLOVER);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		taskList.setLayoutData(td);
-		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.update.ui.SiteForm"); //$NON-NLS-1$
 	}
 	public void setSelection(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();

@@ -21,7 +21,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -145,7 +145,7 @@ public class TargetSiteDialog extends Dialog {
 		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(deleteButton);		
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
 		Dialog.applyDialogFont(parent);
         
         siteViewer.setInput(job);

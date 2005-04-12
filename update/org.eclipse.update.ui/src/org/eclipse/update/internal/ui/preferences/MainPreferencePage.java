@@ -22,7 +22,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
@@ -70,7 +69,7 @@ public class MainPreferencePage
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.MainPreferencePage"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.update.ui.MainPreferencePage"); //$NON-NLS-1$
 
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
