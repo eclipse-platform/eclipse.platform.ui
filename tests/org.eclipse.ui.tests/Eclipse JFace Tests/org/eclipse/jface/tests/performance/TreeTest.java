@@ -114,7 +114,6 @@ public class TreeTest extends ViewerTest {
 
 	/**
 	 * Test addition to the tree.
-	 * 
 	 */
 	public void testAdd() {
 		openBrowser();
@@ -133,10 +132,34 @@ public class TreeTest extends ViewerTest {
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
+	/**
+	 * Test addition to the tree one element at a time.
+	 */
+	public void testAddOneAtATime() {
+		openBrowser();
+		for (int i = 0; i < 25; i++) {
+
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			processEvents();
+			startMeasuring();
+			for (int j = 0; j < input.children.length; j++) {
+				
+				viewer.add(input, input.children[j]);
+				processEvents();
+				
+			}
+			stopMeasuring();
+		}
+
+		commitMeasurements();
+		assertPerformance();
+	}
+
 	/**
 	 * Test addition to the tree with the items presorted.
-	 * 
 	 */
 	public void testAddPreSort() {
 		openBrowser();
@@ -145,7 +168,7 @@ public class TreeTest extends ViewerTest {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
-			viewer.getSorter().sort(viewer,input.children);
+			viewer.getSorter().sort(viewer, input.children);
 			processEvents();
 			startMeasuring();
 			viewer.add(input, input.children);
@@ -156,6 +179,5 @@ public class TreeTest extends ViewerTest {
 		commitMeasurements();
 		assertPerformance();
 	}
-
 
 }
