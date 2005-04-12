@@ -7,7 +7,7 @@ Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: 
- org.osgi.service.prefs; specification-version=1.0,
+ org.osgi.service.prefs; version=1.0,
  org.eclipse.core.internal.registry,
  org.eclipse.core.internal.runtime,
  org.eclipse.core.internal.preferences,
