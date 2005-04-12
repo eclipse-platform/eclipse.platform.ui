@@ -14,12 +14,10 @@ package org.eclipse.team.internal.core;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.team.core.*;
 
 /**
@@ -179,19 +177,11 @@ public class FileContentManager implements IFileContentManager {
         if (extension != null && (type= getTypeForExtension(extension)) != Team.UNKNOWN)
             return type;
         
-        if (storage instanceof IFile) {
-            IFile file = (IFile) storage;
-            try {
-                IContentDescription desc = file.getContentDescription();
-                if (desc != null) {
-                    IContentType contentType = desc.getContentType();
-                    IContentType textType = getTextContentType();
-                    if (contentType.isKindOf(textType)) {
-                        return Team.TEXT;
-                    }
-                }
-            } catch (CoreException e) {
-                // Ignore
+        IContentType contentType = Platform.getContentTypeManager().findContentTypeFor(name);
+        if (contentType != null) {
+            IContentType textType = getTextContentType();
+            if (contentType.isKindOf(textType)) {
+                return Team.TEXT;
             }
         }
 
