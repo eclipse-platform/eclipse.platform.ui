@@ -576,14 +576,9 @@ public abstract class MarkerView extends TableView {
         List resources = new ArrayList();
         if (part instanceof IEditorPart) {
             IEditorPart editor = (IEditorPart) part;
-            IEditorInput input = editor.getEditorInput();
-            // Fix for bug 88965: editors aren't supposed to return a null input, but if there is
-            // a buggy editor somewhere, it shouldn't bring down the marker view
-            if (input != null) {
-                IFile file = ResourceUtil.getFile(input);
-                if (file != null) {
-                    resources.add(file);
-                }
+            IFile file = ResourceUtil.getFile(editor.getEditorInput());
+            if (file != null) {
+                resources.add(file);
             }
         } else {
             if (selection instanceof IStructuredSelection) {
