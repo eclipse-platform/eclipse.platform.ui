@@ -890,15 +890,18 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#setAnnotationTypeLayer(java.lang.Object, int)
 	 */
 	public void setAnnotationTypeLayer(Object annotationType, int layer) {
-		Integer layerObj= new Integer(layer);
-		if (fAnnotationsSortedByLayer.remove(annotationType))
-			fLayersSortedByLayer.remove(layerObj);
+		int j= fAnnotationsSortedByLayer.indexOf(annotationType);
+		if (j != -1) {
+			fAnnotationsSortedByLayer.remove(j);
+			fLayersSortedByLayer.remove(j);
+		}
 
 		if (layer >= 0) {
 			int i= 0;
 			int size= fLayersSortedByLayer.size();
 			while (i < size && layer >= ((Integer)fLayersSortedByLayer.get(i)).intValue())
 				i++;
+			Integer layerObj= new Integer(layer);
 			fLayersSortedByLayer.add(i, layerObj);
 			fAnnotationsSortedByLayer.add(i, annotationType);
 		}
