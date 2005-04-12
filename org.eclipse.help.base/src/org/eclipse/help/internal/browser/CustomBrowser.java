@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.service.environment.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  *  
@@ -62,8 +63,7 @@ public class CustomBrowser implements IBrowser {
 									+ path
 									+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
 							e);
-			throw new Exception(HelpBaseResources.getString(
-					"CustomBrowser.errorLaunching", url, path)); //$NON-NLS-1$
+			throw new Exception(NLS.bind("CustomBrowser.errorLaunching", url, path)); //$NON-NLS-1$
 		}
 	}
 

@@ -15,6 +15,7 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Browser adapter for browsers supporting -remote openURL command line option
@@ -179,9 +180,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			} catch (IOException e) {
 				HelpBasePlugin.logError("Launching " + executableName //$NON-NLS-1$
 						+ " has failed.", e); //$NON-NLS-1$
-				String msg = HelpBaseResources.getString(
-						"MozillaBrowserAdapter.executeFailed", //$NON-NLS-1$
-						executableName);
+				String msg = NLS.bind("MozillaBrowserAdapter.executeFailed", executableName);
 				BaseHelpSystem.getDefaultErrorUtil()
 						.displayError(msg, uiThread);
 				// return success, so second command does not execute

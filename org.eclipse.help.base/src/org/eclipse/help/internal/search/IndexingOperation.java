@@ -103,7 +103,7 @@ class IndexingOperation {
 		try {
 			checkCancelled(pm);
 			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-			pm.subTask(HelpBaseResources.getString("UpdatingIndex")); //$NON-NLS-1$
+			pm.subTask(HelpBaseResources.UpdatingIndex); 
 			MultiStatus multiStatus = null;
 			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 				URL doc = (URL) it.next();
@@ -127,12 +127,12 @@ class IndexingOperation {
 			}
 		} catch (OperationCanceledException oce) {
 			// Need to perform rollback on the index
-			pm.subTask(HelpBaseResources.getString("Undoing_document_adds")); //$NON-NLS-1$
+			pm.subTask(HelpBaseResources.Undoing_document_adds); 
 			//			if (!index.abortUpdate())
 			//				throw new Exception();
 			throw oce;
 		}
-		pm.subTask(HelpBaseResources.getString("Writing_index")); //$NON-NLS-1$
+		pm.subTask(HelpBaseResources.Writing_index); 
 		if (!index.endAddBatch())
 			throw new IndexingException();
 	}
@@ -140,7 +140,7 @@ class IndexingOperation {
 	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
 			throws IndexingException {
 
-		pm.subTask(HelpBaseResources.getString("Preparing_for_indexing")); //$NON-NLS-1$
+		pm.subTask(HelpBaseResources.Preparing_for_indexing); 
 		checkCancelled(pm);
 
 		if (numRemoved > 0) {
@@ -149,7 +149,7 @@ class IndexingOperation {
 			try {
 				checkCancelled(pm);
 				pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-				pm.subTask(HelpBaseResources.getString("UpdatingIndex")); //$NON-NLS-1$
+				pm.subTask(HelpBaseResources.UpdatingIndex); 
 				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
 					URL doc = (URL) it.next();
 					index.removeDocument(getName(doc));
@@ -158,8 +158,7 @@ class IndexingOperation {
 				}
 			} catch (OperationCanceledException oce) {
 				// Need to perform rollback on the index
-				pm.subTask(HelpBaseResources
-						.getString("Undoing_document_deletions")); //$NON-NLS-1$
+				pm.subTask(HelpBaseResources.Undoing_document_deletions); //$NON-NLS-1$
 				//			if (!index.abortUpdate())
 				//				throw new Exception();
 				throw oce;

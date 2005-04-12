@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * application org.eclipse.help.indexTool
@@ -44,13 +45,11 @@ public class IndexToolApplication implements IPlatformRunnable,
 		try {
 			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
 			if (directory == null || directory.length() == 0) {
-				throw new Exception(HelpBaseResources.getString(
-						"IndexToolApplication.propertyNotSet", "indexOutput")); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new Exception(NLS.bind("IndexToolApplication.propertyNotSet", "indexOutput")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			String localeStr = System.getProperty("indexLocale"); //$NON-NLS-1$
 			if (localeStr == null || localeStr.length() < 2) {
-				throw new Exception(HelpBaseResources.getString(
-						"IndexToolApplication.propertyNotSet", "indexLocale")); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new Exception(NLS.bind("IndexToolApplication.propertyNotSet", "indexLocale")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			Locale locale;
 			if (localeStr.length() >= 5) {
@@ -112,9 +111,7 @@ public class IndexToolApplication implements IPlatformRunnable,
 		}
 		if (!file.delete()) {
 			throw new IOException(
-					HelpBaseResources
-							.getString(
-									"IndexToolApplication.cannotDelete", file.getAbsolutePath())); //$NON-NLS-1$
+					NLS.bind("IndexToolApplication.cannotDelete", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 	}
 

@@ -106,8 +106,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			osList = (String) params.get("os"); //$NON-NLS-1$
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources
-							.getString("MozillaFactory.dataMissing"), //$NON-NLS-1$
+					HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources.MozillaFactory_dataMissing, //$NON-NLS-1$
 					e));
 		}
 	}

@@ -62,7 +62,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getDescription() {
-			return HelpBaseResources.getString("WebSearch.click"); //$NON-NLS-1$
+			return HelpBaseResources.WebSearch_click; 
 		}
 
 		public String getHref() {
@@ -79,7 +79,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getLabel() {
-			return HelpBaseResources.getString("WebSearch.label"); //$NON-NLS-1$
+			return HelpBaseResources.WebSearch_label; 
 		}
 
 		public float getScore() {

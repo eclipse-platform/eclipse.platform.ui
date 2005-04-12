@@ -18,6 +18,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.context.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * This class provides methods to display help. It is independent of platform
@@ -45,8 +46,7 @@ public class HelpDisplay {
 			// There is no documentation
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
-							HelpBaseResources
-									.getString("HelpDisplay.docsNotInstalled")); //$NON-NLS-1$
+							HelpBaseResources.HelpDisplay_docsNotInstalled); //$NON-NLS-1$
 			//Documentation is not installed.
 			return;
 		}
@@ -201,8 +201,7 @@ public class HelpDisplay {
 							"An exception occurred while launching help.  Check the log at " + Platform.getLogFileLocation().toOSString(), e); //$NON-NLS-1$
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
-							HelpBaseResources
-									.getString("HelpDisplay.exceptionMessage", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
+							NLS.bind("HelpDisplay.exceptionMessage", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 		}
 	}
 

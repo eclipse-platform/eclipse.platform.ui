@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 
 /**
@@ -110,9 +111,7 @@ public class WebappManager {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
-							.getString("Appserver.cannotFindPlugin", //$NON-NLS-1$
-									pluginId), null));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotFindPlugin", pluginId), null));
 		}
 
 		// Note: we just look for one webapp directory.
@@ -120,9 +119,7 @@ public class WebappManager {
 		URL webappURL = Platform.find(bundle, path);
 		if (webappURL == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
-							.getString("Appserver.cannotFindPath", //$NON-NLS-1$
-									pluginId, path.toOSString()), null));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotFindPath", pluginId, path.toOSString()), null));
 		}
 
 		try {
@@ -131,9 +128,7 @@ public class WebappManager {
 			return new Path(webappLocation);
 		} catch (IOException ioe) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, AppserverResources
-							.getString("Appserver.cannotResolvePath", //$NON-NLS-1$
-									pluginId, path.toOSString()), ioe));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotResolvePath", pluginId, path.toOSString()), ioe));
 		}
 	}
 

@@ -141,7 +141,7 @@ public class AppserverPlugin extends Plugin {
 		if (appServer == null)
 			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID,
 					IStatus.OK,
-					AppserverResources.getString("Appserver.start"), null)); //$NON-NLS-1$
+					AppserverResources.Appserver_start, null)); 
 		appServer.start(port, hostAddress);
 	}
 }

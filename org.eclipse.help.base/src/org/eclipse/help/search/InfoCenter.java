@@ -162,10 +162,10 @@ public final class InfoCenter implements ISearchEngine {
 			reader.close();
 		} catch (FileNotFoundException e) {
 			reportError(
-					HelpBaseResources.getString("InfoCenter.fileNotFound"), e, collector); //$NON-NLS-1$
+					HelpBaseResources.InfoCenter_fileNotFound, e, collector); 
 		} catch (IOException e) {
 			reportError(
-					HelpBaseResources.getString("InfoCenter.io"), e, collector); //$NON-NLS-1$
+					HelpBaseResources.InfoCenter_io, e, collector); 
 		} finally {
 			if (is != null) {
 				try {

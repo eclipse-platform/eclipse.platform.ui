@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Help application. Starts webserver and help web application for use by
@@ -59,9 +60,7 @@ public class HelpApplication implements IPlatformRunnable, IExecutableExtension 
 		metadata = new File(Platform.getLocation().toFile(), ".metadata/"); //$NON-NLS-1$
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out
-					.println(HelpBaseResources
-							.getString(
-									"HelpApplication.couldNotStart", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
+					.println(NLS.bind("HelpApplication.couldNotStart", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 			return EXIT_OK;
 		}
 

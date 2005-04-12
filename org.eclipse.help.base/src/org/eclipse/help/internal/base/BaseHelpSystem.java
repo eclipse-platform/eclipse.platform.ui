@@ -245,7 +245,7 @@ public final class BaseHelpSystem {
 						.logError(
 								"The embedded application server could not run help web application.", e); //$NON-NLS-1$
 				BaseHelpSystem.getDefaultErrorUtil().displayError(
-						HelpBaseResources.getString("HelpWebappNotStarted")); //$NON-NLS-1$
+						HelpBaseResources.HelpWebappNotStarted); 
 				return false;
 			}
 			getInstance().webappRunning = true;

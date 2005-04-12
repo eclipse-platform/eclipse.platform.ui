@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.service.environment.*;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Creates browser by delegating to appropriate browser adapter
@@ -138,8 +139,7 @@ public class BrowserManager {
 															+ url
 															+ ".  Ensure that you have a required browser and adapter installed, and that the browser program is available on the system path.", //$NON-NLS-1$
 													null);
-									String msg = HelpBaseResources.getString(
-											"no_browsers", url); //$NON-NLS-1$
+									String msg = NLS.bind("no_browsers", url); //$NON-NLS-1$
 									BaseHelpSystem.getDefaultErrorUtil()
 											.displayError(msg);
 								}
