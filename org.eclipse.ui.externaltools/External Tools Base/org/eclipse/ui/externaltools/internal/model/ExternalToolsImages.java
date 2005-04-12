@@ -12,8 +12,6 @@ package org.eclipse.ui.externaltools.internal.model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -35,11 +33,6 @@ public class ExternalToolsImages {
 	 * The registry for composite images
 	 */
 	private static ImageDescriptorRegistry imageDescriptorRegistry;
-	
-	/**
-	 * A table of all the <code>ImageDescriptor</code>s.
-	 */
-	private static Map imageDescriptors;
 
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;
@@ -73,7 +66,6 @@ public class ExternalToolsImages {
 		} catch (MalformedURLException me) {
 		}
 		imageRegistry.put(key, desc);
-		imageDescriptors.put(key, desc);
 	}
 	
 	/**
@@ -116,7 +108,6 @@ public class ExternalToolsImages {
 	 */
 	public static ImageRegistry initializeImageRegistry() {
 		imageRegistry= new ImageRegistry(ExternalToolsPlugin.getStandardDisplay());
-		imageDescriptors = new HashMap(30);
 		declareImages();
 		return imageRegistry;
 	}
@@ -134,10 +125,7 @@ public class ExternalToolsImages {
 	 * or <code>null</code> if it does not exist.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
-		if (imageDescriptors == null) {
-			initializeImageRegistry();
-		}
-		return (ImageDescriptor)imageDescriptors.get(key);
+		return getImageRegistry().getDescriptor(key);
 	}
 	
 	private static URL makeIconFileURL(String iconPath) throws MalformedURLException {
