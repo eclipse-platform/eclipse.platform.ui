@@ -79,6 +79,8 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 							.logError(
 									"An error occurred during creation of embedded help browser.", se); //$NON-NLS-1$
 				}
+			} catch (Exception e) {
+				// Browser not implemented
 			}
 			if (sh != null && !sh.isDisposed())
 				sh.dispose();
