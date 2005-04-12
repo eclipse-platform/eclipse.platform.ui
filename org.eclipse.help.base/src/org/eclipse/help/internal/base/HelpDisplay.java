@@ -196,12 +196,13 @@ public class HelpDisplay {
 			BaseHelpSystem.getHelpBrowser(forceExternal)
 						.displayURL(helpURL);
 		} catch (Exception e) {
-			HelpBasePlugin.logError(
-					"An exception occurred while launching help.", e); //$NON-NLS-1$
+			HelpBasePlugin
+					.logError(
+							"An exception occurred while launching help.  Check the log at " + Platform.getLogFileLocation().toOSString(), e); //$NON-NLS-1$
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
 							HelpBaseResources
-									.getString("HelpDisplay.exceptionMessage")); //$NON-NLS-1$
+									.getString("HelpDisplay.exceptionMessage", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 		}
 	}
 
