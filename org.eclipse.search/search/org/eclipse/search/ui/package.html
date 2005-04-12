@@ -13,13 +13,23 @@ This package provides the interfaces and classes to implement these dialog
 pages and offers hooks to populate the search result view.
 <h2>
 Package Specification</h2>
-Each search dialog page must implement <tt>ISearchPage</tt>. A search page
-has access to its container (<tt>ISearchPageContainer</tt>) to modify search
-dialog properties. The class <tt>SearchUI</tt> can activate the search
-results view and provide access to the active search results view (<tt>ISearchResultView</tt>).
-<p>It is the clients responsibility to create a marker for each match and
-then report the match to the search result view together with a key (<tt>groupByKey</tt>).
-Each key corresponds to a search result view entry (<tt>ISearchResultViewEntry</tt>)
-which allows to step through the markers grouped by the key.
+
+<p>To contribute to the search dialog using the 'searchPages' extension point a
+dialog page must implement <tt>ISearchPage</tt>. A search page
+has access to its <tt>ISearchPageContainer</tt> to modify search
+dialog properties.
+
+<p>The search view that shows result has been rewritten for 3.0. It is recommended
+to use the following new API:
+<p>
+<p>Search queries are represented by instances of type <tt>ISearchQuery</tt>. They
+are run by API on <tt>NewSearchUI</tt> and create a <code>ISearchResult</code> as result.
+<p>Clients have to contribute a search result page (<tt>ISearchResultPage</tt>) that can
+visualize the matches contained in the result set.
+<p>
+<p>For compatibility to search views written prior to 3.0 the following APIs still exist:
+<p>
+<p>Old searches create markers for search matches. The search view uses <tt>IGroupByKeyComputer</tt> to group
+these markers and present these groups as elements of type <tt>ISearchResultViewEntry</tt>.
 </body>
 </html>
