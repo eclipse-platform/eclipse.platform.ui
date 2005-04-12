@@ -124,7 +124,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         int oldWidth = styledText.getTabs();
         if (tabWidth != oldWidth) {
             styledText.setTabs(tabWidth);
-            styledText.redraw();
         }
     }
 
@@ -141,7 +140,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         }
         if (font == null || !(font.equals(oldFont))) {
             styledText.setFont(font);
-            styledText.redraw();
         }
     }
 
@@ -431,14 +429,12 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     protected void linkEntered(IHyperlink link) {
         Control control = getTextWidget();
-        control.setRedraw(false);
         if (hyperlink != null) {
             linkExited(hyperlink);
         }
         hyperlink = link;
         hyperlink.linkEntered();
         control.setCursor(getHandCursor());
-        control.setRedraw(true);
         control.redraw();
         control.addMouseListener(this);
     }
