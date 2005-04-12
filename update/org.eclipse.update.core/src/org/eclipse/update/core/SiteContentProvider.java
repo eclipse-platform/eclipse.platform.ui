@@ -14,7 +14,6 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.internal.core.*;
 
 /**
  * Base site content provider
