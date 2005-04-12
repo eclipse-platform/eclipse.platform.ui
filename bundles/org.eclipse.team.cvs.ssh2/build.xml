@@ -80,8 +80,8 @@
 				<pathelement path="../org.eclipse.help/@dot"/>
 				<pathelement path="../org.eclipse.swt/bin"/>
 				<pathelement path="../org.eclipse.swt/@dot"/>
-				<pathelement path="../org.eclipse.swt.win32/@dot"/>
-				<pathelement path="../org.eclipse.swt.win32/bin"/>
+				<pathelement path="../org.eclipse.swt.win32.win32.x86/@dot"/>
+				<pathelement path="../org.eclipse.swt.win32.win32.x86/bin"/>
 				<pathelement path="../org.eclipse.jface/bin"/>
 				<pathelement path="../org.eclipse.jface/@dot"/>
 				<pathelement path="../org.eclipse.core.commands/bin/"/>
