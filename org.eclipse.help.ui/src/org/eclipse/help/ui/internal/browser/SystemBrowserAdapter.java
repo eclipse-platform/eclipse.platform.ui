@@ -46,7 +46,7 @@ public class SystemBrowserAdapter implements IBrowser {
 									+ url
 									+ ".  Change the file association or choose a different help web browser in the preferences.", //$NON-NLS-1$
 							null);
-			ErrorUtil.displayErrorDialog(NLS.bind("SystemBrowser.noProgramForURL", url));
+			ErrorUtil.displayErrorDialog(NLS.bind(Messages.SystemBrowser_noProgramForURL, url));
 		}
 		//		} else {
 		//			Program b = Program.findProgram("html");

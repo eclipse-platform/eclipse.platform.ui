@@ -139,7 +139,7 @@ public class BrowserManager {
 															+ url
 															+ ".  Ensure that you have a required browser and adapter installed, and that the browser program is available on the system path.", //$NON-NLS-1$
 													null);
-									String msg = NLS.bind("no_browsers", url); //$NON-NLS-1$
+									String msg = NLS.bind(HelpBaseResources.no_browsers, url);
 									BaseHelpSystem.getDefaultErrorUtil()
 											.displayError(msg);
 								}

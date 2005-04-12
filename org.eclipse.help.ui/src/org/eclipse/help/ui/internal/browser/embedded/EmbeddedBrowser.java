@@ -236,7 +236,7 @@ public class EmbeddedBrowser {
 	private static String getWindowTitle() {
 		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault() //$NON-NLS-1$
 				.getPluginPreferences().getString("windowTitlePrefix"))) { //$NON-NLS-1$
-			return NLS.bind("browserTitle", BaseHelpSystem //$NON-NLS-1$
+			return NLS.bind(Messages.browserTitle, BaseHelpSystem
             .getProductName());
 		} else {
 			return BaseHelpSystem.getProductName();

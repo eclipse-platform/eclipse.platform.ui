@@ -63,7 +63,7 @@ public class CustomBrowser implements IBrowser {
 									+ path
 									+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
 							e);
-			throw new Exception(NLS.bind("CustomBrowser.errorLaunching", url, path)); //$NON-NLS-1$
+			throw new Exception(NLS.bind(HelpBaseResources.CustomBrowser_errorLaunching, url, path));
 		}
 	}
 

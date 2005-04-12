@@ -1287,7 +1287,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (label != null && href != null) {
-				String message = NLS.bind("ReusableHelpPart.status", label, href); //$NON-NLS-1$
+				String message = NLS.bind(Messages.ReusableHelpPart_status, label, href);
 				mng.setMessage(message);
 			} else if (label != null)
 				mng.setMessage(label);

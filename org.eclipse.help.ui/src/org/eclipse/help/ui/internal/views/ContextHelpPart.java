@@ -187,7 +187,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private void updateTitle() {
 		if (lastPart!=null)
-			getSection().setText(NLS.bind("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName())); //$NON-NLS-1$
+			getSection().setText(NLS.bind(Messages.ContextHelpPart_aboutP, lastPart.getSite().getRegisteredName()));
 		else
 			getSection().setText(Messages.ContextHelpPart_about); 
 	}
@@ -234,7 +234,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					if (part != null) {
 						buff.append("\""); //$NON-NLS-1$
 						if (part instanceof IViewPart)
-							buff.append(NLS.bind("ContextHelpPart.query.view", part.getSite().getRegisteredName())); //$NON-NLS-1$
+							buff.append(NLS.bind(Messages.ContextHelpPart_query_view, part.getSite().getRegisteredName()));
 						buff.append("\" "); //$NON-NLS-1$
 					}
 					IPerspectiveDescriptor persp = page.getPerspective();
@@ -242,7 +242,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						if (buff.length() > 0)
 							buff.append("OR "); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
-						buff.append(NLS.bind("ContextHelpPart.query.perspective", persp.getLabel())); //$NON-NLS-1$
+						buff.append(NLS.bind(Messages.ContextHelpPart_query_perspective, persp.getLabel()));
 						buff.append("\""); //$NON-NLS-1$
 					}
 				}

@@ -201,7 +201,7 @@ public class HelpDisplay {
 							"An exception occurred while launching help.  Check the log at " + Platform.getLogFileLocation().toOSString(), e); //$NON-NLS-1$
 			BaseHelpSystem.getDefaultErrorUtil()
 					.displayError(
-							NLS.bind("HelpDisplay.exceptionMessage", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
+							NLS.bind(HelpBaseResources.HelpDisplay_exceptionMessage, Platform.getLogFileLocation().toOSString()));
 		}
 	}
 

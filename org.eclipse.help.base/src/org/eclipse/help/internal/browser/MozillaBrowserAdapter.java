@@ -180,7 +180,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			} catch (IOException e) {
 				HelpBasePlugin.logError("Launching " + executableName //$NON-NLS-1$
 						+ " has failed.", e); //$NON-NLS-1$
-				String msg = NLS.bind("MozillaBrowserAdapter.executeFailed", executableName);
+				String msg = NLS.bind(HelpBaseResources.MozillaBrowserAdapter_executeFailed, executableName);
 				BaseHelpSystem.getDefaultErrorUtil()
 						.displayError(msg, uiThread);
 				// return success, so second command does not execute

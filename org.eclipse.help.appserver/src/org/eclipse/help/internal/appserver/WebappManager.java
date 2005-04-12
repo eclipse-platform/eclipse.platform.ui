@@ -111,7 +111,7 @@ public class WebappManager {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotFindPlugin", pluginId), null));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind(AppserverResources.Appserver_cannotFindPlugin, pluginId), null));
 		}
 
 		// Note: we just look for one webapp directory.
@@ -119,7 +119,7 @@ public class WebappManager {
 		URL webappURL = Platform.find(bundle, path);
 		if (webappURL == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotFindPath", pluginId, path.toOSString()), null));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind(AppserverResources.Appserver_cannotFindPath, pluginId, path.toOSString()), null));
 		}
 
 		try {
@@ -128,8 +128,7 @@ public class WebappManager {
 			return new Path(webappLocation);
 		} catch (IOException ioe) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind("Appserver.cannotResolvePath", pluginId, path.toOSString()), ioe));
+					AppserverPlugin.PLUGIN_ID, IStatus.OK, NLS.bind(AppserverResources.Appserver_cannotResolvePath, pluginId, path.toOSString()), ioe));
 		}
 	}
-
 }
