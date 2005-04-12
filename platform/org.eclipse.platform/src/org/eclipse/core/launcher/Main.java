@@ -18,6 +18,8 @@ import java.security.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * The launcher for Eclipse.
@@ -101,6 +103,7 @@ public class Main {
 	private static final String NL = "-nl";  //$NON-NLS-1$
     private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
     private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
+	private static final String CLEAN = "-clean"; //$NON-NLS-1$
 
     private static final String OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
     private static final String STARTER = "org.eclipse.core.runtime.adaptor.EclipseStarter"; //$NON-NLS-1$
@@ -1561,48 +1564,178 @@ public class Main {
             return null;
 
         // Get the splash screen for the specified locale
-		String localePath = (String) System.getProperties().get(PROP_NL);
-		if (localePath == null)
-			localePath = Locale.getDefault().toString();
-		localePath = localePath.replace('_', File.separatorChar);
+		String locale = (String) System.getProperties().get(PROP_NL);
+		if (locale == null)
+			locale = Locale.getDefault().toString();
+		String[] nlVariants = buildNLVariants(locale);
 
-        // search the specified path
-        while (localePath != null) {
-            String suffix;
-            if (localePath.equals("")) { //$NON-NLS-1$
-                // look for nl'ed splash image
-                suffix = SPLASH_IMAGE;
-            } else {
-                // look for default splash image
-                suffix = "nl" + File.separator + localePath + File.separator + SPLASH_IMAGE; //$NON-NLS-1$
-            }
-
-            // check for file in searchPath
-            for (int i = 0; i < searchPath.length; i++) {
-                String path = searchPath[i];
-                if (!path.endsWith(File.separator))
-                    path += File.separator;
-                path += suffix;
-                File result = new File(path);
-                if (result.exists())
-                    return result.getAbsolutePath(); // return the first match found [20063]
-            }
-
-            // try the next variant
-            if (localePath.equals("")) //$NON-NLS-1$
-                localePath = null;
-            else {
-                int ix = localePath.lastIndexOf(File.separator);
-                if (ix == -1)
-                    localePath = ""; //$NON-NLS-1$
-                else
-                    localePath = localePath.substring(0, ix);
-            }
-        }
+		for (int i=0; i<nlVariants.length; i++) {
+			for (int j=0; j<searchPath.length; j++) {
+				// do we have a JAR?
+				if (isJAR(searchPath[j])) {
+					String result = extractSplashFromJAR(searchPath[j], nlVariants[i]);
+					if (result != null)
+						return result;
+				} else {
+					// we have a file or a directory
+	                String path = searchPath[j];
+	                if (!path.endsWith(File.separator))
+	                    path += File.separator;
+	                path += nlVariants[i];
+	                File result = new File(path);
+	                if (result.exists())
+	                    return result.getAbsolutePath(); // return the first match found [20063]
+				}
+			}
+		}
 
         // sorry, could not find splash image
         return null;
     }
+
+	/**
+	 * Transfers all available bytes from the given input stream to the given output stream. 
+	 * Regardless of failure, this method closes both streams.
+	 */
+	private static void transferStreams(InputStream source, OutputStream destination) {
+		byte[] buffer = new byte[8096];
+		try {
+			while (true) {
+				int bytesRead = -1;
+				try {
+					bytesRead = source.read(buffer);
+				} catch (IOException e) {
+					return;
+				}
+				if (bytesRead == -1)
+					break;
+				try {
+					destination.write(buffer, 0, bytesRead);
+				} catch (IOException e) {
+					return;
+				}
+			}
+		} finally {
+			try {
+				source.close();
+			} catch (IOException e) {
+				// ignore
+			} finally {
+				//close destination in finally in case source.close fails
+				try {
+					destination.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
+	/*
+	 * Look for the specified spash file in the given JAR and extract it to the config 
+	 * area for caching purposes.
+	 */
+	private String extractSplashFromJAR(String jarPath, String splashPath) {
+		String configLocation = System.getProperty(PROP_CONFIG_AREA);
+		if (configLocation == null) {
+			log("Configuration area not set yet. Unable to extract splash from JAR'd plug-in: " + jarPath); //$NON-NLS-1$
+			return null;
+		}
+		URL configURL = buildURL(configLocation, false);
+		if (configURL == null)
+			return null;
+		// cache the splash in the OSGi sub-dir in the config area
+		File splash = new File(configURL.getPath(), OSGI);
+		splash = new File(splash, splashPath);
+		// if we have already extracted this file before, then return
+		if (splash.exists()) {
+			// if we are running with -clean then delete the cached splash file
+			boolean clean = false;
+			for (int i=0; i<commands.length; i++) {
+				if (CLEAN.equalsIgnoreCase(commands[i])) {
+					clean = true;
+					splash.delete();
+					break;
+				}
+			}
+			if (!clean)
+				return splash.getAbsolutePath();
+		}
+		ZipFile file;
+		try {
+			file = new ZipFile(jarPath);
+		} catch (IOException e) {
+			log("Exception looking for splash  in JAR file: " + jarPath); //$NON-NLS-1$
+			log(e);
+			return null;
+		}
+		ZipEntry entry = file.getEntry(splashPath.replace(File.separatorChar, '/'));
+		if (entry == null)
+			return null;
+		InputStream input = null;
+		try {
+			input = file.getInputStream(entry);
+		} catch (IOException e) {
+			log("Exception opening splash: " + entry.getName() + " in JAR file: " + jarPath);  //$NON-NLS-1$ //$NON-NLS-2$
+			log(e);
+			return null;
+		}
+		splash.getParentFile().mkdirs();
+		OutputStream output;
+		try {
+			output = new BufferedOutputStream(new FileOutputStream(splash));
+		} catch (FileNotFoundException e) {
+			try {
+				input.close();
+			} catch (IOException e1) {
+				// ignore
+			}
+			return null;
+		}
+		transferStreams(input, output);
+		return splash.exists() ? splash.getAbsolutePath() : null;
+	}
+
+	/*
+	 * Return a boolean value indicating whether or not the given
+	 * path represents a JAR file.
+	 */
+	private boolean isJAR(String path) {
+		if (path.endsWith(File.separator))
+			return false;
+		int index = path.lastIndexOf('.');
+		if (index == -1)
+			return false;
+		index++;
+		// handle the case where we have a '.' at the end
+		if (index >= path.length()) 
+			return false;
+		return "JAR".equalsIgnoreCase(path.substring(index)); //$NON-NLS-1$
+	}
+
+	/*
+	 * Build an array of path suffixes based on the given NL which is suitable
+	 * for splash path searching.  The returned array contains paths in order 
+	 * from most specific to most generic. So, in the FR_fr locale, it will return 
+	 * "nl/fr/FR/splash.bmp", then "nl/fr/splash.bmp", and finally "splash.bmp". 
+	 * (we always search the root)
+	 */
+	private static String[] buildNLVariants(String locale) {
+		//build list of suffixes for loading resource bundles
+		String nl = locale;
+		ArrayList result = new ArrayList(4);
+		int lastSeparator;
+		while (true) {
+			result.add("nl" + File.separatorChar + nl.replace('_', File.separatorChar) + File.separatorChar + SPLASH_IMAGE); //$NON-NLS-1$
+			lastSeparator = nl.lastIndexOf('_');
+			if (lastSeparator == -1)
+				break;
+			nl = nl.substring(0, lastSeparator);
+		}
+		//add the empty suffix last (most general)
+		result.add(SPLASH_IMAGE);
+		return (String[]) result.toArray(new String[result.size()]);
+	}
 
     /*
      * resolve platform:/base/ URLs
