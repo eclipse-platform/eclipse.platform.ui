@@ -1,5 +1,8 @@
 package org.eclipse.jface.tests.performance;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -157,6 +160,64 @@ public class TreeTest extends ViewerTest {
 		commitMeasurements();
 		assertPerformance();
 	}
+	
+	/**
+	 * Test addition to the tree one element at a time.
+	 */
+	public void testAddTen() {
+		
+		doTestAdd(10);
+	}
+	
+	/**
+	 * Test addition to the tree one element at a time.
+	 */
+	public void testAddFifty() {
+		
+		doTestAdd(50);
+	}
+	
+	/**
+	 * Test addition to the tree one element at a time.
+	 */
+	public void testAddHundred() {
+		
+		doTestAdd(100);
+	}
+	
+	private void doTestAdd(int count){
+
+		openBrowser();
+		for (int i = 0; i < 25; i++) {
+
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			Collection batches = new ArrayList();
+			int blocks = input.children.length/ count;
+			for (int j = 0; j < blocks;  j =j+count) {
+				Object[] batch = new Object[count];
+				System.arraycopy(input.children,j * count,batch,0,count);
+				batches.add(batch);
+			}
+			processEvents();
+			Object[] batchArray = batches.toArray();
+			startMeasuring();
+			for (int j = 0; j < batchArray.length; j++) {
+				
+				viewer.add(input, (Object[]) batchArray[j]);
+				processEvents();
+				
+			}
+			stopMeasuring();
+		}
+
+		commitMeasurements();
+		assertPerformance();
+	
+		
+	}
+
 
 	/**
 	 * Test addition to the tree with the items presorted.
