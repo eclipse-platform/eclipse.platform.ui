@@ -129,6 +129,9 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
 				if (symbolicNameElements.length > 0) {
 					String singleton = symbolicNameElements[0].getDirective(Constants.SINGLETON_DIRECTIVE);
+					if (singleton == null)
+						singleton = symbolicNameElements[0].getAttribute(Constants.SINGLETON_DIRECTIVE);
+
 					if (! "true".equalsIgnoreCase(singleton)) { //$NON-NLS-1$
 						if (InternalPlatform.DEBUG_REGISTRY) {
 							String message = NLS.bind(Messages.parse_nonSingleton, bundle.getLocation());
