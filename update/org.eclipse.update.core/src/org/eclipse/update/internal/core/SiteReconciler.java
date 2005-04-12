@@ -43,7 +43,7 @@ public class SiteReconciler extends ModelObject {
 		try {
 			resolvedURL = Platform.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
-			throw Utilities.newCoreException(NLS.bind("SiteLocal.UnableToResolve", (new String[] { newSiteEntry.getURL().toExternalForm() })), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteLocal_UnableToResolve, (new String[] { newSiteEntry.getURL().toExternalForm() })), e);
 		}
 		return resolvedURL;
 	}

@@ -74,7 +74,7 @@ public class SiteStatusAnalyzer {
 		if (featureSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
-			String msg = NLS.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull", (new Object[] { feature.getURL()})); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusSiteNull, (new Object[] { feature.getURL()}));
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -83,7 +83,7 @@ public class SiteStatusAnalyzer {
 		if (cSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 				UpdateCore.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
-			String msg = NLS.bind("SiteLocal.UnableToDetermineFeatureStatusConfiguredSiteNull", (new Object[] { feature.getURL()})); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.SiteLocal_UnableToDetermineFeatureStatusConfiguredSiteNull, (new Object[] { feature.getURL()}));
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -158,7 +158,7 @@ public class SiteStatusAnalyzer {
 						// Unable to find children feature, broken
 						Object featureAsPrintableObject = children[i].getURL();
 						featureAsPrintableObject = children[i].getVersionedIdentifier();
-						String msg1 = NLS.bind("SiteLocal.NestedFeatureUnavailable", (new Object[] { featureAsPrintableObject })); //$NON-NLS-1$
+						String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnavailable, (new Object[] { featureAsPrintableObject }));
 						multiTemp.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null));
 						if (IFeature.STATUS_UNHAPPY > code)
 							code = IFeature.STATUS_UNHAPPY;
@@ -169,7 +169,7 @@ public class SiteStatusAnalyzer {
 						if (childStatus.getCode() == IFeature.STATUS_DISABLED) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
 							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
-							String msg1 = NLS.bind("SiteLocal.NestedFeatureDisable", (new String[] { childFeature.getLabel(), featureVer })); //$NON-NLS-1$
+							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureDisable, (new String[] { childFeature.getLabel(), featureVer }));
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (IFeature.STATUS_UNHAPPY > code)
 								code = IFeature.STATUS_UNHAPPY;
@@ -177,7 +177,7 @@ public class SiteStatusAnalyzer {
 						if (childStatus.getSeverity() != IStatus.OK) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
 							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
-							String msg1 = NLS.bind("SiteLocal.NestedFeatureUnHappy", (new String[] { childFeature.getLabel(), featureVer })); //$NON-NLS-1$
+							String msg1 = NLS.bind(Messages.SiteLocal_NestedFeatureUnHappy, (new String[] { childFeature.getLabel(), featureVer }));
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (childStatus.getCode() > code)
 								code = childStatus.getCode();
@@ -245,12 +245,12 @@ public class SiteStatusAnalyzer {
 				String msg = null;
 				if (feature == null) {
 					Object[] values = new Object[] {bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion};
-					msg = NLS.bind("SiteLocal.TwoVersionSamePlugin1", values); //$NON-NLS-1$
+					msg = NLS.bind(Messages.SiteLocal_TwoVersionSamePlugin1, values);
 				} else {
 					String label = feature.getLabel();
 					String featureVersion = feature.getVersionedIdentifier().getVersion().toString();
 					Object[] values = new Object[] { bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion, label, featureVersion };
-					msg = NLS.bind("SiteLocal.TwoVersionSamePlugin2", values); //$NON-NLS-1$
+					msg = NLS.bind(Messages.SiteLocal_TwoVersionSamePlugin2, values);
 				}
 
 				UpdateCore.warn("Found another version of the same plugin on the path:" + bundles[j].getSymbolicName() + " " + bundleVersion); //$NON-NLS-1$ //$NON-NLS-2$
@@ -271,7 +271,7 @@ public class SiteStatusAnalyzer {
 						newMulti.addAll(multi);
 						multi = newMulti;
 					}
-					String msg = NLS.bind("SiteLocal.NoPluginVersion", (new String[] { featurePluginID.getIdentifier() })); //$NON-NLS-1$
+					String msg = NLS.bind(Messages.SiteLocal_NoPluginVersion, (new String[] { featurePluginID.getIdentifier() }));
 					multi.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg, null));
 				}
 			}

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.operations.*;
 
 /**
@@ -46,13 +47,13 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 				if (unconfigure(feature, targetSite))
 					restartNeeded = true;
 				else
-					throw Utilities.newCoreException(NLS.bind("OperationsManager.error.uninstall", (new String[] { feature.getVersionedIdentifier().toString() })), null); //$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind(Messages.OperationsManager_error_uninstall, (new String[] { feature.getVersionedIdentifier().toString() })), null);
 			}
 			targetSite.remove(feature, pm);
 		} else {
 			// we should do something here
 			String message =
-				NLS.bind("OperationsManager.error.uninstall", (new String[] { feature.getLabel() }));
+				NLS.bind(Messages.OperationsManager_error_uninstall, (new String[] { feature.getLabel() }));
 			IStatus status =
 				new Status(
 					IStatus.ERROR,

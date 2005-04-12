@@ -295,6 +295,7 @@ public final class Messages extends NLS {
 	public static String ErrorRecoveryLog_noFiletoRemove;
 	public static String ErrorRecoveryLog_removeFeature;
 	public static String UpdatesSearchCategory_errorSearchingForUpdates;
+    public static String UninstallCommand_featureNotInstalledByUM;
 	public static String Standalone_siteConfigured;
 	public static String Standalone_noSite;
 	public static String Standalone_noSite2;

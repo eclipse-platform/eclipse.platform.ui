@@ -53,7 +53,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 			jarPath = newURL.getFile().replace(File.separatorChar, '/');
 			File jarFile = new File(jarPath);
 			if (jarFile.exists()) {
-				throw Utilities.newCoreException(NLS.bind("UpdateManagerUtils.FileAlreadyExists", (new Object[] { jarFile })), null); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.UpdateManagerUtils_FileAlreadyExists, (new Object[] { jarFile })), null);
 			}
 			// error recovery
 			tempPath= ErrorRecoveryLog.getLocalRandomIdentifier(jarPath+".tmp"); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 			//
 			UpdateManagerUtils.copyToLocal(inStream, tempPath, null);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(NLS.bind("GlobalConsumer.ErrorCreatingFile", (new String[] { tempPath })), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.GlobalConsumer_ErrorCreatingFile, (new String[] { tempPath })), e);
 		} finally {
 			if (inStream != null) {
 				try {
@@ -93,7 +93,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = NLS.bind("ContentConsumer.UnableToRename", (new String[] { tempPath, jarPath })); //$NON-NLS-1$
+				String msg = NLS.bind(Messages.ContentConsumer_UnableToRename, (new String[] { tempPath, jarPath }));
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -126,7 +126,8 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = NLS.bind("Unable to delete", (new String[] { jarPath })); //$NON-NLS-1$
+            //TODO need to translate this
+			String msg = NLS.bind("Unable to delete {0}", (new String[] { jarPath })); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		}
 		closed = true;

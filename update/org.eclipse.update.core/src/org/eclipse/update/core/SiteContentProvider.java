@@ -14,6 +14,7 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.internal.core.Messages;
 
 /**
  * Base site content provider
@@ -58,7 +59,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 			return new URL(getURL(), archiveID);
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(
-					NLS.bind("SiteContentProvider.ErrorCreatingURLForArchiveID", (new String[] { archiveID, getURL().toExternalForm() })),
+					NLS.bind(Messages.SiteContentProvider_ErrorCreatingURLForArchiveID, (new String[] { archiveID, getURL().toExternalForm() })),
 					e);
 		}
 	}

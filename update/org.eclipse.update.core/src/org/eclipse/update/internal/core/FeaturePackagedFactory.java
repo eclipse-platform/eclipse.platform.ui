@@ -64,7 +64,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		}  catch (CoreException e){
 			throw e;
 		} catch (Exception e) { 
-			throw Utilities.newCoreException(NLS.bind("FeatureFactory.CreatingError", (new String[] { url.toExternalForm() })), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.FeatureFactory_CreatingError, (new String[] { url.toExternalForm() })), e);
 		}finally {
 			try {
 				if (featureStream!=null)	

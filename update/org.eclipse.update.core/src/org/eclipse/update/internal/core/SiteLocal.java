@@ -63,7 +63,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 			parseLocalSiteFile(currentPlatformConfiguration, localSite);
 
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(NLS.bind("SiteLocal.UnableToCreateURLFor", (new String[] { localSite.getLocationURLString() + " & " + CONFIG_FILE })), exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteLocal_UnableToCreateURLFor, (new String[] { localSite.getLocationURLString() + " & " + CONFIG_FILE })), exception); //$NON-NLS-1$
 		}
 	
 		return localSite;

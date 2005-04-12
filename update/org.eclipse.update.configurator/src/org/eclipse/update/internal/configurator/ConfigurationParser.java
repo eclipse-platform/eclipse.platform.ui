@@ -118,9 +118,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			}
 
 		} catch (MalformedURLException e) {
-			throw new SAXException(NLS.bind("InstalledSiteParser.UnableToCreateURL", (new String[] { e.getMessage() })), e); //$NON-NLS-1$
+			throw new SAXException(NLS.bind(Messages.InstalledSiteParser_UnableToCreateURL, (new String[] { e.getMessage() })), e);
 		} catch (CoreException e) {
-			throw new SAXException(NLS.bind("InstalledSiteParser.InternalError", (new String[] { e.toString() })), e); //$NON-NLS-1$
+			throw new SAXException(NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { e.toString() })), e);
 		}
 	}
 
@@ -284,7 +284,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				config = new Configuration(new Date(time));
 			} catch (NumberFormatException e1) {
 				time = new Date().getTime();
-				Utils.log(NLS.bind("InstalledSiteParser.date", (new String[] { date }))); //$NON-NLS-1$
+				Utils.log(NLS.bind(Messages.InstalledSiteParser_date, (new String[] { date })));
 				config = new Configuration(); // constructed with current date
 			}
 		}

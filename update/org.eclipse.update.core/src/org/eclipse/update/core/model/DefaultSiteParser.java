@@ -135,7 +135,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				while (iter.hasNext()) {
 					stack = stack + iter.next().toString() + "\r\n"; //$NON-NLS-1$
 				}
-				throw new SAXException(NLS.bind("DefaultSiteParser.WrongParsingStack", (new String[] { stack })));	//$NON-NLS-1$
+				throw new SAXException(NLS.bind(Messages.DefaultSiteParser_WrongParsingStack, (new String[] { stack })));
 			}
 		}
 	}
@@ -164,7 +164,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
-				internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { localName, getState(currentState) })));//$NON-NLS-1$
+				internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { localName, getState(currentState) })));
 				break;
 			case STATE_INITIAL :
 				handleInitialState(localName, attributes);
@@ -199,7 +199,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				break;
 
 			default :
-				internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownStartState", (new String[] { getState(currentState) })));//$NON-NLS-1$
+				internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownStartState, (new String[] { getState(currentState) })));
 				break;
 		}
 		int newState = ((Integer) stateStack.peek()).intValue();
@@ -280,7 +280,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				// do not raise error as previous description may be default one
 				// when parsing site tag
 				if (DESCRIPTION_SITE_ALREADY_SEEN)
-					debug(NLS.bind("DefaultSiteParser.ElementAlreadySet", (new String[] { getState(state) })));	//$NON-NLS-1$
+					debug(NLS.bind(Messages.DefaultSiteParser_ElementAlreadySet, (new String[] { getState(state) })));
 				siteModel.setDescriptionModel(info);
 				DESCRIPTION_SITE_ALREADY_SEEN = true;
 				break;
@@ -307,13 +307,13 @@ public class DefaultSiteParser extends DefaultHandler {
 
 				CategoryModel category = (CategoryModel) objectStack.peek();
 				if (category.getDescriptionModel() != null)
-					internalError(NLS.bind("DefaultSiteParser.ElementAlreadySet2", (new String[] { getState(state), category.getLabel() })));//$NON-NLS-1$
+					internalError(NLS.bind(Messages.DefaultSiteParser_ElementAlreadySet, (new String[] { getState(state), category.getLabel() })));
 				else
 					category.setDescriptionModel(info);
 				break;
 
 			default :
-				internalError(NLS.bind("DefaultSiteParser.UnknownEndState", (new String[] { getState(state) })));//$NON-NLS-1$
+				internalError(NLS.bind(Messages.DefaultSiteParser_UnknownEndState, (new String[] { getState(state) })));
 				break;
 		}
 
@@ -360,7 +360,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
 		} else {
-			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) })));	//$NON-NLS-1$
+			internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { elementName, getState(currentState) })));
 			// what we received was not a site.xml, no need to continue
 			throw new SAXException(Messages.DefaultSiteParser_InvalidXMLStream); 
 		}
@@ -381,7 +381,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
 		} else
-			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$ 			
+			internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { elementName, getState(currentState) }))); 			
 	}
 
 	private void handleFeatureState(String elementName, Attributes attributes) {
@@ -401,7 +401,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) }))); //$NON-NLS-1$ 			
+			internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { elementName, getState(currentState) }))); 			
 	}
 
 	private void handleCategoryDefState(String elementName, Attributes attributes) {
@@ -418,7 +418,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_DESCRIPTION_CATEGORY_DEF));
 			processInfo(attributes);
 		} else
-			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) })));	//$NON-NLS-1$ 			
+			internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { elementName, getState(currentState) }))); 			
 	}
 
 	private void handleCategoryState(String elementName, Attributes attributes) {
@@ -438,7 +438,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_CATEGORY));
 			processCategory(attributes);
 		} else
-			internalErrorUnknownTag(NLS.bind("DefaultSiteParser.UnknownElement", (new String[] { elementName, getState(currentState) })));//$NON-NLS-1$ 			
+			internalErrorUnknownTag(NLS.bind(Messages.DefaultSiteParser_UnknownElement, (new String[] { elementName, getState(currentState) }))); 			
 	}
 
 	/* 
@@ -509,7 +509,7 @@ public class DefaultSiteParser extends DefaultHandler {
         // We need to have id and version, or the url, or both.
  		if (noURL) {
             if (noId || noVersion)
-                internalError(NLS.bind("DefaultSiteParser.Missing", (new String[] { "url", getState(currentState) })));	//$NON-NLS-1$  //$NON-NLS-2$
+                internalError(NLS.bind(Messages.DefaultSiteParser_Missing, (new String[] { "url", getState(currentState) })));	//$NON-NLS-1$
             else // default url
                 urlInfo = FEATURES + id + '_' + ver; //$NON-NLS-1$ 
         }
@@ -522,7 +522,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		// if one is null, and not the other
 		if (noId ^ noVersion) {
 			String[] values = new String[] { id, ver, getState(currentState)};
-			UpdateCore.warn(NLS.bind("DefaultFeatureParser.IdOrVersionInvalid", values));//$NON-NLS-1$
+			UpdateCore.warn(NLS.bind(Messages.DefaultFeatureParser_IdOrVersionInvalid, values));
 		} else {
 			feature.setFeatureIdentifier(id);
 			feature.setFeatureVersion(ver);
@@ -574,14 +574,14 @@ public class DefaultSiteParser extends DefaultHandler {
 		ArchiveReferenceModel archive = factory.createArchiveReferenceModel();
 		String id = attributes.getValue("path"); //$NON-NLS-1$
 		if (id == null || id.trim().equals("")) { //$NON-NLS-1$
-			internalError(NLS.bind("DefaultSiteParser.Missing", (new String[] { "path", getState(currentState) }))); //$NON-NLS-1$  //$NON-NLS-2$
+			internalError(NLS.bind(Messages.DefaultSiteParser_Missing, (new String[] { "path", getState(currentState) }))); //$NON-NLS-1$
 		}
 
 		archive.setPath(id);
 
 		String url = attributes.getValue("url"); //$NON-NLS-1$
 		if (url == null || url.trim().equals("")) { //$NON-NLS-1$
-			internalError(NLS.bind("DefaultSiteParser.Missing", (new String[] { "archive", getState(currentState) })));	//$NON-NLS-1$  //$NON-NLS-2$
+			internalError(NLS.bind(Messages.DefaultSiteParser_Missing, (new String[] { "archive", getState(currentState) })));	//$NON-NLS-1$
 		} else {
 			archive.setURLString(url);
 
@@ -656,10 +656,10 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		String msg;
 		if (name.equals("")) //$NON-NLS-1$
-			msg = NLS.bind("DefaultSiteParser.ErrorParsing", (new String[] { ex.getMessage() }));	//$NON-NLS-1$
+			msg = NLS.bind(Messages.DefaultSiteParser_ErrorParsing, (new String[] { ex.getMessage() }));
 		else {
 			String[] values = new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()};
-			msg = NLS.bind("DefaultSiteParser.ErrorLineColumnMessage", values);//$NON-NLS-1$
+			msg = NLS.bind(Messages.DefaultSiteParser_ErrorlineColumnMessage, values);
 		}
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, msg, ex));
 	}

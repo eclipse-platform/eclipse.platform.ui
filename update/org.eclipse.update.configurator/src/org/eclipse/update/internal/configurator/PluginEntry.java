@@ -126,7 +126,7 @@ public class PluginEntry {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				Utils.log(NLS.bind("PluginEntry.versionError", (new String[] { id, ver }))); //$NON-NLS-1$ //$NON-NLS-2$
+				Utils.log(NLS.bind(Messages.PluginEntry_versionError, (new String[] { id, ver })));
 			}
 		}
 

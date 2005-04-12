@@ -136,7 +136,7 @@ public class IncludedFeatureReference
 	 */
 	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
 		if (isUninstalled())
-			throw new CoreException(new Status(IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, NLS.bind("IncludedFeatureReference.featureUninstalled", (new String[] { getFeatureIdentifier() })), null));
+			throw new CoreException(new Status(IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, NLS.bind(Messages.IncludedFeatureReference_featureUninstalled, (new String[] { getFeatureIdentifier() })), null));
 		else
 			return super.getFeature(monitor);
 	}

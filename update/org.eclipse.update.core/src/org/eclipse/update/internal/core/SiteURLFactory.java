@@ -70,9 +70,9 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 			site.resolve(url, url);
 			site.markReadOnly();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(NLS.bind("SiteURLFactory.UnableToCreateURL", (new String[] { url == null ? "" : url.toExternalForm() })), e);	//$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(NLS.bind("SiteURLFactory.UnableToAccessSiteStream", (new String[] { url == null ? "" : url.toExternalForm() })), ISite.SITE_ACCESS_EXCEPTION, e);	//$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToAccessSiteStream, (new String[] { url == null ? "" : url.toExternalForm() })), ISite.SITE_ACCESS_EXCEPTION, e);	//$NON-NLS-1$
 		} finally {
 			if (siteStream != null) {
 				try {

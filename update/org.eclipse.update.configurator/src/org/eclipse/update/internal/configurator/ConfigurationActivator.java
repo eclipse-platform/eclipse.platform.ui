@@ -108,7 +108,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(getInstallURL(), configLocation);
 		if (configuration == null)
-			throw Utils.newCoreException(NLS.bind("ConfigurationActivator.createConfig", (new String[] { configLocation.getURL().toExternalForm() })), null); //$NON-NLS-1$
+			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] { configLocation.getURL().toExternalForm() })), null);
 
 		DataInputStream stream = null;
 		try {
@@ -176,7 +176,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 					toRefresh.add(bundlesToUninstall[i]);					
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
-					Utils.log(NLS.bind("ConfigurationActivator.uninstallBundle", (new String[] { bundlesToUninstall[i].getLocation() }))); //$NON-NLS-1$
+					Utils.log(NLS.bind(Messages.ConfigurationActivator_uninstallBundle, (new String[] { bundlesToUninstall[i].getLocation() })));
 				}
 			}
 			
@@ -197,7 +197,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
-						Utils.log(NLS.bind("ConfigurationActivator.installBundle", (new String[] { bundlesToInstall[i] })) + "   " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] { bundlesToInstall[i] })) + "   " + e.getMessage()); //$NON-NLS-1$
 				}
 			}
 			context.ungetService(reference);

@@ -67,7 +67,7 @@ public final class FeatureTypeFactory {
 
 		if (elements == null || elements.length == 0) {
 			throw Utilities.newCoreException(
-					NLS.bind("FeatureTypeFactory.UnableToFindFeatureFactory", (new String[] { type })), //$NON-NLS-1$
+					NLS.bind(Messages.FeatureTypeFactory_UnableToFindFeatureFactory, (new String[] { type })),
 					null);
 		} 
 

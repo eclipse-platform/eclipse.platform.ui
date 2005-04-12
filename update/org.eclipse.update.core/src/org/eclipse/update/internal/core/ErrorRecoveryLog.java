@@ -134,7 +134,7 @@ public class ErrorRecoveryLog {
 			UpdateCore.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							 //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				NLS.bind("UpdateManagerUtils.UnableToLog", (new Object[] { logFile })), //$NON-NLS-1$
+				NLS.bind(Messages.UpdateManagerUtils_UnableToLog, (new Object[] { logFile })),
 				e);
 		}
 		
@@ -163,7 +163,7 @@ public class ErrorRecoveryLog {
 			index++;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				NLS.bind("UpdateManagerUtils.UnableToLog", (new Object[] { logFile })), //$NON-NLS-1$
+				NLS.bind(Messages.UpdateManagerUtils_UnableToLog, (new Object[] { logFile })),
 				e);
 		}
 	}

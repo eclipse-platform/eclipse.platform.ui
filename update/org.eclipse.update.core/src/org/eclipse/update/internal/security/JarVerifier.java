@@ -71,11 +71,11 @@ public class JarVerifier extends Verifier {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password
 					} catch (NoSuchAlgorithmException e) {
-						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToFindEncryption", (new String[] { handle.getLocation().toExternalForm() })), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind(Messages.JarVerifier_UnableToFindEncryption, (new String[] { handle.getLocation().toExternalForm() })), e);
 					} catch (CertificateException e) {
-						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToLoadCertificate", (new String[] { handle.getLocation().toExternalForm() })), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind(Messages.JarVerifier_UnableToLoadCertificate, (new String[] { handle.getLocation().toExternalForm() })), e);
 					} catch (KeyStoreException e) {
-						throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToFindProviderForKeystore", (new String[] { handle.getType() })), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind(Messages.JarVerifier_UnableToFindProviderForKeystore, (new String[] { handle.getType() })), e);
 					} finally {
 						if (in != null) {
 							try {
@@ -131,9 +131,9 @@ public class JarVerifier extends Verifier {
 					}
 				}
 			} catch (ZipException e){
-				throw Utilities.newCoreException(NLS.bind("JarVerifier.InvalidJar", (new String[] { jarReference.toString() })), e); //$NON-NLS-1$				
+				throw Utilities.newCoreException(NLS.bind(Messages.JarVerifier_InvalidJar, (new String[] { jarReference.toString() })), e);				
 			} catch (IOException e) {
-				throw Utilities.newCoreException(NLS.bind("JarVerifier.UnableToAccessJar", (new String[] { jarReference.toString() })), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.JarVerifier_UnableToAccessJar, (new String[] { jarReference.toString() })), e);
 			}
 		}
 
@@ -177,7 +177,7 @@ public class JarVerifier extends Verifier {
 		JarEntry currentEntry = null;
 		InputStream in = null;
 		if (monitor != null)
-			monitor.setTaskName(NLS.bind("JarVerifier.Verify", (new String[] { identifier == null ? jarFile.getName(): identifier }))); //$NON-NLS-1$ 
+			monitor.setTaskName(NLS.bind(Messages.JarVerifier_Verify, (new String[] { identifier == null ? jarFile.getName(): identifier }))); 
 
 		try {
 			while (entries.hasMoreElements()) {
@@ -356,7 +356,7 @@ public class JarVerifier extends Verifier {
 				else
 					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
-				Exception e = new Exception(NLS.bind("JarVerifier.InvalidFile", (new String[] { file }))); //$NON-NLS-1$
+				Exception e = new Exception(NLS.bind(Messages.JarVerifier_InvalidFile, (new String[] { file })));
 				result.setResultException(e);
 				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 				UpdateCore.warn(null,e);

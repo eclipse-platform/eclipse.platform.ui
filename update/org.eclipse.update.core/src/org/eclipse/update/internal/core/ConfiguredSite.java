@@ -96,7 +96,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// ConfigSite is read only 
 		if (!isUpdatable()) {
-			String errorMessage = NLS.bind("ConfiguredSite.NonInstallableSite", (new String[] { getSite().getURL().toExternalForm() })); //$NON-NLS-1$
+			String errorMessage = NLS.bind(Messages.ConfiguredSite_NonInstallableSite, (new String[] { getSite().getURL().toExternalForm() }));
 			IStatus status = verifyUpdatableStatus();
 			if (status != null)
 				errorMessage += " " + status.getMessage(); //$NON-NLS-1$
@@ -167,7 +167,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// ConfigSite is read only
 		if (!isUpdatable()) {
-			String errorMessage = NLS.bind("ConfiguredSite.NonUninstallableSite", (new String[] { getSite().getURL().toExternalForm() })); //$NON-NLS-1$
+			String errorMessage = NLS.bind(Messages.ConfiguredSite_NonUninstallableSite, (new String[] { getSite().getURL().toExternalForm() }));
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
@@ -195,10 +195,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (getConfigurationPolicy().isConfigured(referenceToRemove)) {
 					IFeature featureToRemove = ((IFeatureReference) referenceToRemove).getFeature(null);
 					String featureLabel = (featureToRemove == null) ? null : featureToRemove.getLabel();
-					throw Utilities.newCoreException(NLS.bind("ConfiguredSite.UnableToRemoveConfiguredFeature", (new String[] { featureLabel })), null);
+					throw Utilities.newCoreException(NLS.bind(Messages.ConfiguredSite_UnableToRemoveConfiguredFeature, (new String[] { featureLabel })), null);
 				}
 			} else {
-				throw Utilities.newCoreException(NLS.bind("ConfiguredSite.UnableToFindFeature", (new String[] { feature.getURL().toString() })), //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.ConfiguredSite_UnableToFindFeature, (new String[] { feature.getURL().toString() })),
 				null);
 			}
 
@@ -492,7 +492,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				String url = element.getURL().toString();
 				ISite site = element.getSite();
 				String siteString = (site != null) ? site.getURL().toExternalForm() : Messages.ConfiguredSite_NoSite; 
-				UpdateCore.warn(NLS.bind("ConfiguredSite.CannotFindFeatureToUnconfigure", (new String[] { url, siteString })), e); //$NON-NLS-1$ 
+				UpdateCore.warn(NLS.bind(Messages.ConfiguredSite_CannotFindFeatureToUnconfigure, (new String[] { url, siteString })), e); 
 			}
 		}
 		//} // end USER_EXCLUDE
@@ -517,7 +517,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					// notify we cannot find the feature
 					UpdateCore.warn(null, e);
 					String featureString = configuredFeatures[i].getURL().toExternalForm();
-					if (!handler.reportProblem(NLS.bind("ConfiguredSite.CannotFindFeatureToConfigure", (new String[] { featureString })))) { //$NON-NLS-1$
+					if (!handler.reportProblem(NLS.bind(Messages.ConfiguredSite_CannotFindFeatureToConfigure, (new String[] { featureString })))) {
 						throw new InterruptedException();
 					}
 				}
@@ -548,7 +548,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 								UpdateCore.log(msg, new Exception());
 
 								String siteString = (site != null) ? site.getURL().toExternalForm() : Messages.ConfiguredSite_NoSite;	
-								String errorLabel = NLS.bind("ConfiguredSite.CannotFindPluginEntry", (new String[] { currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString }));	//$NON-NLS-1$ //$NON-NLS-2$
+								String errorLabel = NLS.bind(Messages.ConfiguredSite_CannotFindPluginEntry, (new String[] { currentFeaturePluginEntry.getVersionedIdentifier().toString(), siteString }));
 								if (handler == null) {
 									throw new InterruptedException(errorLabel);
 								}
@@ -693,7 +693,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (id != null) {
 					values = new Object[] { id.getIdentifier(), id.getVersion()};
 				}
-				String msg1 = NLS.bind("ConfiguredSite.MissingPluginsBrokenFeature", values); //$NON-NLS-1$
+				String msg1 = NLS.bind(Messages.ConfiguredSite_MissingPluginsBrokenFeature, values);
 				UpdateCore.warn(msg1);
 				IStatus status = createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null);
 				multi.add(status);
@@ -765,13 +765,13 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		String productName = getProductName(file);
 		if (productName != null) {
 			if (!productName.equals(getProductIdentifier("id", getProductFile()))) { //$NON-NLS-1$
-				verifyStatus = createStatus(IStatus.ERROR, NLS.bind("ConfiguredSite.NotSameProductId", (new String[] { productName })), null); //$NON-NLS-1$
+				verifyStatus = createStatus(IStatus.ERROR, NLS.bind(Messages.ConfiguredSite_NotSameProductId, (new String[] { productName })), null);
 				return verifyStatus;
 			}
 		} else {
 			File container = getSiteContaining(file);
 			if (container != null) {
-				verifyStatus = createStatus(IStatus.ERROR, NLS.bind("ConfiguredSite.ContainedInAnotherSite", (new String[] { container.getAbsolutePath() })), null); //$NON-NLS-1$
+				verifyStatus = createStatus(IStatus.ERROR, NLS.bind(Messages.ConfiguredSite_ContainedInAnotherSite, (new String[] { container.getAbsolutePath() })), null);
 				return verifyStatus;
 			}
 		}
@@ -1078,10 +1078,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					return true;
 			}
 		} catch (MalformedURLException e) {
-			String msg = NLS.bind("ConfiguredSite.UnableResolveURL", (new String[] { platformString })); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.ConfiguredSite_UnableResolveURL, (new String[] { platformString }));
 			throw Utilities.newCoreException(msg, e);
 		} catch (IOException e) {
-			String msg = NLS.bind("ConfiguredSite.UnableToAccessSite", (new Object[] { siteURL })); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.ConfiguredSite_UnableToAccessSite, (new Object[] { siteURL }));
 			throw Utilities.newCoreException(msg, e);
 		}
 

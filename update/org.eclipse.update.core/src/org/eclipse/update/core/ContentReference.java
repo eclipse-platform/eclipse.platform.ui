@@ -147,7 +147,7 @@ public class ContentReference {
 			length=response.getContentLength();
 			return is;
 		} else
-			throw new IOException(NLS.bind("ContentReference.UnableToCreateInputStream", (new String[] { this.toString() }))); //$NON-NLS-1$
+			throw new IOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
 	}
 	/**
 	 * Creates an input stream for the reference.
@@ -167,7 +167,7 @@ public class ContentReference {
 			length=offset + response.getContentLength();
 			return is;
 		} else
-			throw new IOException(NLS.bind("ContentReference.UnableToCreateInputStream", (new String[] { this.toString() }))); //$NON-NLS-1$
+			throw new IOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
 	}
 	
 	/**
@@ -234,10 +234,10 @@ public class ContentReference {
 			if (result.exists())
 				return result;
 			else 
-				throw new IOException(NLS.bind("ContentReference.FileDoesNotExist", (new String[] { this.toString() }))); //$NON-NLS-1$ 			
+				throw new IOException(NLS.bind(Messages.ContentReference_FileDoesNotExist, (new String[] { this.toString() }))); 			
 		}
 
-		throw new IOException(NLS.bind("ContentReference.UnableToReturnReferenceAsFile", (new String[] { this.toString() }))); //$NON-NLS-1$ 
+		throw new IOException(NLS.bind(Messages.ContentReference_UnableToReturnReferenceAsFile, (new String[] { this.toString() }))); 
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class ContentReference {
 		if (file != null)
 			return file.toURL();
 
-		throw new IOException(NLS.bind("ContentReference.UnableToReturnReferenceAsURL", (new String[] { this.toString() }))); //$NON-NLS-1$
+		throw new IOException(NLS.bind(Messages.ContentReference_UnableToReturnReferenceAsURL, (new String[] { this.toString() })));
 	}
 
 	/**

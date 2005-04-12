@@ -40,21 +40,21 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 			CmdLineArgs cmdLineArgs = new CmdLineArgs(params);
 			ScriptedCommand cmd = cmdLineArgs.getCommand();
 			if (cmd == null) {
-				System.out.println(NLS.bind("Standalone.cmdFailed", (new String[] { Platform.getLogFileLocation().toOSString() }))); //$NON-NLS-1$
+				System.out.println(NLS.bind(Messages.Standalone_cmdFailed, (new String[] { Platform.getLogFileLocation().toOSString() })));
 				return EXIT_ERROR;
 			}
 			loggedException = false;
 			boolean result = cmd.run();
 			if (result) {
 				if (loggedException) {
-					System.out.println(NLS.bind("Standalone.cmdCompleteWithErrors", (new String[] { Platform.getLogFileLocation().toOSString() })));//$NON-NLS-1$
+					System.out.println(NLS.bind(Messages.Standalone_cmdCompleteWithErrors, (new String[] { Platform.getLogFileLocation().toOSString() })));
 				} else {
 					System.out.println(Messages.Standalone_cmdOK); 
 				}
 				return IPlatformRunnable.EXIT_OK;
 			} else {
 				if (loggedException) {
-					System.out.println(NLS.bind("Standalone.cmdFailed", (new String[] { Platform.getLogFileLocation().toOSString() }))); //$NON-NLS-1$
+					System.out.println(NLS.bind(Messages.Standalone_cmdFailed, (new String[] { Platform.getLogFileLocation().toOSString() })));
 				} else {
 					System.out.println(Messages.Standalone_cmdFailedNoLog);
 				}

@@ -108,7 +108,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 						}
 					} catch (IOException e) {
 						throw Utilities
-							.newCoreException(NLS.bind("JarVerificationService.CancelInstall", (new String[] { id })),	//$NON-NLS-1$
+							.newCoreException(NLS.bind(Messages.JarVerificationService_CancelInstall, (new String[] { id })),
 						e);
 					}
 

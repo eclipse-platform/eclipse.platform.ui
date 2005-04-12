@@ -277,7 +277,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 						return false;
 					boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
 					if (!valid)
-						Utils.log(NLS.bind("SiteEntry.cannotFindFeatureInDir", (new String[] { f.getAbsolutePath() }))); //$NON-NLS-1$
+						Utils.log(NLS.bind(Messages.SiteEntry_cannotFindFeatureInDir, (new String[] { f.getAbsolutePath() })));
 					return valid;
 				}
 			});
@@ -293,7 +293,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 					if (featureEntry != null)
 						addFeatureEntry(featureEntry);
 				} catch (MalformedURLException e) {
-					Utils.log(NLS.bind("InstalledSiteParser.UnableToCreateURLForFile", (new String[] { featuresDir.getAbsolutePath() })));//$NON-NLS-1$
+					Utils.log(NLS.bind(Messages.InstalledSiteParser_UnableToCreateURLForFile, (new String[] { featuresDir.getAbsolutePath() })));
 				}
 			}
 		}
@@ -374,10 +374,10 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			}
 		} catch (IOException e5) {
 			String pluginFileString2 = pluginURL + "!" + entryName; //$NON-NLS-1$
-			Utils.log(NLS.bind("InstalledSiteParser.ErrorAccessing", (new String[] { pluginFileString2 }))); //$NON-NLS-1$
+			Utils.log(NLS.bind(Messages.InstalledSiteParser_ErrorAccessing, (new String[] { pluginFileString2 })));
 		} catch (SAXException e3) {
 			String pluginFileString1 = pluginURL + "!" + entryName; //$NON-NLS-1$
-			Utils.log(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString1 }))); //$NON-NLS-1$
+			Utils.log(NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { pluginFileString1 })));
 		} finally {
 			if (bundleManifestIn != null) {
 				try {
@@ -442,13 +442,13 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		} catch (IOException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
 			if (ConfigurationActivator.DEBUG)
-				Utils.log(Utils.newStatus(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString })), e));//$NON-NLS-1$
+				Utils.log(Utils.newStatus(NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { pluginFileString })), e));
 			else
-				Utils.log(NLS.bind("InstalledSiteParser.ErrorAccessing", (new String[] { pluginFileString }))); //$NON-NLS-1$
+				Utils.log(NLS.bind(Messages.InstalledSiteParser_ErrorAccessing, (new String[] { pluginFileString })));
 		} catch (SAXException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
-			Utils.log(NLS.bind("InstalledSiteParser.ErrorParsingFile", (new String[] { pluginFileString }))); //$NON-NLS-1$
-		}
+			Utils.log(NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { pluginFileString })));
+        }
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return pluginsChangeStamp;
 		
 		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
-			Utils.log(NLS.bind("SiteEntry.computePluginStamp", (new String[] { resolvedURL.toExternalForm() }))); //$NON-NLS-1$
+			Utils.log(NLS.bind(Messages.SiteEntry_computePluginStamp, (new String[] { resolvedURL.toExternalForm() })));
 			return 0;
 		}
 
@@ -519,7 +519,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 		File pluginsDir = new File(root, PLUGINS);
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-			Utils.log(NLS.bind("SiteEntry.pluginsDir", (new String[] { pluginsDir.getAbsolutePath() }))); //$NON-NLS-1$
+			Utils.log(NLS.bind(Messages.SiteEntry_pluginsDir, (new String[] { pluginsDir.getAbsolutePath() })));
 			return 0;
 		}
 
@@ -601,7 +601,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				// log error if same feature version/id but a different url
 				if (feature instanceof FeatureEntry && existing instanceof FeatureEntry &&
 						!((FeatureEntry)feature).getURL().equals(((FeatureEntry)existing).getURL()))
-				Utils.log(NLS.bind("SiteEntry.duplicateFeature", (new String[] { getURL().toExternalForm(), existing.getFeatureIdentifier() }))); //$NON-NLS-1$ //$NON-NLS-2$
+				Utils.log(NLS.bind(Messages.SiteEntry_duplicateFeature, (new String[] { getURL().toExternalForm(), existing.getFeatureIdentifier() })));
 			}
 		} else {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);

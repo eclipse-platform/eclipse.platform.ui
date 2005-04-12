@@ -46,7 +46,7 @@ public class VersionedIdentifier {
 	public VersionedIdentifier(String id, String versionName) {
 		if (id == null	|| (id = id.trim()).equals("")) //$NON-NLS-1$
 			throw new IllegalArgumentException(
-				NLS.bind("VersionedIdentifier.IdOrVersionNull", (new String[] { id, versionName }))); //$NON-NLS-1$
+				NLS.bind(Messages.VersionedIdentifier_IdOrVersionNull, (new String[] { id, versionName })));
 		this.id = id;
 		// 15707
 		if (versionName != null){

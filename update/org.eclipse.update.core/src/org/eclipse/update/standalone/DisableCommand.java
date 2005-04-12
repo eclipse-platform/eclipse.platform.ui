@@ -71,7 +71,7 @@ public class DisableCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
-				throw new Exception(NLS.bind("Standalone.noFeatures3", (new String[] { featureId }))); //$NON-NLS-1$
+				throw new Exception(NLS.bind(Messages.Standalone_noFeatures3, (new String[] { featureId })));
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -87,7 +87,7 @@ public class DisableCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				throw new Exception(NLS.bind("Standalone.noFeatures4", (new String[] { featureId, version }))); //$NON-NLS-1$
+				throw new Exception(NLS.bind(Messages.Standalone_noFeatures4, (new String[] { featureId, version })));
 			}
 
 		} catch (MalformedURLException e) {

@@ -62,7 +62,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		} catch (CoreException e) {
 			throw e;
 		} catch (Exception e) {
-			throw Utilities.newCoreException(NLS.bind("FeatureFactory.CreatingError", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.FeatureFactory_CreatingError, (new String[] { url.toExternalForm() })), e);
 		} finally {
 			try {
 				if (featureStream != null)
@@ -110,7 +110,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 				String path = url.getFile() + "/"; //$NON-NLS-1$
 				url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(NLS.bind("FeatureExecutableFactory.CannotCreateURL", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.FeatureExecutableFactory_CannotCreateURL, (new String[] { url.toExternalForm() })), e);
 			}
 		}
 		return url;

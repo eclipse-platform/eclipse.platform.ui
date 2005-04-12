@@ -391,7 +391,7 @@ public class OperationValidator implements IOperationValidator {
 		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
 		if (csite != null && !csite.isUpdatable())
 			status.add(createStatus(feature, FeatureStatus.CODE_OTHER,
-					NLS.bind("ActivityConstraints.readOnly", (new String[] { csite.getSite().getURL().toExternalForm() }))));
+					NLS.bind(Messages.ActivityConstraints_readOnly, (new String[] { csite.getSite().getURL().toExternalForm() }))));
 	}
 
 	/*
@@ -629,7 +629,7 @@ public class OperationValidator implements IOperationValidator {
 		
 		// check for <includes> cycle
 		if (candidates.contains(feature)) {
-			String msg = NLS.bind("ActivityConstraints.cycle", (new String[] {feature.getLabel(), 
+			String msg = NLS.bind(Messages.ActivityConstraints_cycle, (new String[] {feature.getLabel(), 
             feature.getVersionedIdentifier().toString()}));
 			IStatus status = createStatus(feature, FeatureStatus.CODE_CYCLE, msg);
 			throw new CoreException(status);
@@ -885,30 +885,30 @@ public class OperationValidator implements IOperationValidator {
 							? FeatureStatus.CODE_PREREQ_FEATURE
 							: FeatureStatus.CODE_PREREQ_PLUGIN;
 					String msg =
-						NLS.bind("ActivityConstraints.prereq", (new String[] { target, id }));
+						NLS.bind(Messages.ActivityConstraints_prereq, (new String[] { target, id }));
 
 					if (!ignoreVersion) {
 						if (rule == IImport.RULE_PERFECT)
 							msg =
-								NLS.bind("ActivityConstraints.prereqPerfect", (new String[] {
+								NLS.bind(Messages.ActivityConstraints_prereqPerfect, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_EQUIVALENT)
 							msg =
-								NLS.bind("ActivityConstraints.prereqEquivalent", (new String[] {
+								NLS.bind(Messages.ActivityConstraints_prereqEquivalent, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_COMPATIBLE)
 							msg =
-								NLS.bind("ActivityConstraints.prereqCompatible", (new String[] {
+								NLS.bind(Messages.ActivityConstraints_prereqCompatible, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
-								NLS.bind("ActivityConstraints.prereqGreaterOrEqual", (new String[] {
+								NLS.bind(Messages.ActivityConstraints_prereqGreaterOrEqual, (new String[] {
                                 target,
                                 id,
                                 version.toString()}));
@@ -1123,7 +1123,7 @@ public class OperationValidator implements IOperationValidator {
 			PluginVersionIdentifier version =
 				feature.getVersionedIdentifier().getVersion();
 			fullMessage =
-				NLS.bind("ActivityConstraints.childMessage", (new String[] {
+				NLS.bind(Messages.ActivityConstraints_childMessage, (new String[] {
                 feature.getLabel(),
                 version.toString(),
                 message }));

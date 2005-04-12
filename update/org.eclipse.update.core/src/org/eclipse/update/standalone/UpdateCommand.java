@@ -72,12 +72,12 @@ public class UpdateCommand extends ScriptedCommand {
 						getConfiguration(),
 						featureId);
 				if (targetSite == null) {
-					throw new Exception(NLS.bind("Standalone.noConfigSiteForFeature", (new String[] { featureId }))); //$NON-NLS-1$
+					throw new Exception(NLS.bind(Messages.Standalone_noConfigSiteForFeature, (new String[] { featureId })));
 				}
 				IFeature[] currentFeatures =
 					UpdateUtils.searchSite(featureId, targetSite, true);
 				if (currentFeatures == null || currentFeatures.length == 0) {
-					throw new Exception(NLS.bind("Standalone.noFeatures3", (new String[] { featureId }))); //$NON-NLS-1$
+					throw new Exception(NLS.bind(Messages.Standalone_noFeatures3, (new String[] { featureId })));
 				}
 				this.currentFeature = currentFeatures[0];
 			} else {
@@ -129,7 +129,7 @@ public class UpdateCommand extends ScriptedCommand {
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(Utilities.newCoreException(NLS.bind("Standalone.noUpdate", (new String[] { featureId })),	null));  //$NON-NLS-1$
+				UpdateCore.log(Utilities.newCoreException(NLS.bind(Messages.Standalone_noUpdate, (new String[] { featureId })),	null));
 				return false;
 			}
 
@@ -169,7 +169,7 @@ public class UpdateCommand extends ScriptedCommand {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(
 					Utilities.newCoreException(
-							NLS.bind("Standalone.noUpdate", (new String[] { featureId })),  //$NON-NLS-1$
+							NLS.bind(Messages.Standalone_noUpdate, (new String[] { featureId })),
 						e));
 				return false;
 			}

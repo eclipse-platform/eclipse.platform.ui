@@ -108,7 +108,7 @@ public class UpdatePolicy {
 			loaded = true;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				NLS.bind("SiteURLFactory.UnableToAccessSiteStream", (new String[] { mapFile == null ? "" : mapFile.toExternalForm() })), //$NON-NLS-1$
+				NLS.bind(Messages.SiteURLFactory_UnableToAccessSiteStream, (new String[] { mapFile == null ? "" : mapFile.toExternalForm() })), //$NON-NLS-1$
 				ISite.SITE_ACCESS_EXCEPTION,
 				e);
 		} catch (SAXException e) {

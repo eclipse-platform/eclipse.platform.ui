@@ -139,18 +139,18 @@ public class InstallHandlerProxy implements IInstallHandler {
 			handler.initialize(type, feature, entry, monitor);
 		} catch (ClassNotFoundException e) {
 			handleExceptionInInit(
-				NLS.bind("InstallHandler.notFound", (new String[] { feature.getLabel() })), //$NON-NLS-1$
+				NLS.bind(Messages.InstallHandler_notFound, (new String[] { feature.getLabel() })),
 				e);
 
 		} catch (ClassCastException e) {
 			handleExceptionInInit(
-				NLS.bind("InstallHandler.invalidHandler", (new String[] { feature.getLabel() })), //$NON-NLS-1$
+				NLS.bind(Messages.InstallHandler_invalidHandler, (new String[] { feature.getLabel() })),
 				e);
 		} catch (CoreException e) {
 			handleExceptionInInit(null, e);
 		} catch (Exception e) {
 			handleExceptionInInit(
-				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { feature.getLabel() })), //$NON-NLS-1$
+				NLS.bind(Messages.InstallHandler_unableToCreateHandler, (new String[] { feature.getLabel() })),
 				e);
 		}
 
@@ -446,7 +446,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else
 			ce =
 				Utilities.newCoreException(
-					NLS.bind("InstallHandler.callException", (new String[] { feature.getLabel() })), //$NON-NLS-1$
+					NLS.bind(Messages.InstallHandler_callException, (new String[] { feature.getLabel() })),
 					e);
 		
 		if (isUndoAction()) {
@@ -492,7 +492,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			base = baseRef.asURL();
 		if (base == null)
 			throw Utilities.newCoreException(
-				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { this.feature.getLabel() })), //$NON-NLS-1$
+				NLS.bind(Messages.InstallHandler_unableToCreateHandler, (new String[] { this.feature.getLabel() })),
 				null);
 
 
@@ -541,7 +541,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			reg.getConfigurationElementsFor(EXT_PLUGIN, EXT_POINT, name);
 		if (handlerExtension == null || handlerExtension.length <= 0)
 			throw Utilities.newCoreException(
-				NLS.bind("InstallHandler.unableToCreateHandler", (new String[] { this.feature.getLabel() })), //$NON-NLS-1$
+				NLS.bind(Messages.InstallHandler_unableToCreateHandler, (new String[] { this.feature.getLabel() })),
 				null);
 
 		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class"); //$NON-NLS-1$

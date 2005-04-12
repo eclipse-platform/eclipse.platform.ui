@@ -188,14 +188,14 @@ public class JarVerificationResult implements IVerificationResult {
 		StringBuffer strb = new StringBuffer();
 		strb.append(issuerString(certIssuer.getSubjectDN()));
 		strb.append("\r\n"); //$NON-NLS-1$
-		strb.append(NLS.bind("JarVerificationResult.ValidBetween", (new String[] { dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()) }))); //$NON-NLS-1$
+		strb.append(NLS.bind(Messages.JarVerificationResult_ValidBetween, (new String[] { dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()) })));
 		strb.append(checkValidity(certIssuer));
 		signerInfo = strb.toString();
 		if (certIssuer != null && !certIssuer.equals(certRoot)) {
 			strb = new StringBuffer();	
 			strb.append(issuerString(certIssuer.getIssuerDN()));
 			strb.append("\r\n"); //$NON-NLS-1$
-			strb.append(NLS.bind("JarVerificationResult.ValidBetween", (new String[] { dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()) }))); //$NON-NLS-1$ 
+			strb.append(NLS.bind(Messages.JarVerificationResult_ValidBetween, (new String[] { dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()) }))); 
 			strb.append(checkValidity(certRoot));
 			verifierInfo = strb.toString();
 		}

@@ -211,7 +211,7 @@ public class InternalSiteManager {
 					throw e;
 				site = createSite(e.getNewType(), siteURL, monitor);
 			} catch (InvalidSiteTypeException e1) {
-				throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToCreateSiteWithType", (new String[] { e.getNewType(), siteURL.toExternalForm() })), e1);	//$NON-NLS-1$ 
+				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateSiteWithType, (new String[] { e.getNewType(), siteURL.toExternalForm() })), e1); 
 			}
 		}
 
@@ -255,38 +255,38 @@ public class InternalSiteManager {
 			// or a directory, without reference			
 			if (url.getRef() != null) {
 				// 4 nothing we can do
-				throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToAccessURL", (new String[] { url.toExternalForm() })), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), e);
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 				// 1 try to add site.xml
 				URL urlRetry;
 				try {
 					urlRetry = new URL(url, Site.SITE_XML);
 				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToCreateURL", (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateURL, (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$
 				}
 				try {
 					monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
-					throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToAccessURL", (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
 				}
 			} else if (url.getFile().endsWith(Site.SITE_XML)) {
 				// 3 nothing we can do
-				throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToAccessURL", (new String[] { url.toExternalForm() })), e);//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), e);
 			} else {
 				// 2 try to add /site.xml 
 				URL urlRetry;
 				try {
 					urlRetry = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML);	//$NON-NLS-1$
 				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToCreateURL", (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$ //$NON-NLS-2$
+					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateURL, (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$
 				}
 
 				try {
 					monitor.worked(1);
 					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
-					throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToAccessURL", (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);//$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
 				}
 			}
 		}
@@ -314,7 +314,7 @@ public class InternalSiteManager {
 				URL siteURL = siteLocation.toURL();
 				site = getSite(siteURL, false, null);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(NLS.bind("InternalSiteManager.UnableToCreateURL", (new String[] { siteLocation.getAbsolutePath() })), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateURL, (new String[] { siteLocation.getAbsolutePath() })), e);
 			}
 		}
 		return site;

@@ -162,7 +162,7 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 		//DEBUG:
 		if (!found) {
 			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>"; //$NON-NLS-1$
-			UpdateCore.warn(NLS.bind("Site.CannotFindCategory", (new String[] { key, URLString }))); //$NON-NLS-1$ //$NON-NLS-2$
+			UpdateCore.warn(NLS.bind(Messages.Site_CannotFindCategory, (new String[] { key, URLString })));
 			if (getCategoryModels().length <= 0)
 				UpdateCore.warn(Messages.Site_NoCategories);	
 		}

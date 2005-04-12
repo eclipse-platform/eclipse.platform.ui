@@ -71,7 +71,7 @@ public class UninstallCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, false);
 			if (features == null || features.length == 0) {
-				throw new Exception(NLS.bind("Standalone.noFeatures1", (new String[] { featureId }))); //$NON-NLS-1$
+				throw new Exception(NLS.bind(Messages.Standalone_noFeatures1, (new String[] { featureId })));
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -88,7 +88,7 @@ public class UninstallCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				throw new Exception(NLS.bind("Standalone.noFeatures2", (new String[] { featureId, version }))); //$NON-NLS-1$
+				throw new Exception(NLS.bind(Messages.Standalone_noFeatures2, (new String[] { featureId, version })));
 			}
 
 		} catch (MalformedURLException e) {
@@ -109,7 +109,7 @@ public class UninstallCommand extends ScriptedCommand {
 		}
 		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) { //$NON-NLS-1$
 			StandaloneUpdateApplication.exceptionLogged();
-			UpdateCore.log(Utilities.newCoreException(NLS.bind("UninstallCommand.featureNotInstalledByUM", (new String[] { feature.toString() })),null)); //$NON-NLS-1$ //$NON-NLS-2$
+			UpdateCore.log(Utilities.newCoreException(NLS.bind(Messages.UninstallCommand_featureNotInstalledByUM, (new String[] { feature.toString() })),null));
 			return false;
 		}
 							

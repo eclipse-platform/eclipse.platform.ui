@@ -429,7 +429,7 @@ public class Feature extends FeatureModel implements IFeature {
 					pluginsToInstall[i].getVersionedIdentifier();
 				String pluginID =
 					(pluginVerId == null) ? "" : pluginVerId.getIdentifier(); //$NON-NLS-1$
-				msg = NLS.bind("Feature.TaskInstallPluginFiles", (new String[] { pluginID })); //$NON-NLS-1$
+				msg = NLS.bind(Messages.Feature_TaskInstallPluginFiles, (new String[] { pluginID }));
 
 				for (int j = 0; j < references.length; j++) {
 					setMonitorTaskName(
@@ -523,13 +523,13 @@ public class Feature extends FeatureModel implements IFeature {
 			// and an error occured during abort
 			if (originalException != null) {
 				throw Utilities.newCoreException(
-					NLS.bind("InstallHandler.error", (new String[] { this.getLabel() })), //$NON-NLS-1$
+					NLS.bind(Messages.InstallHandler_error, (new String[] { this.getLabel() })),
 					originalException);
 			}
 
 			if (newException != null)
 				throw Utilities.newCoreException(
-					NLS.bind("InstallHandler.error", (new String[] { this.getLabel() })), //$NON-NLS-1$
+					NLS.bind(Messages.InstallHandler_error, (new String[] { this.getLabel() })),
 					newException);
 
 			if (abortedException != null) {
@@ -727,7 +727,7 @@ public class Feature extends FeatureModel implements IFeature {
 		throws CoreException {
 		if (featureContentProvider == null) {
 			throw Utilities.newCoreException(
-				NLS.bind("Feature.NoContentProvider", (new String[] { getVersionedIdentifier().toString() })),
+				NLS.bind(Messages.Feature_NoContentProvider, (new String[] { getVersionedIdentifier().toString() })),
 				null);	
 		}
 		return this.featureContentProvider;
@@ -755,7 +755,7 @@ public class Feature extends FeatureModel implements IFeature {
 			String featureURLString =
 				(getURL() != null) ? getURL().toExternalForm() : ""; //$NON-NLS-1$
 			throw Utilities.newCoreException(
-				NLS.bind("Feature.SiteAlreadySet", (new String[] { featureURLString })), //$NON-NLS-1$
+				NLS.bind(Messages.Feature_SiteAlreadySet, (new String[] { featureURLString })),
 				null);
 		}
 		this.site = site;
@@ -785,7 +785,7 @@ public class Feature extends FeatureModel implements IFeature {
 				: getURL().toExternalForm();
 
 		String verString =
-			NLS.bind("Feature.FeatureVersionToString", (new String[] { URLString, getVersionedIdentifier().toString() }));
+			NLS.bind(Messages.Feature_FeatureVersionToString, (new String[] { URLString, getVersionedIdentifier().toString() }));
 		String label = getLabel() == null ? "" : getLabel(); //$NON-NLS-1$
 		return verString + " [" + label + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -884,7 +884,7 @@ public class Feature extends FeatureModel implements IFeature {
 			return newRef;
 		} catch (Exception e) {
 			throw Utilities.newCoreException(
-				NLS.bind("Feature.UnableToInitializeFeatureReference", (new String[] { identifier.toString() })),
+				NLS.bind(Messages.Feature_UnableToInitializeFeatureReference, (new String[] { identifier.toString() })),
 				e);
 		}
 	}

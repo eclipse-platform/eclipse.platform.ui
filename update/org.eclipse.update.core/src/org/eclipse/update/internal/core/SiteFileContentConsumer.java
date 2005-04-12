@@ -106,7 +106,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			oldPath = featurePath.replace(File.separatorChar, '/');
 			File localFile = new File(oldPath);
 			if (localFile.exists()) {
-				throw Utilities.newCoreException(NLS.bind("UpdateManagerUtils.FileAlreadyExists", (new Object[] { localFile })), null); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.UpdateManagerUtils_FileAlreadyExists, (new Object[] { localFile })), null);
 			}
 			featurePath = ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
 			newPath = featurePath;
@@ -119,7 +119,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			UpdateManagerUtils.checkPermissions(contentReference, featurePath); // 20305
 			installedFiles.add(featurePath);
 		} catch (IOException e) {
-			throw Utilities.newCoreException(NLS.bind("GlobalConsumer.ErrorCreatingFile", (new String[] { featurePath })), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.GlobalConsumer_ErrorCreatingFile, (new String[] { featurePath })), e);
 		} finally {
 			if (inStream != null) {
 				try {
@@ -149,7 +149,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(NLS.bind("SiteFileContentConsumer.UnableToCreateURLForFile", (new String[] { file.getAbsolutePath() })), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileContentConsumer_UnableToCreateURLForFile, (new String[] { file.getAbsolutePath() })), e);
 		}
 
 		//rename file back 
@@ -166,7 +166,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = NLS.bind("ContentConsumer.UnableToRename", (new String[] { newPath, oldPath })); //$NON-NLS-1$
+				String msg = NLS.bind(Messages.ContentConsumer_UnableToRename, (new String[] { newPath, oldPath }));
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -223,7 +223,8 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = NLS.bind("Unable to delete", (new String[] { oldPath })); //$NON-NLS-1$
+            //TODO need to NL this
+			String msg = NLS.bind("Unable to delete {0}", (new String[] { oldPath })); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		} else {
 			// remove the feature files;
@@ -279,7 +280,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	
 				String urlString = (getSite().getURL() != null) ? getSite().getURL().toExternalForm() : "";	//$NON-NLS-1$
 				urlString += Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
-				throw Utilities.newCoreException(NLS.bind("SiteFile.UnableToCreateURL", (new String[] { urlString })), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_UnableToCreateURL, (new String[] { urlString })), e);
 			}
 		}
 		return;

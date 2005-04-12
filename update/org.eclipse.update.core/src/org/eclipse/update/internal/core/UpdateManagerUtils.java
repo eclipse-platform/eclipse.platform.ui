@@ -282,7 +282,7 @@ public class UpdateManagerUtils {
 		}
 
 		if (!file.delete()) {
-			String msg = NLS.bind("UpdateManagerUtils.UnableToRemoveFile", (new String[] { file.getAbsolutePath() }));	//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = NLS.bind(Messages.UpdateManagerUtils_UnableToRemoveFile, (new String[] { file.getAbsolutePath() }));
 			UpdateCore.log(msg, new Exception());
 		}
 	}
@@ -302,7 +302,7 @@ public class UpdateManagerUtils {
 			}
 		}
 		if (!file.delete()) {
-			String msg = NLS.bind("UpdateManagerUtils.UnableToRemoveFile", (new String[] { file.getAbsolutePath() }));	//$NON-NLS-1$ //$NON-NLS-2$
+			String msg = NLS.bind(Messages.UpdateManagerUtils_UnableToRemoveFile, (new String[] { file.getAbsolutePath() }));
 			UpdateCore.log(msg, new Exception());
 		}
 	}
@@ -521,7 +521,7 @@ public class UpdateManagerUtils {
 
 			if (result != IStatusCodes.HTTP_OK) {
 				String serverMsg = response.getStatusMessage();
-				throw new IOException(NLS.bind("ContentReference.HttpNok", (new Object[] { new Integer(result), serverMsg, url }))); //$NON-NLS-1$						
+				throw new IOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
 			}
 	}
 
@@ -871,7 +871,7 @@ public static class Writer {
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
 			if(expectedLength>0 && offset!=expectedLength)
-				throw new IOException(NLS.bind("UpdateManagerUtils.inputStreamEnded", (new String[] { String.valueOf(offset), String.valueOf(expectedLength) }))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				throw new IOException(NLS.bind(Messages.UpdateManagerUtils_inputStreamEnded, (new String[] { String.valueOf(offset), String.valueOf(expectedLength) })));
 			return -1;
 		} catch(IOException e){
 			// Log the actual error, as this is no longer

@@ -115,11 +115,11 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 		String version = attributes.getValue("version"); //$NON-NLS-1$
 		if (id == null || id.trim().length() == 0) {
 			id = "_no_id_"; //$NON-NLS-1$
-            Utils.log(NLS.bind("PluginParser.plugin_no_id", (new String[] { location })));
+            Utils.log(NLS.bind(Messages.PluginParser_plugin_no_id, (new String[] { location })));
         }
         if (version == null || version.trim().length() == 0) {
             version = "0.0.0"; //$NON-NLS-1$
-            Utils.log(NLS.bind("PluginParser.plugin_no_version", (new String[] { location })));
+            Utils.log(NLS.bind(Messages.PluginParser_plugin_no_version, (new String[] { location })));
         }
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		

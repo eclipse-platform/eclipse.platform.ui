@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.operations.*;
 
 
@@ -23,9 +24,6 @@ import org.eclipse.update.operations.*;
  * 
  */
 public class DuplicateConflictsValidator  {
-
-	private static final String KEY_CONFLICT =
-		"DuplicateConflictsDialog.conflict"; //$NON-NLS-1$
 
 	public static class IdEntry {
 		IConfiguredSite csite;
@@ -64,7 +62,7 @@ public class DuplicateConflictsValidator  {
 			String version =
 				feature.getVersionedIdentifier().getVersion().toString();
 			String location = configSite.getSite().getURL().getFile();
-			return NLS.bind(KEY_CONFLICT, (new String[] { version, location }));
+			return NLS.bind(Messages.DuplicateConflictsDialog_conflict, (new String[] { version, location }));
 		}
 	}
 

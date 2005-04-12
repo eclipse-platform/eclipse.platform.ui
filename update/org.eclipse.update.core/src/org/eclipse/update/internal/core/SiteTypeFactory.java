@@ -68,7 +68,7 @@ public final class SiteTypeFactory {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
-			throw Utilities.newCoreException(NLS.bind("SiteTypeFactory.UnableToFindSiteFactory", (new String[] { type })),null); //$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteTypeFactory_UnableToFindSiteFactory, (new String[] { type })),null);
 		} else {
 			IConfigurationElement element = elements[0];
 			result = (ISiteFactory)element.createExecutableExtension("class"); //$NON-NLS-1$

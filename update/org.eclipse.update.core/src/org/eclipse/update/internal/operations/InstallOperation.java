@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.operations.*;
 
 /**
@@ -25,8 +26,6 @@ import org.eclipse.update.operations.*;
 public class InstallOperation
 	extends FeatureOperation
 	implements IInstallFeatureOperation {
-	private static final String KEY_OLD = "OperationsManager.error.old"; //$NON-NLS-1$
-
 	private IFeatureReference[] optionalFeatures;
 	private IFeature[] unconfiguredOptionalFeatures;
 	private IVerificationListener verifier;
@@ -85,7 +84,7 @@ public class InstallOperation
 					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
 						// "eat" the error if nested child
 						String message =
-							NLS.bind(KEY_OLD, (new String[] { oldFeature.getLabel() }));
+							NLS.bind(Messages.OperationsManager_error_old, (new String[] { oldFeature.getLabel() }));
 						IStatus status =
 							new Status(
 								IStatus.ERROR,

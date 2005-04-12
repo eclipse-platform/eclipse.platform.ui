@@ -82,7 +82,7 @@ public class BundleManifest implements IConfigurationConstants {
 			// plugin version
 			String version = a.getValue(Constants.BUNDLE_VERSION);
 			if (version == null) {
-				Utils.log(NLS.bind("BundleManifest.noVersion", (new String[] { Constants.BUNDLE_VERSION, id })));
+				Utils.log(NLS.bind(Messages.BundleManifest_noVersion, (new String[] { Constants.BUNDLE_VERSION, id })));
 				return;
 			}
 			String hostPlugin = a.getValue(Constants.FRAGMENT_HOST);

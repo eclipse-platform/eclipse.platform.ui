@@ -90,7 +90,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		// the manifest has not been found
 		String[] values = new String[] { Feature.FEATURE_XML, getURL().toExternalForm()};
-		throw Utilities.newCoreException(NLS.bind("FeaturePackagedContentProvider.NoManifestFile", values), new Exception()); //$NON-NLS-1$ 
+		throw Utilities.newCoreException(NLS.bind(Messages.FeaturePackagedContentProvider_NoManifestFile, values), new Exception()); 
 
 	}
 
@@ -246,7 +246,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		List result = new ArrayList();
 
 		if (!dir.isDirectory())
-			throw new IOException(NLS.bind("FeaturePackagedContentProvider.InvalidDirectory", (new String[] { dir.getPath() }))); //$NON-NLS-1$
+			throw new IOException(NLS.bind(Messages.FeaturePackagedContentProvider_InvalidDirectory, (new String[] { dir.getPath() })));
 
 		File[] files = dir.listFiles();
 		if (files != null) // be careful since it can be null
@@ -267,7 +267,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		String[] values = new String[] { obj };
 
-		return Utilities.newCoreException(NLS.bind("FeaturePackagedContentProvider.ErrorRetrieving", values), e); //$NON-NLS-1$	 	
+		return Utilities.newCoreException(NLS.bind(Messages.FeaturePackagedContentProvider_ErrorRetrieving, values), e);	 	
 
 	}
 

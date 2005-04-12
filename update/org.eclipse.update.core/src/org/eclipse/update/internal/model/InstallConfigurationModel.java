@@ -244,9 +244,9 @@ public class InstallConfigurationModel extends ModelObject {
 				new InstallConfigurationParser(platformConfig, this);
 			} catch (FileNotFoundException exception) {
 				UpdateCore.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
-				throw Utilities.newCoreException(NLS.bind("InstallConfiguration.ErrorDuringFileAccess", (new String[] { locationURLString })), exception); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallConfiguration_ErrorDuringFileAccess, (new String[] { locationURLString })), exception);
 			} catch (IOException exception) {
-				throw Utilities.newCoreException(NLS.bind("InstallConfiguration.ErrorDuringFileAccess", (new String[] { locationURLString })), exception); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallConfiguration_ErrorDuringFileAccess, (new String[] { locationURLString })), exception);
 			}
 			
 		} catch (CoreException e) {

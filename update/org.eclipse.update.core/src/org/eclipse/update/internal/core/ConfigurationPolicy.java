@@ -152,9 +152,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), originalException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), originalException);
 			if (newException != null)
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), newException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), newException);
 		}
 	}
 
@@ -252,9 +252,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), originalException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), originalException);
 			if (newException != null)
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), newException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), newException);
 		}
 
 		if (!success) {

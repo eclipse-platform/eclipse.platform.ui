@@ -70,7 +70,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 		} catch (MissingResourceException e) {
 			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			UpdateCore.warn(NLS.bind("BaseSiteFactory.CannotRetriveParentDirectory", (new String[] { url.toExternalForm() })));  //$NON-NLS-1$
+			UpdateCore.warn(NLS.bind(Messages.BaseSiteFactory_CannotRetriveParentDirectory, (new String[] { url.toExternalForm() })));
 		}
 
 		return bundle;

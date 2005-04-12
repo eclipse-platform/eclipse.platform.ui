@@ -45,7 +45,7 @@ public class TargetFeature extends Feature {
 	 */
 	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		if (this.contentConsumer == null) {
-			throw Utilities.newCoreException( NLS.bind("Feature.NoFeatureContentConsumer", (new String[] { getURL().toExternalForm() })), null); //$NON-NLS-1$
+			throw Utilities.newCoreException( NLS.bind(Messages.Feature_NoFeatureContentConsumer, (new String[] { getURL().toExternalForm() })), null);
 		}
 		return contentConsumer;
 	}

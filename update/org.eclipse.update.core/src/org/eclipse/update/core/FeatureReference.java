@@ -145,7 +145,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 			try {
 				resolve(url, null);
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(NLS.bind("FeatureReference.UnableToResolveURL", (new String[] { url.toExternalForm() })), e);	//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.FeatureReference_UnableToResolveURL, (new String[] { url.toExternalForm() })), e);
 			}
 		}
 	}

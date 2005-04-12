@@ -168,7 +168,7 @@ public class SiteFile extends Site {
 			}
 
 			if (InstallRegistry.getInstance().get("feature_"+feature.getVersionedIdentifier()) == null) { //$NON-NLS-1$
-				UpdateCore.log(NLS.bind("SiteFile.featureNotRemoved", (new String[] { feature.getVersionedIdentifier().toString() })), null); //$NON-NLS-1$ //$NON-NLS-2$
+				UpdateCore.log(NLS.bind(Messages.SiteFile_featureNotRemoved, (new String[] { feature.getVersionedIdentifier().toString() })), null);
 			} else {
 				// remove the feature content
 				ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
@@ -178,7 +178,7 @@ public class SiteFile extends Site {
 						if (monitor != null)
 							monitor.worked(1);
 					} catch (IOException e) {
-						throw Utilities.newCoreException(NLS.bind("SiteFile.CannotRemoveFeature", (new String[] { feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm() })), e);	//$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemoveFeature, (new String[] { feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm() })), e);
 					}
 				}
 				InstallRegistry.unregisterFeature(feature);
@@ -227,9 +227,9 @@ public class SiteFile extends Site {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), originalException); //$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), originalException);
 			if (newException != null)
-				throw Utilities.newCoreException(NLS.bind("InstallHandler.error", (new String[] { feature.getLabel() })), newException);//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.InstallHandler_error, (new String[] { feature.getLabel() })), newException);
 		}
 	}
 
@@ -357,7 +357,7 @@ public class SiteFile extends Site {
 			return;
 			
 		if (InstallRegistry.getInstance().get("plugin_"+pluginEntry.getVersionedIdentifier()) == null) { //$NON-NLS-1$
-			UpdateCore.log(NLS.bind("SiteFile.pluginNotRemoved", (new String[] { pluginEntry.getVersionedIdentifier().toString() })), null); //$NON-NLS-1$ //$NON-NLS-2$
+			UpdateCore.log(NLS.bind(Messages.SiteFile_pluginNotRemoved, (new String[] { pluginEntry.getVersionedIdentifier().toString() })), null);
 			return; 
 		}
 
@@ -368,7 +368,7 @@ public class SiteFile extends Site {
 				if (monitor != null)
 					monitor.worked(1);
 			} catch (IOException e) {
-				throw Utilities.newCoreException(NLS.bind("SiteFile.CannotRemovePlugin", (new String[] { pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm() })), e);//$NON-NLS-1$
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemovePlugin, (new String[] { pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm() })), e);
 			}
 		}
 		pluginEntries.remove(pluginEntry);
@@ -395,7 +395,7 @@ public class SiteFile extends Site {
 					recoveryLog.appendPath(ErrorRecoveryLog.FEATURE_ENTRY, references[i].asFile().getAbsolutePath());
 				} catch (IOException e) {
 					String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
-					throw Utilities.newCoreException(NLS.bind("SiteFile.CannotRemoveFeature", (new String[] { feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm() })), e); //$NON-NLS-1$
+					throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemoveFeature, (new String[] { feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm() })), e);
 				}
 			}
 			// log pluginEntry URL
@@ -406,7 +406,7 @@ public class SiteFile extends Site {
 					try {
 						recoveryLog.appendPath(ErrorRecoveryLog.BUNDLE_JAR_ENTRY, references[j].asFile().getAbsolutePath());
 					} catch (IOException e) {
-						throw Utilities.newCoreException(NLS.bind("SiteFile.CannotRemovePlugin", (new String[] { pluginsToRemove[i].getVersionedIdentifier().toString(), getURL().toExternalForm() })), e); //$NON-NLS-1$
+						throw Utilities.newCoreException(NLS.bind(Messages.SiteFile_CannotRemovePlugin, (new String[] { pluginsToRemove[i].getVersionedIdentifier().toString(), getURL().toExternalForm() })), e);
 					}
 				}
 			}

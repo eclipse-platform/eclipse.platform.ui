@@ -516,7 +516,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			} catch (CoreException e) {
 				Utils.log(e.getMessage());
 				Utils.log(e.getStatus());
-				throw new IOException(NLS.bind("cfig.unableToSave", (new String[] { url.toExternalForm() }))); //$NON-NLS-1$
+				throw new IOException(NLS.bind(Messages.cfig_unableToSave, (new String[] { url.toExternalForm() })));
 			} finally {
 				os.close();
 			}
@@ -589,7 +589,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				changeStamp = config.getDate().getTime();
 				config.setDirty(false);
 			} catch (CoreException e) {
-				throw new IOException(NLS.bind("cfig.unableToSave", (new String[] { cfigTmp.getAbsolutePath() }))); //$NON-NLS-1$
+				throw new IOException(NLS.bind(Messages.cfig_unableToSave, (new String[] { cfigTmp.getAbsolutePath() })));
 			} finally {
 				if (os != null)
 					try {
@@ -610,7 +610,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				// case we will restart with the previous state.
 				Utils.log(Messages.PlatformConfiguration_cannotRenameTempFile); 
 				
-				throw new IOException(NLS.bind("cfig.unableToSave", (new String[] { cfigTmp.getAbsolutePath() }))); //$NON-NLS-1$
+				throw new IOException(NLS.bind(Messages.cfig_unableToSave, (new String[] { cfigTmp.getAbsolutePath() })));
 			}
 		}
 	}

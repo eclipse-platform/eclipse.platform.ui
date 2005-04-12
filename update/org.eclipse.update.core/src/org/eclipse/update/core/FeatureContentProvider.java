@@ -251,7 +251,7 @@ public abstract class FeatureContentProvider
 						inputLength = ref.getInputSize(); 
 					} catch (IOException e) {
 						throw Utilities.newCoreException(
-							NLS.bind("FeatureContentProvider.UnableToRetrieve", (new Object[] { ref })),
+							NLS.bind(Messages.FeatureContentProvider_UnableToRetrieve, (new Object[] { ref })),
 							e);
 					}
 
@@ -261,7 +261,7 @@ public abstract class FeatureContentProvider
 								new FileOutputStream(localFile));
 					} catch (FileNotFoundException e) {
 						throw Utilities.newCoreException(
-							NLS.bind("FeatureContentProvider.UnableToCreate", (new Object[] { localFile })),
+							NLS.bind(Messages.FeatureContentProvider_UnableToCreate, (new Object[] { localFile })),
 							e);
 					}
 				}
@@ -289,7 +289,7 @@ public abstract class FeatureContentProvider
 						throw new InstallAbortedException(msg, null);
 					} else {
 						throw new FeatureDownloadException(
-							NLS.bind("FeatureContentProvider.ExceptionDownloading", (new Object[] { getURL().toExternalForm()})),
+							NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] { getURL().toExternalForm()})),
 							new IOException());
 					}
 				} else {
@@ -310,7 +310,7 @@ public abstract class FeatureContentProvider
 				Utilities.mapLocalFile(key, localFile);
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
-					NLS.bind("FeatureContentProvider.UnableToCreate", (new Object[] { localFile })),
+					NLS.bind(Messages.FeatureContentProvider_UnableToCreate, (new Object[] { localFile })),
 					e);
 			} finally {
 				//Do not close IS if user cancel,

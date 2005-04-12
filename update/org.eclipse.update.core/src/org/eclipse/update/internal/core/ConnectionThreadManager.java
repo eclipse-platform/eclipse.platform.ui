@@ -154,7 +154,7 @@ public class ConnectionThreadManager {
 						IStatus.ERROR,
 						pluginId,
 						IStatus.OK,
-						NLS.bind("ConnectionThreadManager.unresponsiveURL", (new String[] { url })),
+						NLS.bind(Messages.ConnectionThreadManager_unresponsiveURL, (new String[] { url })),
 						null);
 				children.add(status);
 			}
