@@ -43,17 +43,6 @@ import org.eclipse.ui.internal.util.Util;
 public final class EnabledSubmission implements Comparable {
 
     /**
-     * The factor used in the hashing function.
-     */
-    private final static int HASH_FACTOR = 89;
-
-    /**
-     * The seed value for the hash function.
-     */
-    private final static int HASH_INITIAL = EnabledSubmission.class.getName()
-            .hashCode();
-
-    /**
      * The identifier of the part in which this context should be enabled. If
      * this value is <code>null</code>, this means it should be active in any
      * part.
@@ -77,18 +66,6 @@ public final class EnabledSubmission implements Comparable {
      * submissions. This value should never be <code>null</code>.
      */
     private final String contextId;
-
-    /**
-     * The cached value of the has code. This value is computed lazily on the
-     * first call to retrieve the hash code, and the cache is used for all
-     * future calls.
-     */
-    private transient int hashCode;
-
-    /**
-     * Whether the hash code has been computed yet.
-     */
-    private transient boolean hashCodeComputed = false;
 
     /**
      * The cached string representation of this instance. This value is computed
@@ -187,23 +164,6 @@ public final class EnabledSubmission implements Comparable {
      */
     public String getContextId() {
         return contextId;
-    }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activePartId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activeWorkbenchPartSite);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
-            hashCodeComputed = true;
-        }
-
-        return hashCode;
     }
 
     /**

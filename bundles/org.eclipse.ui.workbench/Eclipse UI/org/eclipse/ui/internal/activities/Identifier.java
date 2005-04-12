@@ -84,12 +84,16 @@ final class Identifier implements IIdentifier {
         if (!(object instanceof Identifier))
             return false;
 
-        Identifier castedObject = (Identifier) object;
-        boolean equals = true;
-        equals &= Util.equals(activityIds, castedObject.activityIds);
-        equals &= Util.equals(enabled, castedObject.enabled);
-        equals &= Util.equals(id, castedObject.id);
-        return equals;
+        final Identifier castedObject = (Identifier) object;
+        if (!Util.equals(activityIds, castedObject.activityIds)) {
+            return false;
+        }
+        
+        if (!Util.equals(enabled, castedObject.enabled)) {
+            return false;
+        }
+        
+        return Util.equals(id, castedObject.id);
     }
 
     void fireIdentifierChanged(IdentifierEvent identifierEvent) {

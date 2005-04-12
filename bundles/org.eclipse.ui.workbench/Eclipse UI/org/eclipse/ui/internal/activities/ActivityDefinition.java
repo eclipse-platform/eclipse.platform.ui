@@ -115,12 +115,16 @@ public final class ActivityDefinition implements Comparable {
         if (!(object instanceof ActivityDefinition))
             return false;
 
-        ActivityDefinition castedObject = (ActivityDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(name, castedObject.name);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
+        final ActivityDefinition castedObject = (ActivityDefinition) object;
+        if (!Util.equals(id, castedObject.id)) {
+            return false;
+        }
+
+        if (!Util.equals(name, castedObject.name)) {
+            return false;
+        }
+
+        return Util.equals(sourceId, castedObject.sourceId);
     }
 
     public String getId() {

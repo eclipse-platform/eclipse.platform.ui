@@ -115,17 +115,31 @@ final class Activity implements IActivity {
         if (!(object instanceof Activity))
             return false;
 
-        Activity castedObject = (Activity) object;
-        boolean equals = true;
-        equals &= Util.equals(activityRequirementBindings,
-                castedObject.activityRequirementBindings);
-        equals &= Util.equals(activityPatternBindings,
-                castedObject.activityPatternBindings);
-        equals &= Util.equals(defined, castedObject.defined);
-        equals &= Util.equals(enabled, castedObject.enabled);
-        equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(name, castedObject.name);
-        return equals;
+        final Activity castedObject = (Activity) object;
+
+        if (!Util.equals(activityRequirementBindings,
+                castedObject.activityRequirementBindings)) {
+            return false;
+        }
+
+        if (!Util.equals(activityPatternBindings,
+                castedObject.activityPatternBindings)) {
+            return false;
+        }
+
+        if (!Util.equals(defined, castedObject.defined)) {
+            return false;
+        }
+
+        if (!Util.equals(enabled, castedObject.enabled)) {
+            return false;
+        }
+
+        if (!Util.equals(id, castedObject.id)) {
+            return false;
+        }
+
+        return Util.equals(name, castedObject.name);
     }
 
     void fireActivityChanged(ActivityEvent activityEvent) {

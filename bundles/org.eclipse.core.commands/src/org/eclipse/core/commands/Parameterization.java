@@ -156,7 +156,7 @@ public final class Parameterization {
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(parameter);
-			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(value);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}

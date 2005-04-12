@@ -96,12 +96,16 @@ public final class CategoryActivityBindingDefinition {
         if (!(object instanceof CategoryActivityBindingDefinition))
             return false;
 
-        CategoryActivityBindingDefinition castedObject = (CategoryActivityBindingDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(activityId, castedObject.activityId);
-        equals &= Util.equals(categoryId, castedObject.categoryId);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
+        final CategoryActivityBindingDefinition castedObject = (CategoryActivityBindingDefinition) object;
+        if (!Util.equals(activityId, castedObject.activityId)) {
+            return false;
+        }
+
+        if (!Util.equals(categoryId, castedObject.categoryId)) {
+            return false;
+        }
+
+        return Util.equals(sourceId, castedObject.sourceId);
     }
 
     public String getActivityId() {

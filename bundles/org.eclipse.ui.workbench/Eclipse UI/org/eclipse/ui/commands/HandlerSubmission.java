@@ -43,18 +43,6 @@ import org.eclipse.ui.internal.util.Util;
 public final class HandlerSubmission implements Comparable {
 
     /**
-     * A factor used in the hash function.
-     */
-    private final static int HASH_FACTOR = 89;
-
-    /**
-     * The seed for the hash function -- computed from this class' name's hash
-     * code.
-     */
-    private final static int HASH_INITIAL = HandlerSubmission.class.getName()
-            .hashCode();
-
-    /**
      * The part identifier for the part that should be active before this
      * submission can be considered.  This value can be <code>null</code>, which
      * indicates that it should match any part.
@@ -85,17 +73,6 @@ public final class HandlerSubmission implements Comparable {
      * The handler being submitted.  This value cannot be <code>null</code>.  
      */
     private final IHandler handler;
-
-    /**
-     * A lazily computed cache of the hash code.  This value is computed once on
-     * demand.
-     */
-    private transient int hashCode;
-
-    /**
-     * Whether the hash code has been computed yet.
-     */
-    private transient boolean hashCodeComputed;
 
     /**
      * The priority for this submission.  In the event of all other factors
@@ -235,25 +212,6 @@ public final class HandlerSubmission implements Comparable {
      */
     public Priority getPriority() {
         return priority;
-    }
-
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activePartId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
-            hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activeWorkbenchPartSite);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(priority);
-            hashCodeComputed = true;
-        }
-
-        return hashCode;
     }
 
     /**

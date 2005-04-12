@@ -65,11 +65,12 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
         if (!(object instanceof KeySequenceBinding))
             return false;
 
-        KeySequenceBinding castedObject = (KeySequenceBinding) object;
-        boolean equals = true;
-        equals &= Util.equals(keySequence, castedObject.keySequence);
-        equals &= Util.equals(match, castedObject.match);
-        return equals;
+        final KeySequenceBinding castedObject = (KeySequenceBinding) object;
+        if (!Util.equals(keySequence, castedObject.keySequence)) {
+            return false;
+        }
+        
+        return Util.equals(match, castedObject.match);
     }
 
     public KeySequence getKeySequence() {

@@ -115,12 +115,16 @@ public final class CategoryDefinition implements Comparable {
         if (!(object instanceof CategoryDefinition))
             return false;
 
-        CategoryDefinition castedObject = (CategoryDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(name, castedObject.name);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
+        final CategoryDefinition castedObject = (CategoryDefinition) object;
+        if (!Util.equals(id, castedObject.id)) {
+            return false;
+        }
+        
+        if (!Util.equals(name, castedObject.name)) {
+            return false;
+        }
+        
+        return Util.equals(sourceId, castedObject.sourceId);
     }
 
     public String getId() {

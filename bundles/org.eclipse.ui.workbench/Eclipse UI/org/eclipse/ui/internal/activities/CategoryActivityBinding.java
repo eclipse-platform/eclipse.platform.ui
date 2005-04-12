@@ -52,11 +52,12 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
         if (!(object instanceof CategoryActivityBinding))
             return false;
 
-        CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
-        boolean equals = true;
-        equals &= Util.equals(activityId, castedObject.activityId);
-        equals &= Util.equals(categoryId, castedObject.categoryId);
-        return equals;
+        final CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
+        if (!Util.equals(activityId, castedObject.activityId)) {
+            return false;
+        }
+
+        return Util.equals(categoryId, castedObject.categoryId);
     }
 
     public String getActivityId() {

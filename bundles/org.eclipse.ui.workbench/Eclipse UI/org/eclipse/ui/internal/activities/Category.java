@@ -94,14 +94,21 @@ final class Category implements ICategory {
         if (!(object instanceof Category))
             return false;
 
-        Category castedObject = (Category) object;
-        boolean equals = true;
-        equals &= Util.equals(categoryActivityBindings,
-                castedObject.categoryActivityBindings);
-        equals &= Util.equals(defined, castedObject.defined);
-        equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(name, castedObject.name);
-        return equals;
+        final Category castedObject = (Category) object;
+        if (!Util.equals(categoryActivityBindings,
+                castedObject.categoryActivityBindings)) {
+            return false;
+        }
+        
+        if (!Util.equals(defined, castedObject.defined)) {
+            return false;
+        }
+        
+        if (!Util.equals(id, castedObject.id)) {
+            return false;
+        }
+        
+        return Util.equals(name, castedObject.name);
     }
 
     void fireCategoryChanged(CategoryEvent categoryEvent) {

@@ -97,13 +97,17 @@ public final class ActivityRequirementBindingDefinition {
         if (!(object instanceof ActivityRequirementBindingDefinition))
             return false;
 
-        ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(requiredActivityId,
-                castedObject.requiredActivityId);
-        equals &= Util.equals(activityId, castedObject.activityId);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
+        final ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
+        if (!Util.equals(requiredActivityId,
+                castedObject.requiredActivityId)) {
+            return false;
+        }
+        
+        if (!Util.equals(activityId, castedObject.activityId)) {
+            return false;
+        }
+        
+        return Util.equals(sourceId, castedObject.sourceId);
     }
 
     public String getRequiredActivityId() {

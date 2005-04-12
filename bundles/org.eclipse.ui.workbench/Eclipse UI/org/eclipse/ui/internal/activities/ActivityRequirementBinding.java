@@ -55,12 +55,12 @@ public final class ActivityRequirementBinding implements
         if (!(object instanceof ActivityRequirementBinding))
             return false;
 
-        ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
-        boolean equals = true;
-        equals &= Util.equals(requiredActivityId,
-                castedObject.requiredActivityId);
-        equals &= Util.equals(activityId, castedObject.activityId);
-        return equals;
+        final ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
+        if (!Util.equals(requiredActivityId, castedObject.requiredActivityId)) {
+            return false;
+        }
+
+        return Util.equals(activityId, castedObject.activityId);
     }
 
     public String getRequiredActivityId() {

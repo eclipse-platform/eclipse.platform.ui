@@ -94,12 +94,16 @@ public final class ActivityPatternBindingDefinition {
         if (!(object instanceof ActivityPatternBindingDefinition))
             return false;
 
-        ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(activityId, castedObject.activityId);
-        equals &= Util.equals(pattern, castedObject.pattern);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
+        final ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
+        if (!Util.equals(activityId, castedObject.activityId)) {
+            return false;
+        }
+
+        if (!Util.equals(pattern, castedObject.pattern)) {
+            return false;
+        }
+
+        return Util.equals(sourceId, castedObject.sourceId);
     }
 
     public String getActivityId() {

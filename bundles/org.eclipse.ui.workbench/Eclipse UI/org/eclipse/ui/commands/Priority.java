@@ -45,16 +45,6 @@ import org.eclipse.ui.internal.util.Util;
 public final class Priority implements Comparable {
 
 	/**
-	 * An internal factor used in the hash function.
-	 */
-	private final static int HASH_FACTOR = 89;
-
-	/**
-	 * The hash seed is the hash code of this class' name.
-	 */
-	private final static int HASH_INITIAL = Priority.class.getName().hashCode();
-
-	/**
 	 * An instance representing 'legacy' priority.
 	 */
 	public final static Priority LEGACY = new Priority(ISources.LEGACY_LEGACY);
@@ -68,17 +58,6 @@ public final class Priority implements Comparable {
 	 * An instance representing 'medium' priority.
 	 */
 	public final static Priority MEDIUM = new Priority(ISources.LEGACY_MEDIUM);
-
-	/**
-	 * The generated hash code. The hash code is only computed once (lazily).
-	 * After that, requests for the hash code simply get this value.
-	 */
-	private transient int hashCode;
-
-	/**
-	 * Whether the hash code has been computed yet.
-	 */
-	private transient boolean hashCodeComputed;
 
 	/**
 	 * The string representation of this priority. This is computed once
@@ -122,19 +101,6 @@ public final class Priority implements Comparable {
 	 */
 	int getValue() {
 		return value;
-	}
-
-	/**
-	 * @see Object#hashCode()
-	 */
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-			hashCodeComputed = true;
-		}
-
-		return hashCode;
 	}
 
 	/**

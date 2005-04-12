@@ -55,11 +55,12 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         if (!(object instanceof ActivityPatternBinding))
             return false;
 
-        ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
-        boolean equals = true;
-        equals &= Util.equals(activityId, castedObject.activityId);
-        equals &= Util.equals(pattern, castedObject.pattern);
-        return equals;
+        final ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
+        if (!Util.equals(activityId, castedObject.activityId)) {
+            return false;
+        }
+
+        return Util.equals(pattern, castedObject.pattern);
     }
 
     public String getActivityId() {
