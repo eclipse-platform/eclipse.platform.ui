@@ -147,7 +147,7 @@ public final class ContentType implements IContentType {
 			userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
 		}
 		// persist using preferences		
-		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		Preferences contentTypeNode = manager.getPreferences().node(id);
 		String newValue = Util.toListString(userSet);
 		// we are adding stuff, newValue must be non-null
 		Assert.isNotNull(newValue);
@@ -155,7 +155,7 @@ public final class ContentType implements IContentType {
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = NLS.bind(Messages.content_errorSavingSettings, getId());
+			String message = NLS.bind(Messages.content_errorSavingSettings, id);
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
@@ -181,7 +181,7 @@ public final class ContentType implements IContentType {
 		} catch (IOException ioe) {
 			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
 			if (ContentTypeManager.DEBUGGING) {
-				String message = NLS.bind(Messages.content_errorReadingContents, getId());
+				String message = NLS.bind(Messages.content_errorReadingContents, id);
 				ContentType.log(message, ioe);
 			}
 		} finally {
@@ -196,7 +196,7 @@ public final class ContentType implements IContentType {
 	public boolean equals(Object another) {
 		if (!(another instanceof ContentType))
 			return false;
-		return ((ContentType) another).getId().equals(this.getId());
+		return ((ContentType) another).id.equals(id);
 	}
 
 	public String getAliasTargetId() {
@@ -368,7 +368,7 @@ public final class ContentType implements IContentType {
 	}
 
 	public int hashCode() {
-		return this.getId().hashCode();
+		return id.hashCode();
 	}
 
 	private String[] internalGetFileSpecs(int typeMask) {
@@ -551,7 +551,7 @@ public final class ContentType implements IContentType {
 
 	private IContentDescriber invalidateDescriber(Throwable reason) {
 		setValidation(STATUS_INVALID);
-		String message = NLS.bind(Messages.content_invalidContentDescriber, getId());
+		String message = NLS.bind(Messages.content_invalidContentDescriber, id);
 		log(message, reason);
 		return (IContentDescriber) (describer = new InvalidDescriber());
 	}
@@ -586,8 +586,6 @@ public final class ContentType implements IContentType {
 			return aliasTarget.isKindOf(catalog, another);
 		if (this == another)
 			return true;
-		if (getDepth(catalog) <= another.getDepth(catalog))
-			return false;
 		ContentType baseType = getBaseType(catalog);
 		return baseType != null && baseType.isKindOf(catalog, another);
 	}
@@ -621,7 +619,7 @@ public final class ContentType implements IContentType {
 				return;
 		}
 		// persist the change
-		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		Preferences contentTypeNode = manager.getPreferences().node(id);
 		//TODO: shouldn't this call take a catalog?
 		final String[] userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
 		String preferenceKey = getPreferenceKey(type);
@@ -633,7 +631,7 @@ public final class ContentType implements IContentType {
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = NLS.bind(Messages.content_errorSavingSettings, getId());
+			String message = NLS.bind(Messages.content_errorSavingSettings, id);
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
@@ -660,12 +658,12 @@ public final class ContentType implements IContentType {
 			userCharset = newCharset;
 		}
 		// persist the change
-		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		Preferences contentTypeNode = manager.getPreferences().node(id);
 		setPreference(contentTypeNode, PREF_DEFAULT_CHARSET, userCharset);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
-			String message = NLS.bind(Messages.content_errorSavingSettings, getId());
+			String message = NLS.bind(Messages.content_errorSavingSettings, id);
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
@@ -691,7 +689,7 @@ public final class ContentType implements IContentType {
 	}
 
 	public String toString() {
-		return getId();
+		return id;
 	}
 
 	boolean isAlias(ContentTypeCatalog catalog) {
