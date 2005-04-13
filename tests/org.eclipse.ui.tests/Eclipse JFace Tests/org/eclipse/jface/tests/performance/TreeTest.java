@@ -149,7 +149,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddTen() throws CoreException {
 
-		doTestAdd(10);
+		doTestAddFast(10);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddFifty() throws CoreException {
 
-		doTestAdd(50);
+		doTestAddFast(50);
 	}
 
 	/**
@@ -169,13 +169,22 @@ public class TreeTest extends ViewerTest {
 
 		tagIfNecessary("Add 100 items to tree", Dimension.ELAPSED_PROCESS);
 		
-		doTestAdd(100);
+		doTestAddFast(100);
 	}
 
-	private void doTestAdd(final int count) throws CoreException {
+	/**
+	 * Run the test for one of the fast insertions.
+	 * @param count
+	 * @throws CoreException
+	 */
+	private void doTestAddFast(final int count) throws CoreException {
 
 		openBrowser();
-		for (int i = 0; i < ITERATIONS; i++) {
+		
+		int iterations = ITERATIONS / 5;
+		int measureSize = 5;
+		
+		for (int i = 0; i < iterations; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
@@ -189,10 +198,13 @@ public class TreeTest extends ViewerTest {
 			processEvents();
 			Object[] batchArray = batches.toArray();
 			startMeasuring();
-			for (int j = 0; j < batchArray.length; j++) {
-
-				viewer.add(input, (Object[]) batchArray[j]);
-				processEvents();
+			
+			//Measure more than one for the fast cases
+			for (int j = 0; j < measureSize; j++) {
+				for (int k = 0; k < batchArray.length; k++) {
+					viewer.add(input, (Object[]) batchArray[k]);
+					processEvents();
+				}
 
 			}
 			stopMeasuring();
@@ -207,7 +219,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddThousand() throws CoreException {
 		openBrowser();
-		for (int i = 0; i < ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS / 5; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
@@ -230,7 +242,7 @@ public class TreeTest extends ViewerTest {
 		tagIfNecessary("Add 1000 items to end of tree", Dimension.ELAPSED_PROCESS);
 		
 		openBrowser();
-		for (int i = 0; i < ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS / 5; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
