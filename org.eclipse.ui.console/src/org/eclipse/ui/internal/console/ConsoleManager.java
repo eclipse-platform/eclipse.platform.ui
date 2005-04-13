@@ -75,29 +75,44 @@ public class ConsoleManager implements IConsoleManager {
     private RepaintJob fRepaintJob = new RepaintJob();
     
     private class RepaintJob extends WorkbenchJob {
+        private ArrayList list = new ArrayList();
+
         public RepaintJob() {
             super("schedule redraw() of viewers"); //$NON-NLS-1$
             setSystem(true);
         }
         
-        private ArrayList list = new ArrayList();
-
-        void addControl(Control control) {
-            synchronized (list) {
-                if (!list.contains(control)) {
-                    list.add(control);
-                }
-            }
+        void addConsole(IConsole console) {
+            list.add(console);
         }
         
         public IStatus runInUIThread(IProgressMonitor monitor) {
             synchronized (list) {
-                for (Iterator iter = list.iterator(); iter.hasNext();) {
-                    Control control = (Control) iter.next();
-                    if (!control.isDisposed()) {
-                        control.redraw();
+                if (list.isEmpty()) {
+                    return Status.OK_STATUS;
+                }
+                
+                IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+                for (int i = 0; i < workbenchWindows.length; i++) {
+                    IWorkbenchWindow window = workbenchWindows[i];
+                    if (window != null) {
+                        IWorkbenchPage page = window.getActivePage();
+                        if (page != null) {
+                            IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+                            if (part != null && part instanceof IConsoleView) {
+                                ConsoleView view = (ConsoleView) part;
+                                if (view != null && list.contains(view.getConsole())) {
+                                    Control control = view.getCurrentPage().getControl();
+                                    if (control.isDisposed()) {
+                                        control.redraw();
+                                    }
+                                }
+                            }
+
+                        }
                     }
                 }
+                list.clear();
             }
             return Status.OK_STATUS;
         }
@@ -420,29 +435,8 @@ public class ConsoleManager implements IConsoleManager {
     
     
     public void refresh(final IConsole console) {
-        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
-                IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-                for (int i = 0; i < workbenchWindows.length; i++) {
-                    IWorkbenchWindow window = workbenchWindows[i];
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-                            if (part instanceof IConsoleView) {
-                                ConsoleView view = (ConsoleView) part;
-                                if (view != null && view.getConsole().equals(console)) {
-                                    Control control = view.getCurrentPage().getControl();
-                                    fRepaintJob.addControl(control);
-                                    fRepaintJob.schedule(50);                                    
-                                }
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        }); 
+        fRepaintJob.addConsole(console);
+        fRepaintJob.schedule(50); 
     }
 
 }
