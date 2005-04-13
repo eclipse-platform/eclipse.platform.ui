@@ -18,6 +18,7 @@ import java.util.zip.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
 
 /**
@@ -97,21 +98,15 @@ public class DirectoryToc {
 			// collect topics from doc.zip file
 			ret.putAll(createExtraTopicsFromZip(pluginID, directory, url));
 		}
-		// Find directory on the filesystem
-		iPath = new Path("$nl$/" + directory); //$NON-NLS-1$
-		url = null;
-		url = Platform.find(pluginDesc, iPath, override);
-		if (url == null) {
-			url = Platform.find(pluginDesc, new Path(directory));
-		}
-		if (url != null) {
-			// collect topics from directory
-			ret
-					.putAll(createExtraTopicsFromDirectory(pluginID, directory,
-							url));
+		
+		// Find topics in plugin
+		Set paths = ResourceLocator.findTopicPaths(pluginDesc, directory,
+				locale);
+		for (Iterator it = paths.iterator(); it.hasNext();) {
+			String href = "/" + pluginID + "/" + (String) it.next();
+			ret.put(href, new ExtraTopic(href));
 		}
 		return ret;
-
 	}
 
 	/**
@@ -126,10 +121,14 @@ public class DirectoryToc {
 		URL realZipURL;
 		try {
 			realZipURL = Platform.asLocalURL(Platform.resolve(url));
+			if (realZipURL.toExternalForm().startsWith("jar:")) {
+				// doc.zip not allowed in jarred plug-ins.
+				return ret;
+			}
 		} catch (IOException ioe) {
 			HelpPlugin.logError("IOException occurred, when resolving URL " //$NON-NLS-1$
 					+ url.toString() + ".", ioe); //$NON-NLS-1$
-			return new HashMap(0);
+			return ret;
 		}
 		ZipFile zipFile;
 		try {
@@ -175,55 +174,6 @@ public class DirectoryToc {
 			}
 		}
 		return ret;
-	}
-
-	/**
-	 * @param directory
-	 *            path in the form "segment1/segment2...", "" will return names
-	 *            of all files in a directory
-	 * @return Map of ITopic by href String
-	 */
-	private Map createExtraTopicsFromDirectory(String pluginID,
-			String directory, URL url) {
-		Map m = new HashMap();
-		URL realURL;
-		try {
-			realURL = Platform.asLocalURL(Platform.resolve(url));
-		} catch (IOException ioe) {
-			HelpPlugin.logError("IOException occurred, when resolving URL " //$NON-NLS-1$
-					+ url.toString() + ".", ioe); //$NON-NLS-1$
-			return m;
-		}
-		File dirFile = new File(realURL.getFile());
-		if (dirFile.exists() && dirFile.isDirectory()) {
-			String prefix;
-			if (directory.length() > 0) {
-				prefix = "/" + pluginID + "/" + directory; //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				prefix = "/" + pluginID; //$NON-NLS-1$
-			}
-			createExtraTopicsFromDirectoryFile(prefix, dirFile, m);
-		}
-		return m;
-
-	}
-
-	/**
-	 * @prefix /pluginID/segment1/segment2
-	 * @return Map of ITopic by href String
-	 */
-	private Map createExtraTopicsFromDirectoryFile(String prefix, File dir,
-			Map m) {
-		File[] files = dir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			String href = prefix + "/" + files[i].getName(); //$NON-NLS-1$
-			if (files[i].isDirectory()) {
-				createExtraTopicsFromDirectoryFile(href, files[i], m);
-			} else {
-				m.put(href, new ExtraTopic(href));
-			}
-		}
-		return m;
 	}
 
 	class ExtraTopic implements ITopic {

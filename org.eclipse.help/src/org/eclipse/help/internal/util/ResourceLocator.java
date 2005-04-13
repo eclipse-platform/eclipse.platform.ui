@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -338,4 +339,55 @@ public class ResourceLocator {
 		return pathPrefix;
 	}
 
+	/**
+	 * Finds all topics under specified directory (recursively). This includes
+	 * includes OS, WS and NL lookup.
+	 * 
+	 * @param pluginDesc
+	 *            the plugin description of the plugin that contains the file
+	 *            you are trying to find
+	 * @param directory
+	 *            the relative path of the directory
+	 * @param locale
+	 *            the locale used as an override or <code>null</code> to use
+	 *            the default locale
+	 * 
+	 * @return an InputStream to the file or <code>null</code> if the file
+	 *         wasn't found
+	 */
+	public static Set findTopicPaths(Bundle pluginDesc, String directory,
+			String locale) {
+		Set ret = new HashSet();
+		findTopicPaths(pluginDesc, directory, locale, ret);
+		return ret;
+	}
+
+	/**
+	 * @param pluginDesc
+	 * @param directory
+	 * @param locale
+	 * @param paths
+	 */
+	private static void findTopicPaths(Bundle pluginDesc, String directory,
+			String locale, Set paths) {
+		if (directory.endsWith("/"))
+			directory = directory.substring(0, directory.length() - 1);
+		ArrayList pathPrefix = getPathPrefix(locale);
+		for (int i = 0; i < pathPrefix.size(); i++) {
+			String path = pathPrefix.get(i) + directory;
+			if (path.length() == 0)
+				path = "/";
+			Enumeration entries = pluginDesc.getEntryPaths(path);
+			if (entries != null) {
+				while (entries.hasMoreElements()) {
+					String topicPath = (String) entries.nextElement();
+					if (topicPath.endsWith("/")) {
+						findTopicPaths(pluginDesc, topicPath, locale, paths);
+					} else {
+						paths.add(topicPath);
+					}
+				}
+			}
+		}
+	}
 }
