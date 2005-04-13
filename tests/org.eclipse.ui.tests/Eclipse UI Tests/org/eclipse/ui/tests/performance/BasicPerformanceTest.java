@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -267,7 +267,22 @@ public abstract class BasicPerformanceTest extends UITestCase {
             try {
                 runnable.run();
             } catch (Exception e) {
-                throw new CoreException(WorkbenchPlugin.getStatus(e));
+                
+                
+                Throwable cause = e;
+                
+                if (e instanceof CoreException) {
+                    cause = ((CoreException)e).getStatus().getException();
+                } else {
+                    if (e.getCause() != null) {
+                        cause = e.getCause();
+                    }
+                }
+                
+                throw new CoreException(new Status(IStatus.ERROR, 
+                        TestPlugin.getDefault().getBundle().getSymbolicName(),
+                        IStatus.OK,
+                        "An exception occurred", e));
             }
             
             long curTime = System.currentTimeMillis();
