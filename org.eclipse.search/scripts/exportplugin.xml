@@ -1,10 +1,12 @@
 <project name="org.eclipse.search" default="export" basedir="..">
 	<target name="init">
 		<tstamp/>
+		<property name="tempdir" value="../../tmp" />
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.search" />
 		<property name="version"  value="_3.1.0" />
 		<property name="dest"  value="${destdir}/${plugin}${version}" />
+		<property name="destjar"  value="${destdir}/${plugin}${version}.jar" />
 	</target>
 
 	<target name="build" depends="init">
@@ -12,24 +14,24 @@
 	</target>
 
 	<target name="export" depends="build">
+		<delete dir="${tempdir}" />
+		<mkdir dir="${tempdir}" />
 		<mkdir dir="${destdir}" />
-		<delete dir="${dest}" />
-		<mkdir dir="${dest}" />
-		<jar 
-			jarfile="${dest}/search.jar"
-			basedir="bin"
-		/>
-		<copy file="plugin.xml" todir="${dest}"/>
-		<copy file="plugin.properties" todir="${dest}"/>
-		<copy todir="${dest}/icons">
-			<fileset dir="icons" />
-		</copy>
-		<copy todir= "${dest}/META-INF">
-			<fileset dir="META-INF"/>
-		</copy>		
-		<zip zipfile="${dest}/searchsrc.zip">
+		<delete file="${destjar}" />
+		<zip zipfile="${tempdir}/src.zip">
 		    <fileset dir="search" />
 		    <fileset dir="new search" />
-  		</zip>
+  		</zip>		
+		<zip zipfile="${destjar}">
+			<fileset dir=".">
+			  <include name="plugin.xml" />
+			  <include name="plugin.properties" />
+			  <include name="icons/**"/>
+			  <include name="META-INF/**" />
+			</fileset>
+			<fileset dir="bin" />
+			<fileset file="${tempdir}/src.zip" />
+		</zip>
+		<delete file="${tempdir}/src.zip" />
 	</target>
 </project>
