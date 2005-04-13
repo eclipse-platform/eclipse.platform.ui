@@ -25,7 +25,6 @@ public class JFacePerformanceSuite extends TestSuite {
 		addTest(new ComboViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
 		addTest(new TableViewerRefreshTest("testRefresh"));
 		addTest(new TableViewerRefreshTest("testUpdate"));
-		addTest(new TreeTest("testAddOneAtATime"));
 		addTest(new TreeTest("testAddTen"));
 		addTest(new TreeTest("testAddFifty"));
 		addTest(new TreeTest("testAddThousand"));

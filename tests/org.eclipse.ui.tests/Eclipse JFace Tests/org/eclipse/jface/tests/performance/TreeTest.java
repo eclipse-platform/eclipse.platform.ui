@@ -121,10 +121,10 @@ public class TreeTest extends ViewerTest {
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
 	 */
-	public void testAddOneAtATime() throws CoreException {
+	public void testAddOneAtATime() {
 		openBrowser();
 
-		for (int i = 0; i < ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS / 10; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
 			input.createChildren(TEST_COUNT);
