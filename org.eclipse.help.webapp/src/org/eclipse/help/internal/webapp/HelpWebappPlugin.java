@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
 import org.osgi.framework.*;
 
 /**
@@ -42,11 +41,11 @@ public class HelpWebappPlugin extends Plugin {
 
 	/**
 	 * Logs a Warning message with an exception. Note that the message should
-	 * already be localized to proper local. ie: WebappResources.getString()
+	 * already be localized to proper locale. ie: WebappResources.getString()
 	 * should already have been called
 	 */
 	public static synchronized void logWarning(String message) {
-		if (HelpPlugin.DEBUG) {
+		if (HelpWebappPlugin.DEBUG) {
 			if (message == null)
 				message = ""; //$NON-NLS-1$
 			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
