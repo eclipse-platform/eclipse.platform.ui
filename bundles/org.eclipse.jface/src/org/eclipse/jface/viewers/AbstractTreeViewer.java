@@ -176,48 +176,139 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
         if (childElements.length > 0) {
             Object[] filtered = filter(childElements);
-            for (int i = 0; i < filtered.length; i++) {
-                createAddedElement(widget, filtered[i]);
-            }
+			if(getSorter() != null)
+				getSorter().sort(this,filtered);
+            createAddedElements(widget, filtered);
         }
 	}
 
 	/**
-     * Create the new element in the parent widget. If the
+     * Create the new elements in the parent widget. If the
      * child already exists do nothing.
      * @param widget
-     * @param element
+     * @param elements Sorted list of elements to add.
      */
-    private void createAddedElement(Widget widget, Object element) {
+    private void createAddedElements(Widget widget, Object[] elements) {
 
-        if (equals(element, widget.getData()))
-            return;
+		if(elements.length == 1){
+			if (equals(elements[0], widget.getData()))
+				return;
+		}
+		
+		ViewerSorter sorter = getSorter ();
+		Item[] items = null;
 
-        if (getSorter () == null) {
-          Item[] items = getChildren(widget);
-          for (int i = 0; i < items.length; i++) {
-              if (items[i].getData().equals(element)) {
+        if (sorter == null) {
+		   items = getChildren(widget);
+		  for (int i = 0; i < elements.length; i++) {
+			for (int j = 0; j < items.length; j++) {
+              if (items[j].getData().equals(elements[i])) {
               	//refresh the element in case it has new children
-              	refresh(element);
-                  return;
+              	refresh(elements[i]);
+                 return;
               }
-          }
+			}
+		  }
         }
 
-        int index = indexForElement(widget, element);
-        if (getSorter () != null) {
-          // ASSUME sorter is consistent with equals() - therefore we can
-          // just check against the item prior to this index (if any)
-          if (index > 0
-              && getChild (widget, index - 1).getData().equals(element)) {
-            //refresh the element in case it has new children
-            refresh(element);
-              return;
-          }
-        }
-        createTreeItem(widget, element, index);
+		
+		
+		//As the items are sorted already we optimize for a 
+		//start position
+		int position = 0;
+		int size;
+		
+	
+		if(widget instanceof Control)
+			size = getItemCount((Control) widget);
+		else{
+			if(widget instanceof Item)
+				size = getItemCount((Item) widget);
+			else{
+				if(items == null)
+					items = getChildren(widget);
+				size = items.length;
+					
+			}
+		}		
+		
+		for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
+			int index;
+			if(sorter == null)
+				index = size;
+			else{
+				index = indexForElement(widget,sorter,position, element,size);
+				
+				// Assume sorter is consistent with equals() - therefore we can
+				// just check against the item prior to this index (if any)
+				if (index >0 && getChild (widget, index - 1).getData().equals(element)) {
+					//refresh the element in case it has new children
+					refresh(element);
+					break;
+				}
+				position = index;
+			}
+			createTreeItem(widget, element, index);		
+			size++;
+		}
     }
+	
 
+	/**
+     * Returns the index where the item should be inserted. It uses sorter to
+     * determine the correct position, if sorter is not assigned, returns the
+     * index of the element after the last.
+     * 
+     * @param parent The parent widget
+     * @param sorter The sorter to use.
+     * @param startIndex
+     *            the start index to start search for position from this allows
+     *            optimising search for multiple elements that are sorted
+     *            themself.
+     * @param element
+     *            element to find position for.
+     * @param currentSize
+     * 			the current size of the collection
+     * @return the index to use when inserting the element.
+     * 
+     */
+    private int indexForElement(
+			Widget parent, 
+			ViewerSorter sorter,
+			int startIndex, 
+			Object element, 
+			int currentSize) {
+    
+
+        if (sorter == null)
+            return currentSize;
+        int min = startIndex, max = currentSize - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            Object data = getChild (parent, mid).getData();
+            int compare = sorter.compare(this, data, element);
+            if (compare == 0) {
+                // find first item > element
+                while (compare == 0) {
+                    ++mid;
+                    if (mid >= currentSize) {
+                        break;
+                    }
+                    data = getChild (parent, mid).getData();
+                    compare = sorter.compare(this, data, element);
+                }
+                return mid;
+            }
+            if (compare < 0)
+                min = mid + 1;
+            else
+                max = mid - 1;
+        }
+        return min;
+    }
+	
     /**
      * Returns the index where the item should be inserted.
      * 
