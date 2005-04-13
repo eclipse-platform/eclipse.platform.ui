@@ -56,12 +56,14 @@ public final class ContentType implements IContentType {
 	final static byte STATUS_INVALID = 2;
 	final static byte STATUS_UNKNOWN = 0;
 	final static byte STATUS_VALID = 1;
+	private static final Object NO_DESCRIBER = "NO DESCRIBER"; //$NON-NLS-1$
+	private static final Object INHERITED_DESCRIBER = "INHERITED DESCRIBER"; //$NON-NLS-1$
 	private String baseTypeId;
 	private String aliasTargetId;
 	private IConfigurationElement contentTypeElement;
 	private String userCharset;
 	private IContentDescription defaultDescription;
-	private IContentDescriber describer;
+	private Object describer;
 	private List fileSpecs;
 	private ContentTypeManager manager;
 	private String name;
@@ -276,22 +278,29 @@ public final class ContentType implements IContentType {
 		if (aliasTarget != null)
 			return aliasTarget.getDescriber(catalog);
 		try {
-			// if "" is specified no describer should be created
-			if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
-				return null;
-			synchronized (this) {
-				if (describer != null)
-					return describer;
-				if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
-					try {
-						return describer = (IContentDescriber) contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
-					} catch (CoreException ce) {
-						// the content type definition was invalid. Ensure we don't
-						// try again, and this content type does not accept any
-						// contents
-						return invalidateDescriber(ce);
-					}
+			// thread safety
+			Object tmpDescriber = describer;
+			if (tmpDescriber != null) {
+				if (INHERITED_DESCRIBER == tmpDescriber) {
+					ContentType baseType = getBaseType(catalog);
+					return baseType == null ? null : baseType.getDescriber(catalog);
+				}
+				return (NO_DESCRIBER == tmpDescriber) ? null : (IContentDescriber) tmpDescriber;
 			}
+			if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
+				try {
+					if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) { //$NON-NLS-1$
+						describer = NO_DESCRIBER;
+						return null;
+					}
+					describer = tmpDescriber = contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
+					return (IContentDescriber) tmpDescriber;
+				} catch (CoreException ce) {
+					// the content type definition was invalid. Ensure we don't
+					// try again, and this content type does not accept any
+					// contents
+					return invalidateDescriber(ce);
+				}
 		} catch (InvalidRegistryObjectException e) {
 			/*
 			 * This should only happen if  an API call is made after the registry has changed and before
@@ -302,6 +311,12 @@ public final class ContentType implements IContentType {
 			// bad timing - next time the client asks for a describer, s/he will have better luck
 			return null;
 		}
+		if (baseTypeId == null) {
+			describer = NO_DESCRIBER;
+			return null;
+		}
+		// remember so we don't come here next time
+		describer = INHERITED_DESCRIBER;
 		ContentType baseType = getBaseType(catalog);
 		return baseType == null ? null : baseType.getDescriber(catalog);
 	}
@@ -538,7 +553,7 @@ public final class ContentType implements IContentType {
 		setValidation(STATUS_INVALID);
 		String message = NLS.bind(Messages.content_invalidContentDescriber, getId());
 		log(message, reason);
-		return describer = new InvalidDescriber();
+		return (IContentDescriber) (describer = new InvalidDescriber());
 	}
 
 	/**
