@@ -39,8 +39,9 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
         
         tagIfNecessary("Open Multiple Editors", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
         
-        startMeasuring();            
-        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+        startMeasuring();      
+                
+        for (int i = 0; i < 100; i++) {
             IFile file = getProject().getFile(i + "." + extension);
             IEditorPart part = IDE.openEditor(activePage, file, true);
             processEvents();

@@ -23,7 +23,6 @@ public class EditorPerformanceSuite extends TestSuite {
     public static final String [][] EDITOR_SWITCH_PAIRS = {
         {"perf_outline", "java"},
         {"perf_basic", "perf_outline"}};
-    public static final int ITERATIONS = 100;
     
     /**
      * Returns the suite. This is required to use the JUnit Launcher.

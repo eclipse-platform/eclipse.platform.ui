@@ -43,30 +43,31 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
 		// Open both files outside the loop so as not to include
 		// the initial time to open, just switching.
-		IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
+		final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
 				.getActivePage();
-		IFile file1 = getProject().getFile("1." + extension1);
+		final IFile file1 = getProject().getFile("1." + extension1);
 		assertTrue(file1.exists());
-		IFile file2 = getProject().getFile("1." + extension2);
+		final IFile file2 = getProject().getFile("1." + extension2);
 		assertTrue(file2.exists());
 		IDE.openEditor(activePage, file1, true);
 		IDE.openEditor(activePage, file2, true);
 		processEvents();
+        EditorTestHelper.calmDown(500, 30000, 500);
+        waitForBackgroundJobs();
+        
+        exercise(new TestRunnable() {
 
-		// Switch between the two editors one hundred times.
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			startMeasuring();
-			for (int j = 0; j < 10; j++) {
-
-				IDE.openEditor(activePage, file1, true);
-				processEvents();
-				IDE.openEditor(activePage, file2, true);
-				processEvents();
-
-			}
-			stopMeasuring();
-			EditorTestHelper.calmDown(500, 30000, 500);
-		}
+            public void run() throws Exception {            
+                startMeasuring();
+                IDE.openEditor(activePage, file1, true);
+                processEvents();
+                IDE.openEditor(activePage, file2, true);
+                processEvents();
+                stopMeasuring();
+                EditorTestHelper.calmDown(500, 30000, 100);
+             } 
+        });
+        
 		commitMeasurements();
 		assertPerformance();
 	}

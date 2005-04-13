@@ -3,6 +3,7 @@ package org.eclipse.jface.tests.performance;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -10,6 +11,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 public class TreeTest extends ViewerTest {
 
@@ -118,99 +120,106 @@ public class TreeTest extends ViewerTest {
 	/**
 	 * Test addition to the tree.
 	 */
-	public void testAdd() {
+	public void testAdd() throws CoreException {
 		openBrowser();
-		for (int i = 0; i < 25; i++) {
-
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			processEvents();
-			startMeasuring();
-			viewer.add(input, input.children);
-			processEvents();
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                TestTreeElement input = new TestTreeElement(0, null);
+                viewer.setInput(input);
+                input.createChildren(TEST_COUNT);
+                processEvents();
+                startMeasuring();
+                viewer.add(input, input.children);
+                processEvents();
+                stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
 	}
 
 	/**
+	 * @throws CoreException 
 	 * Test addition to the tree one element at a time.
 	 */
-	public void testAddOneAtATime() {
+	public void testAddOneAtATime() throws CoreException {
 		openBrowser();
-		for (int i = 0; i < 25; i++) {
-
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			processEvents();
-			startMeasuring();
-			for (int j = 0; j < input.children.length; j++) {
-				
-				viewer.add(input, input.children[j]);
-				processEvents();
-				
-			}
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+    			TestTreeElement input = new TestTreeElement(0, null);
+    			viewer.setInput(input);
+    			input.createChildren(TEST_COUNT);
+    			processEvents();
+    			startMeasuring();
+    			for (int j = 0; j < input.children.length; j++) {
+    				
+    				viewer.add(input, input.children[j]);
+    				processEvents();
+    				
+    			}
+    			stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
 	}
 	
 	/**
+	 * @throws CoreException 
 	 * Test addition to the tree one element at a time.
 	 */
-	public void testAddTen() {
+	public void testAddTen() throws CoreException {
 		
 		doTestAdd(10);
 	}
 	
 	/**
+	 * @throws CoreException 
 	 * Test addition to the tree one element at a time.
 	 */
-	public void testAddFifty() {
+	public void testAddFifty() throws CoreException {
 		
 		doTestAdd(50);
 	}
 	
 	/**
+	 * @throws CoreException 
 	 * Test addition to the tree one element at a time.
 	 */
-	public void testAddHundred() {
+	public void testAddHundred() throws CoreException {
 		
 		doTestAdd(100);
 	}
 	
-	private void doTestAdd(int count){
+	private void doTestAdd(final int count) throws CoreException{
 
 		openBrowser();
-		for (int i = 0; i < 25; i++) {
-
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			Collection batches = new ArrayList();
-			int blocks = input.children.length/ count;
-			for (int j = 0; j < blocks;  j =j+count) {
-				Object[] batch = new Object[count];
-				System.arraycopy(input.children,j * count,batch,0,count);
-				batches.add(batch);
-			}
-			processEvents();
-			Object[] batchArray = batches.toArray();
-			startMeasuring();
-			for (int j = 0; j < batchArray.length; j++) {
-				
-				viewer.add(input, (Object[]) batchArray[j]);
-				processEvents();
-				
-			}
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+    			TestTreeElement input = new TestTreeElement(0, null);
+    			viewer.setInput(input);
+    			input.createChildren(TEST_COUNT);
+    			Collection batches = new ArrayList();
+    			int blocks = input.children.length/ count;
+    			for (int j = 0; j < blocks;  j =j+count) {
+    				Object[] batch = new Object[count];
+    				System.arraycopy(input.children,j * count,batch,0,count);
+    				batches.add(batch);
+    			}
+    			processEvents();
+    			Object[] batchArray = batches.toArray();
+    			startMeasuring();
+    			for (int j = 0; j < batchArray.length; j++) {
+    				
+    				viewer.add(input, (Object[]) batchArray[j]);
+    				processEvents();
+    				
+    			}
+    			stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
@@ -220,22 +229,25 @@ public class TreeTest extends ViewerTest {
 
 
 	/**
+	 * @throws CoreException 
 	 * Test addition to the tree with the items presorted.
 	 */
-	public void testAddPreSort() {
+	public void testAddPreSort() throws CoreException {
 		openBrowser();
-		for (int i = 0; i < 25; i++) {
-
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			viewer.getSorter().sort(viewer, input.children);
-			processEvents();
-			startMeasuring();
-			viewer.add(input, input.children);
-			processEvents();
-			stopMeasuring();
-		}
+        
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+    			TestTreeElement input = new TestTreeElement(0, null);
+    			viewer.setInput(input);
+    			input.createChildren(TEST_COUNT);
+    			viewer.getSorter().sort(viewer, input.children);
+    			processEvents();
+    			startMeasuring();
+    			viewer.add(input, input.children);
+    			processEvents();
+    			stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();

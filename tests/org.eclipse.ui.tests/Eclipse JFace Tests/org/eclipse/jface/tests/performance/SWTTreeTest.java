@@ -1,5 +1,6 @@
 package org.eclipse.jface.tests.performance;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -7,6 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 public class SWTTreeTest extends BasicPerformanceTest {
 
@@ -49,39 +51,46 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	 * Test the getItems API.
 	 * 
 	 */
-	public void testGetItems() {
+	public void testGetItems() throws CoreException {
 		openBrowser();
 
-		for (int i = 0; i < 25; i++) {
-			processEvents();
-			startMeasuring();
-			for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
-				tree.getItems();
-				processEvents();
-			}
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                startMeasuring();
+                for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
+                    tree.getItems();
+                    processEvents();
+                }
+                stopMeasuring();
+            } 
+        });
+        
 		commitMeasurements();
 		assertPerformance();
 		browserShell.close();
 	}
 
 	/**
+	 * @throws CoreException 
 	 * Test the getItem API.
 	 * 
 	 */
-	public void testGetItemAt() {
+	public void testGetItemAt() throws CoreException {
 		openBrowser();
 
-		for (int i = 0; i < 25; i++) {
-			processEvents();
-			startMeasuring();
-			for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
-				tree.getItem(j);
-				processEvents();
-			}
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                startMeasuring();
+                for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
+                    tree.getItem(j);
+                    processEvents();
+                }
+                stopMeasuring();
+            } 
+        });
+
 		commitMeasurements();
 		assertPerformance();
 		browserShell.close();

@@ -12,10 +12,10 @@ package org.eclipse.ui.tests.performance.layout;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * @since 3.1
@@ -26,7 +26,6 @@ public class ComputeSizeTest extends BasicPerformanceTest {
     private int xHint;
     private int yHint;
     private boolean flushState;
-    private int iterations = 100;
     
     /**
      * @param testName
@@ -49,24 +48,23 @@ public class ComputeSizeTest extends BasicPerformanceTest {
     protected void runTest() throws CoreException, WorkbenchException {
 
         widgetFactory.init();
-        Composite widget = widgetFactory.getControl();
-        Point maxSize = widgetFactory.getMaxSize();
+        final Composite widget = widgetFactory.getControl();
         
-        for (int iteration = 0; iteration < iterations; iteration++) {
-            
-            processEvents();
-            
-            // Place some bogus size queries to reduce the chance of a cached value being returned
-            widget.computeSize(100, SWT.DEFAULT, false);
-            widget.computeSize(SWT.DEFAULT, 100, false);
-            
-            startMeasuring();
-            
-            widget.computeSize(xHint, yHint, flushState);
-            
-            stopMeasuring();                
-            
-        }
+        exercise(new TestRunnable() {
+           public void run() {
+               processEvents();
+               
+               // Place some bogus size queries to reduce the chance of a cached value being returned
+               widget.computeSize(100, SWT.DEFAULT, false);
+               widget.computeSize(SWT.DEFAULT, 100, false);
+               
+               startMeasuring();
+               
+               widget.computeSize(xHint, yHint, flushState);
+               
+               stopMeasuring();                
+            } 
+        });
         
         commitMeasurements();
         assertPerformance();

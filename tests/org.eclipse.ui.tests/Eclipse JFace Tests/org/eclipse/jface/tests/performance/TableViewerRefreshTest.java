@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * The TableViewerRefreshTest is a test for refreshing the TableViewer.
@@ -79,12 +79,14 @@ public class TableViewerRefreshTest extends ViewerTest {
 	public void testRefresh() throws Throwable {
 		openBrowser();
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			startMeasuring();
-			viewer.refresh();
-			processEvents();
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+    			startMeasuring();
+    			viewer.refresh();
+    			processEvents();
+    			stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
@@ -99,12 +101,14 @@ public class TableViewerRefreshTest extends ViewerTest {
 		openBrowser();
 		viewer.setSorter(new ViewerSorter());
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			startMeasuring();
-			viewer.refresh();
-			processEvents();
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+    			startMeasuring();
+    			viewer.refresh();
+    			processEvents();
+    			stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
@@ -117,19 +121,20 @@ public class TableViewerRefreshTest extends ViewerTest {
 	 */
 	public void testRefreshPreSorted() throws Throwable {
 		openBrowser();
-		ViewerSorter sorter = new ViewerSorter();
+		final ViewerSorter sorter = new ViewerSorter();
 		viewer.setSorter(sorter);
 		
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			contentProvider.refreshElements();
-			startMeasuring();
-			contentProvider.cloneElements();
-			contentProvider.preSortElements(viewer,sorter);
-			viewer.refresh();
-			processEvents();
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                contentProvider.refreshElements();
+                startMeasuring();
+                contentProvider.cloneElements();
+                contentProvider.preSortElements(viewer,sorter);
+                viewer.refresh();
+                processEvents();
+                stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();
@@ -142,20 +147,21 @@ public class TableViewerRefreshTest extends ViewerTest {
 	 */
 	public void testUpdate() throws Throwable {
 		openBrowser();
-
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			TableItem[] items = viewer.getTable().getItems();
-			startMeasuring();
-			for (int j = 0; j < items.length; j++) {
-				TableItem item = items[j];
-				Object element = RefreshTestContentProvider.allElements[j];
-				
-				viewer.testUpdateItem(item, element);
-				
-			}
-			processEvents();
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                TableItem[] items = viewer.getTable().getItems();
+                startMeasuring();
+                for (int j = 0; j < items.length; j++) {
+                    TableItem item = items[j];
+                    Object element = RefreshTestContentProvider.allElements[j];
+                    
+                    viewer.testUpdateItem(item, element);
+                    
+                }
+                processEvents();
+                stopMeasuring();
+            } 
+        });
 
 		commitMeasurements();
 		assertPerformance();

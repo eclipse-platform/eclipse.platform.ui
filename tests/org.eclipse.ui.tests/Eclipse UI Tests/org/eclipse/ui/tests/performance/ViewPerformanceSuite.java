@@ -14,18 +14,14 @@ package org.eclipse.ui.tests.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.tests.api.MockViewPart;
-
 /**
  * @since 3.1
  */
 public class ViewPerformanceSuite extends TestSuite {
 
 	public static final String BASIC_VIEW = "org.eclipse.ui.tests.perf_basic";
-    public static final String [] VIEW_IDS = {BASIC_VIEW, IPageLayout.ID_RES_NAV, MockViewPart.ID};
-    
-    public static final int ITERATIONS = 100;
+    public static final String FINGERPRINT_TEST = BASIC_VIEW;
+    //public static final String [] VIEW_IDS = {BASIC_VIEW, IPageLayout.ID_RES_NAV, MockViewPart.ID};
     
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
@@ -45,9 +41,15 @@ public class ViewPerformanceSuite extends TestSuite {
      * 
      */
     private void addOpenCloseScenarios() {
-        for (int i = 0; i < VIEW_IDS.length; i++) {
+        String[] ids = WorkbenchPerformanceSuite.getAllTestableViewIds();
+        
+        for (int i = 0; i < ids.length; i++) {
+            String id = ids[i];
+            
+            boolean fingerprint = id.equals(FINGERPRINT_TEST);
         	//tag
-            addTest(new OpenCloseViewTest(VIEW_IDS[i], i == 0 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));            
+            addTest(new OpenCloseViewTest(id, fingerprint ? BasicPerformanceTest.LOCAL 
+                    : BasicPerformanceTest.NONE));            
         }         
     }
 }

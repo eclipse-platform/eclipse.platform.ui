@@ -32,23 +32,25 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 
     protected void runTest() throws Throwable {
         IWorkbenchWindow window = openTestWindow();
-        IWorkbenchPage page = window.getActivePage();
+        final IWorkbenchPage page = window.getActivePage();
         
         // prime it
-        IViewPart view = page.showView(viewId);
-        page.hideView(view);
+        IViewPart view1 = page.showView(viewId);
+        page.hideView(view1);
+        waitForBackgroundJobs();
         processEvents();
         
        	tagIfNecessary("Open/Close View", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
-                
-        for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-            startMeasuring();
-            view = page.showView(viewId);
-            processEvents();
-            stopMeasuring();
-            page.hideView(view);
-            processEvents();
-        }
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                startMeasuring();
+                IViewPart view = page.showView(viewId);
+                processEvents();
+                stopMeasuring();
+                page.hideView(view);
+                processEvents();
+            } 
+        });
         
         commitMeasurements();
         assertPerformance();

@@ -11,10 +11,14 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.ArrayList;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
 import org.eclipse.ui.tests.performance.layout.LayoutTest;
 import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
@@ -23,6 +27,7 @@ import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * @since 3.1
@@ -41,16 +46,21 @@ class WorkbenchPerformanceSuite extends TestSuite {
         "org.eclipse.jdt.ui.JavaPerspective", 
         "org.eclipse.debug.ui.DebugPerspective"};
     
+    // Perspective ID to use for the resize window fingerprint test
+    public static String resizeFingerprintTest = RESOURCE_PERSPID; 
+    
     public static final String [][] PERSPECTIVE_SWITCH_PAIRS = {
-    	{UIPerformanceTestSetup.PERSPECTIVE1, UIPerformanceTestSetup.PERSPECTIVE2, "1.perf_basic"},
+        // Test switching between the two most commonly used perspectives in the SDK (this is the most important
+        // perspective switch test, but it is easily affected by changes in JDT, etc.)
+        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"},
+        
+        {UIPerformanceTestSetup.PERSPECTIVE1, UIPerformanceTestSetup.PERSPECTIVE2, "1.perf_basic"},
 		
         {"org.eclipse.ui.tests.dnd.dragdrop", "org.eclipse.ui.tests.fastview_perspective", "1.perf_basic"},
         
         // Test switching between a perspective with lots of actions and a perspective with none
         {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.ui.tests.util.EmptyPerspective", "1.perf_basic"},
         
-        // Test switching between two perspectives with lots of actions but some commonality
-        {"org.eclipse.jdt.ui.JavaPerspective", "org.eclipse.debug.ui.DebugPerspective", "1.java"},
         {RESOURCE_PERSPID, "org.eclipse.jdt.ui.JavaPerspective", "1.java"} 
     };
     
@@ -76,7 +86,6 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
         addWindowOpenCloseScenarios();
-        addWindowResizeScenarios();
         addContributionScenarios();
     }
 
@@ -117,16 +126,6 @@ class WorkbenchPerformanceSuite extends TestSuite {
     }
     
     /**
-     * add a single fingerprint test for window resize
-     */
-    private void addWindowResizeScenarios() {
-    	if (PERSPECTIVE_IDS.length == 0)
-    		return;
-    	
-        addTest(new WindowResizeTest(new String[] {RESOURCE_PERSPID}, BasicPerformanceTest.GLOBAL));
-    }
-    
-    /**
      * Add performance tests for the layout of the given widget 
      * 
      * @param factory
@@ -162,15 +161,55 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addLayoutScenarios(new RecursiveTrimLayoutWidgetFactory());
     }
     
+    public static String[] getAllPerspectiveIds() {
+        ArrayList result = new ArrayList();
+        IPerspectiveDescriptor[] perspectives = Workbench.getInstance().getPerspectiveRegistry().getPerspectives();
+        
+        for (int i = 0; i < perspectives.length; i++) {
+            IPerspectiveDescriptor descriptor = perspectives[i];
+            String id = descriptor.getId();
+            result.add(id);
+        }
+
+        return (String[]) result.toArray(new String[result.size()]);
+    }
+
+    public static String[] getAllTestableViewIds() {
+        ArrayList result = new ArrayList();
+        
+        IViewDescriptor[] descriptors = Workbench.getInstance().getViewRegistry().getViews();
+        for (int i = 0; i < descriptors.length; i++) {
+            IViewDescriptor descriptor = descriptors[i];
+            // Heuristically prune out any test or example views
+            if (descriptor.getId().indexOf(".test") == -1
+                    && descriptor.getId().indexOf(".examples") == -1) {
+        
+                result.add(descriptor.getId());
+            }
+        }
+        
+        return (String[]) result.toArray(new String[result.size()]);
+    }
+    
+    
     /**
      * 
      */
     private void addResizeScenarios() {
-        for (int i = 0; i < PERSPECTIVE_IDS.length; i++) {            
-            addTest(new ResizeTest(new PerspectiveWidgetFactory(PERSPECTIVE_IDS[i])));
+        
+        String[] perspectiveIds = getAllPerspectiveIds();
+        for (int i = 0; i < perspectiveIds.length; i++) {
+            String id = perspectiveIds[i];
+            addTest(new ResizeTest(new PerspectiveWidgetFactory(id), 
+                    id.equals(resizeFingerprintTest) ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE, 
+                            "Window Resize"));
         }
-        for (int i = 0; i < VIEW_IDS.length; i++) {
-            addTest(new ResizeTest(new ViewWidgetFactory(VIEW_IDS[i])));
+        
+        String[] viewIds = getAllTestableViewIds();
+        for (int i = 0; i < viewIds.length; i++) {
+            String id = viewIds[i];
+
+            addTest(new ResizeTest(new ViewWidgetFactory(id)));
         }
     }
 }

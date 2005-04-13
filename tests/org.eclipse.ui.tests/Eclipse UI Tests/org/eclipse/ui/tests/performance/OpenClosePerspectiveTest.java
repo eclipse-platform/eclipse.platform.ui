@@ -53,7 +53,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         
         // create a nice clean window.
         IWorkbenchWindow window = openTestWindow();          
-        IWorkbenchPage activePage = window.getActivePage();
+        final IWorkbenchPage activePage = window.getActivePage();
         
         //causes creation of all views 
         activePage.setPerspective(perspective1);
@@ -71,18 +71,21 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
         tagIfNecessary("Open/Close Perspective", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
         
-        for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
-            processEvents();
-            EditorTestHelper.calmDown(500, 30000, 500);
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                EditorTestHelper.calmDown(500, 30000, 500);
 
-            
-            startMeasuring();
-            activePage.setPerspective(perspective1);
-            processEvents();      
-            closePerspective(activePage);
-            processEvents(); 
-            stopMeasuring();
-        }        
+                
+                startMeasuring();
+                activePage.setPerspective(perspective1);
+                processEvents();      
+                closePerspective(activePage);
+                processEvents(); 
+                stopMeasuring();
+            } 
+        });
+        
         commitMeasurements();
         assertPerformance();
     }

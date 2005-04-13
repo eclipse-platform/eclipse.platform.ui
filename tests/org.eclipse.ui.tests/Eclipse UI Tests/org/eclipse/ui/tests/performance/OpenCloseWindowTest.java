@@ -33,18 +33,21 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     protected void runTest() throws Throwable {
     	
     	tagIfNecessary("Open/Close Window", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
-        for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
-            processEvents();
-            EditorTestHelper.calmDown(500, 30000, 500);
-            
-            startMeasuring();
-            IWorkbenchWindow window = openTestWindow(id);
-            processEvents();   
-            window.close();
-            processEvents(); 
-            stopMeasuring();
-        }
         
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                EditorTestHelper.calmDown(500, 30000, 500);
+                
+                startMeasuring();
+                IWorkbenchWindow window = openTestWindow(id);
+                processEvents();   
+                window.close();
+                processEvents(); 
+                stopMeasuring();
+            } 
+        });
+                
         commitMeasurements();
         assertPerformance();
     }

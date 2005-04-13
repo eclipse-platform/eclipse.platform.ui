@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * @since 3.1
@@ -67,10 +68,17 @@ public class ViewWidgetFactory extends TestWidgetFactory {
 		// Open a file.
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		activePage.setPerspective(perspective1);
+        activePage.resetPerspective();
 		
 		IViewPart part = activePage.showView(viewId, null, WorkbenchPage.VIEW_ACTIVATE);
-
+        
+        BasicPerformanceTest.waitForBackgroundJobs();
+        
 		ctrl = getControl(part);
+        
+        Point size = getMaxSize();
+        ctrl.setBounds(0,0,size.x, size.y);
+        activePage.getWorkbenchWindow().getShell().setSize(size);
     }
     
     public void done() throws CoreException, WorkbenchException {

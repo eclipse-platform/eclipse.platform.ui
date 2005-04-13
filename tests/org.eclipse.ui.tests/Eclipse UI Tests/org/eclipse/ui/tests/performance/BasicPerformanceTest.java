@@ -14,7 +14,15 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -203,4 +211,70 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 	
+    public static void waitForBackgroundJobs() {
+
+        Job backgroundJob = new Job("This is a test job which sits around being low priority until everything else finishes") {
+            protected IStatus run(IProgressMonitor monitor) {
+                return Status.OK_STATUS;
+            }
+        };
+
+        backgroundJob.setPriority(Job.DECORATE);
+        
+        boolean hadEvents = true;
+        Display display = PlatformUI.getWorkbench().getDisplay();
+        if (display != null) {
+            while (hadEvents) {
+                hadEvents = false;
+                // Join a low priority job then spin the event loop
+                backgroundJob.schedule(0);
+                try {
+                    backgroundJob.join();
+                } catch (InterruptedException e) {
+                }
+                
+                while (display.readAndDispatch()) {
+                    hadEvents = true;
+                }
+            }
+        }        
+    }
+    
+    /**
+     * Runs the given runnable until either 100 iterations or 3s has elapsed.
+     * 
+     * @param runnable
+     * @since 3.1
+     */
+    public static void exercise(TestRunnable runnable) throws CoreException {
+        exercise(runnable, 100, 3000);
+    }
+    
+    /**
+     * Exercises the given runnable until either the given number of iterations or the given
+     * amount of time has elapsed, whatever occurs first.
+     * 
+     * @param runnable
+     * @param maxIterations
+     * @param maxTime
+     * @since 3.1
+     */
+    public static void exercise(TestRunnable runnable, int maxIterations, int maxTime) throws CoreException {
+        long startTime = System.currentTimeMillis();
+        
+        for(int counter = 0; counter < maxIterations; counter++) {
+
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                throw new CoreException(WorkbenchPlugin.getStatus(e));
+            }
+            
+            long curTime = System.currentTimeMillis();
+            if (curTime - startTime > maxTime) {
+                break;
+            } 
+        }
+    }
+    
 }

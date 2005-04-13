@@ -34,22 +34,25 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 	}
 
 	protected void runTest() throws Throwable {
-		IFile file = getProject().getFile("1." + extension);
+		final IFile file = getProject().getFile("1." + extension);
 		assertTrue(file.exists());
-		IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
+		final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
 				.getActivePage();
 
-		for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
-			startMeasuring();
-			for (int j = 0; j < 10; j++) {
-				IEditorPart part = IDE.openEditor(activePage, file, true);
-				processEvents();
-				activePage.closeEditor(part, false);
-				processEvents();
-				
-			}
-			stopMeasuring();
-		}
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                startMeasuring();
+                for (int j = 0; j < 10; j++) {
+                    IEditorPart part = IDE.openEditor(activePage, file, true);
+                    processEvents();
+                    activePage.closeEditor(part, false);
+                    processEvents();
+                    
+                }
+                stopMeasuring();
+            } 
+        });
+        
 		tagIfNecessary("Open/Close Editor", Dimension.CPU_TIME);
 		commitMeasurements();
 		assertPerformance();
