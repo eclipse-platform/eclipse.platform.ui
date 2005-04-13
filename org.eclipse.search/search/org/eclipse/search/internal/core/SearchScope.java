@@ -35,8 +35,8 @@ import org.eclipse.search.internal.ui.SearchMessages;
 public class SearchScope {
 
 	/**
-	 * Returns a workbench scope.
-	 * @return a workbench scope.
+	 * Returns a workspace scope.
+	 * @return a workspace scope.
 	 */
 	public static SearchScope newWorkspaceScope() {
 		return new SearchScope(SearchMessages.getString("WorkspaceScope"), new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); //$NON-NLS-1$
