@@ -98,9 +98,10 @@ public interface IConsoleManager {
 	public IPatternMatchListener[] createPatternMatchListeners(IConsole console);
     
     /**
-     * Requests a redraw of any visible Viewers containing the specified console.
+     * Requests a redraw of any visible console page containing the specified console.
      * 
-     * @param console The console requiring a redraw.
+     * @param console the console to be refreshed
+     * @since 3.1
      */
     public void refresh(IConsole console);
 	
