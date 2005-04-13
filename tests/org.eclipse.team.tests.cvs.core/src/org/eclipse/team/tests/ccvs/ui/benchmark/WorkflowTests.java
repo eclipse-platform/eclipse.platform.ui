@@ -11,9 +11,13 @@
 package org.eclipse.team.tests.ccvs.ui.benchmark;
 
 import java.io.File;
+
 import junit.framework.Test;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
+import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 
 public class WorkflowTests extends BenchmarkTest {
 	private int FILE_SIZE_MEAN = 16384;
@@ -51,17 +55,21 @@ public class WorkflowTests extends BenchmarkTest {
 	}
 
 	public void testBigWorkflow() throws Exception {
-		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
+		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false, new SynchronizeViewTestAdapter());
 	}
 	
 	public void testBigWorkflowForSummary() throws Exception {
-		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow", BenchmarkTestSetup.LOOP_COUNT, true);
+		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow", BenchmarkTestSetup.LOOP_COUNT, true, new SynchronizeViewTestAdapter());
 	}
+    
+    public void testBigWorkflowNoUI() throws Exception {
+        runWorkflowTests("testBigWithNoUI", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow No UI", BenchmarkTestSetup.LOOP_COUNT, true, new SyncInfoSource());
+    }
 	
 	/**
 	 * Runs a series of incoming and outgoing workflow-related tests.
 	 */
-	protected void runWorkflowTests(String name, File initialContents, String globalName, int loopCount, boolean global) throws Exception {
+	protected void runWorkflowTests(String name, File initialContents, String globalName, int loopCount, boolean global, SyncInfoSource source) throws Exception {
         openEmptyPerspective();
 	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
 	    for (int i = 0; i < loopCount; i++) {
@@ -92,22 +100,22 @@ public class WorkflowTests extends BenchmarkTest {
 			BenchmarkUtils.touchRandomDeepFiles(gen, outProject, 2);
 			IFolder componentRoot = BenchmarkUtils.createRandomDeepFolder(gen, outProject);
 			BenchmarkUtils.createRandomDeepFiles(gen, componentRoot, 12, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
-			syncCommitResources(new IResource[] { outProject }, "");	
+			syncCommitResources(source, new IResource[] { outProject }, "");	
 			endGroup();
 			// Test 1: catching up to a new component - localized additions and some changes
 			startGroup(UPDATE1);
-			syncUpdateResources(new IResource[] { inProject });
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 	
 			// Test 2: fixing a bug - localized changes
 			startGroup(COMMIT2);
 			BenchmarkUtils.modifyRandomDeepFiles(gen, componentRoot, 2);
 			BenchmarkUtils.touchRandomDeepFiles(gen, componentRoot, 2);
-			syncCommitResources(new IResource[] { outProject }, "");
+			syncCommitResources(source, new IResource[] { outProject }, "");
 			endGroup();
 			// Test 2: catching up to a bug fix - localized changes
 			startGroup(UPDATE2);
-			syncUpdateResources(new IResource[] { inProject });
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 			
 			// Test 3: moving a package - scattered changes, files moved
@@ -115,11 +123,11 @@ public class WorkflowTests extends BenchmarkTest {
 			BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, 5);        // a few scattered changes
 			BenchmarkUtils.modifyRandomDeepFiles(gen, componentRoot, 12); // changes to "package" stmt
 			BenchmarkUtils.renameResource(componentRoot, BenchmarkUtils.makeUniqueName(gen, "folder", null));
-			syncCommitResources(new IResource[] { outProject }, "");
+			syncCommitResources(source, new IResource[] { outProject }, "");
 			endGroup();
 			// Test 3: catching up to a moved package - scattered changes, files moved
 			startGroup(UPDATE3);
-			syncUpdateResources(new IResource[] { inProject });
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 			
 			// Test 4: big refactoring - scattered changes, files renamed and balanced additions/deletions
@@ -128,11 +136,11 @@ public class WorkflowTests extends BenchmarkTest {
 			BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, 20); // many scattered changes
 			BenchmarkUtils.renameRandomDeepFiles(gen, outProject, 5);  // renamed some stuff
 			BenchmarkUtils.createRandomDeepFiles(gen, outProject, 4, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);  // some new stuff added
-			syncCommitResources(new IResource[] { outProject }, "");
+			syncCommitResources(source, new IResource[] { outProject }, "");
 			endGroup();
 			// Test 4: catching up to a big refactoring - scattered changes, files renamed and balanced additions/deletions
 			startGroup(UPDATE4);		
-			syncUpdateResources(new IResource[] { inProject });
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 	
 			// Test 5: test tagging a project
@@ -160,7 +168,7 @@ public class WorkflowTests extends BenchmarkTest {
 			BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, 42); // many changes
 			BenchmarkUtils.renameRandomDeepFiles(gen, outProject, 8);  // evidence of some refactoring
 			BenchmarkUtils.createRandomDeepFiles(gen, outProject, 10, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY); // a few new components added
-			syncCommitResources(new IResource[] { outProject }, "");
+			syncCommitResources(source, new IResource[] { outProject }, "");
 			startGroup(REPLACE3);
 			replace(new IResource[] { inProject }, null, true);
 			endGroup();

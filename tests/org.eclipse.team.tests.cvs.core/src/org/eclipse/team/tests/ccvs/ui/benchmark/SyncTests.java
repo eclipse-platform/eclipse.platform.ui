@@ -12,8 +12,11 @@ package org.eclipse.team.tests.ccvs.ui.benchmark;
 
 
 import junit.framework.Test;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
+import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 
 public class SyncTests extends BenchmarkTest {
 	private static final int FILE_SIZE_MEAN = 16384;
@@ -38,16 +41,20 @@ public class SyncTests extends BenchmarkTest {
 	}
     
 	public void testSync10() throws Exception {
-		runTestSync(10, "CVS Synchronize 10", false);
+		runTestSync(10, "CVS Synchronize 10", false, new SynchronizeViewTestAdapter());
 	}
 
 	public void testSync100() throws Exception {
-		runTestSync(100, "CVS Synchronize 100", false);
+		runTestSync(100, "CVS Synchronize 100", false, new SynchronizeViewTestAdapter());
 	}
 	
 	public void testSync100Global() throws Exception {
-		runTestSync(100, "CVS Synchronize", true);
+		runTestSync(100, "CVS Synchronize", true, new SynchronizeViewTestAdapter());
 	}
+    
+    public void testSync100NoUI() throws Exception {
+        runTestSync(100, "CVS Synchronize No UI", true, new SyncInfoSource());
+    }
 
 	protected IProject setupOutProject() throws Exception {
 		IProject project = createUniqueProject(BenchmarkTestSetup.SMALL_ZIP_FILE);
@@ -59,7 +66,7 @@ public class SyncTests extends BenchmarkTest {
 	 * Runs a sequence of operations for the synchronizer tests.
 	 * A parallel project is used to generate incoming changes.
 	 */
-	protected void runTestSync(int size, String globalName, boolean global) throws Exception {
+	protected void runTestSync(int size, String globalName, boolean global, SyncInfoSource source) throws Exception {
         openEmptyPerspective();
 	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
@@ -78,20 +85,20 @@ public class SyncTests extends BenchmarkTest {
 			/*** outgoing and incoming changes ***/
 			startGroup(ADDED_GROUP_SUFFIX);
 			BenchmarkUtils.createRandomDeepFiles(gen, outProject, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
-			syncCommitResources(new IResource[] { outProject }, "");
-			syncUpdateResources(new IResource[] { inProject });
+			syncCommitResources(source, new IResource[] { outProject }, "");
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 			
 			startGroup(MODIFIED_GROUP_SUFFIX);
 			BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, size);
-			syncCommitResources(new IResource[] { outProject }, "");
-			syncUpdateResources(new IResource[] { inProject });
+			syncCommitResources(source, new IResource[] { outProject }, "");
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
 	
 			startGroup(REMOVED_GROUP_SUFFIX);
 			BenchmarkUtils.deleteRandomDeepFiles(gen, outProject, size);
-			syncCommitResources(new IResource[] { outProject }, "");
-			syncUpdateResources(new IResource[] { inProject });
+			syncCommitResources(source, new IResource[] { outProject }, "");
+			syncUpdateResources(source, new IResource[] { inProject });
 			endGroup();
         }
 	    commitGroups(global);
