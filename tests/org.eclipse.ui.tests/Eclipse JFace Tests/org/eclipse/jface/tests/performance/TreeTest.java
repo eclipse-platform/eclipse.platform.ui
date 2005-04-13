@@ -11,7 +11,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 public class TreeTest extends ViewerTest {
 
@@ -117,139 +116,121 @@ public class TreeTest extends ViewerTest {
 		};
 	}
 
-	
-
 	/**
-	 * @throws CoreException 
-	 * Test addition to the tree one element at a time.
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
 	 */
 	public void testAddOneAtATime() throws CoreException {
 		openBrowser();
-        exercise(new TestRunnable() {
-            public void run() throws Exception {
-    			TestTreeElement input = new TestTreeElement(0, null);
-    			viewer.setInput(input);
-    			input.createChildren(TEST_COUNT);
-    			processEvents();
-    			startMeasuring();
-    			for (int j = 0; j < input.children.length; j++) {
-    				
-    				viewer.add(input, input.children[j]);
-    				processEvents();
-    				
-    			}
-    			stopMeasuring();
-            } 
-        });
+		TestTreeElement input = new TestTreeElement(0, null);
+		viewer.setInput(input);
+		input.createChildren(TEST_COUNT);
+		processEvents();
+		startMeasuring();
+		for (int j = 0; j < input.children.length; j++) {
+
+			viewer.add(input, input.children[j]);
+			processEvents();
+
+		}
+		stopMeasuring();
 
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	/**
-	 * @throws CoreException 
-	 * Test addition to the tree one element at a time.
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
 	 */
 	public void testAddTen() throws CoreException {
-		
+
 		doTestAdd(10);
 	}
-	
+
 	/**
-	 * @throws CoreException 
-	 * Test addition to the tree one element at a time.
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
 	 */
 	public void testAddFifty() throws CoreException {
-		
+
 		doTestAdd(50);
 	}
-	
+
 	/**
-	 * @throws CoreException 
-	 * Test addition to the tree one element at a time.
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
 	 */
 	public void testAddHundred() throws CoreException {
-		
+
 		doTestAdd(100);
 	}
-	
-	private void doTestAdd(final int count) throws CoreException{
+
+	private void doTestAdd(final int count) throws CoreException {
 
 		openBrowser();
-        exercise(new TestRunnable() {
-            public void run() throws Exception {
-    			TestTreeElement input = new TestTreeElement(0, null);
-    			viewer.setInput(input);
-    			input.createChildren(TEST_COUNT);
-    			Collection batches = new ArrayList();
-    			int blocks = input.children.length/ count;
-    			for (int j = 0; j < blocks;  j =j+count) {
-    				Object[] batch = new Object[count];
-    				System.arraycopy(input.children,j * count,batch,0,count);
-    				batches.add(batch);
-    			}
-    			processEvents();
-    			Object[] batchArray = batches.toArray();
-    			startMeasuring();
-    			for (int j = 0; j < batchArray.length; j++) {
-    				
-    				viewer.add(input, (Object[]) batchArray[j]);
-    				processEvents();
-    				
-    			}
-    			stopMeasuring();
-            } 
-        });
+
+		TestTreeElement input = new TestTreeElement(0, null);
+		viewer.setInput(input);
+		input.createChildren(TEST_COUNT);
+		Collection batches = new ArrayList();
+		int blocks = input.children.length / count;
+		for (int j = 0; j < blocks; j = j + count) {
+			Object[] batch = new Object[count];
+			System.arraycopy(input.children, j * count, batch, 0, count);
+			batches.add(batch);
+		}
+		processEvents();
+		Object[] batchArray = batches.toArray();
+		startMeasuring();
+		for (int j = 0; j < batchArray.length; j++) {
+
+			viewer.add(input, (Object[]) batchArray[j]);
+			processEvents();
+
+		}
+		stopMeasuring();
 
 		commitMeasurements();
 		assertPerformance();
-	
-		
+
 	}
-	
+
 	/**
 	 * Test addition to the tree.
 	 */
 	public void testAddThousand() throws CoreException {
 		openBrowser();
-        exercise(new TestRunnable() {
-            public void run() throws Exception {
-                TestTreeElement input = new TestTreeElement(0, null);
-                viewer.setInput(input);
-                input.createChildren(TEST_COUNT);
-                processEvents();
-                startMeasuring();
-                viewer.add(input, input.children);
-                processEvents();
-                stopMeasuring();
-            } 
-        });
+
+		TestTreeElement input = new TestTreeElement(0, null);
+		viewer.setInput(input);
+		input.createChildren(TEST_COUNT);
+		processEvents();
+		startMeasuring();
+		viewer.add(input, input.children);
+		processEvents();
+		stopMeasuring();
 
 		commitMeasurements();
 		assertPerformance();
 	}
 
-
 	/**
-	 * @throws CoreException 
-	 * Test addition to the tree with the items presorted.
+	 * @throws CoreException
+	 *             Test addition to the tree with the items presorted.
 	 */
 	public void testAddThousandPreSort() throws CoreException {
 		openBrowser();
-        
-        exercise(new TestRunnable() {
-            public void run() throws Exception {
-    			TestTreeElement input = new TestTreeElement(0, null);
-    			viewer.setInput(input);
-    			input.createChildren(TEST_COUNT);
-    			viewer.getSorter().sort(viewer, input.children);
-    			processEvents();
-    			startMeasuring();
-    			viewer.add(input, input.children);
-    			processEvents();
-    			stopMeasuring();
-            } 
-        });
+
+		TestTreeElement input = new TestTreeElement(0, null);
+		viewer.setInput(input);
+		input.createChildren(TEST_COUNT);
+		viewer.getSorter().sort(viewer, input.children);
+		processEvents();
+		startMeasuring();
+		viewer.add(input, input.children);
+		processEvents();
+		stopMeasuring();
 
 		commitMeasurements();
 		assertPerformance();
