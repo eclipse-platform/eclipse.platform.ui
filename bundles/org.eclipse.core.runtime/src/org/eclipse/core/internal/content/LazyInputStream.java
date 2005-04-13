@@ -53,7 +53,11 @@ public class LazyInputStream extends InputStream {
 	private void ensureAvailable(long bytesToRead) throws IOException {
 		int loadedBlockSize = blockCapacity;
 		while (bufferSize < offset + bytesToRead && loadedBlockSize == blockCapacity) {
-			loadedBlockSize = loadBlock();
+			try {
+				loadedBlockSize = loadBlock();
+			} catch (IOException e) {
+				throw new LowLevelIOException(e);
+			}
 			bufferSize += loadedBlockSize;
 		}
 	}
@@ -108,16 +112,12 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public int read() throws IOException {
-		try {
-			ensureAvailable(1);
-			if (bufferSize <= offset)
-				return -1;
-			int nextByte = 0xFF & blocks[offset / blockCapacity][offset % blockCapacity];
-			offset++;
-			return nextByte;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		ensureAvailable(1);
+		if (bufferSize <= offset)
+			return -1;
+		int nextByte = 0xFF & blocks[offset / blockCapacity][offset % blockCapacity];
+		offset++;
+		return nextByte;
 	}
 
 	public int read(byte[] b) throws IOException {
@@ -125,13 +125,9 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public int read(byte[] b, int off, int len) throws IOException {
-		try {
-			ensureAvailable(len);
-			int copied = copyFromBuffer(b, off, len);
-			return copied == 0 ? -1 : copied;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		ensureAvailable(len);
+		int copied = copyFromBuffer(b, off, len);
+		return copied == 0 ? -1 : copied;
 	}
 
 	public void reset() {
@@ -139,16 +135,12 @@ public class LazyInputStream extends InputStream {
 	}
 
 	public long skip(long toSkip) throws IOException {
-		try {
-			if (toSkip <= 0)
-				return 0;
-			ensureAvailable(toSkip);
-			long skipped = Math.min(toSkip, bufferSize - offset);
-			offset += skipped;
-			return skipped;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		if (toSkip <= 0)
+			return 0;
+		ensureAvailable(toSkip);
+		long skipped = Math.min(toSkip, bufferSize - offset);
+		offset += skipped;
+		return skipped;
 	}
 
 	public void rewind() {

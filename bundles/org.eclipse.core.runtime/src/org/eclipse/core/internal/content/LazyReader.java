@@ -53,7 +53,11 @@ public class LazyReader extends Reader {
 	private void ensureAvailable(long charsToRead) throws IOException {
 		int loadedBlockSize = blockCapacity;
 		while (bufferSize < offset + charsToRead && loadedBlockSize == blockCapacity) {
-			loadedBlockSize = loadBlock();
+			try {
+				loadedBlockSize = loadBlock();
+			} catch (IOException ioe) {
+				throw new LowLevelIOException(ioe);
+			}
 			bufferSize += loadedBlockSize;
 		}
 	}
@@ -108,16 +112,12 @@ public class LazyReader extends Reader {
 	}
 
 	public int read() throws IOException {
-		try {
-			ensureAvailable(1);
-			if (bufferSize <= offset)
-				return -1;
-			char nextChar = blocks[offset / blockCapacity][offset % blockCapacity];
-			offset++;
-			return nextChar;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		ensureAvailable(1);
+		if (bufferSize <= offset)
+			return -1;
+		char nextChar = blocks[offset / blockCapacity][offset % blockCapacity];
+		offset++;
+		return nextChar;
 	}
 
 	public int read(char[] c) throws IOException {
@@ -125,13 +125,9 @@ public class LazyReader extends Reader {
 	}
 
 	public int read(char[] c, int off, int len) throws IOException {
-		try {
-			ensureAvailable(len);
-			int copied = copyFromBuffer(c, off, len);
-			return copied == 0 ? -1 : copied;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		ensureAvailable(len);
+		int copied = copyFromBuffer(c, off, len);
+		return copied == 0 ? -1 : copied;
 	}
 
 	public void reset() {
@@ -139,16 +135,12 @@ public class LazyReader extends Reader {
 	}
 
 	public long skip(long toSkip) throws IOException {
-		try {
-			if (toSkip <= 0)
-				return 0;
-			ensureAvailable(toSkip);
-			long skipped = Math.min(toSkip, bufferSize - offset);
-			offset += skipped;
-			return skipped;
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+		if (toSkip <= 0)
+			return 0;
+		ensureAvailable(toSkip);
+		long skipped = Math.min(toSkip, bufferSize - offset);
+		offset += skipped;
+		return skipped;
 	}
 
 	public void close() {
