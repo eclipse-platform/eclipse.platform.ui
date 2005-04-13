@@ -122,18 +122,21 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddOneAtATime() throws CoreException {
 		openBrowser();
-		TestTreeElement input = new TestTreeElement(0, null);
-		viewer.setInput(input);
-		input.createChildren(TEST_COUNT);
-		processEvents();
-		startMeasuring();
-		for (int j = 0; j < input.children.length; j++) {
 
-			viewer.add(input, input.children[j]);
+		for (int i = 0; i < ITERATIONS; i++) {
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
 			processEvents();
+			startMeasuring();
+			for (int j = 0; j < input.children.length; j++) {
 
+				viewer.add(input, input.children[j]);
+				processEvents();
+
+			}
+			stopMeasuring();
 		}
-		stopMeasuring();
 
 		commitMeasurements();
 		assertPerformance();
@@ -169,28 +172,28 @@ public class TreeTest extends ViewerTest {
 	private void doTestAdd(final int count) throws CoreException {
 
 		openBrowser();
-
-		TestTreeElement input = new TestTreeElement(0, null);
-		viewer.setInput(input);
-		input.createChildren(TEST_COUNT);
-		Collection batches = new ArrayList();
-		int blocks = input.children.length / count;
-		for (int j = 0; j < blocks; j = j + count) {
-			Object[] batch = new Object[count];
-			System.arraycopy(input.children, j * count, batch, 0, count);
-			batches.add(batch);
-		}
-		processEvents();
-		Object[] batchArray = batches.toArray();
-		startMeasuring();
-		for (int j = 0; j < batchArray.length; j++) {
-
-			viewer.add(input, (Object[]) batchArray[j]);
+		for (int i = 0; i < ITERATIONS; i++) {
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			Collection batches = new ArrayList();
+			int blocks = input.children.length / count;
+			for (int j = 0; j < blocks; j = j + count) {
+				Object[] batch = new Object[count];
+				System.arraycopy(input.children, j * count, batch, 0, count);
+				batches.add(batch);
+			}
 			processEvents();
+			Object[] batchArray = batches.toArray();
+			startMeasuring();
+			for (int j = 0; j < batchArray.length; j++) {
 
+				viewer.add(input, (Object[]) batchArray[j]);
+				processEvents();
+
+			}
+			stopMeasuring();
 		}
-		stopMeasuring();
-
 		commitMeasurements();
 		assertPerformance();
 
@@ -201,15 +204,16 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddThousand() throws CoreException {
 		openBrowser();
-
-		TestTreeElement input = new TestTreeElement(0, null);
-		viewer.setInput(input);
-		input.createChildren(TEST_COUNT);
-		processEvents();
-		startMeasuring();
-		viewer.add(input, input.children);
-		processEvents();
-		stopMeasuring();
+		for (int i = 0; i < ITERATIONS; i++) {
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			processEvents();
+			startMeasuring();
+			viewer.add(input, input.children);
+			processEvents();
+			stopMeasuring();
+		}
 
 		commitMeasurements();
 		assertPerformance();
@@ -221,17 +225,17 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddThousandPreSort() throws CoreException {
 		openBrowser();
-
-		TestTreeElement input = new TestTreeElement(0, null);
-		viewer.setInput(input);
-		input.createChildren(TEST_COUNT);
-		viewer.getSorter().sort(viewer, input.children);
-		processEvents();
-		startMeasuring();
-		viewer.add(input, input.children);
-		processEvents();
-		stopMeasuring();
-
+		for (int i = 0; i < ITERATIONS; i++) {
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			viewer.getSorter().sort(viewer, input.children);
+			processEvents();
+			startMeasuring();
+			viewer.add(input, input.children);
+			processEvents();
+			stopMeasuring();
+		}
 		commitMeasurements();
 		assertPerformance();
 	}

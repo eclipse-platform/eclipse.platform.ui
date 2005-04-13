@@ -26,6 +26,8 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 public abstract class ViewerTest extends BasicPerformanceTest {
 
 	Shell browserShell;
+	
+	public static int ITERATIONS = 100;
 
 	public ViewerTest(String testName, int tagging) {
 		super(testName, tagging);
