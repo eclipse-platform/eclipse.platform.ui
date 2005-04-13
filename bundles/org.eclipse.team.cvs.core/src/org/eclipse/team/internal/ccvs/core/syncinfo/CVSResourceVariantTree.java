@@ -210,7 +210,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 				&& !hasLocalSyncInfo((IFolder)local)
 				&& hasLocalSyncInfo(local.getParent())) {
 			// Manage the folder locally since folders exist in all versions, etc
-			// Use the info from the remote except get the tag from the locla parent
+			// Use the info from the remote except get the tag from the local parent
 			CVSTag tag = CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).getFolderSyncInfo().getTag();
 			FolderSyncInfo info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
             MutableFolderSyncInfo newInfo = info.cloneMutable();
@@ -218,16 +218,31 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);
 			cvsFolder.setFolderSyncInfo(newInfo);
 		}
-		boolean changed = super.setVariant(local, remote);
-		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
-			// Log a warning if there is no sync bytes available for the resource's
-			// parent but there is valid sync bytes for the child
-			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { getSyncName(getByteStore()), local.getFullPath().toString() }))); //$NON-NLS-1$
-		}
-		return changed;
+        if (remote == null && isIgnored(local)) {
+            // Do not record the lack of existance of a remote for ignored local files
+            // Instead, just flush the remote bytes if there are any
+            flushVariants(local, IResource.DEPTH_ZERO);
+            return false;
+        } else {
+    		boolean changed = super.setVariant(local, remote);
+    		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
+    			// Log a warning if there is no sync bytes available for the resource's
+    			// parent but there is valid sync bytes for the child
+    			CVSProviderPlugin.log(new TeamException(NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnSet, new String[] { getSyncName(getByteStore()), local.getFullPath().toString() }))); //$NON-NLS-1$
+    		}
+    		return changed;
+        }
 	}
 	
-	private boolean parentHasSyncBytes(IResource resource) throws TeamException {
+	private boolean isIgnored(IResource local) {
+        try {
+            return CVSWorkspaceRoot.getCVSResourceFor(local).isIgnored();
+        } catch (CVSException e) {
+            return false;
+        }
+    }
+
+    private boolean parentHasSyncBytes(IResource resource) throws TeamException {
 		if (resource.getType() == IResource.PROJECT) return true;
 		return getParentBytes(resource) != null;
 	}
