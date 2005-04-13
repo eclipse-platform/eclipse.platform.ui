@@ -95,7 +95,7 @@ public abstract class BenchmarkTest extends EclipseTest {
 				String suffix = performance_groups[i];
 				groups.put(suffix, meter);
 			}
-			perf.tagAsGlobalSummary(meter, globalName, Dimension.CPU_TIME);
+			perf.tagAsGlobalSummary(meter, globalName, Dimension.ELAPSED_PROCESS);
 		} else {
 			// Use a meter for each group, provides fine grain results
 			for (int i = 0; i < performance_groups.length; i++) {
@@ -103,7 +103,7 @@ public abstract class BenchmarkTest extends EclipseTest {
 				meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
 				groups.put(suffix, meter);
 				if (globalName != null) {
-					perf.tagAsSummary(meter, suffix, Dimension.CPU_TIME);
+					perf.tagAsSummary(meter, suffix, Dimension.ELAPSED_PROCESS);
 				}
 			}
 		}
