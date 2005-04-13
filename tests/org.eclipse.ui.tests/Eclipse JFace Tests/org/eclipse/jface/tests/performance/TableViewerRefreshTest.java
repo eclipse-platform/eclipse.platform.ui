@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
 
 /**
  * The TableViewerRefreshTest is a test for refreshing the TableViewer.
@@ -79,7 +78,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	public void testRefresh() throws Throwable {
 		openBrowser();
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			startMeasuring();
 			viewer.refresh();
 			processEvents();
@@ -99,7 +98,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		openBrowser();
 		viewer.setSorter(new ViewerSorter());
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			startMeasuring();
 			viewer.refresh();
 			processEvents();
@@ -121,7 +120,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		viewer.setSorter(sorter);
 		
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			contentProvider.refreshElements();
 			startMeasuring();
 			contentProvider.cloneElements();
@@ -143,7 +142,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	public void testUpdate() throws Throwable {
 		openBrowser();
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			TableItem[] items = viewer.getTable().getItems();
 			startMeasuring();
 			for (int j = 0; j < items.length; j++) {

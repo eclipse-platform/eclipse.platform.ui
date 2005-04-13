@@ -12,17 +12,26 @@ package org.eclipse.jface.tests.performance;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+
 /**
- * The JFacePerformanceSuite are the performance
- * tests for JFace.
- *
+ * The JFacePerformanceSuite are the performance tests for JFace.
  */
 public class JFacePerformanceSuite extends TestSuite {
 
 	public JFacePerformanceSuite() {
 		super();
-		addTest(new ListViewerRefreshTest("testRefresh"));
-		addTest(new ComboViewerRefreshTest("testRefresh"));
-		addTest(new TreeTest("testAdd"));
+		addTest(new ListViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
+		addTest(new ComboViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
+		addTest(new TableViewerRefreshTest("testRefresh"));
+		addTest(new TableViewerRefreshTest("testUpdate"));
+		addTest(new TreeTest("testAddTen"));
+		addTest(new TreeTest("testAddFifty"));
+		addTest(new TreeTest("testAddThousand"));
+		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.GLOBAL
+				& BasicPerformanceTest.LOCAL));
+		addTest(new TreeTest("testAddThousandPreSort",
+				BasicPerformanceTest.LOCAL));
+
 	}
 }

@@ -14,7 +14,6 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
 
 /**
  * The ListViewerRefreshTest is a test of refreshing the list viewer.
@@ -53,7 +52,7 @@ public class ListViewerRefreshTest extends ViewerTest {
 	public void testRefresh() throws Throwable {
 		openBrowser();
 
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			startMeasuring();
 			viewer.refresh();
 			processEvents();
