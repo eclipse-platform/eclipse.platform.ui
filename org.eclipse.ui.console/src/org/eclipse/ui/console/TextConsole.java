@@ -87,6 +87,9 @@ public abstract class TextConsole extends AbstractConsole {
      * Map of client defined attributes
      */
     private HashMap fAttributes = new HashMap();
+    
+    private IConsoleManager fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
+    
    
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.AbstractConsole#dispose()
@@ -439,7 +442,7 @@ public abstract class TextConsole extends AbstractConsole {
 		ConsoleHyperlinkPosition hyperlinkPosition = new ConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
 			document.addPosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, hyperlinkPosition);
-			firePropertyChange(this, IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED, null, null);
+            fConsoleManager.refresh(this);
 		} catch (BadPositionCategoryException e) {
 			ConsolePlugin.log(e);
 		} 

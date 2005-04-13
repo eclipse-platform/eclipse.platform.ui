@@ -79,9 +79,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected ArrayList fSelectionActions = new ArrayList();
     protected ClearOutputAction fClearOutputAction;
     
-    private Object fLock = new Object();
-    private boolean fUpdateScheduled = false;
-    
 	// text selection listener, used to update selection dependant actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -245,25 +242,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			    fViewer.setTabWidth(tabSize.intValue());
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 			    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
-			} else if (property.equals(IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED)) {
-			    synchronized (fLock) {
-			        if (fUpdateScheduled) {
-			            return;
-			        } else if (fViewer != null) {
-			            fUpdateScheduled = true;
-				        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-				            public void run() {
-				                synchronized (fLock) {
-					                if(fViewer != null) {
-					                    fViewer.getTextWidget().redraw();
-					                }
-					                fUpdateScheduled = false;
-				                }
-				            }
-				        });
-			        }
-			    }
-			}
+			} 
         }
 	}
 

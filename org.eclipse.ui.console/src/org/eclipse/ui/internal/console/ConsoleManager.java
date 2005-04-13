@@ -17,11 +17,13 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -38,6 +40,7 @@ import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.TextConsole;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The singleton console manager.
@@ -68,6 +71,37 @@ public class ConsoleManager implements IConsoleManager {
     private List fConsoleFactoryExtensions;
     
     private boolean fWarnQueued = false;
+    
+    private RepaintJob fRepaintJob = new RepaintJob();
+    
+    private class RepaintJob extends WorkbenchJob {
+        public RepaintJob() {
+            super("schedule redraw() of viewers"); //$NON-NLS-1$
+            setSystem(true);
+        }
+        
+        private ArrayList list = new ArrayList();
+
+        void addControl(Control control) {
+            synchronized (list) {
+                if (!list.contains(control)) {
+                    list.add(control);
+                }
+            }
+        }
+        
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            synchronized (list) {
+                for (Iterator iter = list.iterator(); iter.hasNext();) {
+                    Control control = (Control) iter.next();
+                    if (!control.isDisposed()) {
+                        control.redraw();
+                    }
+                }
+            }
+            return Status.OK_STATUS;
+        }
+    }
     
 	/**
 	 * Notifies a console listener of additions or removals
@@ -382,6 +416,33 @@ public class ConsoleManager implements IConsoleManager {
             }
         }
         return (ConsoleFactoryExtension[]) fConsoleFactoryExtensions.toArray(new ConsoleFactoryExtension[0]);
+    }
+    
+    
+    public void refresh(final IConsole console) {
+        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+                for (int i = 0; i < workbenchWindows.length; i++) {
+                    IWorkbenchWindow window = workbenchWindows[i];
+                    if (window != null) {
+                        IWorkbenchPage page = window.getActivePage();
+                        if (page != null) {
+                            IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+                            if (part instanceof IConsoleView) {
+                                ConsoleView view = (ConsoleView) part;
+                                if (view != null && view.getConsole().equals(console)) {
+                                    Control control = view.getCurrentPage().getControl();
+                                    fRepaintJob.addControl(control);
+                                    fRepaintJob.schedule(50);                                    
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }); 
     }
 
 }
