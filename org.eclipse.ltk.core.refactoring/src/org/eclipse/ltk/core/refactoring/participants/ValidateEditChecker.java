@@ -95,7 +95,7 @@ public class ValidateEditChecker implements IConditionChecker {
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
 			if (!result.hasFatalError()) {
-				result.addFatalError(RefactoringCoreMessages.getString("ValidateEditChecker.failed")); //$NON-NLS-1$
+				result.addFatalError(RefactoringCoreMessages.ValidateEditChecker_failed); 
 			}
 		}
 		return result;

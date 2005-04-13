@@ -33,7 +33,7 @@ public class NullChange extends Change {
 	 * Creates a new <code>NullChange</code> with a default name.
 	 */
 	public NullChange() {
-		this(RefactoringCoreMessages.getString("NullChange.name")); //$NON-NLS-1$
+		this(RefactoringCoreMessages.NullChange_name); 
 	}
 
 	/**

@@ -136,7 +136,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			ExecuteResult result= executeChange(
 				getQuery(
 					info,
-					RefactoringCoreMessages.getString("Refactoring.execute.label")), //$NON-NLS-1$
+					RefactoringCoreMessages.Refactoring_execute_label), 
 				monitor);
 			if (!result.changeExecuted) {
 				return createStatus(result);
@@ -159,7 +159,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			ExecuteResult result= executeChange(
 				getQuery(
 					info,
-					RefactoringCoreMessages.getString("Refactoring.undo.label")), //$NON-NLS-1$ 
+					RefactoringCoreMessages.Refactoring_undo_label), 
 				monitor);
 			if (!result.changeExecuted) {
 				return createStatus(result);
@@ -182,7 +182,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			ExecuteResult result= executeChange(
 				getQuery(
 					info,
-					RefactoringCoreMessages.getString("Refactoring.redo.label")), //$NON-NLS-1$ 
+					RefactoringCoreMessages.Refactoring_redo_label), 
 				monitor);
 			if (!result.changeExecuted) {
 				return createStatus(result);
@@ -274,7 +274,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			return asStatus(result.validationStatus.getEntryWithHighestSeverity());
 		} else {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR, 
-				RefactoringCoreMessages.getString("UndoableOperation2ChangeAdapter.error.message"),  //$NON-NLS-1$
+				RefactoringCoreMessages.UndoableOperation2ChangeAdapter_error_message,  
 				null);
 		}
 	}

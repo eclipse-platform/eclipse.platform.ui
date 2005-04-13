@@ -63,7 +63,7 @@ public class RefactoringCorePlugin extends Plugin {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
-			RefactoringCoreMessages.getString("RefactoringCorePlugin.internal_error"),  //$NON-NLS-1$
+			RefactoringCoreMessages.RefactoringCorePlugin_internal_error,  
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -72,7 +72,7 @@ public class RefactoringCorePlugin extends Plugin {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
-			RefactoringCoreMessages.getString("RefactoringCorePlugin.listener_removed"),  //$NON-NLS-1$
+			RefactoringCoreMessages.RefactoringCorePlugin_listener_removed,  
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -81,8 +81,8 @@ public class RefactoringCorePlugin extends Plugin {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
-			RefactoringCoreMessages.getFormattedString(
-				"RefactoringCorePlugin.participant_removed",  //$NON-NLS-1$
+			Messages.format(
+				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,  //$NON-NLS-1$
 				descriptor.getId()),
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);

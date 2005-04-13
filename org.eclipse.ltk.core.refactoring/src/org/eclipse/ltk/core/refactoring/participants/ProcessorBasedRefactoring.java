@@ -139,7 +139,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", 10); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.initial_conditions")); //$NON-NLS-1$
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions); 
 		
 		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 8)));
 		if (result.hasFatalError()) {
@@ -160,7 +160,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		CheckConditionsContext context= createCheckConditionsContext();
 		
 		pm.beginTask("", 9); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.final_conditions")); //$NON-NLS-1$
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions); 
 		
 		result.merge(getProcessor().checkFinalConditions(new SubProgressMonitor(pm, 5), context));
 		if (result.hasFatalError()) {
@@ -201,7 +201,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", fParticipants.length + 2); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.getString("ProcessorBasedRefactoring.create_change")); //$NON-NLS-1$
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change); 
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		if (pm.isCanceled())
 			throw new OperationCanceledException();

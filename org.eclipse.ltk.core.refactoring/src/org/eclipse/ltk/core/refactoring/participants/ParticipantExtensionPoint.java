@@ -25,6 +25,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -93,20 +94,20 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 										shared.put(descriptor, participant);
 								}
 							} catch(ClassCastException e) {
-								status.addError(RefactoringCoreMessages.getFormattedString(
-									"ParticipantExtensionPoint.participant_removed",  //$NON-NLS-1$
+								status.addError(Messages.format(
+									RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  //$NON-NLS-1$
 									descriptor.getName()));
 								RefactoringCorePlugin.logErrorMessage(
-									RefactoringCoreMessages.getFormattedString(
-										"ParticipantExtensionPoint.wrong_type", //$NON-NLS-1$
+									Messages.format(
+										RefactoringCoreMessages.ParticipantExtensionPoint_wrong_type, //$NON-NLS-1$
 										new String[] {descriptor.getName(), fParticipantClass.getName()}));
 								iter.remove();
 							}
 						}
 					}
 				} catch (CoreException e) {
-					status.addError(RefactoringCoreMessages.getFormattedString(
-						"ParticipantExtensionPoint.participant_removed",  //$NON-NLS-1$
+					status.addError(Messages.format(
+						RefactoringCoreMessages.ParticipantExtensionPoint_participant_removed,  //$NON-NLS-1$
 						descriptor.getName()));
 					RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 					iter.remove();

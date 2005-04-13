@@ -17,7 +17,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
 public class RefactoringUndoContext implements IUndoContext {
 
 	public String getLabel() {
-		return RefactoringCoreMessages.getString("RefactoringUndoContext.label"); //$NON-NLS-1$
+		return RefactoringCoreMessages.RefactoringUndoContext_label; 
 	}
 
 	public boolean matches(IUndoContext context) {

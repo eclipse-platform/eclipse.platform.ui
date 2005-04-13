@@ -49,29 +49,29 @@ public class TextChanges {
 		// still doesn't exist.
 		if (!existed) {
 			if (file.exists())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.existing", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_existing, //$NON-NLS-1$
 					file.getFullPath().toString()
 					));
 		} else {
 			if (!file.exists())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.not_existing", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_not_existing, //$NON-NLS-1$
 					file.getFullPath().toString()
 					));
 			if (lastModificationStamp != file.getModificationStamp())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.content_changed", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
 					file.getFullPath().toString()
 					)); 
 			if (file.isReadOnly())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.read_only", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_read_only, //$NON-NLS-1$
 					file.getFullPath().toString()
 					));
 			if (!file.isSynchronized(IResource.DEPTH_ZERO)) 
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.outOfSync", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_outOfSync, //$NON-NLS-1$
 					file.getFullPath().toString()
 					));
 			
@@ -80,8 +80,8 @@ public class TextChanges {
 				// Don't connect. We want to check if the file is under modification right now
 				ITextFileBuffer buffer= manager.getTextFileBuffer(file.getFullPath());
 				if (buffer != null && buffer.isDirty()) {
-					return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-						"TextChanges.error.unsaved_changes", //$NON-NLS-1$
+					return RefactoringStatus.createFatalErrorStatus(Messages.format(
+						RefactoringCoreMessages.TextChanges_error_unsaved_changes, //$NON-NLS-1$
 						file.getFullPath().toString()
 						)); 
 				}
@@ -93,7 +93,7 @@ public class TextChanges {
 	public static RefactoringStatus isValid(IDocument document, int length) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		if (length != document.getLength()) {
-			result.addFatalError(RefactoringCoreMessages.getString("TextChanges.error.document_content_changed")); //$NON-NLS-1$
+			result.addFatalError(RefactoringCoreMessages.TextChanges_error_document_content_changed); 
 		}
 		return result;
 	}

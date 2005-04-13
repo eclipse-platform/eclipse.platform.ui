@@ -175,7 +175,7 @@ public class UndoManager2 implements IUndoManager {
 		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext()));
 		if (op == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, RefactoringCoreMessages.getString("UndoManager2.no_change"), null)); //$NON-NLS-1$
+				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
 		if (query == null)
 			query= new NullQuery();
 		try {
@@ -200,7 +200,7 @@ public class UndoManager2 implements IUndoManager {
 		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext()));
 		if (op == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, RefactoringCoreMessages.getString("UndoManager2.no_change"), null)); //$NON-NLS-1$
+				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
 		if (query == null)
 			query= new NullQuery();
 		try {
@@ -241,7 +241,7 @@ public class UndoManager2 implements IUndoManager {
 		} else {
 			throw new CoreException(new Status(
 				IStatus.ERROR, RefactoringCorePlugin.getPluginId(),IStatus.ERROR, 
-				RefactoringCoreMessages.getString("RefactoringCorePlugin.internal_error"), //$NON-NLS-1$
+				RefactoringCoreMessages.RefactoringCorePlugin_internal_error, 
 				e));
 		}
 	}

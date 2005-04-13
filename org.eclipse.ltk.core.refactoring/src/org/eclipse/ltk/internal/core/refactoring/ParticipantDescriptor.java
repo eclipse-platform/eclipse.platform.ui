@@ -49,20 +49,20 @@ public class ParticipantDescriptor {
 	public IStatus checkSyntax() {
 		if (fConfigurationElement.getAttribute(ID) == null) {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
-				RefactoringCoreMessages.getString("ParticipantDescriptor.error.id_missing"), null); //$NON-NLS-1$
+				RefactoringCoreMessages.ParticipantDescriptor_error_id_missing, null); 
 		}
 		if (fConfigurationElement.getAttribute(NAME) == null) {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
-				RefactoringCoreMessages.getFormattedString( "ParticipantDescriptor.error.name_missing", getId()),  //$NON-NLS-1$
+				Messages.format( RefactoringCoreMessages.ParticipantDescriptor_error_name_missing, getId()),  
 				null);
 		}
 		if (fConfigurationElement.getAttribute(CLASS) == null) {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
-				RefactoringCoreMessages.getFormattedString( "ParticipantDescriptor.error.class_missing", getId()),  //$NON-NLS-1$
+				Messages.format( RefactoringCoreMessages.ParticipantDescriptor_error_class_missing, getId()),  
 				null);
 		}
 		return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, 
-			RefactoringCoreMessages.getString("ParticipantDescriptor.correct"), null); //$NON-NLS-1$
+			RefactoringCoreMessages.ParticipantDescriptor_correct, null); 
 	}
 	
 	public boolean matches(IEvaluationContext context) throws CoreException {

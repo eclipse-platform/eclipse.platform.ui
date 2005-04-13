@@ -263,7 +263,7 @@ public class CompositeChange extends Change {
 		fUndoUntilException= null;
 		List undos= new ArrayList(fChanges.size());
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.getString("CompositeChange.performingChangesTask.name")); //$NON-NLS-1$
+		pm.setTaskName(RefactoringCoreMessages.CompositeChange_performingChangesTask_name); 
 		Change change= null;
 		boolean canceled= false;
 		try {

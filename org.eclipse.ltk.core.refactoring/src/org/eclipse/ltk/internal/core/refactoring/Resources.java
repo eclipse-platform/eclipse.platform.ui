@@ -137,7 +137,7 @@ public class Resources {
 		IStatus entry= new Status(
 			IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 			IRefactoringCoreStatusCodes.VALIDATE_EDIT_CHANGED_CONTENT, 
-			RefactoringCoreMessages.getFormattedString("Resources.fileModified", file.getFullPath().toString()), //$NON-NLS-1$ 
+			Messages.format(RefactoringCoreMessages.Resources_fileModified, file.getFullPath().toString()), 
 			null);
 		if (status == null) {
 			return entry;
@@ -147,7 +147,7 @@ public class Resources {
 		} else {
 			MultiStatus result= new MultiStatus(RefactoringCorePlugin.getPluginId(),
 				IRefactoringCoreStatusCodes.VALIDATE_EDIT_CHANGED_CONTENT,
-				RefactoringCoreMessages.getString("Resources.modifiedResources"), null); //$NON-NLS-1$ 
+				RefactoringCoreMessages.Resources_modifiedResources, null); 
 			result.add(status);
 			result.add(entry);
 			return result;
@@ -159,7 +159,7 @@ public class Resources {
 			IStatus.ERROR,
 			ResourcesPlugin.PI_RESOURCES,
 			IResourceStatus.OUT_OF_SYNC_LOCAL,
-			RefactoringCoreMessages.getFormattedString("Resources.outOfSync", resource.getFullPath().toString()), //$NON-NLS-1$ 
+			Messages.format(RefactoringCoreMessages.Resources_outOfSync, resource.getFullPath().toString()), 
 			null);
 		if (status == null) {
 			return entry;
@@ -170,7 +170,7 @@ public class Resources {
 			MultiStatus result= new MultiStatus(
 				ResourcesPlugin.PI_RESOURCES,
 				IResourceStatus.OUT_OF_SYNC_LOCAL,
-				RefactoringCoreMessages.getString("Resources.outOfSyncResources"), null); //$NON-NLS-1$ 
+				RefactoringCoreMessages.Resources_outOfSyncResources, null); 
 			result.add(status);
 			result.add(entry);
 			return result;

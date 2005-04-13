@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
@@ -76,7 +78,7 @@ public class CheckConditionsContext {
 			fCheckers.put(checker.getClass(), old);
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 				IRefactoringCoreStatusCodes.CHECKER_ALREADY_EXISTS_IN_CONTEXT, 
-				RefactoringCoreMessages.getFormattedString("CheckConditionContext.error.checker_exists", checker.getClass().toString()), //$NON-NLS-1$
+				Messages.format(RefactoringCoreMessages.CheckConditionContext_error_checker_exists, checker.getClass().toString()), 
 				null));  
 		}
 	}

@@ -48,14 +48,14 @@ public abstract class BufferValidationState {
 	public RefactoringStatus isValid() {
 		if (!fExisted) {
 			if (fFile.exists())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.existing", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_existing, //$NON-NLS-1$
 					fFile.getFullPath().toString()
 					));
 		} else {
 			if (!fFile.exists())
-				return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getFormattedString(
-					"TextChanges.error.not_existing", //$NON-NLS-1$
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(
+					RefactoringCoreMessages.TextChanges_error_not_existing, //$NON-NLS-1$
 					fFile.getFullPath().toString()
 					));
 		}
@@ -167,8 +167,8 @@ class DirtyBufferValidationState extends BufferValidationState {
 		// the current stamp since a change executed later could have set a concrete stamp for the 
 		// current content
 		if (fChanged || (!fContentStamp.isNullStamp() && !fContentStamp.equals(ContentStamps.get(fFile)))) {
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.content_changed", //$NON-NLS-1$
+			result.addFatalError(Messages.format(
+				RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				)); 
 		}
@@ -210,23 +210,23 @@ class SavedBufferValidationState extends BufferValidationState {
 		if (result.hasFatalError())
 			return result;
 		if (!fContentStamp.equals(ContentStamps.get(fFile))) {
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.content_changed", //$NON-NLS-1$
+			result.addFatalError(Messages.format(
+				RefactoringCoreMessages.TextChanges_error_content_changed, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				)); 
 		} else if (fFile.isReadOnly()) {
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.read_only", //$NON-NLS-1$
+			result.addFatalError(Messages.format(
+				RefactoringCoreMessages.TextChanges_error_read_only, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				));
 		} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.outOfSync", //$NON-NLS-1$
+			result.addFatalError(Messages.format(
+				RefactoringCoreMessages.TextChanges_error_outOfSync, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				));
 		} else if (isDirty(fFile)){
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.unsaved_changes", //$NON-NLS-1$
+			result.addFatalError(Messages.format(
+				RefactoringCoreMessages.TextChanges_error_unsaved_changes, //$NON-NLS-1$
 				fFile.getFullPath().toString()
 				)); 
 		}
