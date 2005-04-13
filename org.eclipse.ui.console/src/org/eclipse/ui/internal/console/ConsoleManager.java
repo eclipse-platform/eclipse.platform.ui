@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -75,7 +77,7 @@ public class ConsoleManager implements IConsoleManager {
     private RepaintJob fRepaintJob = new RepaintJob();
     
     private class RepaintJob extends WorkbenchJob {
-        private ArrayList list = new ArrayList();
+        private Set list = new HashSet();
 
         public RepaintJob() {
             super("schedule redraw() of viewers"); //$NON-NLS-1$
@@ -83,7 +85,9 @@ public class ConsoleManager implements IConsoleManager {
         }
         
         void addConsole(IConsole console) {
-            list.add(console);
+        	synchronized (list) {
+        		list.add(console);
+			}
         }
         
         public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -103,7 +107,7 @@ public class ConsoleManager implements IConsoleManager {
                                 ConsoleView view = (ConsoleView) part;
                                 if (view != null && list.contains(view.getConsole())) {
                                     Control control = view.getCurrentPage().getControl();
-                                    if (control.isDisposed()) {
+                                    if (!control.isDisposed()) {
                                         control.redraw();
                                     }
                                 }
