@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.test.performance.Dimension;
 
 public class TreeTest extends ViewerTest {
 
@@ -166,6 +167,8 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddHundred() throws CoreException {
 
+		tagIfNecessary("Add 100 items to tree", Dimension.ELAPSED_PROCESS);
+		
 		doTestAdd(100);
 	}
 
@@ -224,6 +227,8 @@ public class TreeTest extends ViewerTest {
 	 *             Test addition to the tree with the items presorted.
 	 */
 	public void testAddThousandPreSort() throws CoreException {
+		tagIfNecessary("Add 1000 items to end of tree", Dimension.ELAPSED_PROCESS);
+		
 		openBrowser();
 		for (int i = 0; i < ITERATIONS; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);

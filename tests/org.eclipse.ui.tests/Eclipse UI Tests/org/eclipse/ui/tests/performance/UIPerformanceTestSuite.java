@@ -32,9 +32,9 @@ public class UIPerformanceTestSuite extends TestSuite {
      */
     public UIPerformanceTestSuite() {
         addTest(new JFacePerformanceSuite());
-        addTest(new WorkbenchPerformanceSuite());
-        addTest(new ViewPerformanceSuite());
-        addTest(new EditorPerformanceSuite());
-        addTest(new TestSuite(CommandsPerformanceTest.class));
+//        addTest(new WorkbenchPerformanceSuite());
+//        addTest(new ViewPerformanceSuite());
+//        addTest(new EditorPerformanceSuite());
+//        addTest(new TestSuite(CommandsPerformanceTest.class));
     }
 }
