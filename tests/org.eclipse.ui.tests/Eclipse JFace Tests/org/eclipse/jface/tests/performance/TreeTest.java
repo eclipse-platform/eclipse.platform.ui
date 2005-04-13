@@ -117,27 +117,7 @@ public class TreeTest extends ViewerTest {
 		};
 	}
 
-	/**
-	 * Test addition to the tree.
-	 */
-	public void testAdd() throws CoreException {
-		openBrowser();
-        exercise(new TestRunnable() {
-            public void run() throws Exception {
-                TestTreeElement input = new TestTreeElement(0, null);
-                viewer.setInput(input);
-                input.createChildren(TEST_COUNT);
-                processEvents();
-                startMeasuring();
-                viewer.add(input, input.children);
-                processEvents();
-                stopMeasuring();
-            } 
-        });
-
-		commitMeasurements();
-		assertPerformance();
-	}
+	
 
 	/**
 	 * @throws CoreException 
@@ -226,13 +206,35 @@ public class TreeTest extends ViewerTest {
 	
 		
 	}
+	
+	/**
+	 * Test addition to the tree.
+	 */
+	public void testAddThousand() throws CoreException {
+		openBrowser();
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                TestTreeElement input = new TestTreeElement(0, null);
+                viewer.setInput(input);
+                input.createChildren(TEST_COUNT);
+                processEvents();
+                startMeasuring();
+                viewer.add(input, input.children);
+                processEvents();
+                stopMeasuring();
+            } 
+        });
+
+		commitMeasurements();
+		assertPerformance();
+	}
 
 
 	/**
 	 * @throws CoreException 
 	 * Test addition to the tree with the items presorted.
 	 */
-	public void testAddPreSort() throws CoreException {
+	public void testAddThousandPreSort() throws CoreException {
 		openBrowser();
         
         exercise(new TestRunnable() {
