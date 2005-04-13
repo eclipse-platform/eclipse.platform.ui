@@ -114,6 +114,8 @@ public final class CustomizableIntroPart extends IntroPart implements
         // is still not loaded here.
 
         // if we are logging performance, set UI creation start time.
+        // ps: perf data is stored in Intro plugin because we do not want create
+        // apis here.
         if (Log.logPerformance)
             IntroPlugin.getDefault().setUICreationStartTime(
                 System.currentTimeMillis());
@@ -173,7 +175,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         container = new Composite(parent, SWT.NULL);
         StackLayout layout = new StackLayout();
         layout.marginHeight = 0;
-        layout.marginHeight = 0;
+        layout.marginWidth = 0;
         container.setLayout(layout);
 
         if (model != null && model.hasValidConfig()) {

@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.intro.impl.model.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
@@ -80,6 +81,9 @@ public class BrowserIntroPartImplementation extends
      * create the browser and set it's contents
      */
     public void createPartControl(Composite parent) {
+        long newBrowserStartTime = 0;
+        if (Log.logPerformance)
+            newBrowserStartTime = System.currentTimeMillis();
         browser = new Browser(parent, SWT.NONE);
 
         // add a location listener on the browser so we can intercept
@@ -112,6 +116,14 @@ public class BrowserIntroPartImplementation extends
                     event.doit = false;
             }
         });
+
+        // if we are logging performance, log actual UI creation time for
+        // browser.
+        if (Log.logPerformance)
+            Util.logPerformanceTime(
+                "IntroPlugin Performance- creating a new Browser took: ",
+                newBrowserStartTime);
+
 
         addToolBarActions();
 
