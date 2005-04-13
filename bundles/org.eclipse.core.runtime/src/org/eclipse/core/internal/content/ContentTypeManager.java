@@ -15,9 +15,7 @@ import java.io.Reader;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.Preferences;
+import org.eclipse.core.runtime.preferences.*;
 
 public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager, IRegistryChangeListener {
 	private static ContentTypeManager instance;
@@ -132,7 +130,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return new ContentTypeMatcher(customPolicy);
 	}
 
-	Preferences getPreferences() {
+	IEclipsePreferences getPreferences() {
 		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
 

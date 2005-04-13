@@ -89,12 +89,10 @@ public final class ContentType implements IContentType {
 		contentType.contentTypeElement = contentTypeElement;
 		contentType.baseTypeId = baseTypeId;
 		contentType.aliasTargetId = aliasTargetId;
-		contentType.processPreferences(catalog);
 		return contentType;
 	}
 
-	private void processPreferences(ContentTypeCatalog catalog) {
-		Preferences contentTypeNode = manager.getPreferences().node(getId());
+	void processPreferences(ContentTypeCatalog catalog, Preferences contentTypeNode) {
 		// user set default charset
 		this.userCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, null);
 		// user set file names 

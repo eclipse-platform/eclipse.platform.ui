@@ -27,6 +27,7 @@ public class Messages extends NLS {
 	// Content type manager
 	public static String content_badInitializationData;
 	public static String content_errorReadingContents;
+	public static String content_errorLoadingSettings;	
 	public static String content_errorSavingSettings;
 	public static String content_invalidContentDescriber;
 	public static String content_invalidProperty;	
@@ -98,6 +99,7 @@ public class Messages extends NLS {
 	public static String parse_oneElementPluginVersion;
 	public static String parse_pluginMissingAttr;
 	public static String parse_pluginMissingIdName;
+
 	public static String parse_postiveMajor;
 	public static String parse_postiveMinor;
 	public static String parse_postiveService;

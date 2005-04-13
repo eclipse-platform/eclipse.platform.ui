@@ -16,7 +16,10 @@ import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * This class is a sidekick for ContentTypeManager that provides mechanisms for 
@@ -83,13 +86,35 @@ public class ContentTypeBuilder {
 	 */
 	public void buildCatalog() {
 		IConfigurationElement[] allContentTypeCEs = getConfigurationElements();
-		for (int i = 0; i < allContentTypeCEs.length; i++) {
+		for (int i = 0; i < allContentTypeCEs.length; i++)
 			if (allContentTypeCEs[i].getName().equals("content-type")) //$NON-NLS-1$
 				registerContentType(allContentTypeCEs[i]);
-		}
-		for (int i = 0; i < allContentTypeCEs.length; i++) {
+		for (int i = 0; i < allContentTypeCEs.length; i++)
 			if (allContentTypeCEs[i].getName().equals("file-association")) //$NON-NLS-1$
 				registerFileAssociation(allContentTypeCEs[i]);
+		applyPreferences();
+	}
+
+	/**
+	 * Applies any existing preferences to content types as a batch operation.
+	 */
+	private void applyPreferences() {
+		try {
+			final ContentTypeCatalog localCatalog = catalog;
+			final IEclipsePreferences root = localCatalog.getManager().getPreferences();
+			root.accept(new IPreferenceNodeVisitor() {
+				public boolean visit(IEclipsePreferences node) {
+					if (node == root)
+						return true;
+					ContentType contentType = localCatalog.getContentType(node.name());
+					if (contentType != null)
+						contentType.processPreferences(localCatalog, node);
+					// content type nodes don't have any children anyway
+					return false;
+				}
+			});
+		} catch (BackingStoreException bse) {
+			ContentType.log(Messages.content_errorLoadingSettings, bse);
 		}
 	}
 
