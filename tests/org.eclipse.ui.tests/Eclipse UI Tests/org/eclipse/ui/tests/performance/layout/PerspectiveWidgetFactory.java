@@ -18,7 +18,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.1
@@ -42,21 +41,17 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
     public void init() {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+        final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
         final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(perspectiveId);
 
         Assert.assertNotNull("Unknown perspective id: " + perspectiveId 
                 + " (probably indicates a bug in the test suite)", perspective1);
 
-		// Open a file.
+		// Open the perspective.
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		activePage.setPerspective(perspective1);
     }
     
-    public void done() {
-        
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */

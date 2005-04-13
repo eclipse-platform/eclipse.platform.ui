@@ -27,8 +27,8 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
  * @since 3.1
@@ -68,8 +68,8 @@ public class EditorWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#init()
      */
     public void init() throws CoreException, WorkbenchException {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId("org.eclipse.ui.tests.util.EmptyPerspective");
+        final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
 
         Assert.assertNotNull(perspective1);
 
