@@ -194,7 +194,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	}
 
 	protected Control createTreeAreaContents(Composite parent) {
-		Composite leftArea = new Composite(parent, SWT.NONE);
+		Composite leftArea = new Composite(parent, getTreeAreaStyle());
 		leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout leftLayout = new GridLayout();
@@ -218,6 +218,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		layoutTreeAreaControl(leftArea);
 
 		return leftArea;
+	}
+
+	/**
+	 * Get the style bits for the tree area.
+	 * @return int
+	 */
+	public int getTreeAreaStyle() {
+		return SWT.NONE;
 	}
 
 	/**
