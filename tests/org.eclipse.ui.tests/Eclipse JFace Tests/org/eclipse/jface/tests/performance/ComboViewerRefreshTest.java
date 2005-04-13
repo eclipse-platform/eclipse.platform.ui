@@ -25,7 +25,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
     private RefreshTestContentProvider contentProvider;
 
-    private static final int ELEMENT_COUNT = 5000;
+    private static final int ELEMENT_COUNT = 1000;
 
     public ComboViewerRefreshTest(String testName, int tagging) {
         super(testName, tagging);
