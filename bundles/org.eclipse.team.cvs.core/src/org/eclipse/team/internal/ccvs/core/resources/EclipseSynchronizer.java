@@ -494,7 +494,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void flush(final ThreadInfo info, IProgressMonitor monitor) throws CVSException {
 		if (info != null && !info.isEmpty()) {
 			try {
-				beginOperation();
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 					public void run(IProgressMonitor pm) throws CoreException {
 						IStatus status = commitCache(info, pm);
@@ -505,8 +504,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 				}, null, 0 /* no flags */, monitor);
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
-			} finally {
-				endOperation();
 			}
 		}
 	}
@@ -945,6 +942,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				IContainer folder = changedFolders[i];
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					try {
+                        beginOperation();
 						FolderSyncInfo info = sessionPropertyCache.getCachedFolderSync(folder);
 						// Do not write the folder sync for linked resources
 						if (info == null) {
@@ -964,7 +962,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 							errors.add(pe.getStatus());
 						}
 						errors.add(e.getStatus());
-					}
+					} finally {
+                        endOperation();
+                    }
 				}
 				monitor.worked(1);
 			}
@@ -978,6 +978,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					// write sync info for all children in one go
 					try {
+                        beginOperation();
 						List infos = new ArrayList();
 						IResource[] children = folder.members(true);
 						for (int i = 0; i < children.length; i++) {
@@ -1005,7 +1006,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 							errors.add(pe.getStatus());
 						}							
 						errors.add(e.getStatus());
-					}
+					} finally {
+                        endOperation();
+                    }
 				}
 				monitor.worked(1);
 			}
