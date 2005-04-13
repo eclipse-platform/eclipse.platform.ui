@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.1
@@ -42,21 +41,17 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
     public void init() {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+        final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
         final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(perspectiveId);
 
         Assert.assertNotNull("Unknown perspective id: " + perspectiveId 
                 + " (probably indicates a bug in the test suite)", perspective1);
 
-		// Open a file.
+		// Open the perspective.
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		activePage.setPerspective(perspective1);
     }
     
-    public void done() {
-        
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */

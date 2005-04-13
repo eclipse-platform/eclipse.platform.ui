@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * The ListPopulationTest is the test for simple
@@ -71,16 +71,19 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	 */
 	public void addBench(int count) throws Throwable {
 		openBrowser();		
-		String [] items = getItems(count);
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			list.removeAll();
-			startMeasuring();
-			for (int j = 0; j < items.length; j++) {
-				list.add(items[j]);
-			}
-			processEvents();
-			stopMeasuring();
-		}
+		final String [] items = getItems(count);
+        
+        exercise(new TestRunnable() {
+            public void run() {
+    			list.removeAll();
+    			startMeasuring();
+    			for (int j = 0; j < items.length; j++) {
+    				list.add(items[j]);
+    			}
+    			processEvents();
+    			stopMeasuring();
+    		}
+        });
 		
 		commitMeasurements();
 		assertPerformance();
@@ -92,14 +95,16 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	 */
 	public void setItemsBench(int count) throws Throwable {
 		openBrowser();		
-		String [] items = getItems(count);
-		for (int i = 0; i < ViewPerformanceSuite.ITERATIONS; i++) {
-			list.removeAll();
-			startMeasuring();
-			list.setItems(items);
-			processEvents();
-			stopMeasuring();
-		}
+		final String [] items = getItems(count);
+        exercise(new TestRunnable() {
+            public void run() {
+    			list.removeAll();
+    			startMeasuring();
+    			list.setItems(items);
+    			processEvents();
+    			stopMeasuring();
+            }
+        });
 		
 		commitMeasurements();
 		assertPerformance();

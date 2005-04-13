@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -67,7 +67,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         }
         
         // Open a file.
-        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
         //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
         IFile aFile = getProject().getFile(activeEditor);
         assertTrue(aFile.exists());
@@ -83,16 +83,19 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
        	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
         
-        for (int i = 0; i < 20; i++) {
-            processEvents();
-            
-            startMeasuring();
-            activePage.setPerspective(perspective1);
-            processEvents();
-            activePage.setPerspective(perspective2);
-            processEvents();
-            stopMeasuring();
-        }
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                
+                startMeasuring();
+                activePage.setPerspective(perspective1);
+                processEvents();
+                activePage.setPerspective(perspective2);
+                processEvents();
+                stopMeasuring();
+            } 
+        });
+        
         commitMeasurements();
         assertPerformance();
     }

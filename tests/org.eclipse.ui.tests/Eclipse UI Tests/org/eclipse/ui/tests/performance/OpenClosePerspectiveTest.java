@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
  * @since 3.1
@@ -53,8 +52,8 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         }
         
         // create a nice clean window.
-        IWorkbenchWindow window = openTestWindow(EmptyPerspective.PERSP_ID);          
-        IWorkbenchPage activePage = window.getActivePage();
+        IWorkbenchWindow window = openTestWindow();          
+        final IWorkbenchPage activePage = window.getActivePage();
         
         //causes creation of all views 
         activePage.setPerspective(perspective1);
@@ -72,18 +71,20 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
         tagIfNecessary("Open/Close Perspective", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
         
-        for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
-            processEvents();
-            EditorTestHelper.calmDown(500, 30000, 500);
-
-            
-            startMeasuring();
-            activePage.setPerspective(perspective1);
-            processEvents();      
-            closePerspective(activePage);
-            processEvents(); 
-            stopMeasuring();
-        }        
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                EditorTestHelper.calmDown(500, 30000, 500);
+                
+                startMeasuring();
+                activePage.setPerspective(perspective1);
+                processEvents();      
+                closePerspective(activePage);
+                processEvents(); 
+                stopMeasuring();
+            } 
+        });
+        
         commitMeasurements();
         assertPerformance();
     }

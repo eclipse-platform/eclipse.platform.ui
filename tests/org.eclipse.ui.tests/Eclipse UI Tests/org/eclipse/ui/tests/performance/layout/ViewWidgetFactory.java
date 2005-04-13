@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,8 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.util.EmptyPerspective;
 
 /**
  * @since 3.1
@@ -59,24 +60,27 @@ public class ViewWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
     public void init() throws CoreException, WorkbenchException {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId("org.eclipse.ui.tests.util.EmptyPerspective");
+        final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
 
         Assert.assertNotNull(perspective1);
 
 		// Open a file.
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		activePage.setPerspective(perspective1);
+        activePage.resetPerspective();
 		
 		IViewPart part = activePage.showView(viewId, null, WorkbenchPage.VIEW_ACTIVATE);
-
+        
+        BasicPerformanceTest.waitForBackgroundJobs();
+        
 		ctrl = getControl(part);
+        
+        Point size = getMaxSize();
+        ctrl.setBounds(0,0,size.x, size.y);
+        activePage.getWorkbenchWindow().getShell().setSize(size);
     }
     
-    public void done() throws CoreException, WorkbenchException {
-        
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */
