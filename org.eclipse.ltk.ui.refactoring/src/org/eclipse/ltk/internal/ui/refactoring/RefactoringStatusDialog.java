@@ -69,9 +69,9 @@ public class RefactoringStatusDialog extends Dialog {
 		messagePane.setBackground(background);
 		Label label= new Label(messagePane, SWT.LEFT | SWT.WRAP);
 		if (fStatus.hasFatalError())
-			label.setText(RefactoringUIMessages.getString("RefactoringStatusDialog.Cannot_proceed")); //$NON-NLS-1$
+			label.setText(RefactoringUIMessages.RefactoringStatusDialog_Cannot_proceed); 
 		else 
-			label.setText(RefactoringUIMessages.getString("RefactoringStatusDialog.Please_look")); //$NON-NLS-1$
+			label.setText(RefactoringUIMessages.RefactoringStatusDialog_Please_look); 
 		label.setBackground(background);
 		messagePane.setContent(label);
 		RefactoringStatusViewer viewer= new RefactoringStatusViewer(result, SWT.NONE);
@@ -93,7 +93,7 @@ public class RefactoringStatusDialog extends Dialog {
 		if (!fStatus.hasFatalError()) {
 			if (fBackButton)
 				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false); //$NON-NLS-1$
-			createButton(parent, IDialogConstants.OK_ID, RefactoringUIMessages.getString("RefactoringStatusDialog.Continue"), true); //$NON-NLS-1$
+			createButton(parent, IDialogConstants.OK_ID, RefactoringUIMessages.RefactoringStatusDialog_Continue, true); 
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		} else {
 			if (fBackButton)

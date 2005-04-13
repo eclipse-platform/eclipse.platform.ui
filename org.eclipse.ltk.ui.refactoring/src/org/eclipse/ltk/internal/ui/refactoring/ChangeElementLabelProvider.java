@@ -71,8 +71,8 @@ class ChangeElementLabelProvider extends LabelProvider {
 			
 			if (change instanceof TextFileChange) {
 				IFile file= ((TextFileChange)change).getFile();
-				return RefactoringUIMessages.getFormattedString(
-					"PreviewWizardPage.changeElementLabelProvider.textFormat",  //$NON-NLS-1$
+				return Messages.format(
+					RefactoringUIMessages.PreviewWizardPage_changeElementLabelProvider_textFormat,  //$NON-NLS-1$
 					new String[] {file.getName(), getPath(file)});
 			} else {
 				return change.getName();

@@ -49,8 +49,8 @@ public class ChangeExceptionHandler {
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			Button ok= getButton(IDialogConstants.OK_ID);
-			ok.setText( RefactoringUIMessages.getString("ChangeExceptionHandler.undo")); //$NON-NLS-1$
-			Button abort= createButton(parent, IDialogConstants.CANCEL_ID, RefactoringUIMessages.getString("ChangeExceptionHandler.abort"), true); //$NON-NLS-1$
+			ok.setText( RefactoringUIMessages.ChangeExceptionHandler_undo); 
+			Button abort= createButton(parent, IDialogConstants.CANCEL_ID, RefactoringUIMessages.ChangeExceptionHandler_abort, true); 
 			abort.moveBelow(ok);
 			abort.setFocus();
 		}
@@ -58,7 +58,7 @@ public class ChangeExceptionHandler {
 			Control result= super.createMessageArea(parent);
 			new Label(parent, SWT.NONE); // filler
 			Label label= new Label(parent, SWT.NONE);
-			label.setText(RefactoringUIMessages.getString("ChangeExceptionHandler.button_explanation")); //$NON-NLS-1$
+			label.setText(RefactoringUIMessages.ChangeExceptionHandler_button_explanation); 
 			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			applyDialogFont(result);
 			return result;
@@ -75,7 +75,7 @@ public class ChangeExceptionHandler {
 		IStatus status= null;
 		if (exception.getMessage() == null) {
 			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR, 
-				RefactoringUIMessages.getString("ChangeExceptionHandler.no_details"), exception); //$NON-NLS-1$
+				RefactoringUIMessages.ChangeExceptionHandler_no_details, exception); 
 		} else {
 			status= new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), IStatus.ERROR, 
 				exception.getMessage(), exception);
@@ -94,8 +94,8 @@ public class ChangeExceptionHandler {
 			if (undo != null) {
 				RefactoringUIPlugin.log(status);
 				final ErrorDialog dialog= new RefactorErrorDialog(fParent,
-					RefactoringUIMessages.getString("ChangeExceptionHandler.refactoring"), //$NON-NLS-1$
-					RefactoringUIMessages.getFormattedString("ChangeExceptionHandler.unexpected_exception", new String[] {fName}), //$NON-NLS-1$
+					RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
+					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, new String[] {fName}), 
 					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
 				int result= dialog.open();
 				if (result == IDialogConstants.OK_ID) {
@@ -105,8 +105,8 @@ public class ChangeExceptionHandler {
 			}
 		}
 		ErrorDialog dialog= new ErrorDialog(fParent,
-			RefactoringUIMessages.getString("ChangeExceptionHandler.refactoring"), //$NON-NLS-1$
-			RefactoringUIMessages.getFormattedString("ChangeExceptionHandler.unexpected_exception", new String[] {fName}), //$NON-NLS-1$
+			RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
+			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, new String[] {fName}), 
 			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
 		dialog.open();
 	}
@@ -130,8 +130,8 @@ public class ChangeExceptionHandler {
 			dialog.run(false, false, adapter);
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e, fParent, 
-				RefactoringUIMessages.getString("ChangeExceptionHandler.rollback.title"),  //$NON-NLS-1$
-				RefactoringUIMessages.getString("ChangeExceptionHandler.rollback.message") + fName); //$NON-NLS-1$
+				RefactoringUIMessages.ChangeExceptionHandler_rollback_title,  
+				RefactoringUIMessages.ChangeExceptionHandler_rollback_message + fName); 
 		} catch (InterruptedException e) {
 			// can't happen
 		}

@@ -92,7 +92,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 			}
 		}
 		if (title == null || title.length() == 0)
-			title= RefactoringUIMessages.getString("RefactoringStatusViewer.Problem_context"); //$NON-NLS-1$
+			title= RefactoringUIMessages.RefactoringStatusViewer_Problem_context; 
 		fLabel.setText(title);
 		if (fPaneImage != null) {
 			fPaneImage.dispose();

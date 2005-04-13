@@ -147,8 +147,8 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 			RefactoringCore.getUndoManager().flush();
 			ExceptionHandler.handle(e,
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-				RefactoringUIMessages.getString("UndoManagerAction.internal_error.title"),  //$NON-NLS-1$
-				RefactoringUIMessages.getString("UndoManagerAction.internal_error.message")); //$NON-NLS-1$
+				RefactoringUIMessages.UndoManagerAction_internal_error_title,  
+				RefactoringUIMessages.UndoManagerAction_internal_error_message); 
 		} catch (InterruptedException e) {
 			// Opertation isn't cancelable.
 		} catch (OperationCanceledException e) {

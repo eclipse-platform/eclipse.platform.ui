@@ -151,9 +151,9 @@ public class RefactoringWizardOpenOperation {
 			return cco.getStatus();
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e, parent, title, 
-				RefactoringUIMessages.getString("RefactoringUI.open.unexpected_exception"));//$NON-NLS-1$
+				RefactoringUIMessages.RefactoringUI_open_unexpected_exception);
 			return RefactoringStatus.createFatalErrorStatus(
-				RefactoringUIMessages.getString("RefactoringUI.open.unexpected_exception"));//$NON-NLS-1$
+				RefactoringUIMessages.RefactoringUI_open_unexpected_exception);
 		}
 	}
 }

@@ -58,7 +58,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		private Label fLabel;
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
-			fLabel.setText(RefactoringUIMessages.getString("PreviewWizardPage.no_preview")); //$NON-NLS-1$
+			fLabel.setText(RefactoringUIMessages.PreviewWizardPage_no_preview); 
 		}
 		public void refresh() {
 		}
@@ -74,7 +74,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
-			setToolTipText(RefactoringUIMessages.getString("PreviewWizardPage.next_Change")); //$NON-NLS-1$
+			setToolTipText(RefactoringUIMessages.PreviewWizardPage_next_Change); 
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
 		}
 		public void run() {
@@ -87,7 +87,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
-			setToolTipText(RefactoringUIMessages.getString("PreviewWizardPage.previous_Change")); //$NON-NLS-1$
+			setToolTipText(RefactoringUIMessages.PreviewWizardPage_previous_Change); 
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
 		}	
 		public void run() {
@@ -112,7 +112,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	public PreviewWizardPage() {
 		super(PAGE_NAME);
-		setDescription(RefactoringUIMessages.getString("PreviewWizardPage.description")); //$NON-NLS-1$
+		setDescription(RefactoringUIMessages.PreviewWizardPage_description); 
 	}
 
 	/**
@@ -181,8 +181,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			RefactoringWizard wizard= getRefactoringWizard();
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
-				RefactoringUIMessages.getFormattedString(
-					"RefactoringUI.cannot_execute", //$NON-NLS-1$
+				Messages.format(
+					RefactoringUIMessages.RefactoringUI_cannot_execute, //$NON-NLS-1$
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}
@@ -218,7 +218,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		SashForm sashForm= new SashForm(result, SWT.VERTICAL);
 		
 		ViewerPane pane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
-		pane.setText(RefactoringUIMessages.getString("PreviewWizardPage.changes")); //$NON-NLS-1$
+		pane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
 		ToolBarManager tbm= pane.getToolBarManager();
 		tbm.add(new NextChange());
 		tbm.add(new PreviousChange());
@@ -254,7 +254,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		result.setLayout(layout);
 		Label label= new Label(result, SWT.CENTER);
-		label.setText(RefactoringUIMessages.getString("PreviewWizardPage.no_source_code_change")); //$NON-NLS-1$
+		label.setText(RefactoringUIMessages.PreviewWizardPage_no_source_code_change); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Dialog.applyDialogFont(result);
 		return result;
@@ -379,8 +379,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		} catch (CoreException e) {
 			showNullPreviewer();
 			ExceptionHandler.handle(e, getShell(),
-						RefactoringUIMessages.getString("PreviewWizardPage.refactoring"), //$NON-NLS-1$
-						RefactoringUIMessages.getString("PreviewWizardPage.Internal_error")); //$NON-NLS-1$
+						RefactoringUIMessages.PreviewWizardPage_refactoring, 
+						RefactoringUIMessages.PreviewWizardPage_Internal_error); 
 		}
 	}
 	

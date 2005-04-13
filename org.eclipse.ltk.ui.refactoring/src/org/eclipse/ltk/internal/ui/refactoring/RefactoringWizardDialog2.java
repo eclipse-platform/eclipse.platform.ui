@@ -561,7 +561,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (! (fCurrentPage instanceof PreviewWizardPage) && fWizard.internalHasPreviewPage(InternalAPI.INSTANCE)) {
-			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.getString("RefactoringWizardDialog2.buttons.preview.label"), false); //$NON-NLS-1$
+			Button preview= createButton(parent, PREVIEW_ID, RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label, false); 
 			if (fMakeNextButtonDefault) {
 				preview.getShell().setDefaultButton(preview);
 			}

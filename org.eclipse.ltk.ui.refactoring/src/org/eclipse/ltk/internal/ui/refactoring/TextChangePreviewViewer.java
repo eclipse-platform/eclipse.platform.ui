@@ -70,9 +70,9 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 			super(parent, SWT.BORDER | SWT.FLAT, true);
 			fCompareConfiguration= new CompareConfiguration();
 			fCompareConfiguration.setLeftEditable(false);
-			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.getString("ComparePreviewer.original_source")); //$NON-NLS-1$
+			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_original_source); 
 			fCompareConfiguration.setRightEditable(false);
-			fCompareConfiguration.setRightLabel(RefactoringUIMessages.getString("ComparePreviewer.refactored_source")); //$NON-NLS-1$
+			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source); 
 			addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					if (fImage != null && !fImage.isDisposed())
@@ -120,7 +120,7 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 			fType= type;
 		}
 		public String getName() {
-			return RefactoringUIMessages.getString("ComparePreviewer.element_name"); //$NON-NLS-1$
+			return RefactoringUIMessages.ComparePreviewer_element_name; 
 		}
 		public Image getImage() {
 			return null;

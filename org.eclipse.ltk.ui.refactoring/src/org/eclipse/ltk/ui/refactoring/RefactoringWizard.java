@@ -40,6 +40,7 @@ import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
 import org.eclipse.ltk.internal.ui.refactoring.IPreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -171,7 +172,7 @@ public abstract class RefactoringWizard extends Wizard {
 		fFlags= flags;
 		setNeedsProgressMonitor(true);
 		setChangeCreationCancelable(true);
-		setWindowTitle(RefactoringUIMessages.getString("RefactoringWizard.title")); //$NON-NLS-1$
+		setWindowTitle(RefactoringUIMessages.RefactoringWizard_title); 
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
 	} 
 	
@@ -465,7 +466,7 @@ public abstract class RefactoringWizard extends Wizard {
 		if (exception != null) {
 			RefactoringUIPlugin.log(exception);
 			status= new RefactoringStatus();
-			status.addFatalError(RefactoringUIMessages.getString("RefactoringWizard.internal_error_1")); //$NON-NLS-1$
+			status.addFatalError(RefactoringUIMessages.RefactoringWizard_internal_error_1); 
 		} else {
 			status= op.getStatus();
 		}
@@ -555,8 +556,8 @@ public abstract class RefactoringWizard extends Wizard {
 				}
 			}
 			ExceptionHandler.handle(e, parent, 
-				RefactoringUIMessages.getString("RefactoringWizard.refactoring"), //$NON-NLS-1$
-				RefactoringUIMessages.getString("RefactoringWizard.unexpected_exception_1")); //$NON-NLS-1$
+				RefactoringUIMessages.RefactoringWizard_refactoring, 
+				RefactoringUIMessages.RefactoringWizard_unexpected_exception_1); 
 			return FinishResult.createException();
 		} catch (InterruptedException e) {
 			return FinishResult.createInterrupted();
@@ -582,9 +583,9 @@ public abstract class RefactoringWizard extends Wizard {
 				status= new RefactoringStatus();
 				String msg= exception.getMessage();
 				if (msg != null) {
-					status.addFatalError(RefactoringUIMessages.getFormattedString("RefactoringWizard.see_log", msg)); //$NON-NLS-1$
+					status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringWizard_see_log, msg)); 
 				} else {
-					status.addFatalError(RefactoringUIMessages.getString("RefactoringWizard.Internal_error")); //$NON-NLS-1$
+					status.addFatalError(RefactoringUIMessages.RefactoringWizard_Internal_error); 
 				}
 				RefactoringUIPlugin.log(exception);
 			} else {
@@ -594,8 +595,8 @@ public abstract class RefactoringWizard extends Wizard {
 		} else {
 			if (exception != null)
 				ExceptionHandler.handle(exception, getContainer().getShell(), 
-					RefactoringUIMessages.getString("RefactoringWizard.refactoring"),  //$NON-NLS-1$
-					RefactoringUIMessages.getString("RefactoringWizard.unexpected_exception")); //$NON-NLS-1$
+					RefactoringUIMessages.RefactoringWizard_refactoring,  
+					RefactoringUIMessages.RefactoringWizard_unexpected_exception); 
 		}
 		Change change= operation.getChange();	
 		return change;

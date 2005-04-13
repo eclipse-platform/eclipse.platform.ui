@@ -27,6 +27,7 @@ import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
 
@@ -64,17 +65,17 @@ public class UndoRefactoringAction extends UndoManagerAction implements IWorkben
 	 */
 	protected String getName() {
 		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactor change
-		return RefactoringUIMessages.getString("UndoRefactoringAction.name"); //$NON-NLS-1$
+		return RefactoringUIMessages.UndoRefactoringAction_name; 
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
 	protected IRunnableWithProgress createOperation(Shell parent) {
-		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.getString("UndoRefactoringAction.error.title")) { //$NON-NLS-1$
+		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.UndoRefactoringAction_error_title) { 
 			protected String getFullMessage(String errorMessage) {
-				return RefactoringUIMessages.getFormattedString(
-					"UndoRefactoringAction.error.message",  //$NON-NLS-1$
+				return Messages.format(
+					RefactoringUIMessages.UndoRefactoringAction_error_message,  //$NON-NLS-1$
 					errorMessage);
 			}
 		};
@@ -104,7 +105,7 @@ public class UndoRefactoringAction extends UndoManagerAction implements IWorkben
 					enabled= true;
 					text= getActionText();
 				} else {
-					text= RefactoringUIMessages.getString("UndoRefactoringAction.label"); //$NON-NLS-1$
+					text= RefactoringUIMessages.UndoRefactoringAction_label; 
 				}
 				action.setEnabled(enabled);
 				action.setText(text);
@@ -118,7 +119,7 @@ public class UndoRefactoringAction extends UndoManagerAction implements IWorkben
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
 			hookListener(action);
-			fPatternLength= RefactoringUIMessages.getString("UndoRefactoringAction.extendedLabel").length(); //$NON-NLS-1$
+			fPatternLength= RefactoringUIMessages.UndoRefactoringAction_extendedLabel.length(); 
 			IUndoManager undoManager = RefactoringCore.getUndoManager();
 			if (undoManager.anythingToUndo()) {
 				if (undoManager.peekUndoName() != null)
@@ -131,8 +132,8 @@ public class UndoRefactoringAction extends UndoManagerAction implements IWorkben
 	}	
 	
 	private String getActionText() {
-		return shortenText(RefactoringUIMessages.getFormattedString(
-			"UndoRefactoringAction.extendedLabel", //$NON-NLS-1$
+		return shortenText(Messages.format(
+			RefactoringUIMessages.UndoRefactoringAction_extendedLabel, //$NON-NLS-1$
 			RefactoringCore.getUndoManager().peekUndoName()), fPatternLength);
 	}	
 }

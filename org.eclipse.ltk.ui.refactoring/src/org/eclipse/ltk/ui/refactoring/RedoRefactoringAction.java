@@ -27,6 +27,7 @@ import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
 
@@ -63,17 +64,17 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	 * Method declared in UndoManagerAction
 	 */
 	protected String getName() {
-		return RefactoringUIMessages.getString("RedoRefactoringAction.name"); //$NON-NLS-1$
+		return RefactoringUIMessages.RedoRefactoringAction_name; 
 	}
 	
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
 	protected IRunnableWithProgress createOperation(Shell parent) {
-		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.getString("RedoRefactoringAction.error.title")) { //$NON-NLS-1$
+		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.RedoRefactoringAction_error_title) { 
 			protected String getFullMessage(String errorMessage) {
-				return RefactoringUIMessages.getFormattedString(
-					"RedoRefactoringAction.error.message",  //$NON-NLS-1$
+				return Messages.format(
+					RefactoringUIMessages.RedoRefactoringAction_error_message,  //$NON-NLS-1$
 					errorMessage);
 			}
 		};
@@ -103,7 +104,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 					enabled= true;
 					text= getActionText();
 				} else {
-					text= RefactoringUIMessages.getString("RedoRefactoringAction.label"); //$NON-NLS-1$
+					text= RefactoringUIMessages.RedoRefactoringAction_label; 
 				}
 				action.setEnabled(enabled);
 				action.setText(text);
@@ -117,7 +118,7 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!isHooked()) {
 			hookListener(action);
-			fPatternLength= RefactoringUIMessages.getString("RedoRefactoringAction.extendedLabel").length(); //$NON-NLS-1$
+			fPatternLength= RefactoringUIMessages.RedoRefactoringAction_extendedLabel.length(); 
 			IUndoManager undoManager = RefactoringCore.getUndoManager();
 			if (undoManager.anythingToRedo()) {
 				if (undoManager.peekRedoName() != null)
@@ -130,8 +131,8 @@ public class RedoRefactoringAction extends UndoManagerAction implements IWorkben
 	}	
 	
 	private String getActionText() {
-		return shortenText(RefactoringUIMessages.getFormattedString(
-			"RedoRefactoringAction.extendedLabel", //$NON-NLS-1$
+		return shortenText(Messages.format(
+			RefactoringUIMessages.RedoRefactoringAction_extendedLabel, //$NON-NLS-1$
 			RefactoringCore.getUndoManager().peekRedoName()), fPatternLength);
 	}
 }

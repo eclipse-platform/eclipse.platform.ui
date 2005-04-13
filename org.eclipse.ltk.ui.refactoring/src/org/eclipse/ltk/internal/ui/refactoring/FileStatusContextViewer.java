@@ -75,6 +75,6 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		} catch (CoreException e) {
 			RefactoringUIPlugin.log(e);
 		}
-		return new Document(RefactoringUIMessages.getString("FileStatusContextViewer.error_reading_file")); //$NON-NLS-1$
+		return new Document(RefactoringUIMessages.FileStatusContextViewer_error_reading_file); 
 	}	
 }

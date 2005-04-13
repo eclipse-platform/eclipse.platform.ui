@@ -66,7 +66,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringUIStatusCodes.INTERNAL_ERROR, 
-			RefactoringUIMessages.getString("RefactoringUIPlugin.internal_error"),  //$NON-NLS-1$
+			RefactoringUIMessages.RefactoringUIPlugin_internal_error,  
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -79,7 +79,7 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
 			IRefactoringUIStatusCodes.INTERNAL_ERROR, 
-			RefactoringUIMessages.getString("RefactoringUIPlugin.listener_removed"),  //$NON-NLS-1$
+			RefactoringUIMessages.RefactoringUIPlugin_listener_removed,  
 			t);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}

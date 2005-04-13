@@ -55,7 +55,7 @@ public class RefactoringStatusViewer extends SashForm {
 		}
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
-			fLabel.setText(RefactoringUIMessages.getString("ErrorWizardPage.no_context_information_available")); //$NON-NLS-1$
+			fLabel.setText(RefactoringUIMessages.ErrorWizardPage_no_context_information_available); 
 		}
 		public void setInput(RefactoringStatusContext input) {
 			// do nothing
@@ -70,7 +70,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
-			setToolTipText(RefactoringUIMessages.getString("ErrorWizardPage.next_Change")); //$NON-NLS-1$
+			setToolTipText(RefactoringUIMessages.ErrorWizardPage_next_Change); 
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_PROBLEM_ACTION);
 		}
 		public void run() {
@@ -92,7 +92,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
-			setToolTipText(RefactoringUIMessages.getString("ErrorWizardPage.previous_Change")); //$NON-NLS-1$
+			setToolTipText(RefactoringUIMessages.ErrorWizardPage_previous_Change); 
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_PROBLEM_ACTION);
 		}	
 		public void run() {
@@ -181,7 +181,7 @@ public class RefactoringStatusViewer extends SashForm {
 		setLayout(layout);
 		
 		ViewerPane contextPane= new ViewerPane(this, SWT.BORDER | SWT.FLAT);
-		contextPane.setText(RefactoringUIMessages.getString("RefactoringStatusViewer.Found_problems")); //$NON-NLS-1$
+		contextPane.setText(RefactoringUIMessages.RefactoringStatusViewer_Found_problems); 
 		ToolBarManager tbm= contextPane.getToolBarManager();
 		tbm.add(fNextProblem= new NextProblem());
 		tbm.add(fPreviousProblem= new PreviousProblem());
@@ -264,8 +264,8 @@ public class RefactoringStatusViewer extends SashForm {
 			} catch (CoreException e) {
 				showNullContextViewer();
 				ExceptionHandler.handle(e, getShell(),
-					RefactoringUIMessages.getString("RefactoringStatusViewer.error.title"), //$NON-NLS-1$
-					RefactoringUIMessages.getString("RefactoringStatusViewer.error.message")); //$NON-NLS-1$
+					RefactoringUIMessages.RefactoringStatusViewer_error_title, 
+					RefactoringUIMessages.RefactoringStatusViewer_error_message); 
 			}
 		}
 	}

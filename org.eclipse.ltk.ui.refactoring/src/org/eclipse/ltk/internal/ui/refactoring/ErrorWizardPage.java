@@ -51,9 +51,9 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 			setPageComplete(isRefactoringPossible());
 			int severity= fStatus.getSeverity();
 			if (severity >= RefactoringStatus.FATAL) {
-				setDescription(RefactoringUIMessages.getString("ErrorWizardPage.cannot_proceed")); //$NON-NLS-1$
+				setDescription(RefactoringUIMessages.ErrorWizardPage_cannot_proceed); 
 			} else if (severity >= RefactoringStatus.INFO) {
-				setDescription(RefactoringUIMessages.getString("ErrorWizardPage.confirm")); //$NON-NLS-1$
+				setDescription(RefactoringUIMessages.ErrorWizardPage_confirm); 
 			} else {
 				setDescription(""); //$NON-NLS-1$
 			}
@@ -144,8 +144,8 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
-				RefactoringUIMessages.getFormattedString(
-					"RefactoringUI.cannot_execute", //$NON-NLS-1$
+				Messages.format(
+					RefactoringUIMessages.RefactoringUI_cannot_execute, //$NON-NLS-1$
 					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
 			return true;
 		}
