@@ -241,13 +241,13 @@ public abstract class BasicPerformanceTest extends UITestCase {
     }
     
     /**
-     * Runs the given runnable until either 100 iterations or 3s has elapsed.
+     * Runs the given runnable until either 25 iterations or 3s has elapsed.
      * 
      * @param runnable
      * @since 3.1
      */
     public static void exercise(TestRunnable runnable) throws CoreException {
-        exercise(runnable, 100, 3000);
+        exercise(runnable, 25, 3000);
     }
     
     /**

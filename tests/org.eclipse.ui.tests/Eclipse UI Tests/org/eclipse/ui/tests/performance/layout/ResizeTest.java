@@ -17,8 +17,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
+ * Measures the time to resize the widget 10 times, including the time required to redraw.
+ * 
  * @since 3.1
  */
 public class ResizeTest extends BasicPerformanceTest {
@@ -53,30 +56,37 @@ public class ResizeTest extends BasicPerformanceTest {
         tagIfNecessary(tagString, new Dimension[] {Dimension.ELAPSED_PROCESS, Dimension.CPU_TIME});
         
         widgetFactory.init();
-        Composite widget = widgetFactory.getControl();
+        final Composite widget = widgetFactory.getControl();
         Rectangle initialBounds = widget.getBounds();
-        Point maxSize = widgetFactory.getMaxSize();
+        final Point maxSize = widgetFactory.getMaxSize();
     
         waitForBackgroundJobs();
         processEvents();
         
-        for (int xIteration = 0; xIteration < xIterations; xIteration++) {
-            for (int yIteration = 0; yIteration < yIterations; yIteration++) {
-                // Avoid giving the same x value twice in a row in order to make it hard to cache
-                int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
-                int ySize = maxSize.y * yIteration / yIterations;
+        exercise(new TestRunnable() {
+            public void run() {
+    
+                for (int xIteration = 0; xIteration < xIterations; xIteration++) {
+                    
+                    startMeasuring();
+                    
+                    for (int yIteration = 0; yIteration < yIterations; yIteration++) {
+                        // Avoid giving the same x value twice in a row in order to make it hard to cache
+                        int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
+                        int ySize = maxSize.y * yIteration / yIterations;
+                        
+                        widget.setSize(xSize, ySize);
+                        // Try to ensure that the resize event wasn't deferred by asking for the bounds
+                        widget.getBounds();
+        
+                        processEvents();
+                    }
+                    
+                    stopMeasuring();
+                }
                 
-                startMeasuring();
-                
-                widget.setSize(xSize, ySize);
-                // Try to ensure that the resize event wasn't deferred by asking for the bounds
-                widget.getBounds();
-
-                stopMeasuring();
-
-                processEvents();
             }
-        }
+        });
         
         commitMeasurements();
         assertPerformance();

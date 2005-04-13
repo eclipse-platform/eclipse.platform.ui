@@ -75,7 +75,6 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             public void run() throws Exception {
                 processEvents();
                 EditorTestHelper.calmDown(500, 30000, 500);
-
                 
                 startMeasuring();
                 activePage.setPerspective(perspective1);

@@ -11,6 +11,13 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.ArrayList;
+
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.tests.performance.layout.ResizeTest;
+import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
+import org.eclipse.ui.views.IViewDescriptor;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -34,14 +41,15 @@ public class ViewPerformanceSuite extends TestSuite {
      * 
      */
     public ViewPerformanceSuite() {        
-        addOpenCloseScenarios();
+        addOpenCloseTests();
+        addResizeTests();
     }
 
     /**
      * 
      */
-    private void addOpenCloseScenarios() {
-        String[] ids = WorkbenchPerformanceSuite.getAllTestableViewIds();
+    private void addOpenCloseTests() {
+        String[] ids = getAllTestableViewIds();
         
         for (int i = 0; i < ids.length; i++) {
             String id = ids[i];
@@ -49,7 +57,35 @@ public class ViewPerformanceSuite extends TestSuite {
             boolean fingerprint = id.equals(FINGERPRINT_TEST);
         	//tag
             addTest(new OpenCloseViewTest(id, fingerprint ? BasicPerformanceTest.LOCAL 
-                    : BasicPerformanceTest.NONE));            
+                    : BasicPerformanceTest.NONE));
         }         
+    }
+    
+    private void addResizeTests() {
+        String[] ids = getAllTestableViewIds();
+        
+        for (int i = 0; i < ids.length; i++) {
+            String id = ids[i];
+                        
+            addTest(new ResizeTest(new ViewWidgetFactory(id)));
+        }         
+        
+    }
+    
+    public static String[] getAllTestableViewIds() {
+        ArrayList result = new ArrayList();
+        
+        IViewDescriptor[] descriptors = Workbench.getInstance().getViewRegistry().getViews();
+        for (int i = 0; i < descriptors.length; i++) {
+            IViewDescriptor descriptor = descriptors[i];
+            // Heuristically prune out any test or example views
+            if (descriptor.getId().indexOf(".test") == -1
+                    && descriptor.getId().indexOf(".examples") == -1) {
+        
+                result.add(descriptor.getId());
+            }
+        }
+        
+        return (String[]) result.toArray(new String[result.size()]);
     }
 }

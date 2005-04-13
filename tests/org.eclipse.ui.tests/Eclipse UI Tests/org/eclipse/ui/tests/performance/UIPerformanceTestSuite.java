@@ -31,10 +31,10 @@ public class UIPerformanceTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UIPerformanceTestSuite() {
+        addTest(new WorkbenchPerformanceSuite());
+        addTest(new ViewPerformanceSuite());
+        addTest(new EditorPerformanceSuite());
+        addTest(new TestSuite(CommandsPerformanceTest.class));
         addTest(new JFacePerformanceSuite());
-//        addTest(new WorkbenchPerformanceSuite());
-//        addTest(new ViewPerformanceSuite());
-//        addTest(new EditorPerformanceSuite());
-//        addTest(new TestSuite(CommandsPerformanceTest.class));
     }
 }

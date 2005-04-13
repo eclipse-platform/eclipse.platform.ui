@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
@@ -25,9 +24,7 @@ import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.RecursiveTrimLayoutWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
 import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
-import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * @since 3.1
@@ -132,20 +129,9 @@ class WorkbenchPerformanceSuite extends TestSuite {
      * @since 3.1
      */
     private void addLayoutScenarios(TestWidgetFactory factory) {
-        // Test preferred size
-        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, SWT.DEFAULT, false));
-        
-        // Wrapping tests
-        addTest(new ComputeSizeTest(factory, 256, SWT.DEFAULT, false));
-        
-        // Vertical wrapping
-        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, 256, false));
-        
-        // Test both dimensions known
-        addTest(new ComputeSizeTest(factory, 256, 256, false));
         
         // Determine the effect of flushing the cache
-        addTest(new ComputeSizeTest(factory, SWT.DEFAULT, SWT.DEFAULT, true));
+        addTest(new ComputeSizeTest(factory));
         
         // Test layout(false)
         addTest(new LayoutTest(factory, false));
@@ -173,43 +159,17 @@ class WorkbenchPerformanceSuite extends TestSuite {
 
         return (String[]) result.toArray(new String[result.size()]);
     }
-
-    public static String[] getAllTestableViewIds() {
-        ArrayList result = new ArrayList();
-        
-        IViewDescriptor[] descriptors = Workbench.getInstance().getViewRegistry().getViews();
-        for (int i = 0; i < descriptors.length; i++) {
-            IViewDescriptor descriptor = descriptors[i];
-            // Heuristically prune out any test or example views
-            if (descriptor.getId().indexOf(".test") == -1
-                    && descriptor.getId().indexOf(".examples") == -1) {
-        
-                result.add(descriptor.getId());
-            }
-        }
-        
-        return (String[]) result.toArray(new String[result.size()]);
-    }
-    
     
     /**
      * 
      */
     private void addResizeScenarios() {
-        
         String[] perspectiveIds = getAllPerspectiveIds();
         for (int i = 0; i < perspectiveIds.length; i++) {
             String id = perspectiveIds[i];
             addTest(new ResizeTest(new PerspectiveWidgetFactory(id), 
                     id.equals(resizeFingerprintTest) ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE, 
                             "Window Resize"));
-        }
-        
-        String[] viewIds = getAllTestableViewIds();
-        for (int i = 0; i < viewIds.length; i++) {
-            String id = viewIds[i];
-
-            addTest(new ResizeTest(new ViewWidgetFactory(id)));
         }
     }
 }

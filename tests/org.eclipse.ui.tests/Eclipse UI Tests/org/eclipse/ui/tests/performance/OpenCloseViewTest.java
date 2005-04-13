@@ -44,11 +44,14 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 startMeasuring();
+
                 IViewPart view = page.showView(viewId);
                 processEvents();
-                stopMeasuring();
+                
                 page.hideView(view);
                 processEvents();
+                
+                stopMeasuring();
             } 
         });
         
