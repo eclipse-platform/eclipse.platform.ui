@@ -55,9 +55,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
         for (int i = 0; i < ITERATIONS; i++) {
             startMeasuring();
-            for (int j = 0; j < 10; j++) {
-                viewer.refresh();
-            }
+            viewer.refresh();
             processEvents();
             stopMeasuring();
         }
