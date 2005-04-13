@@ -589,24 +589,27 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 			runnable.run();
 		} finally {
 		    if (Utils.canUpdateViewer(viewer)) {
-                if (!additionsMap.isEmpty() && Utils.canUpdateViewer(viewer)) {
-                    for (Iterator iter = additionsMap.keySet().iterator(); iter.hasNext();) {
-                        ISynchronizeModelElement parent = (ISynchronizeModelElement) iter.next();
-                        if (DEBUG) {
-                            System.out.println("Adding child view items of " + parent.getName()); //$NON-NLS-1$
+                try {
+                    if (additionsMap != null && !additionsMap.isEmpty() && Utils.canUpdateViewer(viewer)) {
+                        for (Iterator iter = additionsMap.keySet().iterator(); iter.hasNext();) {
+                            ISynchronizeModelElement parent = (ISynchronizeModelElement) iter.next();
+                            if (DEBUG) {
+                                System.out.println("Adding child view items of " + parent.getName()); //$NON-NLS-1$
+                            }
+                            List toAdd = (List)additionsMap.get(parent);
+                            ((AbstractTreeViewer)viewer).add(parent, toAdd.toArray(new Object[toAdd.size()]));
                         }
-                        List toAdd = (List)additionsMap.get(parent);
-                        ((AbstractTreeViewer)viewer).add(parent, toAdd.toArray(new Object[toAdd.size()]));
+                        additionsMap = null;
                     }
-                    additionsMap = null;
+    		        if (expanded != null) {
+    		            provider.expandResources(expanded);
+    		        }
+    		        if (selected != null) {
+    		            provider.selectResources(selected);
+    		        }
+                } finally {
+                    viewer.getControl().setRedraw(true);
                 }
-		        if (expanded != null) {
-		            provider.expandResources(expanded);
-		        }
-		        if (selected != null) {
-		            provider.selectResources(selected);
-		        }
-		        viewer.getControl().setRedraw(true);
 		    }
 		}
 
