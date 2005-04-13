@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
@@ -75,7 +68,8 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	private long fLastUpdateTime;
 	private boolean fVisitDerived;
 	private final MultiStatus fStatus;
-	private boolean fAllowNIOSearch;	
+	
+	private final FileCharSequenceProvider fFileCharSequenceProvider;
 	
 	public TextSearchVisitor(MatchLocator locator, SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MultiStatus status, int fileCount) {
 		fScope= scope;
@@ -89,15 +83,14 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		fNumberOfScannedFiles= 0;
 		fNumberOfFilesToScan= fileCount;
 		fVisitDerived= visitDerived;
-		fAllowNIOSearch= true;
+		
+		fFileCharSequenceProvider= new FileCharSequenceProvider();
 	}
-	
-	public void setAllowNIOSearch(boolean allowNIOSearch) {
-		fAllowNIOSearch= allowNIOSearch;
-	}
-	
+		
 	public void process() {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
+		
+		long time= System.currentTimeMillis();
 		
 		IResource[] roots= fScope.getRootElements();
 		for (int i= 0; i < roots.length; i++) {
@@ -107,6 +100,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 				fStatus.add(ex.getStatus());
 			}
 		}
+		System.out.println("text search: " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 		
 		fDocumentsInEditors= null;
 	}
@@ -181,24 +175,10 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 			if (document != null) {
 				fLocator.locateMatches(fProgressMonitor, new DocumentCharSequence(document), fCollector, proxy);
 			} else {
-				InputStream stream= null;
+				CharSequence seq= null;
 				try {
-					Charset charset= Charset.forName(file.getCharset());
-					
-					stream= file.getContents();
-					if (fAllowNIOSearch && stream instanceof FileInputStream) {
-						FileChannel channel= ((FileInputStream) stream).getChannel();
-						try {
-							MappedByteBuffer mappedBuffer= channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-							CharSequence searchInput= charset.decode(mappedBuffer);
-							fLocator.locateMatches(fProgressMonitor, searchInput, fCollector, proxy);
-						} finally {
-							channel.close();
-						}
-					} else {
-						BufferedReader reader= new BufferedReader(new InputStreamReader(stream, charset));
-						fLocator.locateMatches(fProgressMonitor, reader, fCollector, proxy);
-					}
+					seq= fFileCharSequenceProvider.newCharSequence(file);
+					fLocator.locateMatches(fProgressMonitor, seq, fCollector, proxy);
 				} catch (UnsupportedCharsetException e) {
 					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
 					String message= SearchMessages.getFormattedString("TextSearchVisitor.unsupportedcharset", args); //$NON-NLS-1$
@@ -216,8 +196,12 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} finally {
-					if (stream != null) {
-						try { stream.close();	} catch (IOException ignored) {}
+					if (seq != null) {
+						try {
+							fFileCharSequenceProvider.releaseCharSequence(seq);
+						} catch (IOException e) {
+							SearchPlugin.log(e);
+						}
 					}
 				}	
 			}
@@ -230,10 +214,11 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	private void updateProgressMonitor() {
 		fNumberOfScannedFiles++;
 		if (fNumberOfScannedFiles < fNumberOfFilesToScan) {
-			if (System.currentTimeMillis() - fLastUpdateTime > 1000) {
+			long currTime= System.currentTimeMillis();
+			if (currTime - fLastUpdateTime > 1000) {
 				Object[] args= { new Integer(fNumberOfScannedFiles + 1),  new Integer(fNumberOfFilesToScan)};
 				fProgressMonitor.setTaskName(SearchMessages.getFormattedString("TextSearchVisitor.scanning", args)); //$NON-NLS-1$
-				fLastUpdateTime= System.currentTimeMillis();
+				fLastUpdateTime= currTime;
 			}
 		}
 		fProgressMonitor.worked(1);

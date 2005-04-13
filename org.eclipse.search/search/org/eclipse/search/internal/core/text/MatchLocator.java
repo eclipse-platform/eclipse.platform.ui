@@ -16,12 +16,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.search.internal.ui.SearchMessages;
-
-import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
+import org.eclipse.core.resources.IResourceProxy;
+
+import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * A class finding matches withing a file.
@@ -105,16 +106,14 @@ public class MatchLocator {
 
 	public void locateMatches(IProgressMonitor progressMonitor, CharSequence searchInput, ITextSearchResultCollector collector, IResourceProxy proxy) throws CoreException {
 		fMatcher.reset(searchInput);
-		int pos= 0;
 		int k= 0;
-		while (pos < searchInput.length() && fMatcher.find(pos)) {
+		while (fMatcher.find()) {
 			int start= fMatcher.start();
 			int end= fMatcher.end();
 			collector.accept(proxy, start, end - start);
 			if (end == start) {
 				end++;
 			}
-			pos= end;
 			if (k++ == 20) {
 				if (progressMonitor.isCanceled()) {
 					throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$

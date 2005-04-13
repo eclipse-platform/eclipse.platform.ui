@@ -15,37 +15,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 
-import org.eclipse.core.resources.IWorkspace;
-
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 
 public class TextSearchEngine {
-	
-	/**
-	 * @param workspace Current worspave
-	 * @param scope Search scope
-	 * @param visitDerived Select to visit derived resource
-	 * @param collector
-	 * @param matchLocator
-	 * @return Returns the status
-	 * @deprecated Use {@link #search(SearchScope, boolean, ITextSearchResultCollector, MatchLocator)} instead
-	 */
-	public IStatus search(IWorkspace workspace, SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
-		return search(scope, visitDerived, collector, matchLocator);
-	}
-	
+		
 	public IStatus search(SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator) {
-		boolean disableNIOSearch= SearchPlugin.getDefault().getPluginPreferences().getBoolean("org.eclipse.search.disableNIOSearch"); //$NON-NLS-1$
-		return search(scope, visitDerived, collector, matchLocator, !disableNIOSearch);
-	}
-	
-	public IStatus search(SearchScope scope, boolean visitDerived, ITextSearchResultCollector collector, MatchLocator matchLocator, boolean allowNIOSearch) {
 		Assert.isNotNull(scope);
 		Assert.isNotNull(collector);
 		Assert.isNotNull(matchLocator);
@@ -63,7 +42,6 @@ public class TextSearchEngine {
 			}				
 			collector.aboutToStart();
 			TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, visitDerived, collector, status, amountOfWork);
-			visitor.setAllowNIOSearch(allowNIOSearch);
 			visitor.process();
 		} catch (CoreException ex) {
 			status.add(ex.getStatus());

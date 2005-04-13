@@ -17,6 +17,14 @@ import java.io.InputStream;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -27,13 +35,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 
 /**
  * @since 3.0
@@ -108,13 +109,19 @@ public class ResourceHelper {
 		return folder;
 	}
 	
-	public static IFile createFile(IFolder folder, String name, String contents) throws CoreException {
+	public static IFile createFile(IFolder folder, String name, String contents, String encoding) throws CoreException, IOException {
 		IFile file= folder.getFile(name);
 		if (contents == null)
 			contents= ""; //$NON-NLS-1$
-		InputStream inputStream= new ByteArrayInputStream(contents.getBytes());
+		InputStream inputStream= new ByteArrayInputStream(contents.getBytes(encoding));
 		file.create(inputStream, true, NULL_MONITOR);
+		file.setCharset(encoding, null);
+		inputStream.close();
 		return file;
+	}
+	
+	public static IFile createFile(IFolder folder, String name, String contents) throws CoreException, IOException {
+		return createFile(folder, name, contents, "ISO-8859-1");
 	}
 	
 	public static IFile createLinkedFile(IContainer container, IPath linkPath, File linkedFileTarget) throws CoreException {

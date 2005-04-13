@@ -17,24 +17,26 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.search.internal.core.SearchScope;
-import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
-import org.eclipse.search.internal.core.text.MatchLocator;
-import org.eclipse.search.internal.core.text.TextSearchEngine;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.tests.ResourceHelper;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
+
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
+import org.eclipse.search.internal.core.text.MatchLocator;
+import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.ui.SearchPlugin;
+
+import org.eclipse.search.tests.ResourceHelper;
 
 public class FileSearchTests extends TestCase {
 	
@@ -105,6 +107,62 @@ public class FileSearchTests extends TestCase {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}
 	
+	
+	/*
+	private void createFile(File file, String contents) throws IOException {
+		FileWriter fs= new FileWriter(file);
+		try {
+			fs.write(contents);
+			System.out.println(fs.getEncoding());
+		} finally {
+			fs.close();
+		}
+	}
+	
+	public void testFileNIOTest1() throws Exception {
+		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038
+		StringBuffer buf= new StringBuffer();
+		buf.append("File1\n");
+		buf.append("hello\n");
+		buf.append("more hello\n");
+		buf.append("world\n");
+		
+
+		File file1= File.createTempFile("test", "txt");
+		createFile(file1, buf.toString());
+		
+		File file2= File.createTempFile("test", "txt");
+		createFile(file2, buf.toString());
+		assertTrue(file2.delete());
+		
+		
+		InputStream stream= null;
+		try {
+			stream= new FileInputStream(file1);
+			if (stream instanceof FileInputStream) {
+				FileChannel channel= ((FileInputStream) stream).getChannel();
+				try {
+					MappedByteBuffer mappedBuffer= channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+					
+					Charset charset= Charset.forName("Cp1252");
+					CharsetDecoder decoder = charset.newDecoder();
+					
+					CharSequence searchInput= decoder.decode(mappedBuffer);
+
+					int len= Math.min(searchInput.length(), 5);
+					CharSequence sequence= searchInput.subSequence(0, len);
+					System.out.println(sequence.toString());
+				} finally {
+					channel.close();
+				}
+			}
+		} finally {
+			stream.close();
+		}
+		assertTrue(file1.delete());
+	}
+	*/
+	
 	public void testSimpleFiles() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
@@ -120,7 +178,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("hello", false, true);
 		
 		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
-		engine.search(scope, true, collector, matchLocator, true);
+		engine.search(scope, true, collector, matchLocator);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
@@ -145,7 +203,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("mor*", false, false);
 		
 		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
-		engine.search(scope, true, collector, matchLocator, true);
+		engine.search(scope, true, collector, matchLocator);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 6, results.length);
@@ -167,7 +225,7 @@ public class FileSearchTests extends TestCase {
 		MatchLocator matchLocator= new MatchLocator("mo?e", false, false);
 		
 		SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] { fProject });
-		engine.search(scope, true, collector, matchLocator, true);
+		engine.search(scope, true, collector, matchLocator);
 		
 		TestResult[] results= collector.getResults();
 		assertEquals("Number of total results", 4, results.length);
@@ -196,7 +254,7 @@ public class FileSearchTests extends TestCase {
 			// search in Junit sources
 
 			SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] {project});
-			engine.search(scope, true, collector, matchLocator, true);
+			engine.search(scope, true, collector, matchLocator);
 
 			TestResult[] results= collector.getResults();
 			assertEquals("Number of total results", 748, results.length);
@@ -228,7 +286,7 @@ public class FileSearchTests extends TestCase {
 			MatchLocator matchLocator= new MatchLocator("hello", false, true);
 
 			SearchScope scope= SearchScope.newSearchScope("test-project", new IResource[] {fProject});
-			engine.search(scope, true, collector, matchLocator, true);
+			engine.search(scope, true, collector, matchLocator);
 
 			TestResult[] results= collector.getResults();
 			assertEquals("Number of total results", 4, results.length);
