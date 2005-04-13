@@ -24,6 +24,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
@@ -160,7 +161,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
-                "CustomizableIntroPart.configNotFound", //$NON-NLS-1$
+                Messages.CustomizableIntroPart_configNotFound,
                 new Object[] { ModelLoaderUtil.getLogString(
                     getConfigurationElement(), null) }, null);
 
