@@ -131,8 +131,12 @@ public class HeapStatus extends Composite {
 		// make sure stats are updated before first paint
 		updateStats();
 
-        getDisplay().timerExec(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), timer);
-    	}
+        getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				getDisplay().timerExec(HeapStatus.this.prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), timer);
+			}
+		});
+   	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
