@@ -236,13 +236,14 @@ public abstract class BasicPerformanceTest extends UITestCase {
     }
     
     /**
-     * Runs the given runnable until either 25 iterations or 3s has elapsed.
+     * Runs the given runnable until either 100 iterations or 4s has elapsed.
+     * Runs a minimum of 3 times.
      * 
      * @param runnable
      * @since 3.1
      */
     public static void exercise(TestRunnable runnable) throws CoreException {
-        exercise(runnable, 25, 3000);
+        exercise(runnable, 3, 100, 4000);
     }
     
     /**
@@ -254,7 +255,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
      * @param maxTime
      * @since 3.1
      */
-    public static void exercise(TestRunnable runnable, int maxIterations, int maxTime) throws CoreException {
+    public static void exercise(TestRunnable runnable, int minIterations, int maxIterations, int maxTime) throws CoreException {
         long startTime = System.currentTimeMillis();
         
         for(int counter = 0; counter < maxIterations; counter++) {
@@ -281,7 +282,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
             }
             
             long curTime = System.currentTimeMillis();
-            if (curTime - startTime > maxTime) {
+            if (curTime - startTime > maxTime && counter >= minIterations - 1) {
                 break;
             } 
         }

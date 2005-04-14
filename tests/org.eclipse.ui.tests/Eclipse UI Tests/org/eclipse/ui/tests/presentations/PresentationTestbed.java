@@ -24,7 +24,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.internal.DefaultStackPresentationSite;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -77,26 +76,8 @@ public class PresentationTestbed {
         
         control.setLayout(new Layout() {
             protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-                int widthHint = wHint == SWT.DEFAULT ? ISizeProvider.INFINITE : wHint;
-                int heightHint = hHint == SWT.DEFAULT ? ISizeProvider.INFINITE : hHint;
                 
-                int width = 200;
-                int height = 200;
-                StackPresentation presentation = site.getPresentation();
-                if (presentation != null) {
-                    width = presentation.computePreferredSize(true, widthHint, heightHint, widthHint);
-                    height = presentation.computePreferredSize(false, heightHint, widthHint, heightHint);
-                }
-                
-                if (width == ISizeProvider.INFINITE) {
-                    width = 200;
-                }
-
-                if (height == ISizeProvider.INFINITE) {
-                    height = 200;
-                }
-                
-                return new Point(width, height);
+                return new Point(200, 200);
             }
            
             protected void layout(Composite composite, boolean flushCache) {
