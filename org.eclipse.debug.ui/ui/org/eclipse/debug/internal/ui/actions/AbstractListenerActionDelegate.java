@@ -47,22 +47,16 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		if (shell == null || shell.isDisposed()) {
 			return;
 		}
-		Runnable r= new Runnable() {
-			public void run() {
-                synchronized (AbstractListenerActionDelegate.this) {
-                    if (fDisposed) {
-                        return;
-                    }
-                }
-				for (int i = 0; i < events.length; i++) {
-					if (events[i].getSource() != null) {
-						doHandleDebugEvent(events[i]);
-					}
-				}
+        synchronized (this) {
+            if (fDisposed) {
+                return;
+            }
+        }
+		for (int i = 0; i < events.length; i++) {
+			if (events[i].getSource() != null) {
+				doHandleDebugEvent(events[i]);
 			}
-		};
-		
-		shell.getDisplay().asyncExec(r);
+		}		
 	}
 	
 	/**
