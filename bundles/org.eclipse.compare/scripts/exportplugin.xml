@@ -24,6 +24,7 @@
 			<fileset dir=".">
 			  <include name="plugin.xml" />
 			  <include name="plugin.properties" />
+			  <include name="icons/**" />
 			  <include name="META-INF/**" />
 			</fileset>
 			<fileset dir="bin" />
