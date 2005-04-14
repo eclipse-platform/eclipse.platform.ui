@@ -40,7 +40,7 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	public void testOpenAntEditor2() throws PartInitException {
 		// warm run
 		IFile file= getIFile("build.xml");
-		tagAsGlobalSummary("Open Ant Editor", Dimension.CPU_TIME);
+		tagAsGlobalSummary("Open Ant Editor", Dimension.ELAPSED_PROCESS);
 		measureOpenInEditor(file);
 	}
 	
@@ -49,7 +49,7 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	    try {
 		IFile file= getIFile("build.xml");
 		store.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-		tagAsSummary("Open Ant Editor; No folding", Dimension.CPU_TIME);
+		tagAsSummary("Open Ant Editor; No folding", Dimension.ELAPSED_PROCESS);
 		measureOpenInEditor(file);
 	    } finally {
 	        store.setToDefault(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
