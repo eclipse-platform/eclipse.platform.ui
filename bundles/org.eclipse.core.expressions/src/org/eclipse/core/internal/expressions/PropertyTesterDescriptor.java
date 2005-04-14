@@ -36,7 +36,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 		if (fNamespace == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
 				IStatus.ERROR, 
-				ExpressionMessages.getString("PropertyTesterDescriptor.no_namespace"), //$NON-NLS-1$
+				ExpressionMessages.PropertyTesterDescriptor_no_namespace, 
 				null));
 		}
 		StringBuffer buffer= new StringBuffer(","); //$NON-NLS-1$
@@ -44,7 +44,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 		if (properties == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
 				IStatus.ERROR, 
-				ExpressionMessages.getString("PropertyTesterDescritpri.no_properties"), //$NON-NLS-1$
+				ExpressionMessages.PropertyTesterDescritpri_no_properties, 
 				null));
 		}
 		for (int i= 0; i < properties.length(); i++) {

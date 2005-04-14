@@ -35,7 +35,7 @@ public class TestExpression extends Expression {
 		if (pos == -1) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.NO_NAMESPACE_PROVIDED,
-				ExpressionMessages.getString("TestExpression.no_name_space"))); //$NON-NLS-1$
+				ExpressionMessages.TestExpression_no_name_space)); 
 		}
 		fNamespace= property.substring(0, pos);
 		fProperty= property.substring(pos + 1);

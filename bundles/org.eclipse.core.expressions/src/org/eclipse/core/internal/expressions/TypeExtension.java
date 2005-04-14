@@ -98,7 +98,7 @@ public class TypeExtension {
 						fExtenders[i]= null;
 						throw new CoreException(new ExpressionStatus(
 							ExpressionStatus.TYPE_EXTENDER_INCORRECT_TYPE,
-							ExpressionMessages.getString("TypeExtender.incorrectType"),  //$NON-NLS-1$
+							ExpressionMessages.TypeExtender_incorrectType,  
 							e));
 					}
 				} else {

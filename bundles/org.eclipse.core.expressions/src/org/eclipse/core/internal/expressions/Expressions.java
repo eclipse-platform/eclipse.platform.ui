@@ -58,7 +58,7 @@ public class Expressions {
 		if (value == null) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.MISSING_ATTRIBUTE, 
-				ExpressionMessages.getFormattedString("Expression.attribute.missing", name))); //$NON-NLS-1$
+				Messages.format(ExpressionMessages.Expression_attribute_missing, name))); 
 		}
 	}
 	
@@ -70,7 +70,7 @@ public class Expressions {
 		}
 		throw new CoreException(new ExpressionStatus(
 			ExpressionStatus.WRONG_ATTRIBUTE_VALUE, 
-			ExpressionMessages.getFormattedString("Expression.attribute.invalid_value", value))); //$NON-NLS-1$
+			Messages.format(ExpressionMessages.Expression_attribute_invalid_value, value))); 
 	}
 	
 	public static void checkCollection(Object var, Expression expression) throws CoreException {
@@ -78,7 +78,7 @@ public class Expressions {
 			return;
 		throw new CoreException(new ExpressionStatus(
 			ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, 
-			ExpressionMessages.getFormattedString("Expression.variable.not_a_collection", expression.toString()))); //$NON-NLS-1$
+			Messages.format(ExpressionMessages.Expression_variable_not_a_collection, expression.toString()))); 
 	}
 	
 	public static void checkList(Object var, Expression expression) throws CoreException {
@@ -86,7 +86,7 @@ public class Expressions {
 			return;
 		throw new CoreException(new ExpressionStatus(
 			ExpressionStatus.VARIABLE_IS_NOT_A_LIST, 
-			ExpressionMessages.getFormattedString("Expression.variable.not_a_list", expression.toString()))); //$NON-NLS-1$
+			Messages.format(ExpressionMessages.Expression_variable_not_a_list, expression.toString()))); 
 	}
 	
 	//---- Argument parsing --------------------------------------------
@@ -137,7 +137,7 @@ public class Expressions {
 		if (inString)
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.STRING_NOT_TERMINATED, 
-				ExpressionMessages.getFormattedString("Expression.string_not_terminated", str))); //$NON-NLS-1$
+				Messages.format(ExpressionMessages.Expression_string_not_terminated, str))); 
 			
 		return -1;
 	}
@@ -176,7 +176,7 @@ public class Expressions {
 				if (i == str.length() - 1 || str.charAt(i + 1) != '\'')
 					throw new CoreException(new ExpressionStatus(
 						ExpressionStatus.STRING_NOT_CORRECT_ESCAPED, 
-						ExpressionMessages.getFormattedString("Expression.string_not_correctly_escaped", str))); //$NON-NLS-1$
+						Messages.format(ExpressionMessages.Expression_string_not_correctly_escaped, str))); 
 				result.append('\'');
 				i++;
 			} else {

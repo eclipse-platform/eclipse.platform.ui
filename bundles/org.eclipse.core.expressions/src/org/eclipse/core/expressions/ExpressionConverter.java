@@ -19,6 +19,7 @@ import org.eclipse.core.internal.expressions.Assert;
 import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.ExpressionMessages;
 import org.eclipse.core.internal.expressions.ExpressionPlugin;
+import org.eclipse.core.internal.expressions.Messages;
 
 /**
  * An expression converter converts an XML expression represented by an 
@@ -96,8 +97,8 @@ public final class ExpressionConverter {
 				if (child == null)
 					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
 						IStatus.ERROR, 
-						ExpressionMessages.getFormattedString(
-							"Expression.unknown_element",  //$NON-NLS-1$
+						Messages.format(
+							ExpressionMessages.Expression_unknown_element,  //$NON-NLS-1$
 							children[i].getName()),
 						null));
 				result.add(child);

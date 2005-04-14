@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,57 +10,32 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class ExpressionMessages {
+public final class ExpressionMessages extends NLS {
 
-	private static final String BUNDLE_NAME= "org.eclipse.core.internal.expressions.ExpressionMessages";//$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final String BUNDLE_NAME = "org.eclipse.core.internal.expressions.ExpressionMessages";//$NON-NLS-1$
 
 	private ExpressionMessages() {
-		// no instances
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	public static String Expression_attribute_missing;
+	public static String Expression_attribute_invalid_value;
+	public static String Expression_variable_not_a_collection;
+	public static String Expression_variable_not_a_list;
+	public static String Expression_unknown_element;
+	public static String Expression_string_not_correctly_escaped;
+	public static String Expression_string_not_terminated;
+	public static String TypeExtender_unknownMethod;
+	public static String TypeExtender_incorrectType;
+	public static String TestExpression_no_name_space;
+	public static String WithExpression_variable_not_defined;
+	public static String ResolveExpression_variable_not_defined;
+	public static String PropertyTesterDescriptor_no_namespace;
+	public static String PropertyTesterDescritpri_no_properties;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, ExpressionMessages.class);
 	}
-	
-	public static String getFormattedString(String key, String arg) {
-		try{
-			return MessageFormat.format(RESOURCE_BUNDLE.getString(key), new String[] { arg });
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}	
-	}
-	
-	public static String getFormattedString(String key, Object arg) {
-		try{
-			return MessageFormat.format(RESOURCE_BUNDLE.getString(key), new Object[] { arg });
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}	
-	}
-	
-	public static String getFormattedString(String key, String[] args) {
-		try{
-			return MessageFormat.format(RESOURCE_BUNDLE.getString(key), args);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}	
-	}
-	
-	public static String getFormattedString(String key, Object[] args) {
-		try{
-			return MessageFormat.format(RESOURCE_BUNDLE.getString(key), args);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}	
-	}	
 }

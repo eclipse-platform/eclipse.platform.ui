@@ -103,8 +103,8 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		if (extender == TypeExtension.CONTINUE || extender == null) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
-				ExpressionMessages.getFormattedString(
-					"TypeExtender.unknownMethod",  //$NON-NLS-1$
+				Messages.format(
+					ExpressionMessages.TypeExtender_unknownMethod,  //$NON-NLS-1$
 					new Object[] {method, clazz.toString()})));
 		}
 		result.setPropertyTester(extender);

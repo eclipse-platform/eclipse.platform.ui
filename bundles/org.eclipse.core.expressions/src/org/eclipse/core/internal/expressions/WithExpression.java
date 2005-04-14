@@ -32,7 +32,7 @@ public class WithExpression extends CompositeExpression {
 		if (variable == null) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.VARIABLE_NOT_DEFINED,
-				ExpressionMessages.getFormattedString("WithExpression.variable_not_defined", fVariable))); //$NON-NLS-1$
+				Messages.format(ExpressionMessages.WithExpression_variable_not_defined, fVariable))); 
 		}
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}
