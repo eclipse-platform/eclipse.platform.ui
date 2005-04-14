@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Random;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.content.*;
 import org.eclipse.core.internal.content.ContentTypeBuilder;
 import org.eclipse.core.internal.content.Util;
 import org.eclipse.core.runtime.IPath;
@@ -178,9 +179,28 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		return installed;
 	}
 
+	/**
+	 * Returns a loaded content type manager. Except for load time tests, this method should
+	 * be called outside the scope of performance monitoring.
+	 */
+	private IContentTypeManager loadContentTypeManager() {
+		// any cheap interaction that causes the catalog to be built				
+		Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);		
+		return Platform.getContentTypeManager();
+	}
+
+	/** Forces all describers to be loaded.*/
+	private void loadDescribers() {
+		final IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentType[] allTypes = manager.getAllContentTypes();
+		for (int i = 0; i < allTypes.length; i++)
+			((ContentType) allTypes[i]).getDescriber();
+	}
+
 	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis */
 	public void testContentMatching() {
-		final IContentTypeManager manager = Platform.getContentTypeManager();
+		final IContentTypeManager manager = loadContentTypeManager();		
+		loadDescribers();
 		new PerformanceTestRunner() {
 			protected void test() {
 				IContentType[] associated = null;
@@ -189,7 +209,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 				} catch (IOException e) {
 					fail("2.0", e);
 				}
-				// we know at least the etxt content type should be here
+				// we know at least the text content type should be there
 				assertTrue("2.1", associated.length >= 1);
 				for (int i = 0; i < associated.length; i++)
 					if (associated[i].getId().equals(IContentTypeManager.CT_TEXT))
@@ -223,7 +243,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	public void testIsKindOf() {
 		int numberOfLevels = 10;
 		int elementsPerLevel = 2;
-		IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentTypeManager manager = loadContentTypeManager();
 		final IContentType lastRoot = manager.getContentType(getContentTypeId(elementsPerLevel));
 		assertNotNull("2.0", lastRoot);
 		final IContentType lastLeaf = manager.getContentType(getContentTypeId(computeNumberOfElements(elementsPerLevel, numberOfLevels)));
@@ -236,20 +256,19 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	}
 
 	/**
-	 * This test is intended for running as a session test. Use a non-standard prefix to avoid automatic inclusion in test suite.
+	 * This test is intended for running as a session test.
 	 */
 	public void testLoadCatalog() {
 		new PerformanceTestRunner() {
 			protected void test() {
-				// any cheap interaction that cause the catalog to be built				
-				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+				loadContentTypeManager();
 			}
 		}.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
 	}
 
 	/** Tests how much the size of the catalog affects the performance of content type matching by name */
 	public void testNameMatching() {
-		final IContentTypeManager manager = Platform.getContentTypeManager();
+		final IContentTypeManager manager = loadContentTypeManager();
 		new PerformanceTestRunner() {
 			protected void test() {
 				IContentType[] associated = manager.findContentTypesFor("foo.txt");
