@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * @see ILabelDecorator
@@ -42,7 +43,7 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
     public void decorate(Object element, IDecoration decoration) {
         if (fail) {
             fail = false;
-            throw new NullPointerException("Lighweight boom");
+            throw new ForcedException("Lighweight boom");
         }
     }
 

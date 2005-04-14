@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * @see ILabelDecorator
@@ -68,7 +69,7 @@ public class HeavyNullTextDecorator implements ILabelDecorator {
     public String decorateText(String text, Object element) {
         if (fail) {
             fail = false;
-            throw new NullPointerException("Heavy text boom");
+            throw new ForcedException("Heavy text boom");
         }
         return null;
     }

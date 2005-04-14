@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.decorators;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * @see ILabelDecorator
@@ -61,7 +62,7 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
     public Image decorateImage(Image image, Object element) {
         if (fail) {
             fail = false;
-            throw new NullPointerException("Heavy image boom");
+            throw new ForcedException("Heavy image boom");
         }
         return null;
     }

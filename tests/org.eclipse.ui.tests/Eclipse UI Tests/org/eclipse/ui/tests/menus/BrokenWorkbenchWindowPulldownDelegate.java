@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.tests.intro.ForcedException;
+import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * This is a broken pulldown delegate that throws exceptions if you try to get

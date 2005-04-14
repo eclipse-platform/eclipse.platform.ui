@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.tests.intro;
+package org.eclipse.ui.tests.internal;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -23,6 +23,11 @@ public class ForcedException extends RuntimeException {
 
 	 private static final long serialVersionUID= 1L;
 
+	 /**
+	  * Creates a <code>ForcedException</code> with the given message.
+	  *  
+	  * @param message the message
+	  */
 	 public ForcedException(String message) {
 		 super(message);
 	 }
