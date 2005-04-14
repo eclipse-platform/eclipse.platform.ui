@@ -21,7 +21,7 @@ import org.eclipse.core.tests.session.SessionTestSuite;
  */
 public class AllTests extends TestCase {
 	public static Test suite() {
-		SessionTestSuite runtimeSessionTests = new SessionTestSuite(RuntimeTest.PI_RUNTIME_TESTS);
+		SessionTestSuite runtimeSessionTests = new SessionTestSuite(RuntimeTest.PI_RUNTIME_TESTS, AllTests.class.getName());
 		runtimeSessionTests.addTest(ExtensionRegistryStaticTest.suite());
 		return runtimeSessionTests;
 	}

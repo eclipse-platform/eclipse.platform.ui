@@ -13,8 +13,7 @@ package org.eclipse.core.tests.internal.registry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -265,7 +264,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		//Test the third level configuration elements
 		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testI");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
-		
+
 		IExtension ext = Platform.getExtensionRegistry().getExtension("testI.ext1");
 		IConfigurationElement ce = ext.getConfigurationElements()[0];
 		assertEquals(ce.getName(), "ce");
@@ -295,7 +294,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertEquals(ce.getChildren()[0].getChildren()[0].getChildren()[0].getName(), "ce4");
 		assertNotNull(ce.getChildren()[0].getChildren()[0].getChildren()[0].getValue());
 	}
-	
+
 	//Test the cache readAll
 
 	//test various methods on a delta object
@@ -305,9 +304,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 
 	//Test the delta with more details
 
-	public static TestSuite suite() {
+	public static Test suite() {
 		//Order is important
-		TestSuite sameSession = new TestSuite();
+		TestSuite sameSession = new TestSuite(ExtensionRegistryStaticTest.class.getName());
 		sameSession.addTest(new ExtensionRegistryStaticTest("testA"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("testAFromCache"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("testB"));
