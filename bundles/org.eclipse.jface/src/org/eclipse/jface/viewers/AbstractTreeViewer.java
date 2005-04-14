@@ -234,7 +234,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 					refresh(element);
 					break;
 				}
-				lastInsertion = index;
 			}
 			createTreeItem(widget, element, index);		
 		}
