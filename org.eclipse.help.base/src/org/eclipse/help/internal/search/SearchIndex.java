@@ -22,6 +22,7 @@ import org.apache.lucene.search.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
+import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
@@ -48,7 +49,7 @@ public class SearchIndex {
 	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
 
-	private static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions"; //$NON-NLS-1$
+	public static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions"; //$NON-NLS-1$
 
 	public static final String INDEXED_DOCS_FILE = "indexed_docs"; //$NON-NLS-1$
 
@@ -86,11 +87,25 @@ public class SearchIndex {
 	 */
 	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc,
 			TocManager tocManager) {
+		this(new File(HelpBasePlugin.getConfigurationDirectory(), "index/" + locale), //$NON-NLS-1$
+				locale, analyzerDesc, tocManager);
+	}
+	
+	/**
+	 * Alternative constructor that provides index directory.
+	 * @param indexDir
+	 * @param locale
+	 * @param analyzerDesc
+	 * @param tocManager
+	 * @since 3.1
+	 */
+	
+	public SearchIndex(File indexDir, String locale, AnalyzerDescriptor analyzerDesc,
+			TocManager tocManager) {
 		this.locale = locale;
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
-		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(),
-				"index/" + locale); //$NON-NLS-1$
+		this.indexDir = indexDir;
 		inconsistencyFile = new File(indexDir.getParentFile(), locale
 				+ ".inconsistent"); //$NON-NLS-1$
 		parser = new HTMLDocParser();
@@ -350,6 +365,15 @@ public class SearchIndex {
 					docPluginsIds, indexDir, !exists());
 		}
 		return docPlugins;
+	}
+	
+	/**
+	 * Sets the list of all plug-ns in this session. This method
+	 * is used for external indexer.
+	 * @param docPlugins
+	 */
+	public void setDocPlugins(PluginVersionInfo docPlugins) {
+		this.docPlugins = docPlugins;
 	}
 
 	/**
@@ -637,6 +661,47 @@ public class SearchIndex {
 			} catch (IOException ioe) {
 			}
 			lock = null;
+		}
+	}
+	
+	public static String getIndexableHref(String url) {
+		String fileName = url.toLowerCase(Locale.ENGLISH);
+		if (fileName.endsWith(".htm") //$NON-NLS-1$
+				|| fileName.endsWith(".html") //$NON-NLS-1$
+				|| fileName.endsWith(".txt") //$NON-NLS-1$
+				|| fileName.endsWith(".xml")) { //$NON-NLS-1$
+			// indexable
+		} else if (fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
+				|| fileName.indexOf(".html#") >= 0 //$NON-NLS-1$
+				|| fileName.indexOf(".xml#") >= 0) { //$NON-NLS-1$
+			url = url.substring(0, url.lastIndexOf('#'));
+			// its a fragment, index whole document
+		} else {
+			// not indexable
+			return null;
+		}
+		return url;
+	}
+	/**
+	 * Checks if document is indexable, and creates a URL to obtain contents.
+	 * 
+	 * @param url
+	 *            specified in the navigation
+	 * @return URL to obtain document content or null
+	 */
+	public static URL getIndexableURL(String locale, String url) {
+		url = getIndexableHref(url);
+		if (url==null)
+			return null;
+
+		try {
+			//return new URL("help:" + url + "?lang=" + index.getLocale());
+			return new URL("help", //$NON-NLS-1$
+					null, -1, url + "?lang=" + locale, //$NON-NLS-1$
+					HelpURLStreamHandler.getDefault());
+
+		} catch (MalformedURLException mue) {
+			return null;
 		}
 	}
 }

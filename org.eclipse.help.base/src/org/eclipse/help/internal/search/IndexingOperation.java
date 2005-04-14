@@ -205,7 +205,7 @@ class IndexingOperation {
 				continue;
 			}
 
-			URL url = getIndexableURL(doc);
+			URL url = SearchIndex.getIndexableURL(index.getLocale(), doc);
 			if (url != null) {
 				addedDocs.add(url);
 			}
@@ -234,7 +234,7 @@ class IndexingOperation {
 				continue;
 			}
 
-			URL url = getIndexableURL(doc);
+			URL url = SearchIndex.getIndexableURL(index.getLocale(), doc);
 			if (url != null) {
 				removedDocs.add(url);
 			}
@@ -275,39 +275,5 @@ class IndexingOperation {
 				add(tocDescriptionTopic, hrefs);
 		}
 		return hrefs;
-	}
-	/**
-	 * Checks if document is indexable, and creates a URL to obtain contents.
-	 * 
-	 * @param url
-	 *            specified in the navigation
-	 * @return URL to obtain document content or null
-	 */
-	private URL getIndexableURL(String url) {
-		String fileName = url.toLowerCase(Locale.ENGLISH);
-		if (fileName.endsWith(".htm") //$NON-NLS-1$
-				|| fileName.endsWith(".html") //$NON-NLS-1$
-				|| fileName.endsWith(".txt") //$NON-NLS-1$
-				|| fileName.endsWith(".xml")) { //$NON-NLS-1$
-			// indexable
-		} else if (fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
-				|| fileName.indexOf(".html#") >= 0 //$NON-NLS-1$
-				|| fileName.indexOf(".xml#") >= 0) { //$NON-NLS-1$
-			url = url.substring(0, url.lastIndexOf('#'));
-			// its a fragment, index whole document
-		} else {
-			// not indexable
-			return null;
-		}
-
-		try {
-			//return new URL("help:" + url + "?lang=" + index.getLocale());
-			return new URL("help", //$NON-NLS-1$
-					null, -1, url + "?lang=" + index.getLocale(), //$NON-NLS-1$
-					HelpURLStreamHandler.getDefault());
-
-		} catch (MalformedURLException mue) {
-			return null;
-		}
 	}
 }

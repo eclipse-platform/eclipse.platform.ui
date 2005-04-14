@@ -23,7 +23,7 @@ import org.osgi.framework.*;
 public class PluginVersionInfo extends HelpProperties {
 	private static final long serialVersionUID = 1L;
 	// Separates plugins and versions in value strings
-	static final String SEPARATOR = "\n"; //$NON-NLS-1$
+	protected static final String SEPARATOR = "\n"; //$NON-NLS-1$
 	File dir;
 	boolean doComparison = true;
 	boolean hasChanged = false;
@@ -49,6 +49,10 @@ public class PluginVersionInfo extends HelpProperties {
 		super(name, dir);
 		this.dir = dir;
 		this.ignoreSavedVersions = ignoreSavedVersions;
+		createTable(docBundleIds);
+	}
+
+	protected void createTable(Collection docBundleIds) {
 		// create table of current contributions
 		for (Iterator it = docBundleIds.iterator(); it.hasNext();) {
 			String bundleId = (String) it.next();

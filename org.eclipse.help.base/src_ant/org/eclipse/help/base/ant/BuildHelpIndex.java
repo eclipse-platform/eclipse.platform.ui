@@ -31,7 +31,8 @@ public class BuildHelpIndex extends Task {
 		File file = getManifestFile();
 		if (file==null)
 			return;
-		builder = new HelpIndexBuilder(file);
+		builder = new HelpIndexBuilder();
+		builder.setManifest(file);
 		IProgressMonitor monitor = 
 			(IProgressMonitor) getProject().getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
 		try {
