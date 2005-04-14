@@ -16,9 +16,5 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.ant_1.6.2/lib/ant.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
