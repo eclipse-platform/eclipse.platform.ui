@@ -236,17 +236,40 @@
 </extension>
 <extension
       point="org.eclipse.core.runtime.contentTypes">
+   <content-type      
+         name="My Content Type"
+         id="myContent"
+         file-extensions="resources-mc"
+         default-charset="PROVIDER_CHARSET"/>            
    <content-type
          name="A more specific XML"
          id="anotherXML"
          base-type="org.eclipse.core.runtime.xml"          
          describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.tests.resources.anotherXML"/>
-   <content-type      
-         name="My Content Type"
-         id="myContent"
-         file-extensions="resources-mc"
-         default-charset="PROVIDER_CHARSET"/>         
+   <!-- content types for nature-content type association tests -->
+   <content-type
+         name="A content type for testing nature association"
+         id="nature_associated_1"
+         file-extensions="nature-associated"
+         base-type="org.eclipse.core.runtime.text"/>
+   <content-type
+         name="A derived content type for testing nature association"
+         id="nature_associated_2"
+         base-type="org.eclipse.core.tests.resources.nature_associated_1"/>
 </extension>
+<extension
+      id="contentTypeRelated1"
+      name="Content-type related nature 1"
+      point="org.eclipse.core.resources.natures">
+      <content-type id="org.eclipse.core.tests.resources.nature_associated_1"/>
+</extension>
+<extension
+      id="contentTypeRelated2"
+      name="Content-type related nature 2"
+      point="org.eclipse.core.resources.natures">
+      <content-type id="org.eclipse.core.tests.resources.nature_associated_2"/>       
+</extension>
+
 <extension
       point="org.eclipse.core.resources.refreshProviders">
    <refreshProvider

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 
 public class ProjectInfo extends ResourceInfo {
 
@@ -23,8 +24,11 @@ public class ProjectInfo extends ResourceInfo {
 	/** The list of natures for this project */
 	protected HashMap natures = null;
 
-	/** The property store for this resource */
+	/** The property store for this resource (used only by the compatibility fragment) */
 	protected Object propertyStore = null;
+
+	/** The content type matcher for this project. */
+	protected IContentTypeMatcher matcher = null;
 
 	/**
 	 * Discards any instantiated nature and builder instances associated with
@@ -35,7 +39,7 @@ public class ProjectInfo extends ResourceInfo {
 		if (description != null) {
 			ICommand[] buildSpec = description.getBuildSpec(false);
 			for (int i = 0; i < buildSpec.length; i++)
-				((BuildCommand)buildSpec[i]).setBuilder(null);
+				((BuildCommand) buildSpec[i]).setBuilder(null);
 		}
 	}
 
@@ -44,6 +48,13 @@ public class ProjectInfo extends ResourceInfo {
 	 */
 	public ProjectDescription getDescription() {
 		return description;
+	}
+
+	/**
+	 * Returns the content type matcher associated with this info.  The return value may be null.
+	 */
+	public IContentTypeMatcher getMatcher() {
+		return matcher;
 	}
 
 	public IProjectNature getNature(String natureId) {
@@ -75,6 +86,13 @@ public class ProjectInfo extends ResourceInfo {
 			value.setBuildSpec(newSpec);
 		}
 		description = value;
+	}
+
+	/**
+	 * Sets the content type matcher to be associated with this info.  The value may be null.
+	 */
+	public void setMatcher(IContentTypeMatcher matcher) {
+		this.matcher = matcher;
 	}
 
 	public synchronized void setNature(String natureId, IProjectNature value) {

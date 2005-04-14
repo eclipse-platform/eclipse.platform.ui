@@ -25,6 +25,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 	protected String[] requiredNatures;
 	protected String[] natureSets;
 	protected String[] builderIds;
+	protected String[] contentTypeIds;
 	protected boolean allowLinking = true;
 
 	//descriptors that are in a dependency cycle are never valid
@@ -54,6 +55,14 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 	 */
 	public String[] getBuilderIds() {
 		return builderIds;
+	}
+
+	/**
+	 * Returns the IDs of the content types this nature declares to
+	 * have affinity with.  These content types do not necessarily exist in the registry.
+	 */
+	public String[] getContentTypeIds() {
+		return contentTypeIds;
 	}
 
 	/**
@@ -106,6 +115,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		ArrayList requiredList = new ArrayList(count);
 		ArrayList setList = new ArrayList(count);
 		ArrayList builderList = new ArrayList(count);
+		ArrayList contentTypeList = new ArrayList(count);
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
 			String name = element.getName();
@@ -124,6 +134,11 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 				if (attribute == null)
 					fail();
 				builderList.add(attribute);
+			} else if (name.equalsIgnoreCase("content-type")) { //$NON-NLS-1$
+				String attribute = element.getAttribute("id"); //$NON-NLS-1$
+				if (attribute == null)
+					fail();
+				contentTypeList.add(attribute);
 			} else if (name.equalsIgnoreCase("options")) { //$NON-NLS-1$
 				String attribute = element.getAttribute("allowLinking"); //$NON-NLS-1$
 				//when in doubt (missing attribute, wrong value) default to allow linking
@@ -133,6 +148,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		requiredNatures = (String[]) requiredList.toArray(new String[requiredList.size()]);
 		natureSets = (String[]) setList.toArray(new String[setList.size()]);
 		builderIds = (String[]) builderList.toArray(new String[builderList.size()]);
+		contentTypeIds = (String[]) contentTypeList.toArray(new String[contentTypeList.size()]);
 	}
 
 	/**

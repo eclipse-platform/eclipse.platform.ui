@@ -322,10 +322,16 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * Returns the cached array of enabled natures for this project,
 	 * or null if there is nothing in the cache.
 	 */
-	protected String[] getEnabledNatures(IProject project) {
-		if (natureEnablements != null)
-			return (String[]) natureEnablements.get(project);
-		return null;
+	protected String[] getEnabledNatures(Project project) {
+		String[] enabled;		
+		if (natureEnablements != null) {
+			enabled = (String[]) natureEnablements.get(project);
+			if (enabled != null)
+				return enabled;
+		}
+		enabled = computeNatureEnablements(project);
+		setEnabledNatures(project, enabled);
+		return enabled;
 	}
 
 	/**
@@ -425,10 +431,6 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public boolean isNatureEnabled(Project project, String id) {
 		String[] enabled = getEnabledNatures(project);
-		if (enabled == null) {
-			enabled = computeNatureEnablements(project);
-			setEnabledNatures(project, enabled);
-		}
 		for (int i = 0; i < enabled.length; i++) {
 			if (enabled[i].equals(id))
 				return true;

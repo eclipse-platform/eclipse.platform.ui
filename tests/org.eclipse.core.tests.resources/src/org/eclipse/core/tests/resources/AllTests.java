@@ -25,6 +25,7 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(CharsetTest.suite());
+		suite.addTest(ContentDescriptionManagerTest.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IPathVariableTest.suite());

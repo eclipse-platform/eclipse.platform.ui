@@ -11,6 +11,10 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.internal.events.ILifecycleListener;
+import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
@@ -18,7 +22,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -27,13 +30,14 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.0
  * @see IFile#getContentDescription()
  */
-public class ContentDescriptionManager implements IManager, IRegistryChangeListener, IContentTypeManager.IContentTypeChangeListener {
-
+public class ContentDescriptionManager implements IManager, IRegistryChangeListener, IContentTypeManager.IContentTypeChangeListener, ILifecycleListener {
 	/**
 	 * This job causes the content description cache and the related flags 
 	 * in the resource tree to be flushed. 
 	 */
 	private class FlushJob extends WorkspaceJob {
+		private final List toFlush;
+		private boolean fullFlush;
 
 		public FlushJob() {
 			super(Messages.resources_flushingContentDescriptionCache);
@@ -41,6 +45,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			setUser(false);
 			setPriority(LONG);
 			setRule(workspace.getRoot());
+			toFlush = new ArrayList(5);
 		}
 
 		/* (non-Javadoc)
@@ -64,7 +69,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				try {
 					workspace.prepareOperation(rule, monitor);
 					workspace.beginOperation(true);
-					doFlushCache(monitor);
+					doFlushCache(monitor, getPathsToFlush());
 				} finally {
 					workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 				}
@@ -77,6 +82,35 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			}
 			return Status.OK_STATUS;
 		}
+
+		private IPath[] getPathsToFlush() {
+			synchronized (toFlush) {
+				try {
+					if (fullFlush)
+						return null;
+					int size = toFlush.size();
+					return (size == 0) ? null : (IPath[]) toFlush.toArray(new IPath[size]);
+				} finally {
+					fullFlush = false;
+					toFlush.clear();
+				}
+			}
+		}
+
+		/**
+		 * @param project project to flush, or null for a full flush
+		 */
+		void flush(IProject project) {
+			synchronized (toFlush) {
+				if (!fullFlush)
+					if (project == null)
+						fullFlush = true;
+					else
+						toFlush.add(project.getFullPath());
+			}
+			schedule(1000);
+		}
+
 	}
 
 	/** 
@@ -144,7 +178,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 
 	private byte cacheState;
 
-	private Job flushJob;
+	private FlushJob flushJob;
+	private ProjectContentTypes projectContentTypes;
 
 	Workspace workspace;
 
@@ -152,16 +187,37 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(ContentTypeChangeEvent)
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
-		invalidateCache(true);
+		invalidateCache(true, null);
 	}
 
-	synchronized void doFlushCache(final IProgressMonitor monitor) throws CoreException {
+	synchronized void doFlushCache(final IProgressMonitor monitor, IPath[] toClean) throws CoreException {
 		// nothing to be done if no information cached
-		if (getCacheState() == EMPTY_CACHE)
+		if (getCacheState() != INVALID_CACHE)
 			return;
-		setCacheState(FLUSHING_CACHE);
-		// flush the MRU cache
-		cache.discardAll();
+		try {
+			setCacheState(FLUSHING_CACHE);
+			// flush the MRU cache
+			cache.discardAll();
+			if (toClean == null || toClean.length == 0)
+				// no project was added, must be a global flush
+				clearContentFlags(Path.ROOT, monitor);
+			else {
+				// flush a project at a time								
+				for (int i = 0; i < toClean.length; i++)
+					clearContentFlags(toClean[i], monitor);
+			}
+		} catch (CoreException ce) {
+			setCacheState(INVALID_CACHE);
+			throw ce;
+		}
+		// done cleaning (only if we didn't fail)
+		setCacheState(EMPTY_CACHE);
+	}
+
+	/**
+	 * Clears the content related flags for every file under the given root.
+	 */
+	private void clearContentFlags(IPath root, final IProgressMonitor monitor) {
 		// discard content type related flags for all files in the tree 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -179,13 +235,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				return true;
 			}
 		};
-		try {
-			new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
-		} catch (WrappedRuntimeException e) {
-			throw (CoreException) e.getTargetException();
-		}
-		// done cleaning
-		setCacheState(EMPTY_CACHE);
+		new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
 	}
 
 	Cache getCache() {
@@ -288,7 +338,14 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		return Platform.getPlatformAdmin().getState(false).getTimeStamp();
 	}
 
-	public synchronized void invalidateCache(boolean flush) {
+	/**
+	 * Marks the cache as invalid. Does not do anything if the cache is new.
+	 * Optionally causes the cached information to be actually flushed.
+	 *  
+	 * @param flush whether the cached information should be flushed 
+	 * @see #doFlushCache(IProgressMonitor, IPath[])
+	 */
+	public synchronized void invalidateCache(boolean flush, IProject project) {
 		if (getCacheState() == EMPTY_CACHE)
 			// cache has not been touched, nothing to do			
 			return;
@@ -298,9 +355,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		if (!flush)
-			return;
-		flushJob.schedule(1000);
+		if (flush)
+			flushJob.flush(project);
 	}
 
 	/**
@@ -310,8 +366,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		// tries to obtain a description for this file contents
 		InputStream contents = new LazyFileInputStream(file.getLocation());
 		try {
-			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-			return contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
+			IContentTypeMatcher matcher = projectContentTypes.getMatcherFor((Project) file.getProject());
+			return matcher.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
@@ -327,7 +383,22 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		// no changes related to the content type registry
 		if (event.getExtensionDeltas(Platform.PI_RUNTIME, PT_CONTENTTYPES).length == 0)
 			return;
-		invalidateCache(true);
+		invalidateCache(true, null);
+	}
+
+	/**
+	 * @see ILifecycleListener#handleEvent(LifecycleEvent)
+	 */
+	public void handleEvent(LifecycleEvent event) {
+		//TODO are these the only events we care about?
+		switch (event.kind) {
+			case LifecycleEvent.PRE_PROJECT_CHANGE :
+			case LifecycleEvent.PRE_PROJECT_CLOSE :
+			case LifecycleEvent.PRE_PROJECT_DELETE :
+			case LifecycleEvent.PRE_PROJECT_MOVE :
+			case LifecycleEvent.PRE_PROJECT_OPEN :
+				invalidateCache(true, (IProject) event.resource);
+		}
 	}
 
 	synchronized void setCacheState(byte newCacheState) throws CoreException {
@@ -351,18 +422,23 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		cache = null;
 		flushJob.cancel();
 		flushJob = null;
+		projectContentTypes = null;
 	}
 
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		cache = new Cache(100, 1000, 0.1);
+		projectContentTypes = new ProjectContentTypes(workspace);
 		getCacheState();
 		if (cacheState == FLUSHING_CACHE)
 			// in case we died before completing the last flushing 
 			setCacheState(INVALID_CACHE);
 		flushJob = new FlushJob();
+		// the cache is stale (plug-ins that might be contributing content types were added/removed)
 		if (getCacheTimestamp() != getPlatformTimeStamp())
-			invalidateCache(false);
+			invalidateCache(false, null);
+		// register a lifecycle listener
+		workspace.addLifecycleListener(this);
 		// register a content type change listener
 		Platform.getContentTypeManager().addContentTypeChangeListener(this);
 		// register a registry change listener		
