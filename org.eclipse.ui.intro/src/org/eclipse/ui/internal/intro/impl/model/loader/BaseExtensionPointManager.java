@@ -96,9 +96,10 @@ public class BaseExtensionPointManager {
             loadSharedConfigExtensions();
 
             if (Log.logPerformance)
-                Util.logPerformanceTime(
-                    "IntroPlugin Performance- loading Intro Model took: ",
-                    startTime);
+                Util
+                    .logPerformanceTime(
+                        "IntroPlugin Performance- loading Intro Model (quering registry/creating model/resolving model) took: ",
+                        startTime);
 
             return model;
         }

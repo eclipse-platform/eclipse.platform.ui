@@ -84,6 +84,7 @@ public class BrowserIntroPartImplementation extends
         long newBrowserStartTime = 0;
         if (Log.logPerformance)
             newBrowserStartTime = System.currentTimeMillis();
+
         browser = new Browser(parent, SWT.NONE);
 
         // add a location listener on the browser so we can intercept
@@ -121,7 +122,7 @@ public class BrowserIntroPartImplementation extends
         // browser.
         if (Log.logPerformance)
             Util.logPerformanceTime(
-                "IntroPlugin Performance- creating a new Browser took: ",
+                "IntroPlugin Performance- creating a new Browser() took: ",
                 newBrowserStartTime);
 
 
@@ -186,6 +187,10 @@ public class BrowserIntroPartImplementation extends
      *            the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
+        long contentDisplayStartTime = 0;
+        if (Log.logPerformance)
+            contentDisplayStartTime = System.currentTimeMillis();
+
         String content = null;
 
         if (page.isXHTMLPage())
@@ -211,6 +216,23 @@ public class BrowserIntroPartImplementation extends
             if (!success)
                 Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
+
+
+        // now log performance
+        if (Log.logPerformance)
+            Util
+                .logPerformanceTime(
+                    "IntroPlugin Performance- displaying model in Browser (HTML generation of XSLT) took: ",
+                    contentDisplayStartTime);
+
+        // if we are logging performance, log actual UI creation time.
+        if (Log.logPerformance)
+            Util
+                .logPerformanceTime(
+                    "IntroPlugin Performance- TOTAL TIME: creating CustomizableIntroPart view took: ",
+                    IntroPlugin.getDefault().gettUICreationStartTime());
+
+
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {
             String printHtml = Platform

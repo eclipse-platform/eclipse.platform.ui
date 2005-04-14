@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.IntroPart;
 
@@ -116,7 +115,10 @@ public final class CustomizableIntroPart extends IntroPart implements
 
         // if we are logging performance, set UI creation start time.
         // ps: perf data is stored in Intro plugin because we do not want create
-        // apis here.
+        // apis here. The full creation time of the UI is calculated by each
+        // implementation class and not here. This is because we relay on
+        // workbench to display content in UI, so we have to wait until last
+        // possible time to stop the perf clock.
         if (Log.logPerformance)
             IntroPlugin.getDefault().setUICreationStartTime(
                 System.currentTimeMillis());
@@ -184,12 +186,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             // do not create the standby part here for performance.
         }
 
-        // if we are logging performance, log actual UI creation time.
-        if (Log.logPerformance)
-            Util
-                .logPerformanceTime(
-                    "IntroPlugin Performance- creating CustomizableIntroPart took: ",
-                    IntroPlugin.getDefault().gettUICreationStartTime());
     }
 
 
