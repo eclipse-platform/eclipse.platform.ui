@@ -1,4 +1,4 @@
-<project name="org.eclipse.jdt.ui" default="export" basedir="..">
+<project name="org.eclipse.ltk.core.refactoring" default="export" basedir="..">
 <!-- build script to create a plugin from org.eclipse.core.expressions -->
 
 	<target name="init">
