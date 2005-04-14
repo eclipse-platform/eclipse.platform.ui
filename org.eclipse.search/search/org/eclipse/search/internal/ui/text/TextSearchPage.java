@@ -762,7 +762,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fPattern, ReplaceDialog2.createContentAssistant(RegExContentAssistProcessor.fgFindProposalKeys));
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fPattern, ReplaceDialog2.createContentAssistant(true));
 			}
 			fReplaceContentAssistHandler.setEnabled(true);
 		} else {

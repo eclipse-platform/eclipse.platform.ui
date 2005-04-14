@@ -735,12 +735,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		return fMarkers.size() > 0;
 	}
 	
-	public static SubjectControlContentAssistant createContentAssistant(ArrayList proposalKeys) {
+	public static SubjectControlContentAssistant createContentAssistant(boolean isFind) {
 		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
 		
 		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings()); //$NON-NLS-1$
 		
-		IContentAssistProcessor processor= new RegExContentAssistProcessor(proposalKeys);
+		IContentAssistProcessor processor= new RegExContentAssistProcessor(isFind);
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		
 		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
@@ -758,7 +758,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fTextField, createContentAssistant(RegExContentAssistProcessor.fgReplaceProposalKeys));
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fTextField, createContentAssistant(false));
 			}
 			fReplaceContentAssistHandler.setEnabled(true);
 			
