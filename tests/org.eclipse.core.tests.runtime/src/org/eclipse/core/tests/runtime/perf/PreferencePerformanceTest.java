@@ -82,6 +82,46 @@ public class PreferencePerformanceTest extends RuntimeTest {
 	}
 
 	/*
+	 * Time how long it takes to get 1000 keys that aren't there.
+	 * Fill the node up with 1000 key/value pairs so it has some data
+	 */
+	public void testGetString1000Misses() {
+		// setup
+		final String qualifier = getUniqueString();
+		String[][] kvp = getUniqueKeys(1000);
+		final String[] keys = kvp[0];
+		final String[] values = kvp[1];
+		final String[] missingKeys = getUniqueKeys(1000)[0];
+	
+		// run the test
+		new PerformanceTestRunner() {
+			Preferences prefs;
+	
+			// set the values outside the timed loop
+			protected void setUp() {
+				prefs = getScopeRoot().node(qualifier);
+				for (int i = 0; i < keys.length; i++)
+					prefs.put(keys[i], values[i]);
+			}
+	
+			// how long to get the values?
+			protected void test() {
+				for (int i = 0; i < keys.length; i++)
+					prefs.get(missingKeys[i], null);
+			}
+	
+			// clean-up
+			protected void tearDown() {
+				try {
+					prefs.removeNode();
+				} catch (BackingStoreException e) {
+					fail("0.99", e);
+				}
+			}
+		}.run(this, 10, 50);
+	}
+
+	/*
 	 * Time how long it takes to get 1000 keys that are unique.
 	 */
 	public void testGetString1000UniqueKeys() {
