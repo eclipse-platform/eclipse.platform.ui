@@ -49,11 +49,11 @@ public class SyncTests extends BenchmarkTest {
 	}
 	
 	public void testSync100Global() throws Exception {
-		runTestSync(100, "CVS Synchronize", true, new SynchronizeViewTestAdapter());
+		runTestSync(100, "CVS Synchronize", false, new SynchronizeViewTestAdapter());
 	}
     
     public void testSync100NoUI() throws Exception {
-        runTestSync(100, "CVS Synchronize No UI", true, new SyncInfoSource());
+        runTestSync(100, "CVS Synchronize No UI", false, new SyncInfoSource());
     }
 
 	protected IProject setupOutProject() throws Exception {
