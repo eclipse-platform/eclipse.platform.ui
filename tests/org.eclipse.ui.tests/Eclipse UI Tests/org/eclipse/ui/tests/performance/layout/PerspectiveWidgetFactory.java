@@ -12,12 +12,13 @@ package org.eclipse.ui.tests.performance.layout;
 
 import junit.framework.Assert;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * @since 3.1
@@ -25,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 public class PerspectiveWidgetFactory extends TestWidgetFactory {
 
     private String perspectiveId;
+    private IWorkbenchWindow window;
     
     public PerspectiveWidgetFactory(String initialPerspective) {
         perspectiveId = initialPerspective;
@@ -40,16 +42,11 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
-    public void init() {
-        final IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(perspectiveId);
-
-        Assert.assertNotNull("Unknown perspective id: " + perspectiveId 
-                + " (probably indicates a bug in the test suite)", perspective1);
-
-		// Open the perspective.
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		activePage.setPerspective(perspective1);
+    public void init() throws WorkbenchException {
+    	// open the perspective in a new window
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, null);
+		IWorkbenchPage page = window.getActivePage();
+        Assert.assertNotNull(page);
     }
     
     /* (non-Javadoc)
@@ -63,7 +60,14 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getControl()
      */
     public Composite getControl() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return window.getShell();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
+     */
+    public void done() throws CoreException, WorkbenchException {
+    	window.close();
+    	super.done();
+    }
 }

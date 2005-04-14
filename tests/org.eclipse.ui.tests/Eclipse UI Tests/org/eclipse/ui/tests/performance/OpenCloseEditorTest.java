@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -24,10 +25,6 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 
 	private String extension;
 
-	/**
-	 * @param tagging
-	 * @param testName
-	 */
 	public OpenCloseEditorTest(String extension, int tagging) {
 		super("testOpenAndCloseEditors:" + extension, tagging);
 		this.extension = extension;
@@ -36,8 +33,9 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 	protected void runTest() throws Throwable {
 		final IFile file = getProject().getFile("1." + extension);
 		assertTrue(file.exists());
-		final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
-				.getActivePage();
+		
+		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
+		final IWorkbenchPage activePage = window.getActivePage();
 
         exercise(new TestRunnable() {
             public void run() throws Exception {

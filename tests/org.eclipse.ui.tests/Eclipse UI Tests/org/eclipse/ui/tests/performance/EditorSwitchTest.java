@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -43,8 +44,8 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
 		// Open both files outside the loop so as not to include
 		// the initial time to open, just switching.
-		final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow()
-				.getActivePage();
+		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
+		final IWorkbenchPage activePage = window.getActivePage();
 		final IFile file1 = getProject().getFile("1." + extension1);
 		assertTrue(file1.exists());
 		final IFile file2 = getProject().getFile("1." + extension2);

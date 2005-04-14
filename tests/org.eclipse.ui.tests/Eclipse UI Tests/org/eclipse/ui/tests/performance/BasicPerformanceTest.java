@@ -77,11 +77,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 	    super.doSetUp();
-	    
-	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
-                fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
-                        UIPerformanceTestSetup.PERSPECTIVE1));
-	    
 	    tester = new PerformanceTester(this);
 	}
 	

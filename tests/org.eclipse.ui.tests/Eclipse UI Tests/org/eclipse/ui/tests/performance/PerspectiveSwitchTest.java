@@ -16,6 +16,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -66,20 +67,19 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
             return;
         }
         
-        // Open a file.
-        final IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        // Open the two perspectives and the file, in a new window.
+        // Do this outside the loop so as not to include
+        // the initial time to open, just switching.        
+        IWorkbenchWindow window = openTestWindow(id1);
+        final IWorkbenchPage page = window.getActivePage();
+        assertNotNull(page);
+        page.setPerspective(perspective2);
+        
         //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
         IFile aFile = getProject().getFile(activeEditor);
         assertTrue(aFile.exists());
 
-        IDE.openEditor(activePage, aFile, true);
-
-        // Open both perspective outside the loop so as not to include
-        // the initial time to open, just switching.        
-        activePage.setPerspective(perspective1);
-        activePage.resetPerspective();
-        activePage.setPerspective(perspective2);
-        activePage.resetPerspective();
+        IDE.openEditor(page, aFile, true);
 
        	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
         
@@ -88,9 +88,9 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
                 processEvents();
                 
                 startMeasuring();
-                activePage.setPerspective(perspective1);
+                page.setPerspective(perspective1);
                 processEvents();
-                activePage.setPerspective(perspective2);
+                page.setPerspective(perspective2);
                 processEvents();
                 stopMeasuring();
             } 
