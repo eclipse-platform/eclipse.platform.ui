@@ -22,17 +22,22 @@ import org.eclipse.help.search.HelpIndexBuilder;
 
 public class BuildHelpIndex extends Task {
 	private String manifest;
+	private String targetDir;
 	private HelpIndexBuilder builder; 
 	
 	public BuildHelpIndex() {
 	}
 
 	public void execute() throws BuildException {
-		File file = getManifestFile();
+		File file = getFile(manifest);
 		if (file==null)
-			return;
+			throw new BuildException("Manifest not set.");
+		File target = getFile(targetDir);
+		if (target==null)
+			throw new BuildException("Target directory not set.");
 		builder = new HelpIndexBuilder();
 		builder.setManifest(file);
+		builder.setTarget(target);
 		IProgressMonitor monitor = 
 			(IProgressMonitor) getProject().getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
 		try {
@@ -43,17 +48,21 @@ public class BuildHelpIndex extends Task {
 		}
 	}
 	
-	private File getManifestFile() {
-		if (manifest==null)
+	private File getFile(String fileName) {
+		if (fileName==null)
 			return null;
 		File file =
-			new Path(manifest).isAbsolute()
-				? new File(manifest)
-				: new File(getProject().getBaseDir(), manifest);
+			new Path(fileName).isAbsolute()
+				? new File(fileName)
+				: new File(getProject().getBaseDir(), fileName);
 				return file;
 	}
 
 	public void setManifest(String manifest) {
 		this.manifest = manifest;
+	}
+	
+	public void setTargetDir(String targetDir) {
+		this.targetDir = targetDir;
 	}
 }
