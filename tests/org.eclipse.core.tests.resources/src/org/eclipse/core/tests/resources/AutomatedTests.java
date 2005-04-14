@@ -45,6 +45,7 @@ public class AutomatedTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.resources.refresh.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.regression.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.usecase.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.resources.session.AllTests.suite());
 		return suite;
 	}
 }
