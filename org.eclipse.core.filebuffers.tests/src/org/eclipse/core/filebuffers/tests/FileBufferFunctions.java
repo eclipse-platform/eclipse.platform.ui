@@ -11,6 +11,8 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
@@ -1076,14 +1078,27 @@ public abstract class FileBufferFunctions extends TestCase {
 			}
 		}
 		
+		class ForcedException extends RuntimeException {
+			private static final long serialVersionUID= 1L;
+
+			public void printStackTrace(PrintStream s) {
+				s.println("!FORCED BY TEST: this entry is intentional");
+			}
+			
+			public void printStackTrace(PrintWriter s) {
+				s.println("!FORCED BY TEST: this entry is intentional");
+			}
+		}
+		
 		NotifiedListener notifyCounter1= new NotifiedListener();
 		NotifiedListener notifyCounter2= new NotifiedListener();
+		
 		FileBufferListener failingListener= new FileBufferListener() {
 			public void bufferCreated(IFileBuffer buffer) {
-				int i= 1/0; // force error
+				throw new ForcedException();
 			}
 			public void bufferDisposed(IFileBuffer buffer) {
-				int i= 1/0; // force error
+				throw new ForcedException();
 			}
 		};
 		
