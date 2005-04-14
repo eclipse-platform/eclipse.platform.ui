@@ -26,7 +26,7 @@ public class CreateNewIdMapAction extends Action {
 	
 	public CreateNewIdMapAction(XMLStructureViewer viewer) {		
 		setImageDescriptor(XMLPlugin.getDefault().getImageDescriptor("obj16/addidmap.gif")); //$NON-NLS-1$
-		setToolTipText(XMLCompareMessages.getString("XMLStructureViewer.newtask")); //$NON-NLS-1$
+		setToolTipText(XMLCompareMessages.XMLStructureViewer_newtask); 
 	}
 	
 	public void run() {

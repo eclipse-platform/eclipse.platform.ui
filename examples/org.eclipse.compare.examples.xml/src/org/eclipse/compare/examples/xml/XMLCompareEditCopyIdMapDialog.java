@@ -39,7 +39,7 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 	public XMLCompareEditCopyIdMapDialog(Shell parent, IdMap idmap, HashMap idmaps, HashMap idmapsInternal) {
 		super(parent);
 	
-		setTitle(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.title")); //$NON-NLS-1$
+		setTitle(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_title); 
 
 		fIdMaps= idmaps;
 		fIdMapsInternal= idmapsInternal;
@@ -62,7 +62,7 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 		Composite composite= (Composite) super.createDialogArea(ancestor);
 		
 		Label comment= new Label(composite, SWT.NONE);
-		comment.setText(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.comment")); //$NON-NLS-1$
+		comment.setText(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_comment); 
 		GridData data= new GridData();
 		data.horizontalAlignment= GridData.FILL;
 		data.verticalAlignment= GridData.BEGINNING;
@@ -75,7 +75,7 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label= new Label(inner, SWT.NULL);
-		label.setText(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.label")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_label); 
 		label.setLayoutData(new GridData());
 
 		fIdMapText= new Text(inner, SWT.BORDER);
@@ -98,11 +98,11 @@ public class XMLCompareEditCopyIdMapDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String newText= fIdMapText.getText();
 		if (newText.length() == 0)
-			status.setError(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.error.noname")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_error_noname); 
 		else if (XMLComparePreferencePage.containsInvalidCharacters(newText))
-			status.setError(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.error.invalidname")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_error_invalidname); 
 		else if (fIdMaps.containsKey(newText) || fIdMapsInternal.containsKey(newText))
-			status.setError(XMLCompareMessages.getString("XMLCompareEditCopyIdMapDialog.error.nameExists")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareEditCopyIdMapDialog_error_nameExists); 
 		updateStatus(status);
 	}
 	

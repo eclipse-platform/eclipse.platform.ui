@@ -446,16 +446,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			if (fDirection == RangeDifference.LEFT) {
 				if (!leftEmpty && rightEmpty)
-					return CompareMessages.getString("TextMergeViewer.changeType.addition"); //$NON-NLS-1$
+					return CompareMessages.TextMergeViewer_changeType_addition; 
 				if (leftEmpty && !rightEmpty)
-					return CompareMessages.getString("TextMergeViewer.changeType.deletion"); //$NON-NLS-1$
+					return CompareMessages.TextMergeViewer_changeType_deletion; 
 			} else {
 				if (leftEmpty && !rightEmpty)
-					return CompareMessages.getString("TextMergeViewer.changeType.addition"); //$NON-NLS-1$
+					return CompareMessages.TextMergeViewer_changeType_addition; 
 				if (!leftEmpty && rightEmpty)
-					return CompareMessages.getString("TextMergeViewer.changeType.deletion"); //$NON-NLS-1$
+					return CompareMessages.TextMergeViewer_changeType_deletion; 
 			}
-			return CompareMessages.getString("TextMergeViewer.changeType.change"); //$NON-NLS-1$
+			return CompareMessages.TextMergeViewer_changeType_change; 
 		}
 		
 		Image getImage() {
@@ -2853,13 +2853,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		String diffDescription;
 		
 		if (diff == null) {
-			diffDescription= CompareMessages.getString("TextMergeViewer.diffDescription.noDiff.format");	//$NON-NLS-1$
+			diffDescription= CompareMessages.TextMergeViewer_diffDescription_noDiff_format;	
 		} else {
 			
 			if (diff.fIsToken)		// we don't show special info for token diffs
 				diff= diff.fParent;
 		
-			String format= CompareMessages.getString("TextMergeViewer.diffDescription.diff.format");	//$NON-NLS-1$
+			String format= CompareMessages.TextMergeViewer_diffDescription_diff_format;	
 			diffDescription= MessageFormat.format(format, 
 				new String[] {
 					getDiffType(diff),						// 0: diff type
@@ -2870,7 +2870,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			);
 		}
 		
-		String format= CompareMessages.getString("TextMergeViewer.statusLine.format");	//$NON-NLS-1$
+		String format= CompareMessages.TextMergeViewer_statusLine_format;	
 		String s= MessageFormat.format(format, 
 			new String[] {
 				getCursorPosition(fLeft),	// 0: left column
@@ -2898,16 +2898,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		String s= ""; 	//$NON-NLS-1$
 		switch(diff.fDirection) {
 		case RangeDifference.LEFT:
-			s= CompareMessages.getString("TextMergeViewer.direction.outgoing");	//$NON-NLS-1$
+			s= CompareMessages.TextMergeViewer_direction_outgoing;	
 			break;
 		case RangeDifference.RIGHT:
-			s= CompareMessages.getString("TextMergeViewer.direction.incoming");	//$NON-NLS-1$
+			s= CompareMessages.TextMergeViewer_direction_incoming;	
 			break;
 		case RangeDifference.CONFLICT:
-			s= CompareMessages.getString("TextMergeViewer.direction.conflicting");	//$NON-NLS-1$
+			s= CompareMessages.TextMergeViewer_direction_conflicting;	
 			break;
 		}
-		String format= CompareMessages.getString("TextMergeViewer.diffType.format");	//$NON-NLS-1$
+		String format= CompareMessages.TextMergeViewer_diffType_format;	
 		return MessageFormat.format(format, new String[] { s, diff.changeType() } );
 	}
 	
@@ -2933,9 +2933,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		String format;
 		if (endLine < startLine)
-			format= CompareMessages.getString("TextMergeViewer.beforeLine.format");	//$NON-NLS-1$
+			format= CompareMessages.TextMergeViewer_beforeLine_format;	
 		else
-			format= CompareMessages.getString("TextMergeViewer.range.format");	//$NON-NLS-1$
+			format= CompareMessages.TextMergeViewer_range_format;	
 		return MessageFormat.format(format,
 					new String[] { Integer.toString(startLine),
 									Integer.toString(endLine) } );
@@ -2968,7 +2968,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					int tabWidth= styledText.getTabs();
 					int column= caret - lineOffset + (tabWidth -1) * occurrences;
 					
-					String format= CompareMessages.getString("TextMergeViewer.cursorPosition.format");	//$NON-NLS-1$
+					String format= CompareMessages.TextMergeViewer_cursorPosition_format;	
 					return MessageFormat.format(format,
 						new String[] { Integer.toString(line + 1), Integer.toString(column + 1) } );
 					
@@ -3680,11 +3680,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			if (down)
 				return MessageDialog.openQuestion(c.getShell(),
-					CompareMessages.getString("TextMergeViewer.atEnd.title"),	//$NON-NLS-1$
-					CompareMessages.getString("TextMergeViewer.atEnd.message"));	//$NON-NLS-1$
+					CompareMessages.TextMergeViewer_atEnd_title,	
+					CompareMessages.TextMergeViewer_atEnd_message);	
 			return MessageDialog.openQuestion(c.getShell(),
-					CompareMessages.getString("TextMergeViewer.atBeginning.title"),	//$NON-NLS-1$
-					CompareMessages.getString("TextMergeViewer.atBeginning.message"));	//$NON-NLS-1$
+					CompareMessages.TextMergeViewer_atBeginning_title,	
+					CompareMessages.TextMergeViewer_atBeginning_message);	
 		}
 		return false;
 	}

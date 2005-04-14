@@ -1146,7 +1146,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), INTERNAL_ERROR, CompareMessages.getString("ComparePlugin.internal_error"), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getPluginId(), INTERNAL_ERROR, CompareMessages.ComparePlugin_internal_error, e)); 
 	}
 	
 	public static void log(IStatus status) {

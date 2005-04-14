@@ -44,7 +44,7 @@ import org.eclipse.compare.internal.*;
 	/* package */ PatchWizard(ISelection selection) {
 		
 		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif"));	//$NON-NLS-1$
-		setWindowTitle(PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
+		setWindowTitle(PatchMessages.PatchWizard_title); 
 
 		setTargets(Utilities.getResources(selection));
 
@@ -101,7 +101,7 @@ import org.eclipse.compare.internal.*;
 			WorkspaceModifyOperation op= new WorkspaceModifyOperation(fTarget.getProject()) {
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						fPatcher.applyAll(getTarget(), monitor, getShell(), PatchMessages.getString("PatchWizard.title")); //$NON-NLS-1$
+						fPatcher.applyAll(getTarget(), monitor, getShell(), PatchMessages.PatchWizard_title); 
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -111,8 +111,8 @@ import org.eclipse.compare.internal.*;
 
 		} catch (InvocationTargetException e) {
 			ExceptionHandler.handle(e,
-					PatchMessages.getString("PatchWizard.title"),	//$NON-NLS-1$ 
-					PatchMessages.getString("PatchWizard.unexpectedException.message"));	//$NON-NLS-1$
+					PatchMessages.PatchWizard_title,	
+					PatchMessages.PatchWizard_unexpectedException_message);	
 		} catch (InterruptedException e) {
 			// cannot happen
 			// NeedWork: use assert!

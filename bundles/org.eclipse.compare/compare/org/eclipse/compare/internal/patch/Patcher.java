@@ -775,7 +775,7 @@ public class Patcher {
 			return;
 		
 		if (pm != null) {
-			String message= PatchMessages.getString("Patcher.Task.message");	//$NON-NLS-1$
+			String message= PatchMessages.Patcher_Task_message;	
 			pm.beginTask(message, fDiffs.length*WORK_UNIT);
 		}
 		
@@ -829,7 +829,7 @@ public class Patcher {
 						store(getRejected(failed), file, pm);
 						try {
 							IMarker marker= file.createMarker(MARKER_TYPE);
-							marker.setAttribute(IMarker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
+							marker.setAttribute(IMarker.MESSAGE, PatchMessages.Patcher_Marker_message);	
 							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 						} catch (CoreException ex) {
 							// NeedWork

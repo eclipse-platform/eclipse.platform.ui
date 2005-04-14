@@ -259,7 +259,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 					totalWork= 1;
 				else
 					totalWork= 3;
-				monitor.beginTask(XMLCompareMessages.getString("XMLStructureViewer.matching.beginTask"), totalWork); //$NON-NLS-1$
+				monitor.beginTask(XMLCompareMessages.XMLStructureViewer_matching_beginTask, totalWork); 
 				ArrayList ordered= null;
 				if (!getXMLStructureCreator()
 					.getIdMap()
@@ -363,7 +363,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 			if (diffnodeIdSig.endsWith(XMLStructureCreator.SIGN_ATTRIBUTE) || (diffnodeIdSig.endsWith(XMLStructureCreator.SIGN_TEXT) && ((XMLNode) diffnode.getId()).getOrigId().endsWith("(1)"))) { //$NON-NLS-1$
 				Action action= new SetAsIdAction(diffnode);
 				if (!fIdMaps.containsKey(idmap_name)) {
-					action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.notUserIdMap")); //$NON-NLS-1$
+					action.setText(XMLCompareMessages.XMLStructureViewer_action_notUserIdMap); 
 					action.setEnabled(false);
 				} else {
 					HashMap idmapHM= (HashMap) fIdMaps.get(idmap_name);
@@ -410,7 +410,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 					}
 					if (idmapHM.containsKey(signature)) {
 						if (idmapHM.get(signature).equals(idname)) {
-							action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.setId.text1")); //$NON-NLS-1$
+							action.setText(XMLCompareMessages.XMLStructureViewer_action_setId_text1); 
 							action.setEnabled(false);
 						} else {
 							String oldId= (String) idmapHM.get(signature);
@@ -420,11 +420,11 @@ public class XMLStructureViewer extends StructureDiffViewer {
 										.ID_TYPE_BODY))
 										.toString()))
 								oldId= oldId.substring(1);
-							action.setText(MessageFormat.format("{0} {1}", new String[] { XMLCompareMessages.getString("XMLStructureViewer.action.setId.text2"), oldId })); //$NON-NLS-2$ //$NON-NLS-1$
+							action.setText(MessageFormat.format("{0} {1}", new String[] { XMLCompareMessages.XMLStructureViewer_action_setId_text2, oldId })); 
 							action.setEnabled(true);
 						}
 					} else {
-						action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.setId.text3")); //$NON-NLS-1$
+						action.setText(XMLCompareMessages.XMLStructureViewer_action_setId_text3); 
 						action.setEnabled(true);
 					}
 				}
@@ -433,7 +433,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 				diffnodeIdSig.endsWith(XMLStructureCreator.SIGN_ELEMENT)) {
 				SetOrderedAction action= new SetOrderedAction(idmap_name);
 				if (!fIdMaps.containsKey(idmap_name)) {
-					action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.notUserIdMap")); //$NON-NLS-1$
+					action.setText(XMLCompareMessages.XMLStructureViewer_action_notUserIdMap); 
 					action.setEnabled(false);
 				} else {
 					ArrayList idmapOrdered=
@@ -448,10 +448,10 @@ public class XMLStructureViewer extends StructureDiffViewer {
 								XMLStructureCreator.SIGN_ELEMENT));
 					if (idmapOrdered != null
 						&& idmapOrdered.contains(signature)) {
-						action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.setOrdered.exists")); //$NON-NLS-1$
+						action.setText(XMLCompareMessages.XMLStructureViewer_action_setOrdered_exists); 
 						action.setEnabled(false);
 					} else {
-						action.setText(XMLCompareMessages.getString("XMLStructureViewer.action.setOrdered")); //$NON-NLS-1$
+						action.setText(XMLCompareMessages.XMLStructureViewer_action_setOrdered); 
 						action.setSignature(signature);
 						action.setEnabled(true);
 					}

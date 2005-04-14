@@ -334,7 +334,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	private void updateTitle() {
 		if (fTitle != null) {
 			if (fTitleArgument != null) {
-				String format= CompareMessages.getString("CompareViewerSwitchingPane.Titleformat");	//$NON-NLS-1$
+				String format= CompareMessages.CompareViewerSwitchingPane_Titleformat;	
 				String t= MessageFormat.format(format, new String[] { fTitle, fTitleArgument } );
 				setText(t);
 			} else

@@ -56,8 +56,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 	protected static char[] invalidCharacters;
 	protected static final char SIGN_SEPARATOR = XMLStructureCreator.SIGN_SEPARATOR;
 
-	public static String IDTYPE_ATTRIBUTE= XMLCompareMessages.getString("XMLComparePreference.idtype.attribute"); //$NON-NLS-1$
-	public static String IDTYPE_CHILDBODY= XMLCompareMessages.getString("XMLComparePreference.idtype.child_body"); //$NON-NLS-1$
+	public static String IDTYPE_ATTRIBUTE= XMLCompareMessages.XMLComparePreference_idtype_attribute; 
+	public static String IDTYPE_CHILDBODY= XMLCompareMessages.XMLComparePreference_idtype_child_body; 
 
 	
 	static {
@@ -110,7 +110,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		
 		//layout the top table & its buttons
 		Label label = new Label(parent, SWT.LEFT);
-		label.setText(XMLCompareMessages.getString("XMLComparePreference.topTableLabel")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLComparePreference_topTableLabel); 
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -127,8 +127,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 			}
 		});
 
-		String column2Text= XMLCompareMessages.getString("XMLComparePreference.topTableColumn2"); //$NON-NLS-1$
-		String column3Text= XMLCompareMessages.getString("XMLComparePreference.topTableColumn3"); //$NON-NLS-1$
+		String column2Text= XMLCompareMessages.XMLComparePreference_topTableColumn2; 
+		String column3Text= XMLCompareMessages.XMLComparePreference_topTableColumn3; 
 		ColumnLayoutData columnLayouts[]= {
 			new ColumnWeightData(1),
 			new ColumnPixelData(convertWidthInCharsToPixels(column2Text.length()+2), true),
@@ -138,7 +138,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		for (int i=0; i<3; i++)
 			tablelayout.addColumnData(columnLayouts[i]);
 		TableColumn column = new TableColumn(fIdMapsTable, SWT.NONE);
-		column.setText(XMLCompareMessages.getString("XMLComparePreference.topTableColumn1")); //$NON-NLS-1$
+		column.setText(XMLCompareMessages.XMLComparePreference_topTableColumn1); 
 		column = new TableColumn(fIdMapsTable, SWT.NONE);
 		column.setText(column2Text); //$NON-NLS-1$
 		column = new TableColumn(fIdMapsTable, SWT.NONE);
@@ -154,7 +154,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		buttons.setLayoutData(data);
 
 		fAddIdMapButton = new Button(buttons, SWT.PUSH);
-		fAddIdMapButton.setText(XMLCompareMessages.getString("XMLComparePreference.topAdd")); //$NON-NLS-1$
+		fAddIdMapButton.setText(XMLCompareMessages.XMLComparePreference_topAdd); 
 		fAddIdMapButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addIdMap(fAddIdMapButton.getShell());
@@ -168,7 +168,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		fAddIdMapButton.setLayoutData(data);
 	
 		fRenameIdMapButton = new Button(buttons, SWT.PUSH);
-		fRenameIdMapButton.setText(XMLCompareMessages.getString("XMLComparePreference.topRename")); //$NON-NLS-1$
+		fRenameIdMapButton.setText(XMLCompareMessages.XMLComparePreference_topRename); 
 		fRenameIdMapButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				renameIdMap(fRenameIdMapButton.getShell());
@@ -182,7 +182,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		fRenameIdMapButton.setLayoutData(data);
 
 		fRemoveIdMapButton = new Button(buttons, SWT.PUSH);
-		fRemoveIdMapButton.setText(XMLCompareMessages.getString("XMLComparePreference.topRemove")); //$NON-NLS-1$
+		fRemoveIdMapButton.setText(XMLCompareMessages.XMLComparePreference_topRemove); 
 		fRemoveIdMapButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 				removeIdMap(fRemoveIdMapButton.getShell());
@@ -198,7 +198,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		createSpacer(buttons);
 
 		fEditIdMapButton = new Button(buttons, SWT.PUSH);
-		fEditIdMapButton.setText(XMLCompareMessages.getString("XMLComparePreference.topEdit")); //$NON-NLS-1$
+		fEditIdMapButton.setText(XMLCompareMessages.XMLComparePreference_topEdit); 
 		fEditIdMapButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editIdMap(fEditIdMapButton.getShell());
@@ -220,7 +220,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		//layout the middle table & its buttons
 		label = new Label(parent, SWT.LEFT);
-		label.setText(XMLCompareMessages.getString("XMLComparePreference.middleTableLabel")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLComparePreference_middleTableLabel); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -233,8 +233,8 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		data.widthHint= convertWidthInCharsToPixels(70);
 		fMappingsTable.setLayoutData(data);
 		
-		column3Text= XMLCompareMessages.getString("XMLComparePreference.middleTableColumn3"); //$NON-NLS-1$
-		String column4Text= XMLCompareMessages.getString("XMLComparePreference.middleTableColumn4"); //$NON-NLS-1$
+		column3Text= XMLCompareMessages.XMLComparePreference_middleTableColumn3; 
+		String column4Text= XMLCompareMessages.XMLComparePreference_middleTableColumn4; 
 		columnLayouts= new ColumnLayoutData[] {
 			new ColumnWeightData(10),
 			new ColumnWeightData(18),
@@ -245,9 +245,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		for (int i=0; i<4; i++)
 			tablelayout.addColumnData(columnLayouts[i]);
 		column = new TableColumn(fMappingsTable, SWT.NONE);
-		column.setText(XMLCompareMessages.getString("XMLComparePreference.middleTableColumn1")); //$NON-NLS-1$
+		column.setText(XMLCompareMessages.XMLComparePreference_middleTableColumn1); 
 		column = new TableColumn(fMappingsTable, SWT.NONE);
-		column.setText(XMLCompareMessages.getString("XMLComparePreference.middleTableColumn2")); //$NON-NLS-1$
+		column.setText(XMLCompareMessages.XMLComparePreference_middleTableColumn2); 
 		column = new TableColumn(fMappingsTable, SWT.NONE);
 		column.setText(column3Text); //$NON-NLS-1$
 		column = new TableColumn(fMappingsTable, SWT.NONE);
@@ -262,7 +262,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		
 		fNewMappingsButton= new Button(buttons, SWT.PUSH);
 		fNewMappingsButton.setLayoutData(getButtonGridData(fNewMappingsButton));
-		fNewMappingsButton.setText(XMLCompareMessages.getString("XMLComparePreference.middleNew")); //$NON-NLS-1$
+		fNewMappingsButton.setText(XMLCompareMessages.XMLComparePreference_middleNew); 
 		fNewMappingsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addMapping(fAddIdMapButton.getShell());
@@ -271,7 +271,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		fEditMappingsButton= new Button(buttons, SWT.PUSH);
 		fEditMappingsButton.setLayoutData(getButtonGridData(fEditMappingsButton));
-		fEditMappingsButton.setText(XMLCompareMessages.getString("XMLComparePreference.middleEdit")); //$NON-NLS-1$
+		fEditMappingsButton.setText(XMLCompareMessages.XMLComparePreference_middleEdit); 
 		fEditMappingsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editMapping(fEditMappingsButton.getShell());
@@ -280,7 +280,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		fRemoveMappingsButton= new Button(buttons, SWT.PUSH);
 		fRemoveMappingsButton.setLayoutData(getButtonGridData(fRemoveMappingsButton));
-		fRemoveMappingsButton.setText(XMLCompareMessages.getString("XMLComparePreference.middleRemove")); //$NON-NLS-1$
+		fRemoveMappingsButton.setText(XMLCompareMessages.XMLComparePreference_middleRemove); 
 		fRemoveMappingsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeMapping(fRemoveMappingsButton.getShell());
@@ -291,7 +291,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		//layout the botton table & its buttons
 		label = new Label(parent, SWT.LEFT);
-		label.setText(XMLCompareMessages.getString("XMLComparePreference.bottomTableLabel")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLComparePreference_bottomTableLabel); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
@@ -312,9 +312,9 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		for (int i=0; i<2; i++)
 			tablelayout.addColumnData(columnLayouts[i]);
 		column = new TableColumn(fOrderedTable, SWT.NONE);
-		column.setText(XMLCompareMessages.getString("XMLComparePreference.bottomTableColumn1")); //$NON-NLS-1$
+		column.setText(XMLCompareMessages.XMLComparePreference_bottomTableColumn1); 
 		column = new TableColumn(fOrderedTable, SWT.NONE);
-		column.setText(XMLCompareMessages.getString("XMLComparePreference.bottomTableColumn2")); //$NON-NLS-1$
+		column.setText(XMLCompareMessages.XMLComparePreference_bottomTableColumn2); 
 	
 		buttons= new Composite(parent, SWT.NULL);
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -325,7 +325,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		
 		fNewOrderedButton= new Button(buttons, SWT.PUSH);
 		fNewOrderedButton.setLayoutData(getButtonGridData(fNewOrderedButton));
-		fNewOrderedButton.setText(XMLCompareMessages.getString("XMLComparePreference.bottomNew")); //$NON-NLS-1$
+		fNewOrderedButton.setText(XMLCompareMessages.XMLComparePreference_bottomNew); 
 		fNewOrderedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addOrdered(fNewOrderedButton.getShell());
@@ -334,7 +334,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		fEditOrderedButton= new Button(buttons, SWT.PUSH);
 		fEditOrderedButton.setLayoutData(getButtonGridData(fEditOrderedButton));
-		fEditOrderedButton.setText(XMLCompareMessages.getString("XMLComparePreference.bottomEdit")); //$NON-NLS-1$
+		fEditOrderedButton.setText(XMLCompareMessages.XMLComparePreference_bottomEdit); 
 		fEditOrderedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editOrdered(fEditOrderedButton.getShell());
@@ -343,7 +343,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 
 		fRemoveOrderedButton= new Button(buttons, SWT.PUSH);
 		fRemoveOrderedButton.setLayoutData(getButtonGridData(fRemoveOrderedButton));
-		fRemoveOrderedButton.setText(XMLCompareMessages.getString("XMLComparePreference.bottomRemove")); //$NON-NLS-1$
+		fRemoveOrderedButton.setText(XMLCompareMessages.XMLComparePreference_bottomRemove); 
 		fRemoveOrderedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeOrdered(fRemoveOrderedButton.getShell());
@@ -622,7 +622,7 @@ public class XMLComparePreferencePage extends PreferencePage implements IWorkben
 		while (i<items.length && idmap.getName().compareToIgnoreCase(items[i].getText(0)) > 0)
 			i++;
 		TableItem item = new TableItem(fIdMapsTable, SWT.NULL, i);
-		String[] values = new String[] {idmap.getName(), (idmap.isInternal())?XMLCompareMessages.getString("XMLComparePreference.topTableColumn2internal"):XMLCompareMessages.getString("XMLComparePreference.topTableColumn2user"),idmap.getExtension()}; //$NON-NLS-2$ //$NON-NLS-1$
+		String[] values = new String[] {idmap.getName(), (idmap.isInternal())?XMLCompareMessages.XMLComparePreference_topTableColumn2internal:XMLCompareMessages.XMLComparePreference_topTableColumn2user,idmap.getExtension()}; 
 		item.setText(values);
 		item.setData(idmap);
 		if (selected) {

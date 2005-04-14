@@ -65,7 +65,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			return null;
 		}
 		public String getName() {
-			return PatchMessages.getString("PreviewPatchPage.NoName.text"); //$NON-NLS-1$
+			return PatchMessages.PreviewPatchPage_NoName_text; 
 		}
 		public String getType() {
 			return fType;
@@ -93,9 +93,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 	
 	/* package */ PreviewPatchPage(PatchWizard pw) {
 		super("PreviewPatchPage",	//$NON-NLS-1$ 
-			PatchMessages.getString("PreviewPatchPage.title"), null); //$NON-NLS-1$
+			PatchMessages.PreviewPatchPage_title, null); 
 		
-		setMessage(PatchMessages.getString("PreviewPatchPage.message"));	//$NON-NLS-1$
+		setMessage(PatchMessages.PreviewPatchPage_message);	
 		
 		fPatchWizard= pw;
 		//setPageComplete(false);
@@ -119,10 +119,10 @@ import org.eclipse.compare.structuremergeviewer.*;
 		fCompareConfiguration= new CompareConfiguration();
 		
 		fCompareConfiguration.setLeftEditable(false);
-		fCompareConfiguration.setLeftLabel(PatchMessages.getString("PreviewPatchPage.Left.title")); //$NON-NLS-1$
+		fCompareConfiguration.setLeftLabel(PatchMessages.PreviewPatchPage_Left_title); 
 		
 		fCompareConfiguration.setRightEditable(false);
-		fCompareConfiguration.setRightLabel(PatchMessages.getString("PreviewPatchPage.Right.title")); //$NON-NLS-1$
+		fCompareConfiguration.setRightLabel(PatchMessages.PreviewPatchPage_Right_title); 
 	}
 	
 	/* (non-Javadoc)
@@ -253,7 +253,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		final Patcher patcher= fPatchWizard.getPatcher();
 		
 		Group group= new Group(parent, SWT.NONE);
-		group.setText(PatchMessages.getString("PreviewPatchPage.PatchOptions.title")); //$NON-NLS-1$
+		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title); 
 		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0;
 		group.setLayout(gl);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
@@ -267,7 +267,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		pair.setLayoutData(gd);
 		
 			l= new Label(pair, SWT.NONE);
-			l.setText(PatchMessages.getString("PreviewPatchPage.IgnoreSegments.text")); //$NON-NLS-1$
+			l.setText(PatchMessages.PreviewPatchPage_IgnoreSegments_text); 
 			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 			l.setLayoutData(gd);
 
@@ -282,7 +282,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		addSpacer(group);
 		
 		fReversePatchButton= new Button(group, SWT.CHECK);
-		fReversePatchButton.setText(PatchMessages.getString("PreviewPatchPage.ReversePatch.text")); //$NON-NLS-1$
+		fReversePatchButton.setText(PatchMessages.PreviewPatchPage_ReversePatch_text); 
 		
 		addSpacer(group);
 		
@@ -294,8 +294,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		pair.setLayoutData(gd);
 	
 			l= new Label(pair, SWT.NONE);
-			l.setText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.text")); //$NON-NLS-1$
-			l.setToolTipText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.tooltip")); //$NON-NLS-1$
+			l.setText(PatchMessages.PreviewPatchPage_FuzzFactor_text); 
+			l.setToolTipText(PatchMessages.PreviewPatchPage_FuzzFactor_tooltip); 
 			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 			l.setLayoutData(gd);
 						
@@ -305,7 +305,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			fFuzzField.setLayoutData(gd);
 	
 			Button b= new Button(pair, SWT.PUSH);
-			b.setText(PatchMessages.getString("PreviewPatchPage.GuessFuzz.text"));	//$NON-NLS-1$
+			b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);	
 			b.addSelectionListener(
 				new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -321,7 +321,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		addSpacer(group);
 		
 		fIgnoreWhitespaceButton= new Button(group, SWT.CHECK);
-		fIgnoreWhitespaceButton.setText(PatchMessages.getString("PreviewPatchPage.IgnoreWhitespace.text")); //$NON-NLS-1$
+		fIgnoreWhitespaceButton.setText(PatchMessages.PreviewPatchPage_IgnoreWhitespace_text); 
 		
 		addSpacer(group);
 				
@@ -411,8 +411,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		// do the "work"
 		int[] fuzzRef= new int[1];
-		String format= PatchMessages.getString("PreviewPatchPage.GuessFuzzProgress.format");	//$NON-NLS-1$
-		pm.beginTask(PatchMessages.getString("PreviewPatchPage.GuessFuzzProgress.text"), work);	//$NON-NLS-1$
+		String format= PatchMessages.PreviewPatchPage_GuessFuzzProgress_format;	
+		pm.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, work);	
 		try {
 			int fuzz= 0;
 			for (int i= 0; i < diffs.length; i++) {
@@ -567,7 +567,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 					diff.fMatches= true;
 				} else {
 					// file already exists
-					error= PatchMessages.getString("PreviewPatchPage.FileExists.error"); //$NON-NLS-1$
+					error= PatchMessages.PreviewPatchPage_FileExists_error; 
 				}
 				create= true;
 			} else {
@@ -579,14 +579,14 @@ import org.eclipse.compare.structuremergeviewer.*;
 				if (file != null) {
 					if (file.isReadOnly()) {
 						// file is readonly
-						error= PatchMessages.getString("PreviewPatchPage.FileIsReadOnly.error"); //$NON-NLS-1$
+						error= PatchMessages.PreviewPatchPage_FileIsReadOnly_error; 
 						file= null;
 					} else {
 						diff.fMatches= true;
 					}
 				} else {
 					// file doesn't exist
-					error= PatchMessages.getString("PreviewPatchPage.FileDoesNotExist.error"); //$NON-NLS-1$
+					error= PatchMessages.PreviewPatchPage_FileDoesNotExist_error; 
 				}
 			}
 			
@@ -605,7 +605,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 				boolean failed= failedHunks.contains(hunk);
 				String hunkError= null;
 				if (failed)
-					hunkError= PatchMessages.getString("PreviewPatchPage.NoMatch.error"); //$NON-NLS-1$
+					hunkError= PatchMessages.PreviewPatchPage_NoMatch_error; 
 
 				boolean check= !failed;
 				hunkItems[h].setChecked(check);

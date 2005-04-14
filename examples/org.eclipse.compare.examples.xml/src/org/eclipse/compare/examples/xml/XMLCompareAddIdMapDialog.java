@@ -42,9 +42,9 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 	
 		fEdit= edit;
 		if (fEdit)
-			setTitle(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.editTitle")); //$NON-NLS-1$
+			setTitle(XMLCompareMessages.XMLCompareAddIdMapDialog_editTitle); 
 		else
-			setTitle(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.newTitle")); //$NON-NLS-1$
+			setTitle(XMLCompareMessages.XMLCompareAddIdMapDialog_newTitle); 
 
 		fIdMap= idmap;
 		fIdMaps= idmaps;
@@ -71,7 +71,7 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label= new Label(inner, SWT.NULL);
-		label.setText(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.label")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLCompareAddIdMapDialog_label); 
 		label.setLayoutData(new GridData());
 
 		fIdMapText= new Text(inner, SWT.BORDER);
@@ -86,7 +86,7 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 		});
 	
 		label= new Label(inner, SWT.NULL);
-		label.setText(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.extlabel")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLCompareAddIdMapDialog_extlabel); 
 		label.setLayoutData(new GridData());
 
 		fIdMapExtText= new Text(inner, SWT.BORDER);
@@ -113,19 +113,19 @@ public class XMLCompareAddIdMapDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String newText= fIdMapText.getText();
 		if (newText.length() == 0)
-			status.setError(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.error.noname")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareAddIdMapDialog_error_noname); 
 		else if (XMLComparePreferencePage.containsInvalidCharacters(newText))
-			status.setError(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.error.invalidname")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareAddIdMapDialog_error_invalidname); 
 		else if ( (!fEdit && (fIdMaps.containsKey(newText) || fIdMapsInternal.containsKey(newText)) )
 					|| (fEdit && !newText.equals(fIdMap.getName()) && (fIdMaps.containsKey(newText) || fIdMapsInternal.containsKey(newText)) )
 				 )
-			status.setError(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.error.idmapExists")); //$NON-NLS-1$
+			status.setError(XMLCompareMessages.XMLCompareAddIdMapDialog_error_idmapExists); 
 		newText= fIdMapExtText.getText().toLowerCase();
 		if (newText.length() > 0) {
 			if (newText.indexOf(".") > -1) //$NON-NLS-1$
-				status.setError(XMLCompareMessages.getString("XMLCompareAddIdMapDialog.error.extfullstop")); //$NON-NLS-1$
+				status.setError(XMLCompareMessages.XMLCompareAddIdMapDialog_error_extfullstop); 
 			else if (fIdExtensionToName.containsKey(newText) && !fIdExtensionToName.get(newText).equals(fIdMap.getName()))
-				status.setError(MessageFormat.format("{0} {1}",new String[] {XMLCompareMessages.getString("XMLCompareAddIdMapDialog.error.extExists"),(String)fIdExtensionToName.get(newText)})); //$NON-NLS-2$ //$NON-NLS-1$
+				status.setError(MessageFormat.format("{0} {1}",new String[] {XMLCompareMessages.XMLCompareAddIdMapDialog_error_extExists,(String)fIdExtensionToName.get(newText)})); 
 		}
 		updateStatus(status);
 	}

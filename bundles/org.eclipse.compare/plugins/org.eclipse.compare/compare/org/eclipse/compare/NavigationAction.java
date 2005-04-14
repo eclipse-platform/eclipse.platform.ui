@@ -71,11 +71,11 @@ public class NavigationAction extends Action {
 					String title;
 					String message;
 					if (fNext) {
-						title= CompareMessages.getString("CompareNavigator.atEnd.title"); //$NON-NLS-1$
-						message= CompareMessages.getString("CompareNavigator.atEnd.message"); //$NON-NLS-1$
+						title= CompareMessages.CompareNavigator_atEnd_title; 
+						message= CompareMessages.CompareNavigator_atEnd_message; 
 					} else {
-						title= CompareMessages.getString("CompareNavigator.atBeginning.title"); //$NON-NLS-1$
-						message= CompareMessages.getString("CompareNavigator.atBeginning.message"); //$NON-NLS-1$
+						title= CompareMessages.CompareNavigator_atBeginning_title; 
+						message= CompareMessages.CompareNavigator_atBeginning_message; 
 					}
 					MessageDialog.openInformation(shell, title, message);
 				}

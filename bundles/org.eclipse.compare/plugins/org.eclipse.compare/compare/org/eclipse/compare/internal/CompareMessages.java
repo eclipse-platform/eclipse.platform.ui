@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,44 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class CompareMessages {
+public final class CompareMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.compare.internal.CompareMessages";//$NON-NLS-1$
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.CompareMessages";//$NON-NLS-1$
 
 	private CompareMessages() {
-		// nothing to do
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
+	public static String ComparePlugin_internal_error;
+	public static String ExceptionDialog_seeErrorLogMessage;
+	public static String CompareViewerSwitchingPane_Titleformat;
+	public static String StructureDiffViewer_NoStructuralDifferences;
+	public static String StructureDiffViewer_StructureError;
+	public static String TextMergeViewer_cursorPosition_format;
+	public static String TextMergeViewer_beforeLine_format;
+	public static String TextMergeViewer_range_format;
+	public static String TextMergeViewer_changeType_addition;
+	public static String TextMergeViewer_changeType_deletion;
+	public static String TextMergeViewer_changeType_change;
+	public static String TextMergeViewer_direction_outgoing;
+	public static String TextMergeViewer_direction_incoming;
+	public static String TextMergeViewer_direction_conflicting;
+	public static String TextMergeViewer_diffType_format;
+	public static String TextMergeViewer_diffDescription_noDiff_format;
+	public static String TextMergeViewer_diffDescription_diff_format;
+	public static String TextMergeViewer_statusLine_format;
+	public static String TextMergeViewer_atEnd_title;
+	public static String TextMergeViewer_atEnd_message;
+	public static String TextMergeViewer_atBeginning_title;
+	public static String TextMergeViewer_atBeginning_message;
+	public static String CompareNavigator_atEnd_title;
+	public static String CompareNavigator_atEnd_message;
+	public static String CompareNavigator_atBeginning_title;
+	public static String CompareNavigator_atBeginning_message;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);
 	}
 }

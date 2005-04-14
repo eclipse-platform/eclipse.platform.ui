@@ -59,9 +59,9 @@ import org.eclipse.core.runtime.*;
 
 
 	InputPatchPage(PatchWizard pw) {
-		super("InputPatchPage", PatchMessages.getString("InputPatchPage.title"), null); //$NON-NLS-1$ //$NON-NLS-2$
+		super("InputPatchPage", PatchMessages.InputPatchPage_title, null); 
 		fPatchWizard= pw;
-		setMessage(PatchMessages.getString("InputPatchPage.message")); //$NON-NLS-1$
+		setMessage(PatchMessages.InputPatchPage_message); 
 	}
 	
 	/*
@@ -74,7 +74,7 @@ import org.eclipse.core.runtime.*;
 
 	/* package */ String getPatchName() {
 		if (getUseClipboard())
-			return PatchMessages.getString("InputPatchPage.Clipboard"); //$NON-NLS-1$
+			return PatchMessages.InputPatchPage_Clipboard; 
 		return getPatchFilePath();
 	}
 	
@@ -86,7 +86,7 @@ import org.eclipse.core.runtime.*;
 		setControl(composite);
 		
 		Label l= new Label(composite, SWT.NONE);	
-		l.setText(PatchMessages.getString("InputPatchPage.SelectInput")); //$NON-NLS-1$
+		l.setText(PatchMessages.InputPatchPage_SelectInput); 
 		buildInputGroup(composite);
 		
 		new Label(composite, SWT.NONE);	// a spacer		
@@ -120,7 +120,7 @@ import org.eclipse.core.runtime.*;
 				if (o instanceof String)
 					reader= new StringReader((String)o);
 			}
-			source= PatchMessages.getString("InputPatchPage.Clipboard.title");	//$NON-NLS-1$
+			source= PatchMessages.InputPatchPage_Clipboard_title;	
 		} else {
 			String patchFilePath= getPatchFilePath();
 			if (patchFilePath != null) {
@@ -128,11 +128,11 @@ import org.eclipse.core.runtime.*;
 					reader= new FileReader(patchFilePath);
 				} catch (FileNotFoundException ex) {
 					MessageDialog.openError(null,
-						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
-						PatchMessages.getString("InputPatchPage.PatchFileNotFound.message")); //$NON-NLS-1$
+						PatchMessages.InputPatchPage_PatchErrorDialog_title,	
+						PatchMessages.InputPatchPage_PatchFileNotFound_message); 
 				}
 			}
-			source= PatchMessages.getString("InputPatchPage.PatchFile.title");	//$NON-NLS-1$
+			source= PatchMessages.InputPatchPage_PatchFile_title;	
 		}
 		
 		// parse the input
@@ -141,8 +141,8 @@ import org.eclipse.core.runtime.*;
 				patcher.parse(new BufferedReader(reader));
 			} catch (IOException ex) {
 				MessageDialog.openError(null,
-					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), //$NON-NLS-1$ 
-					PatchMessages.getString("InputPatchPage.ParseError.message")); //$NON-NLS-1$
+					PatchMessages.InputPatchPage_PatchErrorDialog_title, 
+					PatchMessages.InputPatchPage_ParseError_message); 
 			}
 			
 			try {
@@ -154,10 +154,10 @@ import org.eclipse.core.runtime.*;
 		
 		Diff[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0) {
-			String format= PatchMessages.getString("InputPatchPage.NoDiffsFound.format");	//$NON-NLS-1$
+			String format= PatchMessages.InputPatchPage_NoDiffsFound_format;	
 			String message= MessageFormat.format(format, new String[] { source });
 			MessageDialog.openInformation(null,
-				PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), message); //$NON-NLS-1$
+				PatchMessages.InputPatchPage_PatchErrorDialog_title, message); 
 			return this;
 		}
 		
@@ -165,10 +165,10 @@ import org.eclipse.core.runtime.*;
 		// contains only a patch for a single file
 		IResource target= fPatchWizard.getTarget();
 		if (target instanceof IFile && diffs.length > 1) {
-			String format= PatchMessages.getString("InputPatchPage.SingleFileError.format");	//$NON-NLS-1$
+			String format= PatchMessages.InputPatchPage_SingleFileError_format;	
 			String message= MessageFormat.format(format, new String[] { source });
 			MessageDialog.openInformation(null,
-				PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), message); //$NON-NLS-1$
+				PatchMessages.InputPatchPage_PatchErrorDialog_title, message); 
 			return this;
 		}
 		
@@ -199,7 +199,7 @@ import org.eclipse.core.runtime.*;
 	private void buildPatchFileGroup(Composite parent) {
 		
 		fPatchFileGroup= new Group(parent, SWT.NONE);
-		fPatchFileGroup.setText(PatchMessages.getString("InputPatchPage.SelectPatch.title")); //$NON-NLS-1$
+		fPatchFileGroup.setText(PatchMessages.InputPatchPage_SelectPatch_title); 
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
 		fPatchFileGroup.setLayout(layout);
@@ -207,7 +207,7 @@ import org.eclipse.core.runtime.*;
 		
 		// 1st row
 		fUsePatchFileButton= new Button(fPatchFileGroup, SWT.RADIO);
-		fUsePatchFileButton.setText(PatchMessages.getString("InputPatchPage.FileButton.text")); //$NON-NLS-1$
+		fUsePatchFileButton.setText(PatchMessages.InputPatchPage_FileButton_text); 
 		
 		fPatchFileNameField= new Combo(fPatchFileGroup, SWT.BORDER);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -216,12 +216,12 @@ import org.eclipse.core.runtime.*;
 		fPatchFileNameField.setLayoutData(gd);
 		
 		fPatchFileBrowseButton= new Button(fPatchFileGroup, SWT.PUSH);
-		fPatchFileBrowseButton.setText(PatchMessages.getString("InputPatchPage.ChooseFileButton.text")); //$NON-NLS-1$
+		fPatchFileBrowseButton.setText(PatchMessages.InputPatchPage_ChooseFileButton_text); 
 		fPatchFileBrowseButton.setLayoutData(new GridData());
 		
 		// 2nd row
 		fUseClipboardButton= new Button(fPatchFileGroup, SWT.RADIO);
-		fUseClipboardButton.setText(PatchMessages.getString("InputPatchPage.UseClipboardButton.text")); //$NON-NLS-1$
+		fUseClipboardButton.setText(PatchMessages.InputPatchPage_UseClipboardButton_text); 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		fUseClipboardButton.setLayoutData(gd);
@@ -308,7 +308,7 @@ import org.eclipse.core.runtime.*;
 		ISelection selection= fPatchTargets.getSelection();
 		boolean anySelected= selection != null && !selection.isEmpty();
 		if (!anySelected)
-			error= PatchMessages.getString("InputPatchPage.NothingSelected.message"); //$NON-NLS-1$
+			error= PatchMessages.InputPatchPage_NothingSelected_message; 
 
 		boolean gotPatch= false;
 		if (getUseClipboard()) {
@@ -322,20 +322,20 @@ import org.eclipse.core.runtime.*;
 					if (s.length() > 0)
 						gotPatch= true;
 					else
-						error= PatchMessages.getString("InputPatchPage.ClipboardIsEmpty.message"); //$NON-NLS-1$
+						error= PatchMessages.InputPatchPage_ClipboardIsEmpty_message; 
 				} else
-					error= PatchMessages.getString("InputPatchPage.NoTextInClipboard.message");					 //$NON-NLS-1$
+					error= PatchMessages.InputPatchPage_NoTextInClipboard_message;					 
 			} else
-				error= PatchMessages.getString("InputPatchPage.CouldNotReadClipboard.message");					 //$NON-NLS-1$
+				error= PatchMessages.InputPatchPage_CouldNotReadClipboard_message;					 
 		} else {
 			String path= fPatchFileNameField.getText();
 			if (path != null && path.length() > 0) {
 				File file= new File(path);
 				gotPatch= file.exists() && file.isFile() && file.length() > 0;
 				if (!gotPatch)
-					error= PatchMessages.getString("InputPatchPage.CannotLocatePatch.message") + path; //$NON-NLS-1$
+					error= PatchMessages.InputPatchPage_CannotLocatePatch_message + path; 
 			} else {
-				error= PatchMessages.getString("InputPatchPage.NoFileName.message"); //$NON-NLS-1$
+				error= PatchMessages.InputPatchPage_NoFileName_message; 
 			}
 		}
 		
@@ -346,7 +346,7 @@ import org.eclipse.core.runtime.*;
 	
 	protected void handlePatchFileBrowseButtonPressed() {
 		FileDialog dialog= new FileDialog(getShell(), SWT.NONE);
-		dialog.setText(PatchMessages.getString("InputPatchPage.SelectPatchFileDialog.title"));		 //$NON-NLS-1$
+		dialog.setText(PatchMessages.InputPatchPage_SelectPatchFileDialog_title);		 
 		String patchFilePath= getPatchFilePath();
 		if (patchFilePath != null) {
 			int lastSegment= patchFilePath.lastIndexOf(SEPARATOR);

@@ -57,10 +57,10 @@ public class XMLStructureCreator implements IStructureCreator {
 
     protected static final boolean DEBUG_MODE= false;
     
-    public static final String DEFAULT_NAME= XMLCompareMessages.getString("XMLStructureCreator.pluginname"); //$NON-NLS-1$
+    public static final String DEFAULT_NAME= XMLCompareMessages.XMLStructureCreator_pluginname; 
 
-    public static final String USE_UNORDERED= XMLCompareMessages.getString("XMLStructureCreator.unordered"); //$NON-NLS-1$
-    public static final String USE_ORDERED= XMLCompareMessages.getString("XMLStructureCreator.ordered"); //$NON-NLS-1$
+    public static final String USE_UNORDERED= XMLCompareMessages.XMLStructureCreator_unordered; 
+    public static final String USE_ORDERED= XMLCompareMessages.XMLStructureCreator_ordered; 
     public static final String DEFAULT_IDMAP= USE_ORDERED;
 
     public static final String TYPE_ELEMENT= "element"; //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class XMLStructureCreator implements IStructureCreator {
     public static final String SIGN_TEXT= SIGN_ENCLOSING + TYPE_TEXT + SIGN_ENCLOSING;
     public static final String SIGN_ATTRIBUTE= SIGN_ENCLOSING + TYPE_ATTRIBUTE + SIGN_ENCLOSING;
     
-    public static final String IDMAP_UNORDERED= XMLCompareMessages.getString("XMLStructureCreator.idmap_unordered"); //$NON-NLS-1$
+    public static final String IDMAP_UNORDERED= XMLCompareMessages.XMLStructureCreator_idmap_unordered; 
     public static final char ID_SEPARATOR= '<';
     public static final char ID_TYPE_BODY= '<';
 
@@ -334,7 +334,7 @@ public class XMLStructureCreator implements IStructureCreator {
                             body_value= removeWhiteSpace(body_value);
                         }
                         XMLNode bodynode= new XMLNode(TYPE_TEXT, "body_(" + fcurrentParent.bodies + ")", body_value, (fsignature + SIGN_TEXT), fdoc, offset, length); //$NON-NLS-2$ //$NON-NLS-1$
-                        bodynode.setName(MessageFormat.format("{0} ({1})", new String[] { XMLCompareMessages.getString("XMLStructureCreator.body"), Integer.toString(fcurrentParent.bodies)})); //$NON-NLS-2$ //$NON-NLS-1$
+                        bodynode.setName(MessageFormat.format("{0} ({1})", new String[] { XMLCompareMessages.XMLStructureCreator_body, Integer.toString(fcurrentParent.bodies)})); 
                         fcurrentParent.addChild(bodynode);
                         bodynode.setParent(fcurrentParent);
                         if (XMLStructureCreator.DEBUG_MODE)

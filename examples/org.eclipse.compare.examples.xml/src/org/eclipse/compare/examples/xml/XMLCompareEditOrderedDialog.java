@@ -49,9 +49,9 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 	
 		fEdit= edit;
 		if (fEdit)
-			setTitle(XMLCompareMessages.getString("XMLCompareEditOrderedDialog.editTitle")); //$NON-NLS-1$
+			setTitle(XMLCompareMessages.XMLCompareEditOrderedDialog_editTitle); 
 		else
-			setTitle(XMLCompareMessages.getString("XMLCompareEditOrderedDialog.newTitle")); //$NON-NLS-1$
+			setTitle(XMLCompareMessages.XMLCompareEditOrderedDialog_newTitle); 
 
 		fMapping= mapping;
 		fIdmapAL= idmapAL;
@@ -77,7 +77,7 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 		
 		//Element
 		Label label= new Label(inner, SWT.NULL);
-		label.setText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.element")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLCompareEditMappingDialog_element); 
 		label.setLayoutData(new GridData());
 
 		fElementText= new Text(inner, SWT.BORDER);
@@ -91,7 +91,7 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 
 		//Signature
 		label= new Label(inner, SWT.NULL);
-		label.setText(XMLCompareMessages.getString("XMLCompareEditMappingDialog.signature")); //$NON-NLS-1$
+		label.setText(XMLCompareMessages.XMLCompareEditMappingDialog_signature); 
 		label.setLayoutData(new GridData());
 
 		fSignatureText= new Text(inner, SWT.BORDER);
@@ -120,18 +120,18 @@ public class XMLCompareEditOrderedDialog extends StatusDialog {
 		String errormsg= ""; //$NON-NLS-1$
 		boolean isError= false;
 		if (text.length() == 0) {
-			errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.noname"); //$NON-NLS-1$
+			errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_noname; 
 			isError= true;
 		} else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidname"); //$NON-NLS-2$ //$NON-NLS-1$
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidname; 
 			isError= true;
 		} else if (!fEdit && fIdmapAL.contains(mappingKey)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditOrderedDialog.error.orderedExists"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditOrderedDialog_error_orderedExists; 
 			isError= true;
 		}
 		text= fSignatureText.getText();
 		if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.getString("XMLCompareEditMappingDialog.error.invalidsignature"); //$NON-NLS-2$ //$NON-NLS-1$
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidsignature; 
 			isError= true;
 		}
 		if (isError) status.setError(errormsg);

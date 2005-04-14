@@ -280,7 +280,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		if ((fThreeWay && fAncestorStructure == null) || fLeftStructure == null || fRightStructure == null) {
 			// could not get structure of one (or more) of the legs
 			fRoot= null;
-			message= CompareMessages.getString("StructureDiffViewer.StructureError");	//$NON-NLS-1$
+			message= CompareMessages.StructureDiffViewer_StructureError;	
 			
 		} else {	// calculate difference of the two (or three) structures
 
@@ -301,7 +301,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 					fAncestorStructure, fLeftStructure, fRightStructure);
 					
 			if (fRoot == null || fRoot.getChildren().length == 0) {
-				message= CompareMessages.getString("StructureDiffViewer.NoStructuralDifferences");	//$NON-NLS-1$
+				message= CompareMessages.StructureDiffViewer_NoStructuralDifferences;	
 			} else {
 				postDiffHook(fDifferencer, fRoot);
 			}

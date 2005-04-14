@@ -27,9 +27,9 @@ class ChooseMatcherDropDownAction extends Action implements IMenuCreator {
 
 	public ChooseMatcherDropDownAction(XMLStructureViewer viewer) {
 		fViewer = viewer;
-		setText(XMLCompareMessages.getString("ChooseMatcherDropDownAction.text")); //$NON-NLS-1$
+		setText(XMLCompareMessages.ChooseMatcherDropDownAction_text); 
 		setImageDescriptor(XMLPlugin.getDefault().getImageDescriptor("obj16/smartmode_co.gif")); //$NON-NLS-1$
-		setToolTipText(XMLCompareMessages.getString("ChooseMatcherDropDownAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(XMLCompareMessages.ChooseMatcherDropDownAction_tooltip); 
 		setMenuCreator(this);
 	}
 

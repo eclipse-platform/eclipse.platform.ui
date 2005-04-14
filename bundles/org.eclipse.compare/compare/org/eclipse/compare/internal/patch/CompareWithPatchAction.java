@@ -87,10 +87,10 @@ public class CompareWithPatchAction extends BaseCompareAction {
 			}
 			return true;
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("PatchAction.Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, shell, PatchMessages.PatchAction_ExceptionTitle, PatchMessages.PatchAction_Exception);  
 			return false;
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("PatchAction.Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, shell, PatchMessages.PatchAction_ExceptionTitle, PatchMessages.PatchAction_Exception);  
 			return false;			
 		} catch (InterruptedException e) {
 			Assert.isTrue(false); // Can't happen. Operation isn't cancelable.
@@ -102,7 +102,7 @@ public class CompareWithPatchAction extends BaseCompareAction {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor pm) {
 				IEditorPart[] editorsToSave= CompareUIPlugin.getDirtyEditors();
-				pm.beginTask(PatchMessages.getString("PatchAction.SavingDirtyEditorsTask"), editorsToSave.length); //$NON-NLS-1$
+				pm.beginTask(PatchMessages.PatchAction_SavingDirtyEditorsTask, editorsToSave.length); 
 				for (int i= 0; i < editorsToSave.length; i++) {
 					editorsToSave[i].doSave(new SubProgressMonitor(pm, 1));
 					pm.worked(1);
@@ -119,7 +119,7 @@ public class CompareWithPatchAction extends BaseCompareAction {
 			protected Control createDialogArea(Composite parent) {
 				Composite result= (Composite) super.createDialogArea(parent);
 				final Button check= new Button(result, SWT.CHECK);
-				check.setText(PatchMessages.getString("PatchAction.AlwaysSaveQuestion")); //$NON-NLS-1$
+				check.setText(PatchMessages.PatchAction_AlwaysSaveQuestion); 
 				check.setSelection(ComparePreferencePage.getSaveAllEditors());
 				check.addSelectionListener(
 					new SelectionAdapter() {
@@ -132,10 +132,10 @@ public class CompareWithPatchAction extends BaseCompareAction {
 				return result;
 			}
 		};
-		dialog.setTitle(PatchMessages.getString("PatchAction.SaveAllQuestion")); //$NON-NLS-1$
+		dialog.setTitle(PatchMessages.PatchAction_SaveAllQuestion); 
 		dialog.setAddCancelButton(true);
 		dialog.setLabelProvider(createDialogLabelProvider());
-		dialog.setMessage(PatchMessages.getString("PatchAction.SaveAllDescription")); //$NON-NLS-1$
+		dialog.setMessage(PatchMessages.PatchAction_SaveAllDescription); 
 		dialog.setContentProvider(new ListContentProvider());
 		dialog.setInput(Arrays.asList(CompareUIPlugin.getDirtyEditors()));
 		return dialog.open() == Window.OK;
