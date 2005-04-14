@@ -149,7 +149,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddTen() throws CoreException {
 
-		doTestAddFast(10);
+		doTestAdd(10, TEST_COUNT, false);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddFifty() throws CoreException {
 
-		doTestAddFast(50);
+		doTestAdd(50, TEST_COUNT, false);
 	}
 
 	/**
@@ -168,45 +168,48 @@ public class TreeTest extends ViewerTest {
 	public void testAddHundred() throws CoreException {
 
 		tagIfNecessary("Add 100 items to tree", Dimension.ELAPSED_PROCESS);
-		
-		doTestAddFast(100);
+
+		doTestAdd(100, TEST_COUNT, false);
 	}
 
 	/**
 	 * Run the test for one of the fast insertions.
+	 * 
 	 * @param count
 	 * @throws CoreException
 	 */
-	private void doTestAddFast(final int count) throws CoreException {
+	private void doTestAdd(final int increment, int total, boolean preSort) {
 
 		openBrowser();
-		
-		int iterations = ITERATIONS / 5;
-		int measureSize = 5;
-		
+
+		int iterations = ITERATIONS;
+		if (total > 100)// Cut it down for large data sets
+			iterations = ITERATIONS / 5;
+
 		for (int i = 0; i < iterations; i++) {
 			TestTreeElement input = new TestTreeElement(0, null);
 			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
+			input.createChildren(total);
+			if (preSort)
+				viewer.getSorter().sort(viewer, input.children);
 			Collection batches = new ArrayList();
-			int blocks = input.children.length / count;
-			for (int j = 0; j < blocks; j = j + count) {
-				Object[] batch = new Object[count];
-				System.arraycopy(input.children, j * count, batch, 0, count);
+			int blocks = input.children.length / increment;
+			for (int j = 0; j < blocks; j = j + increment) {
+				Object[] batch = new Object[increment];
+				System.arraycopy(input.children, j * increment, batch, 0,
+						increment);
 				batches.add(batch);
 			}
 			processEvents();
 			Object[] batchArray = batches.toArray();
 			startMeasuring();
-			
-			//Measure more than one for the fast cases
-			for (int j = 0; j < measureSize; j++) {
-				for (int k = 0; k < batchArray.length; k++) {
-					viewer.add(input, (Object[]) batchArray[k]);
-					processEvents();
-				}
 
+			// Measure more than one for the fast cases
+			for (int k = 0; k < batchArray.length; k++) {
+				viewer.add(input, (Object[]) batchArray[k]);
+				processEvents();
 			}
+
 			stopMeasuring();
 		}
 		commitMeasurements();
@@ -217,44 +220,39 @@ public class TreeTest extends ViewerTest {
 	/**
 	 * Test addition to the tree.
 	 */
-	public void testAddThousand() throws CoreException {
-		openBrowser();
-		for (int i = 0; i < ITERATIONS / 5; i++) {
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			processEvents();
-			startMeasuring();
-			viewer.add(input, input.children);
-			processEvents();
-			stopMeasuring();
-		}
+	public void testAddThousand() {
+		doTestAdd(1000, 2000, false);
+	}
 
-		commitMeasurements();
-		assertPerformance();
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
+	 */
+	public void testAddTwoThousand() throws CoreException {
+
+		doTestAdd(2000, 4000, false);
+
 	}
 
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree with the items presorted.
 	 */
+	public void testAddHundredPreSort() throws CoreException {
+	
+		doTestAdd(100, 1000, true);
+	}
+
+	
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree with the items presorted.
+	 */
 	public void testAddThousandPreSort() throws CoreException {
-		tagIfNecessary("Add 1000 items to end of tree", Dimension.ELAPSED_PROCESS);
-		
-		openBrowser();
-		for (int i = 0; i < ITERATIONS / 5; i++) {
-			TestTreeElement input = new TestTreeElement(0, null);
-			viewer.setInput(input);
-			input.createChildren(TEST_COUNT);
-			viewer.getSorter().sort(viewer, input.children);
-			processEvents();
-			startMeasuring();
-			viewer.add(input, input.children);
-			processEvents();
-			stopMeasuring();
-		}
-		commitMeasurements();
-		assertPerformance();
+		tagIfNecessary("Add 2000 items in 2 blocks",
+				Dimension.ELAPSED_PROCESS);
+
+		doTestAdd(1000, 2000, true);
 	}
 
 }
