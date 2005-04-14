@@ -400,16 +400,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
             if (setsToActivate.isEmpty())
                 return;
 
-            Perspective[] perspectives = getActiveWorkbenchPage()
-                    .getOpenInternalPerspectives();
-
-            for (int i = 0; i < perspectives.length; i++) {
-                IActionSetDescriptor[] originalSets = perspectives[i]
-                        .getActionSets();
-                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
-                newSets.addAll(setsToActivate);
-                perspectives[i].setActionSets((IActionSetDescriptor[]) newSets
-                        .toArray(new IActionSetDescriptor[newSets.size()]));
+            WorkbenchPage page = getActiveWorkbenchPage();
+            if (page != null) {
+	            Perspective[] perspectives = page.getOpenInternalPerspectives();
+	
+	            for (int i = 0; i < perspectives.length; i++) {
+	                IActionSetDescriptor[] originalSets = perspectives[i]
+	                        .getActionSets();
+	                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
+	                newSets.addAll(setsToActivate);
+	                perspectives[i].setActionSets((IActionSetDescriptor[]) newSets
+	                        .toArray(new IActionSetDescriptor[newSets.size()]));
+	            }
             }
 
             updateActionSets();
