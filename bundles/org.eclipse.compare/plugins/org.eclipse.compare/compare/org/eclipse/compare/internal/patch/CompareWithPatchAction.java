@@ -87,10 +87,10 @@ public class CompareWithPatchAction extends BaseCompareAction {
 			}
 			return true;
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("PatchAction.Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, shell, PatchMessages.getString("PatchAction.ExceptionTitle"), PatchMessages.getString("PatchAction.Exception"));  //$NON-NLS-1$ //$NON-NLS-2$
 			return false;			
 		} catch (InterruptedException e) {
 			Assert.isTrue(false); // Can't happen. Operation isn't cancelable.
