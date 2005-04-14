@@ -213,8 +213,9 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					// if this node was removed then we need to create a new one
 					if (removed)
 						globalNode = (IEclipsePreferences) root.node(node.absolutePath());
-					for (Iterator i = epNode.properties.keySet().iterator(); i.hasNext();) {
-						String key = (String) i.next();
+					String[] keys = epNode.properties.keys();
+					for (int i = 0; i < keys.length; i++) {
+						String key = keys[i];
 						// intern strings we import because some people
 						// in their property change listeners use identity
 						// instead of equals. See bug 20193 and 20534.

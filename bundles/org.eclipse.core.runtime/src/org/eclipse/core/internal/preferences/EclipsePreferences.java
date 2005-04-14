@@ -53,7 +53,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected final String name;
 	// the parent of an EclipsePreference node is always an EclipsePreference node. (or null)
 	protected final EclipsePreferences parent;
-	protected ObjectMap properties;
+	protected HashMapOfString properties;
 	protected boolean removed = false;
 	private ListenerList nodeChangeListeners;
 	private ListenerList preferenceChangeListeners;
@@ -167,7 +167,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void clear() {
 		// illegal state if this node has been removed
 		checkRemoved();
-		ObjectMap temp = properties;
+		HashMapOfString temp = properties;
 		if (temp == null)
 			return;
 		// call each one separately (instead of Properties.clear) so
@@ -245,13 +245,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	protected Properties convertToProperties(Properties result, String prefix) throws BackingStoreException {
 		// add the key/value pairs from this node
-		ObjectMap temp = properties;
+		HashMapOfString temp = properties;
 		boolean addSeparator = prefix.length() != 0;
 		if (temp != null) {
 			synchronized (temp) {
 				String[] keys = temp.keys();
 				for (int i = 0; i < keys.length; i++) {
-					String value = (String)temp.get(keys[i]);
+					String value = temp.get(keys[i]);
 					if (value != null)
 						result.put(encodePath(prefix, keys[i]), value);
 				}
@@ -500,13 +500,13 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// illegal state if this node has been removed
 		checkRemoved();
 		//Thread safety: copy field reference in case of concurrent modification
-		ObjectMap temp = properties;
+		HashMapOfString temp = properties;
 		if (temp == null) {
 			if (InternalPlatform.DEBUG_PREFERENCE_GET)
 				Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
-		String result = (String) temp.get(key);
+		String result = temp.get(key);
 		if (InternalPlatform.DEBUG_PREFERENCE_GET)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
@@ -553,8 +553,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
-			properties = new ObjectMap();
-		String oldValue = (String) properties.get(key);
+			properties = new HashMapOfString();
+		String oldValue = properties.get(key);
 		if (InternalPlatform.DEBUG_PREFERENCE_SET)
 			Policy.debug("Setting preference: " + absolutePath() + '/' + key + '=' + newValue); //$NON-NLS-1$
 		properties.put(key, newValue);
@@ -567,7 +567,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		synchronized (this) {
 			if (properties == null)
 				return;
-			wasRemoved = properties.remove(key) != null;
+			wasRemoved = properties.removeKey(key) != null;
 			if (properties.size() == 0)
 				properties = null;
 			if (wasRemoved)
@@ -590,7 +590,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public String[] keys() {
 		// illegal state if this node has been removed
 		checkRemoved();
-		ObjectMap temp = properties;
+		HashMapOfString temp = properties;
 		if (temp == null || temp.size() == 0)
 			return EMPTY_STRING_ARRAY;
 		return temp.keys();
@@ -982,9 +982,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @param pool The pool to share strings in
 	 */
 	public void shareStrings(StringPool pool) {
-		ObjectMap temp = properties;
-		if (temp != null)
-			temp.shareStrings(pool);
+		//protect access while destructively sharing strings
+		synchronized (this) {
+			HashMapOfString temp = properties;
+			if (temp != null)
+				temp.shareStrings(pool);
+		}
 		IEclipsePreferences[] myChildren = getChildren(false);
 		for (int i = 0; i < myChildren.length; i++)
 			if (myChildren[i] instanceof EclipsePreferences)
