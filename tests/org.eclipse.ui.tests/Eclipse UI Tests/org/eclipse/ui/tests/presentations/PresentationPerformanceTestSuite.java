@@ -64,8 +64,8 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
 
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 1000, "large folder creation"));
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 1000, "large folder creation"));
+        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100, "large folder creation"));
+        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100, "large folder creation"));
         
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
