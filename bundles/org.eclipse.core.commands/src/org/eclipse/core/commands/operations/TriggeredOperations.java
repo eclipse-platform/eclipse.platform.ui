@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  */
 public class TriggeredOperations extends AbstractOperation implements
-		ICompositeOperation {
+		ICompositeOperation, IHistoryNotificationAwareOperation {
 
 	private IUndoableOperation triggeringOperation;
 
@@ -290,5 +290,15 @@ public class TriggeredOperations extends AbstractOperation implements
 	 */
 	public IUndoableOperation getTriggeringOperation() {
 		return triggeringOperation;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IHistoryNotificationAwareOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
+	 */
+	public void aboutToNotify(OperationHistoryEvent event) {
+		if (triggeringOperation instanceof IHistoryNotificationAwareOperation)
+			((IHistoryNotificationAwareOperation)triggeringOperation).aboutToNotify(event);
 	}
 }
