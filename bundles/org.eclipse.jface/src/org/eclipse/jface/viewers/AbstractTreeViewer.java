@@ -226,6 +226,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				index = items.length + i;
 			else{
 				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+				//As we are only searching the original array we keep track of those positions only
 				index = lastInsertion + i; //Add the index as the array is growing
 				// Assume sorter is consistent with equals() - therefore we can
 				// just check against the item prior to this index (if any)
@@ -240,14 +241,54 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     }
 	
 
+	/**
+     * Returns the index where the item should be inserted. It uses sorter to
+     * determine the correct position, if sorter is not assigned, returns the
+     * index of the element after the last.
+     * 
+     * @param items the items to search
+     * @param sorter The sorter to use.
+     * @param lastInsertion
+     *            the start index to start search for position from this allows
+     *            optimising search for multiple elements that are sorted
+     *            themself.
+     * @param element
+     *            element to find position for.
+     * @return the index to use when inserting the element.
+     * 
+     */
 	
 	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
-		for (int i = lastInsertion; i < items.length; i++) {
-			//Insert when new element is less than the one at index
-			if( sorter.compare(this, items[i].getData(),element) > 0)
-				return i;
-		}
-		return items.length;
+	    
+		int size = items.length;
+		if (sorter == null)
+			return size;
+	    int min = lastInsertion, max = size - 1;
+
+		while (min <= max) {
+            int mid = (min + max) / 2;
+            Object data = items[mid].getData();
+            int compare = sorter.compare(this, data, element);
+            if (compare == 0) {
+                // find first item > element
+                while (compare == 0) {
+                    ++mid;
+                    if (mid >= size) {
+                        break;
+                    }
+                    data = items[mid].getData();
+                    compare = sorter.compare(this, data, element);
+                }
+                return mid;
+            }
+            if (compare < 0)
+                min = mid + 1;
+            else
+                max = mid - 1;
+	        }
+	   return min;
+	    
+			
 	}
 
 	/**
@@ -268,41 +309,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @return the index to use when inserting the element.
      * 
      */
-    private int indexForElement(
-			Widget parent, 
-			ViewerSorter sorter,
-			int startIndex, 
-			Object element, 
-			int currentSize) {
-    
-
-        if (sorter == null)
-            return currentSize;
-        int min = startIndex, max = currentSize - 1;
-
-        while (min <= max) {
-            int mid = (min + max) / 2;
-            Object data = getChild (parent, mid).getData();
-            int compare = sorter.compare(this, data, element);
-            if (compare == 0) {
-                // find first item > element
-                while (compare == 0) {
-                    ++mid;
-                    if (mid >= currentSize) {
-                        break;
-                    }
-                    data = getChild (parent, mid).getData();
-                    compare = sorter.compare(this, data, element);
-                }
-                return mid;
-            }
-            if (compare < 0)
-                min = mid + 1;
-            else
-                max = mid - 1;
-        }
-        return min;
-    }
 	
     /**
      * Returns the index where the item should be inserted.
