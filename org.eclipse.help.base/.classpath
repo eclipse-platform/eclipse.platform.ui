@@ -4,11 +4,19 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
+	<classpathentry output="bin2" kind="src" path="src_ant">
+		<attributes>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
 		<attributes>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.ant_1.6.2/lib/ant.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>
