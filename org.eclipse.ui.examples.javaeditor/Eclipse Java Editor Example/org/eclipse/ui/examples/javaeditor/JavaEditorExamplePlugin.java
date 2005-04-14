@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.javaeditor;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 
 import org.eclipse.ui.examples.javaeditor.java.JavaCodeScanner;
@@ -21,7 +18,7 @@ import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * The example java editor plugin class.
+ * The example java editor plug-in class.
  * 
  * @since 3.0
  */
@@ -36,29 +33,19 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 	private JavaDocScanner fDocScanner;
 
 	/**
-	 * Creates a new plugin instance.
-	 * 
-	 * @param descriptor
+	 * Creates a new plug-in instance.
 	 */
-	public JavaEditorExamplePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public JavaEditorExamplePlugin() {
 		fgInstance= this;
 	}
 	
 	/**
-	 * Returns the default plugin instance.
+	 * Returns the default plug-in instance.
 	 * 
-	 * @return the default plugin instance
+	 * @return the default plug-in instance
 	 */
 	public static JavaEditorExamplePlugin getDefault() {
 		return fgInstance;
-	}
-	
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
 	}
 	
 	/**
