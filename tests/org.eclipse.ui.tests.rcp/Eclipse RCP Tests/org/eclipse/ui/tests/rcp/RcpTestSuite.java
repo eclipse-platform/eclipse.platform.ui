@@ -32,5 +32,6 @@ public class RcpTestSuite extends TestSuite {
         addTest(new TestSuite(WorkbenchWindowConfigurerTest.class));
         addTest(new TestSuite(ActionBarConfigurerTest.class));
         addTest(new TestSuite(IWorkbenchPageTest.class));
+        addTest(new TestSuite(WorkbenchSaveRestoreStateTest.class));
     }
 }
