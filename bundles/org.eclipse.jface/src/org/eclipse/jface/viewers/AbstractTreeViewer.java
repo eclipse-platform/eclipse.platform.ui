@@ -215,45 +215,41 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		
 		//As the items are sorted already we optimize for a 
 		//start position
-		int position = 0;
-		int size;
-		
-	
-		if(widget instanceof Control)
-			size = getItemCount((Control) widget);
-		else{
-			if(widget instanceof Item)
-				size = getItemCount((Item) widget);
-			else{
-				if(items == null)
-					items = getChildren(widget);
-				size = items.length;
-					
-			}
-		}		
+		int lastInsertion = 0;		
+		if(items == null)//Don't ask if we already have it
+			items = getChildren(widget);			
 		
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			int index;
 			if(sorter == null)
-				index = size;
+				index = items.length + i;
 			else{
-				index = indexForElement(widget,sorter,position, element,size);
-				
+				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+				index = lastInsertion + i; //Add the index as the array is growing
 				// Assume sorter is consistent with equals() - therefore we can
 				// just check against the item prior to this index (if any)
-				if (index >0 && getChild (widget, index - 1).getData().equals(element)) {
+				if (index >0 && index < items.length && items[index].getData().equals(element)) {
 					//refresh the element in case it has new children
 					refresh(element);
 					break;
 				}
-				position = index;
+				lastInsertion = index;
 			}
 			createTreeItem(widget, element, index);		
-			size++;
 		}
     }
 	
+
+	
+	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element) {
+		for (int i = lastInsertion; i < items.length; i++) {
+			//Insert when new element is less than the one at index
+			if( sorter.compare(this, items[i].getData(),element) > 0)
+				return i;
+		}
+		return items.length;
+	}
 
 	/**
      * Returns the index where the item should be inserted. It uses sorter to
