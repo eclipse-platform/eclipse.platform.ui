@@ -22,6 +22,7 @@ public class AllTests extends TestCase {
 		suite.addTest(new UIPerformanceSessionTestSuite(RuntimeTestsPlugin.PI_RUNTIME_TESTS, 5, UIStartupTest.class));
 		suite.addTest(BenchPath.suite());
 		suite.addTest(ContentTypePerformanceTest.suite());
+		suite.addTest(PreferencePerformanceTest.suite());
 		return suite;
 	}
 }
