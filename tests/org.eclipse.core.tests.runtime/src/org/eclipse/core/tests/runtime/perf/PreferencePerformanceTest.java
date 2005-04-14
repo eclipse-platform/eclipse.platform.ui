@@ -42,26 +42,35 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE);
 	}
 
+	/*
+	 * Time how long it takes to retrieve 1000 keys which are constructed
+	 * from sequential integers.
+	 */
 	public void testGetString1000SequentialKeys() {
+		// setup
 		final String qualifier = getUniqueString();
 		String[][] kvp = getSequentialKeys(1000);
 		final String[] keys = kvp[0];
 		final String[] values = kvp[1];
 
+		// run the test
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
+			// set the values outside the timed loop
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
 			}
 
+			// how long to get the values?
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
 			}
 
+			// clean-up
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -72,26 +81,34 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 50);
 	}
 
+	/*
+	 * Time how long it takes to get 1000 keys that are unique.
+	 */
 	public void testGetString1000UniqueKeys() {
+		// setup
 		final String qualifier = getUniqueString();
 		String[][] kvp = getUniqueKeys(1000);
 		final String[] keys = kvp[0];
 		final String[] values = kvp[1];
 
+		// run the test
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
+			// set the values outside the timed loop
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
 			}
 
+			// how long to get the values?
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
 			}
 
+			// clean-up
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -102,26 +119,35 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 50);
 	}
 
+	/*
+	 * Time how long it takes to retrieve 1000 keys with a common prefix.
+	 */
 	public void testGetString1000CommonPrefixKeys() {
+		
+		// setup
 		final String qualifier = getUniqueString();
 		String[][] kvp = getCommonPrefixKeys(1000, qualifier);
 		final String[] keys = kvp[0];
 		final String[] values = kvp[1];
 
+		// run the test
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
+			// set the values outside the timed loop
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
 			}
 
+			// test retrieval
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
 			}
 
+			//  clean-up
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -132,19 +158,23 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 50);
 	}
 
+	/*
+	 * Time how long it takes to put 1000 keys into a preference node.
+	 */
 	public void testPutString1000Keys() {
+		
+		// setup outside the timed block
 		final String qualifier = getUniqueString();
 		final ArrayList keyList = new ArrayList();
 		final ArrayList valueList = new ArrayList();
-
 		for (int i = 0; i < 1000; i++) {
 			keyList.add(getUniqueString() + Integer.toString(i));
 			valueList.add(Integer.toString(i));
 		}
-
 		final String[] keys = (String[]) keyList.toArray(new String[keyList.size()]);
 		final String[] values = (String[]) valueList.toArray(new String[valueList.size()]);
 
+		// run the test
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
@@ -152,11 +182,13 @@ public class PreferencePerformanceTest extends RuntimeTest {
 				prefs = getScopeRoot().node(qualifier);
 			}
 
+			// how long to set the values?
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
 			}
 
+			// clean-up
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -167,6 +199,10 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 50);
 	}
 
+	/*
+	 * Return a 2 dimensional String array with the first element being the keys
+	 * and the second being the values. The keys will be integers in sequential order.
+	 */
 	private String[][] getSequentialKeys(int size) {
 		ArrayList keyList = new ArrayList();
 		ArrayList valueList = new ArrayList();
@@ -180,11 +216,15 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		return result;
 	}
 
+	/*
+	 * Return a 2 dimensional String array with the first element being the keys
+	 * and the second being the values. All the keys will have a unique prefix.
+	 */
 	private String[][] getUniqueKeys(int size) {
 		ArrayList keyList = new ArrayList();
 		ArrayList valueList = new ArrayList();
 		for (int i = 0; i < size; i++) {
-			keyList.add(getUniqueString() + Integer.toString(i));
+			keyList.add(Integer.toString(i) + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
@@ -193,11 +233,15 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		return result;
 	}
 
+	/*
+	 * Return a 2 dimensional String array with the first element being the keys
+	 * and the second being the values. All the keys will have the given prefix.
+	 */
 	private String[][] getCommonPrefixKeys(int size, String prefix) {
 		ArrayList keyList = new ArrayList();
 		ArrayList valueList = new ArrayList();
 		for (int i = 0; i < size; i++) {
-			keyList.add(prefix + '.' + getUniqueString());
+			keyList.add(prefix + '.' + Integer.toString(i) + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
@@ -206,33 +250,40 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		return result;
 	}
 
+	/*
+	 * Add 1000 keys to a preference node and then remove them one at a time.
+	 */
 	public void testRemoveString1000Keys() {
+
+		// gather the key/value pairs before so we don't time it
 		final String qualifier = getUniqueString();
 		final ArrayList keyList = new ArrayList();
 		final ArrayList valueList = new ArrayList();
-
 		for (int i = 0; i < 1000; i++) {
 			keyList.add(getUniqueString() + Integer.toString(i));
 			valueList.add(Integer.toString(i));
 		}
-
 		final String[] keys = (String[]) keyList.toArray(new String[keyList.size()]);
 		final String[] values = (String[]) valueList.toArray(new String[valueList.size()]);
 
+		// run the performance test
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
+			// fill the node with values each run
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
 			}
 
+			// the test is how long it takes to remove all the values
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.remove(keys[i]);
 			}
 
+			// clean-up at the end of each run
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -240,6 +291,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 					fail("0.99", e);
 				}
 			}
+			// can only run this once because there is only so many keys you can remove
 		}.run(this, 50, 1);
 	}
 
