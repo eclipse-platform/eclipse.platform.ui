@@ -133,7 +133,9 @@ public class HeapStatus extends Composite {
 
         getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				getDisplay().timerExec(HeapStatus.this.prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), timer);
+				if (!isDisposed()) {
+					getDisplay().timerExec(HeapStatus.this.prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), timer);
+				}
 			}
 		});
    	}
