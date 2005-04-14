@@ -96,7 +96,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			fElements= new IFile[0];
 		fPage= page;
 		
-		setText(SearchMessages.getString("ReplaceAction.label_all")); //$NON-NLS-1$
+		setText(SearchMessages.ReplaceAction_label_all); 
 		setEnabled(!(fElements.length == 0));
 	}
 	
@@ -114,7 +114,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 		fElements= collectFiles(new ItemIterator(items));
 		
-		setText(SearchMessages.getString("ReplaceAction.label_all")); //$NON-NLS-1$
+		setText(SearchMessages.ReplaceAction_label_all); 
 		setEnabled(!(fElements.length == 0));
 	}
 
@@ -122,7 +122,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	public ReplaceAction2(FileSearchPage page, IStructuredSelection selection) {
 		fSite= page.getSite();
 		fPage= page;
-		setText(SearchMessages.getString("ReplaceAction.label_selected")); //$NON-NLS-1$
+		setText(SearchMessages.ReplaceAction_label_selected); 
 		fElements= collectFiles(selection.iterator());
 		setEnabled(!(fElements.length == 0));
 	}
@@ -177,7 +177,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(readOnlyFiles, fSite.getShell());
 		if (!status.isOK()) {
 			if (status.getSeverity() != IStatus.CANCEL) {
-				ErrorDialog.openError(fSite.getShell(), SearchMessages.getString("ReplaceAction2.error_validate.title"), SearchMessages.getString("ReplaceAction2.error_validate.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(fSite.getShell(), SearchMessages.ReplaceAction2_error_validate_title, SearchMessages.ReplaceAction2_error_validate_message, status); 
 			}
 			return false;
 		}
@@ -213,7 +213,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 					});
 					return true;
 				} catch (InvocationTargetException e) {
-					ExceptionHandler.handle(e, fSite.getShell(), SearchMessages.getString("ReplaceAction.label"), SearchMessages.getString("ReplaceAction.research.error")); //$NON-NLS-1$ //$NON-NLS-2$
+					ExceptionHandler.handle(e, fSite.getShell(), SearchMessages.ReplaceAction_label, SearchMessages.ReplaceAction_research_error); 
 				} catch (InterruptedException e) {
 					// canceled
 				}
@@ -234,7 +234,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	}
 
 	private void research(IProgressMonitor monitor, List outOfDateEntries, FileSearchQuery operation) throws CoreException {
-		String message= SearchMessages.getString("ReplaceAction2.statusMessage"); //$NON-NLS-1$
+		String message= SearchMessages.ReplaceAction2_statusMessage; 
 		MultiStatus multiStatus= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, message, null);
 		for (Iterator elements = outOfDateEntries.iterator(); elements.hasNext();) {
 			IFile entry = (IFile) elements.next();

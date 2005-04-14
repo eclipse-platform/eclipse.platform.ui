@@ -18,8 +18,8 @@ import org.eclipse.search.ui.NewSearchUI;
 class RemoveAllSearchesAction extends Action {
 
 	public RemoveAllSearchesAction() {
-		super(SearchMessages.getString("RemoveAllSearchesAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("RemoveAllSearchesAction.tooltip")); //$NON-NLS-1$
+		super(SearchMessages.RemoveAllSearchesAction_label); 
+		setToolTipText(SearchMessages.RemoveAllSearchesAction_tooltip); 
 	}	
 	
 	public void run() {

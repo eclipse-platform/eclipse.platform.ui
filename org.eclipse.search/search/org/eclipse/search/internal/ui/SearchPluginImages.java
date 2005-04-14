@@ -33,7 +33,7 @@ public class SearchPluginImages {
 		try {
 			fgIconLocation= new URL(SearchPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
 		} catch (MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.incorrectIconLocation.message")); //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.Search_Error_incorrectIconLocation_message); 
 		}
 	}
 
@@ -96,7 +96,7 @@ public class SearchPluginImages {
 		try {
 			return new URL(fgIconLocation, buffer.toString());
 		} catch (MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.incorrectIconLocation.message")); //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.Search_Error_incorrectIconLocation_message); 
 			return null;
 		}
 	}

@@ -17,9 +17,9 @@ class ShowPreviousResultAction extends Action {
 	private SearchResultViewer fViewer;
 
 	public ShowPreviousResultAction(SearchResultViewer viewer) {
-		super(SearchMessages.getString("SearchResultView.showPrev.text")); //$NON-NLS-1$
+		super(SearchMessages.SearchResultView_showPrev_text); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_PREV);
-		setToolTipText(SearchMessages.getString("SearchResultView.showPrev.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.SearchResultView_showPrev_tooltip); 
 		setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
 		fViewer= viewer;
 	}

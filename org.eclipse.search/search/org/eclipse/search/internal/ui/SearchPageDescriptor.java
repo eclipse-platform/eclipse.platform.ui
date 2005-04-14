@@ -146,7 +146,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 			iconURL = new URL(iconURL, imageName);
 			return ImageDescriptor.createFromURL(iconURL);
 		} catch (MalformedURLException e) {
-			ExceptionHandler.log(e, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
+			ExceptionHandler.log(e, SearchMessages.Search_Error_createSearchPage_message); 
 		}
 		return null;
 	}
@@ -210,7 +210,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 			try {
 				position= Integer.parseInt(str);
 		} catch (NumberFormatException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.Search_Error_createSearchPage_message); 
 			// position is Integer.MAX_VALUE;
 		}
 		return position;

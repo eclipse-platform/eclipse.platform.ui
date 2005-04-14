@@ -74,7 +74,7 @@ public class MatchLocator {
 			charCounter+= lineLength + eolStrLength;
 			lineCounter++;
 			if (monitor.isCanceled())
-				throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+				throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
 		}
 	}
 	
@@ -116,7 +116,7 @@ public class MatchLocator {
 			}
 			if (k++ == 20) {
 				if (progressMonitor.isCanceled()) {
-					throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
 				}
 				k= 0;
 			}

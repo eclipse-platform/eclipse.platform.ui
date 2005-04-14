@@ -34,8 +34,8 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	private SearchView fSearchView;
 	
 	public SearchDropDownAction(SearchView searchView) {
-		setText(SearchMessages.getString("SearchDropDownAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("SearchDropDownAction.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.SearchDropDownAction_label); 
+		setToolTipText(SearchMessages.SearchDropDownAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
 		fSearchView= searchView;
 		setMenuCreator(this);
@@ -69,7 +69,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 			String tooltip= search.getTooltip();
 			ImageDescriptor image= search.getImageDescriptor();
 			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
-				label= label+ SearchMessages.getString("SearchDropDownAction.running.message"); //$NON-NLS-1$
+				label= label+ SearchMessages.SearchDropDownAction_running_message; 
 			ShowSearchAction action= new ShowSearchAction(fSearchView, search, label, image, tooltip );
 			if (searches[i].equals(currentQuery))
 				action.setChecked(true);

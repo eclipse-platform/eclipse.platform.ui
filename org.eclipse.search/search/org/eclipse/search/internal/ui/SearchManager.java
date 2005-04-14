@@ -87,7 +87,7 @@ public class SearchManager implements IResourceChangeListener {
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation(null) {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(SearchMessages.getString("SearchManager.updating"), 100); //$NON-NLS-1$
+				monitor.beginTask(SearchMessages.SearchManager_updating, 100); 
 				SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 				monitor.worked(100);
 				monitor.done();
@@ -98,7 +98,7 @@ public class SearchManager implements IResourceChangeListener {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 			dialog.run(true, true, op);
 		} catch (InvocationTargetException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		} finally {
@@ -137,7 +137,7 @@ public class SearchManager implements IResourceChangeListener {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 			dialog.run(true, true, op);
 		} catch (InvocationTargetException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.switchSearch.title"), SearchMessages.getString("Search.Error.switchSearch.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_switchSearch_title, SearchMessages.Search_Error_switchSearch_message); 
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		} finally {
@@ -154,13 +154,13 @@ public class SearchManager implements IResourceChangeListener {
 				
 		final Search previousSearch= fCurrentSearch;
 		fCurrentSearch= search;
-		monitor.beginTask(SearchMessages.getString("SearchManager.updating"), getCurrentResults().size() + 20); //$NON-NLS-1$
+		monitor.beginTask(SearchMessages.SearchManager_updating, getCurrentResults().size() + 20); 
 		
 		// remove current search markers
 		try {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 		}
 		monitor.worked(10);
 
@@ -185,7 +185,7 @@ public class SearchManager implements IResourceChangeListener {
 				try {
 					newMarker= entry.getResource().createMarker(entry.getMarkerType());
 				} catch (CoreException ex) {
-					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createMarker.title"), SearchMessages.getString("Search.Error.createMarker.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					ExceptionHandler.handle(ex, SearchMessages.Search_Error_createMarker_title, SearchMessages.Search_Error_createMarker_message); 
 					continue;
 				}
 				try {
@@ -196,7 +196,7 @@ public class SearchManager implements IResourceChangeListener {
 						continue;
 					}
 				} catch (CoreException ex) {
-					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.markerAttributeAccess.title"), SearchMessages.getString("Search.Error.markerAttributeAccess.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					ExceptionHandler.handle(ex, SearchMessages.Search_Error_markerAttributeAccess_title, SearchMessages.Search_Error_markerAttributeAccess_message); 
 				}
 				entry.add(newMarker);
 			}
@@ -212,17 +212,17 @@ public class SearchManager implements IResourceChangeListener {
 		Display display= getDisplay();
 		
 		if (filesChanged)
-			warningMessage= SearchMessages.getString("SearchManager.resourceChanged"); //$NON-NLS-1$
+			warningMessage= SearchMessages.SearchManager_resourceChanged; 
 		if (filesDeleted) {
 			if (warningMessage == null)
 				warningMessage= ""; //$NON-NLS-1$
 			else
 				warningMessage += "\n";			 //$NON-NLS-1$
-			warningMessage += SearchMessages.getString("SearchManager.resourceDeleted"); //$NON-NLS-1$
+			warningMessage += SearchMessages.SearchManager_resourceDeleted; 
 		}
 		if (warningMessage != null) {
 			if (display != null && !display.isDisposed()) {
-				final String warningTitle= SearchMessages.getString("SearchManager.resourceChangedWarning"); //$NON-NLS-1$
+				final String warningTitle= SearchMessages.SearchManager_resourceChangedWarning; 
 				final String warningMsg= warningMessage;
 				display.syncExec(new Runnable() {
 					public void run() {
@@ -272,7 +272,7 @@ public class SearchManager implements IResourceChangeListener {
 		try {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 			fIsRemoveAll= false;
 		}
 	}
@@ -311,7 +311,7 @@ public class SearchManager implements IResourceChangeListener {
 		try {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 		}
 	}
 

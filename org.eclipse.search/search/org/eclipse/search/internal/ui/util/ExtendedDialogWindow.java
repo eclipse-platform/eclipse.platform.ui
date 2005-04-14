@@ -347,9 +347,9 @@ public abstract class ExtendedDialogWindow extends Dialog implements IRunnableCo
 		MessageDialog result= 
 			new MessageDialog(
 				getShell(),
-				SearchMessages.getString("SearchDialogClosingDialog.title"),  //$NON-NLS-1$
+				SearchMessages.SearchDialogClosingDialog_title,  
 				null, 
-				SearchMessages.getString("SearchDialogClosingDialog.message"),  //$NON-NLS-1$
+				SearchMessages.SearchDialogClosingDialog_message,  
 				MessageDialog.QUESTION, 
 				new String[] {IDialogConstants.OK_LABEL}, 
 				0); 

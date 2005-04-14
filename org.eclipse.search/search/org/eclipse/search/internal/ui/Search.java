@@ -143,7 +143,7 @@ public class Search extends Object {
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, fOperation);
 		} catch (InvocationTargetException ex) {
-			ExceptionHandler.handle(ex, shell, SearchMessages.getString("Search.Error.search.title"), SearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, shell, SearchMessages.Search_Error_search_title, SearchMessages.Search_Error_search_message); 
 		} catch(InterruptedException e) {
 		} finally {
 			SearchPlugin.setAutoBuilding(isAutoBuilding);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,56 +10,302 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class SearchMessages {
+public final class SearchMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= SearchMessages.class.getName();
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME = "org.eclipse.search.internal.ui.SearchMessages";//$NON-NLS-1$
 
 	private SearchMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
+	public static String SearchDialog_title;
+	public static String SearchDialog_searchAction;
+	public static String SearchDialog_replaceAction;
+	public static String SearchDialog_customize;
+	public static String SearchDialog_noSearchExtension;
+	public static String SearchPageSelectionDialog_title;
+	public static String SearchPageSelectionDialog_message;
+	public static String SearchManager_resourceChangedWarning;
+	public static String SearchManager_resourceChanged;
+	public static String SearchManager_resourceDeleted;
+	public static String SearchManager_updating;
+	public static String SearchResultView_title;
+	public static String SearchResultView_titleWithDescription;
+	public static String SearchResultView_matches;
+	public static String SearchResultView_removed_resource;
+	public static String SearchResultView_removeAllResults_text;
+	public static String SearchResultView_removeAllResults_tooltip;
+	public static String SearchResultView_removeAllSearches_text;
+	public static String SearchResultView_removeAllSearches_tooltip;
+	public static String SearchResultView_searchAgain_text;
+	public static String SearchResultView_searchAgain_tooltip;
+	public static String SearchResultView_previousSearches_text;
+	public static String SearchResultView_previousSearches_tooltip;
+	public static String SearchResultView_removeEntry_text;
+	public static String SearchResultView_removeEntry_tooltip;
+	public static String SearchResultView_removeEntries_text;
+	public static String SearchResultView_removeEntries_tooltip;
+	public static String SearchResultView_removeMatch_text;
+	public static String SearchResultView_removeMatch_tooltip;
+	public static String SearchResultView_gotoMarker_text;
+	public static String SearchResultView_gotoMarker_tooltip;
+	public static String SearchResultView_showNext_text;
+	public static String SearchResultView_showNext_tooltip;
+	public static String SearchResultView_showPrev_text;
+	public static String SearchResultView_showPrev_tooltip;
+	public static String SearchDialogClosingDialog_title;
+	public static String SearchDialogClosingDialog_message;
+	public static String SearchDialog_error_pageCreationFailed;
+	public static String SearchPlugin_internal_error;
+	public static String Search_Error_search_title;
+	public static String Search_Error_search_message;
+	public static String Search_Error_setDescription_title;
+	public static String Search_Error_setDescription_message;
+	public static String Search_Error_openResultView_title;
+	public static String Search_Error_openResultView_message;
+	public static String Search_Error_deleteMarkers_title;
+	public static String Search_Error_deleteMarkers_message;
+	public static String Search_Error_createMarker_title;
+	public static String Search_Error_createMarker_message;
+	public static String Search_Error_markerAttributeAccess_title;
+	public static String Search_Error_markerAttributeAccess_message;
+	public static String Search_Error_switchSearch_title;
+	public static String Search_Error_switchSearch_message;
+	public static String Search_Error_createSearchPage_title;
+	public static String Search_Error_createSearchPage_message;
+	public static String Search_Error_createSorter_title;
+	public static String Search_Error_createSorter_message;
+	public static String Search_Error_incorrectIconLocation_message;
+	public static String SearchPage_containingText_text;
+	public static String SearchPage_containingText_hint;
+	public static String SearchPage_browse;
+	public static String SearchPage_fileNamePatterns_text;
+	public static String SearchPage_fileNamePatterns_hint;
+	public static String SearchPage_caseSensitive;
+	public static String SearchPage_regularExpression;
+	public static String TextSearchEngine_scanning;
+	public static String TextSearchEngine_statusMessage;
+	public static String TextSearchPage_searchDerived_label;
+	public static String TextSearchVisitor_scanning;
+	public static String TextSearchVisitor_error;
+	public static String TextSearchVisitor_canceled;
+	public static String TextSearchVisitor_unsupportedcharset;
+	public static String TextSearchVisitor_illegalcharset;
+	public static String SortDropDownAction_label;
+	public static String SortDropDownAction_tooltip;
+	public static String ShowOtherSearchesAction_label;
+	public static String ShowOtherSearchesAction_tooltip;
+	public static String OtherSearchesDialog_title;
+	public static String OtherSearchesDialog_message;
+	public static String PreviousSearchesDialog_title;
+	public static String PreviousSearchesDialog_message;
+	public static String TextSearchPage_replace_searchproblems_title;
+	public static String TextSearchPage_replace_searchproblems_message;
+	public static String FileSearchQuery_label;
+	public static String FileSearchQuery_pluralPattern;
+	public static String FileSearchQuery_singularLabel;
+	public static String FileSearchQuery_singularLabel_fileNameSearch;
+	public static String FileSearchQuery_pluralPattern_fileNameSearch;
+	public static String OpenSearchDialogAction_label;
+	public static String OpenSearchDialogAction_tooltip;
+	public static String FileTypeEditor_typeDelimiter;
+	public static String FileLabelProvider_dashSeparated;
+	public static String FileLabelProvider_count_format;
+	public static String FileLabelProvider_removed_resource_label;
+	public static String FileSearchPage_sort_name_label;
+	public static String FileSearchPage_sort_path_label;
+	public static String FileSearchPage_error_marker;
+	public static String FileSearchPage_sort_by_label;
+	public static String FileSearchPage_limited_format;
+	public static String TypesFiltering_title;
+	public static String TypesFiltering_message;
+	public static String TypesFiltering_otherExtensions;
+	public static String TypesFiltering_selectAll;
+	public static String TypesFiltering_deselectAll;
+	public static String WorkspaceScope;
+	public static String WorkingSetScope;
+	public static String SelectionScope;
+	public static String EnclosingProjectsScope;
+	public static String EnclosingProjectScope;
+	public static String ScopePart_group_text;
+	public static String ScopePart_selectedResourcesScope_text;
+	public static String ScopePart_enclosingProjectsScope_text;
+	public static String ScopePart_workingSetChooseButton_text;
+	public static String ScopePart_workingSetText_accessible_label;
+	public static String ScopePart_workingSetScope_text;
+	public static String ScopePart_workspaceScope_text;
+	public static String ScopePart_workingSetConcatenation;
+	public static String CopyToClipboardAction_label;
+	public static String CopyToClipboardAction_tooltip;
+	public static String CopyToClipboardAction_error_title;
+	public static String CopyToClipboardAction_error_message;
+	public static String ExceptionDialog_seeErrorLogMessage;
+	public static String SearchPreferencePage_emphasizePotentialMatches;
+	public static String SearchPreferencePage_potentialMatchFgColor;
+	public static String SearchPreferencePage_reuseEditor;
+	public static String SearchPreferencePage_limit_label;
+	public static String SearchPreferencePage_limit_error;
+	public static String SearchPreferencePage_bringToFront;
+	public static String SearchPreferencePage_defaultPerspective;
+	public static String SearchPreferencePage_defaultPerspective_none;
+	public static String SearchPreferencePage_ignorePotentialMatches;
+	public static String ReplaceAction_label_all;
+	public static String ReplaceAction_label_selected;
+	public static String ReplaceAction2_error_validate_title;
+	public static String ReplaceAction2_error_validate_message;
+	public static String ReplaceDialog_replace_label;
+	public static String ReplaceDialog_with_label;
+	public static String ReplaceDialog_replace;
+	public static String ReplaceDialog_replaceAllInFile;
+	public static String ReplaceDialog_replaceAll;
+	public static String ReplaceDialog_skip;
+	public static String ReplaceDialog2_regexError_format;
+	public static String ReplaceDialog_skipFile;
+	public static String ReplaceDialog_dialog_title;
+	public static String ReplaceDialog_error_unable_to_open_text_editor;
+	public static String ReplaceDialog_error_unable_to_replace;
+	public static String SelectAllAction_label;
+	public static String SelectAllAction_tooltip;
+	public static String RemovePotentialMatchesAction_removePotentialMatch_text;
+	public static String RemovePotentialMatchesAction_removePotentialMatch_tooltip;
+	public static String RemovePotentialMatchesAction_removePotentialMatches_text;
+	public static String RemovePotentialMatchesAction_removePotentialMatches_tooltip;
+	public static String RemovePotentialMatchesAction_dialog_title;
+	public static String RemovePotentialMatchesAction_dialog_message;
+	public static String OpenWithMenu_label;
+	public static String ReadOnlyDialog_skipFile;
+	public static String ReadOnlyDialog_skipAll;
+	public static String ReadOnlyDialog_message;
+	public static String ReplaceDialog_task_replace;
+	public static String ReplaceDialog_task_replaceInFile;
+	public static String ReplaceDialog_task_replace_replaceAll;
+	public static String ReplaceDialog2_error_disableAutobuild;
+	public static String ReplaceDialog2_error_restoreAutobuild;
+	public static String ReplaceAction_label;
+	public static String ReplaceAction_research_error;
+	public static String ReplaceAction2_statusMessage;
+	public static String SearchAgainConfirmationDialog_outofsync_message;
+	public static String SearchAgainConfirmationDialog_outofsync_label;
+	public static String SearchAgainConfirmationDialog_stale_message;
+	public static String SearchAgainConfirmationDialog_stale_label;
+	public static String SearchAgainConfirmationDialog_title;
+	public static String ReplaceDialog_isRegex_label;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslash_bslash_bslash;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslash_bslash_bslash;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslash0;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslash0;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashx;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashx;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashu;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashu;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslasht;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslasht;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashn;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashn;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashr;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashr;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashf;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashf;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslasha;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslasha;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashe;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashe;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashc;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashc;
+	public static String FindReplace_regExContentAssist_displayString__;
+	public static String FindReplace_regExContentAssist_additionalInfo__;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashd;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashd;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashD;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashD;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashs;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashs;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashS;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashS;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashw;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashw;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashW;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashW;
+	public static String FindReplace_regExContentAssist_displayString__question;
+	public static String FindReplace_regExContentAssist_additionalInfo__question;
+	public static String FindReplace_regExContentAssist_displayString__star;
+	public static String FindReplace_regExContentAssist_additionalInfo__star;
+	public static String FindReplace_regExContentAssist_displayString__plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__plus;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_rbrace;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace;
+	public static String FindReplace_regExContentAssist_displayString__question_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__question_question;
+	public static String FindReplace_regExContentAssist_displayString__star_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__star_question;
+	public static String FindReplace_regExContentAssist_displayString__plus_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__plus_question;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_rbrace_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_question;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_question;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_question;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_question;
+	public static String FindReplace_regExContentAssist_displayString__question_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__question_plus;
+	public static String FindReplace_regExContentAssist_displayString__star_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__star_plus;
+	public static String FindReplace_regExContentAssist_displayString__plus_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__plus_plus;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_rbrace_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_plus;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_plus;
+	public static String FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_plus;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_plus;
+	public static String FindReplace_regExContentAssist_displayString_UV;
+	public static String FindReplace_regExContentAssist_additionalInfo_UV;
+	public static String FindReplace_regExContentAssist_displayString_U_barV;
+	public static String FindReplace_regExContentAssist_additionalInfo_U_barV;
+	public static String FindReplace_regExContentAssist_displayString__lparenU_rparen;
+	public static String FindReplace_regExContentAssist_additionalInfo__lparenU_rparen;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashi;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashi;
+	public static String FindReplace_regExContentAssist_displayString_$i;
+	public static String FindReplace_regExContentAssist_additionalInfo_$i;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslash;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslash;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashQ;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashQ;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashE;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashE;
+	public static String FindReplace_regExContentAssist_displayString__lbracketecq_rbracket;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracketecq_rbracket;
+	public static String FindReplace_regExContentAssist_displayString__lbracket_powerecq_rbracket;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbracket_powerecq_rbracket;
+	public static String FindReplace_regExContentAssist_displayString__lbrackete_q_rbracket;
+	public static String FindReplace_regExContentAssist_additionalInfo__lbrackete_q_rbracket;
+	public static String FindReplace_regExContentAssist_displayString__amp_amp;
+	public static String FindReplace_regExContentAssist_additionalInfo__amp_amp;
+	public static String FindReplace_regExContentAssist_displayString__power;
+	public static String FindReplace_regExContentAssist_additionalInfo__power;
+	public static String FindReplace_regExContentAssist_displayString_$;
+	public static String FindReplace_regExContentAssist_additionalInfo_$;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashb;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashb;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashB;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashB;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashA;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashA;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashG;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashG;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashZ;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashZ;
+	public static String FindReplace_regExContentAssist_displayString__bslash_bslashz;
+	public static String FindReplace_regExContentAssist_additionalInfo__bslash_bslashz;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
-	}
-
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object[] args) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		return MessageFormat.format(format, args);
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
 	}
 }

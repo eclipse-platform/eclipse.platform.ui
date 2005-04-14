@@ -49,10 +49,10 @@ class SorterDescriptor {
 		try {
 			return (ViewerSorter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message); 
 			return null;
 		} catch (ClassCastException ex) {
-			ExceptionHandler.displayMessageDialog(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.displayMessageDialog(ex, SearchMessages.Search_Error_createSorter_title, SearchMessages.Search_Error_createSorter_message); 
 			return null;
 		}
 	}
@@ -77,7 +77,7 @@ class SorterDescriptor {
 		try {
 			url= new URL(fElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL(), imageName);
 		} catch (java.net.MalformedURLException ex) {
-			ExceptionHandler.log(ex, SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-1$
+			ExceptionHandler.log(ex, SearchMessages.Search_Error_createSorter_message); 
 			return null;
 		}
 		return ImageDescriptor.createFromURL(url);

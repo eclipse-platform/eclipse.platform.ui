@@ -28,8 +28,8 @@ class SearchAgainAction extends Action {
 	private SearchView fView;
 	
 	public SearchAgainAction(SearchView view) {
-		setText(SearchMessages.getString("SearchAgainAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("SearchAgainAction.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.SearchAgainAction_label); 
+		setToolTipText(SearchMessages.SearchAgainAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_TOOL, SearchPluginImages.IMG_TOOL_SEARCH);
 		fView= view;	
 	}
@@ -47,7 +47,7 @@ class SearchAgainAction extends Action {
 					ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);
 					IStatus status= NewSearchUI.runQueryInForeground(pmd, query);
 					if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
-						ErrorDialog.openError(shell, SearchMessages.getString("SearchAgainAction.Error.title"), SearchMessages.getString("SearchAgainAction.Error.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+						ErrorDialog.openError(shell, SearchMessages.SearchAgainAction_Error_title, SearchMessages.SearchAgainAction_Error_message, status); 
 					}
 				}
 			}

@@ -563,9 +563,9 @@ public class SearchResultViewer extends TableViewer {
 		String title;
 		if (hasCurrentSearch) {
 			String description= SearchManager.getDefault().getCurrentSearch().getFullDescription();
-			title= SearchMessages.getFormattedString("SearchResultView.titleWithDescription", description); //$NON-NLS-1$
+			title= Messages.format(SearchMessages.SearchResultView_titleWithDescription, description); 
 		} else
-			title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
+			title= SearchMessages.SearchResultView_title; 
 		if (title == null || !title.equals(fOuterPart.getContentDescription()))
 			fOuterPart.setContentDescription(title);
 	}
@@ -574,7 +574,7 @@ public class SearchResultViewer extends TableViewer {
 	 * Clear the title
 	 */
 	protected void clearTitle() {
-		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
+		String title= SearchMessages.SearchResultView_title; 
 		if (!title.equals(fOuterPart.getContentDescription()))
 			fOuterPart.setContentDescription(title);
 	}

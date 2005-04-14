@@ -73,6 +73,7 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -197,7 +198,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}
 		
 		if (!status.isOK()) {
-			ErrorDialog.openError(getShell(), SearchMessages.getString("TextSearchPage.replace.searchproblems.title"), SearchMessages.getString("TextSearchPage.replace.searchproblems.message"), status); //$NON-NLS-1$ //$NON-NLS-2$
+			ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_searchproblems_message, status); 
 		}
 		
 		
@@ -237,7 +238,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
-				String desc= SearchMessages.getFormattedString("WorkingSetScope", ScopePart.toString(workingSets)); //$NON-NLS-1$
+				String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets)); 
 				scope= SearchScope.newSearchScope(desc, workingSets);
 		}		
 		NewSearchUI.activateSearchResultView();
@@ -391,7 +392,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 			statusMessage(false, ""); //$NON-NLS-1$
 		} else {
-			statusMessage(false, SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
+			statusMessage(false, SearchMessages.SearchPage_containingText_hint); 
 		}
 		return true;
 	}
@@ -401,7 +402,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 		// Info text		
 		Label label= new Label(group, SWT.LEAD);
-		label.setText(SearchMessages.getString("SearchPage.containingText.text")); //$NON-NLS-1$
+		label.setText(SearchMessages.SearchPage_containingText_text); 
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		label.setFont(group.getFont());
 
@@ -427,7 +428,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fPattern.setLayoutData(data);
 		
 		fIgnoreCase= new Button(group, SWT.CHECK);
-		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
+		fIgnoreCase.setText(SearchMessages.SearchPage_caseSensitive); 
 		fIgnoreCase.setSelection(!fIsCaseSensitive);
 		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -442,11 +443,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fStatusLabel.setFont(group.getFont());
 		fStatusLabel.setAlignment(SWT.LEFT);
-		fStatusLabel.setText(SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
+		fStatusLabel.setText(SearchMessages.SearchPage_containingText_hint); 
 
 		// RegEx checkbox
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
-		fIsRegExCheckbox.setText(SearchMessages.getString("SearchPage.regularExpression")); //$NON-NLS-1$
+		fIsRegExCheckbox.setText(SearchMessages.SearchPage_regularExpression); 
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 		setContentAssistsEnablement(fIsRegExSearch);
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
@@ -571,7 +572,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		
 		// Line with label, combo and button
 		Label label= new Label(group, SWT.LEAD);
-		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.text")); //$NON-NLS-1$
+		label.setText(SearchMessages.SearchPage_fileNamePatterns_text); 
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		label.setFont(group.getFont());
 		
@@ -587,7 +588,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fExtensions.setFont(group.getFont());
 		
 		Button button= new Button(group, SWT.PUSH);
-		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
+		button.setText(SearchMessages.SearchPage_browse); 
 		GridData gridData= new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1);
 		gridData.widthHint= SWTUtil.getButtonWidthHint(button);	
 		button.setLayoutData(gridData);
@@ -598,12 +599,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		
 		// Text line which explains the special characters
 		Label description= new Label(group, SWT.LEAD);
-		description.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
+		description.setText(SearchMessages.SearchPage_fileNamePatterns_hint); 
 		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		description.setFont(group.getFont());
 		
 		fSearchDerivedCheckbox= new Button(group, SWT.CHECK);
-		fSearchDerivedCheckbox.setText(SearchMessages.getString("TextSearchPage.searchDerived.label")); //$NON-NLS-1$
+		fSearchDerivedCheckbox.setText(SearchMessages.TextSearchPage_searchDerived_label); 
 		
 		fSearchDerivedCheckbox.setSelection(fSearchDerived);
 		fSearchDerivedCheckbox.addSelectionListener(new SelectionAdapter() {
@@ -669,13 +670,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (isProjectScope) {
 			int elementCount= resources.size();
 			if (elementCount > 1)
-				name= SearchMessages.getFormattedString("EnclosingProjectsScope", firstProjectName); //$NON-NLS-1$
+				name= Messages.format(SearchMessages.EnclosingProjectsScope, firstProjectName); 
 			else if (elementCount == 1)
-				name= SearchMessages.getFormattedString("EnclosingProjectScope", firstProjectName); //$NON-NLS-1$
+				name= Messages.format(SearchMessages.EnclosingProjectScope, firstProjectName); 
 			else 
-				name= SearchMessages.getFormattedString("EnclosingProjectScope", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				name= Messages.format(SearchMessages.EnclosingProjectScope, "");  //$NON-NLS-1$
 		} else {
-			name= SearchMessages.getString("SelectionScope"); //$NON-NLS-1$
+			name= SearchMessages.SelectionScope; 
 		}
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return SearchScope.newSearchScope(name, arr);

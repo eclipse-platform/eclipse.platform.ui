@@ -34,12 +34,12 @@ class RemoveResultAction extends Action {
 	public RemoveResultAction(ISelectionProvider provider, boolean stringsDependOnMatchCount) {
 		fSelectionProvider= provider;
 		if (!stringsDependOnMatchCount || usePluralLabel()) {
-			setText(SearchMessages.getString("SearchResultView.removeEntries.text")); //$NON-NLS-1$
-			setToolTipText(SearchMessages.getString("SearchResultView.removeEntries.tooltip")); //$NON-NLS-1$
+			setText(SearchMessages.SearchResultView_removeEntries_text); 
+			setToolTipText(SearchMessages.SearchResultView_removeEntries_tooltip); 
 		}
 		else {
-			setText(SearchMessages.getString("SearchResultView.removeEntry.text")); //$NON-NLS-1$
-			setToolTipText(SearchMessages.getString("SearchResultView.removeEntry.tooltip")); //$NON-NLS-1$
+			setText(SearchMessages.SearchResultView_removeEntry_text); 
+			setToolTipText(SearchMessages.SearchResultView_removeEntry_tooltip); 
 		}
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
@@ -52,7 +52,7 @@ class RemoveResultAction extends Action {
 					try {					
 						SearchPlugin.getWorkspace().deleteMarkers(markers);
 					} catch (CoreException ex) {
-						ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+						ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 					}
 				}
 			});

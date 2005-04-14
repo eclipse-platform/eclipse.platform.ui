@@ -102,33 +102,33 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	protected void createFieldEditors() {
 		BooleanFieldEditor boolEditor= new BooleanFieldEditor(
 			REUSE_EDITOR,
-			SearchMessages.getString("SearchPreferencePage.reuseEditor"), //$NON-NLS-1$
+			SearchMessages.SearchPreferencePage_reuseEditor, 
 			getFieldEditorParent()
         );
 		addField(boolEditor);
 
 		boolEditor= new BooleanFieldEditor(
 				BRING_VIEW_TO_FRONT,
-				SearchMessages.getString("SearchPreferencePage.bringToFront"), //$NON-NLS-1$
+				SearchMessages.SearchPreferencePage_bringToFront, 
 				getFieldEditorParent()
 				);
 		addField(boolEditor);
 		
 		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
-			SearchMessages.getString("SearchPreferencePage.ignorePotentialMatches"), //$NON-NLS-1$
+			SearchMessages.SearchPreferencePage_ignorePotentialMatches, 
 			getFieldEditorParent());
 		addField(fIgnorePotentialMatchesCheckbox);
 
 		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
-			SearchMessages.getString("SearchPreferencePage.emphasizePotentialMatches"), //$NON-NLS-1$
+			SearchMessages.SearchPreferencePage_emphasizePotentialMatches, 
 			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
 
 		fColorEditor= new ColorFieldEditor(
 			POTENTIAL_MATCH_FG_COLOR,
-			SearchMessages.getString("SearchPreferencePage.potentialMatchFgColor"), //$NON-NLS-1$
+			SearchMessages.SearchPreferencePage_potentialMatchFgColor, 
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
@@ -142,7 +142,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
 		ComboFieldEditor comboEditor= new ComboFieldEditor(
 			DEFAULT_PERSPECTIVE,
-			SearchMessages.getString("SearchPreferencePage.defaultPerspective"), //$NON-NLS-1$
+			SearchMessages.SearchPreferencePage_defaultPerspective, 
 			perspectiveNamesAndIds,
 			getFieldEditorParent());
 		addField(comboEditor);
@@ -160,7 +160,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		parent.setLayoutData(gd);
 		
 		fLimitTable= new Button(parent, SWT.CHECK);
-		fLimitTable.setText(SearchMessages.getString("SearchPreferencePage.limit.label")); //$NON-NLS-1$
+		fLimitTable.setText(SearchMessages.SearchPreferencePage_limit_label); 
 		fLimitTable.setLayoutData(new GridData());
 		
 		fLimitTableValue= new Text(parent, SWT.BORDER);
@@ -194,7 +194,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			
 		}
 		if (fLimitTable.getSelection() && value <= 0)
-			setErrorMessage(SearchMessages.getString("SearchPreferencePage.limit.error")); //$NON-NLS-1$
+			setErrorMessage(SearchMessages.SearchPreferencePage_limit_error); 
 		else 
 			setErrorMessage(null);
 	}
@@ -265,7 +265,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		Arrays.sort(perspectiveDescriptors, new PerspectiveDescriptorComparator());
 		
 		String[][] table = new String[perspectiveDescriptors.length + 1][2];
-		table[0][0] = SearchMessages.getString("SearchPreferencePage.defaultPerspective.none"); //$NON-NLS-1$;
+		table[0][0] = SearchMessages.SearchPreferencePage_defaultPerspective_none; 
 		table[0][1] = NO_DEFAULT_PERSPECTIVE;
 		for (int i = 0; i < perspectiveDescriptors.length; i++) {
 			table[i + 1][0] = perspectiveDescriptors[i].getLabel();

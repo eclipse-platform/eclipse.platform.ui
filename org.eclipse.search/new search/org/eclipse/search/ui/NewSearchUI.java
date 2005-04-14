@@ -70,7 +70,7 @@ public class NewSearchUI {
 				if (!status.isOK())
 					SearchPlugin.log(status);
 				if (status.getSeverity() == IStatus.ERROR) {
-					ErrorDialog.openError(SearchPlugin.getActiveWorkbenchShell(), SearchMessages.getString("NewSearchUI.error.title"), SearchMessages.getString("NewSearchUI.error.label"), status); //$NON-NLS-1$ //$NON-NLS-2$
+					ErrorDialog.openError(SearchPlugin.getActiveWorkbenchShell(), SearchMessages.NewSearchUI_error_title, SearchMessages.NewSearchUI_error_label, status); 
 				}
 			}
 		}

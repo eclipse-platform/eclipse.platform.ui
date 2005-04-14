@@ -15,9 +15,9 @@ import org.eclipse.jface.action.Action;
 class RemoveAllResultsAction extends Action {
 
 	public RemoveAllResultsAction() {
-		super(SearchMessages.getString("SearchResultView.removeAllResults.text")); //$NON-NLS-1$
+		super(SearchMessages.SearchResultView_removeAllResults_text); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
-		setToolTipText(SearchMessages.getString("SearchResultView.removeAllResults.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.SearchResultView_removeAllResults_tooltip); 
 	}
 	
 	public void run() {

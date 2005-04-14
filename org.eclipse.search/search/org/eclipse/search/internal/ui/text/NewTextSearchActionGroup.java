@@ -90,7 +90,7 @@ class NewTextSearchActionGroup extends ActionGroup {
 		menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenAction);
 	
 		// Create menu
-		IMenuManager submenu= new MenuManager(SearchMessages.getString("OpenWithMenu.label")); //$NON-NLS-1$
+		IMenuManager submenu= new MenuManager(SearchMessages.OpenWithMenu_label); 
 		submenu.add(new OpenWithMenu(fPage, (IAdaptable)o));
 	
 		// Add the submenu.

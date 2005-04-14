@@ -88,6 +88,7 @@ import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -184,7 +185,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		try {
 			wasAutobuild= disableAutobuild();
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog2.error.disableAutobuild")); //$NON-NLS-1$
+			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.ReplaceDialog2_error_disableAutobuild); 
 		}
 		try {
 			return super.open();
@@ -193,7 +194,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				try {
 					restoreAutobuild();
 				} catch (CoreException e1) {
-					ExceptionHandler.handle(e1, getShell(), getDialogTitle(), SearchMessages.getString("ReplaceDialog2.error.restoreAutobuild")); //$NON-NLS-1$
+					ExceptionHandler.handle(e1, getShell(), getDialogTitle(), SearchMessages.ReplaceDialog2_error_restoreAutobuild); 
 					return CANCEL;
 				}
 		}
@@ -238,7 +239,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		FileSearchQuery query= getQuery();
 		
 		Label label= new Label(result, SWT.NONE);
-		label.setText(SearchMessages.getString("ReplaceDialog.replace_label")); //$NON-NLS-1$
+		label.setText(SearchMessages.ReplaceDialog_replace_label); 
 		Text clabel= new Text(result, SWT.BORDER | SWT.READ_ONLY);
 		clabel.setText(query.getSearchString());
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -247,7 +248,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		
 		label= new Label(result, SWT.NONE);
-		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
+		label.setText(SearchMessages.ReplaceDialog_with_label); 
 		fTextField= new Combo(result, SWT.DROP_DOWN);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
@@ -265,7 +266,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
-		fReplaceWithRegex.setText(SearchMessages.getString("ReplaceDialog.isRegex.label"));//$NON-NLS-1$
+		fReplaceWithRegex.setText(SearchMessages.ReplaceDialog_isRegex_label);
 		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setContentAssistsEnablement(fReplaceWithRegex.getSelection());
@@ -303,15 +304,15 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		fReplaceButton= createActionButton(composite, REPLACE, SearchMessages.getString("ReplaceDialog.replace"), true); //$NON-NLS-1$
-		fReplaceAllInFileButton= createActionButton(composite, REPLACE_ALL_IN_FILE, SearchMessages.getString("ReplaceDialog.replaceAllInFile"), false); //$NON-NLS-1$
+		fReplaceButton= createActionButton(composite, REPLACE, SearchMessages.ReplaceDialog_replace, true); 
+		fReplaceAllInFileButton= createActionButton(composite, REPLACE_ALL_IN_FILE, SearchMessages.ReplaceDialog_replaceAllInFile, false); 
 
 		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		
-		fReplaceAllButton= createActionButton(composite, REPLACE_ALL, SearchMessages.getString("ReplaceDialog.replaceAll"), false); //$NON-NLS-1$
-		fSkipButton= createActionButton(composite, SKIP, SearchMessages.getString("ReplaceDialog.skip"), false); //$NON-NLS-1$
-		fSkipFileButton= createActionButton(composite, SKIP_FILE, SearchMessages.getString("ReplaceDialog.skipFile"), false); //$NON-NLS-1$
+		fReplaceAllButton= createActionButton(composite, REPLACE_ALL, SearchMessages.ReplaceDialog_replaceAll, false); 
+		fSkipButton= createActionButton(composite, SKIP, SearchMessages.ReplaceDialog_skip, false); 
+		fSkipFileButton= createActionButton(composite, SKIP_FILE, SearchMessages.ReplaceDialog_skipFile, false); 
 
 		filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
@@ -373,11 +374,11 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		} catch (InvocationTargetException e) {
 			Throwable targetException= e.getTargetException();
 			if (targetException instanceof PatternSyntaxException) {
-				String format= SearchMessages.getString("ReplaceDialog2.regexError.format"); //$NON-NLS-1$
+				String format= SearchMessages.ReplaceDialog2_regexError_format; 
 				String message= MessageFormat.format(format, new Object[] { targetException.getLocalizedMessage() });
 				statusMessage(true, message);
 			} else {
-				String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_replace", ((IFile)getCurrentMarker().getElement()).getName()); //$NON-NLS-1$
+				String message= Messages.format(SearchMessages.ReplaceDialog_error_unable_to_replace, ((IFile)getCurrentMarker().getElement()).getName()); 
 				ExceptionHandler.handle(e, getParentShell(), getDialogTitle(), message);
 			}
 		} catch (InterruptedException e) {
@@ -403,20 +404,20 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	private void replace(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
 		Match marker= getCurrentMarker();
-		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace"), 10); //$NON-NLS-1$
+		pm.beginTask(SearchMessages.ReplaceDialog_task_replace, 10); 
 		replaceInFile(pm, (IFile) marker.getElement(), replacementText, new Match[]{marker});
 	}
 	
 	private void replaceInFile(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
 		Match firstMarker= getCurrentMarker();
 		Match[] markers= collectMarkers((IFile)firstMarker.getElement());
-		pm.beginTask(SearchMessages.getFormattedString("ReplaceDialog.task.replaceInFile", ((IFile)firstMarker.getElement()).getFullPath().toOSString()), 4); //$NON-NLS-1$
+		pm.beginTask(Messages.format(SearchMessages.ReplaceDialog_task_replaceInFile, ((IFile)firstMarker.getElement()).getFullPath().toOSString()), 4); 
 		replaceInFile(pm, (IFile) firstMarker.getElement(), replacementText, markers);
 	}
 	
 	private void replaceAll(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
 		int resourceCount= countResources();
-		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace.replaceAll"), resourceCount); //$NON-NLS-1$
+		pm.beginTask(SearchMessages.ReplaceDialog_task_replace_replaceAll, resourceCount); 
 		try {
 			while (fMarkers.size() > 0) {
 				replaceInFile(new SubProgressMonitor(pm, 1, 0), replacementText);
@@ -507,12 +508,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 
 	private int askForSkip(final IFile file) {
 		
-		String message= SearchMessages.getFormattedString("ReadOnlyDialog.message", file.getFullPath().toOSString()); //$NON-NLS-1$
+		String message= Messages.format(SearchMessages.ReadOnlyDialog_message, file.getFullPath().toOSString()); 
 		String[] buttonLabels= null;
 		boolean showSkip= countResources() > 1;
 		if (showSkip) {
-			String skipLabel= SearchMessages.getString("ReadOnlyDialog.skipFile"); //$NON-NLS-1$
-			String skipAllLabel= SearchMessages.getString("ReadOnlyDialog.skipAll"); //$NON-NLS-1$
+			String skipLabel= SearchMessages.ReadOnlyDialog_skipFile; 
+			String skipAllLabel= SearchMessages.ReadOnlyDialog_skipAll; 
 			buttonLabels= new String[]{skipLabel, skipAllLabel, IDialogConstants.CANCEL_LABEL};
 		} else {
 			buttonLabels= new String[]{IDialogConstants.CANCEL_LABEL};
@@ -532,7 +533,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 		
 	private String getDialogTitle() {
-		return SearchMessages.getString("ReplaceDialog.dialog.title"); //$NON-NLS-1$
+		return SearchMessages.ReplaceDialog_dialog_title; 
 	}
 	
 	private void skip() {
@@ -570,7 +571,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				if (focusControl != null && !focusControl.isDisposed())
 					focusControl.setFocus();
 			} catch (PartInitException e) {
-				String message= SearchMessages.getFormattedString("ReplaceDialog.error.unable_to_open_text_editor", ((IFile)marker.getElement()).getName()); //$NON-NLS-1$
+				String message= Messages.format(SearchMessages.ReplaceDialog_error_unable_to_open_text_editor, ((IFile)marker.getElement()).getName()); 
 				MessageDialog.openError(getParentShell(), getDialogTitle(), message);
 			}
 		}

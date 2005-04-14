@@ -24,8 +24,8 @@ public class RemoveMatchAction extends Action {
 
 	public RemoveMatchAction(AbstractTextSearchViewPage page) {
 		fPage= page;
-		setText(SearchMessages.getString("RemoveMatchAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("RemoveMatchAction.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.RemoveMatchAction_label); 
+		setToolTipText(SearchMessages.RemoveMatchAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 	

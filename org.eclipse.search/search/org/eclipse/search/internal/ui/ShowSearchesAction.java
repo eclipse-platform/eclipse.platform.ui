@@ -66,8 +66,8 @@ class ShowSearchesAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchesAction() {
-		super(SearchMessages.getString("ShowOtherSearchesAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("ShowOtherSearchesAction.tooltip")); //$NON-NLS-1$
+		super(SearchMessages.ShowOtherSearchesAction_label); 
+		setToolTipText(SearchMessages.ShowOtherSearchesAction_tooltip); 
 	}
 	/*
 	 * Overrides method from Action
@@ -102,12 +102,12 @@ class ShowSearchesAction extends Action {
 		String title;
 		String message;
 		if (showAll) {
-			title= SearchMessages.getString("PreviousSearchesDialog.title"); //$NON-NLS-1$
-			message= SearchMessages.getString("PreviousSearchesDialog.message"); //$NON-NLS-1$
+			title= SearchMessages.PreviousSearchesDialog_title; 
+			message= SearchMessages.PreviousSearchesDialog_message; 
 		}
 		else {
-			title= SearchMessages.getString("OtherSearchesDialog.title"); //$NON-NLS-1$
-			message= SearchMessages.getString("OtherSearchesDialog.message"); //$NON-NLS-1$
+			title= SearchMessages.OtherSearchesDialog_title; 
+			message= SearchMessages.OtherSearchesDialog_message; 
 		}
 		
 		LabelProvider labelProvider=new SearchesLabelProvider();

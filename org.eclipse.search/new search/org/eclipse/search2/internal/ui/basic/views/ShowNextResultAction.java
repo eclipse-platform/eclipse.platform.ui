@@ -23,9 +23,9 @@ public class ShowNextResultAction extends Action {
 	private AbstractTextSearchViewPage fPage;
 
 	public ShowNextResultAction(AbstractTextSearchViewPage page) {
-		super(SearchMessages.getString("ShowNextResultAction.label")); //$NON-NLS-1$
+		super(SearchMessages.ShowNextResultAction_label); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_NEXT);
-		setToolTipText(SearchMessages.getString("ShowNextResultAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.ShowNextResultAction_tooltip); 
 		fPage= page;
 	}
 	

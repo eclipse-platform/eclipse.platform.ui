@@ -34,8 +34,8 @@ class ShowSearchesAction extends Action {
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchesAction(SearchView searchView) {
-		super(SearchMessages.getString("ShowSearchesAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("ShowSearchesAction.tooltip")); //$NON-NLS-1$
+		super(SearchMessages.ShowSearchesAction_label); 
+		setToolTipText(SearchMessages.ShowSearchesAction_tooltip); 
 		fSearchView= searchView;
 	}
 	 

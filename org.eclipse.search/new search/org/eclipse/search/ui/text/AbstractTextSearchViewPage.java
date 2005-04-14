@@ -118,7 +118,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private class UpdateUIJob extends UIJob {
 		
 		public UpdateUIJob() {
-			super(SearchMessages.getString("AbstractTextSearchViewPage.update_job.name")); //$NON-NLS-1$
+			super(SearchMessages.AbstractTextSearchViewPage_update_job_name); 
 			setSystem(true);
 		}
 		
@@ -269,8 +269,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void createLayoutActions() {
 		if (countBits(fSupportedLayouts) > 1) {
-			fFlatAction = new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.flat_layout.tooltip"), FLAG_LAYOUT_FLAT); //$NON-NLS-1$ //$NON-NLS-2$
-			fHierarchicalAction = new SetLayoutAction(this, SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.label"), SearchMessages.getString("AbstractTextSearchViewPage.hierarchical_layout.tooltip"), FLAG_LAYOUT_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+			fFlatAction = new SetLayoutAction(this, SearchMessages.AbstractTextSearchViewPage_flat_layout_label, SearchMessages.AbstractTextSearchViewPage_flat_layout_tooltip, FLAG_LAYOUT_FLAT); 
+			fHierarchicalAction = new SetLayoutAction(this, SearchMessages.AbstractTextSearchViewPage_hierarchical_layout_label, SearchMessages.AbstractTextSearchViewPage_hierarchical_layout_tooltip, FLAG_LAYOUT_TREE); 
 			SearchPluginImages.setImageDescriptors(fFlatAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_FLAT_LAYOUT);
 			SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
 		}
@@ -471,7 +471,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private Control createBusyControl() {
 		Table busyLabel = new Table(fPagebook, SWT.NONE);
 		TableItem item = new TableItem(busyLabel, SWT.NONE);
-		item.setText(SearchMessages.getString("AbstractTextSearchViewPage.searching.label")); //$NON-NLS-1$
+		item.setText(SearchMessages.AbstractTextSearchViewPage_searching_label); 
 		busyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return busyLabel;
 	}
@@ -746,7 +746,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			public void handleException(Throwable exception) {
 				if (exception instanceof PartInitException) {
 					PartInitException pie = (PartInitException) exception;
-					ErrorDialog.openError(getSite().getShell(), SearchMessages.getString("DefaultSearchViewPage.show_match"), SearchMessages.getString("DefaultSearchViewPage.error.no_editor"), pie.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+					ErrorDialog.openError(getSite().getShell(), SearchMessages.DefaultSearchViewPage_show_match, SearchMessages.DefaultSearchViewPage_error_no_editor, pie.getStatus()); 
 				}
 			}
 

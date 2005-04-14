@@ -35,12 +35,12 @@ class RemovePotentialMatchesAction extends Action {
 		fSite= site;
 
 		if (usePluralLabel()) {
-			setText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.text")); //$NON-NLS-1$
-			setToolTipText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.tooltip")); //$NON-NLS-1$
+			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_text); 
+			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatches_tooltip); 
 		}
 		else {
-			setText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatch.text")); //$NON-NLS-1$
-			setToolTipText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatch.tooltip")); //$NON-NLS-1$
+			setText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_text); 
+			setToolTipText(SearchMessages.RemovePotentialMatchesAction_removePotentialMatch_tooltip); 
 		}
 	}
 	
@@ -50,11 +50,11 @@ class RemovePotentialMatchesAction extends Action {
 			try {
 				SearchPlugin.getWorkspace().deleteMarkers(markers);
 			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 			}
 		else {
-			String title= SearchMessages.getString("RemovePotentialMatchesAction.dialog.title"); //$NON-NLS-1$
-			String message= SearchMessages.getString("RemovePotentialMatchesAction.dialog.message"); //$NON-NLS-1$
+			String title= SearchMessages.RemovePotentialMatchesAction_dialog_title; 
+			String message= SearchMessages.RemovePotentialMatchesAction_dialog_message; 
 			MessageDialog.openInformation(fSite.getShell(), title, message);
 		}
 

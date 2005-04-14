@@ -20,6 +20,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 public class TextSearchEngine {
@@ -30,7 +31,7 @@ public class TextSearchEngine {
 		Assert.isNotNull(matchLocator);
 		IProgressMonitor monitor= collector.getProgressMonitor();
 		
-		String message= SearchMessages.getString("TextSearchEngine.statusMessage"); //$NON-NLS-1$
+		String message= SearchMessages.TextSearchEngine_statusMessage; 
 		MultiStatus status= new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, message, null);
 		
 		int amountOfWork= new AmountOfWorkCalculator(scope, status, visitDerived).process();
@@ -38,7 +39,7 @@ public class TextSearchEngine {
 			monitor.beginTask("", amountOfWork); //$NON-NLS-1$
 			if (amountOfWork > 0) {
 				Integer[] args= new Integer[] {new Integer(1), new Integer(amountOfWork)};
-				monitor.setTaskName(SearchMessages.getFormattedString("TextSearchEngine.scanning", args)); //$NON-NLS-1$
+				monitor.setTaskName(Messages.format(SearchMessages.TextSearchEngine_scanning, args)); 
 			}				
 			collector.aboutToStart();
 			TextSearchVisitor visitor= new TextSearchVisitor(matchLocator, scope, visitDerived, collector, status, amountOfWork);

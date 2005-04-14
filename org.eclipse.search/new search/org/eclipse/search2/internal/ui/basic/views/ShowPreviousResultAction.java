@@ -23,9 +23,9 @@ public class ShowPreviousResultAction extends Action {
 	private AbstractTextSearchViewPage fPage;
 
 	public ShowPreviousResultAction(AbstractTextSearchViewPage page) {
-		super(SearchMessages.getString("ShowPreviousResultAction.label")); //$NON-NLS-1$
+		super(SearchMessages.ShowPreviousResultAction_label); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_PREV);
-		setToolTipText(SearchMessages.getString("ShowPreviousResultAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.ShowPreviousResultAction_tooltip); 
 		fPage= page;
 	}
 	

@@ -21,8 +21,8 @@ public class RemoveSelectedMatchesAction extends Action {
 
 	public RemoveSelectedMatchesAction(AbstractTextSearchViewPage page) {
 		fPage= page;
-		setText(SearchMessages.getString("RemoveSelectedMatchesAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("RemoveSelectedMatchesAction.tooltip"));  //$NON-NLS-1$
+		setText(SearchMessages.RemoveSelectedMatchesAction_label); 
+		setToolTipText(SearchMessages.RemoveSelectedMatchesAction_tooltip);  
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 	

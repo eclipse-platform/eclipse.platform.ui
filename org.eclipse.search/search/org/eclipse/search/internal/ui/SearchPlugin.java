@@ -204,7 +204,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			}
 			return true;
 		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
 			return false;
 		}	
 	}
@@ -231,7 +231,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 				getWorkspace().setDescription(workspaceDesc);
 			}
 			catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_setDescription_title, SearchMessages.Search_Error_setDescription_message); 
 			}
 		}
 		return isAutobuilding;
@@ -347,7 +347,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.getString("SearchPlugin.internal_error"), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.SearchPlugin_internal_error, e)); 
 	}
 	
 	public static String getID() {

@@ -39,7 +39,7 @@ public class SearchScope {
 	 * @return a workspace scope.
 	 */
 	public static SearchScope newWorkspaceScope() {
-		return new SearchScope(SearchMessages.getString("WorkspaceScope"), new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); //$NON-NLS-1$
+		return new SearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }); 
 	}
 	
 	/**

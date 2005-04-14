@@ -47,6 +47,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
@@ -181,19 +182,19 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					fLocator.locateMatches(fProgressMonitor, seq, fCollector, proxy);
 				} catch (UnsupportedCharsetException e) {
 					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
-					String message= SearchMessages.getFormattedString("TextSearchVisitor.unsupportedcharset", args); //$NON-NLS-1$
+					String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args); 
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} catch (IllegalCharsetNameException e) {
 					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
-					String message= SearchMessages.getFormattedString("TextSearchVisitor.illegalcharset", args); //$NON-NLS-1$
+					String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args); 
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} catch (IOException e) {
 					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
-					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
+					String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} catch (CoreException e) {
 					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
-					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
+					String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} finally {
 					if (seq != null) {
@@ -217,13 +218,13 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 			long currTime= System.currentTimeMillis();
 			if (currTime - fLastUpdateTime > 1000) {
 				Object[] args= { new Integer(fNumberOfScannedFiles + 1),  new Integer(fNumberOfFilesToScan)};
-				fProgressMonitor.setTaskName(SearchMessages.getFormattedString("TextSearchVisitor.scanning", args)); //$NON-NLS-1$
+				fProgressMonitor.setTaskName(Messages.format(SearchMessages.TextSearchVisitor_scanning, args)); 
 				fLastUpdateTime= currTime;
 			}
 		}
 		fProgressMonitor.worked(1);
 		if (fProgressMonitor.isCanceled())
-			throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+			throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
 	}
 }
 

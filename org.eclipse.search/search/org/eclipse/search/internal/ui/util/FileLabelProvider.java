@@ -36,7 +36,7 @@ public class FileLabelProvider extends LabelProvider {
 	public static final int SHOW_PATH_LABEL= 3;
 	public static final int SHOW_PATH= 4;
 	
-	private static final String fgSeparatorFormat= SearchMessages.getString("FileLabelProvider.dashSeparated"); //$NON-NLS-1$
+	private static final String fgSeparatorFormat= SearchMessages.FileLabelProvider_dashSeparated; 
 	
 	private WorkbenchLabelProvider fLabelProvider;
 	private ILabelDecorator fDecorator;
@@ -62,7 +62,7 @@ public class FileLabelProvider extends LabelProvider {
 		String text= null;
 
 		if (resource == null || !resource.exists())
-			text= SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
+			text= SearchMessages.SearchResultView_removed_resource; 
 		
 		else {
 			IPath path= resource.getFullPath().removeLastSegments(1);

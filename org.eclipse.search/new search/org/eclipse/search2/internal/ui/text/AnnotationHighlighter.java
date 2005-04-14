@@ -89,7 +89,7 @@ public class AnnotationHighlighter extends Highlighter {
 					return null;
 				}
 			} else {
-				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("AnnotationHighlighter.error.noDocument"), null)); //$NON-NLS-1$
+				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.AnnotationHighlighter_error_noDocument, null)); 
 				return null;
 			}
 		}

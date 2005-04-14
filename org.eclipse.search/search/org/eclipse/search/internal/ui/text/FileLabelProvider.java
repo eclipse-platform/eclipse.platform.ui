@@ -65,7 +65,7 @@ public class FileLabelProvider extends LabelProvider {
 		String text= null;
 
 		if (!resource.exists())
-			text= SearchMessages.getString("FileLabelProvider.removed_resource.label"); //$NON-NLS-1$
+			text= SearchMessages.FileLabelProvider_removed_resource_label; 
 		
 		else {
 			IPath path= resource.getFullPath().removeLastSegments(1);
@@ -97,7 +97,7 @@ public class FileLabelProvider extends LabelProvider {
 			matchCount= result.getMatchCount(element);
 		if (matchCount <= 1)
 			return text;
-		String format= SearchMessages.getString("FileLabelProvider.count.format"); //$NON-NLS-1$
+		String format= SearchMessages.FileLabelProvider_count_format; 
 		return MessageFormat.format(format, new Object[] { text, new Integer(matchCount) });
 	}
 

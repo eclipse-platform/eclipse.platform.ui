@@ -39,8 +39,8 @@ public class CopyToClipboardAction extends Action {
 	}
 	
 	public CopyToClipboardAction() {
-		setText(SearchMessages.getString("CopyToClipboardAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("CopyToClipboardAction.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.CopyToClipboardAction_label); 
+		setToolTipText(SearchMessages.CopyToClipboardAction_tooltip); 
 	}
 	
 	/**
@@ -92,8 +92,8 @@ public class CopyToClipboardAction extends Action {
 		} catch (SWTError ex) {
 			if (ex.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw ex;
-			String title= SearchMessages.getString("CopyToClipboardAction.error.title");  //$NON-NLS-1$
-			String message= SearchMessages.getString("CopyToClipboardAction.error.message"); //$NON-NLS-1$
+			String title= SearchMessages.CopyToClipboardAction_error_title;  
+			String message= SearchMessages.CopyToClipboardAction_error_message; 
 			if (MessageDialog.openQuestion(shell, title, message))
 				copyToClipbard(clipboard, str, shell);
 		}	

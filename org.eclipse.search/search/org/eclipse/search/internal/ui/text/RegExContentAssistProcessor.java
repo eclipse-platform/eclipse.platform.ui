@@ -37,119 +37,119 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	
 	private final String[][] getReplaceProposals() {
 		return new String[][] {
-			{ "\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\i"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\i") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			{ "\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashi, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashi }, //$NON-NLS-1$
 		};
 	}
 	
 	private final String[][] getFindProposals() {
 		return new String[][] {
-			{ "\\\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\\\"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\\\") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\0", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\0"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\0") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\x", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\x"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\x") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\u", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\u"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\u") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\t", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\t"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\t") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\n", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\n"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\n") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\r", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\r"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\r") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\f", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\f"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\f") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\a", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\a"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\a") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\e", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\e"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\e") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\c", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\c"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\c") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ ".", SearchMessages.getString("FindReplace.regExContentAssist.displayString.."), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo..") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\d", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\d"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\d") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\D", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\D"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\D") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\s", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\s"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\s") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\S", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\S"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\S") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\w", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\w"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\w") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\W", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\W"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\W") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "^", SearchMessages.getString("FindReplace.regExContentAssist.displayString.^"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.^") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "$", SearchMessages.getString("FindReplace.regExContentAssist.displayString.$"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.$") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\b", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\b"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\b") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\B", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\B"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\B") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\A", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\A"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\A") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\G", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\G"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\G") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\z", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\z"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\z") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "??", SearchMessages.getString("FindReplace.regExContentAssist.displayString.??"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.??") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "+?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.+?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.+?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "?+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.?+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.?+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "++", SearchMessages.getString("FindReplace.regExContentAssist.displayString.++"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.++") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "", SearchMessages.getString("FindReplace.regExContentAssist.displayString.UV"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.UV") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "|", SearchMessages.getString("FindReplace.regExContentAssist.displayString.U|V"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.U|V") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "()", SearchMessages.getString("FindReplace.regExContentAssist.displayString.(U)"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.(U)") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\Q", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\Q"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\Q") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\E", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\E"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\E") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "[]", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[ecq]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[ecq]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "^", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[^ecq]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[^ecq]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "[]", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[e-q]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[e-q]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "&&", SearchMessages.getString("FindReplace.regExContentAssist.displayString.&&"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.&&") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\\\"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\\\") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\0", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\0"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\0") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\x", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\x"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\x") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\u", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\u"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\u") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\t", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\t"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\t") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\n", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\n"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\n") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\r", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\r"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\r") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\f", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\f"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\f") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\a", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\a"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\a") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\e", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\e"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\e") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\c", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\c"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\c") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ ".", SearchMessages.getString("FindReplace.regExContentAssist.displayString.."), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo..") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\d", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\d"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\d") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\D", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\D"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\D") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\s", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\s"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\s") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\S", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\S"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\S") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\w", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\w"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\w") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\W", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\W"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\W") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "^", SearchMessages.getString("FindReplace.regExContentAssist.displayString.^"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.^") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "$", SearchMessages.getString("FindReplace.regExContentAssist.displayString.$"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.$") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\b", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\b"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\b") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\B", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\B"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\B") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\A", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\A"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\A") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\G", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\G"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\G") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\z", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\z"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\z") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "??", SearchMessages.getString("FindReplace.regExContentAssist.displayString.??"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.??") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "+?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.+?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.+?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}?", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}?"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}?") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "?+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.?+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.?+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "*+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.*+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.*+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "++", SearchMessages.getString("FindReplace.regExContentAssist.displayString.++"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.++") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "{,}+", SearchMessages.getString("FindReplace.regExContentAssist.displayString.{n,m}+"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.{n,m}+") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "", SearchMessages.getString("FindReplace.regExContentAssist.displayString.UV"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.UV") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "|", SearchMessages.getString("FindReplace.regExContentAssist.displayString.U|V"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.U|V") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "()", SearchMessages.getString("FindReplace.regExContentAssist.displayString.(U)"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.(U)") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\i"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\i") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\Q", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\Q"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\Q") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "\\E", SearchMessages.getString("FindReplace.regExContentAssist.displayString.\\E"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.\\E") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "[]", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[ecq]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[ecq]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "^", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[^ecq]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[^ecq]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "[]", SearchMessages.getString("FindReplace.regExContentAssist.displayString.[e-q]"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.[e-q]") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			{ "&&", SearchMessages.getString("FindReplace.regExContentAssist.displayString.&&"), SearchMessages.getString("FindReplace.regExContentAssist.additionalInfo.&&") },//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			{ "\\\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslash, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash }, //$NON-NLS-1$
+			{ "\\0", SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash0, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash0 }, //$NON-NLS-1$
+			{ "\\x", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashx, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashx }, //$NON-NLS-1$
+			{ "\\u", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashu, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashu }, //$NON-NLS-1$
+			{ "\\t", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslasht, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslasht }, //$NON-NLS-1$
+			{ "\\n", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashn, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashn }, //$NON-NLS-1$
+			{ "\\r", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashr, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashr }, //$NON-NLS-1$
+			{ "\\f", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashf, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashf }, //$NON-NLS-1$
+			{ "\\a", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslasha, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslasha }, //$NON-NLS-1$
+			{ "\\e", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashe, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashe }, //$NON-NLS-1$
+			{ "\\c", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashc, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashc }, //$NON-NLS-1$
+			{ ".", SearchMessages.FindReplace_regExContentAssist_displayString__, SearchMessages.FindReplace_regExContentAssist_additionalInfo__ }, //$NON-NLS-1$
+			{ "\\d", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashd, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashd }, //$NON-NLS-1$
+			{ "\\D", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashD, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashD }, //$NON-NLS-1$
+			{ "\\s", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashs, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashs }, //$NON-NLS-1$
+			{ "\\S", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashS, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashS }, //$NON-NLS-1$
+			{ "\\w", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashw, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashw }, //$NON-NLS-1$
+			{ "\\W", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashW, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashW }, //$NON-NLS-1$
+			{ "^", SearchMessages.FindReplace_regExContentAssist_displayString__power, SearchMessages.FindReplace_regExContentAssist_additionalInfo__power }, //$NON-NLS-1$
+			{ "$", SearchMessages.FindReplace_regExContentAssist_displayString_$, SearchMessages.FindReplace_regExContentAssist_additionalInfo_$ }, //$NON-NLS-1$
+			{ "\\b", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashb, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashb }, //$NON-NLS-1$
+			{ "\\B", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashB, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashB }, //$NON-NLS-1$
+			{ "\\A", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashA, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashA }, //$NON-NLS-1$
+			{ "\\G", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashG, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashG }, //$NON-NLS-1$
+			{ "\\z", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashz, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashz }, //$NON-NLS-1$
+			{ "?", SearchMessages.FindReplace_regExContentAssist_displayString__question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question }, //$NON-NLS-1$
+			{ "*", SearchMessages.FindReplace_regExContentAssist_displayString__star, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star }, //$NON-NLS-1$
+			{ "+", SearchMessages.FindReplace_regExContentAssist_displayString__plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus }, //$NON-NLS-1$
+			{ "{}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace }, //$NON-NLS-1$
+			{ "{,}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace }, //$NON-NLS-1$
+			{ "{,}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace }, //$NON-NLS-1$
+			{ "??", SearchMessages.FindReplace_regExContentAssist_displayString__question_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question_question }, //$NON-NLS-1$
+			{ "*?", SearchMessages.FindReplace_regExContentAssist_displayString__star_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star_question }, //$NON-NLS-1$
+			{ "+?", SearchMessages.FindReplace_regExContentAssist_displayString__plus_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus_question }, //$NON-NLS-1$
+			{ "{}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_question }, //$NON-NLS-1$
+			{ "{,}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_question }, //$NON-NLS-1$
+			{ "{,}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_question }, //$NON-NLS-1$
+			{ "?+", SearchMessages.FindReplace_regExContentAssist_displayString__question_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question_plus }, //$NON-NLS-1$
+			{ "*+", SearchMessages.FindReplace_regExContentAssist_displayString__star_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star_plus }, //$NON-NLS-1$
+			{ "++", SearchMessages.FindReplace_regExContentAssist_displayString__plus_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus_plus }, //$NON-NLS-1$
+			{ "{}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_plus }, //$NON-NLS-1$
+			{ "{,}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_plus }, //$NON-NLS-1$
+			{ "{,}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_plus }, //$NON-NLS-1$
+			{ "", SearchMessages.FindReplace_regExContentAssist_displayString_UV, SearchMessages.FindReplace_regExContentAssist_additionalInfo_UV }, //$NON-NLS-1$
+			{ "|", SearchMessages.FindReplace_regExContentAssist_displayString_U_barV, SearchMessages.FindReplace_regExContentAssist_additionalInfo_U_barV }, //$NON-NLS-1$
+			{ "()", SearchMessages.FindReplace_regExContentAssist_displayString__lparenU_rparen, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lparenU_rparen }, //$NON-NLS-1$
+			{ "\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslash, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash }, //$NON-NLS-1$
+			{ "\\Q", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashQ, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashQ }, //$NON-NLS-1$
+			{ "\\E", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashE, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashE }, //$NON-NLS-1$
+			{ "[]", SearchMessages.FindReplace_regExContentAssist_displayString__lbracketecq_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracketecq_rbracket }, //$NON-NLS-1$
+			{ "^", SearchMessages.FindReplace_regExContentAssist_displayString__lbracket_powerecq_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracket_powerecq_rbracket }, //$NON-NLS-1$
+			{ "[]", SearchMessages.FindReplace_regExContentAssist_displayString__lbrackete_q_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbrackete_q_rbracket }, //$NON-NLS-1$
+			{ "&&", SearchMessages.FindReplace_regExContentAssist_displayString__amp_amp, SearchMessages.FindReplace_regExContentAssist_additionalInfo__amp_amp }, //$NON-NLS-1$
+			{ "\\\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslash, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash }, //$NON-NLS-1$
+			{ "\\0", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslash0, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash0 }, //$NON-NLS-1$
+			{ "\\x", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashx, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashx }, //$NON-NLS-1$
+			{ "\\u", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashu, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashu }, //$NON-NLS-1$
+			{ "\\t", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslasht, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslasht }, //$NON-NLS-1$
+			{ "\\n", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashn, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashn }, //$NON-NLS-1$
+			{ "\\r", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashr, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashr }, //$NON-NLS-1$
+			{ "\\f", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashf, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashf }, //$NON-NLS-1$
+			{ "\\a", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslasha, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslasha }, //$NON-NLS-1$
+			{ "\\e", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashe, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashe }, //$NON-NLS-1$
+			{ "\\c", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashc, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashc }, //$NON-NLS-1$
+			{ ".", SearchMessages.FindReplace_regExContentAssist_displayString__, SearchMessages.FindReplace_regExContentAssist_additionalInfo__ }, //$NON-NLS-1$
+			{ "\\d", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashd, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashd }, //$NON-NLS-1$
+			{ "\\D", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashD, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashD }, //$NON-NLS-1$
+			{ "\\s", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashs, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashs }, //$NON-NLS-1$
+			{ "\\S", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashS, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashS }, //$NON-NLS-1$
+			{ "\\w", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashw, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashw }, //$NON-NLS-1$
+			{ "\\W", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashW, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashW }, //$NON-NLS-1$
+			{ "^", SearchMessages.FindReplace_regExContentAssist_displayString__power, SearchMessages.FindReplace_regExContentAssist_additionalInfo__power }, //$NON-NLS-1$
+			{ "$", SearchMessages.FindReplace_regExContentAssist_displayString_$, SearchMessages.FindReplace_regExContentAssist_additionalInfo_$ }, //$NON-NLS-1$
+			{ "\\b", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashb, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashb }, //$NON-NLS-1$
+			{ "\\B", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashB, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashB }, //$NON-NLS-1$
+			{ "\\A", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashA, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashA }, //$NON-NLS-1$
+			{ "\\G", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashG, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashG }, //$NON-NLS-1$
+			{ "\\z", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashz, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashz }, //$NON-NLS-1$
+			{ "?", SearchMessages.FindReplace_regExContentAssist_displayString__question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question }, //$NON-NLS-1$
+			{ "*", SearchMessages.FindReplace_regExContentAssist_displayString__star, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star }, //$NON-NLS-1$
+			{ "+", SearchMessages.FindReplace_regExContentAssist_displayString__plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus }, //$NON-NLS-1$
+			{ "{}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace }, //$NON-NLS-1$
+			{ "{,}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace }, //$NON-NLS-1$
+			{ "{,}", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace }, //$NON-NLS-1$
+			{ "??", SearchMessages.FindReplace_regExContentAssist_displayString__question_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question_question }, //$NON-NLS-1$
+			{ "*?", SearchMessages.FindReplace_regExContentAssist_displayString__star_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star_question }, //$NON-NLS-1$
+			{ "+?", SearchMessages.FindReplace_regExContentAssist_displayString__plus_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus_question }, //$NON-NLS-1$
+			{ "{}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_question }, //$NON-NLS-1$
+			{ "{,}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_question }, //$NON-NLS-1$
+			{ "{,}?", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_question, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_question }, //$NON-NLS-1$
+			{ "?+", SearchMessages.FindReplace_regExContentAssist_displayString__question_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__question_plus }, //$NON-NLS-1$
+			{ "*+", SearchMessages.FindReplace_regExContentAssist_displayString__star_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__star_plus }, //$NON-NLS-1$
+			{ "++", SearchMessages.FindReplace_regExContentAssist_displayString__plus_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__plus_plus }, //$NON-NLS-1$
+			{ "{}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_rbrace_plus }, //$NON-NLS-1$
+			{ "{,}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_comma_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_comma_rbrace_plus }, //$NON-NLS-1$
+			{ "{,}+", SearchMessages.FindReplace_regExContentAssist_displayString__lbracen_commam_rbrace_plus, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracen_commam_rbrace_plus }, //$NON-NLS-1$
+			{ "", SearchMessages.FindReplace_regExContentAssist_displayString_UV, SearchMessages.FindReplace_regExContentAssist_additionalInfo_UV }, //$NON-NLS-1$
+			{ "|", SearchMessages.FindReplace_regExContentAssist_displayString_U_barV, SearchMessages.FindReplace_regExContentAssist_additionalInfo_U_barV }, //$NON-NLS-1$
+			{ "()", SearchMessages.FindReplace_regExContentAssist_displayString__lparenU_rparen, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lparenU_rparen }, //$NON-NLS-1$
+			{ "\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashi, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashi }, //$NON-NLS-1$
+			{ "\\", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslash, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslash }, //$NON-NLS-1$
+			{ "\\Q", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashQ, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashQ }, //$NON-NLS-1$
+			{ "\\E", SearchMessages.FindReplace_regExContentAssist_displayString__bslash_bslashE, SearchMessages.FindReplace_regExContentAssist_additionalInfo__bslash_bslashE }, //$NON-NLS-1$
+			{ "[]", SearchMessages.FindReplace_regExContentAssist_displayString__lbracketecq_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracketecq_rbracket }, //$NON-NLS-1$
+			{ "^", SearchMessages.FindReplace_regExContentAssist_displayString__lbracket_powerecq_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbracket_powerecq_rbracket }, //$NON-NLS-1$
+			{ "[]", SearchMessages.FindReplace_regExContentAssist_displayString__lbrackete_q_rbracket, SearchMessages.FindReplace_regExContentAssist_additionalInfo__lbrackete_q_rbracket }, //$NON-NLS-1$
+			{ "&&", SearchMessages.FindReplace_regExContentAssist_displayString__amp_amp, SearchMessages.FindReplace_regExContentAssist_additionalInfo__amp_amp }, //$NON-NLS-1$
 		};
 	}
 	

@@ -23,9 +23,9 @@ public class RemoveAllMatchesAction extends Action {
 	AbstractTextSearchViewPage fPage;
 
 	public RemoveAllMatchesAction(AbstractTextSearchViewPage page) {
-		super(SearchMessages.getString("RemoveAllMatchesAction.label")); //$NON-NLS-1$
+		super(SearchMessages.RemoveAllMatchesAction_label); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
-		setToolTipText(SearchMessages.getString("RemoveAllMatchesAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.RemoveAllMatchesAction_tooltip); 
 		fPage= page;
 	}
 	

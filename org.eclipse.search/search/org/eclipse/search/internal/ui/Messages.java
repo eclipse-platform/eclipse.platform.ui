@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,24 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
-import org.eclipse.jface.action.Action;
+import java.text.MessageFormat;
 
-class RemoveAllSearchesAction extends Action {
+/**
+ * Helper class to format message strings.
+ * 
+ * @since 3.1
+ */
+public class Messages {
 
-	public RemoveAllSearchesAction() {
-		super(SearchMessages.SearchResultView_removeAllSearches_text); 
-		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM_ALL);		
-		setToolTipText(SearchMessages.SearchResultView_removeAllSearches_tooltip); 
+	public static String format(String message, Object object) {
+		return MessageFormat.format(message, new Object[] { object});
 	}
-	
-	public void run() {
-		SearchManager.getDefault().removeAllSearches();
+
+	public static String format(String message, Object[] objects) {
+		return MessageFormat.format(message, objects);
+	}
+
+	private Messages() {
+		// Not for instantiation
 	}
 }

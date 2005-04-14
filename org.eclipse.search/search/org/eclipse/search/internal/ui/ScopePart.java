@@ -249,7 +249,7 @@ public class ScopePart {
 	 */
 	public Composite createPart(Composite parent) {
 		fPart= new Group(parent, SWT.NONE);
-		fPart.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
+		fPart.setText(SearchMessages.ScopePart_group_text); 
 
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 4;
@@ -258,11 +258,11 @@ public class ScopePart {
 
 		fUseWorkspace= new Button(fPart, SWT.RADIO);
 		fUseWorkspace.setData(new Integer(ISearchPageContainer.WORKSPACE_SCOPE));
-		fUseWorkspace.setText(SearchMessages.getString("ScopePart.workspaceScope.text")); //$NON-NLS-1$
+		fUseWorkspace.setText(SearchMessages.ScopePart_workspaceScope_text); 
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
-		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
+		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text); 
 		ISelection selection= fSearchDialog.getSelection();
 		fUseSelection.setEnabled(selection instanceof IStructuredSelection && !selection.isEmpty());
 		
@@ -272,7 +272,7 @@ public class ScopePart {
 
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
+		fUseProject.setText(SearchMessages.ScopePart_enclosingProjectsScope_text); 
 		fUseProject.setEnabled(selection instanceof IStructuredSelection && !selection.isEmpty() || hasFocusEditor());
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -284,17 +284,17 @@ public class ScopePart {
 
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
-		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
+		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text); 
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fWorkingSetText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result= SearchMessages.getString("ScopePart.workingSetText.accessible.label"); //$NON-NLS-1$
+				e.result= SearchMessages.ScopePart_workingSetText_accessible_label; 
 			}
 		});
 		
 		Button chooseWorkingSet= new Button(fPart, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
-		chooseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetChooseButton.text")); //$NON-NLS-1$
+		chooseWorkingSet.setText(SearchMessages.ScopePart_workingSetChooseButton_text); 
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -398,7 +398,7 @@ public class ScopePart {
 			for (int i= 0; i < workingSets.length; i++) {
 				String workingSetName= workingSets[i].getName();
 				if (firstFound)
-					result= SearchMessages.getFormattedString("ScopePart.workingSetConcatenation", new String[] { result, workingSetName }); //$NON-NLS-1$
+					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName }); 
 				else {
 					result= workingSetName;
 					firstFound= true;

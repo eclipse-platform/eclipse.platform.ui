@@ -241,7 +241,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (search != null) {
 			page= fSearchViewPageService.getExtensionObject(search, ISearchResultPage.class);
 			if (page == null) {
-				String format= SearchMessages.getString("SearchView.error.noResultPage"); //$NON-NLS-1$
+				String format= SearchMessages.SearchView_error_noResultPage; 
 				String message= MessageFormat.format(format, new Object[] { search.getClass().getName() });
 				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, message, null));
 				return;
@@ -363,7 +363,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (result != null) {
 			fSearchAgainAction.setEnabled(result.getQuery().canRerun());
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
-			MenuManager showInSubMenu = new MenuManager(SearchMessages.getString("SearchView.showIn.menu"));  //$NON-NLS-1$
+			MenuManager showInSubMenu = new MenuManager(SearchMessages.SearchView_showIn_menu);  
 			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
 		}

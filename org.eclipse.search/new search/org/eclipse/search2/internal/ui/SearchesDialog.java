@@ -88,8 +88,8 @@ public class SearchesDialog extends SelectionDialog {
 
 	public SearchesDialog(Shell parent, List input) {
 		super(parent);
-		setTitle(SearchMessages.getString("SearchesDialog.title"));  //$NON-NLS-1$
-		setMessage(SearchMessages.getString("SearchesDialog.message")); //$NON-NLS-1$
+		setTitle(SearchMessages.SearchesDialog_title);  
+		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
 	}
 	
@@ -140,7 +140,7 @@ public class SearchesDialog extends SelectionDialog {
 		
 		
         final Button button= new Button(parent, SWT.PUSH);
-        button.setText(SearchMessages.getString("SearchesDialog.remove.label")); //$NON-NLS-1$
+        button.setText(SearchMessages.SearchesDialog_remove_label); 
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 buttonPressed(REMOVE_ID);

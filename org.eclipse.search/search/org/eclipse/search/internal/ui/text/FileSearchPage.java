@@ -113,8 +113,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	private IPropertyChangeListener fPropertyChangeListener;
 	public FileSearchPage() {
-		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
-		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
+		fSortByNameAction= new SortAction(SearchMessages.FileSearchPage_sort_name_label, this, FileLabelProvider.SHOW_LABEL_PATH); 
+		fSortByPathAction= new SortAction(SearchMessages.FileSearchPage_sort_path_label, this, FileLabelProvider.SHOW_PATH_LABEL); 
 
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -185,7 +185,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			IDE.gotoMarker(editor, marker);
 			marker.delete();
 		} catch (CoreException e) {
-			throw new PartInitException(SearchMessages.getString("FileSearchPage.error.marker"), e); //$NON-NLS-1$
+			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
 		}
 	}
 
@@ -209,7 +209,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private void addSortActions(IMenuManager mgr) {
 		if (getLayout() != FLAG_LAYOUT_FLAT)
 			return;
-		MenuManager sortMenu= new MenuManager(SearchMessages.getString("FileSearchPage.sort_by.label")); //$NON-NLS-1$
+		MenuManager sortMenu= new MenuManager(SearchMessages.FileSearchPage_sort_by_label); 
 		sortMenu.add(fSortByNameAction);
 		sortMenu.add(fSortByPathAction);
 		
@@ -284,7 +284,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				int itemCount= ((IStructuredContentProvider) tv.getContentProvider()).getElements(getInput()).length;
 				int fileCount= getInput().getElements().length;
 				if (itemCount < fileCount) {
-					String format= SearchMessages.getString("FileSearchPage.limited.format"); //$NON-NLS-1$
+					String format= SearchMessages.FileSearchPage_limited_format; 
 					return MessageFormat.format(format, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
 				}
 			}

@@ -146,7 +146,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
+		shell.setText(SearchMessages.SearchDialog_title); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
@@ -203,7 +203,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			}
 		};
 
-		String message= SearchMessages.getString("SearchPageSelectionDialog.message"); //$NON-NLS-1$
+		String message= SearchMessages.SearchPageSelectionDialog_message; 
 		
 		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message) {
 			public void create() {
@@ -224,7 +224,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				this.getButton(IDialogConstants.DESELECT_ALL_ID).addSelectionListener(listener);
 			}
 		};
-		dialog.setTitle(SearchMessages.getString("SearchPageSelectionDialog.title")); //$NON-NLS-1$
+		dialog.setTitle(SearchMessages.SearchPageSelectionDialog_title); 
 		dialog.setInitialSelections(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(fInitialPageId).toArray());
 		if (dialog.open() == Window.OK) {
 			SearchPageDescriptor.setEnabled(dialog.getResult());
@@ -268,7 +268,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		
 		if (numPages == 0) {
 			Label label= new Label(parent, SWT.CENTER | SWT.WRAP);
-			label.setText(SearchMessages.getString("SearchDialog.noSearchExtension")); //$NON-NLS-1$
+			label.setText(SearchMessages.SearchDialog_noSearchExtension); 
 			return label;
 		}
 		
@@ -339,15 +339,15 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		fCustomizeButton= createActionButton(composite, CUSTOMIZE_ID, SearchMessages.getString("SearchDialog.customize"), true); //$NON-NLS-1$
+		fCustomizeButton= createActionButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
 		
 		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		layout.numColumns++;
 		
-		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.getString("SearchDialog.replaceAction"), true); //$NON-NLS-1$
+		fReplaceButton= createActionButton(composite, REPLACE_ID, SearchMessages.SearchDialog_replaceAction, true); 
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
-		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.getString("SearchDialog.searchAction"), true); //$NON-NLS-1$
+		Button searchButton= createActionButton(composite, SEARCH_ID, SearchMessages.SearchDialog_searchAction, true); 
 		searchButton.setEnabled(fDescriptors.size() > 0);
 		super.createButtonsForButtonBar(composite);  // cancel button
 		
@@ -557,9 +557,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					}
 					public void handleException(Throwable ex) {
 						if (ex instanceof CoreException) {
-							ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getFormattedString("Search.Error.createSearchPage.message", descriptor.getLabel())); //$NON-NLS-2$ //$NON-NLS-1$
+							ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel())); 
 						} else {
-							ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getFormattedString("Search.Error.createSearchPage.message", descriptor.getLabel())); //$NON-NLS-2$ //$NON-NLS-1$
+							ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel())); 
 						}
 					}
 				});
@@ -570,7 +570,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (page == null || page.getControl() == null) {
 			Composite container= new Composite(parent, SWT.NONE);
 			Label label= new Label(container, SWT.WRAP);
-			label.setText(SearchMessages.getFormattedString("SearchDialog.error.pageCreationFailed", descriptor.getLabel())); //$NON-NLS-1$
+			label.setText(Messages.format(SearchMessages.SearchDialog_error_pageCreationFailed, descriptor.getLabel())); 
 			container.setLayout(new GridLayout());
 			label.setLayoutData(new GridData());
 			return container;

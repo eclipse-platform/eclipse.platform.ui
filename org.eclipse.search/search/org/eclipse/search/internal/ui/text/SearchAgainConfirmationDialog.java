@@ -77,15 +77,15 @@ public class SearchAgainConfirmationDialog extends Dialog {
 		Composite result= (Composite) super.createDialogArea(parent);
 		
 		if (fOutOfSync.size() > 0) {
-			createLabel(result, SearchMessages.getString("SearchAgainConfirmationDialog.outofsync.message")); //$NON-NLS-1$
+			createLabel(result, SearchMessages.SearchAgainConfirmationDialog_outofsync_message); 
 			
-			createLabel(result, SearchMessages.getString("SearchAgainConfirmationDialog.outofsync.label")); //$NON-NLS-1$
+			createLabel(result, SearchMessages.SearchAgainConfirmationDialog_outofsync_label); 
 			createTableViewer(fOutOfSync, result);
 		} else {
-			createLabel(result, SearchMessages.getString("SearchAgainConfirmationDialog.stale.message")); //$NON-NLS-1$
+			createLabel(result, SearchMessages.SearchAgainConfirmationDialog_stale_message); 
 		}
 		
-		createLabel(result, SearchMessages.getString("SearchAgainConfirmationDialog.stale.label")); //$NON-NLS-1$
+		createLabel(result, SearchMessages.SearchAgainConfirmationDialog_stale_label); 
 		createTableViewer(fOutOfDate, result);
 		return result;
 	}
@@ -112,7 +112,7 @@ public class SearchAgainConfirmationDialog extends Dialog {
 	
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(SearchMessages.getString("SearchAgainConfirmationDialog.title")); //$NON-NLS-1$
+		shell.setText(SearchMessages.SearchAgainConfirmationDialog_title); 
 	}
 	
 }

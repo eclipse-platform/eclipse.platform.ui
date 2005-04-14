@@ -20,9 +20,9 @@ public class CollapseAllAction extends Action {
 	private TreeViewer fViewer;
 
 	public CollapseAllAction(TreeViewer viewer) {
-		super(SearchMessages.getString("CollapseAllAction.0")); //$NON-NLS-1$
+		super(SearchMessages.CollapseAllAction_0); 
 		fViewer= viewer;
-		setToolTipText(SearchMessages.getString("CollapseAllAction.1")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.CollapseAllAction_1); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_COLLAPSE_ALL);
 	}
 	

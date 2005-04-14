@@ -29,8 +29,8 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	private Menu fMenu;
 	
 	public SearchDropDownAction() {
-		setText(SearchMessages.getString("SearchResultView.previousSearches.text")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("SearchResultView.previousSearches.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.SearchResultView_previousSearches_text); 
+		setToolTipText(SearchMessages.SearchResultView_previousSearches_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
 		setMenuCreator(this);
 	}

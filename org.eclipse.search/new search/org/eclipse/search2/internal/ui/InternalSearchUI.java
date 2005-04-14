@@ -218,7 +218,7 @@ public class InternalSearchUI {
 			if (innerException instanceof CoreException) {
 				return ((CoreException) innerException).getStatus();
 			}
-			return new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("InternalSearchUI.error.unexpected"), innerException);  //$NON-NLS-1$
+			return new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.InternalSearchUI_error_unexpected, innerException);  
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
 		}
@@ -267,7 +267,7 @@ public class InternalSearchUI {
 			}
 			return viewPart;
 		} catch (PartInitException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
+			ExceptionHandler.handle(ex, SearchMessages.Search_Error_openResultView_title, SearchMessages.Search_Error_openResultView_message); 
 		}	
 		return null;
 	}

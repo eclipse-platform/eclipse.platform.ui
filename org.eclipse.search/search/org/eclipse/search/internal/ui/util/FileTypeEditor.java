@@ -36,7 +36,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	private Combo fTextField;
 	private Button fBrowseButton;
 
-	final static String TYPE_DELIMITER= SearchMessages.getString("FileTypeEditor.typeDelimiter"); //$NON-NLS-1$
+	final static String TYPE_DELIMITER= SearchMessages.FileTypeEditor_typeDelimiter; 
 
 	public FileTypeEditor(IEditorRegistry registry, Combo textField, Button browseButton) {
 		fTextField= textField;

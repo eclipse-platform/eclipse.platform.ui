@@ -46,10 +46,10 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private Map fLastCheckedForType;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
-		super(SearchMessages.getString("SortDropDownAction.label")); //$NON-NLS-1$
+		super(SearchMessages.SortDropDownAction_label); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_SORT);
 		fViewer= viewer;
-		setToolTipText(SearchMessages.getString("SortDropDownAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.SortDropDownAction_tooltip); 
 		setMenuCreator(this);
 		fLastCheckedForType= new HashMap(5);
 	}

@@ -26,8 +26,8 @@ class SelectAllAction extends Action {
 	 */
 	SelectAllAction(SearchResultViewer viewer) {
 		super("selectAll"); //$NON-NLS-1$
-		setText(SearchMessages.getString("SelectAllAction.label")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("SelectAllAction.tooltip")); //$NON-NLS-1$
+		setText(SearchMessages.SelectAllAction_label); 
+		setToolTipText(SearchMessages.SelectAllAction_tooltip); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ISearchHelpContextIds.SELECT_ALL_ACTION);
 		fViewer= viewer;
 	}

@@ -27,8 +27,8 @@ class RemoveMatchAction extends Action {
 	private ISelectionProvider fSelectionProvider;
 
 	public RemoveMatchAction(ISelectionProvider provider) {
-		super(SearchMessages.getString("SearchResultView.removeMatch.text")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("SearchResultView.removeMatch.tooltip")); //$NON-NLS-1$
+		super(SearchMessages.SearchResultView_removeMatch_text); 
+		setToolTipText(SearchMessages.SearchResultView_removeMatch_tooltip); 
 		fSelectionProvider= provider;
 	}
 	
@@ -38,7 +38,7 @@ class RemoveMatchAction extends Action {
 			try {
 				SearchPlugin.getWorkspace().deleteMarkers(markers);
 			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message); 
 			}
 	}
 	

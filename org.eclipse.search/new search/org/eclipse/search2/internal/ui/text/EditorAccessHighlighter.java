@@ -67,7 +67,7 @@ public class EditorAccessHighlighter extends Highlighter {
 						}
 					}
 				} catch (BadLocationException e) {
-					SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("EditorAccessHighlighter.error.badLocation"), e)); //$NON-NLS-1$
+					SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.EditorAccessHighlighter_error_badLocation, e)); 
 				}
 			}
 		}
@@ -91,7 +91,7 @@ public class EditorAccessHighlighter extends Highlighter {
 			if (doc != null) {
 				position= PositionTracker.convertToCharacterPosition(position, doc);
 			} else {
-				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.getString("AnnotationHighlighter.error.noDocument"), null)); //$NON-NLS-1$
+				SearchPlugin.log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, SearchMessages.AnnotationHighlighter_error_noDocument, null)); 
 				return null;
 			}
 		}

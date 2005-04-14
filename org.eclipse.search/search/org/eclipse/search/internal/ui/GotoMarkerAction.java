@@ -17,9 +17,9 @@ class GotoMarkerAction extends Action {
 	private SearchResultViewer fViewer;
 
 	public GotoMarkerAction(SearchResultViewer viewer) {
-		super(SearchMessages.getString("SearchResultView.gotoMarker.text")); //$NON-NLS-1$
+		super(SearchMessages.SearchResultView_gotoMarker_text); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_GOTO);
-		setToolTipText(SearchMessages.getString("SearchResultView.gotoMarker.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.SearchResultView_gotoMarker_tooltip); 
 		fViewer= viewer;
 	}
 	

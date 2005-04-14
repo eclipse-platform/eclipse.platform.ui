@@ -25,6 +25,7 @@ import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 
@@ -84,7 +85,7 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	public String getLabel() {
-		return SearchMessages.getString("FileSearchQuery.label"); //$NON-NLS-1$
+		return SearchMessages.FileSearchQuery_label; 
 	}
 	
 	public String getSearchString() {
@@ -99,17 +100,17 @@ public class FileSearchQuery implements ISearchQuery {
 		if (nMatches == 1) {
 			if (fSearchString.length() > 0) {
 				Object[] args= { fSearchString, fScope.getDescription() };
-				return SearchMessages.getFormattedString("FileSearchQuery.singularLabel", args); //$NON-NLS-1$;
+				return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args); 
 			}
 			Object[] args= { fScope.getFileNamePatternDescription(), fScope.getDescription() };
-			return SearchMessages.getFormattedString("FileSearchQuery.singularLabel.fileNameSearch", args); //$NON-NLS-1$;
+			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args); 
 		}
 		if (fSearchString.length() > 0) {
 			Object[] args= { fSearchString, new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
-			return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern", args); //$NON-NLS-1$;
+			return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
 		}
 		Object[] args= { fScope.getFileNamePatternDescription(), new Integer(nMatches), fScope.getDescription() }; //$NON-NLS-1$
-		return SearchMessages.getFormattedString("FileSearchQuery.pluralPattern.fileNameSearch", args); //$NON-NLS-1$;
+		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args); 
 	}
 
 	/**

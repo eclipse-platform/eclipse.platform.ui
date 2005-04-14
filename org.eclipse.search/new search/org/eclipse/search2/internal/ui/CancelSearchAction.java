@@ -21,9 +21,9 @@ public class CancelSearchAction extends Action {
 	private SearchView fView;
 
 	public CancelSearchAction(SearchView view) {
-		super(SearchMessages.getString("CancelSearchAction.label")); //$NON-NLS-1$
+		super(SearchMessages.CancelSearchAction_label); 
 		fView= view;
-		setToolTipText(SearchMessages.getString("CancelSearchAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.CancelSearchAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_CANCEL);
 	}
 	

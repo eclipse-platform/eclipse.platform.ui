@@ -20,9 +20,9 @@ public class ExpandAllAction extends Action {
 	private TreeViewer fViewer;
 
 	public ExpandAllAction(TreeViewer viewer) {
-		super(SearchMessages.getString("ExpandAllAction.label")); //$NON-NLS-1$
+		super(SearchMessages.ExpandAllAction_label); 
 		fViewer= viewer;
-		setToolTipText(SearchMessages.getString("ExpandAllAction.tooltip")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.ExpandAllAction_tooltip); 
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_EXPAND_ALL);
 	}
 	
