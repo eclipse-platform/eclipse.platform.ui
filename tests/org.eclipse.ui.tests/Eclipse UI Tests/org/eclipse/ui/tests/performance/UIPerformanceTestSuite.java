@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
+import org.eclipse.ui.tests.presentations.PresentationPerformanceTestSuite;
 
 /**
  * Test all areas of the UI API.
@@ -31,6 +32,7 @@ public class UIPerformanceTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UIPerformanceTestSuite() {
+        addTest(new PresentationPerformanceTestSuite());
         addTest(new WorkbenchPerformanceSuite());
         addTest(new ViewPerformanceSuite());
         addTest(new EditorPerformanceSuite());
