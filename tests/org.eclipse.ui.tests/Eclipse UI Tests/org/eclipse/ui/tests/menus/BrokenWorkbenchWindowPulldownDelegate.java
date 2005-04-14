@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.tests.intro.ForcedException;
 
 /**
  * This is a broken pulldown delegate that throws exceptions if you try to get
@@ -43,8 +44,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     public Menu getMenu(Menu parent) {
         if (throwMenu) {
             throwMenu = false;
-            throw new RuntimeException(
-                    "The workbench should handle hostile pulldown delegates (this is an expected exception from the UI test suite).");
+            throw new ForcedException(
+					"The workbench should handle hostile pulldown delegates.");
         }
         menuMenu = new Menu(parent);
         return menuMenu;
@@ -56,8 +57,8 @@ public final class BrokenWorkbenchWindowPulldownDelegate implements
     public Menu getMenu(Control parent) {
         if (throwControl) {
             throwControl = false;
-            throw new RuntimeException(
-                    "The workbench should handle hostile pulldown delegates (this is an expected exception from the UI test suite).");
+            throw new ForcedException(
+					"The workbench should handle hostile pulldown delegates.");
         }
         menuControl = new Menu(parent);
         return menuControl;
