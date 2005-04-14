@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.performance.layout;
 
 import junit.framework.Assert;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -61,7 +62,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
      */
     public void init() throws CoreException, WorkbenchException {
     	// open the view in a new window
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, null);
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
 		IWorkbenchPage page = window.getActivePage();
         Assert.assertNotNull(page);
 

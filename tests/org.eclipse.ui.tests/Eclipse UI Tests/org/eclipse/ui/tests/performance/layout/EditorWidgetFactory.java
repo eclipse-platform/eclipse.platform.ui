@@ -70,7 +70,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
     public void init() throws CoreException, WorkbenchException {
 
 		// Open an editor in a new window.
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, null);
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
 		IWorkbenchPage activePage = window.getActivePage();
         Assert.assertNotNull(activePage);
 		
