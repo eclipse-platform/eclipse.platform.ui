@@ -30,8 +30,8 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Object contribution performance");
-		suite.addTest(new ObjectContributionsPerformance("large selection, limited contributors", generateAdaptableSelection(SEED, 5000), BasicPerformanceTest.LOCAL));
-		suite.addTest(new ObjectContributionsPerformance("limited selection, limited contributors", generateAdaptableSelection(SEED, 50), BasicPerformanceTest.LOCAL));
+		suite.addTest(new ObjectContributionsPerformance("large selection, limited contributors", generateAdaptableSelection(SEED, 5000), BasicPerformanceTest.NONE));
+		suite.addTest(new ObjectContributionsPerformance("limited selection, limited contributors", generateAdaptableSelection(SEED, 50), BasicPerformanceTest.NONE));
 	    return suite;
 	}
 	
@@ -43,7 +43,7 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 	protected void runTest() {
 		ObjectContributionTest tests = new ObjectContributionTest("testObjectContributions");
 		tagIfNecessary(selection.size() + " contribution(s)", new Dimension[]{Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
-		for (int i = 0; i < 10; i++) {			
+		for (int i = 0; i < 1000; i++) {			
 			startMeasuring();			
 			tests.assertPopupMenus("1", new String[] {"bogus"}, selection, null, false);
 			stopMeasuring();
