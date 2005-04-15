@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.Vector;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -285,14 +285,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus run(IProgressMonitor monitor) {
-			int numElements= fElementQueue.size();
-			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_1, new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
 			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
-				StringBuffer message= new StringBuffer(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_1, new String[] { Integer.toString(fElementQueue.size()) })); //$NON-NLS-1$
-				//if (fNextJob != null) {
-					message.append(MessageFormat.format(DebugUIViewsMessages.DebugViewLabelDecorator_2, new String[] { Integer.toString(fNextJob.fElementQueue.size()) })); //$NON-NLS-1$
-				//}
-				monitor.setTaskName(message.toString());
 				int blockSize= 10;
 				if (fElementQueue.size() < blockSize) {
 					blockSize= fElementQueue.size();
