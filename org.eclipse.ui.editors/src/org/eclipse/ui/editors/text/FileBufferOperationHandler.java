@@ -49,6 +49,8 @@ import org.eclipse.ui.commands.ExecutionException;
 
 /**
  * Operation handler for a file buffer.
+ * <p>
+ * This class may be instantiated or be subclassed.</p>
  * 
  * @since 3.1
  */
