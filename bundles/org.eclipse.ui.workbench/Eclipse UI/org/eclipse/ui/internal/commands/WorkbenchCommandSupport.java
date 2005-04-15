@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands.ws;
+package org.eclipse.ui.internal.commands;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,8 +26,6 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.commands.CommandManagerFactory;
-import org.eclipse.ui.internal.commands.CommandManagerWrapper;
 import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 
 /**

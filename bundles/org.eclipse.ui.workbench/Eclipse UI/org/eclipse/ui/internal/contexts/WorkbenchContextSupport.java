@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.contexts.ws;
+package org.eclipse.ui.internal.contexts;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,8 +25,6 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.ContextManagerFactory;
-import org.eclipse.ui.internal.contexts.ContextManagerWrapper;
 import org.eclipse.ui.keys.IBindingService;
 
 /**

@@ -22,8 +22,8 @@ import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.internal.keywords.KeywordRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**

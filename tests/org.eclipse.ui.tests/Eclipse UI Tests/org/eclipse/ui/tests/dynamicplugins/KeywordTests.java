@@ -11,7 +11,7 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.keywords.KeywordRegistry;
+import org.eclipse.ui.internal.registry.KeywordRegistry;
 
 /**
  * @since 3.1
