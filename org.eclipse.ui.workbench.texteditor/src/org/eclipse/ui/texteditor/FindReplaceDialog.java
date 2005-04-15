@@ -299,7 +299,7 @@ class FindReplaceDialog extends Dialog {
 		if (fDialogPositionInit != null)
 			shell.setBounds(fDialogPositionInit);
 		
-		shell.setText(EditorMessages.getString("FindReplace.title")); //$NON-NLS-1$
+		shell.setText(EditorMessages.FindReplace_title); 
 		// shell.setImage(null);
 	}
 
@@ -317,7 +317,7 @@ class FindReplaceDialog extends Dialog {
 		layout.makeColumnsEqualWidth= true;
 		panel.setLayout(layout);
 		
-		fFindNextButton= makeButton(panel, "FindReplace.FindNextButton.label", 102, true, new SelectionAdapter() { //$NON-NLS-1$
+		fFindNextButton= makeButton(panel, EditorMessages.FindReplace_FindNextButton_label, 102, true, new SelectionAdapter() { 
 			public void widgetSelected(SelectionEvent e) {
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
 					initIncrementalBaseLocation();
@@ -330,7 +330,7 @@ class FindReplaceDialog extends Dialog {
 		});
 		setGridData(fFindNextButton, GridData.FILL, true, GridData.FILL, false);
 				
-		fReplaceFindButton= makeButton(panel, "FindReplace.ReplaceFindButton.label", 103, false, new SelectionAdapter() { //$NON-NLS-1$
+		fReplaceFindButton= makeButton(panel, EditorMessages.FindReplace_ReplaceFindButton_label, 103, false, new SelectionAdapter() { 
 			public void widgetSelected(SelectionEvent e) {
 				if (fNeedsInitialFindBeforeReplace)
 					performSearch();
@@ -342,7 +342,7 @@ class FindReplaceDialog extends Dialog {
 		});
 		setGridData(fReplaceFindButton, GridData.FILL, true, GridData.FILL, false);
 				
-		fReplaceSelectionButton= makeButton(panel, "FindReplace.ReplaceSelectionButton.label", 104, false, new SelectionAdapter() { //$NON-NLS-1$
+		fReplaceSelectionButton= makeButton(panel, EditorMessages.FindReplace_ReplaceSelectionButton_label, 104, false, new SelectionAdapter() { 
 			public void widgetSelected(SelectionEvent e) {
 				if (fNeedsInitialFindBeforeReplace)
 					performSearch();
@@ -353,7 +353,7 @@ class FindReplaceDialog extends Dialog {
 		});
 		setGridData(fReplaceSelectionButton, GridData.FILL, true, GridData.FILL, false);
 		
-		fReplaceAllButton= makeButton(panel, "FindReplace.ReplaceAllButton.label", 105, false, new SelectionAdapter() { //$NON-NLS-1$
+		fReplaceAllButton= makeButton(panel, EditorMessages.FindReplace_ReplaceAllButton_label, 105, false, new SelectionAdapter() { 
 			public void widgetSelected(SelectionEvent e) {
 				performReplaceAll();
 				updateFindAndReplaceHistory();
@@ -464,7 +464,7 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 
 		Group group= new Group(panel, SWT.SHADOW_ETCHED_IN);
-		group.setText(EditorMessages.getString("FindReplace.Direction")); //$NON-NLS-1$
+		group.setText(EditorMessages.FindReplace_Direction); 
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -480,12 +480,12 @@ class FindReplaceDialog extends Dialog {
 		};
 
 		fForwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
-		fForwardRadioButton.setText(EditorMessages.getString("FindReplace.ForwardRadioButton.label")); //$NON-NLS-1$
+		fForwardRadioButton.setText(EditorMessages.FindReplace_ForwardRadioButton_label); 
 		setGridData(fForwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		fForwardRadioButton.addSelectionListener(selectionListener);
 
 		Button backwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
-		backwardRadioButton.setText(EditorMessages.getString("FindReplace.BackwardRadioButton.label")); //$NON-NLS-1$
+		backwardRadioButton.setText(EditorMessages.FindReplace_BackwardRadioButton_label); 
 		setGridData(backwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		backwardRadioButton.addSelectionListener(selectionListener);
 
@@ -511,13 +511,13 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);		
 
 		Group group= new Group(panel, SWT.SHADOW_ETCHED_IN);
-		group.setText(EditorMessages.getString("FindReplace.Scope")); //$NON-NLS-1$
+		group.setText(EditorMessages.FindReplace_Scope); 
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fGlobalRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
-		fGlobalRadioButton.setText(EditorMessages.getString("FindReplace.GlobalRadioButton.label")); //$NON-NLS-1$
+		fGlobalRadioButton.setText(EditorMessages.FindReplace_GlobalRadioButton_label); 
 		setGridData(fGlobalRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		fGlobalRadioButton.setSelection(fGlobalInit);
 		fGlobalRadioButton.addSelectionListener(new SelectionListener() {
@@ -533,7 +533,7 @@ class FindReplaceDialog extends Dialog {
 		});
 
 		fSelectedRangeRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
-		fSelectedRangeRadioButton.setText(EditorMessages.getString("FindReplace.SelectedRangeRadioButton.label")); //$NON-NLS-1$
+		fSelectedRangeRadioButton.setText(EditorMessages.FindReplace_SelectedRangeRadioButton_label); 
 		setGridData(fSelectedRangeRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		fSelectedRangeRadioButton.setSelection(!fGlobalInit);
 		fUseSelectedLines= !fGlobalInit;
@@ -610,7 +610,7 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 
 		Label findLabel= new Label(panel, SWT.LEFT);
-		findLabel.setText(EditorMessages.getString("FindReplace.Find.label")); //$NON-NLS-1$
+		findLabel.setText(EditorMessages.FindReplace_Find_label); 
 		setGridData(findLabel, GridData.BEGINNING, false, GridData.CENTER, false);
 
 		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
@@ -618,7 +618,7 @@ class FindReplaceDialog extends Dialog {
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel= new Label(panel, SWT.LEFT);
-		fReplaceLabel.setText(EditorMessages.getString("FindReplace.Replace.label")); //$NON-NLS-1$
+		fReplaceLabel.setText(EditorMessages.FindReplace_Replace_label); 
 		setGridData(fReplaceLabel, GridData.BEGINNING, false, GridData.CENTER, false);
 
 		fReplaceField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
@@ -644,7 +644,7 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 
 		Group group= new Group(panel, SWT.SHADOW_NONE);
-		group.setText(EditorMessages.getString("FindReplace.Options")); //$NON-NLS-1$
+		group.setText(EditorMessages.FindReplace_Options); 
 		GridLayout groupLayout= new GridLayout();
 		groupLayout.numColumns= 2;
 		groupLayout.makeColumnsEqualWidth= true;		
@@ -661,25 +661,25 @@ class FindReplaceDialog extends Dialog {
 		};
 
 		fCaseCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fCaseCheckBox.setText(EditorMessages.getString("FindReplace.CaseCheckBox.label")); //$NON-NLS-1$
+		fCaseCheckBox.setText(EditorMessages.FindReplace_CaseCheckBox_label); 
 		setGridData(fCaseCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
 		fCaseCheckBox.addSelectionListener(selectionListener);
 
 		fWrapCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fWrapCheckBox.setText(EditorMessages.getString("FindReplace.WrapCheckBox.label")); //$NON-NLS-1$
+		fWrapCheckBox.setText(EditorMessages.FindReplace_WrapCheckBox_label); 
 		setGridData(fWrapCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWrapCheckBox.setSelection(fWrapInit);
 		fWrapCheckBox.addSelectionListener(selectionListener);
 
 		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fWholeWordCheckBox.setText(EditorMessages.getString("FindReplace.WholeWordCheckBox.label")); //$NON-NLS-1$
+		fWholeWordCheckBox.setText(EditorMessages.FindReplace_WholeWordCheckBox_label); 
 		setGridData(fWholeWordCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
 		fWholeWordCheckBox.addSelectionListener(selectionListener);
 
 		fIncrementalCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fIncrementalCheckBox.setText(EditorMessages.getString("FindReplace.IncrementalCheckBox.label")); //$NON-NLS-1$
+		fIncrementalCheckBox.setText(EditorMessages.FindReplace_IncrementalCheckBox_label); 
 		setGridData(fIncrementalCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fIncrementalCheckBox.setSelection(fIncrementalInit);
 		fIncrementalCheckBox.addSelectionListener(new SelectionListener() {
@@ -695,7 +695,7 @@ class FindReplaceDialog extends Dialog {
 		});
 
 		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fIsRegExCheckBox.setText(EditorMessages.getString("FindReplace.RegExCheckbox.label")); //$NON-NLS-1$
+		fIsRegExCheckBox.setText(EditorMessages.FindReplace_RegExCheckbox_label); 
 		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
@@ -742,7 +742,7 @@ class FindReplaceDialog extends Dialog {
 		fStatusLabel= new Label(panel, SWT.LEFT);
 		setGridData(fStatusLabel, GridData.FILL, true, GridData.CENTER, false);
 
-		String label= EditorMessages.getString("FindReplace.CloseButton.label"); //$NON-NLS-1$
+		String label= EditorMessages.FindReplace_CloseButton_label; 
 		Button closeButton= createButton(panel, 101, label, false);
 		setGridData(closeButton, GridData.END, false, GridData.END, false);
 
@@ -1176,8 +1176,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param listener a button pressed listener
 	 * @return the new button
 	 */
-	private Button makeButton(Composite parent, String key, int id, boolean dfltButton, SelectionListener listener) {
-		String label= EditorMessages.getString(key);
+	private Button makeButton(Composite parent, String label, int id, boolean dfltButton, SelectionListener listener) {
 		Button b= createButton(parent, id, label, dfltButton);
 		b.addSelectionListener(listener);
 		return b;
@@ -1268,14 +1267,14 @@ class FindReplaceDialog extends Dialog {
 			
 				if (replaceCount != 0) {
 					if (replaceCount == 1) { // not plural
-						statusMessage(EditorMessages.getString("FindReplace.Status.replacement.label")); //$NON-NLS-1$
+						statusMessage(EditorMessages.FindReplace_Status_replacement_label); 
 					} else {
-						String msg= EditorMessages.getString("FindReplace.Status.replacements.label"); //$NON-NLS-1$
+						String msg= EditorMessages.FindReplace_Status_replacements_label; 
 						msg= MessageFormat.format(msg, new Object[] {String.valueOf(replaceCount)});
 						statusMessage(msg);
 					}
 				} else {
-					statusMessage(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
+					statusMessage(EditorMessages.FindReplace_Status_noMatch_label); 
 				}
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
@@ -1297,7 +1296,7 @@ class FindReplaceDialog extends Dialog {
 		if (fTarget instanceof IFindReplaceTargetExtension2) {
 			IFindReplaceTargetExtension2 extension= (IFindReplaceTargetExtension2) fTarget;
 			if (!extension.validateTargetState()) {
-				statusError(EditorMessages.getString("FindReplaceDialog.read_only")); //$NON-NLS-1$
+				statusError(EditorMessages.FindReplaceDialog_read_only); 
 				updateButtonState();
 				return false;
 			}
@@ -1363,7 +1362,7 @@ class FindReplaceDialog extends Dialog {
 				if (somethingFound) {
 					statusMessage(""); //$NON-NLS-1$
 				} else {
-					statusMessage(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
+					statusMessage(EditorMessages.FindReplace_Status_noMatch_label); 
 				}
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());

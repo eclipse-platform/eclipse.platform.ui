@@ -181,6 +181,9 @@ import org.eclipse.ui.part.EditorPart;
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, INavigationLocationProvider {
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
 	 * Current value: <code>editorContribution</code>
@@ -1611,14 +1614,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};	
 	
-	private final String fReadOnlyLabel= EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
-	private final String fWritableLabel= EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
-	private final String fInsertModeLabel= EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
-	private final String fOverwriteModeLabel= EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
-	private final String fSmartInsertModeLabel= EditorMessages.getString("Editor.statusline.mode.smartinsert.label"); //$NON-NLS-1$
+	private final String fReadOnlyLabel= EditorMessages.Editor_statusline_state_readonly_label; 
+	private final String fWritableLabel= EditorMessages.Editor_statusline_state_writable_label; 
+	private final String fInsertModeLabel= EditorMessages.Editor_statusline_mode_insert_label; 
+	private final String fOverwriteModeLabel= EditorMessages.Editor_statusline_mode_overwrite_label; 
+	private final String fSmartInsertModeLabel= EditorMessages.Editor_statusline_mode_smartinsert_label; 
 	
 	/** The error message shown in the status line in case of failed information look up. */
-	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
+	protected final String fErrorLabel= EditorMessages.Editor_statusline_error_label; 
 
 	/**
 	 * Data structure for the position label value.
@@ -1632,7 +1635,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 	/** The pattern used to show the position label in the status line. */
-	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
+	private final String fPositionLabelPattern= EditorMessages.Editor_statusline_position_pattern; 
 	/** The position label value of the current line. */
 	private final PositionLabelValue fLineLabel= new PositionLabelValue();
 	/** The position label value of the current column. */
@@ -2375,7 +2378,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
                     throw new PartInitException(status);
                	throw new PartInitException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), t));
             }
-			throw new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
+			throw new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.Editor_error_init, t)); 
 		}
 	}
 	
@@ -2985,7 +2988,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			IDocumentProvider provider= getDocumentProvider();
 			if (provider == null) {
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.no_provider"), null); //$NON-NLS-1$
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.Editor_error_no_provider, null); 
 				throw new CoreException(s);
 			}
 			
@@ -3022,8 +3025,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			doSetInput(input);
 				
 		} catch (CoreException x) {
-			String title= EditorMessages.getString("Editor.error.setinput.title"); //$NON-NLS-1$
-			String msg= EditorMessages.getString("Editor.error.setinput.message"); //$NON-NLS-1$
+			String title= EditorMessages.Editor_error_setinput_title; 
+			String msg= EditorMessages.Editor_error_setinput_message; 
 			Shell shell= getSite().getShell();
 			ErrorDialog.openError(shell, title, msg, x.getStatus());
 		}				
@@ -3352,12 +3355,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (isSaveAsAllowed()) {
 				
-				title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
-				msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
+				title= EditorMessages.Editor_error_activated_deleted_save_title; 
+				msg= EditorMessages.Editor_error_activated_deleted_save_message; 
 				
 				String[] buttons= {
-						EditorMessages.getString("Editor.error.activated.deleted.save.button.save"), //$NON-NLS-1$
-						EditorMessages.getString("Editor.error.activated.deleted.save.button.close"), //$NON-NLS-1$
+						EditorMessages.Editor_error_activated_deleted_save_button_save, 
+						EditorMessages.Editor_error_activated_deleted_save_button_close, 
 				};
 				
 				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
@@ -3373,16 +3376,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 			} else {
 				
-				title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
-				msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
+				title= EditorMessages.Editor_error_activated_deleted_close_title; 
+				msg= EditorMessages.Editor_error_activated_deleted_close_message; 
 				if (MessageDialog.openConfirm(shell, title, msg))
 					close(false);
 			}
 			
 		} else {
 			
-			title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
-			msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
+			title= EditorMessages.Editor_error_activated_outofsync_title; 
+			msg= EditorMessages.Editor_error_activated_outofsync_message; 
 			
 			if (MessageDialog.openQuestion(shell, title, msg)) {
 				
@@ -3397,8 +3400,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				} catch (CoreException x) {
 					IStatus status= x.getStatus();
 					if (status == null || status.getSeverity() != IStatus.CANCEL) {
-						title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
-						msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
+						title= EditorMessages.Editor_error_refresh_outofsync_title; 
+						msg= EditorMessages.Editor_error_refresh_outofsync_message; 
 						ErrorDialog.openError(shell, title, msg, x.getStatus());
 					}
 				}
@@ -3456,8 +3459,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else {
 				
 				Shell shell= getSite().getShell();
-				String title= EditorMessages.getString("Editor.error.save.deleted.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.save.deleted.message"); //$NON-NLS-1$
+				String title= EditorMessages.Editor_error_save_deleted_title; 
+				String msg= EditorMessages.Editor_error_save_deleted_message; 
 				MessageDialog.openError(shell, title, msg);
 			}
 			
@@ -3573,8 +3576,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				log.log(x.getStatus());
 				
 				Shell shell= getSite().getShell();
-				String title= EditorMessages.getString("Editor.error.validateEdit.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.validateEdit.message"); //$NON-NLS-1$			
+				String title= EditorMessages.Editor_error_validateEdit_title; 
+				String msg= EditorMessages.Editor_error_validateEdit_message; 
 				ErrorDialog.openError(shell, title, msg, x.getStatus());
 			}
 			return;
@@ -3716,8 +3719,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (fErrorCorrectionOnSave == 1 && !isSynchronized) {
 				
-				String title= EditorMessages.getString("Editor.error.save.outofsync.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.save.outofsync.message"); //$NON-NLS-1$
+				String title= EditorMessages.Editor_error_save_outofsync_title; 
+				String msg= EditorMessages.Editor_error_save_outofsync_message; 
 				
 				if (MessageDialog.openQuestion(shell, title, msg))
 					performSave(true, progressMonitor);
@@ -3732,8 +3735,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			} else {
 				
-				String title= EditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.save.message"); //$NON-NLS-1$
+				String title= EditorMessages.Editor_error_save_title; 
+				String msg= EditorMessages.Editor_error_save_message; 
 				ErrorDialog.openError(shell, title, msg, exception.getStatus());
 				
 				/*
@@ -3805,8 +3808,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			IStatus status= x.getStatus();
 			if (status == null || status.getSeverity() != IStatus.CANCEL ) {
 				Shell shell= getSite().getShell();
-				String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
-				String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
+				String title= EditorMessages.Editor_error_revert_title; 
+				String msg= EditorMessages.Editor_error_revert_message; 
 				ErrorDialog.openError(shell, title, msg, x.getStatus());
 			}
 		} finally {
@@ -4096,7 +4099,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			setAction(entry.getActionId(), action);
 		}
 		
-		action= new ToggleOverwriteModeAction(EditorMessages.getResourceBundle(), "Editor.ToggleOverwriteMode."); //$NON-NLS-1$
+		action= new ToggleOverwriteModeAction(fgResourceBundle, "Editor.ToggleOverwriteMode."); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
 		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, action);
 		textWidget.setKeyBinding(SWT.INSERT, SWT.NULL);
@@ -4183,12 +4186,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} else {
 			ResourceAction action;
 			
-			action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
+			action= new TextOperationAction(fgResourceBundle, "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
 			action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 			setAction(ITextEditorActionConstants.UNDO, action);
 			
-			action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
+			action= new TextOperationAction(fgResourceBundle, "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
 			action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			setAction(ITextEditorActionConstants.REDO, action);
@@ -4205,124 +4208,124 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
         ResourceAction action;
         				
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE);
 		setAction(ITextEditorActionConstants.DELETE_LINE, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLine.", this, DeleteLineAction.WHOLE, true); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLine.", this, DeleteLineAction.WHOLE, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE);
 		setAction(ITextEditorActionConstants.CUT_LINE, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, false); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_BEGINNING_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_BEGINNING);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, true); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_BEGINNING_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_BEGINNING);
 		setAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END, false); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_END);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_END, action);
 
-		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.CutLineToEnd.", this, DeleteLineAction.TO_END, true); //$NON-NLS-1$
+		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLineToEnd.", this, DeleteLineAction.TO_END, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_END);
 		setAction(ITextEditorActionConstants.CUT_LINE_TO_END, action);
 		
-		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
+		action= new MarkAction(fgResourceBundle, "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SET_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SET_MARK);
 		setAction(ITextEditorActionConstants.SET_MARK, action);
 
-		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.ClearMark.", this, MarkAction.CLEAR_MARK); //$NON-NLS-1$
+		action= new MarkAction(fgResourceBundle, "Editor.ClearMark.", this, MarkAction.CLEAR_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CLEAR_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CLEAR_MARK);
 		setAction(ITextEditorActionConstants.CLEAR_MARK, action);
 
-		action= new MarkAction(EditorMessages.getResourceBundle(), "Editor.SwapMark.", this, MarkAction.SWAP_MARK); //$NON-NLS-1$
+		action= new MarkAction(fgResourceBundle, "Editor.SwapMark.", this, MarkAction.SWAP_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SWAP_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SWAP_MARK);
 		setAction(ITextEditorActionConstants.SWAP_MARK, action);
 
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
-		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
+		action= new ShiftAction(fgResourceBundle, "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
-		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT) { //$NON-NLS-1$
+		action= new ShiftAction(fgResourceBundle, "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT) { //$NON-NLS-1$
 			public void update() {
 				updateForTab();
 			}
 		};
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT_TAB, action);
 		
-		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		action= new ShiftAction(fgResourceBundle, "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
+		action= new TextOperationAction(fgResourceBundle, "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 		
-		action= new FindReplaceAction(EditorMessages.getResourceBundle(), "Editor.FindReplace.", this); //$NON-NLS-1$
+		action= new FindReplaceAction(fgResourceBundle, "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
-		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindNext.", this, true); //$NON-NLS-1$
+		action= new FindNextAction(fgResourceBundle, "Editor.FindNext.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
 		setAction(ITextEditorActionConstants.FIND_NEXT, action);
 
-		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
+		action= new FindNextAction(fgResourceBundle, "Editor.FindPrevious.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 
-		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this, true); //$NON-NLS-1$
+		action= new IncrementalFindAction(fgResourceBundle, "Editor.FindIncremental.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
 		
-		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
+		action= new IncrementalFindAction(fgResourceBundle, "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 				
-		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
+		action= new SaveAction(fgResourceBundle, "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
 		/*
 		 * if the line below is uncommented then the key binding does not work any more
@@ -4331,62 +4334,62 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 //		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
-		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
+		action= new RevertToSavedAction(fgResourceBundle, "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT_TO_SAVED);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 		
-		action= new GotoLineAction(EditorMessages.getResourceBundle(), "Editor.GotoLine.", this); //$NON-NLS-1$
+		action= new GotoLineAction(fgResourceBundle, "Editor.GotoLine.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
+		action= new MoveLinesAction(fgResourceBundle, "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
 		
-		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
+		action= new MoveLinesAction(fgResourceBundle, "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
 		
-		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
+		action= new MoveLinesAction(fgResourceBundle, "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_UP);
 		setAction(ITextEditorActionConstants.COPY_LINE_UP, action);
 		
-		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
+		action= new MoveLinesAction(fgResourceBundle, "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_DOWN);
 		setAction(ITextEditorActionConstants.COPY_LINE_DOWN, action);
 		
-		action= new CaseAction(EditorMessages.getResourceBundle(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
+		action= new CaseAction(fgResourceBundle, "Editor.UpperCase.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UPPER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UPPER_CASE);
 		setAction(ITextEditorActionConstants.UPPER_CASE, action);
 		
-		action= new CaseAction(EditorMessages.getResourceBundle(), "Editor.LowerCase.", this, false); //$NON-NLS-1$
+		action= new CaseAction(fgResourceBundle, "Editor.LowerCase.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.LOWER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LOWER_CASE);
 		setAction(ITextEditorActionConstants.LOWER_CASE, action);
 		
-		action= new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
+		action= new InsertLineAction(fgResourceBundle, "Editor.SmartEnter.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
 		setAction(ITextEditorActionConstants.SMART_ENTER, action);
 		
-		action= new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
+		action= new InsertLineAction(fgResourceBundle, "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
 		
-		action= new ToggleInsertModeAction(EditorMessages.getResourceBundle(), "Editor.ToggleInsertMode."); //$NON-NLS-1$
+		action= new ToggleInsertModeAction(fgResourceBundle, "Editor.ToggleInsertMode."); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.TOGGLE_INSERT_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 		setAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE, action);
 
-		action= new HippieCompleteAction(EditorMessages.getResourceBundle(), "Editor.HippieCompletion.", this); //$NON-NLS-1$
+		action= new HippieCompleteAction(fgResourceBundle, "Editor.HippieCompletion.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);

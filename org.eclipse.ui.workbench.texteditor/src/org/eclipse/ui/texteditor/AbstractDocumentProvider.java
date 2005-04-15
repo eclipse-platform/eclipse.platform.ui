@@ -180,13 +180,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Constant for representing the OK status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
+	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.AbstractDocumentProvider_ok, null); 
 	
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
+	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.AbstractDocumentProvider_error, null); 
 	
 	
 	/** Element information of all connected elements */
@@ -601,7 +601,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info != null) {
 					if (info.fDocument != document) {
-						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
+						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.AbstractDocumentProvider_error_save_inuse, null); 
 						throw new CoreException(status);				
 					}
 					

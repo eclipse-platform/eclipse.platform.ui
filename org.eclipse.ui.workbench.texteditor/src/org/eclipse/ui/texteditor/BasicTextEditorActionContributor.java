@@ -14,6 +14,7 @@ package org.eclipse.ui.texteditor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -50,6 +51,10 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * @see org.eclipse.ui.texteditor.ITextEditorActionConstants
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {
+	
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+
 	
 	/** The global actions to be connected with editor actions */
 	private final static String[] ACTIONS= {
@@ -91,7 +96,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @since 3.0
 	 */
 	private final static StatusFieldDef[] STATUS_FIELD_DEFS= {
-		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.getString("Editor.FindIncremental.reverse.name").length() + 15), //$NON-NLS-1$
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.Editor_FindIncremental_reverse_name.length() + 15), 
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE, null, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE, ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION, ITextEditorActionConstants.GOTO_LINE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS)
@@ -145,17 +150,17 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public BasicTextEditorActionContributor() {
 		
-		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
+		fFindNext= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindNext."); //$NON-NLS-1$
 		fFindNext.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT); 
-		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
+		fFindPrevious= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindPrevious."); //$NON-NLS-1$
 		fFindPrevious.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS); 
-		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental."); //$NON-NLS-1$
+		fIncrementalFind= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindIncremental."); //$NON-NLS-1$
 		fIncrementalFind.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL); 
-		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
+		fIncrementalFindReverse= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindIncrementalReverse."); //$NON-NLS-1$
 		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
-		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
+		fGotoLine= new RetargetTextEditorAction(fgResourceBundle, "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
-		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
+		fHippieCompletion= new RetargetTextEditorAction(fgResourceBundle, "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		
 		fStatusFields= new HashMap(3);

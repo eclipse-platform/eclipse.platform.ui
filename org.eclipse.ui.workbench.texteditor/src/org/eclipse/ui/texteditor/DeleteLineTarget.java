@@ -333,7 +333,7 @@ class DeleteLineTarget {
 				// don't delete if copy to clipboard fails, rather log & abort
 				
 				// log
-				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.getString("Editor.error.clipboard.copy.failed.message"), e); //$NON-NLS-1$
+				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.Editor_error_clipboard_copy_failed_message, e); 
 				TextEditorPlugin.getDefault().getLog().log(status);
 				
 				fClipboard.uninstall();

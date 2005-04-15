@@ -144,7 +144,6 @@ public class MoveLinesAction extends TextEditorAction {
 	/* keys */	
 	
 	/** Key for status message upon illegal move. <p>Value {@value}</p> */
-	private static final String ILLEGAL_MOVE= "Editor.MoveLines.IllegalMove.status"; //$NON-NLS-1$
 	
 	/* state variables - define what this action does */
 
@@ -488,7 +487,7 @@ public class MoveLinesAction extends TextEditorAction {
 		IEditorStatusLine status= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
 		if (status == null)
 			return;
-		status.setMessage(false, EditorMessages.getString(ILLEGAL_MOVE), null);
+		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null); 
 	}
 
 	/*

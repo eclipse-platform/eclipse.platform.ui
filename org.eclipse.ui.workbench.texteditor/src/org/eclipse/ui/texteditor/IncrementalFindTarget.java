@@ -49,27 +49,27 @@ import org.eclipse.jface.text.TextEvent;
 class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ISelectionChangedListener, ITextListener {
 
 	/** The string representing rendered tab */
-	private final static String TAB= EditorMessages.getString("Editor.FindIncremental.render.tab"); //$NON-NLS-1$
+	private final static String TAB= EditorMessages.Editor_FindIncremental_render_tab; 
 	/**
 	 * The string representing "Reverse Incremental Find"
 	 * @since 3.0
 	 */
-	private final static String FIELD_NAME= EditorMessages.getString("Editor.FindIncremental.name"); //$NON-NLS-1$
+	private final static String FIELD_NAME= EditorMessages.Editor_FindIncremental_name; 
 	/**
 	 * The string representing "Incremental Find"
 	 * @since 3.0
 	 */
-	private final static String REVERSE_FIELD_NAME= EditorMessages.getString("Editor.FindIncremental.reverse.name"); //$NON-NLS-1$
+	private final static String REVERSE_FIELD_NAME= EditorMessages.Editor_FindIncremental_reverse_name; 
 	/**
 	 * The string representing reverse
 	 * @since 2.1
 	 */
-	private final static String REVERSE= EditorMessages.getString("Editor.FindIncremental.reverse"); //$NON-NLS-1$
+	private final static String REVERSE= EditorMessages.Editor_FindIncremental_reverse; 
 	/**
 	 * The string representing wrapped
 	 * @since 2.1
 	 */
-	private final static String WRAPPED= EditorMessages.getString("Editor.FindIncremental.wrapped"); //$NON-NLS-1$
+	private final static String WRAPPED= EditorMessages.Editor_FindIncremental_wrapped; 
 	/** The text viewer to operate on */
 	private final ITextViewer fTextViewer;
 	/** The status line manager for output */
@@ -408,7 +408,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		String reversePrefix= fForward ? "" : REVERSE; //$NON-NLS-1$
 
 		if (!fFound) {
-			String pattern= EditorMessages.getString("Editor.FindIncremental.not_found.pattern"); //$NON-NLS-1$
+			String pattern= EditorMessages.Editor_FindIncremental_not_found_pattern; 
 			statusError(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
 		} else if (string.length() == 0) {
@@ -417,7 +417,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			else
 				statusMessage(REVERSE_FIELD_NAME);
 		} else if (!fForward || fWrapPosition > -1) {
-			String pattern= EditorMessages.getString("Editor.FindIncremental.found.pattern"); //$NON-NLS-1$
+			String pattern= EditorMessages.Editor_FindIncremental_found_pattern; 
 			statusMessage(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 		} else {
 			statusMessage(string);

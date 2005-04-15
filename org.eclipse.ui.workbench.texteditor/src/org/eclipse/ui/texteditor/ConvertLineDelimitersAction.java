@@ -14,6 +14,7 @@ package org.eclipse.ui.texteditor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +42,9 @@ import org.eclipse.jface.text.TextUtilities;
  */
 public class ConvertLineDelimitersAction extends TextEditorAction {
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	
 	/** The target line delimiter. */
 	private final String fLineDelimiter;
 	
@@ -51,7 +55,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * @param lineDelimiter the target line delimiter to convert the editor's document to
 	 */
 	public ConvertLineDelimitersAction(ITextEditor editor, String lineDelimiter) {
-		this(EditorMessages.getResourceBundle(), "dummy", editor, lineDelimiter); //$NON-NLS-1$
+		this(fgResourceBundle, "dummy", editor, lineDelimiter); //$NON-NLS-1$
 	}
 
 	/**
@@ -67,7 +71,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		fLineDelimiter= lineDelimiter;
 		
 		String platformLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
-		setText(EditorMessages.getString(getLabelKey(fLineDelimiter, platformLineDelimiter)));
+		setText(getString(getLabelKey(fLineDelimiter, platformLineDelimiter)));
 
 		update();
 	}
@@ -140,7 +144,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 
 			IDocument document= fRewriteTarget.getDocument();
 			final int lineCount= document.getNumberOfLines();
-			monitor.beginTask(EditorMessages.getString("Editor.ConvertLineDelimiter.title"), lineCount); //$NON-NLS-1$
+			monitor.beginTask(EditorMessages.Editor_ConvertLineDelimiter_title, lineCount); 
 						
 			fRewriteTarget.setRedraw(false);
 			fRewriteTarget.beginCompoundChange();
@@ -253,6 +257,14 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 		
 		return null;
+	}
+	
+	private static String getString(String key) {
+		try {
+			return fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
 	}
 
 	/*

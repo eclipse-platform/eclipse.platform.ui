@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
@@ -35,6 +37,10 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  */
 final class RegExContentAssistProcessor implements IContentAssistProcessor, ISubjectControlContentAssistProcessor {
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+
+	
 	/**
 	 * The available proposal strings.
 	 */
@@ -351,6 +357,15 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	}
 	
 	private String getString(String proposalKey, String type) {
-		return EditorMessages.getString("FindReplace.regExContentAssist." + type + "." + proposalKey);  //$NON-NLS-1$//$NON-NLS-2$
+		return getString("FindReplace.regExContentAssist." + type + "." + proposalKey);  //$NON-NLS-1$//$NON-NLS-2$
 	}
+	
+	private static String getString(String key) {
+		try {
+			return fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}
+	}
+	
 }

@@ -60,13 +60,13 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 			viewerExtension.setMark(selection.x);
 		
 			fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-			fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.set")); //$NON-NLS-1$
+			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_set); 
 	
 		} else {
 			viewerExtension.setMark(-1);
 
 			fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-			fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.cleared")); //$NON-NLS-1$								
+			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_cleared); 
 		}
 	}
 
@@ -82,13 +82,13 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 
 		int markPosition= viewerExtension.getMark();		
 		if (markPosition == -1) {
-			fStatusLine.setErrorMessage(EditorMessages.getString("MarkRegionTarget.markNotSet")); //$NON-NLS-1$
+			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotSet); 
 			fStatusLine.setMessage(""); //$NON-NLS-1$			
 			return;
 		}
 
 		if (!isVisible(fViewer, markPosition)) {
-			fStatusLine.setErrorMessage(EditorMessages.getString("MarkRegionTarget.markNotVisible")); //$NON-NLS-1$
+			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotVisible); 
 			fStatusLine.setMessage(""); //$NON-NLS-1$
 			return;
 		}		
@@ -100,7 +100,7 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		fViewer.revealRange(markPosition, 0);
 
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-		fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.swapped")); //$NON-NLS-1$
+		fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_swapped); 
 	}
 	
 	/**
