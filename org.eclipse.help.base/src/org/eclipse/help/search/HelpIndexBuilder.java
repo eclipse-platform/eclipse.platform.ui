@@ -20,10 +20,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -41,13 +40,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.help.internal.base.DisplayUtils;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
 import org.eclipse.help.internal.search.PluginVersionInfo;
 import org.eclipse.help.internal.search.SearchIndex;
-import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,34 +64,26 @@ import org.xml.sax.InputSource;
  * the plug-in.
  * <p>
  * If the index is created for a fragment, the manifest must point at the
- * referenced fragment plug-in, while the target should be the fragment itself.
+ * referenced fragment plug-in, while the destination should be the fragment
+ * itself.
  * <p>
- * Starting from the provided target directory, index for each locale will be
- * placed in a directory with the following path:
- * 
+ * Starting from the provided destination directory, index for each locale will
+ * be placed in a directory with the following path:
+ * <p>
  * <pre>
- * 
- *  
- *   
- *    
- *         target/nl/country/
- *         
- *         or
- *         
- *         target/nl/country/variant/
- *     
- *    
- *   
- *  
+ *                  destination/nl/country/
+ *                  
+ *                  or
+ *                  
+ *                  destination/nl/country/variant/ 
  * </pre>
- * 
  * <p>
  * The relative directory specified in the <code>index</code> element of the
  * <code>org.eclipse.help.toc</code> extention will be created in each of the
  * locale-specific paths (one per locale).
  * <p>
  * An instance of <code>HelpIndexBuilder</code> can be cached and used
- * multiple times for different manifest and target values.
+ * multiple times for different manifest and destination values.
  * 
  * @since 3.1
  */
@@ -107,14 +99,18 @@ public class HelpIndexBuilder {
 
 	private String indexPath;
 
-	private File target;
+	private File destination;
+	
+	private ArrayList tocFiles = new ArrayList();
 
-	private Hashtable localeDirs = new Hashtable();
+	private ArrayList localeDirs = new ArrayList();
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
 
 	private DocumentBuilder parser;
+	
+	private static Locale[] legalLocales = Locale.getAvailableLocales();
 
 	class PluginIdentifier {
 		String id;
@@ -128,18 +124,35 @@ public class HelpIndexBuilder {
 	}
 
 	class LocaleDir {
-		File directory;
-
 		String locale;
+		ArrayList dirs = new ArrayList();
 
-		ArrayList tocFiles = new ArrayList();
-
-		public LocaleDir(File directory) {
-			this.directory = directory;
+		public LocaleDir(String locale) {
+			this.locale = locale;
 		}
-
-		public void addTocFile(TocFile tocFile) {
-			tocFiles.add(tocFile);
+		
+		public File findFile(String file) {
+			for (int i=0; i<dirs.size(); i++) {
+				File dir = (File)dirs.get(i);
+				File absoluteFile = new File(dir, file);
+				if (absoluteFile.exists())
+					return absoluteFile;
+			}
+			return null;
+		}
+		public URL findURL(String href) {
+			File file = findFile(href);
+			if (file!=null) {
+				try {
+						return file.toURL();
+					}
+				catch (MalformedURLException e) {
+				}
+			}
+			return null;
+		}
+		public void addDirectory(File directory) {
+			dirs.add(directory);
 		}
 	}
 
@@ -159,33 +172,27 @@ public class HelpIndexBuilder {
 		protected void createInfo(PluginIdentifier id, PluginIdentifier fid) {
 			// We will ignore docBundleIds which is null anyway,
 			// and use id and fid to create plugin info
-			// for the target
-			StringBuffer pluginVersionAndFragments = new StringBuffer();
-			pluginVersionAndFragments.append(id.id);
-			pluginVersionAndFragments.append(SEPARATOR);
-			pluginVersionAndFragments.append(id.version.toString());
-			if (fid != null) {
-				pluginVersionAndFragments.append(SEPARATOR);
-				pluginVersionAndFragments.append(fid.id);
-				pluginVersionAndFragments.append(SEPARATOR);
-				pluginVersionAndFragments.append(fid.version.toString());
-			}
-			this.put(id.id, pluginVersionAndFragments.toString());
+			// for the destination
+			StringBuffer buffer = new StringBuffer();
+			appendBundleInformation(buffer, id.id, id.version.toString());
+			if (fid != null)
+				appendBundleInformation(buffer, fid.id, fid.version.toString());
+
+			this.put(id.id, buffer.toString());
 		}
 	}
 
-	class IndexerTocFile extends TocFile {
-		public IndexerTocFile(String plugin, String href, boolean primary,
-				String locale, String extraDir) {
-			super(plugin, href, primary, locale, extraDir);
-		}
-
-		public String getHref() {
-			return super.getHref();
+	class TocFile {
+		String href;
+		boolean primary;
+		String extraDir;
+		
+		public TocFile(String href, boolean primary, String extraDir) {
+			this.href = href;
+			this.primary = primary;
+			this.extraDir = extraDir;
 		}
 	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Creates a new instance of the help index builder.
@@ -219,23 +226,23 @@ public class HelpIndexBuilder {
 	}
 
 	/**
-	 * Returns the target directory where index should be created.
+	 * Returns the destination directory where index should be created.
 	 * 
-	 * @return the target index directory
+	 * @return the destination index directory
 	 */
-	public File getTarget() {
-		return target;
+	public File getDestination() {
+		return destination;
 	}
 
 	/**
-	 * Sets the target directory where index should be created. Locale-specific
-	 * directories will be created starting from this directory.
+	 * Sets the destination directory where index should be created.
+	 * Locale-specific directories will be created starting from this directory.
 	 * 
-	 * @param target
+	 * @param destination
 	 *            the directory where index should be created
 	 */
-	public void setTarget(File target) {
-		this.target = target;
+	public void setDestination(File destination) {
+		this.destination = destination;
 	}
 
 	/**
@@ -253,38 +260,45 @@ public class HelpIndexBuilder {
 
 	public void execute(IProgressMonitor monitor) throws CoreException {
 		reset();
-		if (manifest == null || target == null)
+		if (manifest == null || destination == null)
 			return;
 		Document doc = readXMLFile(manifest);
 		if (doc == null)
 			return;
 
-		PluginIdentifier pluginID = getPluginID(doc);
+		PluginIdentifier pid = getPluginID(doc);
+		PluginIdentifier fid = null;
+		
+		if (!manifest.getParentFile().equals(destination)) {
+			// target is a fragment, source is a plug-in
+			File fragmentFile = new File(destination, "fragment.xml");
+			Document fdoc=null;
+			if (fragmentFile.exists())
+				fdoc = readXMLFile(fragmentFile);
+			fid = getPluginID(fdoc);
+			fdoc=null;
+		}		
 
 		Element[] extensions = getTocExtensions(doc);
 		for (int i = 0; i < extensions.length; i++) {
-			processExtension(pluginID, extensions[i]);
+			processExtension(extensions[i]);
 		}
 		if (indexPath == null) {
-			throwCoreException("Index target path not specified.", null);
+			throwCoreException("Index destination path not specified.", null);
 		}
 		doc = null; // discard the DOM
-		PluginIdentifier fragmentID = null;
+		
+		// compute the dir tree
+		computeLocaleDirs(fid!=null);		
 
-		if (!manifest.getParentFile().equals(target)) {
-			// target is a fragment, source is a plug-in
-			File fragmentFile = new File(target, "fragment.xml");
-			if (fragmentFile.exists())
-				doc = readXMLFile(fragmentFile);
-			fragmentID = getPluginID(doc);
-		}
 		monitor.beginTask("Building index: ", localeDirs.size());
 		MultiStatus multiStatus = null;
-		for (Enumeration enm = localeDirs.elements(); enm.hasMoreElements();) {
+
+		for (int i=0; i<localeDirs.size(); i++) {
 			// process locale dir
-			LocaleDir localeDir = (LocaleDir) enm.nextElement();
-			MultiStatus localeStatus = processLocaleDir(pluginID, fragmentID,
-					localeDir, new SubProgressMonitor(monitor, 1));
+			LocaleDir localeDir = (LocaleDir) localeDirs.get(i);
+			MultiStatus localeStatus = processLocaleDir(pid, fid,
+					localeDir, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			if (localeStatus != null) {
 				if (multiStatus == null)
 					multiStatus = localeStatus;
@@ -292,18 +306,22 @@ public class HelpIndexBuilder {
 					multiStatus.addAll(localeStatus);
 			}
 		}
+		monitor.done();
 		if (multiStatus != null)
 			throw new CoreException(multiStatus);
 	}
 
-	private void processExtension(PluginIdentifier id, Element extensionNode) {
+	/*
+	 * Extracts TOCs and the index path from the extensions.
+	 */
+	private void processExtension(Element extensionNode) {
 		NodeList children = extensionNode.getElementsByTagName(EL_TOC);
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
 			String file = getAttribute(node, "file");
 			String primary = getAttribute(node, "primary");
 			String extradir = getAttribute(node, "extradir");
-			addTocFile(id, file, primary, extradir);
+			addTocFile(file, primary, extradir);
 		}
 		children = extensionNode.getElementsByTagName(EL_INDEX);
 		if (children.getLength() == 1) {
@@ -312,49 +330,155 @@ public class HelpIndexBuilder {
 		}
 	}
 
+	private void addTocFile(String file, String primary, String extradir) {
+		boolean isPrimary = primary != null && primary.equalsIgnoreCase("true");
+		tocFiles.add(new TocFile(file, isPrimary, extradir));
+	}
+
+	/*
+	 * Computes the all nl/country/ and nl/country/variant/ locale
+	 * dirs that contain files. We will produce an index for
+	 * each one.
+	 */
+	private void computeLocaleDirs(boolean fragment) {
+		if (!fragment) {
+			LocaleDir dir = new LocaleDir(null);
+			dir.addDirectory(destination);
+			localeDirs.add(dir);
+		}
+		File nl = new File(destination, "nl");
+		if (!nl.exists() || !nl.isDirectory())
+			return;
+		File [] countries = nl.listFiles();
+		HashSet locales = new HashSet();
+		for (int i=0; i<countries.length; i++) {
+			File country = countries[i];
+			if (!country.isDirectory())
+				continue;
+			File [] variants = country.listFiles();
+			for (int j=0; j<variants.length; j++) {
+				File variant = variants[j];
+				String locale;
+				if (variant.isDirectory())
+					locale = country.getName()+"_"+variant.getName();
+				else
+					locale = country.getName();
+				if (isValidLocale(locale) && !locales.contains(locale)) {
+					LocaleDir dir = new LocaleDir(locale);
+					if (variant.isDirectory())
+						dir.addDirectory(variant);
+					dir.addDirectory(country);
+					dir.addDirectory(destination);
+					localeDirs.add(dir);
+					locales.add(locale);
+				}
+			}
+		}
+	}
+
+	/*
+	 * Reject bogus directories.
+	 */
+	private boolean isValidLocale(String locale) {
+		for (int i=0; i<legalLocales.length; i++) {
+			Locale legalLocale = legalLocales[i];
+			if (legalLocale.toString().equals(locale))
+				return true;
+		}
+		return false;
+	}
+	
+	/*
+	 * Build an index for the locale directory by collecting
+	 * documents according to the tocs, then building the index.
+	 */
+
 	private MultiStatus processLocaleDir(PluginIdentifier id,
 			PluginIdentifier fid, LocaleDir localeDir, IProgressMonitor monitor)
 			throws CoreException {
 		// build an index for each locale directory
-		File directory = localeDir.directory;
+		String message = NLS.bind("Index for {0}: ", ((File)localeDir.dirs.get(0)).getName());
+		monitor.beginTask(message, 5);		
+		File directory = (File)localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
 		prepareDirectory(indexDirectory);
-		SearchIndex index = new SearchIndex(indexDirectory, localeDir.locale,
-				new AnalyzerDescriptor(localeDir.locale), null);
+		String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
+		SearchIndex index = new SearchIndex(indexDirectory, locale,
+				new AnalyzerDescriptor(locale), null);
 		IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
 				fid, indexDirectory);
 		index.setDocPlugins(docPlugins);
-		monitor.beginTask("", 5);
 		Collection docs = collectDocs(localeDir, new SubProgressMonitor(
-				monitor, 1));
-		return createIndex(id.id, directory, index, docs,
-				new SubProgressMonitor(monitor, 4));
+				monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+		MultiStatus status = createIndex(id.id, fid!=null, localeDir, index, docs,
+				new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+		index.deleteLockFile();
+		monitor.setTaskName("");
+		monitor.done();
+		return status;
 	}
+	
+	/*
+	 * Using TOC files found either in the fragment or in the plug-in,
+	 * collect hrefs for the topics.
+	 */
 
 	private Collection collectDocs(LocaleDir localeDir, IProgressMonitor monitor)
 			throws CoreException {
 		HashSet docs = new HashSet();
-		monitor.beginTask("", localeDir.tocFiles.size());
-		for (int i = 0; i < localeDir.tocFiles.size(); i++) {
-			IndexerTocFile tocFile = (IndexerTocFile) localeDir.tocFiles.get(i);
-			monitor.subTask(tocFile.getHref());
-			collectDocs(docs, new File(localeDir.directory, tocFile.getHref()),
-					localeDir.locale);
+		monitor.beginTask("Collecting documents...", tocFiles.size());
+		for (int i = 0; i < tocFiles.size(); i++) {
+			TocFile tocFile = (TocFile) tocFiles.get(i);
+			monitor.subTask(tocFile.href);
+			long startTime = System.currentTimeMillis();
+			collectDocs(docs, getTocFile(localeDir, tocFile.href));
+			if (tocFile.extraDir!=null) {
+				//TODO also include all the indexable documents
+				//in the extraDir
+			}
 			monitor.worked(1);
 		}
+		monitor.setTaskName("");
+		monitor.done();
 		return docs;
 	}
+	
+	/*
+	 * Try to find the actual file for the TOC href. Look in the
+	 * locale dirs first (best match first). If not found,
+	 * look in the plug-in itself (for fragments).
+	 */
 
-	private void collectDocs(Set docs, File tocFile, String locale)
+	private File getTocFile(LocaleDir localeDir, String href) {
+		// try the locale dir
+		File file = localeDir.findFile(href);
+		if (file!=null)
+			return file;
+		// try the plug-in
+		File pdir = manifest.getParentFile();
+		return new File(pdir, href);
+	}
+
+	/*
+	 * Collect hrefs starting from the 'toc' element.
+	 */
+	private void collectDocs(Set docs, File tocFile)
 			throws CoreException {
 		if (!tocFile.exists())
 			return;
 		Document doc = readXMLFile(tocFile);
-		add(doc.getDocumentElement(), docs, locale);
+		add(doc.getDocumentElement(), docs);
 	}
 
-	private void add(Element topic, Set hrefs, String locale) {
+	/*
+	 * Recursive collection of hrefs from topics.
+	 */
+	private void add(Element topic, Set hrefs) {
 		String href = getAttribute(topic, "href");
+		if (topic.getTagName().equals("toc")) {
+			// toc element has 'topic' attribute. Don't ask why :-)
+			href = getAttribute(topic, "topic");
+		}
 		if (href != null
 				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			href = SearchIndex.getIndexableHref(href);
@@ -363,55 +487,66 @@ public class HelpIndexBuilder {
 		}
 		NodeList subtopics = topic.getElementsByTagName("topic");
 		for (int i = 0; i < subtopics.getLength(); i++)
-			add((Element) subtopics.item(i), hrefs, locale);
+			add((Element) subtopics.item(i), hrefs);
 	}
+	
+	/*
+	 * Creates index for the locale dir by iterating over the doc hrefs
+	 * and adding them into the index. Documents that cannot be found
+	 * will be ignored.
+	 */
 
-	private URL getIndexableURL(File directory, String href) {
-		if (href == null)
-			return null;
-		try {
-			return new URL(directory.toURL(), href);
-		} catch (MalformedURLException mue) {
-			System.out.println(mue);
-			return null;
-		}
-	}
-
-	private MultiStatus createIndex(String pluginId, File directory,
+	private MultiStatus createIndex(String pluginId, boolean fragment, LocaleDir localeDir,
 			SearchIndex index, Collection addedDocs, IProgressMonitor monitor)
 			throws CoreException {
+		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());		
 		if (!index.beginAddBatch()) {
 			throwCoreException("Error while creating the index", null);
 		}
 		checkCancelled(monitor);
 		MultiStatus multiStatus = null;
-		monitor.beginTask("", addedDocs.size());
-		monitor.subTask(HelpBaseResources.UpdatingIndex);
 
 		for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 			String href = (String) it.next();
-			URL url = getIndexableURL(directory, href);
+			URL url = localeDir.findURL(href);
 			if (url != null) {
 				IStatus status = index
 						.addDocument(getName(pluginId, href), url);
 				if (status.getCode() != IStatus.OK) {
-					if (multiStatus == null) {
-						multiStatus = new MultiStatus(
-								HelpBasePlugin.PLUGIN_ID,
-								IStatus.ERROR,
-								"Help documentation could not be indexed completely.",
-								null);
-					}
+					if (multiStatus == null)
+						multiStatus = createMultiStatus();
 					multiStatus.add(status);
 				}
+			}
+			else {
+				// report missing document when in a plug-in
+				String message = NLS.bind("Locale ''{0}'': cannot find document: {1}", localeDir.locale, href);
+				IStatus status = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, null);
+				if (multiStatus == null)
+					multiStatus = createMultiStatus();
+				multiStatus.add(status);
 			}
 			checkCancelled(monitor);
 			monitor.worked(1);
 		}
 		monitor.subTask(HelpBaseResources.Writing_index);
-		if (!index.endAddBatch())
-			throwCoreException("Error while writing the index", null);
+		if (!index.endAddBatch()) {
+			IStatus status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
+					IStatus.OK, "Error while writing the index", null);
+			if (multiStatus==null)
+				multiStatus = createMultiStatus();
+			multiStatus.add(status);
+		}
+		monitor.done();
 		return multiStatus;
+	}
+	
+	private MultiStatus createMultiStatus() {
+		return new MultiStatus(
+				HelpBasePlugin.PLUGIN_ID,
+				IStatus.ERROR,
+				"Help documentation could not be indexed completely.",
+				null);
 	}
 
 	private void checkCancelled(IProgressMonitor pm)
@@ -442,86 +577,20 @@ public class HelpIndexBuilder {
 				File file = files[i];
 				boolean result = file.delete();
 				if (!result)
-					throwCoreException("Cannot scrub target index directory",
-							null);
+					throwCoreException(
+							"Cannot scrub destination index directory", null);
 			}
 		} else {
 			boolean result = indexDirectory.mkdirs();
 			if (!result)
-				throwCoreException("Cannot create target index directory", null);
+				throwCoreException("Cannot create destination index directory",
+						null);
 		}
-	}
-
-	private void addTocFile(PluginIdentifier id, String file, String primary,
-			String extradir) {
-		boolean isPrimary = primary != null && primary.equalsIgnoreCase("true");
-
-		File newLocaleDirs[] = computeLocaleDirectories(file, target, 0);
-		for (int i = 0; i < newLocaleDirs.length; i++) {
-			File directory = newLocaleDirs[i];
-			LocaleDir localeDir = (LocaleDir) localeDirs.get(directory);
-			if (localeDir == null) {
-				localeDir = new LocaleDir(directory);
-				localeDir.locale = computeLocale(id, directory);
-				localeDirs.put(directory, localeDir);
-			}
-			localeDir.addTocFile(new IndexerTocFile(id.id, file, isPrimary,
-					localeDir.locale, extradir));
-		}
-	}
-
-	private String computeLocale(PluginIdentifier id, File localeDir) {
-		String idVersion = id.id + "_" + id.version.toString();
-		// check for default id
-		if (localeDir.getName().equals(id.id)
-				|| localeDir.getName().equals(idVersion))
-			return Platform.getNL();
-		String country = null;
-		String variant = null;
-		variant = localeDir.getName();
-		File parent = localeDir.getParentFile();
-		if (parent.getName().equals("nl")) {
-			// shift
-			country = variant;
-			variant = null;
-		} else {
-			country = parent.getName();
-		}
-		if (variant == null)
-			return country;
-		else
-			return country + "_" + variant;
-	}
-
-	private File[] computeLocaleDirectories(String file, File parent, int depth) {
-		File[] files = parent.listFiles();
-		HashSet set = new HashSet();
-		if (files == null)
-			return new File[0];
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].getName().equals(file)) {
-				// match
-				set.add(parent);
-			} else if (depth == 0 && files[i].isDirectory()
-					&& files[i].getName().equals("nl")) {
-				File[] local = computeLocaleDirectories(file, files[i],
-						depth + 1);
-				for (int j = 0; j < local.length; j++) {
-					set.add(local[j]);
-				}
-			} else if (depth < 3 && files[i].isDirectory()) {
-				File[] local = computeLocaleDirectories(file, files[i],
-						depth + 1);
-				for (int j = 0; j < local.length; j++) {
-					set.add(local[j]);
-				}
-			}
-		}
-		return (File[]) set.toArray(new File[set.size()]);
 	}
 
 	private void reset() {
 		localeDirs.clear();
+		tocFiles.clear();
 		indexPath = null;
 	}
 

@@ -639,7 +639,7 @@ public class SearchIndex {
 		if (lock != null) {
 			throw new OverlappingFileLockException();
 		}
-		File lockFile = new File(indexDir.getParentFile(), locale + ".lock"); //$NON-NLS-1$
+		File lockFile = getLockFile();
 		lockFile.getParentFile().mkdirs();
 		try {
 			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
@@ -652,6 +652,25 @@ public class SearchIndex {
 			lock = null;
 		}
 		return false;
+	}
+
+	private File getLockFile() {
+		return new File(indexDir.getParentFile(), locale + ".lock"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Deletes the lock file. The lock must be released prior to this call.
+	 * @return <code>true</code> if the file has been deleted,
+	 * <code>false</code> otherwise.
+	 */
+	
+	public synchronized boolean deleteLockFile() {
+		if (lock!=null)
+			return false;
+		File lockFile = getLockFile();
+		if (lockFile.exists())
+			return lockFile.delete();
+		return true;
 	}
 
 	public synchronized void releaseLock() {

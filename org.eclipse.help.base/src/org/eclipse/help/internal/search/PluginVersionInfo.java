@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
+
 import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.util.*;
 import org.osgi.framework.*;
+
 /**
  * Table of plugins. Records all plugins, their version, corresponding fragments
  * versions The values are String in format:
@@ -22,14 +24,22 @@ import org.osgi.framework.*;
  */
 public class PluginVersionInfo extends HelpProperties {
 	private static final long serialVersionUID = 1L;
+
 	// Separates plugins and versions in value strings
 	protected static final String SEPARATOR = "\n"; //$NON-NLS-1$
+
 	File dir;
+
 	boolean doComparison = true;
+
 	boolean hasChanged = false;
+
 	boolean ignoreSavedVersions;
+
 	Collection added = new ArrayList();
+
 	Collection removed = new ArrayList();
+
 	/**
 	 * Creates table of current contributing plugins and their fragments with
 	 * versions.
@@ -61,27 +71,34 @@ public class PluginVersionInfo extends HelpProperties {
 				continue;
 			}
 			StringBuffer pluginVersionAndFragments = new StringBuffer();
-			pluginVersionAndFragments.append(bundleId);
-			pluginVersionAndFragments.append(SEPARATOR);
-			pluginVersionAndFragments.append(pluginBundle.getHeaders().get(
-					Constants.BUNDLE_VERSION));
+			appendBundleInformation(pluginVersionAndFragments, bundleId,
+					(String) pluginBundle.getHeaders().get(
+							Constants.BUNDLE_VERSION));
 			Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
 			if (fragmentBundles != null) {
 				for (int f = 0; f < fragmentBundles.length; f++) {
 					if (fragmentBundles[f].getState() == Bundle.INSTALLED
 							|| fragmentBundles[f].getState() == Bundle.UNINSTALLED)
 						continue;
-					pluginVersionAndFragments.append(SEPARATOR);
-					pluginVersionAndFragments.append(fragmentBundles[f]
-							.getSymbolicName());
-					pluginVersionAndFragments.append(SEPARATOR);
-					pluginVersionAndFragments.append(fragmentBundles[f]
-							.getHeaders().get(Constants.BUNDLE_VERSION));
+					appendBundleInformation(pluginVersionAndFragments,
+							fragmentBundles[f].getSymbolicName(),
+							(String) fragmentBundles[f].getHeaders().get(
+									Constants.BUNDLE_VERSION));
 				}
 			}
 			this.put(bundleId, pluginVersionAndFragments.toString());
 		}
 	}
+
+	protected void appendBundleInformation(StringBuffer buffer, String id,
+			String version) {
+		if (buffer.length()>0)
+			buffer.append(SEPARATOR);
+		buffer.append(id);
+		buffer.append(SEPARATOR);
+		buffer.append(version);
+	}
+
 	/**
 	 * Detects changes in contributions or their version since last time the
 	 * contribution table was saved.
@@ -131,6 +148,7 @@ public class PluginVersionInfo extends HelpProperties {
 		doComparison = false;
 		return hasChanged;
 	}
+
 	/**
 	 * @return String - Collection of IDs of contributions that were added or
 	 *         upgraded
@@ -140,6 +158,7 @@ public class PluginVersionInfo extends HelpProperties {
 			detectChange();
 		return added;
 	}
+
 	/**
 	 * @return String - Collection of IDs of contributions that were removed or
 	 *         upgraded
@@ -149,6 +168,7 @@ public class PluginVersionInfo extends HelpProperties {
 			detectChange();
 		return removed;
 	}
+
 	/**
 	 * Saves contributions to a file. After this method is called, calls to
 	 * detectChange() will return false.
@@ -166,6 +186,7 @@ public class PluginVersionInfo extends HelpProperties {
 		}
 		return false;
 	}
+
 	/**
 	 * Compares plugins and versions represented as a string for equality String
 	 * have form id1\nverison1\nid2\nversion2 String are equal of they contain

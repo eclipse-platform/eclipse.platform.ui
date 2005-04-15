@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,49 +20,85 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.search.HelpIndexBuilder;
 
+/**
+ * A custom Ant task to pre-build search help index for a plug-in from within an
+ * Ant script.
+ * 
+ * @since 3.1
+ */
+
 public class BuildHelpIndex extends Task {
 	private String manifest;
-	private String targetDir;
-	private HelpIndexBuilder builder; 
-	
+
+	private String destination;
+
+	private HelpIndexBuilder builder;
+
+	/**
+	 * The default constructor.
+	 */
 	public BuildHelpIndex() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.tools.ant.Task#execute()
+	 */
 	public void execute() throws BuildException {
 		File file = getFile(manifest);
-		if (file==null)
+		if (file == null)
 			throw new BuildException("Manifest not set.");
-		File target = getFile(targetDir);
-		if (target==null)
+		File target = getFile(destination);
+		if (target == null)
 			throw new BuildException("Target directory not set.");
 		builder = new HelpIndexBuilder();
 		builder.setManifest(file);
-		builder.setTarget(target);
-		IProgressMonitor monitor = 
-			(IProgressMonitor) getProject().getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+		builder.setDestination(target);
+		IProgressMonitor monitor = (IProgressMonitor) getProject()
+				.getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
 		try {
 			builder.execute(monitor);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			throw new BuildException(e.getMessage(), e.getCause());
 		}
 	}
-	
+
 	private File getFile(String fileName) {
-		if (fileName==null)
+		if (fileName == null)
 			return null;
-		File file =
-			new Path(fileName).isAbsolute()
-				? new File(fileName)
+		File file = new Path(fileName).isAbsolute() ? new File(fileName)
 				: new File(getProject().getBaseDir(), fileName);
-				return file;
+		return file;
 	}
+
+	/**
+	 * The location (relative or absolute) of the manifest file (plugin.xml)
+	 * that contains <code>org.eclipse.help.toc</code> extensions. If help
+	 * docs that need to be indexed are in the fragment, manifest must point at
+	 * the referenced fragment plug-in.
+	 * 
+	 * @param manifest
+	 *            the plug-in manifest file
+	 */
 
 	public void setManifest(String manifest) {
 		this.manifest = manifest;
 	}
-	
-	public void setTargetDir(String targetDir) {
-		this.targetDir = targetDir;
+
+	/**
+	 * The destination directory where the index will be placed. The final index
+	 * directory will be created by appending locale subdirectories and the
+	 * index directory name to the destination. For example, for index directory
+	 * name defined as 'index', and for ja_Jp locale, the index data will be
+	 * created in 'destination/nl/ja/Jp/index'.
+	 * 
+	 * @param destination
+	 *            the base directory of the search index destination (typically
+	 *            plug-in or fragment root directory)
+	 */
+
+	public void setDestination(String destination) {
+		this.destination = destination;
 	}
 }
