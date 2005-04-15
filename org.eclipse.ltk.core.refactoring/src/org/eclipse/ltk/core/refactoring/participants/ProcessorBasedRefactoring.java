@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
@@ -43,7 +44,10 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * @since 3.0 
  */
 public abstract class ProcessorBasedRefactoring extends Refactoring {
-	
+
+	private static final String PERF_CHECK_CONDITIONS= "org.eclipse.ltk.core/perf/participants/checkConditions"; //$NON-NLS-1$
+	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core/perf/participants/createChanges"; //$NON-NLS-1$
+
 	private RefactoringParticipant[] fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
 	
@@ -180,7 +184,14 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
 		sm.beginTask("", fParticipants.length); //$NON-NLS-1$
 		for (int i= 0; i < fParticipants.length && !result.hasFatalError(); i++) {
+
+			final PerformanceStats stats= PerformanceStats.getStats(PERF_CHECK_CONDITIONS, getName() + ", " + fParticipants[i].getName()); //$NON-NLS-1$
+			stats.startRun();
+
 			result.merge(fParticipants[i].checkConditions(new SubProgressMonitor(sm, 1), context));
+
+			stats.endRun();
+
 			if (sm.isCanceled())
 				throw new OperationCanceledException();
 		}
@@ -214,7 +225,14 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		for (int i= 0; i < fParticipants.length; i++) {
 			final RefactoringParticipant participant= fParticipants[i];
 			try {
+
+				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
+				stats.startRun();
+
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
+
+				stats.endRun();
+
 				if (change != null) {
 					changes.add(change);
 					participantMap.put(change, participant);
