@@ -20,16 +20,15 @@ import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
  */
 public class PlatformUIPerfTest extends PerformanceTestCase {
 
-    private static final int REPEAT_COUNT = 10;
-
-    public void testCreateDisplay() {
-        for (int i = 0; i < REPEAT_COUNT; ++i ) {
+    public void testCreateAndDisposeDisplayX100() {
+        for (int i = 0; i < 10; ++i ) {
             startMeasuring();
-            Display display = PlatformUI.createDisplay();
+            for (int j = 0; j < 100; ++j) {
+            	Display display = PlatformUI.createDisplay();
+                display.dispose();
+                assertTrue(display.isDisposed());
+            }
             stopMeasuring();
-
-            display.dispose();
-            assertTrue(display.isDisposed());
         }
 
         commitMeasurements();
@@ -39,7 +38,7 @@ public class PlatformUIPerfTest extends PerformanceTestCase {
     public void testRunAndShutdownWorkbench() {
         Display display = PlatformUI.createDisplay();
 
-        for (int i = 0; i < REPEAT_COUNT; ++i ) {
+        for (int i = 0; i < 10; ++i ) {
             startMeasuring();
             int code = PlatformUI.createAndRunWorkbench(display, new WorkbenchAdvisorObserver(2));
             stopMeasuring();
