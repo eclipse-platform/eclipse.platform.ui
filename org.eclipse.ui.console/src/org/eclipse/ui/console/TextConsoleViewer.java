@@ -147,13 +147,9 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * Positions the cursor at the end of the document.
      */
     protected void revealEndOfDocument() {
-        StyledText text = getTextWidget();
-        if (text != null) {
-            int lineCount = text.getLineCount();
-            int offsetAtLine = text.getOffsetAtLine(lineCount-1);
-            text.setCaretOffset(offsetAtLine);
-            text.showSelection();
-        }
+        StyledText textWidget = getTextWidget();
+        int lineCount = textWidget.getLineCount();
+        textWidget.setTopIndex(lineCount-1);
     }
 
     /*
