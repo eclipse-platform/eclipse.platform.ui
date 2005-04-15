@@ -37,7 +37,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */	
 	public RevertBlockAction(ITextEditor editor, boolean isRulerAction) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
+		super(PREFIX, editor, isRulerAction);
 	}
 
 	/*

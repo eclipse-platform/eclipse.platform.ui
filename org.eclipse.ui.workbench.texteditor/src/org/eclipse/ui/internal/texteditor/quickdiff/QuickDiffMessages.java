@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * 
  * @since 3.0
  */
-final class QuickDiffMessages extends NLS {
+public final class QuickDiffMessages extends NLS {
 
 	private static final String BUNDLE_NAME= QuickDiffMessages.class.getName();
 

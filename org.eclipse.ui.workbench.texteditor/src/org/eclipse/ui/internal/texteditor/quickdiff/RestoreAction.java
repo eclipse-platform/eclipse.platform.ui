@@ -15,6 +15,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -25,10 +26,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class RestoreAction extends QuickDiffRestoreAction {
 	/** Resource key prefix. */
 	private static final String PREFIX= "RestoreAction."; //$NON-NLS-1$
-	/** Resource key for a single deleted line. */
-	private static final String SINGLE_KEY= PREFIX + "label"; //$NON-NLS-1$
-	/** Resource key for multiple deleted lines. */
-	private static final String MULTIPLE_KEY= PREFIX + "multiple.label"; //$NON-NLS-1$
 
 	/** The line to be restored. Set in <code>update()</code>. */
 	private int fLine;
@@ -40,7 +37,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
 	public RestoreAction(ITextEditor editor, boolean isRulerAction) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
+		super(PREFIX, editor, isRulerAction);
 	}
 
 	/*
@@ -67,9 +64,9 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		}
 		info= differ.getLineInfo(fLine);
 		if (info.getRemovedLinesBelow() == 1)
-			setText(QuickDiffMessages.getString(SINGLE_KEY));
+			setText(QuickDiffMessages.RestoreAction_label); 
 		else
-			setText(QuickDiffMessages.getFormattedString(MULTIPLE_KEY, String.valueOf(info.getRemovedLinesBelow()))); //$NON-NLS-1$
+			setText(NLSUtility.format(QuickDiffMessages.RestoreAction_multiple_label, String.valueOf(info.getRemovedLinesBelow()))); 
 		return true;
 	}
 

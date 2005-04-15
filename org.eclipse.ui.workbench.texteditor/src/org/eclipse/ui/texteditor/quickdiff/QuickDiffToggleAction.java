@@ -67,7 +67,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		/** Group name for debug contributions */
 		private static final String GROUP_DEBUB= "debug"; //$NON-NLS-1$
 		private static final String GROUP_QUICKDIFF= "quickdiff"; //$NON-NLS-1$
-		private static final String MENU_LABEL_KEY= "quickdiff.menu.label"; //$NON-NLS-1$
 		private static final String MENU_ID= "quickdiff.menu"; //$NON-NLS-1$
 		private static final String GROUP_RESTORE= "restore"; //$NON-NLS-1$
 
@@ -95,7 +94,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 					manager.insertAfter(GROUP_RESTORE, new Separator(GROUP_QUICKDIFF));
 
 				// create quickdiff menu
-				menu= new MenuManager(QuickDiffMessages.getString(MENU_LABEL_KEY), MENU_ID);
+				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID); 
 				List descriptors= new QuickDiff().getReferenceProviderDescriptors();
 				for (Iterator it= descriptors.iterator(); it.hasNext();) {
 					ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) it.next();
@@ -202,9 +201,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		if (fProxy == null)
 			return;
 		if (isConnected())
-			fProxy.setText(QuickDiffMessages.getString("quickdiff.toggle.disable")); //$NON-NLS-1$
+			fProxy.setText(QuickDiffMessages.quickdiff_toggle_disable); 
 		else
-			fProxy.setText(QuickDiffMessages.getString("quickdiff.toggle.enable")); //$NON-NLS-1$
+			fProxy.setText(QuickDiffMessages.quickdiff_toggle_enable); 
 	}
 
 }

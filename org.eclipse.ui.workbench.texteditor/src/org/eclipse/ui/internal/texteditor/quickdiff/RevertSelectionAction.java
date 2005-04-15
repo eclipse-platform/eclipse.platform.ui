@@ -37,7 +37,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
 	public RevertSelectionAction(ITextEditor editor, boolean isRulerAction) {
-		super(QuickDiffMessages.getResourceBundle(), "RevertSelectionAction.", editor, isRulerAction); //$NON-NLS-1$
+		super("RevertSelectionAction.", editor, isRulerAction); //$NON-NLS-1$
 	}
 
 	/*

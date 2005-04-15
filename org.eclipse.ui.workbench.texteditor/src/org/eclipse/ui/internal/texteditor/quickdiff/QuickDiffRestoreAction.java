@@ -41,16 +41,18 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	private int fLastLine= -1;
 	private final boolean fIsRulerAction;
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.texteditor.quickdiff.ConstructedQuickDiffMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	
 	/**
 	 * Creates a new instance.
 	 * 
-	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
-	QuickDiffRestoreAction(ResourceBundle bundle, String prefix, ITextEditor editor, boolean isRulerAction) {
-		super(bundle, prefix, editor);
+	QuickDiffRestoreAction(String prefix, ITextEditor editor, boolean isRulerAction) {
+		super(fgResourceBundle, prefix, editor);
 		fIsRulerAction= isRulerAction;
 	}
 	
