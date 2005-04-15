@@ -79,11 +79,6 @@ public class ProgressManager extends ProgressProvider implements
      */
     public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
     
-    /**
-     * The constant for the empty collections that are created.
-     */
-    public static final Collection EMPTY_COLLECTION = new ArrayList(0);
-
     private static ProgressManager singleton;
 
     final private Map jobs = Collections.synchronizedMap(new HashMap());
@@ -1020,13 +1015,13 @@ public class ProgressManager extends ProgressProvider implements
      */
     private Collection busyListenersForJob(Job job) {
         if (job.isSystem())
-            return EMPTY_COLLECTION; 
+            return Collections.EMPTY_LIST; 
         synchronized (familyKey) {
             
-            Iterator families = familyListeners.keySet().iterator();
-            if(!families.hasNext())
-            	return EMPTY_COLLECTION;
+            if(familyListeners.isEmpty())
+            	return Collections.EMPTY_LIST;
             
+            Iterator families = familyListeners.keySet().iterator();
             Collection returnValue = new ArrayList();
             while (families.hasNext()) {
                 Object next = families.next();
