@@ -24,11 +24,12 @@ import org.eclipse.jface.text.IRegion;
 /**
  * This class contains the hippie completion engine methods that actually 
  * compute the possible completions.
+ * <p>
+ * This engine is used by the <code>org.eclipse.ui.texteditor.HippieCompleteAction</code>.
+ * </p>
  * 
  * TODO: Sort by editor type
  * TODO: Provide history option
- * 
- * @see org.eclipse.ui.texteditor.HippieCompleteAction
  * 
  * @since 3.1
  * @author Genady Beryozkin, me@genady.org

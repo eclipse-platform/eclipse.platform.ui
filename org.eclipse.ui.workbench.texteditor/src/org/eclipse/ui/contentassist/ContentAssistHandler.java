@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.contentassist;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
+
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
@@ -183,10 +185,10 @@ public class ContentAssistHandler {
 				ICommand command= commandManager.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				List bindings= command.getKeySequenceBindings();
 				if (bindings.size() == 0)
-					return ContentAssistMessages.getString("ContentAssistHandler.contentAssistAvailable"); //$NON-NLS-1$
+					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable; 
 				IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
 				Object[] args= { ksb.getKeySequence().format() };
-				return ContentAssistMessages.getFormattedString("ContentAssistHandler.contentAssistAvailableWithKeyBinding", args); //$NON-NLS-1$
+				return MessageFormat.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, args); 
 			}
 		};
 		fContentAssistSubjectAdapter.setContentAssistCueProvider(labelProvider);

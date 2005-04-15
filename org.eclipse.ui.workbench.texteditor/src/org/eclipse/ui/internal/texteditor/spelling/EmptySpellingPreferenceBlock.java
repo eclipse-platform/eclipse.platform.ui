@@ -43,7 +43,7 @@ public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 		label.setLayoutData(gd);
 		
 		label= new Label(inner, SWT.CENTER);
-		label.setText(SpellingMessages.getString("EmptySpellingPreferenceBlock.emptyCaption")); //$NON-NLS-1$
+		label.setText(SpellingMessages.EmptySpellingPreferenceBlock_emptyCaption); 
 		gd= new GridData(GridData.CENTER);
 		label.setLayoutData(gd);
 

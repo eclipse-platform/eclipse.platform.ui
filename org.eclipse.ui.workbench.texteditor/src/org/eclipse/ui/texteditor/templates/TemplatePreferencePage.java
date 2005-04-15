@@ -75,6 +75,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 
 /**
  * A template preference page allows configuration of the templates for an
@@ -157,7 +158,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	protected TemplatePreferencePage() {
 		super();
 		
-		setDescription(TextEditorTemplateMessages.getString("TemplatePreferencePage.message")); //$NON-NLS-1$
+		setDescription(TextEditorTemplateMessages.TemplatePreferencePage_message); 
 	}
 	
 	/**
@@ -237,13 +238,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		table.setLayout(tableLayout);
 
 		TableColumn column1= new TableColumn(table, SWT.NONE);		
-		column1.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.column.name")); //$NON-NLS-1$
+		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name); 
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
-		column2.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.column.context")); //$NON-NLS-1$
+		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context); 
 	
 		TableColumn column3= new TableColumn(table, SWT.NONE);
-		column3.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.column.description")); //$NON-NLS-1$
+		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description); 
 		
 		fTableViewer= new CheckboxTableViewer(table);		
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -294,7 +295,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		buttons.setLayout(layout);
 		
 		fAddButton= new Button(buttons, SWT.PUSH);
-		fAddButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.new")); //$NON-NLS-1$
+		fAddButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_new); 
 		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -303,7 +304,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fEditButton= new Button(buttons, SWT.PUSH);
-		fEditButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.edit")); //$NON-NLS-1$
+		fEditButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_edit); 
 		fEditButton.setLayoutData(getButtonGridData(fEditButton));
 		fEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -312,7 +313,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fRemoveButton= new Button(buttons, SWT.PUSH);
-		fRemoveButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.remove")); //$NON-NLS-1$
+		fRemoveButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_remove); 
 		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -323,7 +324,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		createSeparator(buttons);
 				
 		fRestoreButton= new Button(buttons, SWT.PUSH);
-		fRestoreButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.restore")); //$NON-NLS-1$
+		fRestoreButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_restore); 
 		fRestoreButton.setLayoutData(getButtonGridData(fRestoreButton));
 		fRestoreButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -332,7 +333,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fRevertButton= new Button(buttons, SWT.PUSH);
-		fRevertButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.revert")); //$NON-NLS-1$
+		fRevertButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_revert); 
 		fRevertButton.setLayoutData(getButtonGridData(fRevertButton));
 		fRevertButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -343,7 +344,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		createSeparator(buttons);
 
 		fImportButton= new Button(buttons, SWT.PUSH);
-		fImportButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.import")); //$NON-NLS-1$
+		fImportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_import); 
 		fImportButton.setLayoutData(getButtonGridData(fImportButton));
 		fImportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -352,7 +353,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 		
 		fExportButton= new Button(buttons, SWT.PUSH);
-		fExportButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.export")); //$NON-NLS-1$
+		fExportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_export); 
 		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -364,7 +365,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		
 		if (isShowFormatterSetting()) {
 			fFormatButton= new Button(parent, SWT.CHECK);
-			fFormatButton.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.use.code.formatter")); //$NON-NLS-1$
+			fFormatButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_use_code_formatter); 
 	        GridData gd1= new GridData();
 	        gd1.horizontalSpan= 2;
 	        fFormatButton.setLayoutData(gd1);
@@ -466,7 +467,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	
 	private SourceViewer doCreateViewer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.preview")); //$NON-NLS-1$
+		label.setText(TextEditorTemplateMessages.TemplatePreferencePage_preview); 
 		GridData data= new GridData();
 		data.horizontalSpan= 2;
 		label.setLayoutData(data);
@@ -620,8 +621,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 			if (!newTemplate.getName().equals(oldTemplate.getName()) &&
 				MessageDialog.openQuestion(getShell(),
-				TextEditorTemplateMessages.getString("TemplatePreferencePage.question.create.new.title"), //$NON-NLS-1$
-				TextEditorTemplateMessages.getString("TemplatePreferencePage.question.create.new.message"))) //$NON-NLS-1$
+				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_title, 
+				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_message)) 
 			{
 				data= new TemplatePersistenceData(newTemplate, true);
 				fTemplateStore.add(data);
@@ -638,8 +639,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		
 	private void import_() {
 		FileDialog dialog= new FileDialog(getShell());
-		dialog.setText(TextEditorTemplateMessages.getString("TemplatePreferencePage.import.title")); //$NON-NLS-1$
-		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.getString("TemplatePreferencePage.import.extension")}); //$NON-NLS-1$
+		dialog.setText(TextEditorTemplateMessages.TemplatePreferencePage_import_title); 
+		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_import_extension}); 
 		String path= dialog.open();
 		
 		if (path == null)
@@ -688,9 +689,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	
 	private void export(TemplatePersistenceData[] templates) {
 		FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-		dialog.setText(TextEditorTemplateMessages.getFormattedString("TemplatePreferencePage.export.title", new Integer(templates.length))); //$NON-NLS-1$
-		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.getString("TemplatePreferencePage.export.extension")}); //$NON-NLS-1$
-		dialog.setFileName(TextEditorTemplateMessages.getString("TemplatePreferencePage.export.filename")); //$NON-NLS-1$
+		dialog.setText(NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_title, new Integer(templates.length))); 
+		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_export_extension}); 
+		dialog.setFileName(TextEditorTemplateMessages.TemplatePreferencePage_export_filename); 
 		String path= dialog.open();
 		
 		if (path == null)
@@ -699,15 +700,15 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		File file= new File(path);		
 
 		if (file.isHidden()) {
-			String title= TextEditorTemplateMessages.getString("TemplatePreferencePage.export.error.title"); //$NON-NLS-1$ 
-			String message= TextEditorTemplateMessages.getFormattedString("TemplatePreferencePage.export.error.hidden", file.getAbsolutePath()); //$NON-NLS-1$
+			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title; 
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, file.getAbsolutePath()); 
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
 		
 		if (file.exists() && !file.canWrite()) {
-			String title= TextEditorTemplateMessages.getString("TemplatePreferencePage.export.error.title"); //$NON-NLS-1$
-			String message= TextEditorTemplateMessages.getFormattedString("TemplatePreferencePage.export.error.canNotWrite", file.getAbsolutePath()); //$NON-NLS-1$
+			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title; 
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, file.getAbsolutePath()); 
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
@@ -734,8 +735,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private boolean confirmOverwrite(File file) {
 		return MessageDialog.openQuestion(getShell(),
-			TextEditorTemplateMessages.getString("TemplatePreferencePage.export.exists.title"), //$NON-NLS-1$
-			TextEditorTemplateMessages.getFormattedString("TemplatePreferencePage.export.exists.message", file.getAbsolutePath())); //$NON-NLS-1$
+			TextEditorTemplateMessages.TemplatePreferencePage_export_exists_title, 
+			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, file.getAbsolutePath())); 
 	}
 	
 	private void remove() {
@@ -777,7 +778,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible)
-			setTitle(TextEditorTemplateMessages.getString("TemplatePreferencePage.title")); //$NON-NLS-1$
+			setTitle(TextEditorTemplateMessages.TemplatePreferencePage_title); 
 	}
 	
 	/*
@@ -838,14 +839,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 	
 	private void openReadErrorDialog(Exception e) {
-		String title= TextEditorTemplateMessages.getString("TemplatePreferencePage.error.read.title"); //$NON-NLS-1$
-		String message= TextEditorTemplateMessages.getString("TemplatePreferencePage.error.read.message"); //$NON-NLS-1$
+		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_read_title; 
+		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_read_message; 
 		MessageDialog.openError(getShell(), title, message);
 	}
 	
 	private void openWriteErrorDialog(Exception e) {
-		String title= TextEditorTemplateMessages.getString("TemplatePreferencePage.error.write.title"); //$NON-NLS-1$
-		String message= TextEditorTemplateMessages.getString("TemplatePreferencePage.error.write.message"); //$NON-NLS-1$
+		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_write_title; 
+		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_write_message; 
 		MessageDialog.openError(getShell(), title, message);		
 	}
 	

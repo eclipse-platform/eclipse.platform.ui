@@ -18,6 +18,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 
 
@@ -167,15 +168,15 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		int l= fDifference.leftLength();
 		int c= Math.min(r, l);
 		int a= r - l;
-		String changed= c > 0 ? QuickDiffMessages.getFormattedString("quickdiff.annotation.changed", new Integer(c)) : null; //$NON-NLS-1$
+		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, new Integer(c)) : null; 
 		String added;
 		if (a > 0)
-			added= QuickDiffMessages.getFormattedString("quickdiff.annotation.added", new Integer(a)); //$NON-NLS-1$
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, new Integer(a)); 
 		else if (a < 0)
-			added= QuickDiffMessages.getFormattedString("quickdiff.annotation.deleted", new Integer(-a)); //$NON-NLS-1$
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, new Integer(-a)); 
 		else
 			added= null;
-		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.getString("quickdiff.annotation.line_plural") : QuickDiffMessages.getString("quickdiff.annotation.line_singular"); //$NON-NLS-1$//$NON-NLS-2$
+		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.quickdiff_annotation_line_plural : QuickDiffMessages.quickdiff_annotation_line_singular; 
 
 		String ret= (changed != null ? changed : "") + (changed != null ? " " + line : "")   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				+ (changed != null && added != null ? ", " : " ") + (added != null ? added : "")  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$

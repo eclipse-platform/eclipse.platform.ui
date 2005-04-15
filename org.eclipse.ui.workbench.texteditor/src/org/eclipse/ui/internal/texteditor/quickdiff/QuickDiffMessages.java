@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class which wraps the specified resource bundle
@@ -20,33 +18,31 @@ import java.util.ResourceBundle;
  * 
  * @since 3.0
  */
-public class QuickDiffMessages {
+final class QuickDiffMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffMessages";//$NON-NLS-1$
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME= QuickDiffMessages.class.getName();
 
 	private QuickDiffMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
-	
-	public static ResourceBundle getResourceBundle() {
-		return fgResourceBundle;
-	}
+	public static String quickdiff_toggle_enable;
+	public static String quickdiff_toggle_disable;
+	public static String quickdiff_initialize;
+	public static String quickdiff_nonsynchronized;
+	public static String quickdiff_annotation_changed;
+	public static String quickdiff_annotation_added;
+	public static String quickdiff_annotation_deleted;
+	public static String quickdiff_annotation_line_singular;
+	public static String quickdiff_annotation_line_plural;
+	public static String quickdiff_menu_label;
+	public static String quickdiff_error_getting_document_content;
+	public static String RestoreAction_label;
+	public static String RestoreAction_multiple_label;
+	public static String RevertLineAction_label;
+	public static String RevertLineAction_delete_label;
 
-	public static String getFormattedString(String key, Object arg) {
-		return getFormattedString(key, new Object[] { arg });
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, QuickDiffMessages.class);
 	}
-	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}	
-	
 }

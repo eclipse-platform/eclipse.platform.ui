@@ -20,22 +20,19 @@ import java.util.Iterator;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import org.osgi.framework.Bundle;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-
+import org.eclipse.ui.internal.editors.NLSUtility;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -145,12 +142,12 @@ public class ContributionTemplateStore extends TemplateStore {
 						TemplatePersistenceData data= datas[i];
 						if (data.isCustom()) {
 							if (data.getId() == null)
-								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_no_id")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_no_id, data.getTemplate().getName()));
 							else
-								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_deleted")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_deleted, data.getTemplate().getName()));
 						} else if (!validateTemplate(data.getTemplate())) {
 							if (contextExists(data.getTemplate().getContextTypeId()))
-								EditorsPlugin.logErrorMessage(ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_prefix") + data.getTemplate().getName() + " " + ContributionTemplateMessages.getString("ContributionTemplateStore.ignore_postfix_validation_failed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_validation_failed, data.getTemplate().getName()));
 						} else {
 							templates.add(data);
 						}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,33 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text.templates;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
  * 
  * @since 3.0
  */
-class ContributionTemplateMessages {
+final class ContributionTemplateMessages extends NLS {
 
-	private static final String BUNDLE_NAME= "org.eclipse.ui.editors.text.templates.ContributionTemplateMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME= ContributionTemplateMessages.class.getName();
 
-	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
+	private ContributionTemplateMessages() {
+		// Do not instantiate
+	}
 
-	private ContributionTemplateMessages() {}
+	public static String ContributionTemplateStore_ignore_no_id;
+	public static String ContributionTemplateStore_ignore_deleted;
+	public static String ContributionTemplateStore_ignore_validation_failed;
 
-	/**
-	 * Gets a string from the resource bundle.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null<code>
-	 * @return the string from the resource bundle
-	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, ContributionTemplateMessages.class);
 	}
 }

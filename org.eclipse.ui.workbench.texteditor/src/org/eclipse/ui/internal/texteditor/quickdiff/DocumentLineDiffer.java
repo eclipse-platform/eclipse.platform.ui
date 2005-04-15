@@ -47,6 +47,7 @@ import org.eclipse.jface.text.source.ILineDifferExtension;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.DocLineComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
@@ -215,7 +216,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public synchronized void revertLine(int line) throws BadLocationException {
 		if (!isInitialized())
-			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized); 
 		
 		DiffRegion region= (DiffRegion) getLineInfo(line);
 		if (region == null || fRightDocument == null || fLeftDocument == null)
@@ -241,7 +242,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public synchronized void revertBlock(int line) throws BadLocationException {
 		if (!isInitialized())
-			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized); 
 		
 		DiffRegion region= (DiffRegion) getLineInfo(line);
 		if (region == null || fRightDocument == null || fLeftDocument == null)
@@ -260,7 +261,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public synchronized void revertSelection(int line, int nLines) throws BadLocationException {
 		if (!isInitialized())
-			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized); 
 		
 		int rOffset= -1, rLength= -1, lOffset= -1, lLength= -1;
 		RangeDifference diff= null;
@@ -305,7 +306,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public synchronized int restoreAfterLine(int line) throws BadLocationException {
 		if (!isInitialized())
-			throw new BadLocationException(QuickDiffMessages.getString("quickdiff.nonsynchronized")); //$NON-NLS-1$
+			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized); 
 
 		DiffRegion region= (DiffRegion) getLineInfo(line);
 		if (region == null || fRightDocument == null || fLeftDocument == null)
@@ -419,7 +420,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			oldJob.cancel();
 		}
 		
-		fInitializationJob= new Job(QuickDiffMessages.getString("quickdiff.initialize")) { //$NON-NLS-1$
+		fInitializationJob= new Job(QuickDiffMessages.quickdiff_initialize) { 
 
 			/*
 			 * This is run in a different thread. As the documents might be synchronized, never ever
@@ -504,7 +505,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				do {
 					// this is an arbitrary emergency exit in case a referenced document goes nuts
 					if (i++ == 100)
-						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getFormattedString("quickdiff.error.getting_document_content", new Object[] {left.getClass(), right.getClass()}), null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(QuickDiffMessages.quickdiff_error_getting_document_content, new Object[] {left.getClass(), right.getClass()}), null); 
 					
 					// clear events
 					synchronized (DocumentLineDiffer.this) {

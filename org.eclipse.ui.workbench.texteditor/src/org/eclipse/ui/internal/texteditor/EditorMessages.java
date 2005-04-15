@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,26 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-class EditorMessages {
+/**
+ * Helper class to get NLSed messages.
+ */
+final class EditorMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= EditorMessages.class.getName();
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME= EditorMessages.class.getName();
 
 	private EditorMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
-	
-	public static ResourceBundle getResourceBundle() {
-		return fgResourceBundle;
+	public static String Editor_error_gotoLastEditPosition_title;
+	public static String Editor_error_gotoLastEditPosition_message;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, EditorMessages.class);
 	}
 }

@@ -15,14 +15,9 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Helper class to get NLSed messages.
  * 
- * <p>
- * NOTE: This class and all its fields are not considered public.
- *       WILL BE MADE PACKAGE VISIBLE FOR 3.1.
- * </p>
- * 
  * @since 3.0
  */
-public final class FileBuffersMessages extends NLS {
+final class FileBuffersMessages extends NLS {
 
 	private static final String BUNDLE_NAME= FileBuffersMessages.class.getName();
 
