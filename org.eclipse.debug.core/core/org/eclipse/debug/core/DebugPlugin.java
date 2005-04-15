@@ -316,6 +316,8 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.1
 	 */
 	class EventDispatchJob extends Job {
+		
+		EventNotifier fNotifier = new EventNotifier();
 
 	    /**
          * Creates a new event dispatch job.
@@ -337,7 +339,7 @@ public class DebugPlugin extends Plugin {
 	                }
 	            }
 	            if (events != null) {
-	                getEventNotifier().dispatch(events);
+	                fNotifier.dispatch(events);
 	            }
             }
             return Status.OK_STATUS;
@@ -1037,15 +1039,6 @@ public class DebugPlugin extends Plugin {
 			return failed;
 		}
 
-	}
-		
-	/**
-	 * Returns an event notifier.
-	 * 
-	 * @return an event notifier
-	 */
-	private EventNotifier getEventNotifier() {
-		return new EventNotifier();
 	}
 	
 	/**
