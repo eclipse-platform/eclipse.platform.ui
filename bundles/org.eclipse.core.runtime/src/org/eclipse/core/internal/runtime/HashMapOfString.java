@@ -53,14 +53,13 @@ public final class HashMapOfString {
 	}
 
 	public String get(String key) {
-		int tableLen = keyTable.length;
-		int index = key.hashCode() & (tableLen - 1);
+		int lengthMask = keyTable.length - 1;
+		int index = key.hashCode() & lengthMask;
 		String currentKey;
 		while ((currentKey = keyTable[index]) != null) {
 			if (currentKey.equals(key))
 				return valueTable[index];
-			if (++index >= tableLen)
-				index = 0;
+			index = (index+1) & lengthMask;
 		}
 		return null;
 	}
@@ -82,14 +81,13 @@ public final class HashMapOfString {
 	}
 
 	public String put(String key, String value) {
-		int tableLen = keyTable.length;
-		int index = key.hashCode() & (tableLen - 1);
+		int lengthMask = keyTable.length - 1;
+		int index = key.hashCode() & lengthMask;
 		String currentKey;
 		while ((currentKey = keyTable[index]) != null) {
 			if (currentKey.equals(key))
 				return valueTable[index] = value;
-			if (++index >= tableLen)
-				index = 0;
+			index = (index+1) & lengthMask;
 		}
 		keyTable[index] = key;
 		valueTable[index] = value;
@@ -113,8 +111,8 @@ public final class HashMapOfString {
 	}
 
 	public String removeKey(String key) {
-		int tableLen = keyTable.length;
-		int index = key.hashCode() & (tableLen - 1);
+		int lengthMask = keyTable.length - 1;
+		int index = key.hashCode() & lengthMask;
 		String currentKey;
 		while ((currentKey = keyTable[index]) != null) {
 			if (currentKey.equals(key)) {
@@ -125,8 +123,7 @@ public final class HashMapOfString {
 				rehash((int) (elementSize / LOAD_FACTOR));
 				return value;
 			}
-			if (++index >= tableLen)
-				index = 0;
+			index = (index+1) & lengthMask;
 		}
 		return null;
 	}
