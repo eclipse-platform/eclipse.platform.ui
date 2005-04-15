@@ -70,7 +70,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * given stream (connected to system out or err).
 	 */
 	public OutputStreamMonitor(InputStream stream) {
-		fStream= stream;
+		fStream= new LazyInputStream(stream);
 		fContents= new StringBuffer();
 	}
 
