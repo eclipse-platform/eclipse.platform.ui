@@ -166,10 +166,12 @@ public class ConsolePlugin extends AbstractUIPlugin {
     
     
     public void stop(BundleContext context) throws Exception {
-        IConsole[] consoles = fConsoleManager.getConsoles();
-        if (consoles != null) {
-            fConsoleManager.removeConsoles(consoles);
-        }
+    	if (fConsoleManager != null) {
+	        IConsole[] consoles = fConsoleManager.getConsoles();
+	        if (consoles != null) {
+	            fConsoleManager.removeConsoles(consoles);
+	        }
+    	}
         super.stop(context);
     }    
     
