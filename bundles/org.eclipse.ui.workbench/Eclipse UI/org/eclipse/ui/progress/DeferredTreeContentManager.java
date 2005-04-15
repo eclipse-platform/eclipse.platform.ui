@@ -273,7 +273,10 @@ public class DeferredTreeContentManager {
                 //Cancel the job if the tree viewer got closed
                 if (treeViewer.getControl().isDisposed())
                     return Status.CANCEL_STATUS;
+                //See https://bugs.eclipse.org/bugs/show_bug.cgi?id=90096
+                treeViewer.getControl().setRedraw(false);
                 treeViewer.add(parent, children);
+                treeViewer.getControl().setRedraw(true);
                 return Status.OK_STATUS;
             }
         };
