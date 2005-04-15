@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.channels.FileChannel;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -55,7 +58,7 @@ public class FileCharSequenceProvider {
 	
 	
 	
-	private static class CharSubSequence implements CharSequence {
+	private static final class CharSubSequence implements CharSequence {
 		
 		private final int fSequenceOffset;
 		private final int fSequenceLength;
@@ -112,8 +115,8 @@ public class FileCharSequenceProvider {
 	}
 	
 	
-	private static class Buffer {
-		private char[] fBuf;
+	private static final class Buffer {
+		private final char[] fBuf;
 		private int fOffset;
 		private int fLength;
 
@@ -128,7 +131,8 @@ public class FileCharSequenceProvider {
 		}
 		
 		public boolean contains(int pos) {
-			return fOffset <= pos && pos < fOffset + fLength;
+			int offset= fOffset;
+			return offset <= pos && pos < offset + fLength;
 		}
 		
 		/**
@@ -206,7 +210,7 @@ public class FileCharSequenceProvider {
 		}
 	}
 	
-	private class FileCharSequence implements CharSequence {
+	private final class FileCharSequence implements CharSequence {
 		private Reader fReader;
 		private int fReaderPos;
 		
@@ -216,6 +220,7 @@ public class FileCharSequenceProvider {
 		private int fNumberOfBuffers;
 		
 		private IFile fFile;
+		private FileChannel fFileChannel; // only set if the inputstream is a file input stream
 			
 		public FileCharSequence(IFile file) throws CoreException, IOException {
 			fNumberOfBuffers= 0;
@@ -224,6 +229,7 @@ public class FileCharSequenceProvider {
 		
 		public void reset(IFile file) throws CoreException, IOException {
 			fFile= file;
+			fFileChannel= null;
 			fLength= null; // only calculated on demand
 	
 			Buffer curr= fMostCurrentBuffer;
@@ -238,10 +244,19 @@ public class FileCharSequenceProvider {
 		
 	
 		private void initializeReader() throws CoreException, IOException {
-			if (fReader != null) {
-				fReader.close();
+			if (fFileChannel != null) {
+				fFileChannel.position(0);
+			} else {
+				if (fReader != null) {
+					fReader.close();
+				}
+				InputStream inputStream= fFile.getContents();
+				if (inputStream instanceof FileInputStream) {
+					// remember the file channel
+					fFileChannel= ((FileInputStream) inputStream).getChannel();
+				}
+				fReader= new InputStreamReader(inputStream, fFile.getCharset());
 			}
-			fReader= new InputStreamReader(fFile.getContents(), fFile.getCharset());
 			fReaderPos= 0;
 		}
 		
@@ -250,6 +265,7 @@ public class FileCharSequenceProvider {
 				fReader.close();
 			}
 			fReader= null;
+			fFileChannel= null;
 			fReaderPos= Integer.MAX_VALUE;
 		}
 		
@@ -314,7 +330,7 @@ public class FileCharSequenceProvider {
 				fReaderPos= buffer.getEndOffset();
 				if (endReached) {
 					fLength= new Integer(fReaderPos); // at least we know the size of the file now
-					clearReader(); // will have to reset next time
+					fReaderPos= Integer.MAX_VALUE; // will have to reset next time
 					return true;
 				}
 			} while (fReaderPos <= pos);
