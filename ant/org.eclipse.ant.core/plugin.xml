@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
+   <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
    <extension-point id="antTasks" name="%tasksName" schema="schema/antTasks.exsd"/>
    <extension-point id="antTypes" name="%typesName" schema="schema/antTypes.exsd"/>
    <extension-point id="antProperties" name="%propertiesName" schema="schema/antProperties.exsd"/>
