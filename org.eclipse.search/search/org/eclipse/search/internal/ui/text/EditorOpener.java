@@ -29,21 +29,21 @@ public class EditorOpener {
 
 	private IEditorPart fEditor;
 	
-	IEditorPart open(Match match) throws PartInitException {
+	IEditorPart open(Match match, boolean activate) throws PartInitException {
 		IWorkbenchPage wbPage= SearchPlugin.getActivePage();
 		if (NewSearchUI.reuseEditor())
-			return showWithReuse(match, wbPage);
-		return showWithoutReuse(match, wbPage);
+			return showWithReuse(match, wbPage, activate);
+		return showWithoutReuse(match, wbPage, activate);
 	}
 	
-	private IEditorPart showWithoutReuse(Match match, IWorkbenchPage wbPage) throws PartInitException {
-		return IDE.openEditor(wbPage, (IFile) match.getElement(), false);
+	private IEditorPart showWithoutReuse(Match match, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
+		return IDE.openEditor(wbPage, (IFile) match.getElement(), activate);
 	}
 
-	private IEditorPart showWithReuse(Match match, IWorkbenchPage wbPage) throws PartInitException {
+	private IEditorPart showWithReuse(Match match, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
 		String editorID= getEditorID(file);
-		return showInEditor(wbPage, file, editorID);
+		return showInEditor(wbPage, file, editorID, activate);
 	}
 
 
@@ -69,12 +69,15 @@ public class EditorOpener {
 		return false;
 	}
 	
-	private IEditorPart showInEditor(IWorkbenchPage page, IFile file, String editorId) throws PartInitException {
+	private IEditorPart showInEditor(IWorkbenchPage page, IFile file, String editorId, boolean activate) throws PartInitException {
 		IFileEditorInput input= new FileEditorInput(file);
 		IEditorPart editor= page.findEditor(input);
-		if (editor != null)
+		if (editor != null) {
 			page.bringToTop(editor);
-		else {
+			if (activate) {
+				page.activate(editor);
+			}
+		} else {
 			boolean isOpen= false;
 			if (fEditor != null) {
 				IEditorReference[] parts= page.getEditorReferences();
@@ -94,8 +97,11 @@ public class EditorOpener {
 				((IReusableEditor)fEditor).setInput(input);
 				page.bringToTop(fEditor);
 				editor= fEditor;
+				if (activate) {
+					page.activate(editor);
+				}
 			} else {
-					editor= IDE.openEditor(page, file, false);
+					editor= IDE.openEditor(page, file, activate);
 					if (editor instanceof IReusableEditor)
 						fEditor= editor;
 					else

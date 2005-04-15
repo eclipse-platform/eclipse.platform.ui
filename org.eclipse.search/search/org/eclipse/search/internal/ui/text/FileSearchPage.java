@@ -165,27 +165,35 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
-		IEditorPart editor= fEditorOpener.open(match);
-		if (editor != null && activate)
-			editor.getEditorSite().getPage().activate(editor);
-		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor= (ITextEditor) editor;
-			textEditor.selectAndReveal(offset, length);
-		} else if (editor != null){
-			showWithMarker(editor, file, offset, length);
+		IEditorPart editor= fEditorOpener.open(match, activate);
+		if (offset != 0 && length != 0) {
+			if (editor instanceof ITextEditor) {
+				ITextEditor textEditor= (ITextEditor) editor;
+				textEditor.selectAndReveal(offset, length);
+			} else if (editor != null) {
+				showWithMarker(editor, file, offset, length);
+			}
 		}
 	}
+	
 	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
+		IMarker marker= null;
 		try {
-			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
+			marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
 			attributes.put(IMarker.CHAR_START, new Integer(offset));
 			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
-			marker.delete();
 		} catch (CoreException e) {
 			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
+		} finally {
+			if (marker != null)
+				try {
+					marker.delete();
+				} catch (CoreException e) {
+					// ignore
+				}
 		}
 	}
 
