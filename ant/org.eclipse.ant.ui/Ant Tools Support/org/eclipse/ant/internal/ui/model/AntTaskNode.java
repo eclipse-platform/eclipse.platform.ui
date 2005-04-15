@@ -179,6 +179,9 @@ public class AntTaskNode extends AntElementNode {
 
 	public List computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
+        if (textToSearch == null || textToSearch.length() == 0) {
+        	return null;
+        }
         List results= new ArrayList();
         RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
         Map attributeMap= wrapper.getAttributeMap();

@@ -50,9 +50,11 @@ public class AntAntNode extends AntTaskNode {
     public String getReferencedElement(int offset) {
         if (fFile != null) {
             String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
-            String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-            if (IAntModelConstants.ATTR_ANT_FILE.equals(attributeString)) {
-                return fFile;
+            if (textToSearch != null && textToSearch.length() != 0) {
+            	String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
+            	if (IAntModelConstants.ATTR_ANT_FILE.equals(attributeString)) {
+            		return fFile;
+            	}
             }
         }
         return null;

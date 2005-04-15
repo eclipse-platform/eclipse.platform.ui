@@ -162,6 +162,9 @@ public class AntTargetNode extends AntElementNode {
     
     public List computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
+        if (textToSearch == null || textToSearch.length() == 0) {
+        	return null;
+        }
         List results= new ArrayList();
         if (getTargetName().equals(identifier)) {
             int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$

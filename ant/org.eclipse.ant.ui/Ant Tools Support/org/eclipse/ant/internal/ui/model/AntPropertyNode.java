@@ -169,6 +169,9 @@ public class AntPropertyNode extends AntTaskNode {
 	public boolean isRegionPotentialReference(IRegion region) {
 		if (super.isRegionPotentialReference(region)) {
 			String textToSearch= getAntModel().getText(getOffset(), getLength());
+			if (textToSearch == null) {
+				return false;
+			}
 			int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
 			if (valueOffset > -1) {
 				valueOffset= textToSearch.indexOf('"', valueOffset);
@@ -190,6 +193,9 @@ public class AntPropertyNode extends AntTaskNode {
     
     public List computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
+        if (textToSearch == null || textToSearch.length() == 0) {
+        	return null;
+        }
         List results= new ArrayList();
         if (fBaseLabel != null) {
             if (fBaseLabel.equals(identifier)) {

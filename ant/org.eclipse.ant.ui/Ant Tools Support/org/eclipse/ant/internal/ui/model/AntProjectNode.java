@@ -124,11 +124,14 @@ public class AntProjectNode extends AntElementNode {
     
     public List computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
+        if (textToSearch == null || textToSearch.length() == 0) {
+        	return null;
+        }
         List results= new ArrayList(1);
-        identifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
-        int defaultTargetNameOffset= textToSearch.indexOf("default"); //$NON-NLS-1$
-        defaultTargetNameOffset= textToSearch.indexOf(identifier, defaultTargetNameOffset);
-        results.add(new Integer(getOffset() + defaultTargetNameOffset + 1));
+    	identifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
+    	int defaultTargetNameOffset= textToSearch.indexOf("default"); //$NON-NLS-1$
+    	defaultTargetNameOffset= textToSearch.indexOf(identifier, defaultTargetNameOffset);
+    	results.add(new Integer(getOffset() + defaultTargetNameOffset + 1));
         return results;
     }
 }
