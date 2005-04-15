@@ -18,7 +18,6 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
-import org.eclipse.help.internal.protocols.*;
 import org.eclipse.help.internal.toc.*;
 
 /**
