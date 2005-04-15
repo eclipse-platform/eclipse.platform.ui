@@ -320,7 +320,6 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 					computedElements.add(element);
 				}
 				labelsComputed(computedElements.toArray());
-				monitor.worked(computedElements.size());
 			}
 			monitor.done();
 			return Status.OK_STATUS;
