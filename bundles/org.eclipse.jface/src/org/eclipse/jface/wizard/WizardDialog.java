@@ -277,7 +277,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     }
 
     /**
-     * About to start a long running operation tiggered through
+     * About to start a long running operation triggered through
      * the wizard. Shows the progress monitor and disables the wizard's
      * buttons and controls.
      *
