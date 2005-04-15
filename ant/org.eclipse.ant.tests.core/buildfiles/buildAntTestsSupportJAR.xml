@@ -25,7 +25,7 @@
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
 			${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
 			${basedir}/bin;
-			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
+			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			${basedir}/../org.eclipse.ant.core/bin">
 			<src path="test support/"/>
 		</javac>

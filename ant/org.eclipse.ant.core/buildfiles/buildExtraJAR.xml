@@ -28,7 +28,7 @@
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
 					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
 					${basedir}/../org.eclipse.core.variables/bin;
-					${eclipse.home}/plugins/org.eclipse.core.variables${version.suffix}/variables.jar;
+					${eclipse.home}/plugins/org.eclipse.core.variables${version.suffix}.jar;
 					${basedir}/../org.eclipse.osgi/bin;
 					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar;
 					${basedir}/bin">

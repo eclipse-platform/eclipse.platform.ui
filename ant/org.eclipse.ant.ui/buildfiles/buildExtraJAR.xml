@@ -8,7 +8,7 @@
 		<property name="bootclasspath" value=""/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
-		<property name="win32.jar" value="${eclipse.home}/plugins/org.eclipse.swt.win32${version.suffix}.jar"/>
+		<property name="win32.jar" value="${eclipse.home}/plugins/org.eclipse.swt.win32.win32.x86${version.suffix}.jar"/>
 		<property name="gtk.jar" value="${eclipse.home}/plugins/org.eclipse.swt.gtk${version.suffix}.jar"/>
 		<property name="motif.jar" value="${eclipse.home}/plugins/org.eclipse.swt.motif${version.suffix}.jar"/>
 		<property name="osx.jar" value="${eclipse.home}/plugins/org.eclipse.swt.carbon${version.suffix}.jar"/>
@@ -32,18 +32,18 @@
 			 	classpath="${basedir}/../org.eclipse.core.runtime/bin;
 				 	${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.core.resources/bin;
-			 		${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}/resources.jar;
+			 		${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}.jar;
 			 		${basedir}/bin;
 					${basedir}/../org.eclipse.swt${version.suffix}/bin;
 			 		${swt.jar};
 					${basedir}/../org.eclipse.text/bin;
 					${eclipse.home}/plugins/org.eclipse.text${version.suffix}/text.jar;
 			 		${basedir}/../org.eclipse.ant.core/bin;
-			 		${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
+			 		${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.debug.core/bin;
-			 		${eclipse.home}/plugins/org.eclipse.debug.core${version.suffix}/dtcore.jar;
+			 		${eclipse.home}/plugins/org.eclipse.debug.core.jar;
 					${basedir}/../org.eclipse.ui.console/bin;
-					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}/console.jar;
+					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
 			 		${eclipse.home}/plugins/org.eclipse.jface${version.suffix}.jar;
 					${basedir}/common_ant_support_bin;

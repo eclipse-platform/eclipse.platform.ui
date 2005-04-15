@@ -23,9 +23,9 @@
 		<!-- compile the source code -->
 		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/bin;
-			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
+			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			${basedir}/../org.eclipse.ant.core/bin
-			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/lib/remoteAnt.jar;
+			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar/lib/remoteAnt.jar;
 			${basedir}/../org.eclipse.ant.ui/lib/remoteAnt.jar">
 			<src path="test support/"/>
 		</javac>
