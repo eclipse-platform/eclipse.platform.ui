@@ -91,8 +91,6 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 	public void process() {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
 		
-		long time= System.currentTimeMillis();
-		
 		IResource[] roots= fScope.getRootElements();
 		for (int i= 0; i < roots.length; i++) {
 			try {
@@ -101,7 +99,6 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 				fStatus.add(ex.getStatus());
 			}
 		}
-		System.out.println("text search: " + (System.currentTimeMillis() - time)); //$NON-NLS-1$
 		
 		fDocumentsInEditors= null;
 	}
@@ -149,30 +146,21 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		}
 	}
 
-	public boolean visit(IResourceProxy proxy) throws CoreException {
+	public boolean visit(IResourceProxy proxy) {
 		if (proxy.getType() != IResource.FILE) {
 			return true; // only interested in files
 		}
-		
 		if (!fVisitDerived && proxy.isDerived() || !fScope.matchesFileName(proxy.getName())) {
 			return false; // finish, files don't have children
 		}
 		
-		if (fLocator.isEmtpy()) {
-			fCollector.accept(proxy, -1, 0); 
-			updateProgressMonitor();
-			return false; // finish, files don't have children
-		}
-		IFile file= (IFile)proxy.requestResource();
-		IDocument document= (IDocument) fDocumentsInEditors.get(file);
-		if (document == null) {
-			ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
-			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath());
-			if (textFileBuffer != null) {
-				document= textFileBuffer.getDocument();
-			}
-		}
 		try {
+			if (fLocator.isEmtpy()) {
+				fCollector.accept(proxy, -1, 0);
+				return false; // finish, files don't have children
+			}
+			IFile file= (IFile) proxy.requestResource();
+			IDocument document= getOpenDocument(file);
 			if (document != null) {
 				fLocator.locateMatches(fProgressMonitor, new DocumentCharSequence(document), fCollector, proxy);
 			} else {
@@ -180,22 +168,6 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 				try {
 					seq= fFileCharSequenceProvider.newCharSequence(file);
 					fLocator.locateMatches(fProgressMonitor, seq, fCollector, proxy);
-				} catch (UnsupportedCharsetException e) {
-					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
-					String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args); 
-					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
-				} catch (IllegalCharsetNameException e) {
-					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
-					String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args); 
-					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
-				} catch (IOException e) {
-					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
-					String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
-					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
-				} catch (CoreException e) {
-					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
-					String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
-					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} finally {
 					if (seq != null) {
 						try {
@@ -204,12 +176,52 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 							SearchPlugin.log(e);
 						}
 					}
-				}	
+				}
 			}
+		} catch (UnsupportedCharsetException e) {
+			IFile file= (IFile) proxy.requestResource();
+			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+			String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args); 
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+		} catch (IllegalCharsetNameException e) {
+			IFile file= (IFile) proxy.requestResource();
+			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+			String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args); 
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+		} catch (IOException e) {
+			IFile file= (IFile) proxy.requestResource();
+			String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+		} catch (CoreException e) {
+			IFile file= (IFile) proxy.requestResource();
+			String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		} finally {
 			updateProgressMonitor();
 		}		
 		return false; // finish, files don't have children
+	}
+
+	private IDocument getOpenDocument(IFile file) {
+		IDocument document= (IDocument) fDocumentsInEditors.get(file);
+		if (document == null) {
+			ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
+			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath());
+			if (textFileBuffer != null) {
+				document= textFileBuffer.getDocument();
+			}
+		}
+		return document;
+	}
+	
+	private String getCharSetName(IFile file) {
+		try {
+			return file.getCharset();
+		} catch (CoreException e) {
+			return "unknown"; //$NON-NLS-1$
+		}
 	}
 
 	private void updateProgressMonitor() {
