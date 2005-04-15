@@ -11,6 +11,7 @@
 package org.eclipse.core.filebuffers.manipulation;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+import org.eclipse.core.internal.filebuffers.NLSUtility;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -66,7 +67,7 @@ public class ContainerCreator {
 	public IContainer createContainer(IProgressMonitor progressMonitor) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(FileBuffersMessages.getString("ContainerCreator.task.creatingContainer"), fContainerFullPath.segmentCount()); //$NON-NLS-1$
+				monitor.beginTask(FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount()); 
 				if (fContainer != null)
 					return;
 		
@@ -78,7 +79,7 @@ public class ContainerCreator {
 					return;
 				} else if (found != null) {
 					// fContainerFullPath specifies a file as directory
-					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("ContainerCreator.destinationMustBeAContainer", fContainerFullPath), null)); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, fContainerFullPath), null)); 
 				}
 		
 				// Create the containers for the given path
@@ -92,7 +93,7 @@ public class ContainerCreator {
 							monitor.worked(1);
 						} else {
 							// fContainerFullPath specifies a file as directory
-							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("ContainerCreator.destinationMustBeAContainer", resource.getFullPath()), null)); //$NON-NLS-1$
+							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, resource.getFullPath()), null)); 
 						}
 					}
 					else {

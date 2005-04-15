@@ -10,72 +10,34 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.manipulation;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
  * 
  * @since 3.0
  */
-class FileBuffersMessages {
+final class FileBuffersMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= FileBuffersMessages.class.getName();
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME = FileBuffersMessages.class.getName();
 
 	private FileBuffersMessages() {
+		// Do not instantiate
 	}
 
-	/**
-	 * Gets a string from the resource bundle.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @return the string from the resource bundle
-	 */
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the given arguments.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @param args the arguments used to format the string
-	 * @return the formatted string
-	 */
-	public static String getFormattedString(String key, Object[] args) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		return MessageFormat.format(format, args);
-	}
+	public static String ConvertLineDelimitersOperation_name;
+	public static String ConvertLineDelimitersOperation_task_generatingChanges;
+	public static String ConvertLineDelimitersOperation_task_applyingChanges;
+	public static String RemoveTrailingWhitespaceOperation_name;
+	public static String RemoveTrailingWhitespaceOperation_task_generatingChanges;
+	public static String RemoveTrailingWhitespaceOperation_task_applyingChanges;
+	public static String FileBufferOperationRunner_task_connecting;
+	public static String FileBufferOperationRunner_task_disconnecting;
+	public static String FileBufferOperationRunner_task_committing;
+	public static String ContainerCreator_task_creatingContainer;
+	public static String ContainerCreator_destinationMustBeAContainer;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with the given argument.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @param arg the argument used to format the string
-	 * @return the formatted string
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, FileBuffersMessages.class);
 	}
 }
