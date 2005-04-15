@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.channels.FileChannel;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -220,7 +217,6 @@ public class FileCharSequenceProvider {
 		private int fNumberOfBuffers;
 		
 		private IFile fFile;
-		private FileChannel fFileChannel; // only set if the inputstream is a file input stream
 			
 		public FileCharSequence(IFile file) throws CoreException, IOException {
 			fNumberOfBuffers= 0;
@@ -229,7 +225,6 @@ public class FileCharSequenceProvider {
 		
 		public void reset(IFile file) throws CoreException, IOException {
 			fFile= file;
-			fFileChannel= null;
 			fLength= null; // only calculated on demand
 	
 			Buffer curr= fMostCurrentBuffer;
@@ -244,19 +239,10 @@ public class FileCharSequenceProvider {
 		
 	
 		private void initializeReader() throws CoreException, IOException {
-			if (fFileChannel != null) {
-				fFileChannel.position(0);
-			} else {
-				if (fReader != null) {
-					fReader.close();
-				}
-				InputStream inputStream= fFile.getContents();
-				if (inputStream instanceof FileInputStream) {
-					// remember the file channel
-					fFileChannel= ((FileInputStream) inputStream).getChannel();
-				}
-				fReader= new InputStreamReader(inputStream, fFile.getCharset());
+			if (fReader != null) {
+				fReader.close();
 			}
+			fReader= new InputStreamReader(fFile.getContents(), fFile.getCharset());
 			fReaderPos= 0;
 		}
 		
@@ -265,7 +251,6 @@ public class FileCharSequenceProvider {
 				fReader.close();
 			}
 			fReader= null;
-			fFileChannel= null;
 			fReaderPos= Integer.MAX_VALUE;
 		}
 		
