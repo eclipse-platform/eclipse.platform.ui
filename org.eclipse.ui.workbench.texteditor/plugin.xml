@@ -415,479 +415,405 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.text.hippieCompletion">
       </command>
-	
-	  <keyBinding
+	</extension>
+   
+	<extension
+	     point="org.eclipse.ui.bindings">
+      <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
+            carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
+      
+	  <key
 	        commandId="org.eclipse.ui.edit.text.delete.line"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+D">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+D"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+M2+DEL">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M2+DEL"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.findNext"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+K">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+K"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.findPrevious"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+M2+K">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M2+K"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.findIncremental"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+J">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+J"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.findIncrementalReverse"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+M2+J">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M2+J"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.line"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+L">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+L"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.scroll.lineUp"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+ARROW_UP">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+ARROW_UP"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.scroll.lineDown"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+ARROW_DOWN">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+ARROW_DOWN"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.toggleOverwrite"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="INSERT">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="INSERT"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
 	        contextId="org.eclipse.ui.textEditorScope"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+F10">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+F10"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+SPACE">
-	  </keyBinding>
-	  <keyBinding
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+SPACE"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="M1+M2+SPACE">
-	  </keyBinding>
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M2+SPACE"/>
 	  <!-- Command+Q is quit on carbon, so don't overwrite it -->
-	  <keyBinding
-	        keySequence="Ctrl+Q"
-	        contextId="org.eclipse.ui.globalScope"
+	  <key
+	        sequence="CTRL+Q"
 	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M2+CR"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M2+CR"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.smartEnter"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M2+CR"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M2+CR"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.smartEnterInverse"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M3+ARROW_UP"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M3+ARROW_UP"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.moveLineUp"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M3+ARROW_DOWN"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M3+ARROW_DOWN"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.moveLineDown"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M3+ARROW_UP"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M3+ARROW_UP"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.copyLineUp"
-			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M3+ARROW_DOWN"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M3+ARROW_DOWN"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.copyLineDown"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M2+X"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M2+X"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.upperCase"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M2+Y"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M2+Y"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.lowerCase"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+ARROW_RIGHT"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+ARROW_RIGHT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.goto.wordNext"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+ARROW_LEFT"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+ARROW_LEFT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+DEL"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+DEL"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+BS"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+BS"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M2+ARROW_RIGHT"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M2+ARROW_RIGHT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.select.wordNext"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-	  <keyBinding
-	        keySequence="M1+M2+ARROW_LEFT"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M1+M2+ARROW_LEFT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.select.wordPrevious"
-	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-	  </keyBinding>
-      <keyBinding
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
             locale="zh"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="M1+SPACE">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+SPACE"/>
+      <key
             locale="zh"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="M1+M2+SPACE">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+SPACE"/>
+      <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
    	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="M3+/">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+/"/>
+      <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="M3+?">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+?"/>
+      <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="M2+M3+?">
-      </keyBinding>
-      <keyBinding
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+?"/>
+      <key
             commandId="org.eclipse.ui.edit.text.toggleInsertMode"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+M2+INSERT"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M1+M2+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M3+/"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="M3+/"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+0 Ctrl+K"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+0 CTRL+K"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc 0 Ctrl+K"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC 0 CTRL+K"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.cut.line.to.end"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+K"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+K"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.set.mark"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+Space"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+SPACE"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.set.mark"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+2"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+2"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.clear.mark"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+G"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+G"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.swap.mark"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+X Ctrl+X"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+X CTRL+X"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.findIncremental"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+S"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+S"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.findIncrementalReverse"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+R"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+R"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.lineUp"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+P"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+P"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.lineDown"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+N"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+N"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.lineStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+A"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+A"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.lineEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+E"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+E"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.line"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+X G"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+X G"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.columnPrevious"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+B"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+B"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.columnNext"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+F"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+F"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.pageUp"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+V"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+V"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.pageUp"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc V"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC V"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.pageDown"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+V"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+V"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+B"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+B"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc B"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC B"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.wordNext"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+F"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+F"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.wordNext"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc F"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC F"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+&lt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+&lt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+Shift+&lt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+SHIFT+&lt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc &lt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC &lt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc Shift+&lt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC SHIFT+&lt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+X ["
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+X ["
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+&gt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+&gt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+Shift+&gt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+SHIFT+&gt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc &gt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC &gt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc Shift+&gt;"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC SHIFT+&gt;"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+X ]"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+X ]"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.scroll.lineUp"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+Z"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+Z"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.scroll.lineUp"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc Z"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC Z"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.scroll.lineDown"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+Z"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+Z"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.deleteNext"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Ctrl+D"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="CTRL+D"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+Bs"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+BS"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc Bs"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC BS"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Alt+D"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+D"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="Esc D"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ESC D"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            keySequence="Alt+/"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+/"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keySequence="Alt+?"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
+            sequence="ALT+?"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-            keySequence="Alt+Shift+?"
-            keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-      </keyBinding>
-	</extension>
+            sequence="ALT+SHIFT+?"
+            schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+   </extension>
    
    	<extension
          point="org.eclipse.ui.actionSets">

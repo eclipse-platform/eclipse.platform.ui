@@ -69,12 +69,6 @@
             description="%ActionDefinition.quickDiff.description"
             id="org.eclipse.quickdiff.toggle">
       </command>
-      <keyBinding
-            keySequence="Ctrl+Shift+Q"
-            contextId="org.eclipse.ui.textEditorScope"
-            commandId="org.eclipse.quickdiff.toggle"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.quickDiff.revert.name"
             categoryId="org.eclipse.ui.category.edit"
@@ -99,48 +93,67 @@
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.toggle">
       </command>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.folding.toggle"
-            contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+Numpad_Divide"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%command.folding.expandAll.name"
             description="%command.folding.expandAll.description"
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.expand_all">
       </command>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.folding.expand_all"
-            contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+Numpad_Multiply"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%command.folding.expand.name"
             description="%command.folding.expand.description"
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.expand">
       </command>
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.folding.expand"
-            contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+Numpad_Add"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%command.folding.collapse.name"
             description="%command.folding.collapse.description"
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.folding.collapse">
       </command>
-      <keyBinding
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+         <handler
+      		commandId="org.eclipse.ui.edit.text.removeTrailingWhitespace"
+      		class="org.eclipse.ui.internal.editors.text.RemoveTrailingWhitespaceHandler">
+      </handler>
+   </extension>
+      
+   <extension
+         point="org.eclipse.ui.bindings">
+      <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
+            carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
+      
+
+      <!-- COMMAND+SHIFT+Q is Logout on carbon, so don't overwrite it -->
+      <key
+            sequence="CTRL+SHIFT+Q"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.quickdiff.toggle"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      
+      <key
+            commandId="org.eclipse.ui.edit.text.folding.toggle"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M1+NUMPAD_DIVIDE"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.ui.edit.text.folding.expand_all"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M1+NUMPAD_MULTIPLY"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.ui.edit.text.folding.expand"
+            contextId="org.eclipse.ui.textEditorScope"
+            sequence="M1+NUMPAD_ADD"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
             commandId="org.eclipse.ui.edit.text.folding.collapse"
             contextId="org.eclipse.ui.textEditorScope"
-            keySequence="M1+Numpad_Subtract"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+            sequence="M1+NUMPAD_SUBTRACT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    
    <extension
