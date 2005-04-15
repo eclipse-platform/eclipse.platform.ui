@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.preferences.WorkingCopyManager;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.eclipse.ui.preferences.IWorkingCopyManager;
 
-public class PreferenceDialogWrapper extends PreferenceDialog {
+public class PreferenceDialogWrapper extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
     public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
         super(parentShell, manager);
@@ -39,4 +43,21 @@ public class PreferenceDialogWrapper extends PreferenceDialog {
 
         return node.getPage();
     }
+
+	public IWorkingCopyManager getWorkingCopyManager() {
+		return new WorkingCopyManager();
+	}
+
+	public boolean openPage(String preferencePageId, Object data) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#registerUpdateJob(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void registerUpdateJob(Job job) {
+		//Do nothing as we are not testing this.
+	}
+    
+  
 }
