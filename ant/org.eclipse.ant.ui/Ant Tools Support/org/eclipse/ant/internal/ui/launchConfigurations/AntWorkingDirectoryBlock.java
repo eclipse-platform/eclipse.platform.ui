@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
@@ -69,14 +68,6 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	
 	private boolean isSameAsDefault(String workingDir) {
 		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		String wd = getAttributeValueFrom(fWorkingDirText);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
 	}
 	
 	public void setEnabled(boolean enabled) {
