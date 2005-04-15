@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -260,11 +258,6 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 				return Status.OK_STATUS;
 			}
 		};
-		job.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				runClearPlaceholderJob(placeholder);
-			}
-		});
 		job.setRule(adapter.getRule(parent));
 		if (progressService == null)
 			job.schedule();
