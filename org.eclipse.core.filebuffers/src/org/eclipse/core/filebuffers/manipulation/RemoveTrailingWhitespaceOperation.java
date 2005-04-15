@@ -39,7 +39,7 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 	 * Creates a remove trailing whitespace operation.
 	 */
 	public RemoveTrailingWhitespaceOperation() {
-		super(FileBuffersMessages.getString("RemoveTrailingWhitespaceOperation.name")); //$NON-NLS-1$
+		super(FileBuffersMessages.RemoveTrailingWhitespaceOperation_name); 
 	}
 	
 	/*
@@ -50,10 +50,10 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 		int lineCount= document.getNumberOfLines();
 		
 		progressMonitor= Progress.getMonitor(progressMonitor);
-		progressMonitor.beginTask(FileBuffersMessages.getString("RemoveTrailingWhitespaceOperation.task.generatingChanges"), lineCount); //$NON-NLS-1$
+		progressMonitor.beginTask(FileBuffersMessages.RemoveTrailingWhitespaceOperation_task_generatingChanges, lineCount); 
 		try {
 			
-			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress(FileBuffersMessages.getString("RemoveTrailingWhitespaceOperation.task.applyingChanges")); //$NON-NLS-1$
+			MultiTextEditWithProgress multiEdit= new MultiTextEditWithProgress(FileBuffersMessages.RemoveTrailingWhitespaceOperation_task_applyingChanges); 
 			
 			for (int i= 0; i < lineCount; i++) {
 				if (progressMonitor.isCanceled())

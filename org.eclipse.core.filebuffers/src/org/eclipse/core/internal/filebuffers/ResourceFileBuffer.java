@@ -219,12 +219,12 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		monitor= Progress.getMonitor(monitor);
-		monitor.beginTask(FileBuffersMessages.getString("ResourceFileBuffer.task.creatingFileBuffer"), 2); //$NON-NLS-1$
+		monitor.beginTask(FileBuffersMessages.ResourceFileBuffer_task_creatingFileBuffer, 2); 
 		
 		try {
 			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 			if (file == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceFileBuffer.error.fileDoesNotExist"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null)); 
 			
 			fLocation= location;
 			fFile= file;

@@ -19,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
  */
 final class FileBuffersMessages extends NLS {
 
-	private static final String BUNDLE_NAME = FileBuffersMessages.class.getName();
+	private static final String BUNDLE_NAME= FileBuffersMessages.class.getName();
 
 	private FileBuffersMessages() {
 		// Do not instantiate

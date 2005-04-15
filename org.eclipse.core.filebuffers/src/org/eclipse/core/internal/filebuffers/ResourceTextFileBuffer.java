@@ -80,11 +80,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/**
 	 * Constant for representing the OK status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.status.ok"), null); //$NON-NLS-1$
+	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_ok, null); 
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.getString("FileBuffer.status.error"), null); //$NON-NLS-1$
+	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.FileBuffer_status_error, null); 
 	/** 
 	 * Constant denoting UTF-8 encoding.
 	 */
@@ -191,7 +191,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				return desc.getContentType();
 			return null;
 		} catch (IOException x) {
-			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("FileBuffer.error.queryContentDescription", fFile.getFullPath().toOSString()), x)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFile.getFullPath().toOSString()), x)); 
 		}
 	}
 	
@@ -325,7 +325,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 				monitor= Progress.getMonitor(monitor);
 				try {
-					monitor.beginTask("Saving", 2); //$NON-NLS-1$
+					monitor.beginTask(FileBuffersMessages.ResourceTextFileBuffer_task_saving, 2); //$NON-NLS-1$
 					ContainerCreator creator = new ContainerCreator(fFile.getWorkspace(), fFile.getParent().getFullPath());
 					IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
 					creator.createContainer(subMonitor);
@@ -346,7 +346,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 			
 		} catch (UnsupportedEncodingException x) {
-			String message= FileBuffersMessages.getFormattedString("ResourceTextFileBuffer.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_unsupported_encoding_message_arg, encoding); 
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		}	
@@ -517,7 +517,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	private void checkSynchronizationState() throws CoreException {
 		if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
-			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.getString("FileBuffer.error.outOfSync"), null);  //$NON-NLS-1$
+			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null);  
 			throw new CoreException(status);
 		}
 	}

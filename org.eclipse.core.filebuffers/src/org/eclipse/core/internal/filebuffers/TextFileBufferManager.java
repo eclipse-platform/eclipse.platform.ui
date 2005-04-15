@@ -90,7 +90,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			
 			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.getString("FileBufferManager.error.canNotCreateFilebuffer"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null)); 
 			
 			fileBuffer.create(location, monitor);
 			fileBuffer.connect();
@@ -225,7 +225,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					runnableResult[0]= factory.createDocument();
 				}
 				public void handleException(Throwable t) {
-					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("TextFileBufferManager.error.documentFactoryFailed"), t); //$NON-NLS-1$
+					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t); 
 					FileBuffersPlugin.getDefault().getLog().log(status);
 					if (t instanceof VirtualMachineError)
 						throw (VirtualMachineError)t;
@@ -248,7 +248,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 						participant.setup(document);
 					}
 					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("TextFileBufferManager.error.documentSetupFailed"), t); //$NON-NLS-1$
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t); 
 						FileBuffersPlugin.getDefault().getLog().log(status);
 						if (t instanceof VirtualMachineError)
 							throw (VirtualMachineError)t;

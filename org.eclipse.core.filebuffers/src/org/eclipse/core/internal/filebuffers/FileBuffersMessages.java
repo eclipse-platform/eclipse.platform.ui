@@ -10,72 +10,39 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
  * 
  * @since 3.0
  */
-class FileBuffersMessages {
+final class FileBuffersMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= FileBuffersMessages.class.getName();
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME= FileBuffersMessages.class.getName();
 
 	private FileBuffersMessages() {
+		// Do not instantiate
 	}
 
-	/**
-	 * Gets a string from the resource bundle.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @return the string from the resource bundle
-	 */
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the given arguments.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @param args the arguments used to format the string
-	 * @return the formatted string
-	 */
-	public static String getFormattedString(String key, Object[] args) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		return MessageFormat.format(format, args);
-	}
+	public static String ExtensionsRegistry_error_extensionPointNotFound;
+	public static String ExtensionsRegistry_error_contentTypeDoesNotExist;
+	public static String ResourceFileBuffer_error_fileDoesNotExist;
+	public static String FileBuffer_error_outOfSync;
+	public static String FileBuffer_status_ok;
+	public static String FileBuffer_status_error;
+	public static String FileBuffer_error_queryContentDescription;
+	public static String FileBufferManager_error_canNotCreateFilebuffer;
+	public static String ResourceTextFileBuffer_error_unsupported_encoding_message_arg;
+	public static String ResourceTextFileBuffer_task_saving;
+	public static String ResourceFileBuffer_task_creatingFileBuffer;
+	public static String JavaTextFileBuffer_error_closeStream;
+	public static String TextFileBufferManager_error_documentSetupFailed;
+	public static String TextFileBufferManager_error_documentFactoryFailed;
+	public static String DocumentInputStream_error_read;
+	public static String DocumentInputStream_error_streamClosed;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with the given argument.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @param arg the argument used to format the string
-	 * @return the formatted string
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, FileBuffersMessages.class);
 	}
 }
