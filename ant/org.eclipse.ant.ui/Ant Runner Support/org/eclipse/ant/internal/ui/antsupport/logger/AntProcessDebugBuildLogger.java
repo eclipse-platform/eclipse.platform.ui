@@ -16,13 +16,16 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
+import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
+import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -36,6 +39,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	private List fBreakpoints= null;
     
 	private AntDebugTarget fAntDebugTarget;
+	private boolean fResumed= false;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
@@ -68,11 +72,15 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	}
 	
 	public synchronized void waitIfSuspended() {
+		fResumed= false;
 		IBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());
 		if (breakpoint != null) {
 			 fAntDebugTarget.breakpointHit(breakpoint);
 			 try {
-				 wait();
+				 while (!fResumed) {
+					 wait(500);
+					 checkCancelled();
+				 }
 			 } catch (InterruptedException e) {
 			 }
 		} else if (fDebugState.getCurrentTask() != null) {
@@ -94,17 +102,28 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	        if (shouldSuspend) {
                 fAntDebugTarget.suspended(detail);
 	            try {
-	                wait();
+	            	while (!fResumed) {
+	            		wait(500);
+	            		checkCancelled();
+	            	}
 	            } catch (InterruptedException e) {
 	            }
 	        }
 	    }
 	}
 
+	private void checkCancelled() {
+		AntProcess process= getAntProcess(fProcessId);
+		if (process != null && process.isCanceled()) {
+			throw new OperationCanceledException(AntSupportMessages.AntProcessDebugBuildLogger_1);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
 	 */
 	public synchronized void resume() {
+		fResumed= true;
         notifyAll();
 	}
 
@@ -120,6 +139,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public synchronized void stepInto() {
 		fDebugState.setStepIntoSuspend(true);
+		fResumed= true;
 		notifyAll();
 	}
 
@@ -127,6 +147,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	public synchronized void stepOver() {
+		fResumed= true;
 		fDebugState.stepOver();
 	}
 
@@ -216,5 +237,5 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public StringBuffer unescapeString(StringBuffer propertyValue) {
 		return propertyValue;
-	}	
+	}
 }

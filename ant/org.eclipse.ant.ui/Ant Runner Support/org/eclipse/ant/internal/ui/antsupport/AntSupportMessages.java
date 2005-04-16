@@ -26,6 +26,8 @@ public class AntSupportMessages extends NLS {
 	public static String AntProcessBuildLogger__seconds_4;
 	public static String AntProcessBuildLogger__second_5;
 	public static String AntProcessBuildLogger__milliseconds_6;
+	
+	public static String AntProcessDebugBuildLogger_1;
 
 	static {
 		// load message values from bundle file
