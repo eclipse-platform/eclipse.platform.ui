@@ -633,9 +633,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
         try {
             URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
             IPath path= new Path(url.getPath());
-            path= path.append("os"); //$NON-NLS-1$
-            path= path.append(Platform.getOS());
-            path= path.append(Platform.getOSArch());
+            path= path.removeTrailingSeparator();
             return path.toOSString();
         } catch (IOException e) {
         }
