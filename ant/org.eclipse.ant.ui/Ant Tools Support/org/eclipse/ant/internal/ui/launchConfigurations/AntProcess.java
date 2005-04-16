@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -22,7 +23,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.console.IConsole;
 
-public class AntProcess implements IProcess, IProgressMonitor {
+public class AntProcess extends PlatformObject implements IProcess, IProgressMonitor {
 	
 	private AntStreamsProxy fProxy = new AntStreamsProxy();
 	private String fLabel = null;
@@ -83,13 +84,6 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	 */
 	public int getExitValue() {
 		return 0;
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return null;
 	}
 
 	/**
