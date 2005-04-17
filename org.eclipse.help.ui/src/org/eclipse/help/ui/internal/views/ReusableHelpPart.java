@@ -1319,6 +1319,10 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 	}
 
 	String escapeSpecialChars(String value) {
+		return escapeSpecialChars(value, false);
+	}
+	
+	String escapeSpecialChars(String value, boolean leaveBold) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
@@ -1328,6 +1332,24 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 				buf.append("&amp;"); //$NON-NLS-1$
 				break;
 			case '<':
+				if (leaveBold) {
+					if (i+3<value.length()) {
+						String tag = value.substring(i, i+4);
+						if (tag.equalsIgnoreCase("</b>")) {
+							buf.append(tag);
+							i+=3;
+							continue;
+						}
+					}					
+					if (i+2<value.length()) {
+						String tag = value.substring(i, i+3);
+						if (tag.equalsIgnoreCase("<b>")) {
+							buf.append(tag);
+							i+=2;
+							continue;
+						}
+					}
+				}
 				buf.append("&lt;"); //$NON-NLS-1$
 				break;
 			case '>':
@@ -1348,7 +1370,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			}
 		}
 		return buf.toString();
-	}
+	}	
 	
 	private void toggleShowAll(boolean checked) {
 		if (checked) {

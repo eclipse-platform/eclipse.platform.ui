@@ -68,6 +68,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		text = toolkit.createFormText(container, true);
+		text.setWhitespaceNormalized(false);
 		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
@@ -380,9 +381,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		// TODO by doing this we are also escaping bold tags
-		// We need to somehow let them through
-		decodedString = parent.escapeSpecialChars(decodedString);
+		decodedString = parent.escapeSpecialChars(decodedString, true);
 		return decodedString;
 	}
 
