@@ -42,6 +42,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 
@@ -312,7 +313,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					info.fIsModifiable= !readOnly;
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.updateCache")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.StorageDocumentProvider_updateCache); 
 			}
 			info.fUpdateCache= false;
 		}
@@ -330,7 +331,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.isReadOnly")); //$NON-NLS-1$
+						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isReadOnly); 
 					}
 				}
 				return info.fIsReadOnly;
@@ -351,7 +352,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.isModifiable")); //$NON-NLS-1$
+						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isModifiable); 
 					}
 				}
 				return info.fIsModifiable;
@@ -439,9 +440,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					name= storage.getName();
 				String message;
 				if (name != null)
-					message= TextEditorMessages.getFormattedString("StorageDocumentProvider.getContentDescriptionFor", name); //$NON-NLS-1$
+					message= NLSUtility.format(TextEditorMessages.StorageDocumentProvider_getContentDescriptionFor, name); 
 				else
-					message= TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"); //$NON-NLS-1$
+					message= TextEditorMessages.StorageDocumentProvider_getContentDescription; 
 				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
 			} finally {
 				try {

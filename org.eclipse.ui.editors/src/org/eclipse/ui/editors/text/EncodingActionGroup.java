@@ -48,8 +48,11 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class EncodingActionGroup extends ActionGroup {
 	
-	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.getString("ResourceInfo.fileContentEncodingFormat"); //$NON-NLS-1$
-	private static final String FILE_CONTAINER_ENCODING_FORMAT= TextEditorMessages.getString("ResourceInfo.fileContainerEncodingFormat"); //$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	
+	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContentEncodingFormat; 
+	private static final String FILE_CONTAINER_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContainerEncodingFormat; 
 
 	
 	/**
@@ -218,11 +221,11 @@ public class EncodingActionGroup extends ActionGroup {
 			if (bom == null)
 				return (String)description.getProperty(IContentDescription.CHARSET);
 			if (bom == IContentDescription.BOM_UTF_8)
-				return TextEditorMessages.getString("WorkbenchPreference.encoding.BOM_UTF_8"); //$NON-NLS-1$
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_8; 
 			if (bom == IContentDescription.BOM_UTF_16BE)
-				return TextEditorMessages.getString("WorkbenchPreference.encoding.BOM_UTF_16BE"); //$NON-NLS-1$
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16BE; 
 			if (bom == IContentDescription.BOM_UTF_16LE)
-				return TextEditorMessages.getString("WorkbenchPreference.encoding.BOM_UTF_16LE"); //$NON-NLS-1$
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16LE; 
 		}
 		
 		return null;
@@ -262,8 +265,8 @@ public class EncodingActionGroup extends ActionGroup {
 			if (encodingSupport == null)
 				return;
 			
-			String title= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.title"); //$NON-NLS-1$
-			String message= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.message");  //$NON-NLS-1$
+			String title= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_title; 
+			String message= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_message;  
 			IInputValidator inputValidator = new IInputValidator() {
 				public String isValid(String newText) { 
 					return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
@@ -337,17 +340,15 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public EncodingActionGroup() {
 		
-		ResourceBundle b= TextEditorMessages.getResourceBundle();
-		
-		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding." + ENCODINGS[0][0] + ".", ENCODINGS[0][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
+		fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[0][0] + ".", ENCODINGS[0][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (SYSTEM_ENCODING != null)
-			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
+			fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
 		
 		for (int i= 1; i < ENCODINGS.length; i++)
-			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
+			fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
+		fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
 	}
 	
 	/*
@@ -357,7 +358,7 @@ public class EncodingActionGroup extends ActionGroup {
 		IMenuManager menuManager= actionBars.getMenuManager(); 
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null && fRetargetActions.size() > 0) {
-			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertEncoding.submenu.label"));  //$NON-NLS-1$
+			MenuManager subMenu= new MenuManager(TextEditorMessages.Editor_ConvertEncoding_submenu_label);  
 			subMenu.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
 					update();
@@ -403,24 +404,23 @@ public class EncodingActionGroup extends ActionGroup {
 	public EncodingActionGroup(ITextEditor editor) {
 		
 		fTextEditor= editor;
-		ResourceBundle b= TextEditorMessages.getResourceBundle();
 		
 		ResourceAction a; 
 		if (SYSTEM_ENCODING != null) {
-			a= new PredefinedEncodingAction(b, SYSTEM_ENCODING, editor);
+			a= new PredefinedEncodingAction(fgResourceBundle, SYSTEM_ENCODING, editor);
 			a.setHelpContextId(IEncodingActionsHelpContextIds.SYSTEM);
 			a.setActionDefinitionId(IEncodingActionsDefinitionIds.SYSTEM);
 			editor.setAction(IEncodingActionsConstants.SYSTEM, a);
 		}
 		
 		for (int i= 0; i < ENCODINGS.length; i++) {
-			a= new PredefinedEncodingAction(b, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
+			a= new PredefinedEncodingAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
 			a.setHelpContextId( ENCODINGS[i][1]);
 			a.setActionDefinitionId( ENCODINGS[i][2]);
 			editor.setAction(ENCODINGS[i][0], a);
 		}
 
-		a= new CustomEncodingAction(b, "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
+		a= new CustomEncodingAction(fgResourceBundle, "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
 		a.setHelpContextId(IEncodingActionsHelpContextIds.CUSTOM);
 		a.setActionDefinitionId(IEncodingActionsDefinitionIds.CUSTOM);
 		editor.setAction(IEncodingActionsConstants.CUSTOM, a);

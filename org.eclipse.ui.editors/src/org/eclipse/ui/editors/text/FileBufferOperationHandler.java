@@ -221,7 +221,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	}
 	
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
-		progressMonitor.beginTask(TextEditorMessages.getString("FileBufferOperationHandler.collectionFiles.label"), files.length);  //$NON-NLS-1$
+		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);  
 		try {
 			Set locations= new HashSet();
 			for (int i= 0; i < files.length; i++) {

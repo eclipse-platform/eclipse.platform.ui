@@ -18,6 +18,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 
 
 /**
@@ -136,9 +137,9 @@ class DocumentInputStream extends InputStream {
 		try {
 			return fOffset < fLength ? fCharSequence.charAt(fOffset++) : -1;
 		} catch (NullPointerException x) {
-			throw new IOException(TextEditorMessages.getString("DocumentInputStream.error.streamClosed")); //$NON-NLS-1$
+			throw new IOException(TextEditorMessages.DocumentInputStream_error_streamClosed); 
 		} catch (IndexOutOfBoundsException x) {
-			throw new IOException(TextEditorMessages.getFormattedString("DocumentInputStream.error.read", x.getLocalizedMessage())); //$NON-NLS-1$
+			throw new IOException(NLSUtility.format(TextEditorMessages.DocumentInputStream_error_read, x.getLocalizedMessage())); 
 		}
 	}
 	

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.action.IMenuManager;
 
 import org.eclipse.ui.IActionBars;
@@ -36,6 +38,9 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedEditorMessages";//$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+
 	/** Change encoding action. */
 	private RetargetTextEditorAction fChangeEncodingAction;
 	
@@ -43,7 +48,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * Creates a new contributor.
 	 */
 	public TextEditorActionContributor() {
-		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
+		fChangeEncodingAction= new RetargetTextEditorAction(fgResourceBundle, "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 	}	
 	
 	/**

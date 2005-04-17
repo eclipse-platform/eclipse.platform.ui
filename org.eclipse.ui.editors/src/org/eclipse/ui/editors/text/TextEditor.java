@@ -139,7 +139,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		}
 		
 		if (provider.isDeleted(input) && original != null) {
-			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() }); //$NON-NLS-1$
+			String message= MessageFormat.format(TextEditorMessages.Editor_warning_save_delete, new Object[] { original.getName() }); 
 			dialog.setErrorMessage(null);
 			dialog.setMessage(message, IMessageProvider.WARNING);
 		}
@@ -171,8 +171,8 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		} catch (CoreException x) {
 			IStatus status= x.getStatus();
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
-				String title= TextEditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-				String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { x.getMessage() }); //$NON-NLS-1$
+				String title= TextEditorMessages.Editor_error_save_title; 
+				String msg= MessageFormat.format(TextEditorMessages.Editor_error_save_message, new Object[] { x.getMessage() }); 
 				
 				if (status != null) {
 					switch (status.getSeverity()) {

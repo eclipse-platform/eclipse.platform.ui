@@ -58,7 +58,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	public TextEditorPreferencePage() {
 		super(GRID);
 		
-		setDescription(TextEditorMessages.getString("PreferencePage.description"));		 //$NON-NLS-1$
+		setDescription(TextEditorMessages.PreferencePage_description);		 
 		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
 		if (plugin instanceof AbstractUIPlugin) {
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
@@ -78,7 +78,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {
-		addField(new FontFieldEditor(JFaceResources.TEXT_FONT, TextEditorMessages.getString("PreferencePage.fontEditor"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new FontFieldEditor(JFaceResources.TEXT_FONT, TextEditorMessages.PreferencePage_fontEditor, getFieldEditorParent())); 
 	}
 
 	/*

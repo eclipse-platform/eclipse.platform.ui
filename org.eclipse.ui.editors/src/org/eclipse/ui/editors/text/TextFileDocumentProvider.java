@@ -66,6 +66,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.part.FileEditorInput;
@@ -139,7 +140,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider  {
 		
-		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.getString("NullProvider.error"), null); //$NON-NLS-1$
+		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.INFO, TextEditorMessages.NullProvider_error, null); 
 		
 		public void connect(Object element) throws CoreException {}
 		public void disconnect(Object element) {}
@@ -711,7 +712,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				// -> saveAs was executed with a target that is already open 
 				// in another editor
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=85519
-				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, TextEditorMessages.getString("TextFileDocumentProvider.saveAsTargetOpenInEditor"), null); //$NON-NLS-1$
+				Status status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.ERROR, TextEditorMessages.TextFileDocumentProvider_saveAsTargetOpenInEditor, null); 
 				throw new CoreException(status);				
 			}
 			
@@ -787,7 +788,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
 		String encoding= getCharsetForNewFile(file, document);
 		try {
-			monitor.beginTask(TextEditorMessages.getString("TextFileDocumentProvider.beginTask.saving"), 2000); //$NON-NLS-1$
+			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000); 
 			InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
 			if (!file.exists()) {
 				ContainerCreator creator= new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
@@ -796,7 +797,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			} else
 				file.setContents(stream, false, false, new SubProgressMonitor(monitor, 1000));
 		} catch (UnsupportedEncodingException x) {
-			String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
+			String message= NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding); 
 			IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
@@ -1054,7 +1055,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (status.getSeverity() != IStatus.ERROR && element instanceof IFileEditorInput) {
 			IFile file= FileBuffers.getWorkspaceFileAtLocation(info.fTextFileBuffer.getLocation());
 			if (file == null || !file.exists()) {
-				String message= TextEditorMessages.getFormattedString("TextFileDocumentProvider.error.doesNotExist", ((IFileEditorInput)element).getFile().getFullPath()); //$NON-NLS-1$
+				String message= NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_doesNotExist, ((IFileEditorInput)element).getFile().getFullPath()); 
 				return new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IResourceStatus.RESOURCE_NOT_FOUND, message, null);
 			}
 		}

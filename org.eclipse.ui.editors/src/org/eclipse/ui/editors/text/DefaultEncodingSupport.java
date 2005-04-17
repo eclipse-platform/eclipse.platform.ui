@@ -34,6 +34,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IAction;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.StatusTextEditor;
@@ -170,10 +171,10 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		Throwable t= status.getException();
 		
 		if (t instanceof CharConversionException)
-			return TextEditorMessages.getString("Editor.error.unreadable_encoding.header"); //$NON-NLS-1$
+			return TextEditorMessages.Editor_error_unreadable_encoding_header; 
 		
 		if (t instanceof UnsupportedEncodingException)
-			return TextEditorMessages.getString("Editor.error.unsupported_encoding.header"); //$NON-NLS-1$
+			return TextEditorMessages.Editor_error_unsupported_encoding_header; 
 		
 		return null;
 	}
@@ -188,10 +189,10 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		Throwable t= status.getException();
 		
 		if (t instanceof CharConversionException)
-			return TextEditorMessages.getString("Editor.error.unreadable_encoding.banner"); //$NON-NLS-1$
+			return TextEditorMessages.Editor_error_unreadable_encoding_banner; 
 		
 		if (t instanceof UnsupportedEncodingException)
-			return TextEditorMessages.getString("Editor.error.unsupported_encoding.banner"); //$NON-NLS-1$
+			return TextEditorMessages.Editor_error_unsupported_encoding_banner; 
 		
 		return null;
 
@@ -213,14 +214,14 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 			
 			if (t instanceof CharConversionException) {
 				if (encoding != null)
-					return MessageFormat.format(TextEditorMessages.getString("Editor.error.unreadable_encoding.message_arg"), new Object[] { encoding }); //$NON-NLS-1$
-				return TextEditorMessages.getString("Editor.error.unreadable_encoding.message"); //$NON-NLS-1$
+					return MessageFormat.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, new Object[] { encoding }); 
+				return TextEditorMessages.Editor_error_unreadable_encoding_message; 
 			}
 			
 			if (t instanceof UnsupportedEncodingException) {
 				if (encoding != null)
-					return TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
-				return TextEditorMessages.getString("Editor.error.unsupported_encoding.message"); //$NON-NLS-1$
+					return NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding); 
+				return TextEditorMessages.Editor_error_unsupported_encoding_message; 
 			}
 		}
 		

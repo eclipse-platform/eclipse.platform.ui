@@ -54,6 +54,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
@@ -428,7 +429,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected void checkSynchronizationState(long cachedModificationStamp, IResource resource) throws CoreException {
 		if (cachedModificationStamp != computeModificationStamp(resource)) {
-			Status status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, TextEditorMessages.getString("FileDocumentProvider.error.out_of_sync"), null); //$NON-NLS-1$
+			Status status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, TextEditorMessages.FileDocumentProvider_error_out_of_sync, null); 
 			throw new CoreException(status);
 		}
 	}
@@ -585,7 +586,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					
 				} else {
 					try {
-						monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
+						monitor.beginTask(TextEditorMessages.FileDocumentProvider_task_saving, 2000); 
 						ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
 						creator.createContainer(new SubProgressMonitor(monitor, 1000));
 						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
@@ -596,7 +597,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				}
 				
 			} catch (UnsupportedEncodingException x) {
-				String message= TextEditorMessages.getFormattedString("Editor.error.unsupported_encoding.message_arg", encoding); //$NON-NLS-1$
+				String message= NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding); 
 				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 				throw new CoreException(s);
 			}
@@ -664,7 +665,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				refreshFile(input.getFile());
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.FileDocumentProvider_createElementInfo); 
 			}
 			
 			IDocument d= null;
@@ -673,7 +674,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				d= createDocument(element);
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.createElementInfo")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.FileDocumentProvider_createElementInfo); 
 				s= x.getStatus();
 				d= createEmptyDocument();
 			}
@@ -842,7 +843,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				refreshFile(input.getFile(), monitor);
 				cacheEncodingState(element);
 			} catch (CoreException x) {
-				handleCoreException(x,TextEditorMessages.getString("FileDocumentProvider.resetDocument")); //$NON-NLS-1$
+				handleCoreException(x,TextEditorMessages.FileDocumentProvider_resetDocument); 
 			}
 		}
 		
@@ -959,7 +960,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						// if successful delete old property
 						file.setPersistentProperty(ENCODING_KEY, null);
 					} catch (CoreException ex) {
-						handleCoreException(ex, TextEditorMessages.getString("FileDocumentProvider.getPersistedEncoding")); //$NON-NLS-1$
+						handleCoreException(ex, TextEditorMessages.FileDocumentProvider_getPersistedEncoding); 
 					}
 				} else {
 					try {
