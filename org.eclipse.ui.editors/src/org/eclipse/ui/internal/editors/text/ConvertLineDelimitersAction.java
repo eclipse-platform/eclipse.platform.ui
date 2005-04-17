@@ -42,7 +42,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	
 	private static String constructLabel(String label, String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter))
-			return label + TextEditorMessages.getString("ConvertLineDelimitersAction.default.label"); //$NON-NLS-1$
+			return label + TextEditorMessages.ConvertLineDelimitersAction_default_label; 
 		return label;
 	}
 	
@@ -63,7 +63,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
 		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.getFormattedString("ConvertLineDelimitersAction.dialog.title", fLabel), TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.description")); //$NON-NLS-1$ //$NON-NLS-2$
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), NLSUtility.format(TextEditorMessages.ConvertLineDelimitersAction_dialog_title, fLabel), TextEditorMessages.ConvertLineDelimitersAction_dialog_description); 
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {

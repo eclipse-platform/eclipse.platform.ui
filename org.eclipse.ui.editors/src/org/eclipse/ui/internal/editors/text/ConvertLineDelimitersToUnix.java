@@ -19,6 +19,6 @@ package org.eclipse.ui.internal.editors.text;
 public class ConvertLineDelimitersToUnix extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToUnix() {
-		super("\n", TextEditorMessages.getString("ConvertLineDelimitersToUnix.label")); //$NON-NLS-1$ //$NON-NLS-2$
+		super("\n", TextEditorMessages.ConvertLineDelimitersToUnix_label); 
 	}
 }

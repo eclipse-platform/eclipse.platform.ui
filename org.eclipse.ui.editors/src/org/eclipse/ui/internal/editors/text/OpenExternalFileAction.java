@@ -104,7 +104,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	 */
 	public void run() {
 		FileDialog dialog= new FileDialog(fWindow.getShell(), SWT.OPEN | SWT.MULTI);
-		dialog.setText(TextEditorMessages.getString("OpenExternalFileAction.title")); //$NON-NLS-1$
+		dialog.setText(TextEditorMessages.OpenExternalFileAction_title); 
 		dialog.setFilterPath(fFilterPath); 
 		dialog.open();
 		String[] names= dialog.getFileNames();
@@ -133,9 +133,9 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			}
 			
 			if (numberOfFilesNotFound > 0) {
-				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.getString("OpenExternalFileAction.message.fileNotFound") : TextEditorMessages.getString("OpenExternalFileAction.message.filesNotFound"); //$NON-NLS-1$ //$NON-NLS-2$
+				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.OpenExternalFileAction_message_fileNotFound : TextEditorMessages.OpenExternalFileAction_message_filesNotFound; 
 				String msg= MessageFormat.format(msgFmt, new Object[] { notFound.toString() });
-				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.getString("OpenExternalFileAction.title"), msg); //$NON-NLS-1$
+				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg); 
 			}
 		}
 	}
@@ -184,8 +184,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IFile selectWorkspaceFile(IFile[] files) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new FileLabelProvider());
 		dialog.setElements(files);
-		dialog.setTitle(TextEditorMessages.getString("OpenExternalFileAction.title.selectWorkspaceFile")); //$NON-NLS-1$
-		dialog.setMessage(TextEditorMessages.getString("OpenExternalFileAction.message.fileLinkedToMultiple")); //$NON-NLS-1$
+		dialog.setTitle(TextEditorMessages.OpenExternalFileAction_title_selectWorkspaceFile); 
+		dialog.setMessage(TextEditorMessages.OpenExternalFileAction_message_fileLinkedToMultiple); 
 		if (dialog.open() == Window.OK)
 			return (IFile) dialog.getFirstResult();
 		return null;

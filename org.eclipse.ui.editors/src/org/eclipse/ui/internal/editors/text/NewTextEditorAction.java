@@ -95,6 +95,6 @@ public class NewTextEditorAction extends Action implements IWorkbenchWindowActio
 	}
 
 	private IEditorInput createEditorInput(File file) {
-		return new NonExistingFileEditorInput(file, TextEditorMessages.getString("NewTextEditorAction.namePrefix")); //$NON-NLS-1$
+		return new NonExistingFileEditorInput(file, TextEditorMessages.NewTextEditorAction_namePrefix); 
 	}
 }

@@ -139,7 +139,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			if (val instanceof String)
 				return Integer.parseInt((String) val);
 			
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(val))); //$NON-NLS-1$
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val))); 
 		}
 	}
 	
@@ -155,16 +155,16 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 
 			try {
 				int integer= parseInteger(value);
 				if (!rangeCheck(integer))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(integer))); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer))); 
 			} catch (NumberFormatException e) {
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			return status;
 		}
@@ -251,16 +251,16 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidRange", new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); 
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			
 			return status;
@@ -278,14 +278,14 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 
 			try {
 				parseBoolean(value);
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$)
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			
 			return status;
@@ -302,7 +302,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 					return false;
 			}
 			
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 		}
 	}
 	
@@ -346,7 +346,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 	
 	public AccessibilityPreferencePage() {
-		setDescription(TextEditorMessages.getString("AccessibilityPreferencePage.accessibility.title")); //$NON-NLS-1$
+		setDescription(TextEditorMessages.AccessibilityPreferencePage_accessibility_title); 
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
@@ -395,16 +395,16 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 		
-		String label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.disableCustomCarets"); //$NON-NLS-1$
+		String label= TextEditorMessages.TextEditorPreferencePage_accessibility_disableCustomCarets; 
 		Preference customCarets= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, label, null);
 		Button master= addCheckBox(appearanceComposite, customCarets, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.getString("TextEditorPreferencePage.accessibility.wideCaret"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_accessibility_wideCaret; 
 		Preference wideCaret= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, label, null);
 		Button slave= addCheckBox(appearanceComposite, wideCaret, new BooleanDomain(), 0);
 		createDependency(master, customCarets, new Control[] { slave });
 		
-		label= TextEditorMessages.getString("QuickDiffConfigurationBlock.characterMode"); //$NON-NLS-1$
+		label= TextEditorMessages.QuickDiffConfigurationBlock_characterMode; 
 		Preference quickDiffTextMode= new Preference(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, label, null);
 		addCheckBox(appearanceComposite, quickDiffTextMode, new BooleanDomain(), 0);
 

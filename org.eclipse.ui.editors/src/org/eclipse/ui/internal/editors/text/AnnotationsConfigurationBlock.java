@@ -177,11 +177,11 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		MAPPING.put(BOOKMARK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
 	}
 	
-	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.HIGHLIGHT"), ""}; //$NON-NLS-1$ //$NON-NLS-2$
-	final static String[] UNDERLINE= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.UNDERLINE"), AnnotationPreference.STYLE_UNDERLINE}; //$NON-NLS-1$
-	final static String[] BOX= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.BOX"), AnnotationPreference.STYLE_BOX}; //$NON-NLS-1$
-	final static String[] IBEAM= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.IBEAM"), AnnotationPreference.STYLE_IBEAM}; //$NON-NLS-1$
-	final static String[] SQUIGGLES= new String[] {TextEditorMessages.getString("AnnotationsConfigurationBlock.SQUIGGLES"), AnnotationPreference.STYLE_SQUIGGLES}; //$NON-NLS-1$
+	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_HIGHLIGHT, ""}; 
+	final static String[] UNDERLINE= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE}; 
+	final static String[] BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX}; 
+	final static String[] IBEAM= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM}; 
+	final static String[] SQUIGGLES= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES}; 
 
 	
 
@@ -241,7 +241,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		composite.setLayout(layout);
 				
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.annotationPresentationOptions")); //$NON-NLS-1$
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_annotationPresentationOptions); 
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
@@ -272,7 +272,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.labels.showIn")); //$NON-NLS-1$
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_labels_showIn); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
         gd.horizontalSpan= 2;
@@ -281,7 +281,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		// we only allow to set either "show in text" or "highlight in text", but not both
         
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInTextCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInText")); //$NON-NLS-1$
+		fShowInTextCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInText); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;
@@ -296,7 +296,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, UNDERLINE, IBEAM});
 		
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInOverviewRuler")); //$NON-NLS-1$
+        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
@@ -304,7 +304,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 		
 		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.showInVerticalRuler")); //$NON-NLS-1$
+		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
@@ -312,7 +312,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fShowInVerticalRulerCheckBox.setLayoutData(gd);
 		
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.getString("AnnotationsConfigurationBlock.color")); //$NON-NLS-1$
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_color); 
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;

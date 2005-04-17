@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,62 +10,104 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
 /**
- * Helper class which wraps the specified resource bundle
- * and offers methods to access the bundle.
+ * Helper class to get NLSed messages.
  * 
  * @since 2.1
  */
-class TextEditorMessages {
+final class TextEditorMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.editors.text.TextEditorMessages";//$NON-NLS-1$
-
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+	private static final String BUNDLE_NAME= TextEditorMessages.class.getName();
 
 	private TextEditorMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-	}
-	
-	public static ResourceBundle getResourceBundle() {
-		return fgResourceBundle;
-	}
+	public static String EditorsPlugin_internal_error;
+	public static String TextEditorPreferencePage_displayedTabWidth;
+	public static String TextEditorPreferencePage_undoHistorySize;
+	public static String TextEditorPreferencePage_printMarginColumn;
+	public static String TextEditorPreferencePage_showLineNumbers;
+	public static String TextEditorPreferencePage_highlightCurrentLine;
+	public static String TextEditorPreferencePage_showPrintMargin;
+	public static String TextEditorPreferencePage_color;
+	public static String TextEditorPreferencePage_appearanceOptions;
+	public static String TextEditorPreferencePage_lineNumberForegroundColor;
+	public static String TextEditorPreferencePage_currentLineHighlighColor;
+	public static String TextEditorPreferencePage_printMarginColor;
+	public static String TextEditorPreferencePage_foregroundColor;
+	public static String TextEditorPreferencePage_backgroundColor;
+	public static String TextEditorPreferencePage_accessibility_disableCustomCarets;
+	public static String TextEditorPreferencePage_accessibility_wideCaret;
+	public static String TextEditorPreferencePage_overwriteMode;
+	public static String TextEditorPreferencePage_selectionForegroundColor;
+	public static String TextEditorPreferencePage_selectionBackgroundColor;
+	public static String TextEditorPreferencePage_systemDefault;
+	public static String TextEditorPreferencePage_invalidInput;
+	public static String TextEditorPreferencePage_invalidRange;
+	public static String TextEditorPreferencePage_emptyInput;
+	public static String QuickDiffConfigurationBlock_description;
+	public static String QuickDiffConfigurationBlock_referenceProviderTitle;
+	public static String QuickDiffConfigurationBlock_characterMode;
+	public static String QuickDiffConfigurationBlock_showForNewEditors;
+	public static String QuickDiffConfigurationBlock_showInOverviewRuler;
+	public static String QuickDiffConfigurationBlock_colorTitle;
+	public static String QuickDiffConfigurationBlock_changeColor;
+	public static String QuickDiffConfigurationBlock_additionColor;
+	public static String QuickDiffConfigurationBlock_deletionColor;
+	public static String OpenExternalFileAction_title;
+	public static String OpenExternalFileAction_message_fileNotFound;
+	public static String OpenExternalFileAction_message_filesNotFound;
+	public static String OpenExternalFileAction_title_selectWorkspaceFile;
+	public static String OpenExternalFileAction_message_fileLinkedToMultiple;
+	public static String NewTextEditorAction_namePrefix;
+	public static String AnnotationsConfigurationBlock_description;
+	public static String AnnotationsConfigurationBlock_showInText;
+	public static String AnnotationsConfigurationBlock_showInOverviewRuler;
+	public static String AnnotationsConfigurationBlock_showInVerticalRuler;
+	public static String AnnotationsConfigurationBlock_annotationPresentationOptions;
+	public static String AnnotationsConfigurationBlock_SQUIGGLES;
+	public static String AnnotationsConfigurationBlock_UNDERLINE;
+	public static String AnnotationsConfigurationBlock_BOX;
+	public static String AnnotationsConfigurationBlock_IBEAM;
+	public static String AnnotationsConfigurationBlock_HIGHLIGHT;
+	public static String AnnotationsConfigurationBlock_labels_showIn;
+	public static String AnnotationsConfigurationBlock_color;
+	public static String SelectResourcesDialog_filterSelection;
+	public static String SelectResourcesDialog_deselectAll;
+	public static String SelectResourcesDialog_selectAll;
+	public static String SelectResourcesDialog_noFilesSelected;
+	public static String SelectResourcesDialog_oneFileSelected;
+	public static String SelectResourcesDialog_nFilesSelected;
+	public static String ConvertLineDelimitersAction_default_label;
+	public static String ConvertLineDelimitersAction_dialog_title;
+	public static String ConvertLineDelimitersToMacOS9_label;
+	public static String ConvertLineDelimitersToWindows_label;
+	public static String ConvertLineDelimitersToUnix_label;
+	public static String ConvertLineDelimitersAction_dialog_description;
+	public static String RemoveTrailingWhitespaceHandler_dialog_title;
+	public static String RemoveTrailingWhitespaceHandler_dialog_description;
+	public static String HyperlinksEnabled_label;
+	public static String HyperlinkColor_label;
+	public static String HyperlinkKeyModifier_label;
+	public static String HyperlinkKeyModifier_error_modifierIsNotValid;
+	public static String HyperlinkKeyModifier_error_shiftIsDisabled;
+	public static String HyperlinkKeyModifier_delimiter;
+	public static String HyperlinkKeyModifier_concatModifierStrings;
+	public static String HyperlinkKeyModifier_insertDelimiterAndModifier;
+	public static String HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter;
+	public static String HyperlinkKeyModifier_insertModifierAndDelimiter;
+	public static String AccessibilityPreferencePage_accessibility_title;
+	public static String SpellingConfigurationBlock_enable;
+	public static String SpellingConfigurationBlock_combo_caption;
+	public static String SpellingConfigurationBlock_info_no_preferences;
+	public static String SpellingConfigurationBlock_error_not_exist;
+	public static String SpellingConfigurationBlock_error_title;
+	public static String SpellingConfigurationBlock_error_message;
 
-	public static String getFormattedString(String key, String arg) {
-		return getFormattedString(key, new String[] { arg });
-	}
-	
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and formats it with the given argument.
-	 * 
-	 * @param key the string used to get the bundle value, must not be <code>null</code>
-	 * @param arg the argument used to format the string
-	 * @return the formatted string
-	 * @since 3.1
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
 }

@@ -45,7 +45,7 @@ public class QuickDiffPreferencePage extends AbstractConfigurationBlockPreferenc
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.getString("QuickDiffConfigurationBlock.description"); //$NON-NLS-1$
+		String description= TextEditorMessages.QuickDiffConfigurationBlock_description; 
 		setDescription(description);
 	}
 	

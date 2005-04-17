@@ -38,7 +38,7 @@ public class AnnotationsPreferencePage extends AbstractConfigurationBlockPrefere
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.getString("AnnotationsConfigurationBlock.description"); //$NON-NLS-1$
+		String description= TextEditorMessages.AnnotationsConfigurationBlock_description; 
 		setDescription(description);
 	}
 	

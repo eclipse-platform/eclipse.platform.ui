@@ -173,7 +173,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			if (val instanceof String) {
 				return Integer.parseInt((String) val);
 			}
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(val))); //$NON-NLS-1$
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val))); 
 		}
 	}
 	
@@ -189,15 +189,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 			try {
 				int integer= parseInteger(value);
 				if (!rangeCheck(integer))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(integer))); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer))); 
 			} catch (NumberFormatException e) {
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			return status;
 		}
@@ -284,15 +284,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidRange", new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); //$NON-NLS-1$
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); 
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			
 			return status;
@@ -318,13 +318,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.getString("TextEditorPreferencePage.emptyInput")); //$NON-NLS-1$
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
 				return status;
 			}
 			try {
 				parseBoolean(value);
 			} catch (NumberFormatException e) {
-				status.setError(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$)
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 			}
 			
 			return status;
@@ -341,7 +341,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					return false;
 			}
 			
-			throw new NumberFormatException(TextEditorMessages.getFormattedString("TextEditorPreferencePage.invalidInput", String.valueOf(value))); //$NON-NLS-1$
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
 		}
 	}
 	
@@ -369,17 +369,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 	
 
-	private static final String MODIFIER_DELIMITER= TextEditorMessages.getString("HyperlinkKeyModifier.delimiter"); //$NON-NLS-1$
+	private static final String MODIFIER_DELIMITER= TextEditorMessages.HyperlinkKeyModifier_delimiter; 
 	
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{TextEditorMessages.getString("TextEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.selectionForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.selectionBackgroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.backgroundColor"), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT}, //$NON-NLS-1$
-		{TextEditorMessages.getString("TextEditorPreferencePage.foregroundColor"), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT}, //$NON-NLS-1$
-		{TextEditorMessages.getString("HyperlinkColor.label"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null}, //$NON-NLS-1$
+		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, 
+		{TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, 
+		{TextEditorMessages.TextEditorPreferencePage_printMarginColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, 
+		{TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, 
+		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, 
+		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT}, 
+		{TextEditorMessages.TextEditorPreferencePage_foregroundColor, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT}, 
+		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null}, 
 	};
 	
 	private OverlayPreferenceStore fOverlayStore;
@@ -494,36 +494,36 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String label= TextEditorMessages.getString("TextEditorPreferencePage.displayedTabWidth"); //$NON-NLS-1$
+		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth; 
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
 		tabWidthDomain.addRange(1, 16);
 		addSpinner(appearanceComposite, tabWidth, tabWidthDomain, 0);
 
-		label= TextEditorMessages.getString("TextEditorPreferencePage.undoHistorySize"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize; 
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
 		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
 		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 5, 0);
 		
-		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine; 
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
 		addCheckBox(appearanceComposite, highlightCurrentLine, new BooleanDomain(), 0);
 				
-		label= TextEditorMessages.getString("TextEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_showPrintMargin; 
 		Preference showPrintMargin= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, label, null);
 		Button showPrintMarginButton= addCheckBox(appearanceComposite, showPrintMargin, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.getString("TextEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_printMarginColumn; 
 		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
 		IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
 		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 3, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
 		
-		label= TextEditorMessages.getString("TextEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers; 
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.getString("HyperlinksEnabled.label"); //$NON-NLS-1$
+		label= TextEditorMessages.HyperlinksEnabled_label; 
 		Preference hyperlinksEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, label, null);
 		fHyperlinksEnabledCheckBox= addCheckBox(appearanceComposite, hyperlinksEnabled, new BooleanDomain(), 0);
 		fHyperlinksEnabledCheckBox.addSelectionListener(new SelectionListener() {
@@ -537,7 +537,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		});
 		
 		// Text field for modifier string
-		label= TextEditorMessages.getString("HyperlinkKeyModifier.label"); //$NON-NLS-1$
+		label= TextEditorMessages.HyperlinkKeyModifier_label; 
 		Preference hyperlinkModifier= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, label, null);
 		fHyperlinkKeyModifierText= (Text)addTextField(appearanceComposite, hyperlinkModifier, null, 20, 20)[1];
 		
@@ -566,11 +566,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					String insertString;
 
 					if (needsPrefixDelimiter && needsPostfixDelimiter)
-						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertDelimiterAndModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
 					else if (needsPrefixDelimiter)
-						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertDelimiterAndModifier", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, new String[] {Action.findModifierString(e.stateMask)}); 
 					else if (needsPostfixDelimiter)
-						insertString= TextEditorMessages.getFormattedString("HyperlinkKeyModifier.insertModifierAndDelimiter", new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
 					else
 						insertString= Action.findModifierString(e.stateMask);
 
@@ -585,7 +585,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 		});
 		
-		label= TextEditorMessages.getString("TextEditorPreferencePage.overwriteMode"); //$NON-NLS-1$
+		label= TextEditorMessages.TextEditorPreferencePage_overwriteMode; 
 		Preference disableOverwrite= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE, label, null);
 		addCheckBox(appearanceComposite, disableOverwrite, new BooleanDomain(), 0);
 		
@@ -596,7 +596,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		l.setLayoutData(gd);
 		
 		l= new Label(appearanceComposite, SWT.LEFT);
-		l.setText(TextEditorMessages.getString("TextEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
+		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions); 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		l.setLayoutData(gd);
@@ -625,7 +625,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		l= new Label(stylesComposite, SWT.LEFT);
-		l.setText(TextEditorMessages.getString("TextEditorPreferencePage.color")); //$NON-NLS-1$
+		l.setText(TextEditorMessages.TextEditorPreferencePage_color); 
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		l.setLayoutData(gd);
@@ -653,7 +653,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		};
 		
 		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(TextEditorMessages.getString("TextEditorPreferencePage.systemDefault")); //$NON-NLS-1$
+		fAppearanceColorDefault.setText(TextEditorMessages.TextEditorPreferencePage_systemDefault); 
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
@@ -1015,9 +1015,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
 			if (stateMask == -1)
-				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.getFormattedString("HyperlinkKeyModifier.error.modifierIsNotValid", modifiers)); //$NON-NLS-1$
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers)); 
 			else
-				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.getString("HyperlinkKeyModifier.error.shiftIsDisabled")); //$NON-NLS-1$
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled); 
 			setValid(false);
 			StatusUtil.applyToStatusLine(this, fHyperlinkKeyModifierStatus);
 		} else {
@@ -1114,6 +1114,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		String newModifierString= Action.findModifierString(modifier);
 		if (modifierString.length() == 0)
 			return newModifierString;
-		return TextEditorMessages.getFormattedString("HyperlinkKeyModifier.concatModifierStrings", new String[] {modifierString, newModifierString}); //$NON-NLS-1$
+		return NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_concatModifierStrings, new String[] {modifierString, newModifierString}); 
 	}
 }

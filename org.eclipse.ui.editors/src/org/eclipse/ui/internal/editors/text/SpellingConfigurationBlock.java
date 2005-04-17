@@ -255,7 +255,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		
 		/* check box for new editors */
 		fEnablementCheckbox= new Button(composite, SWT.CHECK);
-		fEnablementCheckbox.setText(TextEditorMessages.getString("SpellingConfigurationBlock.enable")); //$NON-NLS-1$
+		fEnablementCheckbox.setText(TextEditorMessages.SpellingConfigurationBlock_enable); 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fEnablementCheckbox.setLayoutData(gd);
 		fEnablementCheckbox.addSelectionListener(new SelectionListener() {
@@ -283,7 +283,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Label comboLabel= new Label(fComboGroup, SWT.CENTER);
 			gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_CENTER);
 			comboLabel.setLayoutData(gd);
-			comboLabel.setText(TextEditorMessages.getString("SpellingConfigurationBlock.combo_caption")); //$NON-NLS-1$
+			comboLabel.setText(TextEditorMessages.SpellingConfigurationBlock_combo_caption); 
 			
 			label= new Label(composite, SWT.CENTER);
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -379,7 +379,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			private boolean isPerformRevert() {
 				Shell shell= viewer.getControl().getShell();
-				MessageDialog dialog= new MessageDialog(shell, TextEditorMessages.getString("SpellingConfigurationBlock.error.title"), null, TextEditorMessages.getString("SpellingConfigurationBlock.error.message"), MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog dialog= new MessageDialog(shell, TextEditorMessages.SpellingConfigurationBlock_error_title, null, TextEditorMessages.SpellingConfigurationBlock_error_message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1); 
 				return dialog.open() == 0;
 			}
 
@@ -433,7 +433,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
 		if (desc == null) {
 			// safety in case there is no such descriptor
-			String message= TextEditorMessages.getString("SpellingConfigurationBlock.error.not_exist"); //$NON-NLS-1$
+			String message= TextEditorMessages.SpellingConfigurationBlock_error_not_exist; 
 			EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 			fCurrentBlock= new ErrorPreferences(message);
 		} else {
@@ -462,7 +462,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Platform.run(runnable);
 			control= result[0];
 			if (control == null) {
-				String message= TextEditorMessages.getString("SpellingConfigurationBlock.info.no_preferences"); //$NON-NLS-1$
+				String message= TextEditorMessages.SpellingConfigurationBlock_info_no_preferences; 
 				EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 				control= new ErrorPreferences(message).createControl(fGroup);
 			} else {
