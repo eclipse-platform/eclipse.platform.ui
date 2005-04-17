@@ -407,10 +407,9 @@ public class HelpIndexBuilder {
 		IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
 				fid, indexDirectory);
 		index.setDocPlugins(docPlugins);
-		Collection docs = collectDocs(localeDir, new SubProgressMonitor(
-				monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+		Collection docs = collectDocs(localeDir);
 		MultiStatus status = createIndex(id.id, fid!=null, localeDir, index, docs,
-				new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				new SubProgressMonitor(monitor, 5, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 		index.deleteLockFile();
 		monitor.setTaskName("");
 		monitor.done();
@@ -422,23 +421,18 @@ public class HelpIndexBuilder {
 	 * collect hrefs for the topics.
 	 */
 
-	private Collection collectDocs(LocaleDir localeDir, IProgressMonitor monitor)
+	private Collection collectDocs(LocaleDir localeDir)
 			throws CoreException {
 		HashSet docs = new HashSet();
-		monitor.beginTask("Collecting documents...", tocFiles.size());
 		for (int i = 0; i < tocFiles.size(); i++) {
 			TocFile tocFile = (TocFile) tocFiles.get(i);
-			monitor.subTask(tocFile.href);
 			long startTime = System.currentTimeMillis();
 			collectDocs(docs, getTocFile(localeDir, tocFile.href));
 			if (tocFile.extraDir!=null) {
 				//TODO also include all the indexable documents
 				//in the extraDir
 			}
-			monitor.worked(1);
 		}
-		monitor.setTaskName("");
-		monitor.done();
 		return docs;
 	}
 	
@@ -519,7 +513,8 @@ public class HelpIndexBuilder {
 			}
 			else {
 				// report missing document when in a plug-in
-				String message = NLS.bind("Locale ''{0}'': cannot find document: {1}", localeDir.locale, href);
+				String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
+				String message = NLS.bind("Locale ''{0}'': cannot find document: {1}", locale, href);
 				IStatus status = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, null);
 				if (multiStatus == null)
 					multiStatus = createMultiStatus();
@@ -543,7 +538,7 @@ public class HelpIndexBuilder {
 	private MultiStatus createMultiStatus() {
 		return new MultiStatus(
 				HelpBasePlugin.PLUGIN_ID,
-				IStatus.ERROR,
+				IStatus.OK,
 				"Help documentation could not be indexed completely.",
 				null);
 	}

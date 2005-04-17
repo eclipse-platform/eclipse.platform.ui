@@ -16,7 +16,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.search.HelpIndexBuilder;
 
@@ -60,16 +62,38 @@ public class BuildHelpIndex extends Task {
 		try {
 			builder.execute(monitor);
 		} catch (CoreException e) {
-			throw new BuildException(e.getMessage(), e.getCause());
+			if (e.getStatus().getSeverity()==IStatus.ERROR)
+				throw new BuildException(e.getMessage(), e.getCause());
+			else {
+				printStatus(e);
+			}
+		}
+	}
+
+	private void printStatus(CoreException e) {
+		IStatus status = e.getStatus();
+		System.out.println(e.getMessage());
+		if (status.isMultiStatus()) {
+			IStatus [] children = status.getChildren();
+			for (int i=0; i<children.length; i++) {
+				IStatus child = children[i];
+				System.out.println("    "+child.getMessage());
+			}
 		}
 	}
 
 	private File getFile(String fileName) {
 		if (fileName == null)
 			return null;
-		File file = new Path(fileName).isAbsolute() ? new File(fileName)
-				: new File(getProject().getBaseDir(), fileName);
-		return file;
+		IPath path = new Path(fileName);
+		if (path.isAbsolute())
+			return new File(fileName);
+		File baseDir = getProject().getBaseDir();
+		if (fileName.equals(".") || fileName.equals("./"))
+			return baseDir;
+		if (fileName.equals("..") || fileName.equals("../"))
+			return baseDir.getParentFile();
+		return new File(getProject().getBaseDir(), fileName);
 	}
 
 	/**
