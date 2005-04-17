@@ -30,8 +30,8 @@ import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-import org.eclipse.ui.internal.editors.NLSUtility;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.osgi.framework.Bundle;
 
 

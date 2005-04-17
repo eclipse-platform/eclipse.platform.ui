@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.editors;
+package org.eclipse.ui.internal.editors.text;
 
 import java.text.MessageFormat;
 
