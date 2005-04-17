@@ -334,7 +334,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	public String getDisplayString() {
 		if (fDisplayString == null) {
-			fDisplayString= fTemplate.getName() + JFaceTextTemplateMessages.getString("TemplateProposal.delimiter") + fTemplate.getDescription(); //$NON-NLS-1$
+			String[] arguments= new String[] { fTemplate.getName(), fTemplate.getDescription() };
+			fDisplayString= JFaceTextTemplateMessages.getFormattedString("TemplateProposal.displayString", arguments); //$NON-NLS-1$
 		}
 		return fDisplayString;
 	}
