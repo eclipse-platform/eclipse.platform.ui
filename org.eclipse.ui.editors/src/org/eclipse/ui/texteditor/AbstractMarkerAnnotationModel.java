@@ -243,7 +243,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			catchupWithMarkers();
 		} catch (CoreException x) {
 			if (x.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
-				handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.connected")); //$NON-NLS-1$
+				handleCoreException(x, TextEditorMessages.AbstractMarkerAnnotationModel_connected); 
 		}
 
 		fireModelChanged();
@@ -356,7 +356,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 						deleteMarkers(m);
 						
 					} catch (CoreException x) {
-						handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.removeAnnotations")); //$NON-NLS-1$
+						handleCoreException(x, TextEditorMessages.AbstractMarkerAnnotationModel_removeAnnotations); 
 					}
 					listenToMarkerChanges(true);
 				
@@ -435,7 +435,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		try {
 			return (IMarkerUpdater) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.getString("AbstractMarkerAnnotationModel.createMarkerUpdater")); //$NON-NLS-1$
+			handleCoreException(x, TextEditorMessages.AbstractMarkerAnnotationModel_createMarkerUpdater); 
 		}
 		
 		return null;

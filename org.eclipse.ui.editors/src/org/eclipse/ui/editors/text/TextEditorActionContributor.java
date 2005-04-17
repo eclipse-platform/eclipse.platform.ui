@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedEditorMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedTextEditorMessages";//$NON-NLS-1$
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	/** Change encoding action. */

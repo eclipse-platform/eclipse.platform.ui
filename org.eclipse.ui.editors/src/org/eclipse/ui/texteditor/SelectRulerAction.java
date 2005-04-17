@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
@@ -21,10 +23,13 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  */
 public class SelectRulerAction extends AbstractRulerActionDelegate {
 
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedTextEditorMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+
 	/*
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new SelectMarkerRulerAction(TextEditorMessages.getResourceBundle(), "Editor.SelectMarker.", editor, rulerInfo); //$NON-NLS-1$
+		return new SelectMarkerRulerAction(fgResourceBundle, "Editor.SelectMarker.", editor, rulerInfo); //$NON-NLS-1$
 	}
 }
