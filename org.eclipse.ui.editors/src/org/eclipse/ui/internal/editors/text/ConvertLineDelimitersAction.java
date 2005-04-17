@@ -63,7 +63,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
 		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.title") + fLabel, TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.description")); //$NON-NLS-1$ //$NON-NLS-2$
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.getFormattedString("ConvertLineDelimitersAction.dialog.title", fLabel), TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {
