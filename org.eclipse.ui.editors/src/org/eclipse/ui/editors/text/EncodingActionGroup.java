@@ -48,7 +48,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class EncodingActionGroup extends ActionGroup {
 	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedEditorMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedTextEditorMessages";//$NON-NLS-1$
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 	
 	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContentEncodingFormat; 
