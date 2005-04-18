@@ -66,6 +66,12 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	public String format(final int key) {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
 		final String name = lookup.formalNameLookup(key);
+        
+        // TODO NL issue. Possible problem with 4-byte characters.
+        if (name.length() == 1) {
+            return name;
+        }
+        
 		return Util.translateString(RESOURCE_BUNDLE, name, name);
 	}
 
