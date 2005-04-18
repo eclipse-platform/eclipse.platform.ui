@@ -91,13 +91,13 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	private void removeBundle(Bundle bundle) {
-		registry.remove(bundle.getBundleId());		
+		registry.remove(bundle.getBundleId());
 	}
 
 	private void addBundle(Bundle bundle) {
 		// if the given bundle already exists in the registry then return.
 		// note that this does not work for update cases.
-		if (registry.hasNamespace(bundle.getBundleId()))	
+		if (registry.hasNamespace(bundle.getBundleId()))
 			return;
 		Contribution bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)
@@ -111,6 +111,31 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		registry.add(bundleModel);
 	}
 
+	private boolean isSingleton(Bundle bundle) {
+		String symbolicNameHeader = (String) bundle.getHeaders("").get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
+		try {
+			if (symbolicNameHeader != null) {
+				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
+				if (symbolicNameElements.length > 0) {
+					String singleton = symbolicNameElements[0].getDirective(Constants.SINGLETON_DIRECTIVE);
+					if (singleton == null)
+						singleton = symbolicNameElements[0].getAttribute(Constants.SINGLETON_DIRECTIVE);
+
+					if (!"true".equalsIgnoreCase(singleton)) { //$NON-NLS-1$
+						if (InternalPlatform.DEBUG_REGISTRY) {
+							String message = NLS.bind(Messages.parse_nonSingleton, bundle.getLocation());
+							InternalPlatform.getDefault().log(new Status(IStatus.INFO, Platform.PI_RUNTIME, 0, message, null));
+						}
+						return false;
+					}
+				}
+			}
+		} catch (BundleException e1) {
+			//This can't happen because the fwk would have rejected the bundle
+		}
+		return true;
+	}
+
 	/**
 	 * Tries to create a bundle model from a plugin/fragment manifest in the bundle.
 	 */
@@ -121,33 +146,22 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		// bail out if the bundle does not have a symbolic name
 		if (bundle.getSymbolicName() == null)
 			return null;
-		
-		//If the bundle is not a singleton, then it is not added
-		String symbolicNameHeader = (String) bundle.getHeaders("").get(Constants.BUNDLE_SYMBOLICNAME); //$NON-NLS-1$
-		try {
-			if (symbolicNameHeader != null) {
-				ManifestElement[] symbolicNameElements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicNameHeader);
-				if (symbolicNameElements.length > 0) {
-					String singleton = symbolicNameElements[0].getDirective(Constants.SINGLETON_DIRECTIVE);
-					if (singleton == null)
-						singleton = symbolicNameElements[0].getAttribute(Constants.SINGLETON_DIRECTIVE);
 
-					if (! "true".equalsIgnoreCase(singleton)) { //$NON-NLS-1$
-						if (InternalPlatform.DEBUG_REGISTRY) {
-							String message = NLS.bind(Messages.parse_nonSingleton, bundle.getLocation());
-							InternalPlatform.getDefault().log(new Status(IStatus.INFO, Platform.PI_RUNTIME, 0, message, null));
-						}
-						return null;
-					}
-				}
-			}
-		} catch (BundleException e1) {
-			//This can't happen because the fwk would have rejected the bundle
+		//If the bundle is not a singleton, then it is not added
+		if (!isSingleton(bundle))
+			return null;
+
+		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);
+
+		//If the bundle is a fragment being added to a non singleton host, then it is not added
+		if (isFragment) {
+			Bundle[] hosts = InternalPlatform.getDefault().getHosts(bundle);
+			if (hosts != null && isSingleton(hosts[0]) == false)
+				return null;
 		}
-		
+
 		InputStream is = null;
 		String manifestType = null;
-		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);
 		String manifestName = isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST;
 		try {
 			URL url = bundle.getEntry(manifestName);
@@ -170,7 +184,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 				//Ignore the exception
 			}
 			ExtensionsParser parser = new ExtensionsParser(problems);
-			Contribution bundleModel = new Contribution(bundle); 
+			Contribution bundleModel = new Contribution(bundle);
 			parser.parseManifest(xmlTracker, new InputSource(is), manifestType, manifestName, registry.getObjectManager(), bundleModel, b);
 			if (problems.getSeverity() != IStatus.OK)
 				InternalPlatform.getDefault().log(problems);

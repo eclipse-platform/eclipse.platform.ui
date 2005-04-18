@@ -6,4 +6,6 @@
    version="1.0.0"
    provider-name="">
  
+      <extension-point id="unused" name="unused in tests" schema="schema/xptH1.exsd"/>
+      
 </plugin>

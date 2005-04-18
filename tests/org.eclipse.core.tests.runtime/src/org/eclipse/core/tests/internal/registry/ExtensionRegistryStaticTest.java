@@ -295,15 +295,28 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertNotNull(ce.getChildren()[0].getChildren()[0].getChildren()[0].getValue());
 	}
 
-	//Test the cache readAll
-
-	//test various methods on a delta object
-	//test that configuration elements are removed 
-
-	//Test that all the objects are removed.
-
-	//Test the delta with more details
-
+	public void testNonSingletonBundle() throws MalformedURLException, BundleException, IOException {
+		//Non singleton bundles are not supposed to be added
+		Bundle nonSingletonBundle = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingleton");
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {nonSingletonBundle});
+		assertNull(Platform.getExtensionRegistry().getExtensionPoint("NonSingleton.ExtensionPoint"));
+	}
+	
+	public void testSingletonFragment() throws MalformedURLException, BundleException, IOException {
+		//Fragments to non singleton host can not contribute extension or extension points 
+		Bundle fragmentToNonSingleton = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/fragmentToNonSingleton");
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {fragmentToNonSingleton});
+		assertNull(Platform.getExtensionRegistry().getExtensionPoint("NonSingleton.Bar"));
+	}
+	
+	public void testNonSingletonFragment() throws MalformedURLException, BundleException, IOException {
+		//Non singleton bundles are not supposed to be added
+		Bundle regular = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/plugin");
+		Bundle nonSingletonFragment = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/nonSingletonFragment/fragment");
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {regular, nonSingletonFragment});
+		assertNull(Platform.getExtensionRegistry().getExtensionPoint("Regular.Bar"));
+	}
+	
 	public static Test suite() {
 		//Order is important
 		TestSuite sameSession = new TestSuite(ExtensionRegistryStaticTest.class.getName());
@@ -321,6 +334,9 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		sameSession.addTest(new ExtensionRegistryStaticTest("test71826"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("testJ"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("testJbis"));
+		sameSession.addTest(new ExtensionRegistryStaticTest("testNonSingletonBundle"));
+		sameSession.addTest(new ExtensionRegistryStaticTest("testSingletonFragment"));
+		sameSession.addTest(new ExtensionRegistryStaticTest("testNonSingletonFragment"));
 		return sameSession;
 	}
 }

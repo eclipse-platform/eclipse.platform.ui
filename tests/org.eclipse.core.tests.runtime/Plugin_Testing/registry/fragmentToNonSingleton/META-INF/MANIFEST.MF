@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: FragmentToNonSingleton Fragment
+Bundle-SymbolicName: FragmentToNonSingleton; singleton := true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: FragmentToNonSingleton.jar
+Fragment-Host: NonSingleton;bundle-version="[1.0.0,2.0.0)"
+Bundle-Localization: plugin

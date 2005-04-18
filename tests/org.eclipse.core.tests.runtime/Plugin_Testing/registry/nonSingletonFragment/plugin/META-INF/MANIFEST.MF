@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Regular Plug-in
+Bundle-SymbolicName: Regular; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: NonSingleton.jar
+Bundle-Localization: plugin
+Eclipse-AutoStart: true
+Require-Bundle: org.eclipse.core.runtime
