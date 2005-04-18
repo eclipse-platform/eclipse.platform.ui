@@ -819,7 +819,12 @@ public final class InternalPlatform {
 	 * through here as well.
 	 */
 	public void log(final IStatus status) {
-		assertInitialized();
+		if (!initialized) {
+			Throwable t = status.getException();
+			if (t != null)
+				t.printStackTrace();
+			assertInitialized();
+		}
 		// create array to avoid concurrent access
 		ILogListener[] listeners;
 		synchronized (logListeners) {
