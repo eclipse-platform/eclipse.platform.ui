@@ -82,10 +82,10 @@ public class ConvertPath extends Task {
 				throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
 		}
 		if (property != null)
-			project.setUserProperty(property, resource.getFullPath().toString());
+			getProject().setUserProperty(property, resource.getFullPath().toString());
 		if (pathID != null) {
-			Path newPath = new Path(project, resource.getFullPath().toString());
-			project.addReference(pathID, newPath);
+			Path newPath = new Path(getProject(), resource.getFullPath().toString());
+			getProject().addReference(pathID, newPath);
 		}
 	}
 
@@ -107,10 +107,10 @@ public class ConvertPath extends Task {
 			throw new BuildException(Policy.bind("exception.pathNotValid", path.toString())); //$NON-NLS-1$
 
 		if (property != null)
-			project.setUserProperty(property, resource.getLocation().toOSString());
+			getProject().setUserProperty(property, resource.getLocation().toOSString());
 		if (pathID != null) {
-			Path newPath = new Path(project, resource.getLocation().toOSString());
-			project.addReference(pathID, newPath);
+			Path newPath = new Path(getProject(), resource.getLocation().toOSString());
+			getProject().addReference(pathID, newPath);
 		}
 	}
 

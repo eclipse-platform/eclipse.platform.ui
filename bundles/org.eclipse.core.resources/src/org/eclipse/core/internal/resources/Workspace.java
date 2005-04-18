@@ -343,6 +343,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				shutdown(Policy.subMonitorFor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 			}
 		} finally {
+			//release the scheduling rule to be a good job citizen
+			Platform.getJobManager().endRule(getRoot());
 			monitor.done();
 		}
 	}

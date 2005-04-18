@@ -3,25 +3,15 @@
 
 	<property name="bootclasspath" value=""/>
 
-	<target name="main">
-		<condition property="fullBuild">
-			<equals arg1="${buildType}" arg2="full"/>
-		</condition>
-		<antcall target="build"/>
-	</target>
-
-	<target name="build" if="fullBuild">
-		<antcall target="clean"/>
-		<antcall target="ant_tasks/resources-ant.jar"/>
-		<antcall target="refresh"/>
+	<target name="main" depends="clean, ant_tasks/resources-ant.jar">
 	</target>
 
 	<target name="init" depends="properties">
 		<property name="plugin" value="org.eclipse.core.resources"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>
-		<property name="build.result.folder" value="${basedir}"/>
-		<property name="version.suffix" value="_3.0.0"/>
+		<property name="build.result.folder" value="${basedir}/ant_tasks"/>
+		<property name="version.suffix" value="_3.1.0"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
@@ -35,19 +25,16 @@
 		<!-- compile the source code -->
 		<javac 
 			destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" 
-			failonerror="false" 
+			failonerror="true" 
 			verbose="true" 
-			debug="on" 
-			includeAntRuntime="yes" 
+			debug="on"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
-					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
-					${basedir}/../org.eclipse.core.resources/bin;
-					${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}/resources.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}.jar;
 					${basedir}/../org.eclipse.ant.core/bin;
-					${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
+					${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
@@ -55,18 +42,14 @@
 		<copy todir="${temp.folder}/ant_tasks/resources-ant.jar.bin">
 			<fileset dir="src_ant/" excludes="**/*.java"/>
 		</copy>
-		<mkdir dir="${build.result.folder}/ant_tasks"/>
-		<jar jarfile="${build.result.folder}/ant_tasks/resources-ant.jar" basedir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
+		<mkdir dir="${build.result.folder}"/>
+		<jar jarfile="${build.result.folder}/resources-ant.jar" basedir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<delete dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
-	</target>
-
-	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/ant_tasks/resources-ant.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<target name="refresh" depends="init" if="eclipse.running">
-		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
+	<target name="clean" depends="init">
+		<delete file="${build.result.folder}/resources-ant.jar"/>
+		<delete dir="${temp.folder}"/>
 	</target>
-
 </project>
