@@ -14,6 +14,9 @@ import java.util.Hashtable;
 
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -22,7 +25,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
 public class HelpView extends ViewPart implements IPartListener2,
-		ISelectionChangedListener {
+		ISelectionChangedListener, IPageChangedListener {
 	protected FormToolkit toolkit;
 
 	protected IMemento memento;
@@ -71,8 +74,10 @@ public class HelpView extends ViewPart implements IPartListener2,
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();
-		if (monitoredPart != null)
+		if (monitoredPart != null) {
 			uninstallSelectionListener(monitoredPart);
+			uninstallPageListener(monitoredPart);
+		}
 		service.removePartListener(this);
 		if (reusableHelpPart != null) {
 			reusableHelpPart.dispose();
@@ -119,20 +124,33 @@ public class HelpView extends ViewPart implements IPartListener2,
 					// context help changes with selections
 					installSelectionListener(part);
 				}
+				if (part instanceof IPageChangeProvider)
+					installPageListener(part);
 			} else if (visible)
 				reusableHelpPart.update(part, c);
 		}
+	}
+
+	private void installPageListener(IWorkbenchPart part) {
+		if (part instanceof IPageChangeProvider)
+			((IPageChangeProvider)part).addPageChangedListener(this);
+		monitoredPart = part;
+	}
+	
+	private void uninstallPageListener(IWorkbenchPart part) {
+		if (part instanceof IPageChangeProvider)
+			((IPageChangeProvider)part).removePageChangedListener(this);
+		monitoredPart = null;
 	}
 
 	private void installSelectionListener(IWorkbenchPart part) {
 		ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider instanceof IPostSelectionProvider)
 			((IPostSelectionProvider) provider)
-					.addPostSelectionChangedListener(this);
+				.addPostSelectionChangedListener(this);
 		else
 			provider.addSelectionChangedListener(this);
 		monitoredPart = part;
-		// System.out.println("Installing "+part.getSite().getRegisteredName());
 	}
 
 	private void uninstallSelectionListener(IWorkbenchPart part) {
@@ -143,8 +161,6 @@ public class HelpView extends ViewPart implements IPartListener2,
 		else
 			provider.removeSelectionChangedListener(this);
 		monitoredPart = null;
-		// System.out.println("Uninstalling
-		// "+part.getSite().getRegisteredName());
 	}
 
 	private boolean isThisPart(IWorkbenchPartReference ref) {
@@ -163,8 +179,11 @@ public class HelpView extends ViewPart implements IPartListener2,
 				.getAdapter(IContextProvider.class);
 		Control c = monitoredPart.getSite().getShell().getDisplay()
 				.getFocusControl();
-		if (c != null && c.isDisposed() == false && provider != null && visible) {
-			reusableHelpPart.update(provider, monitoredPart, c);
+		if (c != null && c.isDisposed() == false && visible) {
+			if (provider != null)
+				reusableHelpPart.update(provider, monitoredPart, c);
+			else
+				reusableHelpPart.update(monitoredPart, c);
 		}
 	}
 
@@ -172,6 +191,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		IWorkbenchPart part = ref.getPart(false);
 		if (monitoredPart != null && part != null && part.equals(monitoredPart)) {
 			uninstallSelectionListener(part);
+			uninstallPageListener(part);
 		}
 	}
 
@@ -186,11 +206,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			hook(true);
 			selectionChanged(null);
 		} else {
-			// getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			// public void run() {
 			handlePartActivation(partRef);
-			// }
-			// });
 		}
 	}
 
@@ -280,8 +296,10 @@ public class HelpView extends ViewPart implements IPartListener2,
 			if (aref != null)
 				handlePartActivation(aref);
 		} else {
-			if (monitoredPart != null)
+			if (monitoredPart != null) {
 				uninstallSelectionListener(monitoredPart);
+				uninstallPageListener(monitoredPart);
+			}
 		}
 	}
 
@@ -346,5 +364,9 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void showDynamicHelp(IWorkbenchPart part, Control c) {
 		if (reusableHelpPart != null)
 			reusableHelpPart.showDynamicHelp(part, c);
+	}
+
+	public void pageChanged(PageChangedEvent event) {
+		updateActivePart();
 	}
 }
