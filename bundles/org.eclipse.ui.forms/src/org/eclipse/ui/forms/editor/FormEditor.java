@@ -12,6 +12,11 @@ package org.eclipse.ui.forms.editor;
 
 import java.util.Vector;
 
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -37,14 +42,21 @@ import org.eclipse.ui.part.*;
  * <code>IFormPage</code> interface. These pages will be created lazily and
  * they will share the common key binding and selection service.
  * 
+ * Since 3.1, FormEditor is a page change provider. It allows listeners
+ * to attach to it and get notified when pages are changed. This new
+ * API in JFace allows dynamic help to update on page changes.
+ * 
  * @since 3.0
  */
-public abstract class FormEditor extends MultiPageEditorPart {
+public abstract class FormEditor extends MultiPageEditorPart implements
+		IPageChangeProvider {
 	private FormToolkit toolkit;
 
 	protected Vector pages;
 
 	private int currentPage = -1;
+
+	private ListenerList pageListeners = new ListenerList(3);
 
 	private static class FormEditorSelectionProvider extends
 			MultiPageSelectionProvider {
@@ -135,6 +147,33 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * 'addPage(IFormPage)' method.
 	 */
 	protected abstract void addPages();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void addPageChangedListener(IPageChangedListener listener) {
+		pageListeners.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#removePageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageListeners.remove(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
+	 */
+	public Object getSelectedPage() {
+		return getActivePageInstance();
+	}
 
 	/**
 	 * Adds the form page to this editor. Form page will be loaded lazily. Its
@@ -344,7 +383,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * will still return the last active page.
 	 * 
 	 * @see #getActivePage
-	 * 
 	 * @return the currently selected page or -1 if no page is currently
 	 *         selected
 	 */
@@ -395,6 +433,9 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		// Call super - this will cause pages to switch
 		super.pageChange(newPageIndex);
 		this.currentPage = newPageIndex;
+		IFormPage newPage = getActivePageInstance();
+		if (newPage!=null)
+			firePageChanged(new PageChangedEvent(this, newPage));
 	}
 
 	/**
@@ -465,7 +506,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 *            the object to select and reveal
 	 * @return the page that accepted the request or <code>null</code> if no
 	 *         page has the desired object.
-	 * 
 	 * @see #setActivePage
 	 */
 	public IFormPage selectReveal(Object pageInput) {
@@ -563,4 +603,16 @@ public abstract class FormEditor extends MultiPageEditorPart {
 				fpage.init(getEditorSite(), getEditorInput());
 		}
 	}
+	
+    protected void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = pageListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
+    }
 }
