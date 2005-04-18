@@ -119,15 +119,21 @@ class ImplicitJobs {
 	 */
 	void endJob(InternalJob lastJob) {
 		final Thread currentThread = Thread.currentThread();
+		IStatus error;
 		synchronized (this) {
 			ThreadJob threadJob = 	(ThreadJob) threadJobs.get(currentThread);
 			if (threadJob == null)
 				return;
 			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
-			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null);
-			InternalPlatform.getDefault().log(error);
+			error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null);
 			//end the thread job
 			endThreadJob(threadJob, false);
+		}
+		try {
+			InternalPlatform.getDefault().log(error);
+		} catch (RuntimeException e) {
+			//failed to log, so print to console instead
+			System.err.println(error.getMessage());
 		}
 	}
 
