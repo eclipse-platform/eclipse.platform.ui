@@ -120,10 +120,10 @@ public interface IWorkbenchPart extends IAdaptable {
      * <ol>
      *   <li>Create one or more controls within the parent.</li>
      *   <li>Set the parent layout as needed.</li>
-     *   <li>Register any global actions with the <code>IActionService</code>.</li>
-     *   <li>Register any popup menus with the <code>IActionService</code>.</li>
-     *   <li>Register a selection provider with the <code>ISelectionService</code>
-     *     (optional). </li>
+     *   <li>Register any global actions with the site's <code>IActionBars</code>.</li>
+     *   <li>Register any context menus with the site.</li>
+     *   <li>Register a selection provider with the site, to make it available to 
+     *     the workbench's <code>ISelectionService</code> (optional). </li>
      * </ol>
      * </p>
      *
