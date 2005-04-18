@@ -49,6 +49,10 @@ public class BrowserManager extends Observable {
 				if (property.equals("browsers")) { //$NON-NLS-1$
 					loadBrowsers();
 				}
+				else if (property.equals(WebBrowserPreference.PREF_BROWSER_CHOICE)) {
+					setChanged();
+					notifyObservers();
+				}
 			}
 		};
 		
