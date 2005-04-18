@@ -47,12 +47,6 @@ public class ProjectContentTypes {
 	private Cache contentTypesPerProject;
 	private Workspace workspace;
 
-	private static void swap(Object[] array, int i1, int i2) {
-		Object temp = array[i1];
-		array[i1] = array[i2];
-		array[i2] = temp;
-	}
-
 	public ProjectContentTypes(Workspace workspace) {
 		this.workspace = workspace;
 		// keep cache small
@@ -123,6 +117,12 @@ public class ProjectContentTypes {
 	/**
 	 * Implements project specific, nature-based selection policy. No content types are vetoed.
 	 * 
+	 * The criteria for this policy is as follows:
+	 * <ol>
+	 * <li>associated content types should appear before non-associated content types</li>
+	 * <li>otherwise, relative ordering should be preserved.</li>
+	 * </ol>
+	 * 
 	 *  @see ISelectionPolicy
 	 */
 	final IContentType[] select(Project project, IContentType[] candidates, boolean fileName, boolean content) {
@@ -133,13 +133,20 @@ public class ProjectContentTypes {
 		if (associated == null || associated.isEmpty())
 			// project has no content types associated
 			return candidates;
-		// put content types that appear in related natures before those who don't
-		int relatedCount = 0;
+		int associatedCount = 0;
 		for (int i = 0; i < candidates.length; i++)
+			// is it an associated content type?
 			if (associated.contains(candidates[i].getId())) {
-				if (relatedCount < i)
-					swap(candidates, i, relatedCount);
-				relatedCount++;
+				// need to move it to the right spot (unless all types visited so far are associated as well)
+				if (associatedCount < i) {
+					final IContentType promoted = candidates[i];
+					// move all non-associated content types before it one one position up...
+					for (int j = i; j > associatedCount; j--)
+						candidates[j] = candidates[j - 1];
+					// ...so there is an empty spot for the content type we are promoting
+					candidates[associatedCount] = promoted;
+				}
+				associatedCount++;
 			}
 		return candidates;
 	}
