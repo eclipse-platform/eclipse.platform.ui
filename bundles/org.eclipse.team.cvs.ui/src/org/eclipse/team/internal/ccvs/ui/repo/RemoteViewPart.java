@@ -349,7 +349,9 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		((RemoteContentProvider)viewer.getContentProvider()).cancelJobs(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryRoots());
 		CVSUIPlugin.getPlugin().getRepositoryManager().purgeCache();
 		updateWorkingSetMenu();
+        viewer.getControl().setRedraw(false);
 		viewer.refresh();
+        viewer.getControl().setRedraw(true);
 	}
 	
 	public void collapseAll() {
