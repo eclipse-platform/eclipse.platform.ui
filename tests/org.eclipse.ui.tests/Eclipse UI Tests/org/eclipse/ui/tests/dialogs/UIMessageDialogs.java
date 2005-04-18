@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import java.util.ResourceBundle;
-
 import junit.framework.TestCase;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -39,47 +37,6 @@ public class UIMessageDialogs extends TestCase {
 
     private Shell getShell() {
         return DialogCheck.getShell();
-    }
-
-    /**
-     * Returns the given string from the Text Editor's resource bundle.
-     * Should call org.eclipse.ui.texteditor.EditorMessages directly,
-     * but it has package visibility.
-     */
-    private String getEditorString(String id) {
-        ResourceBundle bundle = ResourceBundle
-                .getBundle("org.eclipse.ui.texteditor.EditorMessages");
-        assertNotNull("EditorMessages", bundle);
-        String string = bundle.getString(id);
-        assertNotNull(id, string);
-        return string;
-    }
-
-    /*
-     * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openConfirm.
-     * The method will return the dialog instead of opening.
-     * @param title the dialog's title, or <code>null</code> if none.
-     * @param message the message.
-     * @return Dialog the confirm dialog.
-     */
-    private MessageDialog getConfirmDialog(String title, String message) {
-        return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.QUESTION, new String[] {
-                        IDialogConstants.OK_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0);
-    }
-
-    /*
-     * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openError.
-     * The method will return the dialog instead of opening.
-     * @param title the dialog's title, or <code>null</code> if none.
-     * @param message the message.
-     * @return MessageDialog the error confirm dialog.
-     */
-    private MessageDialog getErrorDialog(String title, String message) {
-        return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.ERROR,
-                new String[] { IDialogConstants.OK_LABEL }, 0);
     }
 
     /*
@@ -129,13 +86,7 @@ public class UIMessageDialogs extends TestCase {
         DialogCheck.assertDialog(dialog, this);
     }
 
-    public void testCloseFileDeleted() {
-        Dialog dialog = getConfirmDialog(
-                getEditorString("Editor.error.activated.deleted.close.title"),
-                getEditorString("Editor.error.activated.deleted.close.message"));
-        DialogCheck.assertDialog(dialog, this);
-    }
-
+  
     public void testCopyOverwrite() {
         Dialog dialog = getQuestionDialog("Exists","Overwrite?");
         DialogCheck.assertDialog(dialog, this);
@@ -191,13 +142,6 @@ public class UIMessageDialogs extends TestCase {
     public void testErrorClosing() {
         Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
                 WorkbenchMessages.ErrorClosingNoArg);
-        DialogCheck.assertDialog(dialog, this);
-    }
-
-    public void testFileChanged() {
-        MessageDialog dialog = getQuestionDialog(
-                getEditorString("Editor.error.activated.outofsync.title"),
-                getEditorString("Editor.error.activated.outofsync.message"));
         DialogCheck.assertDialog(dialog, this);
     }
 
@@ -312,27 +256,6 @@ public class UIMessageDialogs extends TestCase {
                 new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
-        DialogCheck.assertDialog(dialog, this);
-    }
-
-    public void testSaveFileDeleted() {
-        MessageDialog dialog = new MessageDialog(
-                getShell(),
-                getEditorString("Editor.error.activated.deleted.save.title"),
-                null,
-                getEditorString("Editor.error.activated.deleted.save.message"),
-                MessageDialog.QUESTION,
-                new String[] {
-                        getEditorString("Editor.error.activated.deleted.save.button.save"),
-                        getEditorString("Editor.error.activated.deleted.save.button.close") },
-                0);
-        DialogCheck.assertDialog(dialog, this);
-    }
-
-    public void testUpdateConflict() {
-        MessageDialog dialog = getQuestionDialog(
-                getEditorString("Editor.error.save.outofsync.title"),
-                getEditorString("Editor.error.save.outofsync.message"));
         DialogCheck.assertDialog(dialog, this);
     }
 

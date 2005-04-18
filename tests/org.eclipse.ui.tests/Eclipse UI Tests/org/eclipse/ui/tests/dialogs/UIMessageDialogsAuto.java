@@ -10,28 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import java.util.ResourceBundle;
-
 import junit.framework.TestCase;
-
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.ui.tests.util.DialogCheck;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIMessageDialogsAuto extends TestCase {
     private static final String DUMMY_RESOURCE = "Dummy.resource";
 
     private static final String DUMMY_PROJECT = "DummyProject";
-
-    private static final String DUMMY_ABSOLUTE_PATH = "C:\\Dummypath\\Dummy.resource";
 
     private static final String DUMMY_RELATIVE_PATH = "\\" + DUMMY_PROJECT
             + "\\" + DUMMY_RESOURCE;
@@ -44,33 +37,7 @@ public class UIMessageDialogsAuto extends TestCase {
         return DialogCheck.getShell();
     }
 
-    /*
-     * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openConfirm.
-     * The method will return the dialog instead of opening.
-     * @param title the dialog's title, or <code>null</code> if none.
-     * @param message the message.
-     * @return Dialog the confirm dialog.
-     */
-    private MessageDialog getConfirmDialog(String title, String message) {
-        return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.QUESTION, new String[] {
-                        IDialogConstants.OK_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0);
-    }
-
-    /*
-     * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openError.
-     * The method will return the dialog instead of opening.
-     * @param title the dialog's title, or <code>null</code> if none.
-     * @param message the message.
-     * @return MessageDialog the error confirm dialog.
-     */
-    private MessageDialog getErrorDialog(String title, String message) {
-        return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.ERROR,
-                new String[] { IDialogConstants.OK_LABEL }, 0);
-    }
-
+  
     /*
      * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openInformation.
      * The method will return the dialog instead of opening.
@@ -115,20 +82,6 @@ public class UIMessageDialogsAuto extends TestCase {
         Dialog dialog = getWarningDialog(JFaceResources
                 .getString("AbortPageFlippingDialog.title"), JFaceResources
                 .getString("AbortPageFlippingDialog.message"));
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
-
-    public void testCloseFileDeleted() {
-        Dialog dialog = null;
-        ResourceBundle bundle = ResourceBundle
-                .getBundle("org.eclipse.ui.texteditor.EditorMessages");
-        if (bundle != null) {
-            dialog = getConfirmDialog(
-                    bundle
-                            .getString("Editor_error_activated_deleted_close_title"),
-                    bundle
-                            .getString("Editor_error_activated_deleted_close_message"));
-        }
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
@@ -188,20 +141,6 @@ public class UIMessageDialogsAuto extends TestCase {
                 WorkbenchMessages.ErrorClosingNoArg);
         DialogCheck.assertDialogTexts(dialog, this);
     }
-
-    public void testFileChanged() {
-        MessageDialog dialog = null;
-        ResourceBundle bundle = ResourceBundle
-                .getBundle("org.eclipse.ui.texteditor.EditorMessages");
-        if (bundle != null) {
-            dialog = getQuestionDialog(
-                    bundle.getString("Editor_error_activated_outofsync_title"),
-                    bundle
-                            .getString("Editor_error_activated_outofsync_message"));
-        }
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
-
     public void testFileExtensionEmpty() {
         Dialog dialog = getInformationDialog(
                 "Empty",
@@ -310,40 +249,7 @@ public class UIMessageDialogsAuto extends TestCase {
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
-    public void testSaveFileDeleted() {
-        MessageDialog dialog = null;
-        ResourceBundle bundle = ResourceBundle
-                .getBundle("org.eclipse.ui.texteditor.EditorMessages");
-        if (bundle != null) {
-            dialog = new MessageDialog(
-                    getShell(),
-                    bundle
-                            .getString("Editor_error_activated_deleted_save_title"),
-                    null,
-                    bundle
-                            .getString("Editor_error_activated_deleted_save_message"),
-                    MessageDialog.QUESTION,
-                    new String[] {
-                            bundle
-                                    .getString("Editor_error_activated_deleted_save_button_save"),
-                            bundle
-                                    .getString("Editor_error_activated_deleted_save_button_close") },
-                    0);
-        }
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
 
-    public void testUpdateConflict() {
-        MessageDialog dialog = null;
-        ResourceBundle bundle = ResourceBundle
-                .getBundle("org.eclipse.ui.texteditor.EditorMessages");
-        if (bundle != null) {
-            dialog = getQuestionDialog(bundle
-                    .getString("Editor_error_save_outofsync_title"), bundle
-                    .getString("Editor_error_save_outofsync_message"));
-        }
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
 
     public void testWizardClosing() {
         Dialog dialog = new MessageDialog(getShell(), JFaceResources
