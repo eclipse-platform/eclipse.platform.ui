@@ -53,6 +53,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	
 	private Button dhelpAsWindowButton;
 	private Button dhelpAsInfopopButton;
+	
 	/**
 	 * Creates preference page controls on demand.
 	 * 
