@@ -15,6 +15,7 @@ import java.util.BitSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
@@ -266,6 +267,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 
     public void init(String id, String title, String tooltip,
             ImageDescriptor desc, String paneName, String contentDescription) {
+        Assert.isNotNull(id);
+        Assert.isNotNull(title);
+        Assert.isNotNull(tooltip);
+        Assert.isNotNull(desc);
+        Assert.isNotNull(paneName);
+        Assert.isNotNull(contentDescription);
+        
         this.id = id;
         this.title = title;
         this.tooltip = tooltip;

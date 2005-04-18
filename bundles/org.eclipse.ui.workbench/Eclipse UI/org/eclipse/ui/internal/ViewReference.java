@@ -69,7 +69,7 @@ class ViewReference extends WorkbenchPartReference implements
             name = title;
         }
 
-        init(id, title, null, iDesc, name, null);
+        init(id, title, "", iDesc, name, "");  //$NON-NLS-1$//$NON-NLS-2$
         this.secondaryId = secondaryId;
     }
     

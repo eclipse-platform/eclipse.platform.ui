@@ -144,11 +144,15 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
             return imageDescriptor;
         String iconName = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         if (iconName == null)
-            return null;
+            return ImageDescriptor.getMissingImageDescriptor();
         IExtension extension = configElement.getDeclaringExtension();
         String extendingPluginId = extension.getNamespace();
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 extendingPluginId, iconName);
+        if (imageDescriptor == null) {
+            imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+        }
+        
         return imageDescriptor;
     }
 

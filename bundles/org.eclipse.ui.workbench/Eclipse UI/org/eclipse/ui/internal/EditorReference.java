@@ -111,7 +111,7 @@ public class EditorReference extends WorkbenchPartReference implements
                     .getString(IWorkbenchConstants.TAG_FACTORY_ID);
         }
 
-        init(id, title, tooltip, iDesc, partName, null);
+        init(id, title, tooltip, iDesc, partName, ""); //$NON-NLS-1$
     }
 
     public EditorDescriptor getDescriptor() {
