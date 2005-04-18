@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import java.security.InvalidParameterException;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -212,17 +211,17 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * and will be immutable afterwards.  
 	 * @return this tree.
 	 */
-	public DeltaDataTree collapseTo(DeltaDataTree parent, IComparator comparator) {
-		if (this == parent || getParent() == parent) {
+	public DeltaDataTree collapseTo(DeltaDataTree collapseTo, IComparator comparator) {
+		if (this == collapseTo || getParent() == collapseTo) {
 			//already collapsed
 			return this;
 		}
 		//collapse my tree to be a forward delta of the parent's tree.
 		//c will have the same content as this tree, but its parent will be "parent".
-		DeltaDataTree c = parent.forwardDeltaWith(this, comparator);
+		DeltaDataTree c = collapseTo.forwardDeltaWith(this, comparator);
 
 		//update my internal root node and parent pointers.
-		this.parent = parent;
+		this.parent = collapseTo;
 		this.rootNode = c.rootNode;
 		return this;
 	}
@@ -278,21 +277,16 @@ public class DeltaDataTree extends AbstractDataTree {
 	public DeltaDataTree compareWith(DeltaDataTree other, IComparator comparator, IPath path) {
 		/* need to figure out if trees really contain the given path */
 		if (this.includes(path)) {
-			if (other.includes(path)) {
+			if (other.includes(path))
 				return basicCompare(other, comparator, path);
-			} else {
-				/* only exists in this tree */
-				return new DeltaDataTree(AbstractDataTreeNode.convertToRemovedComparisonNode(this.copyCompleteSubtree(path), comparator.compare(this.getData(path), null)));
-			}
-		} else {
-			if (other.includes(path)) {
-				/* only exists in other tree */
-				return new DeltaDataTree(AbstractDataTreeNode.convertToAddedComparisonNode(other.copyCompleteSubtree(path), comparator.compare(null, other.getData(path))));
-			} else {
-				/* doesn't exist in either tree */
-				return DeltaDataTree.createEmptyDelta();
-			}
+			/* only exists in this tree */
+			return new DeltaDataTree(AbstractDataTreeNode.convertToRemovedComparisonNode(this.copyCompleteSubtree(path), comparator.compare(this.getData(path), null)));
 		}
+		if (other.includes(path))
+			/* only exists in other tree */
+			return new DeltaDataTree(AbstractDataTreeNode.convertToAddedComparisonNode(other.copyCompleteSubtree(path), comparator.compare(null, other.getData(path))));
+		/* doesn't exist in either tree */
+		return DeltaDataTree.createEmptyDelta();
 	}
 
 	/**
@@ -314,12 +308,10 @@ public class DeltaDataTree extends AbstractDataTree {
 			// not found
 			handleNotFound(key);
 		}
-		if (node.isDelta()) {
+		if (node.isDelta())
 			return naiveCopyCompleteSubtree(key);
-		} else {
-			//copy the node in case the user wants to hammer the subtree name
-			return node.copy();
-		}
+		//copy the node in case the user wants to hammer the subtree name
+		return node.copy();
 	}
 
 	/**
@@ -636,9 +628,9 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * @param ancestor the ancestor in question
 	 */
 	protected boolean hasAncestor(DeltaDataTree ancestor) {
-		DeltaDataTree parent = this;
-		while ((parent = parent.getParent()) != null) {
-			if (parent == ancestor) {
+		DeltaDataTree myParent = this;
+		while ((myParent = myParent.getParent()) != null) {
+			if (myParent == ancestor) {
 				return true;
 			}
 		}
@@ -737,10 +729,10 @@ public class DeltaDataTree extends AbstractDataTree {
 	 */
 	public void makeComplete() {
 		AbstractDataTreeNode assembled = getRootNode();
-		DeltaDataTree parent = getParent();
-		while (parent != null) {
-			assembled = parent.getRootNode().assembleWith(assembled);
-			parent = parent.getParent();
+		DeltaDataTree myParent = getParent();
+		while (myParent != null) {
+			assembled = myParent.getRootNode().assembleWith(assembled);
+			myParent = myParent.getParent();
 		}
 		setRootNode(assembled);
 		setParent(null);
@@ -792,7 +784,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * would require that its parents be expressed as deltas on a source tree
 	 * which could still change.
 	 *
-	 * @exception InvalidParameterException
+	 * @exception RuntimeException
 	 *	receiver is not immutable
 	 */
 	public DeltaDataTree reroot() {
@@ -811,22 +803,22 @@ public class DeltaDataTree extends AbstractDataTree {
 	 *
 	 * @param sourceTree
 	 *	source tree to set as the new root
-	 * @exception InvalidParameterException
+	 * @exception RuntimeException
 	 *	sourceTree is not immutable
 	 */
 	protected void reroot(DeltaDataTree sourceTree) {
 		if (!sourceTree.isImmutable())
-			throw new IllegalArgumentException(Messages.dtree_parentsNotImmutable);
-		DeltaDataTree parent = sourceTree.getParent();
-		if (parent == null)
+			handleImmutableTree();
+		DeltaDataTree sourceParent = sourceTree.getParent();
+		if (sourceParent == null)
 			return;
-		this.reroot(parent);
+		this.reroot(sourceParent);
 		DeltaDataTree backwardDelta = sourceTree.asBackwardDelta();
-		DeltaDataTree complete = parent.assembleWithForwardDelta(sourceTree);
+		DeltaDataTree complete = sourceParent.assembleWithForwardDelta(sourceTree);
 		sourceTree.setRootNode(complete.getRootNode());
 		sourceTree.setParent(null);
-		parent.setRootNode(backwardDelta.getRootNode());
-		parent.setParent(sourceTree);
+		sourceParent.setRootNode(backwardDelta.getRootNode());
+		sourceParent.setParent(sourceTree);
 	}
 
 	/**
@@ -840,12 +832,10 @@ public class DeltaDataTree extends AbstractDataTree {
 		AbstractDataTreeNode node = searchNodeAt(key);
 		if (node == null)
 			return null;
-		if (node.isDelta()) {
+		if (node.isDelta())
 			return safeNaiveCopyCompleteSubtree(key);
-		} else {
-			//copy the node in case the user wants to hammer the subtree name
-			return node.copy();
-		}
+		//copy the node in case the user wants to hammer the subtree name
+		return node.copy();
 	}
 
 	/**
@@ -906,11 +896,9 @@ public class DeltaDataTree extends AbstractDataTree {
 				}
 			}
 			if (node != null) {
-				if (node.isDeleted()) {
+				if (node.isDeleted())
 					break;
-				} else {
-					return node;
-				}
+				return node;
 			}
 			if (complete) {
 				// Not found, but complete node encountered, so should not check parent tree.

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import java.security.InvalidParameterException;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -81,7 +80,7 @@ public abstract class AbstractDataTree {
 	 * @param localName name for new child.
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
-	 * @exception InvalidParameterException
+	 * @exception RuntimeException
 	 *	receiver is immutable
 	 */
 	public abstract void createChild(IPath parentKey, String localName);
@@ -95,7 +94,7 @@ public abstract class AbstractDataTree {
 	 * @param object the data for the new child
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
-	 * @exception InvalidParameterException
+	 * @exception RuntimeException
 	 *	receiver is immutable
 	 */
 	public abstract void createChild(IPath parentKey, String localName, Object object);
@@ -114,7 +113,7 @@ public abstract class AbstractDataTree {
 	 *
 	 * @param key key of parent of subtree to create/replace
 	 * @param subtree new subtree to add to tree
-	 * @exception InvalidParameterException receiver is immutable
+	 * @exception RuntimeException receiver is immutable
 	 */
 	public abstract void createSubtree(IPath key, AbstractDataTreeNode subtree);
 
@@ -128,7 +127,7 @@ public abstract class AbstractDataTree {
 	 * @param localName name of node to delete.
 	 * @exception ObjectNotFoundException
 	 *	a child of parentKey with name localName does not exist in the receiver
-	 * @exception InvalidParameterException
+	 * @exception RuntimeException
 	 *	receiver is immutable	 
 	 */
 	public abstract void deleteChild(IPath parentKey, String localName);

@@ -21,7 +21,6 @@ public class Messages extends NLS {
 	public static String dtree_missingChild;
 	public static String dtree_notFound;
 	public static String dtree_notImmutable;
-	public static String dtree_parentsNotImmutable;
 	public static String dtree_reverse;
 	public static String dtree_subclassImplement;
 	public static String dtree_switchError;
