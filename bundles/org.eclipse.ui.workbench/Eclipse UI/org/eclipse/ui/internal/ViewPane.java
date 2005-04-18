@@ -29,7 +29,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.newapi.EnhancedFillLayout;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
@@ -40,12 +39,6 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public class ViewPane extends PartPane implements IPropertyListener {
     private boolean busy = false;
-
-    private boolean fast = false;
-
-    private boolean showFocus = false;
-
-    Composite toolbarWrapper;
 
     // create initially toolbarless bar manager so that actions may be added in the 
     // init method of the view.
@@ -101,7 +94,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
      */
     public ViewPane(IViewReference ref, WorkbenchPage page) {
         super(ref, page);
-        fast = ref.isFastView();
     }
 
     /**
@@ -143,13 +135,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
     }
 
     private void toolBarResized(ToolBar toolBar, int newSize) {
-        if (toolbarWrapper != null) {
+        
+        Control toolbar = isvToolBarMgr.getControl();
+        if (toolbar != null) {
             Control ctrl = getControl();
 
             boolean visible = ctrl != null && ctrl.isVisible()
                     && toolbarIsVisible();
 
-            toolbarWrapper.setVisible(visible);
+            toolbar.setVisible(visible);
         }
 
         presentableAdapter.firePropertyChange(IPresentablePart.PROP_TOOLBAR);
@@ -161,11 +155,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
     private void createToolBars() {
         Composite parentControl = control;
         
-        toolbarWrapper = new Composite(parentControl.getParent(), SWT.NO_BACKGROUND);
-        toolbarWrapper.setLayout(new EnhancedFillLayout());
         // ISV toolbar.
         //			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-        ToolBar isvToolBar = isvToolBarMgr.createControl(toolbarWrapper);
+        ToolBar isvToolBar = isvToolBarMgr.createControl(parentControl.getParent());
 
             isvToolBar.addMouseListener(new MouseAdapter() {
                 public void mouseDoubleClick(MouseEvent event) {
@@ -196,10 +188,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
         if (isvToolBarMgr != null) {
             isvToolBarMgr.dispose();
             isvToolBarMgr.removeAll();
-        }
-        if (toolbarWrapper != null) {
-            toolbarWrapper.dispose();
-            toolbarWrapper = null;
         }
     }
 
@@ -353,7 +341,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
      * system bar.
      */
     public void setFast(boolean b) {
-        fast = b;
     }
 
     /* (non-Javadoc)
@@ -361,7 +348,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
      */
     /* package */
     void shellActivated() {
-        //	drawGradient();
     }
 
     /* (non-Javadoc)
@@ -369,8 +355,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
      */
     /* package */
     void shellDeactivated() {
-        //hideToolBarShell();
-        //	drawGradient();
     }
 
     /**
@@ -502,8 +486,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void reparent(Composite newParent) {
         super.reparent(newParent);
 
-        if (toolbarWrapper != null) {
-            toolbarWrapper.setParent(newParent);
+        if (isvToolBarMgr != null) {
+            ToolBar bar = isvToolBarMgr.getControl();
+            if (bar != null) {
+                bar.setParent(newParent);
+            }
         }
     }
 
@@ -513,7 +500,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void moveAbove(Control refControl) {
         super.moveAbove(refControl);
 
-        toolbarWrapper.moveAbove(control);
+        Control toolbar = internalGetToolbar();
+        
+        if (toolbar != null) {
+            toolbar.moveAbove(control);
+        }
     }
 
     /* (non-Javadoc)
@@ -522,8 +513,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
     public void setVisible(boolean makeVisible) {
         super.setVisible(makeVisible);
 
-        if (toolbarWrapper != null) {
-            toolbarWrapper.setVisible(makeVisible && toolbarIsVisible());
+        Control toolbar = internalGetToolbar();
+        
+        if (toolbar != null) {
+            toolbar.setVisible(makeVisible && toolbarIsVisible());
         }
     }
 
@@ -586,7 +579,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
             return null;
         }
         
-        return toolbarWrapper;
+        return internalGetToolbar();
+    }
+    
+    private ToolBar internalGetToolbar() {
+        if (isvToolBarMgr == null) {
+            return null;
+        }
+        
+        return isvToolBarMgr.getControl();        
     }
 
     /* (non-Javadoc)
