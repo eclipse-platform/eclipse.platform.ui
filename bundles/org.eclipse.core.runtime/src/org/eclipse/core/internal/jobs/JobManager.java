@@ -96,7 +96,7 @@ public class JobManager implements IJobManager {
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
-	
+
 	/**
 	 * Scheduling rule used for validation of client-defined rules.
 	 */
@@ -104,6 +104,7 @@ public class JobManager implements IJobManager {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -155,7 +156,7 @@ public class JobManager implements IJobManager {
 				return "BLOCKED"; //$NON-NLS-1$
 			case InternalJob.ABOUT_TO_RUN :
 				return "ABOUT_TO_RUN"; //$NON-NLS-1$
-			case InternalJob.ABOUT_TO_SCHEDULE:
+			case InternalJob.ABOUT_TO_SCHEDULE :
 				return "ABOUT_TO_SCHEDULE";//$NON-NLS-1$
 		}
 		return "UNKNOWN"; //$NON-NLS-1$
@@ -201,8 +202,8 @@ public class JobManager implements IJobManager {
 						monitor = job.getProgressMonitor();
 						break;
 					}
-					//fall through for ABOUT_TO_RUN case
-				default:
+				//fall through for ABOUT_TO_RUN case
+				default :
 					changeState(job, Job.NONE);
 			}
 		}
@@ -234,7 +235,7 @@ public class JobManager implements IJobManager {
 			int oldState = job.internalGetState();
 			switch (oldState) {
 				case Job.NONE :
-				case InternalJob.ABOUT_TO_SCHEDULE:
+				case InternalJob.ABOUT_TO_SCHEDULE :
 					break;
 				case InternalJob.BLOCKED :
 					//remove this job from the linked list of blocked jobs
@@ -278,7 +279,7 @@ public class JobManager implements IJobManager {
 					job.setStartTime(InternalJob.T_NONE);
 					running.add(job);
 					break;
-				case InternalJob.ABOUT_TO_SCHEDULE:
+				case InternalJob.ABOUT_TO_SCHEDULE :
 					break;
 				default :
 					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
@@ -408,8 +409,23 @@ public class JobManager implements IJobManager {
 		}
 		if (toCancel != null) {
 			//cancel jobs outside sync block to avoid deadlock
-			for (int i = 0; i < toCancel.length; i++)
-				cancel(toCancel[i]);
+			for (int i = 0; i < toCancel.length; i++) {
+				final Job job = toCancel[i];
+				cancel(job);
+				String jobName;
+				if (job instanceof ThreadJob) {
+					Job realJob = ((ThreadJob) job).realJob;
+					if (realJob != null)
+						jobName = realJob.getClass().getName();
+					else
+						jobName = "ThreadJob on rule: " + job.getRule(); //$NON-NLS-1$
+				} else {
+					jobName = job.getClass().getName();
+				}
+				//this doesn't need to be translated because it's just being logged
+				String msg = "Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: " + jobName; //$NON-NLS-1$
+				InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, null));
+			}
 			pool.shutdown();
 		}
 	}
@@ -610,20 +626,21 @@ public class JobManager implements IJobManager {
 				return;
 			//if there is only one blocking job, use it in the blockage callback below
 			if (jobCount == 1)
-				blocking = (Job)jobs.iterator().next();
+				blocking = (Job) jobs.iterator().next();
 			listener = new JobChangeAdapter() {
 				//update the list of jobs if new ones are added during the join
 				public void scheduled(IJobChangeEvent event) {
 					//don't add to list if job is being rescheduled
-					if (((JobChangeEvent)event).reschedule)
+					if (((JobChangeEvent) event).reschedule)
 						return;
 					Job job = event.getJob();
 					if (job.belongsTo(family))
 						jobs.add(job);
 				}
+
 				public void done(IJobChangeEvent event) {
 					//don't remove from list if job is being rescheduled
-					if (!((JobChangeEvent)event).reschedule)
+					if (!((JobChangeEvent) event).reschedule)
 						jobs.remove(event.getJob());
 				}
 			};
@@ -1036,7 +1053,7 @@ public class JobManager implements IJobManager {
 		Assert.isNotNull(rule);
 		implicitJobs.suspend(rule, monitorFor(monitor));
 	}
-	
+
 	/* non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#transferRule()
 	 */
@@ -1062,7 +1079,7 @@ public class JobManager implements IJobManager {
 		//isConflicting method must return false when given an unknown rule
 		Assert.isLegal(!rule.isConflicting(nullRule));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see Job#wakeUp(long)
 	 */
