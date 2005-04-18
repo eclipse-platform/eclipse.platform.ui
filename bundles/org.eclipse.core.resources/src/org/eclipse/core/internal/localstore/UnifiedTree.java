@@ -154,7 +154,8 @@ public class UnifiedTree {
 		
 		/* Mark the children as now known */
 		if (unknown) {
-			resourceInfo = parent.getResourceInfo(false, true);
+			// Don't open the info - we might not be inside a workspace-modifying operation
+			resourceInfo = parent.getResourceInfo(false, false);
 			if (resourceInfo != null)
 				resourceInfo.clear(ICoreConstants.M_CHILDREN_UNKNOWN);
 		}
