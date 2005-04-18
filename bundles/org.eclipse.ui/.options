@@ -99,9 +99,6 @@ org.eclipse.ui/trace/operations=false
 # Report verbose information about (undo) operations history changes.
 org.eclipse.ui/trace/operations.verbose=false
 
-# Enable logging of listener events (must be enabled for any of the /listener/ events to be logged)
-org.eclipse.ui/listeners=false
-
 # Enable logging of events fired from an IWorkbenchPage to an IPartListener
 org.eclipse.ui/listeners/IWorkbenchPage.IPartListener=false
 

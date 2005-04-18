@@ -17,6 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -319,6 +320,9 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
         //test to work with fix to PR 7743
         fActivePage.closeEditor(editor, false);
 
+        // Activate something in a different stack, or the editor will end up activated regardless of
+        // the activate flag.
+        fActivePage.showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
         //open an editor without activation
         callTrace.clear();
         editor = fActivePage.openEditor(input, id, false);
@@ -333,6 +337,9 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
         /*
          javadoc: If this page already has an editor open on the target object that editor is brought to the front
          */
+        // Activate something in a different stack, or the editor will end up activated regardless of
+        // the activate flag.
+        fActivePage.showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
         //open the editor under test second time without activation
         callTrace.clear();
         assertEquals(fActivePage.openEditor(input, id, false), editor);
@@ -433,6 +440,10 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
         fActivePage.activate(extra);
 
+        // Activate something in a different stack, or the editor will end up activated regardless of
+        // the activate flag.
+        fActivePage.showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
+        
         //open the registered editor for the marker resource without activation
         listenerCall.clear();
         editor = IDE.openEditor(fActivePage, marker, false);
@@ -464,6 +475,10 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
         fActivePage.activate(extra);
 
+        // Activate something in a different stack, or the editor will end up activated regardless of
+        // the activate flag.
+        fActivePage.showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
+        
         //open an editor without activation
         listenerCall.clear();
         editor = IDE.openEditor(fActivePage, marker, false);
@@ -480,6 +495,9 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
         /*
          javadoc: If this page already has an editor open on the target object that editor is brought to front
          */
+        // Activate something in a different stack, or the editor will end up activated regardless of
+        // the activate flag.
+        fActivePage.showView(IPageLayout.ID_PROBLEM_VIEW, null, IWorkbenchPage.VIEW_ACTIVATE);
         //open the editor second time without activation
         listenerCall.clear();
         assertEquals(IDE.openEditor(fActivePage, marker, false), editor);

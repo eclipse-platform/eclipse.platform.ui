@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -66,6 +64,8 @@ public abstract class PartPane extends LayoutPart implements Listener {
 
     protected Composite control;
 
+    private boolean inLayout = true;
+    
     private TraverseListener traverseListener = new TraverseListener() {
         /* (non-Javadoc)
          * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
@@ -256,22 +256,25 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Shows the receiver if <code>visible</code> is true otherwise hide it.
      */
     public void setVisible(boolean makeVisible) {
+        // Avoid redundant visibility changes
+        if (makeVisible == getVisible()) {
+            return;
+        }
+        
     	if (makeVisible) {
     	    partReference.getPart(true);
     	}
     	
         super.setVisible(makeVisible);
-    }    
+        
+        ((WorkbenchPartReference) partReference).fireVisibilityChange();
+    }
     
     /**
      * Sets focus to this part.
      */
     public void setFocus() {
         requestActivation();
-        IWorkbenchPart part = partReference.getPart(true);
-        if (part != null) {
-            part.setFocus();
-        }
     }
 
     /**
@@ -292,17 +295,9 @@ public abstract class PartPane extends LayoutPart implements Listener {
 
         this.isZoomed = isZoomed;
 
-        final Object[] listeners = getPropertyListeners().getListeners();
-        if (listeners.length > 0) {
-            Boolean oldValue = isZoomed ? Boolean.FALSE : Boolean.TRUE;
-            Boolean zoomed = isZoomed ? Boolean.TRUE : Boolean.FALSE;
-            PropertyChangeEvent event = new PropertyChangeEvent(this,
-                    PROP_ZOOMED, oldValue, zoomed);
-            for (int i = 0; i < listeners.length; ++i)
-                ((IPropertyChangeListener) listeners[i]).propertyChange(event);
-        }
+        ((WorkbenchPartReference) partReference).fireZoomChange();        
     }
-
+    
     /**
      * Informs the pane that it's window shell has
      * been activated.
@@ -516,5 +511,21 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * @since 3.1
      */
     public abstract boolean isCloseable();
+    
+    public void setInLayout(boolean inLayout) {
+        this.inLayout = inLayout;
+    }
+    
+    public boolean getInLayout() {
+        return inLayout;
+    }
+        
+    public boolean allowsAutoFocus() {
+        if (!inLayout) {
+            return false;
+        }
+        
+        return super.allowsAutoFocus();
+    }
     
 }

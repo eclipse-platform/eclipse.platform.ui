@@ -34,7 +34,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -221,43 +220,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     }
 
-    private void restoreViewState(MultiStatus result, String id) {
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        IMemento memento;
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                memento = (IMemento) ((WorkbenchPage) pages[j]).getStateMap()
-                        .remove(id);
-                if (memento == null)
-                    continue;
-                IMemento[] viewMems = memento
-                        .getChildren(IWorkbenchConstants.TAG_VIEW);
-                ViewFactory viewFactory = ((WorkbenchPage) pages[j])
-                        .getViewFactory();
-                for (int k = 0; k < viewMems.length; k++) {
-                    viewFactory.restoreViewState(viewMems[k]);
-                    createOpenPerspectiveView(pages[j], viewFactory,
-                            viewMems[k]);
-                }
-            }
-        }
-    }
-
-    private void createOpenPerspectiveView(IWorkbenchPage page,
-            ViewFactory viewFactory, IMemento memento) {
-        String id = memento.getString(IWorkbenchConstants.TAG_ID);
-        String perspId = memento.getString(IWorkbenchConstants.TAG_PERSPECTIVE);
-        Perspective persp = ((WorkbenchPage) page).getActivePerspective();
-        if (persp.getDesc().getId().equals(perspId)) {
-            try {
-                viewFactory.createView(id);
-                page.showView(id);
-            } catch (PartInitException e) {
-            }
-        }
-    }
 
     private void unloadPerspective(IExtension ext) {
         final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,

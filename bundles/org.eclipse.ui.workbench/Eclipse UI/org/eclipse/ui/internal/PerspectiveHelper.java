@@ -383,7 +383,7 @@ public class PerspectiveHelper {
         ILayoutContainer container = part.getContainer();
         if (container != null && container instanceof PartStack) {
             PartStack folder = (PartStack) container;
-            if (folder.getVisiblePart() != part) {
+            if (folder.getSelection() != part) {
                 folder.setSelection(part);
                 return true;
             }
@@ -414,7 +414,7 @@ public class PerspectiveHelper {
 
         if (container instanceof ViewStack) {
             ViewStack folder = (ViewStack) container;
-            PartPane visiblePart = folder.getVisiblePart();
+            PartPane visiblePart = folder.getSelection();
             if (visiblePart == null)
                 return false;
             return partRef.equals(visiblePart.getPartReference());
@@ -441,10 +441,10 @@ public class PerspectiveHelper {
 
         if (container != null && container instanceof ViewStack) {
             ViewStack folder = (ViewStack) container;
-            if (folder.getVisiblePart() == null)
+            if (folder.getSelection() == null)
                 return false;
             return part.getCompoundId().equals(
-                    folder.getVisiblePart().getCompoundId());
+                    folder.getSelection().getCompoundId());
         }
         return true;
     }
@@ -760,7 +760,7 @@ public class PerspectiveHelper {
         if (part instanceof ViewStack) {
             window.getShell().setRedraw(false);
             parentWidget.setRedraw(false);
-            LayoutPart visiblePart = ((ViewStack) part).getVisiblePart();
+            LayoutPart visiblePart = ((ViewStack) part).getSelection();
             LayoutPart children[] = ((ViewStack) part).getChildren();
             for (int i = 0; i < children.length; i++) {
                 if (children[i] instanceof ViewPane) {

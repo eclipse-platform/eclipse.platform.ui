@@ -11,11 +11,10 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.EditorPane;
-import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
@@ -37,37 +36,10 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
     }
 
     public void run() {
-        IWorkbenchPart part = editorPane.getPartReference().getPart(true);
+        WorkbenchPartReference ref = (WorkbenchPartReference)editorPane.getPartReference();
 
-        ((EditorSite) part.getSite()).setReuseEditor(isChecked());
+        ref.setPinned(!isChecked());
     }
-
-    //    public void fill(Menu menu, int index) {
-    //        boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
-    //                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-    //        if (!reuseEditor) return;
-    //        IWorkbenchPart part = editorPane.getPartReference().getPart(false);
-    //        if (part == null) return;
-    //        final MenuItem item = new MenuItem(menu, SWT.CHECK);
-    //        item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
-    //        item.addSelectionListener(new SelectionAdapter() {
-    //
-    //            public void widgetSelected(SelectionEvent e) {
-    //                IWorkbenchPart part = editorPane.getPartReference().getPart(
-    //                        true);
-    //                if (part == null) {
-    //                    // this should never happen
-    //                    item.setSelection(false);
-    //                    item.setEnabled(false);
-    //                } else {
-    //                    ((EditorSite) part.getSite()).setReuseEditor(!item
-    //                            .getSelection());
-    //                }
-    //            }
-    //        });
-    //        item.setEnabled(true);
-    //        item.setSelection(!((EditorSite) part.getSite()).getReuseEditor());
-    //    }
 
     public void update() {
         if (editorPane == null) {
@@ -75,13 +47,9 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
             return;
         }
 
-        IWorkbenchPart part = editorPane.getPartReference().getPart(false);
-        if (part == null) {
-            setEnabled(false);
-            return;
-        }
+        WorkbenchPartReference ref = (WorkbenchPartReference)editorPane.getPartReference();
         setEnabled(true);
-        setChecked(!((EditorSite) part.getSite()).getReuseEditor());
+        setChecked(ref.isPinned());
     }
 
     public boolean shouldBeVisible() {

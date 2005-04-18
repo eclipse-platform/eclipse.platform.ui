@@ -10,54 +10,45 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.part.components.services.IPartActionBars;
 import org.eclipse.ui.internal.part.services.EditorToPartActionBarsAdapter;
-import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * An editor container manages the services for an editor.
  */
 public class EditorSite extends PartSite implements IEditorSite {
-    /* package */static final int PROP_REUSE_EDITOR = -0x101;
+    /* package */ //static final int PROP_REUSE_EDITOR = -0x101;
 
     private EditorDescriptor desc;
 
-    private boolean reuseEditor = true;
-
-    private ListenerList propChangeListeners = new ListenerList(1);
+    //private ListenerList propChangeListeners = new ListenerList(1);
 
     private SubActionBars ab = null;
     
     /**
-     * Constructs an EditorSite for an editor.  The resource editor descriptor
-     * may be omitted for an OLE editor.
+     * Constructs an EditorSite for an editor.
      */
     public EditorSite(IEditorReference ref, IEditorPart editor,
             WorkbenchPage page, EditorDescriptor desc) {
         super(ref, editor, page);
-        if (desc != null) {
-            this.desc = desc;
-            if (desc.getConfigurationElement() != null) {
-                setConfigurationElement(desc.getConfigurationElement());
-            } else {
-                // system external and in-place editors do not have a corresponding configuration element
-                setId(desc.getId());
-                setRegisteredName(desc.getLabel());
-            }
+        Assert.isNotNull(desc);
+        this.desc = desc;
+        
+        if (desc.getConfigurationElement() != null) {
+            setConfigurationElement(desc.getConfigurationElement());
+        } else {
+            // system external and in-place editors do not have a corresponding configuration element
+            setId(desc.getId());
+            setRegisteredName(desc.getLabel());
         }
     }
 
@@ -126,52 +117,10 @@ public class EditorSite extends PartSite implements IEditorSite {
         return desc;
     }
 
-    public boolean getReuseEditor() {
-        return reuseEditor;
-    }
 
-    public void setReuseEditor(boolean reuse) {
-        reuseEditor = reuse;
-        firePropertyChange(PROP_REUSE_EDITOR);
-        /*
-         * the editor's pin status changed (added or removed) 
-         * we should ask the presentable part to fire a
-         * PROP_TITLE event in order for the presentation to
-         * request the new icon for this editor
-         */
-        PartPane partPane = getPane();
-        EditorPane editorPane = null;
-        if (partPane instanceof EditorPane) {
-            editorPane = (EditorPane) partPane;
-            IPresentablePart iPresPart = editorPane.getPresentablePart();
-            if (iPresPart instanceof PresentablePart)
-                ((PresentablePart) iPresPart)
-                        .firePropertyChange(IWorkbenchPart.PROP_TITLE);
-        }
-    }
 
     protected String getInitialScopeId() {
         return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
-    }
-
-    public void addPropertyListener(IPropertyListener l) {
-        propChangeListeners.add(l);
-    }
-
-    public void removePropertyListener(IPropertyListener l) {
-        propChangeListeners.remove(l);
-    }
-
-    private void firePropertyChange(final int propertyId) {
-        Object[] array = propChangeListeners.getListeners();
-        for (int nX = 0; nX < array.length; nX++) {
-            final IPropertyListener l = (IPropertyListener) array[nX];
-            Platform.run(new SafeRunnable() {
-                public void run() {
-                    l.propertyChanged(EditorSite.this, propertyId);
-                }
-            });
-        }
     }
     
     public void dispose() {

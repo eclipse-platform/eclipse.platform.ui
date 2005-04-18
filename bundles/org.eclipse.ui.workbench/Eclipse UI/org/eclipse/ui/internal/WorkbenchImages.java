@@ -65,10 +65,6 @@ public/*final*/class WorkbenchImages {
 
     private static ImageRegistry imageRegistry;
 
-    //Key: ImageDescriptor
-    //Value: Image
-    private static ReferenceCounter imageCache;
-
     /* Declare Common paths */
 
     public final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
@@ -94,16 +90,6 @@ public/*final*/class WorkbenchImages {
     //private final static String PATH_STAT = ICONS_PATH+"stat/";
     //private final static String PATH_MISC = ICONS_PATH+"misc/";
     //private final static String PATH_OVERLAY = ICONS_PATH+"ovr16/";
-
-    /**
-     * Returns the image cache used internally by the workbench.
-     */
-    public static ReferenceCounter getImageCache() {
-        if (imageCache == null) {
-            initializeImageRegistry();
-        }
-        return imageCache;
-    }
 
     /**
      * Declares a workbench image given the path of the image file (relative to
@@ -494,7 +480,6 @@ public/*final*/class WorkbenchImages {
     private static void initializeImageRegistry() {
         imageRegistry = new ImageRegistry();
         descriptors = new HashMap();
-        imageCache =  new ReferenceCounter();
         declareImages();
     }
     
@@ -509,7 +494,6 @@ public/*final*/class WorkbenchImages {
             imageRegistry.dispose();
             imageRegistry = null;
             descriptors = null;
-            imageCache = null;
         }
     }
 	

@@ -167,6 +167,9 @@ public class IPartServiceTest extends UITestCase {
         assertTrue(history2.verifyOrder(new String[] { "partDeactivated",
                 "partHidden", "partClosed" }));
         assertEquals(getRef(view), eventPartRef);
+        
+        fPage.removePartListener(partListener);
+        fPage.removePartListener(partListener2);
     }
 
     /**
@@ -199,6 +202,9 @@ public class IPartServiceTest extends UITestCase {
         assertTrue(history2.verifyOrder(new String[] { "partDeactivated",
                 "partHidden", "partClosed" }));
         assertEquals(getRef(view), eventPartRef);
+        
+        fPage.removePartListener(partListener);
+        fPage.removePartListener(partListener2);
     }
 
     /**
@@ -264,6 +270,7 @@ public class IPartServiceTest extends UITestCase {
         fPage.hideView(view);
         assertTrue(history2.contains("partHidden"));
         assertEquals(getRef(view), eventPartRef);
+        fPage.removePartListener(listener);
     }
 
     /**
@@ -293,6 +300,7 @@ public class IPartServiceTest extends UITestCase {
         fPage.hideView(view);
         assertTrue(history2.contains("partHidden"));
         assertEquals(getRef(view), eventPartRef);
+        fPage.removePartListener(listener);
     }
 
     /**
@@ -316,6 +324,7 @@ public class IPartServiceTest extends UITestCase {
         fPage.addPartListener(listener);
         clearEventState();
         fPage.activate(view2);
+        fPage.removePartListener(listener);
         assertTrue(eventReceived[0]);
     }
 
@@ -338,6 +347,7 @@ public class IPartServiceTest extends UITestCase {
         fPage.addPartListener(listener);
         clearEventState();
         MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+        fPage.removePartListener(listener);
         assertEquals(view, fPage.getActivePart());
         assertTrue(eventReceived[0]);
     }
@@ -369,8 +379,52 @@ public class IPartServiceTest extends UITestCase {
         assertTrue(view == view2);
         assertEquals(view2, fPage.getActivePart());
         assertTrue(eventReceived[0]);
+        fPage.removePartListener(listener);
     }
 
+    /**
+     * Tests that both a part hidden and a part closed event are sent when
+     * a part is closed
+     *
+     * @throws Throwable
+     */
+    public void testPartHiddenBeforeClosing() throws Throwable {
+        
+        final boolean[] eventReceived = {false, false};
+        IPartListener2 listener = new TestPartListener2() {
+            public void partHidden(IWorkbenchPartReference ref) {
+                super.partHidden(ref);
+                // ensure that the notification is for the view we revealed
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the part cannot be found in the page
+                assertNull(fPage.findView(MockViewPart.ID));
+                // Ensure that partHidden is sent first
+                eventReceived[0] = true;
+                assertFalse(eventReceived[1]);
+            }
+            public void partClosed(IWorkbenchPartReference ref) {
+                super.partClosed(ref);
+                // ensure that the notification is for the view we revealed
+                assertEquals(MockViewPart.ID, ref.getId());
+                // ensure that the view can no longer be found
+                assertNull(fPage.findView(MockViewPart.ID));
+                // Ensure that partHidden is sent first
+                eventReceived[1] = true;
+                assertTrue(eventReceived[0]);
+
+            }
+        };
+        MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+        assertEquals(view, fPage.getActivePart());
+        fPage.addPartListener(listener);
+        clearEventState();
+        fPage.hideView(view);
+        fPage.removePartListener(listener);
+        history.verifyOrder(new String[] {"partHidden", "partClosed"});
+        assertTrue(eventReceived[0]);
+        assertTrue(eventReceived[1]);
+    }
+    
     /**
      * Tests the partVisible method by activating a view obscured by
      * another view in the same folder.
@@ -394,6 +448,7 @@ public class IPartServiceTest extends UITestCase {
         clearEventState();
         fPage.activate(view);
         assertTrue(eventReceived[0]);
+        fPage.removePartListener(listener);
     }
 
 }

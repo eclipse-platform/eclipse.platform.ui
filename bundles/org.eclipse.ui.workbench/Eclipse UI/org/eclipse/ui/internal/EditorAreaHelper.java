@@ -13,12 +13,12 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
@@ -36,7 +36,7 @@ import org.eclipse.ui.part.MultiEditor;
  */
 public class EditorAreaHelper {
 
-    private ArrayList editorTable = new ArrayList(4);
+    //private ArrayList editorTable = new ArrayList(4);
 
     private EditorSashContainer editorArea;
 
@@ -77,18 +77,6 @@ public class EditorAreaHelper {
     }
 
     /**
-     * Closes all of the editors.
-     */
-    public void closeAllEditors() {
-        editorArea.removeAllEditors();
-        ArrayList editorsToDispose = (ArrayList) editorTable.clone();
-        editorTable.clear();
-        for (int i = 0; i < editorsToDispose.size(); i++) {
-            ((EditorPane) editorsToDispose.get(i)).dispose();
-        }
-    }
-
-    /**
      * Closes an editor.   
      *
      * @param part the editor to close
@@ -118,8 +106,6 @@ public class EditorAreaHelper {
         if (pane != null) {
             if (!(pane instanceof MultiEditorInnerPane))
                 editorArea.removeEditor(pane);
-            editorTable.remove(pane);
-            pane.dispose();
         }
     }
 
@@ -175,21 +161,6 @@ public class EditorAreaHelper {
     public EditorStack getActiveWorkbook() {
         return editorArea.getActiveWorkbook();
     }
-    
-    /**
-     * Returns an array of the open editors.
-     *
-     * @return an array of open editors
-     */
-    public IEditorReference[] getEditors() {
-        int nSize = editorTable.size();
-        IEditorReference[] retArray = new IEditorReference[nSize];
-        for (int i = 0; i < retArray.length; i++) {
-            retArray[i] = ((EditorPane) editorTable.get(i))
-                    .getEditorReference();
-        }
-        return retArray;
-    }
 
     /**
      * Returns the editor area.
@@ -208,7 +179,7 @@ public class EditorAreaHelper {
      */
     public IEditorReference getVisibleEditor() {
         EditorStack activeWorkbook = editorArea.getActiveWorkbook();
-        EditorPane pane = activeWorkbook.getVisibleEditor();
+        EditorPane pane = (EditorPane)activeWorkbook.getSelection();
         if (pane != null) {
             IEditorReference result = pane.getEditorReference();
             IEditorPart editorPart = (IEditorPart) result.getPart(false);
@@ -222,26 +193,6 @@ public class EditorAreaHelper {
         return null;
     }
 
-    /**
-     * The active editor has failed to be restored. Find another editor, restore it
-     * and make it visible.
-     */
-    public void fixVisibleEditor() {
-        EditorStack activeWorkbook = editorArea.getActiveWorkbook();
-        EditorPane pane = activeWorkbook.getVisibleEditor();
-        if (pane == null) {
-            LayoutPart editors[] = activeWorkbook.getChildren();
-            if (editors.length > 0)
-                pane = (EditorPane) editors[0];
-        }
-        if (pane != null) {
-            IEditorReference result = pane.getEditorReference();
-            IEditorPart editorPart = (IEditorPart) result.getPart(true);
-            if (editorPart != null)
-                activeWorkbook.setVisibleEditor(pane);
-        }
-    }
-
     public void moveEditor(IEditorPart part, int position) {
         EditorPane pane = (EditorPane) ((EditorSite) part.getSite()).getPane();
         //TODO commented this out during presentations works
@@ -250,21 +201,44 @@ public class EditorAreaHelper {
 
 
 
-    public void addToEditorList(EditorPane pane) {
-        for (Iterator iter = editorTable.iterator(); iter.hasNext();) {
-            EditorPane next = (EditorPane) iter.next();
-            
-            Assert.isTrue(next.getPartReference() != pane.getPartReference());
+    /**
+     * Main entry point for adding an editor. Adds the editor to the layout in the given
+     * stack, and notifies the workbench page when done.
+     * 
+     * @param ref editor to add
+     * @param workbookId workbook that will contain the editor (or null if the editor
+     * should be added to the default workbook)
+     */
+    public void addEditor(EditorReference ref, String workbookId) {
+        IEditorReference refs[] = editorArea.getPage().getEditorReferences();
+        for (int i = 0; i < refs.length; i++) {
+            if (ref == refs[i])
+                return;
         }
         
-        editorTable.add(pane);
+        if (!(ref.getPane() instanceof MultiEditorInnerPane)) {
+            
+            EditorStack stack = null;
+            
+            if (workbookId != null) {
+                stack = getWorkbookFromID(workbookId);
+            }
+            
+            if (stack == null) {
+                stack = getActiveWorkbook();
+            }
+            
+            addToLayout((EditorPane)ref.getPane(), stack);
+        }
+        
+        editorArea.getPage().partAdded(ref);
     }
     
-    public void addToLayout(EditorPane pane) {
-        EditorStack stack = editorArea.getActiveWorkbook();
+    private void addToLayout(EditorPane pane, EditorStack stack) {
+        //EditorStack stack = editorArea.getActiveWorkbook();
         pane.setWorkbook(stack);
         
-        editorArea.addEditor(pane);
+        editorArea.addEditor(pane, stack);
     }
 
 
@@ -301,15 +275,6 @@ public class EditorAreaHelper {
     }
 
     /**
-     * Makes sure the visible editor's tab is visible.
-     */
-    public void showVisibleEditor() {
-        EditorStack activeWorkbook = editorArea.getActiveWorkbook();
-        if (activeWorkbook != null)
-            activeWorkbook.showVisibleEditor();
-    }
-
-    /**
      * Brings an editor to the front and optionally gives it focus.
      *
      * @param part the editor to make visible
@@ -328,13 +293,13 @@ public class EditorAreaHelper {
                     EditorPane parentPane = ((MultiEditorInnerPane) pane)
                             .getParentPane();
                     EditorStack activeWorkbook = parentPane.getWorkbook();
-                    EditorPane activePane = activeWorkbook.getVisibleEditor();
+                    PartPane activePane = (EditorPane)activeWorkbook.getSelection();
                     if (activePane != parentPane)
-                        parentPane.getWorkbook().setVisibleEditor(parentPane);
+                        parentPane.getWorkbook().setSelection(parentPane);
                     else
                         return false;
                 } else {
-                    pane.getWorkbook().setVisibleEditor(pane);
+                    pane.getWorkbook().setSelection(pane);
                 }
                 if (setFocus)
                     part.setFocus();
@@ -344,12 +309,37 @@ public class EditorAreaHelper {
         return false;
     }
 
+    
+    
     /**
      * Method getWorkbooks.
      * @return ArrayList
      */
     public ArrayList getWorkbooks() {
         return editorArea.getEditorWorkbooks();
+    }
+    
+    public IEditorReference[] getEditors() {
+        List result = new ArrayList();
+        List workbooks = editorArea.getEditorWorkbooks();
+        
+        for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
+            PartStack stack = (PartStack) iter.next();
+            
+            LayoutPart[] children = stack.getChildren();
+            
+            for (int i = 0; i < children.length; i++) {
+                LayoutPart part = children[i];
+                
+                result.add(((PartPane)part).getPartReference());
+            }
+        }
+        
+        return (IEditorReference[]) result.toArray(new IEditorReference[result.size()]);
+    }
+
+    public EditorStack getWorkbookFromID(String workbookId) {
+        return editorArea.getWorkbookFromID(workbookId);
     }
 
 }

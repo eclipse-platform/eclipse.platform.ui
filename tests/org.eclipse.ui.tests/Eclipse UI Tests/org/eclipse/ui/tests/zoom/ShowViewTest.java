@@ -10,16 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.zoom;
 
+import junit.framework.Assert;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PartStack;
 
 public class ShowViewTest extends ZoomTestCase {
     public ShowViewTest(String name) {
         super(name);
     }
 
-//  THE FOLLOWING TESTS FAIL DUE TO BUG 73500. PLEASE UNCOMMENT ONCE BUG 73500 HAS BEEN FIXED.
-//
+// Commented out until the (possible) ambiguity in bug 91775 is resolved
 //    /** 
 //     * <p>Test: Zoom a view, create a new view in the same stack using the 
 //     *    IWorkbenchPage.VIEW_VISIBLE flag</p>
@@ -29,47 +33,86 @@ public class ShowViewTest extends ZoomTestCase {
 //        zoom(stackedView1);
 //        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, 
 //                IWorkbenchPage.VIEW_VISIBLE);
+//        
 //        Assert.assertTrue(page.getActivePart() == newPart);
 //        Assert.assertTrue(isZoomed(newPart));
 //    }
-//    
-//    /** 
-//     * <p>Test: Zoom a view, create a new view in a different stack using the 
-//     *    IWorkbenchPage.VIEW_VISIBLE flag</p>
-//     * <p>Expected result: no change in zoom or activation. The newly created view is obscured by the zoom, 
-//     *    but will be the top view in its (currently invisible) stack.</p> 
-//     */
-//    public void testCreateViewAndMakeVisibleInOtherStack() {
-//        zoom(unstackedView);
-//        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
-//        Assert.assertTrue(page.getActivePart() == unstackedView);
-//        
-//        // Ensure no change to zoom
-//        Assert.assertTrue(isZoomed(unstackedView));
-//        
-//        // Ensure that the new part was brought to the top of the stack
-//        PartPane pane = ((PartSite) newPart.getSite()).getPane();
-//        PartStack stack = (PartStack)pane.getContainer();
-//        
-//        Assert.assertTrue(stack.getVisiblePart() == pane);
-//    }
-//    /** 
-//     * <p>Test: Zoom an editor, create a new view using the IWorkbenchPage.VIEW_VISIBLE mode</p>
-//     * <p>Expected result: No change to zoom or activation. The new view was brought to the top
-//     *    of its stack.</p> 
-//     */
-//    public void testCreateViewAndMakeVisibleWhileEditorZoomed() {
-//        zoom(editor1);
-//        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
-//        Assert.assertTrue(isZoomed());
-//        Assert.assertTrue(page.getActivePart() == editor1);
-//        
-//        // Ensure that the new part was brought to the top of the stack
-//        PartPane pane = ((PartSite) newPart.getSite()).getPane();
-//        PartStack stack = (PartStack)pane.getContainer();
-//        
-//        Assert.assertTrue(stack.getVisiblePart() == pane);
-//    }
+    
+    /** 
+     * <p>Test: Zoom a view, create a new view in the same stack using the 
+     *    IWorkbenchPage.VIEW_CREATE flag, then bring it to top using </p>
+     * <p>Expected result: the new view is zoomed and active</p> 
+     */
+    public void testCreateViewAndBringToTop() {
+        zoom(stackedView1);
+        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, 
+                IWorkbenchPage.VIEW_CREATE);
+        
+        page.bringToTop(newPart);
+        
+        Assert.assertTrue(page.getActivePart() == newPart);
+        Assert.assertTrue(isZoomed(newPart));
+    }
+
+    /** 
+     * <p>Test: Zoom a view, create a new view in a different stack using the 
+     *    IWorkbenchPage.VIEW_CREATE flag and bring it to front using page.bringToTop</p>
+     * <p>Expected result: no change in zoom or activation. The newly created view is obscured by the zoom, 
+     *    but will be the top view in its (currently invisible) stack.</p> 
+     */
+    public void testCreateViewAndBringToTopInOtherStack() {
+        zoom(unstackedView);
+        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
+        page.bringToTop(newPart);
+        Assert.assertTrue(page.getActivePart() == unstackedView);
+        
+        // Ensure no change to zoom
+        Assert.assertTrue(isZoomed(unstackedView));
+        
+        // Ensure that the new part was brought to the top of the stack
+        PartPane pane = ((PartSite) newPart.getSite()).getPane();
+        PartStack stack = (PartStack)pane.getContainer();
+        
+        Assert.assertTrue(stack.getSelection() == pane);
+    }
+    
+    /** 
+     * <p>Test: Zoom a view, create a new view in a different stack using the 
+     *    IWorkbenchPage.VIEW_VISIBLE flag</p>
+     * <p>Expected result: no change in zoom or activation. The newly created view is obscured by the zoom, 
+     *    but will be the top view in its (currently invisible) stack.</p> 
+     */
+    public void testCreateViewAndMakeVisibleInOtherStack() {
+        zoom(unstackedView);
+        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
+        Assert.assertTrue(page.getActivePart() == unstackedView);
+        
+        // Ensure no change to zoom
+        Assert.assertTrue(isZoomed(unstackedView));
+        
+        // Ensure that the new part was brought to the top of the stack
+        PartPane pane = ((PartSite) newPart.getSite()).getPane();
+        PartStack stack = (PartStack)pane.getContainer();
+        
+        Assert.assertTrue(stack.getSelection() == pane);
+    }
+    /** 
+     * <p>Test: Zoom an editor, create a new view using the IWorkbenchPage.VIEW_VISIBLE mode</p>
+     * <p>Expected result: No change to zoom or activation. The new view was brought to the top
+     *    of its stack.</p> 
+     */
+    public void testCreateViewAndMakeVisibleWhileEditorZoomed() {
+        zoom(editor1);
+        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
+        Assert.assertTrue(isZoomed());
+        Assert.assertTrue(page.getActivePart() == editor1);
+        
+        // Ensure that the new part was brought to the top of the stack
+        PartPane pane = ((PartSite) newPart.getSite()).getPane();
+        PartStack stack = (PartStack)pane.getContainer();
+        
+        Assert.assertTrue(stack.getSelection() == pane);
+    }
         
     /** 
      * <p>Test: Zoom a view, create a new view in the same stack using the 

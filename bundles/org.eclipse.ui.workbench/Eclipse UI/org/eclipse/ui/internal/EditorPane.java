@@ -140,10 +140,7 @@ public class EditorPane extends PartPane {
             return;
         }
 
-        IWorkbenchPart part = getPartReference().getPart(false);
-        if (part == null) {
-            return;
-        }
+        final WorkbenchPartReference ref = (WorkbenchPartReference)getPartReference();
 
         final MenuItem item = new MenuItem(parent, SWT.CHECK);
         item.setText(WorkbenchMessages.EditorPane_pinEditor);
@@ -155,13 +152,12 @@ public class EditorPane extends PartPane {
                     item.setSelection(false);
                     item.setEnabled(false);
                 } else {
-                    ((EditorSite) part.getSite()).setReuseEditor(!item
-                            .getSelection());
+                    ref.setPinned(item.getSelection());
                 }
             }
         });
         item.setEnabled(true);
-        item.setSelection(!((EditorSite) part.getSite()).getReuseEditor());
+        item.setSelection(ref.isPinned());
     }
 
     /**

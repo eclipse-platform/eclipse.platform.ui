@@ -45,22 +45,19 @@ public class EditorSashContainer extends PartSashContainer {
 
     private DropTarget dropTarget;
 
-    private WorkbenchPage page;
-
     public EditorSashContainer(String editorId, WorkbenchPage page) {
         super(editorId, page);
 
-        //this.partDropListener = listener;
-        this.page = page;
         createDefaultWorkbook();
     }
 
+    
     /**
      * Add an editor to the active workbook.
      */
-    public void addEditor(EditorPane pane) {
-        EditorStack workbook = getActiveWorkbook();
-        workbook.add(pane);
+    public void addEditor(EditorPane pane, EditorStack stack) {
+        //EditorStack workbook = getActiveWorkbook();
+        stack.add(pane);
     }
 
     /**
@@ -395,6 +392,17 @@ public class EditorSashContainer extends PartSashContainer {
                 setActiveWorkbook(workbook, false);
         }
     }
+    
+    public EditorStack getWorkbookFromID(String id) {
+        for (int i = 0; i < editorWorkbooks.size(); i++) {
+            EditorStack workbook = (EditorStack) editorWorkbooks.get(i);
+            if (workbook.getID().equals(id)) {
+                return workbook;
+            }
+        }
+        
+        return null;
+    }
 
     /**
      * Updates the editor area's tab list to include the active
@@ -480,7 +488,7 @@ public class EditorSashContainer extends PartSashContainer {
         EditorStack refPart = (EditorStack) container;
 
         refPart.becomeActiveWorkbook(true);
-        refPart.setVisibleEditor((EditorPane) visiblePart);
+        refPart.setSelection(visiblePart);
     }
 
     /* (non-Javadoc)
@@ -489,7 +497,7 @@ public class EditorSashContainer extends PartSashContainer {
     protected LayoutPart getVisiblePart(ILayoutContainer container) {
         EditorStack refPart = (EditorStack) container;
 
-        return refPart.getVisibleEditor();
+        return refPart.getSelection();
     }
 
     /* (non-Javadoc)

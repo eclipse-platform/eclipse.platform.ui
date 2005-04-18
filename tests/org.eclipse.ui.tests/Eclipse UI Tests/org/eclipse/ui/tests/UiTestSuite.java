@@ -12,6 +12,7 @@ package org.eclipse.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;

@@ -12,8 +12,11 @@ package org.eclipse.ui.internal;
 
 import java.util.BitSet;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -21,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.util.Util;
 
@@ -29,26 +33,83 @@ import org.eclipse.ui.internal.util.Util;
  */
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference {
 
+    /**
+     * Internal property ID: Indicates that the underlying part was created
+     */
+    public static final int INTERNAL_PROPERTY_OPENED = 0x211;
+    
+    /**
+     * Internal property ID: Indicates that the underlying part was destroyed
+     */
+    public static final int INTERNAL_PROPERTY_CLOSED = 0x212;
+
+    /**
+     * Internal property ID: Indicates that the result of IEditorReference.isPinned()
+     */
+    public static final int INTERNAL_PROPERTY_PINNED = 0x213;
+
+    /**
+     * Internal property ID: Indicates that the result of getVisible() has changed
+     */
+    public static final int INTERNAL_PROPERTY_VISIBLE = 0x214;
+
+    /**
+     * Internal property ID: Indicates that the result of isZoomed() has changed
+     */
+    public static final int INTERNAL_PROPERTY_ZOOMED = 0x215;
+
+    /**
+     * Internal property ID: Indicates that the part has an active child and the
+     * active child has changed. (fired by PartStack)
+     */
+    public static final int INTERNAL_PROPERTY_ACTIVE_CHILD_CHANGED = 0x216;
+
+    /**
+     * Internal property ID: Notifies this part that its parent now considers
+     * it to be the "selected" part. Note: this should never be made API since
+     * this is really a property of the parent, not a property of the part itself.
+     */
+    public static final int INTERNAL_PROPERTY_BROUGHT_TO_TOP = 0x217;
+    
     protected IWorkbenchPart part;
 
     private String id;
 
     protected PartPane pane;
 
+    private boolean pinned = false;
+    
     private String title;
 
     private String tooltip;
 
-    private Image image;
-
+    /**
+     * Stores the current Image for this part reference. Lazily created. Null if not allocated.
+     */
+    private Image image = null;
+    
+    private ImageDescriptor defaultImageDescriptor;
+    
+    /**
+     * Stores the current image descriptor for the part. 
+     */
     private ImageDescriptor imageDescriptor;
 
+    /**
+     * API listener list
+     */
     private ListenerList propChangeListeners = new ListenerList(2);
 
+    /**
+     * Internal listener list. Listens to the INTERNAL_PROPERTY_* property change events that are not yet API.
+     * TODO: Make these properties API in 3.2
+     */
+    private ListenerList internalPropChangeListeners = new ListenerList(2);
+    
     private String partName;
 
     private String contentDescription;
-
+    
     /**
      * Used to remember which events have been queued.
      */
@@ -65,10 +126,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         }
     };
 
+    private boolean creationInProgress = false;
+
     public WorkbenchPartReference() {
         //no-op
     }
-
+    
     /**
      * Calling this with deferEvents(true) will queue all property change events until a subsequent
      * call to deferEvents(false). This should be used at the beginning of a batch of related changes
@@ -88,6 +151,17 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 
             queuedEvents.clear();
         }
+    }
+    
+    /**
+     * Notifies this part that its parent container has brought it to the top.
+     * Note: this is a bit of a hack. The notion of "on top" only applies to 
+     * PartStack, and this event should really be fired by the
+     * PartStack to its own listeners. The part itself should be unaware of
+     * when it is brought to top. 
+     */
+    public void broughtToTop() {
+        fireInternalPropertyChange(INTERNAL_PROPERTY_BROUGHT_TO_TOP);
     }
 
     protected void setTitle(String newTitle) {
@@ -117,6 +191,32 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
     }
 
+    protected void setImageDescriptor(ImageDescriptor descriptor) {
+        if (Util.equals(imageDescriptor, descriptor)) {
+            return;
+        }
+
+        Image oldImage = image;
+        ImageDescriptor oldDescriptor = imageDescriptor;
+        image = null;
+        imageDescriptor = descriptor;
+        
+        // Don't queue events triggered by image changes. We'll dispose the image
+        // immediately after firing the event, so we need to fire it right away.
+        immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
+        if (queueEvents) {
+            // If there's a PROP_TITLE event queued, remove it from the queue because
+            // we've just fired it.
+            queuedEvents.clear(IWorkbenchPartConstants.PROP_TITLE);
+        }
+        
+        // If we had allocated the old image, deallocate it now (AFTER we fire the property change 
+        // -- listeners may need to clean up references to the old image)
+        if (oldImage != null) {
+            JFaceResources.getResources().destroy(oldDescriptor);
+        }
+    }
+    
     protected void setToolTip(String newToolTip) {
         if (Util.equals(tooltip, newToolTip)) {
             return;
@@ -152,12 +252,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         setTitle(computeTitle());
         setContentDescription(computeContentDescription());
         setToolTip(getRawToolTip());
-
-        if (!Util.equals(this.image, part.getTitleImage())) {
-            firePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-        }
+        setImageDescriptor(computeImageDescriptor());
 
         deferEvents(false);
+    }
+    
+    protected ImageDescriptor computeImageDescriptor() {
+        if (part != null) {
+            return ImageDescriptor.createFromImage(part.getTitleImage());
+        }
+        return defaultImageDescriptor;
     }
 
     public void init(String id, String title, String tooltip,
@@ -165,9 +269,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         this.id = id;
         this.title = title;
         this.tooltip = tooltip;
-        this.imageDescriptor = desc;
         this.partName = paneName;
         this.contentDescription = contentDescription;
+        this.defaultImageDescriptor = desc;
+        this.imageDescriptor = computeImageDescriptor();
     }
 
     /**
@@ -175,22 +280,24 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * when its actual part becomes known (not called when it is disposed).
      */
     public void releaseReferences() {
-
         id = null;
-        if (image != null && imageDescriptor != null) {
-            //make sure part has inc. the reference count.
-            if (part != null)
-                part.getTitleImage();
-            ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-            image = (Image) imageCache.get(imageDescriptor);
-            if (image != null) {
-                imageCache.removeRef(imageDescriptor);
-            }
-            image = null;
-            imageDescriptor = null;
-        }
     }
 
+    /* package */ void addInternalPropertyListener(IPropertyListener listener) {
+        internalPropChangeListeners.add(listener);
+    }
+    
+    /* package */ void removeInternalPropertyListener(IPropertyListener listener) {
+        internalPropChangeListeners.remove(listener);
+    }
+
+    private void fireInternalPropertyChange(int id) {
+        Object listeners[] = internalPropChangeListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ((IPropertyListener) listeners[i]).propertyChanged(this, id);
+        }
+    }
+    
     /**
      * @see IWorkbenchPart
      */
@@ -205,7 +312,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         propChangeListeners.remove(listener);
     }
 
-    public String getId() {
+    public final String getId() {
         if (part != null) {
             IWorkbenchPartSite site = part.getSite();
             if (site != null)
@@ -230,7 +337,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     public String getPartName() {
         return Util.safeString(partName);
     }
-
+    
     /**
      * Gets the part name directly from the associated workbench part,
      * or the empty string if none.
@@ -313,52 +420,87 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         return Util.safeString(part.getTitle());
     }
 
-    public Image getTitleImage() {
-        if (part != null)
-            return part.getTitleImage();
-        if (image != null)
-            return image;
-        if (imageDescriptor == null)
-            return null;
-        ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-        image = (Image) imageCache.get(imageDescriptor);
-        if (image != null) {
-            imageCache.addRef(imageDescriptor);
-            return image;
+    public final Image getTitleImage() {
+        if (image == null) {        
+            image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
         }
-        image = imageDescriptor.createImage();
-        imageCache.put(imageDescriptor, image);
         return image;
     }
+    
+    public ImageDescriptor getTitleImageDescriptor() {
+        return imageDescriptor;
+    }
+    
+    /* package */ void fireVisibilityChange() {
+        fireInternalPropertyChange(INTERNAL_PROPERTY_VISIBLE);
+    }
 
+    /* package */ void fireZoomChange() {
+        fireInternalPropertyChange(INTERNAL_PROPERTY_ZOOMED);
+    }
+    
+    public boolean getVisible() {
+        return getPane().getVisible();
+    }
+    
+    public void setVisible(boolean isVisible) {
+        getPane().setVisible(isVisible);
+    }
+    
     private void firePropertyChange(int id) {
 
         if (queueEvents) {
             queuedEvents.set(id);
             return;
         }
-
-        UIListenerLogging.logPartReferencePropertyChange(this, id);
         
+        immediateFirePropertyChange(id);
+    }
+    
+    private void immediateFirePropertyChange(int id) {
+        UIListenerLogging.logPartReferencePropertyChange(this, id);
         Object listeners[] = propChangeListeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyListener) listeners[i]).propertyChanged(part, id);
         }
+        
+        fireInternalPropertyChange(id);
     }
 
-    public void setPart(IWorkbenchPart part) {
-        this.part = part;
-        if (part == null)
-            return;
+    public final IWorkbenchPart getPart(boolean restore) {
+        if (part == null && restore) {
+            
+            if (creationInProgress) {
+                IStatus result = WorkbenchPlugin.getStatus(
+                        new PartInitException(NLS.bind("Warning: Detected recursive attempt by part {0} to create itself (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
+                                getId())));
+                WorkbenchPlugin.log(result);
+                return null;
+            }
+            
+            try {
+                creationInProgress = true;
+                
+                IWorkbenchPart newPart = createPart();
+                if (newPart != null) {
+                    part = newPart;
+                    part.addPropertyListener(propertyChangeListener);
 
-        part.addPropertyListener(propertyChangeListener);
-
-        // Note: it might make sense to call refreshFromPart() here to immediately
-        // get the updated values from the part itself. However, we wait until after
-        // the widgetry is created to avoid breaking parts that can't return meaningful
-        // values until their widgetry exists.
+                    refreshFromPart();
+                    releaseReferences();
+                    
+                    fireInternalPropertyChange(INTERNAL_PROPERTY_OPENED);
+                }
+            } finally {
+                creationInProgress = false;
+            }
+        }        
+        
+        return part;
     }
     
+    protected abstract IWorkbenchPart createPart();
+        
     protected abstract PartPane createPane();
     
     public PartPane getPane() {
@@ -368,24 +510,43 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         return pane;
     }
 
-    public void dispose() {
-
-        propChangeListeners.clear();
-        if (image != null && imageDescriptor != null) {
-            ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-            if (image != null) {
-                int count = imageCache.removeRef(imageDescriptor);
-                if (count <= 0)
-                    image.dispose();
+    public void dispose() {        
+        if (part != null) {
+            fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);
+            // Don't let exceptions in client code bring us down. Log them and continue.
+            try {
+                part.removePropertyListener(propertyChangeListener);
+                part.dispose();
+            } catch (Exception e) {
+                WorkbenchPlugin.log(e);
             }
-            imageDescriptor = null;
+            part = null;
+        }
+        if (pane != null) {
+            pane.dispose();
+        }
+        propChangeListeners.clear();
+        internalPropChangeListeners.clear();
+        if (image != null) {
+            JFaceResources.getResources().destroy(imageDescriptor);
             image = null;
         }
-        if (part != null) {
-            part.removePropertyListener(propertyChangeListener);
-            part.dispose();
+    }
+
+    public void setPinned(boolean newPinned) {
+        if (newPinned == pinned) {
+            return;
         }
-        part = null;
+        
+        pinned = newPinned;
+        
+        setImageDescriptor(computeImageDescriptor());
+        
+        fireInternalPropertyChange(INTERNAL_PROPERTY_PINNED);
+    }
+    
+    public boolean isPinned() {
+        return pinned;
     }
 
 }

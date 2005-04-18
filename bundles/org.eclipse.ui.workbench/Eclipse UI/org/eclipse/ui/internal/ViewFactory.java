@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -21,27 +20,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.registry.ViewDescriptor;
-import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -52,142 +37,13 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 /*package*/class ViewFactory implements IExtensionChangeHandler {
 
-    private class ViewReference extends WorkbenchPartReference implements
-            IViewReference {
-
-        private String secondaryId;
-
-        private boolean create = true;
-        
-        private boolean creationInProgress = false;
-        
-        public ViewReference(String id, IMemento memento) {
-            this(id, null, memento);
-        }
-
-        public ViewReference(String id, String secondaryId, IMemento memento) {
-            super();
-            ViewDescriptor desc = (ViewDescriptor) viewReg.find(id);
-            ImageDescriptor iDesc = null;
-            String title = null;
-            if (desc != null) {
-                iDesc = desc.getImageDescriptor();
-                title = desc.getLabel();
-            }
-
-            String name = null;
-
-            if (memento != null) {
-                name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
-            }
-            if (name == null) {
-                name = title;
-            }
-
-            init(id, title, null, iDesc, name, null);
-            this.secondaryId = secondaryId;
-        }
-        
-        protected PartPane createPane() {
-            return new ViewPane(this, page);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.internal.WorkbenchPartReference#dispose()
-         */
-        public void dispose() {
-            super.dispose();
-            create = false;
-        }
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IWorkbenchPartReference#getPage()
-         */
-        public IWorkbenchPage getPage() {
-            return page;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
-         */
-        public IWorkbenchPart getPart(boolean restore) {
-            if (part != null)
-                return part;
-            if (!create)
-                return null;
-            if (restore) {
-                IStatus status = restoreView(this);
-            }
-            return part;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.internal.WorkbenchPartReference#getRegisteredName()
-         */
-        public String getRegisteredName() {
-            if (part != null && part.getSite() != null) {
-                return part.getSite().getRegisteredName();
-            }
-
-            IViewRegistry reg = viewReg;
-            IViewDescriptor desc = reg.find(getId());
-            if (desc != null)
-                return desc.getLabel();
-            return getTitle();
-        }
-
-        protected String computePartName() {
-            if (part instanceof IWorkbenchPart2) {
-                return super.computePartName();
-            } else {
-                return getRegisteredName();
-            }
-        }
-
-        protected String computeContentDescription() {
-            if (part instanceof IWorkbenchPart2) {
-                return super.computeContentDescription();
-            } else {
-                String rawTitle = getRawTitle();
-
-                if (!Util.equals(rawTitle, getRegisteredName())) {
-                    return rawTitle;
-                }
-
-                return ""; //$NON-NLS-1$
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IViewReference
-         */
-        public String getSecondaryId() {
-            return secondaryId;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IViewReference#getView(boolean)
-         */
-        public IViewPart getView(boolean restore) {
-            return (IViewPart) getPart(restore);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IViewReference#isFastView()
-         */
-        public boolean isFastView() {
-            return page.isFastView(this);
-        }
-
-    }
-
     private ReferenceCounter counter;
 
     private HashMap mementoTable = new HashMap();
 
-    private WorkbenchPage page;
+    WorkbenchPage page;
 
-    private IViewRegistry viewReg;
+    IViewRegistry viewReg;
 
     /**
      * Separates a view's primary id from its secondary id in view key strings.
@@ -266,261 +122,6 @@ import org.eclipse.ui.views.IViewRegistry;
     }
     
     /**
-     * Wrapper for restoring the view. First, this delegates to busyRestoreViewHelper
-     * to do the real work of restoring the view. If unable to restore the view, this
-     * method tries to substitute an error part and return success.
-     *
-     * @param ref_
-     * @return
-     */
-    public IStatus busyRestoreView(IViewReference ref_) {
-        ViewReference ref = (ViewReference) ref_;
-        
-        // Check the status of this part
-        IStatus partStatus = Status.OK_STATUS;
-        
-        // If the part has already been restored, exit
-        if (ref.getPart(false) != null)
-            return Status.OK_STATUS;
-        
-        if (ref.creationInProgress) {
-            IStatus result = WorkbenchPlugin.getStatus(
-                    new PartInitException(NLS.bind("Warning: Detected attempt by view {0} to create itself recursively (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
-                            ref.getId())));
-            WorkbenchPlugin.log(result);
-            return result;
-        }
-
-        try {
-            ref.creationInProgress = true;    
-            
-            // Try to restore the view -- this does the real work of restoring the view
-            //
-            partStatus = busyRestoreViewHelper(ref);
-            
-            // If unable to create the part, create an error part instead
-            if (ref.getPart(false) == null) {
-                IStatus displayStatus = StatusUtil.newStatus(partStatus,
-                        NLS.bind(WorkbenchMessages.ViewFactory_initException, partStatus.getMessage()));
-                
-                IStatus logStatus = StatusUtil.newStatus(partStatus,
-                        NLS.bind("Unable to create view ID {0}: {1}", ref.getId(), partStatus.getMessage()));  //$NON-NLS-1$
-                WorkbenchPlugin.log(logStatus);
-                
-                ErrorViewPart part = new ErrorViewPart(displayStatus);
-                String label = ref_.getId();
-                IViewDescriptor desc = viewReg.find(ref.getId());
-                if (desc != null) {
-                    label = desc.getLabel();
-                }
-                PartPane pane = ref.getPane();
-                ViewSite site = new ViewSite(ref, part, page, ref_.getId(), PlatformUI.PLUGIN_ID, label);
-                site.setActionBars(new ViewActionBars(page.getActionBars(),
-                        (ViewPane) pane));
-                try {
-                    part.init(site);
-                } catch (PartInitException e) {
-                    return e.getStatus();
-                }
-    
-                Composite parent = (Composite)pane.getControl();
-                Composite content = new Composite(parent, SWT.NONE);
-                content.setLayout(new FillLayout());
-                
-                try {
-                    part.createPartControl(content);
-                } catch (Exception e) {
-                    content.dispose();
-                    return partStatus;
-                }
-                
-                ref.setPart(part);
-            }
-        } finally {
-            ref.creationInProgress = false;
-        }
-            
-        return Status.OK_STATUS;
-    }
-    
-    public IStatus busyRestoreViewHelper(ViewReference ref) {
-        
-        IStatus partStatus = Status.OK_STATUS;
-        
-        // If there was a previous failed attempt to restore the part, exit
-        if (partStatus.getSeverity() != IStatus.OK) {
-            return partStatus;
-        }
-        
-        String key = getKey(ref);
-        IMemento stateMem = getViewState(key);
-        
-        IViewDescriptor desc = viewReg.find(ref.getId());
-        if (desc == null) {
-            // If this view descriptor is unknown...
-            return new Status(
-                    IStatus.ERROR,
-                    PlatformUI.PLUGIN_ID,
-                    0,
-                    WorkbenchMessages.ViewFactory_couldNotCreate,
-                    null);
-        }
-        
-        // Create the part pane
-        PartPane pane = ref.getPane();
-        
-        // Create the pane's top-level control
-        pane.createControl(page.getClientComposite());
-        
-        String label = desc.getLabel(); // debugging only
-
-        // Things that will need to be disposed if an exception occurs (they are listed here
-        // in the order they should be disposed)
-        Composite content = null;
-        IViewPart initializedView = null;
-        ViewSite site = null;
-        ViewActionBars actionBars = null;
-        // End of things that need to be explicitly disposed from the try block
-        
-        try {
-            IViewPart view = null;
-            try { 
-                UIStats.start(UIStats.CREATE_PART, label);
-                view = desc.createView();
-            } finally {
-                UIStats.end(UIStats.CREATE_PART, view, label);    
-            }
-
-            // Create site
-            site = new ViewSite(ref, view, page, desc);
-            actionBars = new ViewActionBars(page.getActionBars(),
-                    (ViewPane) pane);
-            site.setActionBars(actionBars);
-
-            try {
-                UIStats.start(UIStats.INIT_PART, label);
-                view.init(site, stateMem);
-                // Once we've called init, we MUST dispose the view. Remember the fact that
-                // we've initialized the view in case an exception is thrown.
-                initializedView = view;
-                
-            } finally {
-                UIStats.end(UIStats.INIT_PART, view, label);
-            }
-
-            if (view.getSite() != site) {
-                partStatus = WorkbenchPlugin.getStatus(WorkbenchMessages.ViewFactory_siteException,
-                        null);
-            } else {
-                
-                int style = SWT.NONE;
-                if(view instanceof IWorkbenchPartOrientation) {
-                    style = ((IWorkbenchPartOrientation) view).getOrientation();
-                }
-
-                // Create the top-level composite
-                {
-                    Composite parent = (Composite)pane.getControl();
-                    content = new Composite(parent, style);
-                    content.setLayout(new FillLayout());
-    
-                    try {
-                        UIStats.start(UIStats.CREATE_PART_CONTROL, label);
-                        view.createPartControl(content);
-    
-                        parent.layout(true);
-                    } finally {
-                        UIStats.end(UIStats.CREATE_PART_CONTROL, view, label);
-                    }
-                }
-                
-                // Install the part's tools and menu
-                {
-                    ViewActionBuilder builder = new ViewActionBuilder();
-                    builder.readActionExtensions(view);
-                    ActionDescriptor[] actionDescriptors = builder
-                            .getExtendedActions();
-                    KeyBindingService keyBindingService = (KeyBindingService) view
-                            .getSite().getKeyBindingService();
-    
-                    if (actionDescriptors != null) {
-                        for (int i = 0; i < actionDescriptors.length; i++) {
-                            ActionDescriptor actionDescriptor = actionDescriptors[i];
-    
-                            if (actionDescriptor != null) {
-                                IAction action = actionDescriptors[i]
-                                        .getAction();
-    
-                                if (action != null
-                                        && action.getActionDefinitionId() != null)
-                                    keyBindingService.registerAction(action);
-                            }
-                        }
-                    }
-                    site.getActionBars().updateActionBars();
-                }
-                
-                // The editor should now be fully created. Exercise its public interface, and sanity-check
-                // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
-                // that it does so now while we can still cancel creation of the part.
-                PartTester.testView(view);
-                
-                ref.setPart(view);
-                ref.refreshFromPart();
-                ref.releaseReferences();
-                
-                IConfigurationElement element = (IConfigurationElement) desc
-                        .getAdapter(IConfigurationElement.class);
-                if (element != null)
-                    page.getExtensionTracker().registerObject(
-                            element.getDeclaringExtension(), view,
-                            IExtensionTracker.REF_WEAK);
-                
-                page.addPart(ref);
-                page.firePartOpened(view);
-            }
-        } catch (Exception e) {
-            // An exception occurred. First deallocate anything we've allocated in the try block (see the top
-            // of the try block for a list of objects that need to be explicitly disposed)
-            if (content != null) {
-                try {
-                    content.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (initializedView != null) {
-                try {
-                    initializedView.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-
-            if (site != null) {
-                try {
-                    site.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (actionBars != null) {
-                try {
-                    actionBars.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            partStatus = WorkbenchPlugin.getStatus(e);
-        }
-        
-        return partStatus;
-    }
-
-    /**
      * Creates an instance of a view defined by id.
      * 
      * This factory implements reference counting.  The first call to this
@@ -558,29 +159,24 @@ import org.eclipse.ui.views.IViewRegistry;
         IViewReference ref = (IViewReference) counter.get(key);
         if (ref == null) {
             IMemento memento = (IMemento) mementoTable.get(key);
-            ref = new ViewReference(id, secondaryId, memento);
+            ref = new ViewReference(this, id, secondaryId, memento);
             counter.put(key, ref);
+            getWorkbenchPage().partAdded((ViewReference)ref);
         } else {
             counter.addRef(key);
         }
         return ref;
     }
-
+    
     /**
-     * Remove a view rec from the manager.
+     * Returns the set of views being managed by this factory
      *
-     * The IViewPart.dispose method must be called at a higher level.
+     * @return the set of views being managed by this factory
      */
-    private void destroyView(IViewPart view) {
-        // Free action bars, pane, etc.
-        PartSite site = (PartSite) view.getSite();
-        ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
-        actionBars.dispose();
-        PartPane pane = site.getPane();
-        pane.dispose();
-
-        // Free the site.
-        site.dispose();
+    public IViewReference[] getViewReferences() {
+        List values = counter.values();
+        
+        return (IViewReference[]) values.toArray(new IViewReference[values.size()]);
     }
 
     /**
@@ -659,9 +255,8 @@ import org.eclipse.ui.views.IViewRegistry;
             return;
         int count = counter.removeRef(key);
         if (count <= 0) {
-            IViewPart view = (IViewPart) ref.getPart(false);
-            if (view != null)
-                destroyView(view);
+            getWorkbenchPage().partRemoved((ViewReference)ref);
+            ((WorkbenchPartReference)viewRef).dispose();
         }
     }
 
@@ -678,26 +273,6 @@ import org.eclipse.ui.views.IViewRegistry;
             restoreViewState(mem[i]);
         }
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-    }
-
-    /**
-     * Creates an instance of a view defined by id.
-     * 
-     * This factory implements reference counting.  The first call to this
-     * method will return a new view.  Subsequent calls will return the
-     * first view with an additional reference count.  The view is
-     * disposed when releaseView is called an equal number of times
-     * to getView.
-     */
-    public IStatus restoreView(final IViewReference ref) {
-        final IStatus result[] = new IStatus[1];
-        BusyIndicator.showWhile(page.getWorkbenchWindow().getShell()
-                .getDisplay(), new Runnable() {
-            public void run() {
-                result[0] = busyRestoreView(ref);
-            }
-        });
-        return result[0];
     }
 
     /**
@@ -766,7 +341,7 @@ import org.eclipse.ui.views.IViewRegistry;
         mementoTable.put(compoundId, memento);
     }
 
-    private IMemento getViewState(String key) {
+    IMemento getViewState(String key) {
         IMemento memento = (IMemento) mementoTable.get(key);
 
         if (memento == null) {

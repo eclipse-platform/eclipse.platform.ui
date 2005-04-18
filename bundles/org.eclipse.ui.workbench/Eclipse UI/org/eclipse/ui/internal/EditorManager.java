@@ -24,20 +24,17 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -50,14 +47,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
@@ -69,17 +61,14 @@ import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPart2;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -92,19 +81,14 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.part.services.NullActionBars;
-import org.eclipse.ui.internal.part.services.NullEditorInput;
-import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
-import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Manage a group of element editors.  Prevent the creation of two editors on
@@ -121,11 +105,11 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * </ol>
  */
 public class EditorManager implements IExtensionChangeHandler {
-    private EditorAreaHelper editorPresentation;
+    EditorAreaHelper editorPresentation;
 
-    private WorkbenchWindow window;
+    WorkbenchWindow window;
 
-    private WorkbenchPage page;
+    WorkbenchPage page;
 
     private Map actionCache = new HashMap();
 
@@ -138,12 +122,10 @@ public class EditorManager implements IExtensionChangeHandler {
     private IPropertyChangeListener editorPropChangeListnener = null;
 
     // Use a cache to optimise image creation
-    private Hashtable imgHashtable = new Hashtable();
+    Hashtable imgHashtable = new Hashtable();
 
     // Handler for the pin editor keyboard shortcut
     private IHandlerActivation pinEditorHandlerActivation = null;
-
-    private MultiStatus closingEditorStatus = null;
 
     private static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.EditorManager_saveResourcesMessage; 
 
@@ -165,91 +147,14 @@ public class EditorManager implements IExtensionChangeHandler {
     }
 
     /**
-     * Closes all of the editors in the workbench.  The contents are not saved.
-     *
-     * This method will close the presentation for each editor.  
-     * The IEditorPart.dispose method must be called at a higher level.
-     */
-    public void closeAll() {
-        // Close the pane, action bars, pane, etc.
-        IEditorReference[] editors = editorPresentation.getEditors();
-        editorPresentation.closeAllEditors();
-        for (int i = 0; i < editors.length; i++) {
-            IEditorPart part = (IEditorPart) editors[i].getPart(false);
-            if (part != null) {
-                PartSite site = (PartSite) part.getSite();
-                disposeEditorActionBars((EditorActionBars) site.getActionBars());
-                site.dispose();
-            }
-        }
-    }
-
-    /**
-     * Closes an editor.  The contents are not saved.
-     *
-     * This method will close the presentation for the editor.
-     * The IEditorPart.dispose method must be called at a higher level.
-     */
-    public void closeEditor(IEditorReference ref) {
-        // Close the pane, action bars, pane, etc.
-        boolean createdStatus = false;
-        if (closingEditorStatus == null) {
-            createdStatus = true;
-            closingEditorStatus = new MultiStatus(PlatformUI.PLUGIN_ID,
-                    IStatus.OK, WorkbenchMessages.EditorManager_unableToOpenEditors,
-                    null);
-        }
-
-        IEditorPart part = ref.getEditor(false);
-        if (part != null) {
-            if (part instanceof MultiEditor) {
-                IEditorPart innerEditors[] = ((MultiEditor) part)
-                        .getInnerEditors();
-                for (int i = 0; i < innerEditors.length; i++) {
-                    EditorSite site = (EditorSite) innerEditors[i]
-                            .getEditorSite();
-                    editorPresentation.closeEditor(innerEditors[i]);
-                    disposeEditorActionBars((EditorActionBars) site
-                            .getActionBars());
-                    site.dispose();
-                }
-            } else {
-                EditorSite site = (EditorSite) part.getEditorSite();
-                if (site.getPane() instanceof MultiEditorInnerPane) {
-                    MultiEditorInnerPane pane = (MultiEditorInnerPane) site
-                            .getPane();
-                    page.closeEditor((IEditorReference) pane.getParentPane()
-                            .getPartReference(), true);
-                    return;
-                }
-            }
-            EditorSite site = (EditorSite) part.getEditorSite();
-            editorPresentation.closeEditor(part);
-            disposeEditorActionBars((EditorActionBars) site.getActionBars());
-            site.dispose();
-        } else {
-            editorPresentation.closeEditor(ref);
-            ((Editor) ref).dispose();
-        }
-        if (createdStatus) {
-            if (closingEditorStatus.getSeverity() == IStatus.ERROR) {
-                ErrorDialog.openError(window.getShell(), WorkbenchMessages.EditorManager_unableToRestoreEditorTitle, 
-                        null, closingEditorStatus, IStatus.WARNING
-                                | IStatus.ERROR);
-            }
-            closingEditorStatus = null;
-        }
-    }
-
-    /**
      * Check to determine if the editor resources are no longer needed
      * removes property change listener for editors
      * removes pin editor keyboard shortcut handler
      * disposes cached images and clears the cached images hash table 
      */
-    private void checkDeleteEditorResources() {
+    void checkDeleteEditorResources() {
         // get the current number of editors
-        IEditorReference[] editors = editorPresentation.getEditors();
+        IEditorReference[] editors = page.getEditorReferences();
         // If there are no editors
         if (editors.length == 0) {
             if (editorPropChangeListnener != null) {
@@ -281,7 +186,7 @@ public class EditorManager implements IExtensionChangeHandler {
     /**
      * Check to determine if the property change listener for editors should be created
      */
-    private void checkCreateEditorPropListener() {
+    void checkCreateEditorPropListener() {
         if (editorPropChangeListnener == null) {
             // Add a property change listener for closing editors automatically preference
             // Add or remove the pin icon accordingly
@@ -291,7 +196,7 @@ public class EditorManager implements IExtensionChangeHandler {
                             IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
                         IEditorReference[] editors = getEditors();
                         for (int i = 0; i < editors.length; i++)
-                            ((Editor) editors[i]).pinStatusUpdated();
+                            ((EditorReference) editors[i]).pinStatusUpdated();
                     }
                 }
             };
@@ -304,7 +209,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * Check to determine if the handler for the pin editor keyboard shortcut
 	 * should be created.
 	 */
-	private void checkCreatePinEditorShortcutKeyHandler() {
+	void checkCreatePinEditorShortcutKeyHandler() {
 		if (pinEditorHandlerActivation == null) {
 			final Shell shell = window.getShell();
 			final IHandler pinEditorHandler = new AbstractHandler() {
@@ -314,14 +219,13 @@ public class EditorManager implements IExtensionChangeHandler {
 					if (WorkbenchPlugin.getDefault().getPreferenceStore()
 							.getBoolean(
 									IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-						// add or remove the editor's pin
-						IWorkbenchPartSite iEditorSite = editorPresentation
-								.getVisibleEditor().getPart(false).getSite();
-						if (iEditorSite instanceof EditorSite) {
-							EditorSite editorSite = (EditorSite) iEditorSite;
-							editorSite.setReuseEditor(!editorSite
-									.getReuseEditor());
-						}
+                        
+                        IWorkbenchPartReference ref = editorPresentation.getVisibleEditor();
+                        if (ref instanceof WorkbenchPartReference) {
+                            WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
+                            
+                            concreteRef.setPinned(concreteRef.isPinned());
+                        }
 					}
 					return null;
 				}
@@ -342,7 +246,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * 
 	 * @return the single image descriptor for the editor's pin icon
 	 */
-    private ImageDescriptor getEditorPinImageDesc() {
+    ImageDescriptor getEditorPinImageDesc() {
         ImageRegistry registry = JFaceResources.getImageRegistry();
         ImageDescriptor pinDesc = registry.getDescriptor(PIN_EDITOR_KEY);
         // Avoid registering twice
@@ -359,7 +263,7 @@ public class EditorManager implements IExtensionChangeHandler {
      */
     private List collectDirtyEditors() {
         List result = new ArrayList(3);
-        IEditorReference[] editors = editorPresentation.getEditors();
+        IEditorReference[] editors = page.getEditorReferences();
         for (int i = 0; i < editors.length; i++) {
             IEditorPart part = (IEditorPart) editors[i].getPart(false);
             if (part != null && part.isDirty())
@@ -373,7 +277,7 @@ public class EditorManager implements IExtensionChangeHandler {
      * Returns whether the manager contains an editor.
      */
     public boolean containsEditor(IEditorReference ref) {
-        IEditorReference[] editors = editorPresentation.getEditors();
+        IEditorReference[] editors = page.getEditorReferences();
         for (int i = 0; i < editors.length; i++) {
             if (ref == editors[i])
                 return true;
@@ -442,7 +346,7 @@ public class EditorManager implements IExtensionChangeHandler {
     /*
      * Dispose
      */
-    private void disposeEditorActionBars(EditorActionBars actionBars) {
+    void disposeEditorActionBars(EditorActionBars actionBars) {
         actionBars.removeRef();
         if (actionBars.getRef() <= 0) {
             String type = actionBars.getEditorType();
@@ -460,11 +364,11 @@ public class EditorManager implements IExtensionChangeHandler {
      * exists return null.
      */
     public IEditorPart findEditor(IEditorInput input) {
-        ArrayList editorList = new ArrayList(Arrays.asList(editorPresentation.getEditors()));
+        ArrayList editorList = new ArrayList(Arrays.asList(page.getEditorReferences()));
         
         // Phase 1: check editors that have their own matching strategy
         for (Iterator i = editorList.iterator(); i.hasNext();) {
-            Editor editor = (Editor) i.next();
+            EditorReference editor = (EditorReference) i.next();
             IEditorDescriptor desc = editor.getDescriptor();
             if (desc != null) {
                 IEditorMatchingStrategy matchingStrategy = desc.getEditorMatchingStrategy();
@@ -479,7 +383,7 @@ public class EditorManager implements IExtensionChangeHandler {
         
         // Phase 2: check materialized editors (without their own matching strategy)
         for (Iterator i = editorList.iterator(); i.hasNext();) {
-            Editor editor = (Editor) i.next();
+            EditorReference editor = (EditorReference) i.next();
             IEditorPart part = (IEditorPart) editor.getPart(false);
             if (part != null) {
                 i.remove(); // We're handling this one here, so remove it from the list.
@@ -500,7 +404,7 @@ public class EditorManager implements IExtensionChangeHandler {
         if (id == null)
             return null;
         for (Iterator i = editorList.iterator(); i.hasNext();) {
-            Editor editor = (Editor) i.next();
+            EditorReference editor = (EditorReference) i.next();
             if (name.equals(editor.getName()) && id.equals(editor.getFactoryId())) {
                 IEditorInput restoredInput;
                 try {
@@ -527,7 +431,7 @@ public class EditorManager implements IExtensionChangeHandler {
      * Answer the number of editors.
      */
     public int getEditorCount() {
-        return editorPresentation.getEditors().length;
+        return page.getEditorReferences().length;
     }
 
     /*
@@ -550,7 +454,7 @@ public class EditorManager implements IExtensionChangeHandler {
      * See IWorkbenchPage.
      */
     public IEditorReference[] getEditors() {
-        return editorPresentation.getEditors();
+        return page.getEditorReferences();
     }
 
     /*
@@ -567,7 +471,7 @@ public class EditorManager implements IExtensionChangeHandler {
      * Answer true if save is needed in any one of the editors.
      */
     public boolean isSaveAllNeeded() {
-        IEditorReference[] editors = editorPresentation.getEditors();
+        IEditorReference[] editors = page.getEditorReferences();
         for (int i = 0; i < editors.length; i++) {
             IEditorReference ed = editors[i];
             if (ed.isDirty())
@@ -670,12 +574,12 @@ public class EditorManager implements IExtensionChangeHandler {
         if (desc.isInternal()) {
             result = reuseInternalEditor(desc, input);
             if (result == null) {
-                result = new Editor(input, desc);
+                result = new EditorReference(this, input, desc);
             }
         } else if (desc.getId()
                 .equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
             if (ComponentSupport.inPlaceEditorSupported()) {
-                result = new Editor(input, desc);
+                result = new EditorReference(this, input, desc);
             }
         } else if (desc.getId().equals(
                 IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)) {
@@ -694,7 +598,7 @@ public class EditorManager implements IExtensionChangeHandler {
         }
         
         if (result != null) {
-            createEditorTab((Editor)result);
+            createEditorTab((EditorReference)result, ""); //$NON-NLS-1$
         }
 
         Workbench wb = (Workbench) window.getWorkbench();
@@ -769,10 +673,9 @@ public class EditorManager implements IExtensionChangeHandler {
                 throw new PartInitException(
                         NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorArray[i] )); 
             descArray[i] = innerDesc;
-            partArray[i] = createPart(descArray[i]);
-            refArray[i] = new InnerEditor(ref, inputArray[i], descArray[i]);
-            createSite(ref, partArray[i], descArray[i], inputArray[i]);
-            ((Editor) refArray[i]).setPart(partArray[i]);
+            InnerEditor innerRef = new InnerEditor(ref, inputArray[i], descArray[i]); 
+            refArray[i] = innerRef;
+            partArray[i] = innerRef.getEditor(true);
         }
         part.setChildren(partArray);
         return refArray;
@@ -781,67 +684,16 @@ public class EditorManager implements IExtensionChangeHandler {
     /*
      * Opens an editor part.
      */
-    private void createEditorTab(final Editor ref) throws PartInitException {
-
-        //Check it there is already a tab for this ref.
-        IEditorReference refs[] = editorPresentation.getEditors();
-        for (int i = 0; i < refs.length; i++) {
-            if (ref == refs[i])
-                return;
-        }
+    private void createEditorTab(final EditorReference ref, final String workbookId) throws PartInitException {
         
-        // The editor's memento stores the id of its parent workbook. Currently, all editors are
-        // opened in the active workbook, so force the parent workbook to be active to cause
-        // the editor to be opened in the correct workbook. A better solution would be to permit
-        // editors to be opened in inactive workbooks, and avoid the extra activations
-        IMemento memento = ref.getMemento();
-        if (memento != null) {
-            String workbookID = ref.getMemento().getString(
-                    IWorkbenchConstants.TAG_WORKBOOK);
-            editorPresentation
-                    .setActiveEditorWorkbookFromID(workbookID);
-        }
+        editorPresentation.addEditor(ref, workbookId);
         
-        final IEditorInput input = ref.getEditorInput();
-        final EditorDescriptor desc = ref.getDescriptor();
-        
-        final PartInitException ex[] = new PartInitException[1];
-        BusyIndicator.showWhile(getDisplay(), new Runnable() {
-            public void run() {
-                try {
-                    if (input != null) {
-                        IEditorPart part = ref.getEditor(false);
-                        if (part != null && part instanceof MultiEditor) {
-                            IEditorReference refArray[] = openMultiEditor(ref,
-                                    (MultiEditor) part, desc,
-                                    (MultiEditorInput) input, false);
-
-                            for (int i = 0; i < refArray.length; i++) {
-                                WorkbenchPartReference ref = (WorkbenchPartReference) refArray[i];
-                                EditorPane pane = (EditorPane)ref.getPane();
-                                
-                                editorPresentation.addToEditorList(pane);
-                            }
-                        }
-                    }
-                    EditorPane pane = (EditorPane)((WorkbenchPartReference)ref).getPane();
-                    editorPresentation.addToEditorList(pane);
-                    editorPresentation.addToLayout(pane);
-                } catch (PartInitException e) {
-                    ex[0] = e;
-                } 
-            }
-        });
-
-        // If the opening failed for any reason throw an exception.
-        if (ex[0] != null)
-            throw ex[0];
     }
 
     /*
      * Create the site and initialize it with its action bars.
      */
-    private void createSite(final IEditorReference ref, final IEditorPart part,
+    EditorSite createSite(final IEditorReference ref, final IEditorPart part,
             final EditorDescriptor desc, final IEditorInput input)
             throws PartInitException {
         EditorSite site = new EditorSite(ref, part, page, desc);
@@ -863,14 +715,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			if (part.getSite() != site || part.getEditorSite() != site)
 				throw new PartInitException(
 						NLS.bind(WorkbenchMessages.EditorManager_siteIncorrect,  desc.getId() ));
-            
-//            // Sanity-check the editor input
-//            IEditorInput actualInput = part.getEditorInput();
-//            
-//            if (actualInput != input)
-//                throw new PartInitException(
-//                        NLS.bind(WorkbenchMessages.EditorManager_editorInputIncorrect, input.getName(), actualInput.getName() ));
-            
+                        
 		} catch (Exception e) {
 			disposeEditorActionBars((EditorActionBars) site.getActionBars());
 			site.dispose();
@@ -879,6 +724,8 @@ public class EditorManager implements IExtensionChangeHandler {
 
 			throw new PartInitException(WorkbenchMessages.EditorManager_errorInInit, e);
 		}
+        
+        return site;
     }
 
     /*
@@ -886,11 +733,15 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
     private IEditorReference reuseInternalEditor(EditorDescriptor desc,
             IEditorInput input) throws PartInitException {
+        
+        Assert.isNotNull(desc, "descriptor must not be null"); //$NON-NLS-1$
+        Assert.isNotNull(input, "input must not be null"); //$NON-NLS-1$
+        
         IEditorReference reusableEditorRef = findReusableEditor(desc);
         if (reusableEditorRef != null) {
             IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
             if (reusableEditor == null) {
-                IEditorReference result = new Editor(input, desc);
+                IEditorReference result = new EditorReference(this, input, desc);
                 page.closeEditor(reusableEditorRef, false);
                 return result;
             }
@@ -907,7 +758,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 return reusableEditorRef;
             } else {
                 //findReusableEditor(...) checks pinned and saves editor if necessary
-                IEditorReference ref = new Editor(input, desc);
+                IEditorReference ref = new EditorReference(this, input, desc);
                 reusableEditor.getEditorSite().getPage().closeEditor(
                         reusableEditor, false);
                 return ref;
@@ -916,7 +767,7 @@ public class EditorManager implements IExtensionChangeHandler {
         return null;
     }
 
-    private IEditorPart createPart(final EditorDescriptor desc)
+    IEditorPart createPart(final EditorDescriptor desc)
             throws PartInitException {
         try {
             IEditorPart result = desc.createEditor();
@@ -972,7 +823,7 @@ public class EditorManager implements IExtensionChangeHandler {
         }
     }
 
-    private ImageDescriptor findImage(EditorDescriptor desc, IPath path) {
+    ImageDescriptor findImage(EditorDescriptor desc, IPath path) {
         if (desc == null) {
             // @issue what should be the default image?
             return ImageDescriptor.getMissingImageDescriptor();
@@ -997,7 +848,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 WorkbenchMessages.EditorManager_problemsRestoringEditors, null); 
         final String activeWorkbookID[] = new String[1];
         final ArrayList visibleEditors = new ArrayList(5);
-        final IEditorPart activeEditor[] = new IEditorPart[1];
+        final IEditorReference activeEditor[] = new IEditorReference[1];
         final ArrayList errorWorkbooks = new ArrayList(1);
 
         IMemento areaMem = memento.getChild(IWorkbenchConstants.TAG_AREA);
@@ -1013,8 +864,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 .getChildren(IWorkbenchConstants.TAG_EDITOR);
         for (int x = 0; x < editorMems.length; x++) {
             //for dynamic UI - call restoreEditorState to replace code which is commented out
-            restoreEditorState(editorMems[x], visibleEditors, activeEditor,
-                    errorWorkbooks, result);
+            restoreEditorState(editorMems[x], visibleEditors, activeEditor, result);
         }
 
         // restore the presentation
@@ -1028,20 +878,19 @@ public class EditorManager implements IExtensionChangeHandler {
                 for (int i = 0; i < visibleEditors.size(); i++)
                     setVisibleEditor((IEditorReference) visibleEditors.get(i),
                             false);
-                for (Iterator iter = errorWorkbooks.iterator(); iter.hasNext();) {
-                    iter.next();
-                    editorPresentation
-                            .setActiveEditorWorkbookFromID(activeWorkbookID[0]);
-                    editorPresentation.fixVisibleEditor();
-                }
 
                 // Update the active workbook
                 if (activeWorkbookID[0] != null)
                     editorPresentation
                             .setActiveEditorWorkbookFromID(activeWorkbookID[0]);
 
-                if (activeEditor[0] != null)
-                    page.activate(activeEditor[0]);
+                if (activeEditor[0] != null) {
+                    IWorkbenchPart editor = activeEditor[0].getPart(true);
+    
+                    if (editor != null) {
+                        page.activate(editor);
+                    }
+                }
             }
 
             public void handleException(Throwable e) {
@@ -1056,241 +905,6 @@ public class EditorManager implements IExtensionChangeHandler {
         });
         return result;
     }
-
-    public IStatus restoreEditor(final Editor ref) {
-        final IStatus result[] = new IStatus[1];
-        BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-            public void run() {
-                result[0] = busyRestoreEditor(ref);
-            }
-        });
-        return result[0];
-    }
-
-    
-    /**
-     * Wrapper for restoring the editor. First, this delegates to busyRestoreEditorHelper
-     * to do the real work of restoring the view. If unable to restore the editor, this
-     * method tries to substitute an error part and return success.
-     *
-     * @param ref_
-     * @return
-     */
-    public IStatus busyRestoreEditor(Editor ref) {
-        
-
-        // If the part has already been restored, exit
-        if (ref.getPart(false) != null)
-            return Status.OK_STATUS;
-
-        if (ref.creationInProgress) {
-            IStatus result = WorkbenchPlugin.getStatus(
-                    new PartInitException(NLS.bind("Warning: Detected recursive attempt by editor {0} to create itself (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
-                            ref.getId())));
-            WorkbenchPlugin.log(result);
-            return result;
-        }
-
-        try {
-            ref.creationInProgress = true;
-            
-            PartInitException exception = null;
-            
-            // Try to restore the editor -- this does the real work of restoring the editor
-            //
-            try {
-                busyRestoreEditorHelper(ref);
-            } catch (PartInitException e2) {
-                exception = e2;
-            }
-            
-            // If unable to create the part, create an error part instead
-            if (exception != null) {
-                
-                IStatus originalStatus = exception.getStatus();
-                IStatus logStatus = StatusUtil.newStatus(originalStatus, 
-                        NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
-                                ref.getId(), originalStatus.getMessage()));
-                WorkbenchPlugin.log(logStatus);
-                
-                IStatus displayStatus = StatusUtil.newStatus(originalStatus,
-                        NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
-                                originalStatus.getMessage()));
-                
-                ErrorEditorPart part = new ErrorEditorPart(displayStatus);
-                
-                IEditorInput input;
-                try {
-                    input = ref.getEditorInput();
-                } catch (PartInitException e1) {
-                    input = new NullEditorInput();
-                }
-                
-                EditorPane pane = (EditorPane)ref.getPane();
-                
-                pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
-                
-                EditorDescriptor descr = ref.getDescriptor();
-                EditorSite site = new EditorSite(ref, part, page, descr);
-                
-                site.setActionBars(new EditorActionBars(new NullActionBars(), ref.getId()));
-                try {
-                    part.init(site, input);
-                } catch (PartInitException e) {
-                    return e.getStatus();
-                }
-
-                Composite parent = (Composite)pane.getControl();
-                Composite content = new Composite(parent, SWT.NONE);
-                content.setLayout(new FillLayout());
-                
-                try {
-                    part.createPartControl(content);
-                } catch (Exception e) {
-                    content.dispose();
-                    return exception.getStatus();
-                }
-                
-                ref.setPart(part);
-                ref.refreshFromPart();
-                page.addPart(ref);
-                page.firePartOpened(part);
-            }
-        } finally {
-            ref.creationInProgress = false;
-        }
-        
-        
-        return Status.OK_STATUS;
-    }
-    
-    public void busyRestoreEditorHelper(Editor ref) throws PartInitException {
-        
-        // Things that will need to be disposed if an exception occurs (listed in the order they
-        // need to be disposed, and set to null if they haven't been created yet)
-        Composite content = null;
-        IEditorPart initializedPart = null;
-        EditorActionBars actionBars = null;
-        EditorSite site = null;
-        
-        try {
-            IEditorInput editorInput = ref.getEditorInput();
-            
-            // Get the editor descriptor.
-            String editorID = ref.getId();
-            EditorDescriptor desc = ref.getDescriptor();
-            
-            if (desc == null) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_missing_editor_descriptor, editorID)); //$NON-NLS-1$
-            }
-            
-            IEditorPart part;
-            
-            if (desc.isInternal()) {    
-                // Create an editor instance.
-                try {
-                    UIStats.start(UIStats.CREATE_PART, editorID);
-                    part = createPart(desc);
-                } finally {
-                    UIStats.end(UIStats.CREATE_PART, ref, editorID);
-                }
-                
-            } else if (desc.getId().equals(
-                    IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
-                
-                part = ComponentSupport.getSystemInPlaceEditor();
-                
-                if (part == null) {
-                    throw new PartInitException(WorkbenchMessages.EditorManager_no_in_place_support); //$NON-NLS-1$
-                }
-            } else {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_invalid_editor_descriptor, editorID)); //$NON-NLS-1$
-            }
-
-            // Create a pane for this part
-            PartPane pane = ref.getPane();
-
-            pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
-            
-            // Create controls
-            int style = SWT.NONE;
-            if(part instanceof IWorkbenchPartOrientation){
-                style = ((IWorkbenchPartOrientation) part).getOrientation();
-            }
-
-            // Link everything up to the part reference (the part reference itself should not have
-            // been modified until this point)
-            createSite(ref, part, desc, editorInput);
-            
-            // Remember the site and the action bars (now that we've created them, we'll need to dispose
-            // them if an exception occurs)
-            site = (EditorSite) part.getSite();
-            actionBars = (EditorActionBars) site.getActionBars();
-            
-            Composite parent = (Composite)pane.getControl();
-            content = new Composite(parent, style);
-
-            content.setLayout(new FillLayout());
-
-            try {
-                UIStats.start(UIStats.CREATE_PART_CONTROL, editorID);
-                part.createPartControl(content);
-            
-                parent.layout(true);
-            } finally {
-                UIStats.end(UIStats.CREATE_PART_CONTROL, part, editorID);
-            }
-
-            // The editor should now be fully created. Exercise its public interface, and sanity-check
-            // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
-            // that it does so now while we can still cancel creation of the part.
-            PartTester.testEditor(part);
-            
-            ref.setPart(part);
-            ref.refreshFromPart();
-            ref.releaseReferences();
-            page.addPart(ref);
-            page.firePartOpened(part);
-        } catch (Exception e) {
-            // Dispose anything which we allocated in the try block
-            if (content != null) {
-                try {
-                    content.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-
-            if (initializedPart != null) {
-                try {
-                    initializedPart.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (actionBars != null) {
-                try {
-                    disposeEditorActionBars(actionBars);
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            if (site != null) {
-                try {
-                    site.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
-            }
-            
-            throw new PartInitException(StatusUtil.getLocalizedMessage(e), StatusUtil.getCause(e));
-        }
-
-    }
-    
-
 
     /**
      * Save all of the editors in the workbench.  
@@ -1453,7 +1067,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 // Save each open editor.
                 IEditorReference editorReference = editorPanes[i]
                         .getEditorReference();
-                Editor e = (Editor) editorReference;
+                EditorReference e = (EditorReference) editorReference;
                 final IEditorPart editor = editorReference.getEditor(false);
                 if (editor == null) {
                     if (e.getMemento() != null) {
@@ -1489,434 +1103,54 @@ public class EditorManager implements IExtensionChangeHandler {
         return (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
     }
 
-    private class Editor extends WorkbenchPartReference implements
-            IEditorReference {
-
-        private IMemento editorMemento;
-
-        /**
-         * User-readable name of the editor's input
-         */
-        private String name;
-
-        private String factoryId;
-
-        private boolean pinned = false;
-
-        private IEditorInput restoredInput;
-        
-        private boolean creationInProgress = false;
-
-        Editor(IEditorInput input, EditorDescriptor desc) {
-            initListenersAndHandlers();
-            restoredInput = input;
-            init(desc.getId(), desc.getLabel(), "", desc.getImageDescriptor(), desc.getLabel(), "");  //$NON-NLS-1$//$NON-NLS-2$
-        }
-        
-        /**
-         * Constructs a new editor reference for use by editors being restored from a memento.
-         */
-        Editor(IMemento memento) {
-            initListenersAndHandlers();
-            this.editorMemento = memento;
-            String id = memento.getString(IWorkbenchConstants.TAG_ID);
-            String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
-            String tooltip = Util.safeString(memento
-                    .getString(IWorkbenchConstants.TAG_TOOLTIP));
-            String partName = memento
-                    .getString(IWorkbenchConstants.TAG_PART_NAME);
-
-            // For compatibility set the part name to the title if not found
-            if (partName == null) {
-                partName = title;
-            }
-
-            // Get the editor descriptor.
-            EditorDescriptor desc = null;
-            if (id != null) {
-                desc = getDescriptor(id);
-            }
-            // desc may be null if id is null or desc is not found, but findImage below handles this
-            String location = memento.getString(IWorkbenchConstants.TAG_PATH);
-            IPath path = location == null ? null : new Path(location);
-            ImageDescriptor iDesc = findImage(desc, path);
-
-            this.name = memento.getString(IWorkbenchConstants.TAG_NAME);
-            if (this.name == null) {
-                this.name = title;
-            }
-            this.pinned = "true".equals(memento.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
-
-            IMemento inputMem = memento.getChild(IWorkbenchConstants.TAG_INPUT);
-            if (inputMem != null) {
-                this.factoryId = inputMem
-                        .getString(IWorkbenchConstants.TAG_FACTORY_ID);
-            }
-
-            init(id, title, tooltip, iDesc, partName, null);
-        }
-
-        public EditorDescriptor getDescriptor() {
-            return getDescriptor(getId());
-        }
-        
-        /**
-         * @since 3.1 
-         *
-         * @param id
-         * @return
-         */
-        private EditorDescriptor getDescriptor(String id) {
-            EditorDescriptor desc;
-            IEditorRegistry reg = WorkbenchPlugin.getDefault()
-                    .getEditorRegistry();
-            desc = (EditorDescriptor) reg.findEditor(id);
-            return desc;
-        }
-        
-        /**
-         * Initializes the necessary editor listeners and handlers
-         */
-        private void initListenersAndHandlers() {
-            // Create a property change listener to track the "close editors automatically"
-            // preference and show/remove the pin icon on editors
-            // Only 1 listener will be created in the EditorManager when necessary
-            checkCreateEditorPropListener();
-            // Create a keyboard shortcut handler for pinning editors
-            // Only 1 handler will be created in the EditorManager when necessary
-            checkCreatePinEditorShortcutKeyHandler();
-        }
-
-        public PartPane createPane() {
-            return new EditorPane(this, page, editorPresentation.getActiveWorkbook());
-        }
-        
-        /**
-         * This method is called when there should be a change in the editor pin
-         * status (added or removed) so that it will ask its presentable part
-         * to fire a PROP_TITLE event in order for the presentation to request
-         * the new icon for this editor
-         */
-        public void pinStatusUpdated() {
-            PartPane partPane = getPane();
-            EditorPane editorPane = null;
-            if (partPane instanceof EditorPane) {
-                editorPane = (EditorPane) partPane;
-                IPresentablePart iPresPart = editorPane.getPresentablePart();
-                if (iPresPart instanceof PresentablePart)
-                    ((PresentablePart) iPresPart)
-                            .firePropertyChange(IWorkbenchPart.PROP_TITLE);
-            }
-        }
-        
-        public String getFactoryId() {
-            IEditorPart editor = getEditor(false);
-            if (editor != null) {
-                IPersistableElement persistable = editor.getEditorInput()
-                        .getPersistable();
-                if (persistable != null)
-                    return persistable.getFactoryId();
-                return null;
-            }
-            return factoryId;
-        }
-
-        protected String computePartName() {
-            if (part instanceof IWorkbenchPart2) {
-                return super.computePartName();
-            } else {
-                return getRawTitle();
-            }
-        }
-
-        public String getName() {
-            if (part != null)
-                return getEditor(false).getEditorInput().getName();
-            return name;
-        }
-
-        public IWorkbenchPart getPart(boolean restore) {
-            return getEditor(restore);
-        }
-
-        public IEditorPart getEditor(boolean restore) {
-            if (part != null)
-                return (IEditorPart) part;
-            if (!restore)
-                return null;
-
-            IStatus status = restoreEditor(this);
-            Workbench workbench = (Workbench) window.getWorkbench();
-            if (status.getSeverity() == IStatus.ERROR) {
-                return null;
-            }
-            return (IEditorPart) part;
-        }
-
-        public void releaseReferences() {
-            super.releaseReferences();
-            editorMemento = null;
-            name = null;
-            factoryId = null;
-            restoredInput = null;
-        }
-
-        void setName(String name) {
-            this.name = name;
-        }
-
-        public void setPart(IWorkbenchPart part) {
-            super.setPart(part);
-            if (part == null)
-                return;
-            EditorSite site = (EditorSite) part.getSite();
-            if (site != null) {
-                site.setReuseEditor(!pinned);
-            }
-        }
-
-        public IMemento getMemento() {
-            return editorMemento;
-        }
-
-        public boolean isDirty() {
-            if (part == null)
-                return false;
-            return ((IEditorPart) part).isDirty();
-        }
-
-        public boolean isPinned() {
-            if (part != null)
-                return !((EditorSite) ((IEditorPart) part).getEditorSite())
-                        .getReuseEditor();
-            return pinned;
-        }
-
-        public void setPinned(boolean pinned) {
-            this.pinned = pinned;
-        }
-
-        public IWorkbenchPage getPage() {
-            return page;
-        }
-
-        public void dispose() {
-            checkDeleteEditorResources();
-
-            super.dispose();
-            editorMemento = null;
-        }
-
-        public IEditorInput getEditorInput() throws PartInitException {
-            IEditorPart part = getEditor(false);
-            if (part != null) {
-                return part.getEditorInput();
-            }
-            return getRestoredInput();
-        }
-        
-        public IEditorInput getRestoredInput() throws PartInitException {
-            if (restoredInput != null) {
-                return restoredInput;
-            }
-
-            // Get the input factory.
-            IMemento editorMem = getMemento();
-            if (editorMem == null) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_no_persisted_state, getId(), getName()));
-            }
-            IMemento inputMem = editorMem
-                    .getChild(IWorkbenchConstants.TAG_INPUT);
-            String factoryID = null;
-            if (inputMem != null) {
-                factoryID = inputMem
-                        .getString(IWorkbenchConstants.TAG_FACTORY_ID);
-            }
-            if (factoryID == null) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_no_input_factory_ID, getId(), getName()));
-            }
-            IAdaptable input = null;
-            String label = null; // debugging only
-            if (UIStats.isDebugging(UIStats.CREATE_PART_INPUT)) {
-                label = getName() != null ? getName() : factoryID;
-            }
-            try {
-                UIStats.start(UIStats.CREATE_PART_INPUT, label);
-                IElementFactory factory = PlatformUI.getWorkbench()
-                        .getElementFactory(factoryID);
-                if (factory == null) {
-                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory, new Object[] { factoryID, getId(), getName() }));
-                }
-
-                // Get the input element.
-                input = factory.createElement(inputMem);
-                if (input == null) {
-                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null, new Object[] { factoryID, getId(), getName() }));
-                }
-            } finally {
-                UIStats.end(UIStats.CREATE_PART_INPUT, input, label);
-            }
-            if (!(input instanceof IEditorInput)) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result, new Object[] { factoryID, getId(), getName() }));
-            }
-            restoredInput = (IEditorInput) input;
-            return restoredInput;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IWorkbenchPartReference#getTitleImage()
-         * This method will append a pin to the icon of the editor
-         * if the "automatically close editors" option in the 
-         * preferences is enabled and the editor has been pinned.
-         */
-        public Image getTitleImage() {
-            Image img = super.getTitleImage();
-            if (!isPinned())
-                return img;
-
-            // Check if the pinned preference is set
-            IPreferenceStore prefStore = WorkbenchPlugin.getDefault()
-                    .getPreferenceStore();
-            boolean bUsePin = prefStore
-                    .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-
-            if (!bUsePin)
-                return img;
-
-            ImageDescriptor pinDesc = getEditorPinImageDesc();
-            if (pinDesc == null)
-                return img;
-
-            ImageWrapper imgDesc = new ImageWrapper(img);
-            OverlayIcon overlayIcon = new OverlayIcon(imgDesc, pinDesc,
-                    new Point(16, 16));
-            // try to get the image from the cache, otherwise create it
-            // and cache it
-            int imgHashCode = overlayIcon.hashCode();
-            Integer imgHashKey = new Integer(imgHashCode);
-            Image image = (Image) imgHashtable.get(imgHashKey);
-            if (image == null) {
-                image = overlayIcon.createImage();
-                imgHashtable.put(imgHashKey, image);
-            }
-            return image;
-        }        
-    }
-    
-    private class InnerEditor extends Editor {
+    private class InnerEditor extends EditorReference {
         
         private IEditorReference outerEditor;
         
         public InnerEditor(IEditorReference outerEditor, IEditorInput input, EditorDescriptor desc) {
-            super(input, desc);
+            super(EditorManager.this, input, desc);
             this.outerEditor = outerEditor;
         }
         
         public PartPane createPane() {
-            return new MultiEditorInnerPane((EditorPane)((Editor)outerEditor).getPane(),
+            return new MultiEditorInnerPane((EditorPane)((EditorReference)outerEditor).getPane(),
                     this, page, editorPresentation.getActiveWorkbook());
         }
-    }
-
-    /**
-     * This class extends ImageDescriptor and only holds on to an Image,
-     * it calculates its hash code based on its Image.
-     */
-    private class ImageWrapper extends ImageDescriptor {
-        private final Image image;
-
-        /**
-         * Constructor
-         * @param img the Image to hold on to
-         */
-        public ImageWrapper(Image img) {
-            Assert.isNotNull(img);
-            image = img;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
-         */
-        public ImageData getImageData() {
-            return image == null ? null : image.getImageData();
-        }
-
-        /* (non-Javadoc)
-         * @see Object#hashCode
-         */
-        public int hashCode() {
-            return Util.hashCode(image);
-        }
-
-        /* (non-Javadoc)
-         * @see Object#equals
-         */
-        public boolean equals(Object obj) {
-            if (!(obj instanceof ImageWrapper))
-                return false;
-            ImageWrapper imgWrap = (ImageWrapper) obj;
-            return Util.equals(this.image, imgWrap.image);
-        }
+       
     }
 
     protected void restoreEditorState(IMemento editorMem,
-            ArrayList visibleEditors, IEditorPart[] activeEditor,
-            ArrayList errorWorkbooks, MultiStatus result) {
-        String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
-        boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
-        Editor e = new Editor(editorMem);
+            ArrayList visibleEditors, IEditorReference[] activeEditor,
+            MultiStatus result) {
+//        String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
+//        boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
+        EditorReference e = new EditorReference(this, editorMem);
+        
+        //if the editor is not visible, ensure it is put in the correct workbook. PR 24091
+        
+        String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
+        
         try {
-            createEditorTab(e);
+            createEditorTab(e, workbookID);
         } catch (PartInitException ex) {
             result.add(ex.getStatus());
         }
-        if (visibleEditor) {
-            visibleEditors.add(e);
-            page.addPart(e);
-            result.add(restoreEditor(e));
-            IEditorPart editor = (IEditorPart) e.getPart(true);
-            if (editor != null) {
-                String strActivePart = editorMem
-                        .getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-                if ("true".equals(strActivePart)) //$NON-NLS-1$
-                    activeEditor[0] = editor;
-            } else {
-                page.closeEditor(e, false);
-                visibleEditors.remove(e);
-                errorWorkbooks.add(editorMem
-                        .getString(IWorkbenchConstants.TAG_WORKBOOK));
-            }
-        } else {
-            if (e.getFactoryId() == null) {
-                WorkbenchPlugin
-                        .log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
-            }
-
-            if (editorMem.getString(IWorkbenchConstants.TAG_TITLE) == null) { //backward compatible format of workbench.xml
-                result.add(restoreEditor(e));
-                IEditorPart editor = (IEditorPart) e.getPart(true);
-                if (editor == null) {
-                    page.closeEditor(e, false);
-                    visibleEditors.remove(e);
-                    errorWorkbooks.add(editorMem
-                            .getString(IWorkbenchConstants.TAG_WORKBOOK));
-                }
-                page.addPart(e);
-            } else {
-                //if the editor is not visible, ensure it is put in the correct workbook. PR 24091
-                String workbookID = editorMem
-                        .getString(IWorkbenchConstants.TAG_WORKBOOK);
-                editorPresentation.setActiveEditorWorkbookFromID(workbookID);
-
-                page.addPart(e);
-            }
-        }
+        
+      String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
+      if ("true".equals(strActivePart)) //$NON-NLS-1$
+          activeEditor[0] = e;
+     
+      String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
+      boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
+      if (visibleEditor) {
+          visibleEditors.add(e);
+      }      
     }
 
     //for dynamic UI
     protected void saveEditorState(IMemento mem, IEditorReference ed,
             MultiStatus res) {
-        final Editor editorRef = (Editor) ed;
+        final EditorReference editorRef = (EditorReference) ed;
         final IEditorPart editor = ed.getEditor(false);
         final IMemento memento = mem;
         final MultiStatus result = res;
@@ -1947,7 +1181,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 editorMem.putString(IWorkbenchConstants.TAG_PART_NAME,
                         editorRef.getPartName());
 
-                if (!site.getReuseEditor())
+                if (editorRef.isPinned())
                     editorMem.putString(IWorkbenchConstants.TAG_PINNED, "true"); //$NON-NLS-1$
 
                 EditorPane editorPane = (EditorPane) ((EditorSite) editor
@@ -1959,7 +1193,7 @@ public class EditorManager implements IExtensionChangeHandler {
                     editorMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,
                             "true"); //$NON-NLS-1$
 
-                if (editorPane == editorPane.getWorkbook().getVisibleEditor())
+                if (editorPane == editorPane.getWorkbook().getSelection())
                     editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 
                 // TODO - DDW - dynamic UI - a check for a null input was deliberately removed here.
@@ -1989,8 +1223,8 @@ public class EditorManager implements IExtensionChangeHandler {
 
     //for dynamic UI
     public IMemento getMemento(IEditorReference e) {
-        if (e instanceof Editor)
-            return ((Editor) e).getMemento();
+        if (e instanceof EditorReference)
+            return ((EditorReference) e).getMemento();
         return null;
     }
 	

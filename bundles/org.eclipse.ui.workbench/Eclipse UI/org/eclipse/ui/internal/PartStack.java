@@ -56,7 +56,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private List children = new ArrayList(3);
 
     protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
-
+    
     /**
      * Stores the last value passed to setSelection. If UI updates are being deferred,
      * this may be significantly different from the other current pointers. Once UI updates
@@ -429,13 +429,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             return false;
         }
 
-        ILayoutContainer parent = getContainer();
-
-        if (parent != null && !parent.allowsAutoFocus()) {
-            return false;
-        }
-
-        return true;
+        return super.allowsAutoFocus();
     }
 
     /**
@@ -727,7 +721,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Returns the visible child.
      * @return the currently visible part, or null if none
      */
-    public PartPane getVisiblePart() {
+    public PartPane getSelection() {
         if (current instanceof PartPane) {
             return (PartPane) current;
         }
@@ -1073,6 +1067,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
             // Update the return value of getVisiblePart
             current = requestedCurrent;
+            if (current instanceof PartPane) {
+                PartPane pane = (PartPane) current;
+                
+                ((WorkbenchPartReference)pane.getPartReference()).broughtToTop();
+            }
         }
     }
 

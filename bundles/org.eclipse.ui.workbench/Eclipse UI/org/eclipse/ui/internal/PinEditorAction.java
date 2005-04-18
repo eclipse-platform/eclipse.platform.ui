@@ -21,9 +21,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class PinEditorAction extends ActiveEditorAction {
     private IPropertyListener propListener = new IPropertyListener() {
         public void propertyChanged(Object source, int propId) {
-            if (propId == EditorSite.PROP_REUSE_EDITOR) {
-                EditorSite site = (EditorSite) source;
-                setChecked(!site.getReuseEditor());
+            if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_PINNED) {
+                WorkbenchPartReference ref = (WorkbenchPartReference)source;
+                setChecked(ref.isPinned());
             }
         }
     };
@@ -54,10 +54,15 @@ public class PinEditorAction extends ActiveEditorAction {
         }
         IEditorPart editor = getActiveEditor();
         if (editor != null) {
-            ((EditorSite) editor.getEditorSite()).setReuseEditor(!isChecked());
+            WorkbenchPartReference ref = getReference(editor);
+            ref.setPinned(isChecked());
         }
     }
 
+    private WorkbenchPartReference getReference(IEditorPart editor) {
+        return (WorkbenchPartReference)((EditorSite)editor.getSite()).getPartReference();
+    }
+    
     /* (non-Javadoc)
      * Method declared on ActiveEditorAction.
      */
@@ -72,8 +77,7 @@ public class PinEditorAction extends ActiveEditorAction {
         boolean enabled = (editor != null);
         setEnabled(enabled);
         if (enabled) {
-            EditorSite site = (EditorSite) editor.getEditorSite();
-            setChecked(!site.getReuseEditor());
+            setChecked(getReference(editor).isPinned());
         } else {
             setChecked(false);
         }
@@ -85,8 +89,7 @@ public class PinEditorAction extends ActiveEditorAction {
     protected void editorActivated(IEditorPart part) {
         super.editorActivated(part);
         if (part != null) {
-            ((EditorSite) part.getEditorSite())
-                    .addPropertyListener(propListener);
+            getReference(part).addInternalPropertyListener(propListener);
         }
     }
 
@@ -96,8 +99,7 @@ public class PinEditorAction extends ActiveEditorAction {
     protected void editorDeactivated(IEditorPart part) {
         super.editorDeactivated(part);
         if (part != null) {
-            ((EditorSite) part.getEditorSite())
-                    .removePropertyListener(propListener);
+            getReference(part).removeInternalPropertyListener(propListener);
         }
     }
 

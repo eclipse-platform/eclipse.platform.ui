@@ -28,14 +28,14 @@ import org.eclipse.ui.internal.util.Util;
 public class UIListenerLogging {
     
     // Types of listeners that can be logged (the names of the options that enable/disable their logging)
-    private final static String LISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners"; //$NON-NLS-1$
-    private final static String PAGE_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener"; //$NON-NLS-1$
-    private final static String PAGE_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener2"; //$NON-NLS-1$
+    private final static String LISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/debug"; //$NON-NLS-1$
+    public  final static String PAGE_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener"; //$NON-NLS-1$
+    public  final static String PAGE_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener2"; //$NON-NLS-1$
     private final static String PAGE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPropertyChangeListener"; //$NON-NLS-1$
     private final static String WINDOW_PAGE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPageListener"; //$NON-NLS-1$
     private final static String WINDOW_PERSPECTIVE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPerspectiveListener"; //$NON-NLS-1$
-    private final static String WINDOW_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener"; //$NON-NLS-1$
-    private final static String WINDOW_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener2"; //$NON-NLS-1$
+    public  final static String WINDOW_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener"; //$NON-NLS-1$
+    public  final static String WINDOW_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener2"; //$NON-NLS-1$
     private final static String PARTREFERENCE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPartReference"; //$NON-NLS-1$
     
     public final static boolean enabled = internal_isEnabled(LISTENER_EVENTS);
@@ -66,8 +66,12 @@ public class UIListenerLogging {
     public static final String PLE_PERSP_DEACTIVATED = "perspectiveDeactivated"; //$NON-NLS-1$
     public static final String PLE_PERSP_ACTIVATED = "perspectiveActivated"; //$NON-NLS-1$
 
-    private static String getWindowId(IWorkbenchWindow window) {
-        return "window " + Util.safeString(Integer.toString(window.hashCode() % 1000)); //$NON-NLS-1$
+    private static String getSourceId(Object source) {
+        return Util.safeString(Integer.toString(source.hashCode() % 1000)); //$NON-NLS-1$
+    }
+
+    private static String getWindowId(IWorkbenchWindow source) {
+        return "window " + Util.safeString(Integer.toString(source.hashCode() % 1000)); //$NON-NLS-1$
     }
     
     private static String getPageId(IWorkbenchPage page) {
@@ -132,9 +136,9 @@ public class UIListenerLogging {
      * @param page
      * @param eventId
      */
-    public static final void logPartListenerEvent(IWorkbenchWindow window, IWorkbenchPart part, String eventId) {
-        if (isEnabled(WINDOW_PARTLISTENER_EVENTS)) {
-            System.out.println(WINDOW_PARTLISTENER_EVENTS + " " + getWindowId(window) //$NON-NLS-1$
+    public static final void logPartListenerEvent(String sourceType, Object source, IWorkbenchPart part, String eventId) {
+        if (isEnabled(sourceType)) {
+            System.out.println(sourceType + " " + getSourceId(source) //$NON-NLS-1$
                     + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
     }
@@ -145,9 +149,9 @@ public class UIListenerLogging {
      * @param page
      * @param eventId
      */
-    public static final void logPartListener2Event(IWorkbenchWindow window, IWorkbenchPartReference part, String eventId) {
-        if (isEnabled(WINDOW_PARTLISTENER2_EVENTS)) {
-            System.out.println(WINDOW_PARTLISTENER2_EVENTS + " " + getWindowId(window) //$NON-NLS-1$
+    public static final void logPartListener2Event(String sourceType, Object source, IWorkbenchPartReference part, String eventId) {
+        if (isEnabled(sourceType)) {
+            System.out.println(sourceType + " " + getSourceId(source) //$NON-NLS-1$
                     + ", " + eventId + "(" + getPartId(part) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
     }

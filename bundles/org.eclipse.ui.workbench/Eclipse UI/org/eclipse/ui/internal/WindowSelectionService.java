@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The selection service for a window.
  */
 /* package */
-class WindowSelectionService extends AbstractSelectionService {
+class WindowSelectionService extends AbstractSelectionService implements IPartListener {
 
     /**
      * The window.

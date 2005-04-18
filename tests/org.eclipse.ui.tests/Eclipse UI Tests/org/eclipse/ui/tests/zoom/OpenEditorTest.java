@@ -10,49 +10,52 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.zoom;
 
+import junit.framework.Assert;
+
 
 public class OpenEditorTest extends ZoomTestCase {
     public OpenEditorTest(String name) {
         super(name);
     }
 
-// THE FOLLOWING TESTS FAIL DUE TO BUG 73500. PLEASE UNCOMMENT ONCE BUG 73500 HAS BEEN FIXED.
-//    /** 
-//     * <p>Test: Zoom an editor then open an existing editor in the same stack. Do not force activation.</p>
-//     * <p>Expected result: the new editor is zoomed and active</p> 
-//     */
-//    public void testOpenExistingEditorInZoomedStack() {
-//        zoom(editor1);
-//        openEditor(file2, false);
-//        Assert.assertTrue(isZoomed(editor2));
-//        Assert.assertTrue(page.getActivePart() == editor2);
-//    }
-//
-//    /** 
-//     * <p>Test: Open a new editor while a view is zoomed. Do not force activation.</p>
-//     * <p>Expected result: the page is unzoomed, the view is active</p> 
-//     */
-//    public void testOpenNewEditorWhileViewZoomed() {
-//        close(editor1);
-//        
-//        zoom(stackedView1);
-//        openEditor(file1, false);
-//        Assert.assertFalse(isZoomed());
-//        Assert.assertTrue(page.getActivePart() == stackedView1);
-//    }
-//    
-//    /** 
-//     * <p>Test: Zoom an editor then open a new editor in the same stack. Do not force activation.</p>
-//     * <p>Expected result: the new editor is zoomed and active</p> 
-//     */
-//    public void testOpenNewEditorInZoomedStack() {
-//        close(editor2);
-//        
-//        zoom(editor1);
-//        openEditor(file2, false);
-//        Assert.assertTrue(isZoomed(editor2));
-//        Assert.assertTrue(page.getActivePart() == editor2);
-//    }
+    /** 
+     * <p>Test: Zoom an editor then open an existing editor in the same stack. Do not force activation.</p>
+     * <p>Expected result: the new editor is zoomed and active</p> 
+     */
+    public void testOpenExistingEditorInZoomedStack() {
+        zoom(editor1);
+        openEditor(file2, false);
+        Assert.assertTrue(isZoomed(editor2));
+        Assert.assertTrue(page.getActivePart() == editor2);
+    }
+
+    /** 
+     * <p>Test: Open a new editor while a view is zoomed. Do not force activation.</p>
+     * <p>Expected result: the page remains zoomed, the view is active</p> 
+     * 
+     * <p>Note: the expected result changed intentionally on 05/04/18</p>
+     */
+    public void testOpenNewEditorWhileViewZoomed() {
+        close(editor1);
+        
+        zoom(stackedView1);
+        openEditor(file1, false);
+        Assert.assertTrue(isZoomed());
+        Assert.assertTrue(page.getActivePart() == stackedView1);
+    }
+    
+    /** 
+     * <p>Test: Zoom an editor then open a new editor in the same stack. Do not force activation.</p>
+     * <p>Expected result: the new editor is zoomed and active</p> 
+     */
+    public void testOpenNewEditorInZoomedStack() {
+        close(editor2);
+        
+        zoom(editor1);
+        openEditor(file2, false);
+        Assert.assertTrue(isZoomed(editor2));
+        Assert.assertTrue(page.getActivePart() == editor2);
+    }
     
     /** 
      * <p>Test: Open an existing editor while a view is zoomed. Do not force activation.</p>

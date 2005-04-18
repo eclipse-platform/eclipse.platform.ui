@@ -13,8 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -47,16 +45,14 @@ public final class ViewIntroAdapterPart extends ViewPart {
      */
     private void addPaneListener() {
         IWorkbenchPartSite site = getSite();
-        if (site instanceof PartSite) {            
-            ((PartSite) site).getPane().addPropertyChangeListener(
-                    new IPropertyChangeListener() {
-                        public void propertyChange(PropertyChangeEvent event) {
+        if (site instanceof PartSite) {        
+            final WorkbenchPartReference ref = ((WorkbenchPartReference)((PartSite) site).getPartReference()); 
+            ref.addInternalPropertyListener(
+                    new IPropertyListener() {
+                        public void propertyChanged(Object source, int propId) {
                             if (handleZoomEvents) {
-                                if (event.getProperty()
-                                        .equals(PartPane.PROP_ZOOMED)) {
-                                    boolean standby = !((Boolean) event
-                                            .getNewValue()).booleanValue();
-                                    setStandby(standby);
+                                if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_ZOOMED) {
+                                    setStandby(!ref.getPane().isZoomed());
                                 }
                             }
                         }

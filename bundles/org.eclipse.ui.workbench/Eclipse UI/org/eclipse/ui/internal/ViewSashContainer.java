@@ -255,7 +255,7 @@ public class ViewSashContainer extends PartSashContainer {
      * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
      */
     protected LayoutPart getVisiblePart(ILayoutContainer container) {
-        return ((ViewStack) container).getVisiblePart();
+        return ((ViewStack) container).getSelection();
     }
 
     /* (non-Javadoc)

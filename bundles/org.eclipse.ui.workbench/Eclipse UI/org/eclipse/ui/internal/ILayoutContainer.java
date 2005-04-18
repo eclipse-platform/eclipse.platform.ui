@@ -88,12 +88,4 @@ public interface ILayoutContainer {
      */
     public void resizeChild(LayoutPart childThatChanged);
 
-    /**
-     * Gets the parent for this container.
-     */
-    //public ILayoutContainer getContainer();
-    /**
-     * Gets root container for this part.
-     */
-    //public ViewSashContainer getRootContainer();
 }

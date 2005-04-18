@@ -28,9 +28,11 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.part.NewEditorToOldWrapper;
 import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -75,7 +77,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private String fileName;
 
-    private String id;
+    private String id = Util.ZERO_LENGTH_STRING;
 
     private boolean matchingStrategyChecked = false;
     private IEditorMatchingStrategy matchingStrategy;
@@ -276,15 +278,15 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * 
      * @return the id
      */
-    public String getId() {
+    public String getId() {        
         if (program == null) {
         	if (configurationElement == null) {
-        		return id;
+        		return Util.safeString(id);
         	}
-        	return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        	return Util.safeString(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
         	
         }
-        return program.getName();
+        return Util.safeString(program.getName());
     }
 
     /**
@@ -423,7 +425,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         className = memento.getString(IWorkbenchConstants.TAG_CLASS);
         launcherName = memento.getString(IWorkbenchConstants.TAG_LAUNCHER);
         fileName = memento.getString(IWorkbenchConstants.TAG_FILE);
-        id = memento.getString(IWorkbenchConstants.TAG_ID);
+        id = Util.safeString(memento.getString(IWorkbenchConstants.TAG_ID));
         pluginIdentifier = memento.getString(IWorkbenchConstants.TAG_PLUGIN);
 
         Integer openModeInt = memento
@@ -540,6 +542,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * For external editors it is path and filename of the editor
      */
     /* package */void setID(String anID) {
+        Assert.isNotNull(anID);
         id = anID;
     }
 

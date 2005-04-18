@@ -978,21 +978,14 @@ public class Perspective {
                         NLS.bind(WorkbenchMessages.Perspective_couldNotFind,  key ), null));
                 continue;
             }
-            page.addPart(ref);
             boolean willPartBeVisible = pres.willPartBeVisible(ref.getId(),
                     secondaryId);
             if (willPartBeVisible) {
-                IStatus restoreStatus = viewFactory.restoreView(viewRef);
-                result.add(restoreStatus);
-                if (restoreStatus.getSeverity() == IStatus.OK) {
-                    IViewPart view = (IViewPart) ref.getPart(true);
-                    if (view != null) {
-                        ViewSite site = (ViewSite) view.getSite();
-                        ViewPane pane = (ViewPane) site.getPane();
-                        pres.replacePlaceholderWithPart(pane);
-                    }
-                } else {
-                    page.removePart(ref);
+                IViewPart view = (IViewPart) ref.getPart(true);
+                if (view != null) {
+                    ViewSite site = (ViewSite) view.getSite();
+                    ViewPane pane = (ViewPane) site.getPane();
+                    pres.replacePlaceholderWithPart(pane);
                 }
             } else {
                 pres.replacePlaceholderWithPart(ref.getPane());
@@ -1048,7 +1041,6 @@ public class Perspective {
                 // will come back to check if its a fast view. We really
                 // need to clean up this code.		
                 fastViews.add(ref);
-                page.addPart(ref);
             }
         }
 
@@ -1682,17 +1674,9 @@ public class Perspective {
             throws PartInitException {
         ViewFactory factory = getViewFactory();
         IViewReference ref = factory.createView(viewId, secondaryId);
-        IViewPart part = (IViewPart) ref.getPart(false);
+        IViewPart part = (IViewPart) ref.getPart(true);
         if (part == null) {
-            IStatus status = factory.restoreView(ref);
-            if (status.getSeverity() == IStatus.ERROR) {
-                if (status.getException() instanceof PartInitException)
-                    throw (PartInitException) status.getException();
-                else
-                    throw new PartInitException(status);
-            } else { //No error so the part has been created
-                part = (IViewPart) ref.getPart(false);
-            }
+            throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate, ref.getId()));
         }
         ViewSite site = (ViewSite) part.getSite();
         ViewPane pane = (ViewPane) site.getPane();

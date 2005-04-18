@@ -67,10 +67,10 @@ public class EditorStack extends PartStack {
     }
 
     public void addSystemActions(IMenuManager menuManager) {
-        pinEditorItem = new SystemMenuPinEditor((EditorPane) getVisiblePart());
+        pinEditorItem = new SystemMenuPinEditor((EditorPane) getSelection());
         appendToGroupIfPossible(menuManager,
                 "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
-        sizeItem = new SystemMenuSize((PartPane) getVisiblePart());
+        sizeItem = new SystemMenuSize((PartPane) getSelection());
         appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
     }
 
@@ -121,7 +121,7 @@ public class EditorStack extends PartStack {
     }
 
     public Control[] getTabList() {
-        return getTabList(getVisiblePart());
+        return getTabList(getSelection());
     }
 
     public void removeAll() {
@@ -160,17 +160,6 @@ public class EditorStack extends PartStack {
 
     public EditorSashContainer getEditorArea() {
         return editorArea;
-    }
-
-    public EditorPane getVisibleEditor() {
-        return (EditorPane) getVisiblePart();
-    }
-
-    public void setVisibleEditor(EditorPane editorPane) {
-        setSelection(editorPane);
-    }
-
-    public void showVisibleEditor() {
     }
 
     /* (non-Javadoc)

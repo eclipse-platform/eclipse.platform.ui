@@ -13,9 +13,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -37,8 +34,6 @@ abstract public class LayoutPart implements ISizeProvider {
 
     protected String id;
 
-    private ListenerList propertyListeners = new ListenerList(1);
-
     public static final String PROP_VISIBILITY = "PROP_VISIBILITY"; //$NON-NLS-1$
 
     /**
@@ -54,26 +49,26 @@ abstract public class LayoutPart implements ISizeProvider {
         super();
         this.id = id;
     }
-
+    
     /**
-     * Adds a property change listener to this action.
-     * Has no effect if an identical listener is already registered.
-     *
-     * @param listener a property change listener
+     * When a layout part closes, focus will return to a previously active part.
+     * This method determines whether this part should be considered for activation
+     * when another part closes. If a group of parts are all closing at the same time,
+     * they will all return false from this method while closing to ensure that the
+     * parent does not activate a part that is in the process of closing. Parts will
+     * also return false from this method if they are minimized, closed fast views,
+     * obscured by zoom, etc.
+     * 
+     * @return true iff the parts in this container may be given focus when the active
+     * part is closed
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyListeners.add(listener);
+    public boolean allowsAutoFocus() {
+        if (container != null) {
+            return container.allowsAutoFocus();
+        }
+        return true;
     }
 
-    /**
-     * Removes the given listener from this action.
-     * Has no effect if an identical listener is not registered.
-     *
-     * @param listener a property change listener
-     */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyListeners.remove(listener);
-    }
 
     /**
      * Creates the SWT control
@@ -176,19 +171,6 @@ abstract public class LayoutPart implements ISizeProvider {
     public IDropTarget getDropTarget(Object draggedObject, Point displayCoordinates) {
         return null;
     }
-
-//    /**
-//     * Returns the top level window for a part.
-//     */
-//    public Window getWindow() {
-//        Control ctrl = getControl();
-//        if (!SwtUtil.isDisposed(ctrl)) {
-//            Object data = ctrl.getShell().getData();
-//            if (data instanceof Window)
-//                return (Window) data;
-//        }
-//        return null;
-//    }
     
     public boolean isDocked() {
         Shell s = getShell();
@@ -294,16 +276,6 @@ abstract public class LayoutPart implements ISizeProvider {
             }
 
             ctrl.setVisible(makeVisible);
-            final Object[] listeners = propertyListeners.getListeners();
-            if (listeners.length > 0) {
-                Boolean oldValue = makeVisible ? Boolean.FALSE : Boolean.TRUE;
-                Boolean newValue = makeVisible ? Boolean.TRUE : Boolean.FALSE;
-                PropertyChangeEvent event = new PropertyChangeEvent(this,
-                        PROP_VISIBILITY, oldValue, newValue);
-                for (int i = 0; i < listeners.length; ++i)
-                    ((IPropertyChangeListener) listeners[i])
-                            .propertyChange(event);
-            }
         }
     }
 
@@ -463,13 +435,6 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     protected final boolean isDeferred() {
     	return deferCount > 0;
-    }
-
-    /**
-     * @return Returns the propertyListeners.
-     */
-    protected ListenerList getPropertyListeners() {
-        return propertyListeners;
     }
 
     /**

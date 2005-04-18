@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -24,8 +25,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ReferenceCounter;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -98,12 +97,9 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
      * <code>setInitializationData</code>. Subclasses may extend.
      */
     public void dispose() {
-        ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-        Image image = (Image) imageCache.get(imageDescriptor);
-        if (image != null) {
-            int count = imageCache.removeRef(imageDescriptor);
-            if (count <= 0)
-                image.dispose();
+        if (titleImage != null) {
+            JFaceResources.getResources().destroyImage(imageDescriptor);
+            titleImage = null;
         }
 
         // Clear out the property change listeners as we
@@ -271,18 +267,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         if (imageDescriptor == null)
             return;
 
-        /*
-         * remember the image in a separatly from titleImage, since it must be
-         * disposed even if the titleImage is changed to something else
-         */
-        ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-        Image image = (Image) imageCache.get(imageDescriptor);
-        if (image != null) {
-            imageCache.addRef(imageDescriptor);
-        } else {
-            image = imageDescriptor.createImage();
-            imageCache.put(imageDescriptor, image);
-        }
+        Image image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
         titleImage = image;
     }
 
