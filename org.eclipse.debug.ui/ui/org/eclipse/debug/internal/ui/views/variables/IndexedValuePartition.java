@@ -75,13 +75,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		IVariable[] vars = new IVariable[fLength];
-		int offset = getInitialOffset();
-		for (int i = 0; i < fLength; i++) {
-			vars[i] = getVariable(offset);
-			offset++;
-		}
-		return vars;
+		return getVariables(0, fLength);
 	}
 
 	/* (non-Javadoc)
