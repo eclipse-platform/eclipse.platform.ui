@@ -46,7 +46,7 @@ public class BrowserManager extends Observable {
 				if (ignorePreferenceChanges)
 					return;
 				String property = event.getProperty();
-				if (property.equals("browsers")) {
+				if (property.equals("browsers")) { //$NON-NLS-1$
 					loadBrowsers();
 				}
 			}
@@ -78,10 +78,10 @@ public class BrowserManager extends Observable {
 	}
 	
 	protected void loadBrowsers() {
-		Trace.trace(Trace.FINEST, "Loading web browsers");
+		Trace.trace(Trace.FINEST, "Loading web browsers"); //$NON-NLS-1$
 		
 		Preferences prefs = WebBrowserUIPlugin.getInstance().getPluginPreferences();
-		String xmlString = prefs.getString("browsers");
+		String xmlString = prefs.getString("browsers"); //$NON-NLS-1$
 		if (xmlString != null && xmlString.length() > 0) {
 			browsers = new ArrayList();
 			
@@ -90,7 +90,7 @@ public class BrowserManager extends Observable {
 				Reader reader = new InputStreamReader(in);
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				
-				IMemento[] children = memento.getChildren("external");
+				IMemento[] children = memento.getChildren("external"); //$NON-NLS-1$
 				int size = children.length;
 				for (int i = 0; i < size; i++) {
 					BrowserDescriptor browser = new BrowserDescriptor();
@@ -98,12 +98,12 @@ public class BrowserManager extends Observable {
 					browsers.add(browser);
 				}
 				
-				Integer current = memento.getInteger("current");
+				Integer current = memento.getInteger("current"); //$NON-NLS-1$
 				if (current != null) {
 					currentBrowser = (IBrowserDescriptor) browsers.get(current.intValue()); 
 				}	
 			} catch (Exception e) {
-				Trace.trace(Trace.WARNING, "Could not load browsers: " + e.getMessage());
+				Trace.trace(Trace.WARNING, "Could not load browsers: " + e.getMessage()); //$NON-NLS-1$
 			}
 			
 			if (currentBrowser == null && browsers.size() > 0)
@@ -120,28 +120,28 @@ public class BrowserManager extends Observable {
 	protected void saveBrowsers() {
 		try {
 			ignorePreferenceChanges = true;
-			XMLMemento memento = XMLMemento.createWriteRoot("web-browsers");
+			XMLMemento memento = XMLMemento.createWriteRoot("web-browsers"); //$NON-NLS-1$
 
 			Iterator iterator = browsers.iterator();
 			while (iterator.hasNext()) {
 				Object obj = iterator.next();
 				if (obj instanceof BrowserDescriptor) {
 					BrowserDescriptor browser = (BrowserDescriptor) obj;
-					IMemento child = memento.createChild("external");
+					IMemento child = memento.createChild("external"); //$NON-NLS-1$
 					browser.save(child);
 				}
 			}
 			
-			memento.putInteger("current", browsers.indexOf(currentBrowser));
+			memento.putInteger("current", browsers.indexOf(currentBrowser)); //$NON-NLS-1$
 
 			StringWriter writer = new StringWriter();
 			memento.save(writer);
 			String xmlString = writer.getBuffer().toString();
 			Preferences prefs = WebBrowserUIPlugin.getInstance().getPluginPreferences();
-			prefs.setValue("browsers", xmlString);
+			prefs.setValue("browsers", xmlString); //$NON-NLS-1$
 			WebBrowserUIPlugin.getInstance().savePluginPreferences();
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Could not save browsers", e);
+			Trace.trace(Trace.SEVERE, "Could not save browsers", e); //$NON-NLS-1$
 		}
 		ignorePreferenceChanges = false;
 	}

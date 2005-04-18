@@ -119,7 +119,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		protected String notNull(String s) {
 			if (s == null)
-				return "";
+				return ""; //$NON-NLS-1$
 			return s;
 		}
 
@@ -225,7 +225,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer = new CheckboxTableViewer(table);
 		tableViewer.setContentProvider(new BrowserContentProvider());
 		tableViewer.setLabelProvider(new BrowserTableLabelProvider());
-		tableViewer.setInput("root");
+		tableViewer.setInput("root"); //$NON-NLS-1$
 
 		// uncheck any other elements that might be checked and leave only the
 		// element checked to
@@ -446,11 +446,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					pm.run(true, true, r);
 				} catch (InvocationTargetException ex) {
 					Trace.trace(Trace.SEVERE,
-							"Invocation Exception occured running monitor: "
+							"Invocation Exception occured running monitor: " //$NON-NLS-1$
 									+ ex);
 				} catch (InterruptedException ex) {
 					Trace.trace(Trace.SEVERE,
-							"Interrupted exception occured running monitor: "
+							"Interrupted exception occured running monitor: " //$NON-NLS-1$
 									+ ex);
 					return;
 				}

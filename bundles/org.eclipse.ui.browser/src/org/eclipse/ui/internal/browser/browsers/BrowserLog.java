@@ -30,7 +30,7 @@ public class BrowserLog {
 	private BrowserLog() {
 		try {
 			newSession = true;
-			logFileName = WebBrowserUIPlugin.getInstance().getStateLocation().append("browser.log").toOSString();
+			logFileName = WebBrowserUIPlugin.getInstance().getStateLocation().append("browser.log").toOSString(); //$NON-NLS-1$
 		} catch (Exception e) {
 			// can get here if platform is shutting down
 		}

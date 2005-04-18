@@ -32,51 +32,51 @@ public class ImageResource {
 
 	static {
 		try {
-			String pathSuffix = "icons/";
+			String pathSuffix = "icons/"; //$NON-NLS-1$
 			ICON_BASE_URL = WebBrowserUIPlugin.getInstance().getBundle().getEntry(pathSuffix);
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e);
+			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e); //$NON-NLS-1$
 		}
 	}
 
 	private static Image[] busyImages;
 
-	private static final String URL_CLCL = "clcl16/";
-	private static final String URL_ELCL = "elcl16/";
-	private static final String URL_DLCL = "dlcl16/";
+	private static final String URL_CLCL = "clcl16/"; //$NON-NLS-1$
+	private static final String URL_ELCL = "elcl16/"; //$NON-NLS-1$
+	private static final String URL_DLCL = "dlcl16/"; //$NON-NLS-1$
 
-	private static final String URL_OBJ = "obj16/";
+	private static final String URL_OBJ = "obj16/"; //$NON-NLS-1$
 
 	// --- constants for images ---
 	// toolbar images
-	public static final String IMG_CLCL_NAV_BACKWARD = "IMG_CLCL_NAV_BACKWARD";
-	public static final String IMG_CLCL_NAV_FORWARD = "IMG_CLCL_NAV_FORWARD";
-	public static final String IMG_CLCL_NAV_STOP = "IMG_CLCL_NAV_STOP";
-	public static final String IMG_CLCL_NAV_REFRESH = "IMG_CLCL_NAV_REFRESH";
-	public static final String IMG_CLCL_NAV_GO = "IMG_CLCL_NAV_GO";
-	public static final String IMG_CLCL_NAV_HOME = "IMG_CLCL_NAV_HOME";
-	public static final String IMG_CLCL_NAV_PRINT = "IMG_CLCL_NAV_PRINT";
+	public static final String IMG_CLCL_NAV_BACKWARD = "IMG_CLCL_NAV_BACKWARD"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_FORWARD = "IMG_CLCL_NAV_FORWARD"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_STOP = "IMG_CLCL_NAV_STOP"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_REFRESH = "IMG_CLCL_NAV_REFRESH"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_GO = "IMG_CLCL_NAV_GO"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_HOME = "IMG_CLCL_NAV_HOME"; //$NON-NLS-1$
+	public static final String IMG_CLCL_NAV_PRINT = "IMG_CLCL_NAV_PRINT"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_NAV_BACKWARD = "IMG_ELCL_NAV_BACKWARD";
-	public static final String IMG_ELCL_NAV_FORWARD = "IMG_ELCL_NAV_FORWARD";
-	public static final String IMG_ELCL_NAV_STOP = "IMG_ELCL_NAV_STOP";
-	public static final String IMG_ELCL_NAV_REFRESH = "IMG_ELCL_NAV_REFRESH";
-	public static final String IMG_ELCL_NAV_GO = "IMG_ELCL_NAV_GO";
-	public static final String IMG_ELCL_NAV_HOME = "IMG_ELCL_NAV_HOME";
-	public static final String IMG_ELCL_NAV_PRINT = "IMG_ELCL_NAV_PRINT";
+	public static final String IMG_ELCL_NAV_BACKWARD = "IMG_ELCL_NAV_BACKWARD"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_FORWARD = "IMG_ELCL_NAV_FORWARD"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_STOP = "IMG_ELCL_NAV_STOP"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_REFRESH = "IMG_ELCL_NAV_REFRESH"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_GO = "IMG_ELCL_NAV_GO"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_HOME = "IMG_ELCL_NAV_HOME"; //$NON-NLS-1$
+	public static final String IMG_ELCL_NAV_PRINT = "IMG_ELCL_NAV_PRINT"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_NAV_BACKWARD = "IMG_DLCL_NAV_BACKWARD";
-	public static final String IMG_DLCL_NAV_FORWARD = "IMG_DLCL_NAV_FORWARD";
-	public static final String IMG_DLCL_NAV_STOP = "IMG_DLCL_NAV_STOP";
-	public static final String IMG_DLCL_NAV_REFRESH = "IMG_DLCL_NAV_REFRESH";
-	public static final String IMG_DLCL_NAV_GO = "IMG_DLCL_NAV_GO";
-	public static final String IMG_DLCL_NAV_HOME = "IMG_DLCL_NAV_HOME";
-	public static final String IMG_DLCL_NAV_PRINT = "IMG_DLCL_NAV_PRINT";
+	public static final String IMG_DLCL_NAV_BACKWARD = "IMG_DLCL_NAV_BACKWARD"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_FORWARD = "IMG_DLCL_NAV_FORWARD"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_STOP = "IMG_DLCL_NAV_STOP"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_REFRESH = "IMG_DLCL_NAV_REFRESH"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_GO = "IMG_DLCL_NAV_GO"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_HOME = "IMG_DLCL_NAV_HOME"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NAV_PRINT = "IMG_DLCL_NAV_PRINT"; //$NON-NLS-1$
 
 	// general object images
-	public static final String IMG_INTERNAL_BROWSER = "internalBrowser";
-	public static final String IMG_EXTERNAL_BROWSER = "externalBrowser";
-	public static final String IMG_FAVORITE = "favorite";
+	public static final String IMG_INTERNAL_BROWSER = "internalBrowser"; //$NON-NLS-1$
+	public static final String IMG_EXTERNAL_BROWSER = "externalBrowser"; //$NON-NLS-1$
+	public static final String IMG_FAVORITE = "favorite"; //$NON-NLS-1$
 
 	/**
 	 * Cannot construct an ImageResource. Use static methods only.
@@ -126,40 +126,40 @@ public class ImageResource {
 		imageDescriptors = new HashMap();
 	
 		// load Web browser images
-		registerImage(IMG_ELCL_NAV_BACKWARD, URL_ELCL + "nav_backward.gif");
-		registerImage(IMG_ELCL_NAV_FORWARD, URL_ELCL + "nav_forward.gif");
-		registerImage(IMG_ELCL_NAV_STOP, URL_ELCL + "nav_stop.gif");
-		registerImage(IMG_ELCL_NAV_REFRESH, URL_ELCL + "nav_refresh.gif");
-		registerImage(IMG_ELCL_NAV_GO, URL_ELCL + "nav_go.gif");
-		registerImage(IMG_ELCL_NAV_HOME, URL_ELCL + "nav_home.gif");
-		registerImage(IMG_ELCL_NAV_PRINT, URL_ELCL + "nav_print.gif");
+		registerImage(IMG_ELCL_NAV_BACKWARD, URL_ELCL + "nav_backward.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_FORWARD, URL_ELCL + "nav_forward.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_STOP, URL_ELCL + "nav_stop.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_REFRESH, URL_ELCL + "nav_refresh.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_GO, URL_ELCL + "nav_go.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_HOME, URL_ELCL + "nav_home.gif"); //$NON-NLS-1$
+		registerImage(IMG_ELCL_NAV_PRINT, URL_ELCL + "nav_print.gif"); //$NON-NLS-1$
 	
-		registerImage(IMG_CLCL_NAV_BACKWARD, URL_CLCL + "nav_backward.gif");
-		registerImage(IMG_CLCL_NAV_FORWARD, URL_CLCL + "nav_forward.gif");
-		registerImage(IMG_CLCL_NAV_STOP, URL_CLCL + "nav_stop.gif");
-		registerImage(IMG_CLCL_NAV_REFRESH, URL_CLCL + "nav_refresh.gif");
-		registerImage(IMG_CLCL_NAV_GO, URL_CLCL + "nav_go.gif");
-		registerImage(IMG_CLCL_NAV_HOME, URL_CLCL + "nav_home.gif");
-		registerImage(IMG_CLCL_NAV_PRINT, URL_CLCL + "nav_print.gif");
+		registerImage(IMG_CLCL_NAV_BACKWARD, URL_CLCL + "nav_backward.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_FORWARD, URL_CLCL + "nav_forward.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_STOP, URL_CLCL + "nav_stop.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_REFRESH, URL_CLCL + "nav_refresh.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_GO, URL_CLCL + "nav_go.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_HOME, URL_CLCL + "nav_home.gif"); //$NON-NLS-1$
+		registerImage(IMG_CLCL_NAV_PRINT, URL_CLCL + "nav_print.gif"); //$NON-NLS-1$
 	
-		registerImage(IMG_DLCL_NAV_BACKWARD, URL_DLCL + "nav_backward.gif");
-		registerImage(IMG_DLCL_NAV_FORWARD, URL_DLCL + "nav_forward.gif");
-		registerImage(IMG_DLCL_NAV_STOP, URL_DLCL + "nav_stop.gif");
-		registerImage(IMG_DLCL_NAV_REFRESH, URL_DLCL + "nav_refresh.gif");
-		registerImage(IMG_DLCL_NAV_GO, URL_DLCL + "nav_go.gif");
-		registerImage(IMG_DLCL_NAV_HOME, URL_DLCL + "nav_home.gif");
-		registerImage(IMG_DLCL_NAV_PRINT, URL_DLCL + "nav_print.gif");
+		registerImage(IMG_DLCL_NAV_BACKWARD, URL_DLCL + "nav_backward.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_FORWARD, URL_DLCL + "nav_forward.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_STOP, URL_DLCL + "nav_stop.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_REFRESH, URL_DLCL + "nav_refresh.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_GO, URL_DLCL + "nav_go.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_HOME, URL_DLCL + "nav_home.gif"); //$NON-NLS-1$
+		registerImage(IMG_DLCL_NAV_PRINT, URL_DLCL + "nav_print.gif"); //$NON-NLS-1$
 	
-		registerImage(IMG_INTERNAL_BROWSER, URL_OBJ + "internal_browser.gif");
-		registerImage(IMG_EXTERNAL_BROWSER, URL_OBJ + "external_browser.gif");
+		registerImage(IMG_INTERNAL_BROWSER, URL_OBJ + "internal_browser.gif"); //$NON-NLS-1$
+		registerImage(IMG_EXTERNAL_BROWSER, URL_OBJ + "external_browser.gif"); //$NON-NLS-1$
 		
-		registerImage(IMG_FAVORITE, URL_OBJ + "favorite.gif");
+		registerImage(IMG_FAVORITE, URL_OBJ + "favorite.gif"); //$NON-NLS-1$
 		
 		// busy images
 		busyImages = new Image[13];
 		for (int i = 0; i < 13; i++) {
-			registerImage("busy" + i, URL_OBJ + "frames" + java.io.File.separator + "frame" + (i+1) + ".gif");
-			busyImages[i] = getImage("busy" + i);
+			registerImage("busy" + i, URL_OBJ + "frames" + java.io.File.separator + "frame" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			busyImages[i] = getImage("busy" + i); //$NON-NLS-1$
 		}
 	}
 
@@ -175,7 +175,7 @@ public class ImageResource {
 			imageRegistry.put(key, id);
 			imageDescriptors.put(key, id);
 		} catch (Exception e) {
-			Trace.trace(Trace.WARNING, "Error registering image " + key + " from " + partialURL, e);
+			Trace.trace(Trace.WARNING, "Error registering image " + key + " from " + partialURL, e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

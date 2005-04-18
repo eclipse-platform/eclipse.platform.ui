@@ -99,8 +99,7 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
     public boolean setFocus() {
         if (getContent() != null)
             return getContent().setFocus();
-        else
-            return super.setFocus();
+        return super.setFocus();
     }
 
     /**

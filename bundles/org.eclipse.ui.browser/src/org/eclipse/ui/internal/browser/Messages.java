@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	static {
-		NLS.initializeMessages("org.eclipse.ui.internal.browser.Messages", Messages.class);
+		NLS.initializeMessages("org.eclipse.ui.internal.browser.Messages", Messages.class); //$NON-NLS-1$
 	}
 
 	public static String BrowserText_title;

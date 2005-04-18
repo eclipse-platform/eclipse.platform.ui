@@ -23,7 +23,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
  * Implementation of the workbench browser support.
  */
 public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
-	private static final String SHARED_ID = "org.eclipse.ui.browser";
+	static final String SHARED_ID = "org.eclipse.ui.browser"; //$NON-NLS-1$
 
 	protected HashMap browserIdMap = new HashMap();
 

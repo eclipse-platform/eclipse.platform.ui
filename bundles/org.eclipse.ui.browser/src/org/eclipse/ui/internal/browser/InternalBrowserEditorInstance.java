@@ -40,7 +40,7 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 				IEditorPart editorPart = page.openEditor(input, WebBrowserEditor.WEB_BROWSER_EDITOR_ID);
                 hookPart(page, editorPart);
 			} catch (Exception e) {
-				Trace.trace(Trace.SEVERE, "Error opening Web browser", e);
+				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}
 		}
 	}

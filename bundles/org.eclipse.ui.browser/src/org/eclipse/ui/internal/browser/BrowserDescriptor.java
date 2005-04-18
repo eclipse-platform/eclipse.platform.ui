@@ -15,9 +15,9 @@ import org.eclipse.ui.IMemento;
  * 
  */
 public class BrowserDescriptor implements IBrowserDescriptor {
-	private static final String MEMENTO_NAME = "name";
-	private static final String MEMENTO_LOCATION = "location";
-	private static final String MEMENTO_PARAMETERS = "parameters";
+	private static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
+	private static final String MEMENTO_LOCATION = "location"; //$NON-NLS-1$
+	private static final String MEMENTO_PARAMETERS = "parameters"; //$NON-NLS-1$
 
 	protected String name;
 	protected String location;
@@ -75,6 +75,6 @@ public class BrowserDescriptor implements IBrowserDescriptor {
 	}
 
 	public String toString() {
-		return "External Web browser: " + getName() + " / " + getLocation() + " / " + getParameters();
+		return "External Web browser: " + getName() + " / " + getLocation() + " / " + getParameters();   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

@@ -365,7 +365,7 @@ public class BrowserViewer extends Composite {
                         monitor.done();
                         progressWorked = 0;
                     } else if (progressWorked == 0) {
-                        monitor.beginTask("", event.total);
+                        monitor.beginTask("", event.total); //$NON-NLS-1$
                         progressWorked = percentProgress;
                     } else {
                         monitor.worked(event.current - progressWorked);
@@ -411,7 +411,7 @@ public class BrowserViewer extends Composite {
                             addToHistory(event.location);
                             updateHistory();
                         } else
-                            combo.setText("");
+                            combo.setText(""); //$NON-NLS-1$
                     }
                 }
 
@@ -545,15 +545,14 @@ public class BrowserViewer extends Composite {
      * 
      */
     private boolean navigate(String url) {
-        Trace.trace(Trace.FINER, "Navigate: " + url);
+        Trace.trace(Trace.FINER, "Navigate: " + url); //$NON-NLS-1$
         if (url != null && url.equals(getURL())) {
             refresh();
             return true;
         }
         if (browser!=null)
             return browser.setUrl(url);
-        else 
-            return text.setUrl(url);
+        return text.setUrl(url);
     }
  
     /**
@@ -576,7 +575,7 @@ public class BrowserViewer extends Composite {
     }
 
     private void setURL(String url, boolean browse) {
-        Trace.trace(Trace.FINEST, "setURL: " + url + " " + browse);
+        Trace.trace(Trace.FINEST, "setURL: " + url + " " + browse); //$NON-NLS-1$ //$NON-NLS-2$
         if (url == null) {
             home();
             return;
@@ -585,10 +584,10 @@ public class BrowserViewer extends Composite {
         if (url.endsWith(WebBrowserPreference.getHomePageURL().substring(9)))
             return;
 
-        if ("eclipse".equalsIgnoreCase(url))
-            url = "http://www.eclipse.org";
-        else if ("wtp".equalsIgnoreCase(url))
-            url = "http://www.eclipse.org/webtools/";
+        if ("eclipse".equalsIgnoreCase(url)) //$NON-NLS-1$
+            url = "http://www.eclipse.org"; //$NON-NLS-1$
+        else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
+            url = "http://www.eclipse.org/webtools/"; //$NON-NLS-1$
 
         if (browse)
             navigate(url);

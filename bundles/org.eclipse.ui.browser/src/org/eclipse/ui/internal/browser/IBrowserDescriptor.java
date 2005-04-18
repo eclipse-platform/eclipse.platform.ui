@@ -18,7 +18,7 @@ package org.eclipse.ui.internal.browser;
  * @since 1.0
  */
 public interface IBrowserDescriptor {
-	public static final String URL_PARAMETER = "%URL%";
+	public static final String URL_PARAMETER = "%URL%"; //$NON-NLS-1$
 
 	/**
 	 * Returns the displayable name of the Web browser.

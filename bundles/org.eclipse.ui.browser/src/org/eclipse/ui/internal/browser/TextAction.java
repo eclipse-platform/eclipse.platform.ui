@@ -30,7 +30,7 @@ public class TextAction extends Action {
 	 * TextAction constructor comment.
 	 */
 	protected TextAction(BrowserViewer browser, byte type) {
-		super(type + "!");
+		super(type + "!"); //$NON-NLS-1$
 		this.browser = browser;
 		this.type = type;
 	}

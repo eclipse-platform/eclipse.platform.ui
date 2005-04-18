@@ -25,7 +25,7 @@ import org.osgi.framework.BundleContext;
  */
 public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	// Web browser plugin id
-	public static final String PLUGIN_ID = "org.eclipse.ui.browser";
+	public static final String PLUGIN_ID = "org.eclipse.ui.browser"; //$NON-NLS-1$
 
 	// singleton instance of this class
 	private static WebBrowserUIPlugin singleton;
@@ -81,8 +81,8 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 		if (browsers2 == null || executable == null)
 			return null;
 		
-		int ind1 = executable.lastIndexOf("/");
-		int ind2 = executable.lastIndexOf("\\");
+		int ind1 = executable.lastIndexOf("/"); //$NON-NLS-1$
+		int ind2 = executable.lastIndexOf("\\"); //$NON-NLS-1$
 		if (ind2 > ind1)
 			ind1 = ind2;
 		executable = executable.substring(ind1 + 1);
@@ -107,21 +107,21 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	private static synchronized void loadBrowsers() {
 		if (browsers != null)
 			return;
-		Trace.trace(Trace.CONFIG, "->- Loading .browsers extension point ->-");
+		Trace.trace(Trace.CONFIG, "->- Loading .browsers extension point ->-"); //$NON-NLS-1$
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] cf = registry.getConfigurationElementsFor(PLUGIN_ID, "browsers");
+		IConfigurationElement[] cf = registry.getConfigurationElementsFor(PLUGIN_ID, "browsers"); //$NON-NLS-1$
 
 		int size = cf.length;
 		browsers = new ArrayList(size);
 		for (int i = 0; i < size; i++) {
 			try {
 				browsers.add(new BrowserExt(cf[i]));
-				Trace.trace(Trace.CONFIG, "  Loaded browser: " + cf[i].getAttribute("id"));
+				Trace.trace(Trace.CONFIG, "  Loaded browser: " + cf[i].getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (Throwable t) {
-				Trace.trace(Trace.SEVERE, "  Could not load browser: " + cf[i].getAttribute("id"), t);
+				Trace.trace(Trace.SEVERE, "  Could not load browser: " + cf[i].getAttribute("id"), t); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		Trace.trace(Trace.CONFIG, "-<- Done loading .browsers extension point -<-");
+		Trace.trace(Trace.CONFIG, "-<- Done loading .browsers extension point -<-"); //$NON-NLS-1$
 	}
 	
 	/**

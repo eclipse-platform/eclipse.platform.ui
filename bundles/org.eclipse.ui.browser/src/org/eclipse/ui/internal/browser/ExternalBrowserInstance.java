@@ -15,13 +15,14 @@ import java.net.URL;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
+
 /**
- * An instance of a running Web browser.
- * 
- * rundll32.exe url.dll,FileProtocolHandler www.ibm.com
+ * An instance of a running Web browser. rundll32.exe
+ * url.dll,FileProtocolHandler www.ibm.com
  */
 public class ExternalBrowserInstance extends AbstractWebBrowser {
 	protected IBrowserDescriptor browser;
+
 	protected Process process;
 
 	public ExternalBrowserInstance(String id, IBrowserDescriptor browser) {
@@ -31,53 +32,60 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 
 	public void openURL(URL url) throws PartInitException {
 		String urlText = null;
-		
+
 		if (url != null)
 			urlText = url.toExternalForm();
 
 		// change spaces to "%20"
 		if (urlText != null && !WebBrowserUtil.isWindows()) {
-			int index = urlText.indexOf(" ");
+			int index = urlText.indexOf(" "); //$NON-NLS-1$
 			while (index >= 0) {
-				urlText = urlText.substring(0, index) + "%20" + urlText.substring(index + 1);
-				index = urlText.indexOf(" ");
+				urlText = urlText.substring(0, index)
+						+ "%20" + urlText.substring(index + 1); //$NON-NLS-1$
+				index = urlText.indexOf(" "); //$NON-NLS-1$
 			}
 		}
 
 		String location = browser.getLocation();
 		String parameters = browser.getParameters();
-		Trace.trace(Trace.FINEST, "Launching external Web browser: " + location + " - " + parameters + " - " + urlText);
-		
+		Trace
+				.trace(
+						Trace.FINEST,
+						"Launching external Web browser: " + location + " - " + parameters + " - " + urlText); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		String params = parameters;
 		if (params == null)
-			params = "";
-		
+			params = ""; //$NON-NLS-1$
+
 		if (urlText != null) {
 			int urlIndex = params.indexOf(IBrowserDescriptor.URL_PARAMETER);
 			if (urlIndex >= 0)
-				params = params.substring(0, urlIndex) + " " + urlText + " " + params.substring(urlIndex + IBrowserDescriptor.URL_PARAMETER.length());
+				params = params.substring(0, urlIndex)
+						+ " " + urlText + " " + params.substring(urlIndex + IBrowserDescriptor.URL_PARAMETER.length()); //$NON-NLS-1$ //$NON-NLS-2$
 			else {
-				if (!params.endsWith(" "))
-					params += " ";
+				if (!params.endsWith(" ")) //$NON-NLS-1$
+					params += " "; //$NON-NLS-1$ 
 				params += urlText;
 			}
 		}
-		
+
 		try {
-			Trace.trace(Trace.FINEST, "Launching " + location + " " + params);
+			Trace.trace(Trace.FINEST, "Launching " + location + " " + params);  //$NON-NLS-1$//$NON-NLS-2$
 			if (params == null || params.length() == 0)
 				process = Runtime.getRuntime().exec(location);
 			else
-				process = Runtime.getRuntime().exec(location + " " + params);
+				process = Runtime.getRuntime().exec(location + " " + params); //$NON-NLS-1$
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Could not launch external browser", e);
-			WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
+			Trace.trace(Trace.SEVERE, "Could not launch external browser", e); //$NON-NLS-1$
+			WebBrowserUtil.openError(NLS.bind(
+					Messages.errorCouldNotLaunchWebBrowser, urlText));
 		}
 		Thread thread = new Thread() {
 			public void run() {
 				try {
 					process.waitFor();
-					DefaultBrowserSupport.getInstance().removeBrowser(ExternalBrowserInstance.this.getId());
+					DefaultBrowserSupport.getInstance().removeBrowser(
+							ExternalBrowserInstance.this.getId());
 				} catch (Exception e) {
 					// ignore
 				}
@@ -86,7 +94,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		thread.setDaemon(true);
 		thread.start();
 	}
-	
+
 	public boolean close() {
 		try {
 			process.destroy();

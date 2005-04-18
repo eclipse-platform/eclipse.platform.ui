@@ -90,7 +90,7 @@ public class BusyIndicator extends Canvas {
 							}
 						});
 				} catch (Exception e) {
-					Trace.trace(Trace.WARNING, "Busy error", e);
+					Trace.trace(Trace.WARNING, "Busy error", e); //$NON-NLS-1$
 				}
 			}
 		};

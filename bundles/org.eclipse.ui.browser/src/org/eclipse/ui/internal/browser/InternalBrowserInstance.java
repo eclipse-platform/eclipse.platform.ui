@@ -30,7 +30,7 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 		this.name = name;
 		this.tooltip = tooltip;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}

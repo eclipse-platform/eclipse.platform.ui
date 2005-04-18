@@ -32,7 +32,7 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 				view = (WebBrowserView)page.showView(WebBrowserView.WEB_BROWSER_VIEW_ID, getId(), IWorkbenchPage.VIEW_CREATE);
                 hookPart(page, view);
 			} catch (Exception e) {
-				Trace.trace(Trace.SEVERE, "Error opening Web browser", e);
+				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}
 		}
         if (view!=null) {

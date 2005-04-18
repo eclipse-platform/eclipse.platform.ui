@@ -32,14 +32,14 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 
 		// change spaces to "%20"
 		if (urlText != null && !WebBrowserUtil.isWindows()) {
-			int index = urlText.indexOf(" ");
+			int index = urlText.indexOf(" "); //$NON-NLS-1$
 			while (index >= 0) {
-				urlText = urlText.substring(0, index) + "%20"
+				urlText = urlText.substring(0, index) + "%20" //$NON-NLS-1$
 						+ urlText.substring(index + 1);
-				index = urlText.indexOf(" ");
+				index = urlText.indexOf(" "); //$NON-NLS-1$
 			}
 		}
-		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText);
+		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText); //$NON-NLS-1$
 		Program.launch(urlText);
 	}
 }

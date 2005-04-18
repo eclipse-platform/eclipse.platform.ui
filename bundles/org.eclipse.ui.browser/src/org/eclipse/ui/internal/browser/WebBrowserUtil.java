@@ -28,7 +28,7 @@ import org.eclipse.swt.browser.Browser;
  * Utility class for the Web browser tooling.
  */
 public class WebBrowserUtil {
-	private static final String BROWSER_PACKAGE_NAME = "org.eclipse.swt.browser.Browser";
+	private static final String BROWSER_PACKAGE_NAME = "org.eclipse.swt.browser.Browser"; //$NON-NLS-1$
 	public static Boolean isInternalBrowserOperational;
 
 	/**
@@ -44,8 +44,8 @@ public class WebBrowserUtil {
 	 * @return boolean
 	 */
 	public static boolean isWindows() {
-		String os = System.getProperty("os.name");
-		if (os != null && os.toLowerCase().indexOf("win") >= 0)
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		if (os != null && os.toLowerCase().indexOf("win") >= 0) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -56,8 +56,8 @@ public class WebBrowserUtil {
 	 * @return boolean
 	 */
 	public static boolean isLinux() {
-		String os = System.getProperty("os.name");
-		if (os != null && os.toLowerCase().indexOf("lin") >= 0)
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		if (os != null && os.toLowerCase().indexOf("lin") >= 0) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -123,14 +123,14 @@ public class WebBrowserUtil {
 			return true;
 		} catch (Throwable t) {
 			WebBrowserUIPlugin.getInstance().getLog().log(new Status(IStatus.WARNING,
-				WebBrowserUIPlugin.PLUGIN_ID, 0, "Internal browser is not operational", t));
+				WebBrowserUIPlugin.PLUGIN_ID, 0, "Internal browser is not operational", t)); //$NON-NLS-1$
 			isInternalBrowserOperational = new Boolean(false);
 			return false;
 		}
 	}
 
 	public static boolean canUseSystemBrowser() {
-		return Program.findProgram("html")!=null;
+		return Program.findProgram("html")!=null; //$NON-NLS-1$
 	}
 	
 	public static List getExternalBrowserPaths() {
@@ -190,7 +190,7 @@ public class WebBrowserUtil {
         ArrayList list = new ArrayList();
         for (int i=0; i<roots.length; i++) {
            String path = roots[i].getAbsolutePath();
-           if (path!=null && path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:"))
+           if (path!=null && path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:")) //$NON-NLS-1$ //$NON-NLS-2$
                continue;
            list.add(roots[i]);
         }

@@ -40,7 +40,7 @@ import org.eclipse.ui.part.EditorPart;
  * better use of the desktop.
  */
 public class WebBrowserEditor extends EditorPart implements IBrowserViewerContainer {
-	public static final String WEB_BROWSER_EDITOR_ID = "org.eclipse.ui.browser.editor";
+	public static final String WEB_BROWSER_EDITOR_ID = "org.eclipse.ui.browser.editor"; //$NON-NLS-1$
 
 	protected BrowserViewer webBrowser;
 	protected String initialURL;
@@ -153,7 +153,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	 * Initializes the editor part with a site and input.
 	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		Trace.trace(Trace.FINEST, "Opening browser: " + input);
+		Trace.trace(Trace.FINEST, "Opening browser: " + input); //$NON-NLS-1$
 		if (input instanceof IPathEditorInput) {
 			IPathEditorInput pei = (IPathEditorInput) input;
 			IPath path = pei.getPath();
@@ -162,7 +162,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 				if (path != null && path.toFile().exists())
 					url = path.toFile().toURL();
 			} catch (Exception e) {
-				Trace.trace(Trace.SEVERE, "Error getting URL to file");
+				Trace.trace(Trace.SEVERE, "Error getting URL to file"); //$NON-NLS-1$
 			}
 			initialURL = url.toExternalForm();
 			if (webBrowser != null) {
@@ -249,7 +249,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			
 			page.openEditor(input, WebBrowserEditor.WEB_BROWSER_EDITOR_ID);
 		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Error opening Web browser", e);
+			Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 		}
 	}
 	
@@ -311,7 +311,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
             int dot = name.lastIndexOf('.');
             String ext = name;
             if (dot!= -1)
-                ext = "*."+name.substring(dot+1);
+                ext = "*."+name.substring(dot+1); //$NON-NLS-1$
             registry.setDefaultEditor(ext, null);
         }
  

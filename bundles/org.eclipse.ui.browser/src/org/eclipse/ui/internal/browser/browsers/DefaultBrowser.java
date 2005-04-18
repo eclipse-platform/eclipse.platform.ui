@@ -56,7 +56,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 					+ path
 					+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
 					e);
-			throw new PartInitException("Error");
+			throw new PartInitException("Error"); //$NON-NLS-1$
 				//TODO: WebBrowserUIPlugin.getString("DefaultBrowser.errorLaunching", url, path)); //$NON-NLS-1$
 		}
 	}
@@ -134,7 +134,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 	private String doSubstitutions(String token, String url) {
 		boolean substituted = false;
 		StringBuffer newToken = new StringBuffer(token);
-		String substitutionMarker = "%1";
+		String substitutionMarker = "%1"; //$NON-NLS-1$
 		int index = newToken.indexOf(substitutionMarker);
 		while (index != -1) {
 			newToken.replace(index, index + substitutionMarker.length(), url);

@@ -23,7 +23,7 @@ import org.eclipse.ui.part.ViewPart;
  * A Web browser viewer.
  */
 public class WebBrowserView extends ViewPart implements IBrowserViewerContainer {
-	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view";
+	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view"; //$NON-NLS-1$
     private static final int DEFAULT_STYLE = BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR;
     private static final char STYLE_SEP = '-';
 
