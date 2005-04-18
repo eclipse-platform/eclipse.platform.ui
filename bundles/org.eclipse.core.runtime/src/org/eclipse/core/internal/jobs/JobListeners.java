@@ -123,17 +123,16 @@ class JobListeners {
 		//but inlined here for performance reasons
 		if (e instanceof OperationCanceledException)
 			return;
-		final InternalPlatform platform = InternalPlatform.getDefault();
-		String pluginId = platform.getBundleId(listener);
-		if (pluginId == null)
-			pluginId = Platform.PI_RUNTIME;
-		String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
-		IStatus status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		//we have to be safe, so don't try to log if the platform is not running 
 		//since it will fail - last resort is to print the stack trace on stderr
-		if (platform.isRunning())
-			platform.log(status);
-		else
+		final InternalPlatform platform = InternalPlatform.getDefault();
+		if (platform != null && platform.isRunning()) {
+			String pluginId = platform.getBundleId(listener);
+			if (pluginId == null)
+				pluginId = Platform.PI_RUNTIME;
+			String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
+			platform.log(new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e));
+		} else
 			e.printStackTrace();
 	}
 
