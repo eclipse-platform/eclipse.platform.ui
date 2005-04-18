@@ -125,9 +125,9 @@ public class UIMessageDialogsAuto extends TestCase {
         if (bundle != null) {
             dialog = getConfirmDialog(
                     bundle
-                            .getString("Editor.error.activated.deleted.close.title"),
+                            .getString("Editor_error_activated_deleted_close_title"),
                     bundle
-                            .getString("Editor.error.activated.deleted.close.message"));
+                            .getString("Editor_error_activated_deleted_close_message"));
         }
         DialogCheck.assertDialogTexts(dialog, this);
     }
@@ -195,9 +195,9 @@ public class UIMessageDialogsAuto extends TestCase {
                 .getBundle("org.eclipse.ui.texteditor.EditorMessages");
         if (bundle != null) {
             dialog = getQuestionDialog(
-                    bundle.getString("Editor.error.activated.outofsync.title"),
+                    bundle.getString("Editor_error_activated_outofsync_title"),
                     bundle
-                            .getString("Editor.error.activated.outofsync.message"));
+                            .getString("Editor_error_activated_outofsync_message"));
         }
         DialogCheck.assertDialogTexts(dialog, this);
     }
@@ -318,16 +318,16 @@ public class UIMessageDialogsAuto extends TestCase {
             dialog = new MessageDialog(
                     getShell(),
                     bundle
-                            .getString("Editor.error.activated.deleted.save.title"),
+                            .getString("Editor_error_activated_deleted_save_title"),
                     null,
                     bundle
-                            .getString("Editor.error.activated.deleted.save.message"),
+                            .getString("Editor_error_activated_deleted_save_message"),
                     MessageDialog.QUESTION,
                     new String[] {
                             bundle
-                                    .getString("Editor.error.activated.deleted.save.button.save"),
+                                    .getString("Editor_error_activated_deleted_save_button_save"),
                             bundle
-                                    .getString("Editor.error.activated.deleted.save.button.close") },
+                                    .getString("Editor_error_activated_deleted_save_button_close") },
                     0);
         }
         DialogCheck.assertDialogTexts(dialog, this);
@@ -339,16 +339,16 @@ public class UIMessageDialogsAuto extends TestCase {
                 .getBundle("org.eclipse.ui.texteditor.EditorMessages");
         if (bundle != null) {
             dialog = getQuestionDialog(bundle
-                    .getString("Editor.error.save.outofsync.title"), bundle
-                    .getString("Editor.error.save.outofsync.message"));
+                    .getString("Editor_error_save_outofsync_title"), bundle
+                    .getString("Editor_error_save_outofsync_message"));
         }
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
     public void testWizardClosing() {
         Dialog dialog = new MessageDialog(getShell(), JFaceResources
-                .getString("WizardClosingDialog.title"), null, JFaceResources
-                .getString("WizardClosingDialog.message"),
+                .getString("WizardClosingDialog_title"), null, JFaceResources
+                .getString("WizardClosingDialog_message"),
                 MessageDialog.QUESTION,
                 new String[] { IDialogConstants.OK_LABEL }, 0);
         DialogCheck.assertDialogTexts(dialog, this);
