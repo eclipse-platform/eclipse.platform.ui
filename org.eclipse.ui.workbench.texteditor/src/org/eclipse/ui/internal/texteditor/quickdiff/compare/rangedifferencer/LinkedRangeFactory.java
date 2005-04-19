@@ -12,20 +12,20 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 /**
  * Memory-monitoring factory for <code>LinkedRangeDifference</code>.
- * 
+ *
  * @since 3.0
  */
 public class LinkedRangeFactory {
-	
+
 	/**
 	 * Exception that is thrown after the minimal allowed free memory is reached.
 	 * <p>
 	 * This class is not intended to be serialized.
 	 * </p>
-	 * 
+	 *
 	 */
 	public static class LowMemoryException extends Exception {
-		
+
 		/**
 		 * Serial version UID for this class.
 		 * <p>
@@ -41,17 +41,17 @@ public class LinkedRangeFactory {
 		public LowMemoryException() {
 			super();
 		}
-		
+
 		/**
 		 * Initialize with the given detail message.
-		 * 
+		 *
 		 * @param message the detail message
 		 */
 		public LowMemoryException(String message) {
 			super(message);
 		}
 	}
-	
+
 	/**
 	 * Relative amount of memory that must be free in order to allow the creation of additional instances
 	 */
@@ -77,7 +77,7 @@ public class LinkedRangeFactory {
 	 */
 	private static final long MAX_INSTANCES= MAX_MEMORY_CONSUMPTION /  OBJECT_SIZE;
 
-	
+
 	/**
 	 * Preallocated low memory exception
 	 */
@@ -87,10 +87,10 @@ public class LinkedRangeFactory {
 	 * Number of instantiations
 	 */
 	private long fCount= 0;
-	
+
 	/**
 	 * Create a new linked range difference with the given next range and operation.
-	 * 
+	 *
 	 * @param next the next linked range difference
 	 * @param operation the operation
 	 * @return the new linked range difference
@@ -104,16 +104,16 @@ public class LinkedRangeFactory {
 	/**
 	 * After <code>CHECK_INTERVAL</code> calls check whether at least a fraction of <code>THRESHOLD</code>
 	 * of the maximal available memory is free, otherwise throw an {@link LowMemoryException}.
-	 * 
+	 *
 	 * @throws LowMemoryException
 	 */
 	private void check() throws LowMemoryException {
 		if (fCount % CHECK_INTERVAL == 0) {
-			
+
 			Runtime runtime= Runtime.getRuntime();
 			long maxMemory= runtime.maxMemory();
 			long maxFreeMemory= maxMemory - (runtime.totalMemory() - runtime.freeMemory());
-			
+
 			if (((float) (maxFreeMemory - MAXIMAL_INTERVAL_REQUIREMENT)) / maxMemory < THRESHOLD)
 				throw fLowMemoryException;
 		}

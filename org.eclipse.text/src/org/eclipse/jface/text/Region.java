@@ -12,15 +12,15 @@ package org.eclipse.jface.text;
 
 
 /**
- * The default implementation of the {@link org.eclipse.jface.text.IRegion} interface. 
+ * The default implementation of the {@link org.eclipse.jface.text.IRegion} interface.
  */
 public class Region implements IRegion {
-	
+
 	/** The region offset */
 	private int fOffset;
 	/** The region length */
 	private int fLength;
-	
+
 	/**
 	 * Create a new region.
 	 *
@@ -31,21 +31,21 @@ public class Region implements IRegion {
 		fOffset= offset;
 		fLength= length;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IRegion#getLength()
 	 */
 	public int getLength() {
 		return fLength;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IRegion#getOffset()
 	 */
 	public int getOffset() {
 		return fOffset;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -56,7 +56,7 @@ public class Region implements IRegion {
 	 	}
 	 	return false;
 	}
-	 
+
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */

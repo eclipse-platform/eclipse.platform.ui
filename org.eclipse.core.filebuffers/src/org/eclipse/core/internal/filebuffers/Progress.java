@@ -19,15 +19,15 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 3.1
  */
 public class Progress {
-	
+
 	public static IProgressMonitor getMonitor(IProgressMonitor monitor) {
 		return monitor == null ? new NullProgressMonitor() : monitor;
 	}
-	
+
 	public static IProgressMonitor getSubMonitor(IProgressMonitor parent, int ticks) {
 		return new SubProgressMonitor(getMonitor(parent), ticks, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 	}
-	
+
 	public static IProgressMonitor getMonitor() {
 		return new NullProgressMonitor();
 	}

@@ -14,8 +14,8 @@ package org.eclipse.jface.text;
 
 /**
  * Exists for backward compatibility.
- * 
+ *
  * @deprecated since 3.0, use <code>IAutoEditStrategy</code> directly
  */
-public interface IAutoIndentStrategy extends IAutoEditStrategy {	
+public interface IAutoIndentStrategy extends IAutoEditStrategy {
 }

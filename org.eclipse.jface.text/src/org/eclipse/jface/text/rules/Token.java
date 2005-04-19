@@ -18,7 +18,7 @@ import org.eclipse.jface.text.Assert;
  * Standard implementation of <code>IToken</code>.
  */
 public class Token implements IToken {
-	
+
 	/** Internal token type: Undefined */
 	private static final int T_UNDEFINED= 0;
 	/** Internal token type: EOF */
@@ -27,32 +27,32 @@ public class Token implements IToken {
 	private static final int T_WHITESPACE= 2;
 	/** Internal token type: Others */
 	private static final int T_OTHER=	3;
-	
-	
-	/** 
+
+
+	/**
 	 * Standard token: Undefined.
 	 */
 	public static final IToken UNDEFINED= new Token(T_UNDEFINED);
-	/** 
-	 * Standard token: End Of File. 
+	/**
+	 * Standard token: End Of File.
 	 */
 	public static final IToken EOF= new Token(T_EOF);
-	/** 
+	/**
 	 * Standard token: Whitespace.
 	 */
 	public static final IToken WHITESPACE= new Token(T_WHITESPACE);
-	
+
 	/**
 	 * Standard token: Neither {@link #UNDEFINED}, {@link #WHITESPACE}, nor {@link #EOF}.
 	 * @deprecated will be removed
 	 */
 	public static final IToken OTHER= new Token(T_OTHER);
-	
+
 	/** The type of this token */
 	private int fType;
 	/** The data associated with this token */
 	private Object fData;
-	
+
 	/**
 	 * Creates a new token according to the given specification which does not
 	 * have any data attached to it.
@@ -64,7 +64,7 @@ public class Token implements IToken {
 		fType= type;
 		fData= null;
 	}
-	
+
 	/**
 	 * Creates a new token which represents neither undefined, whitespace, nor EOF.
 	 * The newly created token has the given data attached to it.
@@ -75,11 +75,11 @@ public class Token implements IToken {
 		fType= T_OTHER;
 		fData= data;
 	}
-	
+
 	/**
 	 * Reinitializes the data of this token. The token may not represent
 	 * undefined, whitespace, or EOF.
-	 * 
+	 *
 	 * @param data to be attached to the token
 	 * @since 2.0
 	 */
@@ -87,39 +87,39 @@ public class Token implements IToken {
 		Assert.isTrue(isOther());
 		fData= data;
 	}
-	
+
 	/*
 	 * @see IToken#getData()
 	 */
 	public Object getData() {
 		return fData;
 	}
-	
+
 	/*
 	 * @see IToken#isOther()
 	 */
 	public boolean isOther() {
 		return (fType == T_OTHER);
 	}
-	
+
 	/*
 	 * @see IToken#isEOF()
 	 */
 	public boolean isEOF() {
 		return (fType == T_EOF);
 	}
-	
+
 	/*
 	 * @see IToken#isWhitespace()
 	 */
 	public boolean isWhitespace() {
 		return (fType == T_WHITESPACE);
 	}
-	
+
 	/*
 	 * @see IToken#isUndefined()
 	 */
 	public boolean isUndefined() {
 		return (fType == T_UNDEFINED);
-	}	
+	}
 }

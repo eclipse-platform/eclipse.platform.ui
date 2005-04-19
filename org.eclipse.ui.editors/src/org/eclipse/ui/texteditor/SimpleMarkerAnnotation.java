@@ -18,14 +18,14 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * An annotation representing a marker. This is a model annotation.
- * 
+ *
  * @see IMarker
  * @since 3.0
  */
 public class SimpleMarkerAnnotation extends Annotation {
-	
+
 	private IMarker fMarker;
-	
+
 	/**
 	 * Creates a new annotation for the given marker.
 	 * @see IMarker
@@ -35,10 +35,10 @@ public class SimpleMarkerAnnotation extends Annotation {
 	public SimpleMarkerAnnotation(IMarker marker) {
 		this(EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(marker), marker);
 	}
-	
+
 	/**
 	 * Creates a new annotation of the given type for the given marker.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @param marker the marker
 	 */
@@ -47,7 +47,7 @@ public class SimpleMarkerAnnotation extends Annotation {
 		Assert.isNotNull(marker);
 		fMarker= marker;
 	}
-	
+
 	/**
 	 * Returns this annotation's underlying marker.
 	 *
@@ -56,12 +56,12 @@ public class SimpleMarkerAnnotation extends Annotation {
 	public IMarker getMarker() {
 		return fMarker;
 	}
-	
+
 	/**
 	 * The <code>SimpleMarkerAnnotation</code> implementation of this
 	 * <code>Object</code> method returns <code>true</code> iff the other
 	 * object is of the same class and the marker handles are equal.
-	 * 
+	 *
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
@@ -69,14 +69,14 @@ public class SimpleMarkerAnnotation extends Annotation {
 			return fMarker.equals(((SimpleMarkerAnnotation) o).fMarker);
 		return false;
 	}
-	
+
 	/*
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
 		return fMarker.hashCode();
 	}
-	
+
 	/**
 	 * Informs this annotation about changes applied to its underlying marker
 	 * and adapts to those changes.
@@ -87,18 +87,18 @@ public class SimpleMarkerAnnotation extends Annotation {
 	public void update() {
 		updateType();
 	}
-	
+
 	/**
 	 * Updates the type to be synchronized with its underlying marker.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private void updateType() {
-		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(fMarker); 
+		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(fMarker);
 		if (annotationType != null && !annotationType.equals(getType()))
 			setType(annotationType);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.Annotation#getText()
 	 */

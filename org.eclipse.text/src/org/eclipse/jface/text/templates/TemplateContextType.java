@@ -38,7 +38,7 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class TemplateContextType {
@@ -55,16 +55,16 @@ public class TemplateContextType {
 	/**
 	 * Creates a context type with an identifier. The identifier must be unique,
 	 * a qualified name is suggested. The id is also used as name.
-	 * 
+	 *
 	 * @param id the unique identifier of the context type
 	 */
 	public TemplateContextType(String id) {
 		this(id, id);
 	}
-	
+
 	/**
 	 * Creates a context type with an identifier. The identifier must be unique, a qualified name is suggested.
-	 * 
+	 *
 	 * @param id the unique identifier of the context type
 	 * @param name the name of the context type
 	 */
@@ -74,26 +74,26 @@ public class TemplateContextType {
 		fId= id;
 		fName= name;
 	}
-	
+
 	/**
 	 * Returns the name of the context type.
-	 * 
+	 *
 	 * @return the name of the receiver
 	 */
 	public String getId() {
 	    return fId;
 	}
-	
+
 
 	/**
 	 * Returns the name of the context type.
-	 * 
+	 *
 	 * @return the name of the context type
 	 */
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Creates a context type with a <code>null</code> identifier.
 	 * <p>
@@ -105,7 +105,7 @@ public class TemplateContextType {
 	 */
 	public TemplateContextType() {
 	}
-	
+
 	/**
 	 * Sets the id of this context.
 	 * <p>
@@ -113,7 +113,7 @@ public class TemplateContextType {
 	 * can be contributed via an extension point and that should not be called
 	 * in client code; use {@link #TemplateContextType(String)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @param id the identifier of this context
 	 * @throws RuntimeException an unspecified exception if the id has already
 	 *         been set on this context type
@@ -126,34 +126,34 @@ public class TemplateContextType {
 
 	/**
 	 * Sets the name of the context type.
-	 * 
+	 *
 	 * <p>
 	 * This is a framework-only method that exists solely so that context types
 	 * can be contributed via an extension point and that should not be called
 	 * in client code; use {@link #TemplateContextType(String, String)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @param name the name of the context type
 	 */
 	public final void setName(String name) {
 		Assert.isTrue(fName == null); // only initialized by extension code
 		fName= name;
 	}
-	
+
 	/**
 	 * Adds a variable resolver to the context type. If there already is a resolver
 	 * for the same type, the previous one gets replaced by <code>resolver</code>.
-	 * 
+	 *
 	 * @param resolver the resolver to be added under its name
 	 */
 	public void addResolver(TemplateVariableResolver resolver) {
 		Assert.isNotNull(resolver);
-		fResolvers.put(resolver.getType(), resolver);   
+		fResolvers.put(resolver.getType(), resolver);
 	}
-	
+
 	/**
 	 * Removes a template variable from the context type.
-	 * 
+	 *
 	 * @param resolver the variable to be removed
 	 */
 	public void removeResolver(TemplateVariableResolver resolver) {
@@ -170,27 +170,27 @@ public class TemplateContextType {
 
 	/**
 	 * Returns an iterator for the variables known to the context type.
-	 * 
+	 *
 	 * @return an iterator over the variables in this context type
 	 */
 	public Iterator resolvers() {
-	 	return Collections.unmodifiableMap(fResolvers).values().iterator();   
+	 	return Collections.unmodifiableMap(fResolvers).values().iterator();
 	}
-	
+
 	/**
 	 * Returns the resolver for the given type.
-	 * 
+	 *
 	 * @param type the type for which a resolver is needed
 	 * @return a resolver for the given type, or <code>null</code> if none is registered
 	 */
 	protected TemplateVariableResolver getResolver(String type) {
 		return (TemplateVariableResolver) fResolvers.get(type);
-	}	
+	}
 
 	/**
-	 * Validates a pattern, a <code>TemplateException</code> is thrown if 
+	 * Validates a pattern, a <code>TemplateException</code> is thrown if
 	 * validation fails.
-	 * 
+	 *
 	 * @param pattern the template pattern to validate
 	 * @throws TemplateException if the pattern is invalid
 	 */
@@ -199,7 +199,7 @@ public class TemplateContextType {
 		TemplateBuffer buffer= translator.translate(pattern);
 		validateVariables(buffer.getVariables());
 	}
-	
+
 	/**
 	 * Validates the variables in this context type. If a variable is not valid,
 	 * e.g. if its type is not known in this context type, a
@@ -207,7 +207,7 @@ public class TemplateContextType {
 	 * <p>
 	 * The default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param variables the variables to validate
 	 * @throws TemplateException if one of the variables is not valid in this
 	 *         context type
@@ -218,7 +218,7 @@ public class TemplateContextType {
 	/**
 	 * Resolves the variables in <code>buffer</code> within <code>context</code>
 	 * and edits the template buffer to reflect the resolved variables.
-	 * 
+	 *
 	 * @param buffer the template buffer
 	 * @param context the template context
 	 * @throws MalformedTreeException if the positions in the buffer overlap
@@ -236,26 +236,26 @@ public class TemplateContextType {
             TemplateVariable variable= variables[i];
 
 			if (variable.isUnambiguous())
-				continue;			
+				continue;
 
 			// remember old values
 			int[] oldOffsets= variable.getOffsets();
 			int oldLength= variable.getLength();
 			String oldValue= variable.getDefaultValue();
-			
+
 			String type= variable.getType();
 			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
 			if (resolver == null)
 				resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
 			resolver.resolve(variable, context);
-			
+
 			String value= variable.getDefaultValue();
-			
+
 			if (!oldValue.equals(value))
 				// update buffer to reflect new value
 				for (int k= 0; k != oldOffsets.length; k++)
 					edits.add(new ReplaceEdit(oldOffsets[k], oldLength, value));
-			
+
         }
 
     	IDocument document= new Document(buffer.getString());
@@ -265,7 +265,7 @@ public class TemplateContextType {
         edit.apply(document, TextEdit.UPDATE_REGIONS);
 
 		positionsToVariables(positions, variables);
-        
+
         buffer.setContent(document.get(), variables);
     }
 
@@ -276,21 +276,21 @@ public class TemplateContextType {
 		    for (int j= 0; j != offsets.length; j++)
 				positions.add(new RangeMarker(offsets[j], 0));
 		}
-		
+
 		return positions;
 	}
-	
+
 	private static void positionsToVariables(List positions, TemplateVariable[] variables) {
 		Iterator iterator= positions.iterator();
-		
+
 		for (int i= 0; i != variables.length; i++) {
 		    TemplateVariable variable= variables[i];
-		    
+
 			int[] offsets= new int[variable.getOffsets().length];
 			for (int j= 0; j != offsets.length; j++)
 				offsets[j]= ((TextEdit) iterator.next()).getOffset();
-			
-		 	variable.setOffsets(offsets);   
+
+		 	variable.setOffsets(offsets);
 		}
 	}
 }

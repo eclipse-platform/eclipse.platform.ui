@@ -16,7 +16,7 @@ package org.eclipse.jface.text.templates;
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
@@ -33,11 +33,11 @@ public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 
 	/**
 	 * Sets the string to which this variable evaluates.
-	 * 
+	 *
 	 * @param evaluationString the evaluation string, may be <code>null</code>.
 	 */
 	public final void setEvaluationString(String evaluationString) {
-		fEvaluationString= evaluationString;	
+		fEvaluationString= evaluationString;
 	}
 
 	/*
@@ -46,11 +46,11 @@ public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 	protected String resolve(TemplateContext context) {
 		return fEvaluationString;
 	}
-	
+
 	/**
 	 * Returns always <code>true</code>, since simple variables are normally
 	 * unambiguous.
-	 * 
+	 *
 	 * @param context {@inheritDoc}
 	 * @return <code>true</code>
 	 */

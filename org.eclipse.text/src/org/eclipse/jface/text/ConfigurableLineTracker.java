@@ -23,14 +23,14 @@ package org.eclipse.jface.text;
  * This class is not intended to be subclassed.
  */
 public class ConfigurableLineTracker extends AbstractLineTracker {
-	
-	
+
+
 	/** The strings which are considered being the line delimiter */
 	private String[] fDelimiters;
 	/** A predefined delimiter information which is always reused as return value */
-	private DelimiterInfo fDelimiterInfo= new DelimiterInfo(); 
-	
-	
+	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
+
+
 	/**
 	 * Creates a standard line tracker for the given line delimiters.
 	 *
@@ -41,7 +41,7 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 		Assert.isTrue(legalLineDelimiters != null && legalLineDelimiters.length > 0);
 		fDelimiters= TextUtilities.copy(legalLineDelimiters);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
@@ -56,7 +56,7 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 		int[] info= TextUtilities.indexOf(fDelimiters, text, offset);
 		if (info[0] == -1)
 			return null;
-			
+
 		fDelimiterInfo.delimiterIndex= info[0];
 		fDelimiterInfo.delimiter= fDelimiters[info[1]];
 		fDelimiterInfo.delimiterLength= fDelimiterInfo.delimiter.length();

@@ -29,7 +29,7 @@ public interface IReadOnlyDependent {
 	 * invariants:
 	 * 	isEnabled() == false, if isEnabled(true) == false || isEnabled(false) == false
 	 * 	isEnabled() == true, if isEnabled(true) == true || isEnabled(false) == true
-	 * 
+	 *
 	 * @param isWritable
 	 * @return the hypothetical enable state of the action
 	 */

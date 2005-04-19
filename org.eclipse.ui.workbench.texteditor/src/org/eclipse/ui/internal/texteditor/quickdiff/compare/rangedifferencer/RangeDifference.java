@@ -52,7 +52,7 @@ public class RangeDifference {
 	 * that is only the ancestor is different.
 	 */
 	public final static int ANCESTOR= 4;
-	
+
 	/** Constant indicating an unknown change kind. */
 	public final static int ERROR= 5;
 
@@ -66,7 +66,7 @@ public class RangeDifference {
 	int lAncestorStart;
 	int lAncestorLength;
 	private DiffRegion fRegion;
-	
+
 	/**
 	 * Creates a new range difference with the given change kind.
 	 *
@@ -215,8 +215,8 @@ public class RangeDifference {
 	}
 
 	/**
-	 * Shifts the offset into the left document of the receiver. 
-	 * 
+	 * Shifts the offset into the left document of the receiver.
+	 *
 	 * @param shift the number of elements to shift
 	 */
 	public void shiftLeft(int shift) {
@@ -225,8 +225,8 @@ public class RangeDifference {
 	}
 
 	/**
-	 * Shifts the offset into the right document of the receiver. 
-	 * 
+	 * Shifts the offset into the right document of the receiver.
+	 *
 	 * @param shift the number of elements to shift
 	 */
 	public void shiftRight(int shift) {
@@ -237,7 +237,7 @@ public class RangeDifference {
 	/**
 	 * Resizes the receiver <code>shift</code> units, on both sides, by
 	 * moving the start of the difference.
-	 * 
+	 *
 	 * @param shift the number of elements to shift
 	 */
 	public void extendStart(int shift) {
@@ -252,7 +252,7 @@ public class RangeDifference {
 	/**
 	 * Resizes the receiver <code>shift</code> units, on both sides, by
 	 * moving the end of the difference.
-	 * 
+	 *
 	 * @param shift the number of elements to shift
 	 */
 	public void extendEnd(int shift) {
@@ -261,7 +261,7 @@ public class RangeDifference {
 		fRightLength += shift;
 		fLeftLength += shift;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -272,19 +272,19 @@ public class RangeDifference {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns {@link Object#hashCode()}.
-	 * 
+	 *
 	 * @return the hash code which is {@link Object#hashCode()}
 	 */
 	public final int hashCode() {
 		return super.hashCode();
 	}
-	
+
 	/**
 	 * Returns the diff region corresponding to this range difference.
-	 * 
+	 *
 	 * @param differences the list of differences around this one difference
 	 * @param source the original document (left document) that this difference refers to
 	 * @return a <code>DiffRegion</code> corresponding to this difference

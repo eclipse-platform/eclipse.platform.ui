@@ -26,15 +26,15 @@ import org.eclipse.jface.text.IDocument;
  * document, it should use the
  * {@link org.eclipse.jface.text.IDocumentExtension3}API and choose a unique
  * partitioning id.
- * 
+ *
  * @since 3.0
  * @see org.eclipse.jface.text.IDocumentExtension3
  */
 public interface IDocumentSetupParticipant {
-	
+
 	/**
 	 * Sets up the document to be ready for use by a text file buffer.
-	 * 
+	 *
 	 * @param document the document to be set up
 	 */
 	void setup(IDocument document);

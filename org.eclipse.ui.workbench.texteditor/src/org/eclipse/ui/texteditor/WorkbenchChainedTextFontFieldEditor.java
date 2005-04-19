@@ -32,28 +32,28 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Propagation means that the actual text font stored in the workbench store is set as
  * default text font in the target store. If the target store does not contain a value
  * rather than the default text font, the new default text font is immediately effective.
- * 
- * @see org.eclipse.jface.preference.FontFieldEditor 
+ *
+ * @see org.eclipse.jface.preference.FontFieldEditor
  * @deprecated since 3.0 not longer in use, no longer supported
  * @since 2.0
  */
 public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEditor {
-	
+
 	/**
 	 * Creates a new font field editor with the given parameters.
-	 * 
+	 *
 	 * @param name the editor's name
 	 * @param labelText the text shown as editor description
 	 * @param parent the editor's parent widget
 	 */
 	public WorkbenchChainedTextFontFieldEditor(String name, String labelText, Composite parent) {
-		super(name, labelText, parent, EditorMessages.WorkbenchChainedTextFontFieldEditor_defaultWorkbenchTextFont); 
+		super(name, labelText, parent, EditorMessages.WorkbenchChainedTextFontFieldEditor_defaultWorkbenchTextFont);
 	}
-	
+
 	/**
 	 * Starts the propagation of the text font preference set in the workbench
 	 * to given target preference store using the given preference key.
-	 * 
+	 *
 	 * @param target the target preference store
 	 * @param targetKey the key to be used in the target preference store
 	 */

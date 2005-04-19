@@ -51,11 +51,11 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog for selecting resources.
- * 
+ *
  * @since 3.1
  */
 public class SelectResourcesDialog extends Dialog {
-	
+
 	interface IFilter {
 		boolean accept(IResource resource);
 	}
@@ -73,16 +73,16 @@ public class SelectResourcesDialog extends Dialog {
 		fTitle= title;
 		fInstruction= instruction;
 	}
-	
+
 	public void setInput(IResource[] input) {
 		fInput= input;
 	}
-	
+
 	public IResource[] getSelectedResources() {
 		List items= fResourceGroup.getAllCheckedListItems();
 		return (IResource[]) items.toArray(new IResource[items.size()]);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
@@ -91,7 +91,7 @@ public class SelectResourcesDialog extends Dialog {
 		if (fTitle != null)
 			newShell.setText(fTitle);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -107,22 +107,22 @@ public class SelectResourcesDialog extends Dialog {
 				updateSelectionCount();
 			}
 		});
-		
+
 		fCountIndication= new Label(composite, SWT.LEFT);
 		fCountIndication.setLayoutData(new GridData(GridData.FILL_BOTH));
-				
+
 		createSelectionButtonGroup(composite);
-		
+
 		setInitialSelection();
 		return composite;
 	}
-	
+
 	private boolean useHeightHint(Composite parent) {
 		int fontHeight= (parent.getFont().getFontData())[0].getHeight();
 		int displayHeight= parent.getDisplay().getClientArea().height;
 		return (displayHeight / fontHeight) > 50;
 	}
-		
+
     private ITreeContentProvider getResourceProvider(final int resourceType) {
         return new WorkbenchContentProvider() {
             public Object[] getChildren(Object o) {
@@ -135,7 +135,7 @@ public class SelectResourcesDialog extends Dialog {
             		}
             		return projects.toArray();
             	}
-            	
+
                 if (o instanceof IContainer) {
                     IResource[] members = null;
                     try {
@@ -154,17 +154,17 @@ public class SelectResourcesDialog extends Dialog {
                         }
                     }
                     return results.toArray();
-                } 
-                
+                }
+
                 //input element case
                 if (o instanceof ArrayList)
                 	return ((ArrayList) o).toArray();
-                
+
                 return new Object[0];
             }
         };
     }
-    
+
     protected final void createSelectionButtonGroup(Composite parent) {
 
 		Font font= parent.getFont();
@@ -179,7 +179,7 @@ public class SelectResourcesDialog extends Dialog {
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_selectAll, false); 
+		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_selectAll, false);
 
 		SelectionListener listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -191,7 +191,7 @@ public class SelectResourcesDialog extends Dialog {
 		selectButton.setFont(font);
 		setButtonLayoutData(selectButton);
 
-		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_deselectAll, false); 
+		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_deselectAll, false);
 
 		listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -202,9 +202,9 @@ public class SelectResourcesDialog extends Dialog {
 		deselectButton.addSelectionListener(listener);
 		deselectButton.setFont(font);
 		setButtonLayoutData(deselectButton);
-		
+
 		// types edit button
-		Button selectTypesButton= createButton(buttonComposite, IDialogConstants.SELECT_TYPES_ID, TextEditorMessages.SelectResourcesDialog_filterSelection, false); 
+		Button selectTypesButton= createButton(buttonComposite, IDialogConstants.SELECT_TYPES_ID, TextEditorMessages.SelectResourcesDialog_filterSelection, false);
 
 		listener= new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -215,7 +215,7 @@ public class SelectResourcesDialog extends Dialog {
 		selectTypesButton.setFont(font);
 		setButtonLayoutData(selectTypesButton);
 	}
-    
+
     protected void handleSelectFileTypes() {
 		Object[] acceptedFileTypes= queryFileTypes();
 		if (acceptedFileTypes != null) {
@@ -223,24 +223,24 @@ public class SelectResourcesDialog extends Dialog {
 			filterSelection();
 		}
 	}
-    
+
     protected Object[] queryFileTypes() {
 		TypeFilteringDialog dialog= new TypeFilteringDialog(getShell(), fAcceptedFileTypes);
 		dialog.open();
 		return dialog.getResult();
 	}
-    
+
     private void filterSelection() {
-    	
+
     	final IFilter filter= new IFilter() {
 			public boolean accept(IResource resource) {
 				return hasAcceptedFileType(resource);
 			}
 		};
-		
+
 		List list= fResourceGroup.getAllWhiteCheckedItems();
 		final IResource[] resources= (IResource[]) list.toArray(new IResource[list.size()]);
-		
+
         Runnable runnable = new Runnable() {
             public void run() {
             	setSelection(resources, filter);
@@ -249,7 +249,7 @@ public class SelectResourcesDialog extends Dialog {
 
         BusyIndicator.showWhile(getShell().getDisplay(), runnable);
     }
-        
+
     protected boolean hasAcceptedFileType(IResource resource) {
 		if (fAcceptedFileTypes == null)
 			return true;
@@ -269,7 +269,7 @@ public class SelectResourcesDialog extends Dialog {
 
 		return false;
 	}
-		
+
 	protected void setInitialSelection() {
 		IFilter filter= new IFilter() {
 			public boolean accept(IResource resource) {
@@ -279,7 +279,7 @@ public class SelectResourcesDialog extends Dialog {
 		setSelection(fInput, filter);
 		selectAndReveal(fInput[0]);
 	}
-	
+
 	protected void setSelection(IResource[] input, IFilter filter) {
 		Map selectionMap= new Hashtable();
 		for (int i= 0; i < input.length; i++) {
@@ -292,7 +292,7 @@ public class SelectResourcesDialog extends Dialog {
 						files= (List) selectionMap.get(parent);
 					else
 						files= new ArrayList();
-					
+
 					files.add(resource);
 					selectionMap.put(parent, files);
 				}
@@ -302,13 +302,13 @@ public class SelectResourcesDialog extends Dialog {
 		fResourceGroup.updateSelections(selectionMap);
 		updateSelectionCount();
 	}
-	
+
 	private void setSelection(Map selectionMap, IContainer parent, IFilter filter) {
 		try {
-			
+
 			IResource[] resources= parent.members();
 			List selections= new ArrayList();
-			
+
 			for (int i= 0; i < resources.length; i++) {
 				IResource resource= resources[i];
 				if ((resource.getType() & IResource.FILE) > 0) {
@@ -318,16 +318,16 @@ public class SelectResourcesDialog extends Dialog {
 					setSelection(selectionMap, (IContainer) resource, filter);
 				}
 			}
-			
+
 			if (!selections.isEmpty())
 				selectionMap.put(parent, selections);
-			
+
 		} catch (CoreException x) {
 			//Just return if we can't get any info
 			return;
 		}
 	}
-	
+
 	private void selectAndReveal(IResource resource) {
 		IContainer container= null;
 		if ((IResource.FILE & resource.getType()) > 0)
@@ -343,16 +343,16 @@ public class SelectResourcesDialog extends Dialog {
 		StringBuffer buffer= new StringBuffer();
 		switch (checkedFiles) {
 			case 0:
-				buffer.append(TextEditorMessages.SelectResourcesDialog_noFilesSelected); 
+				buffer.append(TextEditorMessages.SelectResourcesDialog_noFilesSelected);
 				break;
 			case 1:
-				buffer.append(TextEditorMessages.SelectResourcesDialog_oneFileSelected); 
+				buffer.append(TextEditorMessages.SelectResourcesDialog_oneFileSelected);
 				break;
 			default:
-				buffer.append(NLSUtility.format(TextEditorMessages.SelectResourcesDialog_nFilesSelected, new Integer(checkedFiles))); 
+				buffer.append(NLSUtility.format(TextEditorMessages.SelectResourcesDialog_nFilesSelected, new Integer(checkedFiles)));
 		}
 		fCountIndication.setText(buffer.toString());
-		
+
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		if (okButton != null)
 			okButton.setEnabled(checkedFiles > 0);

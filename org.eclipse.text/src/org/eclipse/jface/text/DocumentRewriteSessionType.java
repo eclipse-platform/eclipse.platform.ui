@@ -21,14 +21,14 @@ package org.eclipse.jface.text;
  * 	<li>{@link DocumentRewriteSessionType#STRICTLY_SEQUENTIAL}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4
  * @see org.eclipse.jface.text.IDocumentRewriteSessionListener
  * @since 3.1
  */
 public class DocumentRewriteSessionType {
-	
+
 	/**
 	 * A unrestricted rewrite session is a sequence of unrestricted replace
 	 * operations.

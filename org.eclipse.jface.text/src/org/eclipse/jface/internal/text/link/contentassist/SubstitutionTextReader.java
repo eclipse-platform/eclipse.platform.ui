@@ -18,13 +18,13 @@ import java.io.Reader;
 
 /**
  * Reads the text contents from a reader and computes for each character
- * a potential substitution. The substitution may eat more characters than 
+ * a potential substitution. The substitution may eat more characters than
  * only the one passed into the computation routine.
  */
 abstract class SubstitutionTextReader extends SingleCharReader {
-	
+
 	protected static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	private Reader fReader;
 	private boolean fWasWhiteSpace;
 	private int fCharAfterWhiteSpace;
@@ -33,7 +33,7 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 	 * Tells whether white space characters are skipped.
 	 */
 	private boolean fSkipWhiteSpace= true;
-	
+
 	private boolean fReadFromBuffer;
 	private StringBuffer fBuffer;
 	private int fIndex;
@@ -47,27 +47,27 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 		fCharAfterWhiteSpace= -1;
 		fWasWhiteSpace= true;
 	}
-	
+
 	/**
 	 * Computes the substitution for the given character and if necessary
 	 * subsequent characters. Implementation should use <code>nextChar</code>
 	 * to read subsequent characters.
-	 * 
+	 *
 	 * @param c the character to be substituted
 	 * @return the substitution for <code>c</code>
 	 * @throws IOException in case computing the substitution fails
 	 */
 	protected abstract String computeSubstitution(int c) throws IOException;
-	
+
 	/**
 	 * Returns the internal reader.
-	 * 
+	 *
 	 * @return the internal reader
 	 */
 	protected Reader getReader() {
 		return fReader;
 	}
-	 
+
 	/**
 	 * Returns the next character.
 	 * @return the next character
@@ -83,7 +83,7 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 			}
 			return ch;
 		}
-		
+
 		int ch= fCharAfterWhiteSpace;
 		if (ch == -1) {
 			ch= fReader.read();
@@ -101,14 +101,14 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 		}
 		return ch;
 	}
-	
+
 	/**
 	 * @see Reader#read()
 	 */
 	public int read() throws IOException {
 		int c;
 		do {
-			
+
 			c= nextChar();
 			while (!fReadFromBuffer) {
 				String s= computeSubstitution(c);
@@ -118,35 +118,35 @@ abstract class SubstitutionTextReader extends SingleCharReader {
 					fBuffer.insert(0, s);
 				c= nextChar();
 			}
-			
+
 		} while (fSkipWhiteSpace && fWasWhiteSpace && (c == ' '));
 		fWasWhiteSpace= (c == ' ' || c == '\r' || c == '\n');
 		return c;
 	}
-		
+
 	/**
 	 * @see Reader#ready()
-	 */		
+	 */
     public boolean ready() throws IOException {
 		return fReader.ready();
 	}
-		
+
 	/**
 	 * @see Reader#close()
-	 */		
+	 */
 	public void close() throws IOException {
 		fReader.close();
 	}
-	
+
 	/**
 	 * @see Reader#reset()
-	 */		
+	 */
 	public void reset() throws IOException {
 		fReader.reset();
 		fWasWhiteSpace= true;
 		fCharAfterWhiteSpace= -1;
 		fBuffer.setLength(0);
-		fIndex= 0;		
+		fIndex= 0;
 	}
 
 	protected final void setSkipWhitespace(boolean state) {

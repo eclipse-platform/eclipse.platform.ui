@@ -17,16 +17,16 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.TextPresentation} is about to be applied to the
  * text viewer. The listener can apply changed to the text presentation and thus
  * participate in the process of text presentation creation.
- * 
+ *
  * @since 3.0
  */
 public interface ITextPresentationListener {
-	
+
 	/**
 	 * This method is called when a text presentation is about to be applied to
 	 * the text viewer. The receiver is allowed to change the text presentation
 	 * during that call.
-	 * 
+	 *
 	 * @param textPresentation the current text presentation
 	 */
 	public void applyTextPresentation(TextPresentation textPresentation);

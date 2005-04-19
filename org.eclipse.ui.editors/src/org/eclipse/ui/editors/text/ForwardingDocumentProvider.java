@@ -55,21 +55,21 @@ import org.eclipse.ui.texteditor.IElementStateListener;
  * <code>ForwardingDocumentProvider</code> as document provider. In this case
  * the forwarding document provider may not be shared between editors.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IStorageDocumentProvider {
-	
+
 	private IDocumentProvider fParentProvider;
 	private String fPartitioning;
 	private IDocumentSetupParticipant fDocumentSetupParticipant;
 	private boolean fAllowSetParentProvider;
-	
-		
+
+
 	/**
 	 * Creates a new forwarding document provider with a fixed parent document provider. Calling
 	 * {@link #setParentProvider(IDocumentProvider)} does not have any effect on this object.
-	 * 
+	 *
 	 * @param partitioning the partitioning
 	 * @param documentSetupParticipant the document setup participant
 	 * @param parentProvider the parent document provider
@@ -80,12 +80,12 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		fParentProvider= parentProvider;
 		fAllowSetParentProvider= false;
 	}
-	
+
 	/**
 	 * Creates a new forwarding document provider with a dynamically changeable
 	 * parent provider. Forwarding document providers created with that method
 	 * are not allowed to be shared by multiple editors.
-	 * 
+	 *
 	 * @param partitioning the partitioning
 	 * @param documentSetupParticipant the document setup participant
 	 */
@@ -94,18 +94,18 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		fDocumentSetupParticipant= documentSetupParticipant;
 		fAllowSetParentProvider= true;
 	}
-	
+
 	/**
 	 * Sets the parent document provider. This method has only an effect if the
 	 * forwarding document provider has accordingly be created.
-	 * 
+	 *
 	 * @param parentProvider the new parent document provider
 	 */
 	public void setParentProvider(IDocumentProvider parentProvider) {
 		if (fAllowSetParentProvider)
 			fParentProvider= parentProvider;
 	}
-		
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#connect(java.lang.Object)
 	 */
@@ -118,7 +118,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 				fDocumentSetupParticipant.setup(document);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProvider#disconnect(java.lang.Object)
 	 */

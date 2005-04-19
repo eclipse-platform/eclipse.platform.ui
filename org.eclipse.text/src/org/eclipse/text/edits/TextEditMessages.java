@@ -30,12 +30,12 @@ import java.util.ResourceBundle;
 			return '!' + key + '!';
 		}
 	}
-	
+
 	public static String getFormattedString(String key, Object arg) {
 		return getFormattedString(key, new Object[] { arg });
 	}
-	
+
 	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}		
+		return MessageFormat.format(getString(key), args);
+	}
 }

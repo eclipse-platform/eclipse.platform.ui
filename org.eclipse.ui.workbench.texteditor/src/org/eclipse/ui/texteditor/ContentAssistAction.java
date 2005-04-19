@@ -38,21 +38,21 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * @since 2.0
  */
 public final class ContentAssistAction extends TextEditorAction {
-	
+
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
-	
+
 	/**
 	 * Creates and initializes the action for the given text editor.
 	 * The action configures its visual representation from the given resource
-	 * bundle. The action works by asking the text editor at the time for its 
+	 * bundle. The action works by asking the text editor at the time for its
 	 * text operation target adapter (using
 	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs the
 	 * content assist operation on this target.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
@@ -60,23 +60,23 @@ public final class ContentAssistAction extends TextEditorAction {
 	public ContentAssistAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
+
 	/**
 	 * Runs the content assist operation on the editor's text operation target.
 	 */
 	public void run() {
 		if (fOperationTarget != null) {
-			
+
 			ITextEditor editor= getTextEditor();
 			if (editor != null && validateEditorInputState()) {
-				
+
 				Display display= null;
-				
+
 				IWorkbenchPartSite site= editor.getSite();
 				Shell shell= site.getShell();
-				if (shell != null && !shell.isDisposed()) 
+				if (shell != null && !shell.isDisposed())
 					display= shell.getDisplay();
-			
+
 				BusyIndicator.showWhile(display, new Runnable() {
 					public void run() {
 						fOperationTarget.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
@@ -85,33 +85,33 @@ public final class ContentAssistAction extends TextEditorAction {
 			}
 		}
 	}
-	
+
 	/**
-	 * The <code>ContentAssistAction</code> implementation of this 
+	 * The <code>ContentAssistAction</code> implementation of this
 	 * <code>IUpdate</code> method discovers the operation through the current
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.
 	 */
 	public void update() {
-		
+
 		ITextEditor editor= getTextEditor();
 
 		if (fOperationTarget == null && editor!= null)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-		
+
 		if (fOperationTarget == null) {
 			setEnabled(false);
 			return;
 		}
-		
+
 		if (fOperationTarget instanceof ITextOperationTargetExtension) {
 			ITextOperationTargetExtension targetExtension= (ITextOperationTargetExtension) fOperationTarget;
 			targetExtension.enableOperation(ISourceViewer.CONTENTASSIST_PROPOSALS, canModifyEditor());
 		}
-		
+
 		setEnabled(fOperationTarget.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS));
 	}
-	
+
 	/**
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */

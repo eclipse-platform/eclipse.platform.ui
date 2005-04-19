@@ -41,7 +41,7 @@ import org.eclipse.ui.IEditorPart;
  * of evolution. The following extension interfaces exist:
  * <ul>
  * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension} since version 2.0
- * 		introducing status fields, read-only state and ruler context menu 
+ * 		introducing status fields, read-only state and ruler context menu
  * 		listeners.</li>
  * <li>{@link org.eclipse.ui.texteditor.ITextEditorExtension2} since version 2.1
  * 		introducing modifiable state for the editor input and validate state
@@ -50,7 +50,7 @@ import org.eclipse.ui.IEditorPart;
  * 		adding input state and change information control.</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.eclipse.ui.texteditor.IDocumentProvider
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @see org.eclipse.ui.texteditor.ITextEditorExtension
@@ -58,14 +58,14 @@ import org.eclipse.ui.IEditorPart;
  * @see org.eclipse.ui.texteditor.ITextEditorExtension3
  */
 public interface ITextEditor extends IEditorPart {
-		
+
 	/**
 	 * Returns this text editor's document provider.
 	 *
 	 * @return the document provider or <code>null</code> if none, e.g. after closing the editor
 	 */
 	IDocumentProvider getDocumentProvider();
-	
+
 	/**
 	 * Closes this text editor after optionally saving changes.
 	 *
@@ -73,20 +73,20 @@ public interface ITextEditor extends IEditorPart {
 	 *   <code>false</code> if unsaved changed should be discarded
 	 */
 	void close(boolean save);
-				
+
 	/**
 	 * Returns whether the text in this text editor can be changed by the user.
 	 *
 	 * @return <code>true</code> if it can be edited, and <code>false</code> if it is read-only
 	 */
 	boolean isEditable();
-		
+
 	/**
-	 * Abandons all modifications applied to this text editor's input element's 
+	 * Abandons all modifications applied to this text editor's input element's
 	 * textual presentation since the last save operation.
 	 */
 	void doRevertToSaved();
-	
+
 	/**
 	 * Installs the given action under the given action id.
 	 *
@@ -95,7 +95,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #getAction(String)
 	 */
 	void setAction(String actionID, IAction action);
-	
+
 	/**
 	 * Returns the action installed under the given action id.
 	 *
@@ -104,11 +104,11 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #setAction(String, IAction)
 	 */
 	IAction getAction(String actionId);
-	
+
 	/**
 	 * Sets the given activation code for the specified action. If
 	 * there is an activation code already registered, it is replaced.
-	 * The activation code consists of the same information as 
+	 * The activation code consists of the same information as
 	 * a <code>KeyEvent</code>. If the activation code is triggered
 	 * and the associated action is enabled, the action is performed
 	 * and the triggering <code>KeyEvent</code> is considered consumed.
@@ -117,25 +117,25 @@ public interface ITextEditor extends IEditorPart {
 	 * differ in their model of event consumption. The key code parameter
 	 * can be <code>-1</code> to indicate a wild card. The state mask
 	 * parameter can be SWT.DEFAULT to indicate a wild card.
-	 * 
+	 *
 	 * @param actionId the action id
 	 * @param activationCharacter the activation code character
 	 * @param activationKeyCode the activation code key code or <code>-1</code> for wild card
 	 * @param activationStateMask the activation code state mask or <code>SWT.DEFAULT</code> for wild card
 	 */
 	void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask);
-	
+
 	/**
 	 * Removes any installed activation code for the specified action.
 	 * If no activation code is installed, this method does not have
 	 * any effect.
-	 * 
+	 *
 	 * @param actionId the action id
 	 */
 	void removeActionActivationCode(String actionId);
-	
+
 	/**
-	 * Returns whether this text editor is configured to show only the 
+	 * Returns whether this text editor is configured to show only the
 	 * highlighted range of the text.
 	 *
 	 * @return <code>true</code> if only the highlighted range is shown, and
@@ -143,7 +143,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #showHighlightRangeOnly(boolean)
 	 */
 	boolean showsHighlightRangeOnly();
-	
+
 	/**
 	 * Configures this text editor to show only the highlighted range of the
 	 * text.
@@ -154,7 +154,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #showsHighlightRangeOnly()
 	 */
 	void showHighlightRangeOnly(boolean showHighlightRangeOnly);
-	
+
 	/**
 	 * Sets the highlighted range of this text editor to the specified region.
 	 *
@@ -166,7 +166,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #getHighlightRange()
 	 */
 	void setHighlightRange(int offset, int length, boolean moveCursor);
-	
+
 	/**
 	 * Returns the highlighted range of this text editor.
 	 *
@@ -174,12 +174,12 @@ public interface ITextEditor extends IEditorPart {
 	 * @see #setHighlightRange(int, int, boolean)
 	 */
 	IRegion getHighlightRange();
-	
+
 	/**
 	 * Resets the highlighted range of this text editor.
 	 */
-	void resetHighlightRange();	
-	
+	void resetHighlightRange();
+
 	/**
 	 * Returns this text editor's selection provider. Repeated calls to this
 	 * method return the same selection provider.
@@ -187,7 +187,7 @@ public interface ITextEditor extends IEditorPart {
 	 * @return the selection provider
 	 */
 	ISelectionProvider getSelectionProvider();
-		
+
 	/**
 	 * Selects and reveals the specified range in this text editor.
 	 *

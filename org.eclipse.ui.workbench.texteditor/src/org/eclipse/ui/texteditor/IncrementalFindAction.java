@@ -40,15 +40,15 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @since 2.1
 	 */
 	private boolean fForward;
-	
+
 	/**
-	 * Creates a new incremental find action for the given workbench part. 
-	 * The action configures its visual representation from the given 
+	 * Creates a new incremental find action for the given workbench part.
+	 * The action configures its visual representation from the given
 	 * resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param workbenchPart the workbench part
 	 * @param forward <code>true</code> if the search direction is forward
@@ -61,20 +61,20 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 		fForward= forward;
 		update();
 	}
-	
+
 	/**
-	 * Creates a new incremental find action for the given workbench window. 
-	 * The action configures its visual representation from the given 
+	 * Creates a new incremental find action for the given workbench window.
+	 * The action configures its visual representation from the given
 	 * resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
 	 * @param forward <code>true</code> if the search direction is forward
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
-	 * 
+	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 * @since 2.1
 	 */
@@ -92,7 +92,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 
 		if (fTarget == null)
 			return;
-		
+
 		if (fTarget instanceof IncrementalFindTarget)
 			((IncrementalFindTarget) fTarget).setDirection(fForward);
 
@@ -104,15 +104,15 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		
+
 		if (fWorkbenchPart == null && fWorkbenchWindow != null)
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
-			
+
 		if (fWorkbenchPart != null)
 			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IncrementalFindTarget.class);
 		else
 			fTarget= null;
-			
+
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
 

@@ -29,24 +29,24 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * store and a target preference store. Any time the source preference
  * store changes, the change is propagated to the target store. Propagation
  * means that the actual value stored in the source store is set as default
- * value in the target store. If the target store does not contain a value 
- * other than the default value, the new default value is immediately 
+ * value in the target store. If the target store does not contain a value
+ * other than the default value, the new default value is immediately
  * effective.
- * 
- * @see FontFieldEditor 
+ *
+ * @see FontFieldEditor
  * @since 2.0
  * @deprecated since 3.0 not longer in use, no longer supported
  */
 public class PropagatingFontFieldEditor extends FontFieldEditor {
-	
+
 	/** The editor's parent widget */
 	private Composite fParent;
 	/** The representation of the default font choice */
 	private String fDefaultFontLabel;
-	
+
 	/**
 	 * Creates a new font field editor with the given parameters.
-	 * 
+	 *
 	 * @param name the editor's name
 	 * @param labelText the text shown as editor description
 	 * @param parent the editor's parent widget
@@ -57,7 +57,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		fParent= parent;
 		fDefaultFontLabel= defaultFontLabel == null ? "" : defaultFontLabel; //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * @see FontFieldEditor#doLoad()
 	 */
@@ -67,7 +67,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		super.doLoad();
 		checkForDefault();
 	}
-	
+
 	/*
 	 * @see FontFieldEditor#doLoadDefault()
 	 */
@@ -75,7 +75,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		super.doLoadDefault();
 		checkForDefault();
 	}
-	
+
 	/**
 	 * Checks whether this editor presents the default value "inherited"
 	 * from the workbench rather than its own font.
@@ -87,11 +87,11 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 				((Label) c).setText(fDefaultFontLabel);
 		}
 	}
-	
+
 	/**
 	 * Propagates the font set in the source store to the
 	 * target store using the given keys.
-	 * 
+	 *
 	 * @param source the store from which to read the text font
 	 * @param sourceKey the key under which the font can be found
 	 * @param target the store to which to propagate the font
@@ -102,18 +102,18 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		if (fd != null) {
 			boolean isDefault= target.isDefault(targetKey);	// save old state!
 			PreferenceConverter.setDefault(target, targetKey, fd);
-			if (isDefault) {			
+			if (isDefault) {
 				// restore old state
 				target.setToDefault(targetKey);
 			}
 		}
 	}
-	
+
 	/**
 	 * Starts the propagation of the font preference stored in the source preference
-	 * store under the source key to the target preference store using the target 
+	 * store under the source key to the target preference store using the target
 	 * preference key.
-	 * 
+	 *
 	 * @param source the source preference store
 	 * @param sourceKey the key to be used in the source preference store
 	 * @param target the target preference store
@@ -122,11 +122,11 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	public static void startPropagate(final IPreferenceStore source, final String sourceKey, final IPreferenceStore target, final String targetKey) {
 		source.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (sourceKey.equals(event.getProperty()))						
+				if (sourceKey.equals(event.getProperty()))
 					propagateFont(source, sourceKey, target, targetKey);
 			}
 		});
-		
+
 		propagateFont(source, sourceKey, target, targetKey);
 	}
 }

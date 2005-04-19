@@ -19,30 +19,30 @@ package org.eclipse.jface.text;
  * delimiter. Between two delimited partitions there may be an open partition of
  * length zero.
  * <p>
- * 
+ *
  * In order to fulfill the contract of this interface, the document must be
  * configured with a document partitioner implementing
  * {@link org.eclipse.jface.text.IDocumentPartitionerExtension2}.
- * 
+ *
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension2
  * @since 3.0
  */
 public interface IDocumentExtension3 {
-	
+
 	/**
 	 * The identifier of the default partitioning.
 	 */
 	final static String DEFAULT_PARTITIONING= "__dftl_partitioning"; //$NON-NLS-1$
-	
-	
+
+
 	/**
 	 * Returns the existing partitionings for this document. This includes
 	 * the default partitioning.
-	 * 
+	 *
 	 * @return the existing partitionings for this document
 	 */
 	String[] getPartitionings();
-	
+
 	/**
 	 * Returns the set of legal content types of document partitions for the given partitioning
 	 * This set can be empty. The set can contain more content types than  contained by the
@@ -53,8 +53,8 @@ public interface IDocumentExtension3 {
 	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	String[] getLegalContentTypes(String partitioning) throws BadPartitioningException;
-	
-	
+
+
 	/**
 	 * Returns the type of the document partition containing the given offset
 	 * for the given partitioning. This is a convenience method for
@@ -70,7 +70,7 @@ public interface IDocumentExtension3 {
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>preferOpenPartitions</code> is ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param partitioning the partitioning
 	 * @param offset the document offset
 	 * @param preferOpenPartitions <code>true</code> if precedence should be
@@ -81,7 +81,7 @@ public interface IDocumentExtension3 {
 	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	String getContentType(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException;
-	
+
 	/**
 	 * Returns the document partition of the given partitioning in which the
 	 * given offset is located.
@@ -96,7 +96,7 @@ public interface IDocumentExtension3 {
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>preferOpenPartitions</code> is ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param partitioning the partitioning
 	 * @param offset the document offset
 	 * @param preferOpenPartitions <code>true</code> if precedence should be
@@ -107,7 +107,7 @@ public interface IDocumentExtension3 {
 	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	ITypedRegion getPartition(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException;
-	
+
 	/**
 	 * Computes the partitioning of the given document range based on the given
 	 * partitioning type.
@@ -121,7 +121,7 @@ public interface IDocumentExtension3 {
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>includeZeroLengthPartitions</code> is ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param partitioning the document's partitioning type
 	 * @param offset the document offset at which the range starts
 	 * @param length the length of the document range
@@ -129,7 +129,7 @@ public interface IDocumentExtension3 {
 	 *        partitions should be returned as part of the computed partitioning
 	 * @return a specification of the range's partitioning
 	 * @exception BadLocationException if the range is invalid in this document$
-	 * @exception BadPartitioningException if partitioning is invalid for this document 
+	 * @exception BadPartitioningException if partitioning is invalid for this document
 	 */
 	ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException;
 
@@ -143,8 +143,8 @@ public interface IDocumentExtension3 {
 	 * @param partitioner the document's new partitioner
 	 * @see IDocumentPartitioningListener
 	 */
-	void setDocumentPartitioner(String partitioning, IDocumentPartitioner partitioner);	
-	
+	void setDocumentPartitioner(String partitioning, IDocumentPartitioner partitioner);
+
 	/**
 	 * Returns the partitioner for the given partitioning or <code>null</code> if
 	 * no partitioner is registered.

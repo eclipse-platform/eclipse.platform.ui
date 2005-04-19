@@ -27,11 +27,11 @@ package org.eclipse.jface.text.source;
  * </ul>
  * <p>
  * Clients may implement this interface.
- * 
+ *
  * @see org.eclipse.jface.text.source.IAnnotationHoverExtension
  */
 public interface IAnnotationHover {
-		
+
 	/**
 	 * Returns the text which should be presented in the a
 	 * hover popup window. This information is requested based on

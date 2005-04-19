@@ -21,7 +21,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  * This interface contains constants only; it is not intended to be implemented.</p>
  */
 public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContextIds {
-	
+
 	/**
 	 * Id for the text editor preference page.
 	 * Value: <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
@@ -33,7 +33,7 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * Value: <code>"org.eclipse.ui.text_editor_context"</code>.
 	 */
 	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
-	
+
 	/**
 	 * Help context id for the "Add Bookmark" action.
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>

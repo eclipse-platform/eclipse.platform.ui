@@ -27,7 +27,7 @@ class JFaceTextMessages {
 
 	/**
 	 * Gets a string from the resource bundle.
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be <code>null</code>
 	 * @return the string from the resource bundle
 	 */

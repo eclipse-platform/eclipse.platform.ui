@@ -52,22 +52,22 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  * The preference page for setting the editor options.
  * <p>
  * This class is internal and not intended to be used by clients.</p>
- * 
+ *
  * @since 2.1
  */
 public class AccessibilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private abstract class Initializer {
 
 		protected final Preference fPreference;
-		
+
 		protected Initializer(Preference preference) {
 			fPreference= preference;
 		}
-		
+
 		public abstract void initialize();
 	}
-	
+
 
 	public final class InitializerFactory {
 		private class TextInitializer extends Initializer {
@@ -123,26 +123,26 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public Initializer create(Preference preference, Button control) {
 			return new CheckboxInitializer(preference, control);
 		}
-		
+
 		public Initializer create(Preference preference, Combo control, EnumeratedDomain domain) {
 			return new ComboInitializer(preference, control, domain);
 		}
 	}
-	
-	
+
+
 	abstract static class Domain {
 		public abstract IStatus validate(Object value);
 		protected int parseInteger(Object val) throws NumberFormatException {
 			if (val instanceof Integer)
 				return ((Integer) val).intValue();
-			
+
 			if (val instanceof String)
 				return Integer.parseInt((String) val);
-			
-			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val))); 
+
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val)));
 		}
 	}
-	
+
 	static class IntegerDomain extends Domain {
 		private final int fMax;
 		private final int fMin;
@@ -155,26 +155,26 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 
 			try {
 				int integer= parseInteger(value);
 				if (!rangeCheck(integer))
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer))); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer)));
 			} catch (NumberFormatException e) {
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
 			return status;
 		}
-		
+
 		protected boolean rangeCheck(int i) {
 			return (i >= fMin && i <= fMax);
 		}
 
 	}
-	
+
 	static class EnumeratedDomain extends Domain {
 		public final static class EnumValue {
 			private final int fValue;
@@ -202,10 +202,10 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				return false;
 			}
 		}
-		
+
 		private final java.util.List fItems= new ArrayList();
 		private final Set fValueSet= new HashSet();
-		
+
 		public void addValue(EnumValue val) {
 			if (fValueSet.contains(val))
 				fItems.remove(val);
@@ -218,12 +218,12 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			for (Iterator it= fItems.iterator(); it.hasNext();) {
 				EnumValue ev= (EnumValue) it.next();
 				if (ev.equals(enumValue))
-					return i; 
+					return i;
 				i++;
 			}
 			return -1;
 		}
-		
+
 		public EnumValue getValueByIndex (int index) {
 			if (index >= 0 && fItems.size() > index)
 				return (EnumValue) fItems.get(index);
@@ -242,7 +242,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public void addValue(int val) {
 			addValue(new EnumValue(val));
 		}
-		
+
 		public void addRange(int from, int to) {
 			while (from <= to)
 				addValue(from++);
@@ -251,21 +251,21 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()}));
 			} catch (NumberFormatException e) {
-				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
-			
+
 			return status;
 		}
-		
+
 		private EnumValue parseEnumValue(Object value) {
 			if (value instanceof EnumValue)
 				return (EnumValue) value;
@@ -273,44 +273,44 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			return getValueByInteger(integer);
 		}
 	}
-	
+
 	static class BooleanDomain extends Domain {
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 
 			try {
 				parseBoolean(value);
 			} catch (NumberFormatException e) {
-				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
-			
+
 			return status;
 		}
 
 		private boolean parseBoolean(Object value) throws NumberFormatException {
 			if (value instanceof Boolean)
 				return ((Boolean) value).booleanValue();
-			
+
 			if (value instanceof String) {
 				if (Boolean.TRUE.toString().equalsIgnoreCase((String) value))
 					return true;
 				if (Boolean.FALSE.toString().equalsIgnoreCase((String) value))
 					return false;
 			}
-			
-			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 		}
 	}
-	
+
 	private static class Preference {
 		private String fKey;
 		private String fName;
 		private String fDescription; // for tooltips
-		
+
 		public Preference(String key, String name, String description) {
 			Assert.isNotNull(key);
 			Assert.isNotNull(name);
@@ -328,39 +328,39 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			return fDescription;
 		}
 	}
-	
+
 	private OverlayPreferenceStore fOverlayStore;
-	
+
 	/**
 	 * Tells whether the fields are initialized.
 	 * @since 3.0
 	 */
 	private boolean fFieldsInitialized= false;
-	
+
 	private java.util.List fInitializers= new ArrayList();
-	
+
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
 
 	private Control fContents;
 	private ArrayList fMasterSlaveListeners= new ArrayList();
 
-	
+
 	public AccessibilityPreferencePage() {
-		setDescription(TextEditorMessages.AccessibilityPreferencePage_accessibility_title); 
+		setDescription(TextEditorMessages.AccessibilityPreferencePage_accessibility_title);
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
-		
+
 		fOverlayStore= createOverlayStore();
 	}
-	
-	
+
+
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look
 	}
-	
+
 	private OverlayPreferenceStore createOverlayStore() {
-		
+
 		ArrayList overlayKeys= new ArrayList();
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
@@ -369,10 +369,10 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
-	
+
 	/*
 	 * @see IWorkbenchPreferencePage#init()
-	 */	
+	 */
 	public void init(IWorkbench workbench) {
 	}
 
@@ -394,54 +394,54 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
-		
-		String label= TextEditorMessages.TextEditorPreferencePage_accessibility_disableCustomCarets; 
+
+		String label= TextEditorMessages.TextEditorPreferencePage_accessibility_disableCustomCarets;
 		Preference customCarets= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, label, null);
 		Button master= addCheckBox(appearanceComposite, customCarets, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.TextEditorPreferencePage_accessibility_wideCaret; 
+		label= TextEditorMessages.TextEditorPreferencePage_accessibility_wideCaret;
 		Preference wideCaret= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, label, null);
 		Button slave= addCheckBox(appearanceComposite, wideCaret, new BooleanDomain(), 0);
 		createDependency(master, customCarets, new Control[] { slave });
-		
-		label= TextEditorMessages.QuickDiffConfigurationBlock_characterMode; 
+
+		label= TextEditorMessages.QuickDiffConfigurationBlock_characterMode;
 		Preference quickDiffTextMode= new Preference(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, label, null);
 		addCheckBox(appearanceComposite, quickDiffTextMode, new BooleanDomain(), 0);
 
 		return appearanceComposite;
 	}
-	
+
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		
+
 		fOverlayStore.load();
 		fOverlayStore.start();
-		
+
 		fContents= createAppearancePage(parent);
 		initialize();
 		Dialog.applyDialogFont(fContents);
 		return fContents;
 	}
-	
+
 	private void initialize() {
 		initializeFields();
 	}
-	
+
 	private void initializeFields() {
-		
+
 		for (Iterator it= fInitializers.iterator(); it.hasNext();) {
 			Initializer initializer= (Initializer) it.next();
 			initializer.initialize();
 		}
-		
+
 		fFieldsInitialized= true;
 
 		updateStatus(new StatusInfo()); //$NON-NLS-1$
-		
+
 	}
-	
+
 	/*
 	 * @see PreferencePage#performOk()
 	 */
@@ -450,39 +450,39 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		EditorsPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 
 		fOverlayStore.loadDefaults();
-		
+
 		initializeFields();
 
 		super.performDefaults();
 	}
-	
+
 	/*
 	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
-		
+
 		if (fOverlayStore != null) {
 			fOverlayStore.stop();
 			fOverlayStore= null;
 		}
-		
+
 		super.dispose();
 	}
-	
-	
-	
-	private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
+
+
+
+	private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {
 		final Button checkBox= new Button(composite, SWT.CHECK);
 		checkBox.setText(preference.getName());
 		checkBox.setToolTipText(preference.getDescription());
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
@@ -496,20 +496,20 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				updateStatus(status);
 			}
 		});
-		
+
 		fInitializers.add(fInitializerFactory.create(preference, checkBox));
-		
+
 		return checkBox;
 	}
-	
+
 	private void createDependency(final Button master, Preference preference, final Control[] slaves) {
 		indent(slaves[0]);
-		
+
 		boolean masterState= fOverlayStore.getBoolean(preference.getKey());
 		for (int i= 0; i < slaves.length; i++) {
 			slaves[i].setEnabled(masterState);
 		}
-		
+
 		SelectionListener listener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
@@ -523,24 +523,24 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		master.addSelectionListener(listener);
 		fMasterSlaveListeners.add(listener);
 	}
-	
+
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
 		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
+		control.setLayoutData(gridData);
 	}
-	
+
 	void updateStatus(IStatus status) {
 		if (!fFieldsInitialized)
 			return;
-		
+
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
 
 	/**
 	 * Applies the status to the status line of a dialog page.
-	 * 
+	 *
 	 * @param page the dialog page
 	 * @param status the status
 	 */
@@ -554,18 +554,18 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			case IStatus.WARNING:
 				page.setMessage(message, IMessageProvider.WARNING);
 				page.setErrorMessage(null);
-				break;				
+				break;
 			case IStatus.INFO:
 				page.setMessage(message, IMessageProvider.INFORMATION);
 				page.setErrorMessage(null);
-				break;			
+				break;
 			default:
 				if (message.length() == 0) {
 					message= null;
 				}
 				page.setMessage(null);
 				page.setErrorMessage(message);
-				break;		
+				break;
 		}
 	}
 }

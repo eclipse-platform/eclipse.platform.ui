@@ -31,60 +31,60 @@ import java.util.List;
  * This class must be subclassed.
  */
 public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerExtension {
-	
-	
+
+
 	/**
 	 * Tells whether this class is in debug mode.
 	 * @since 3.1
 	 */
 	private static final boolean DEBUG= false;
 
-	
+
 	/**
 	 * Combines the information of the occurrence of a line delimiter.
 	 * <code>delimiterIndex</code> is the index where a line delimiter
 	 * starts, whereas <code>delimiterLength</code>, indicates the length
-	 * of the delimiter. 
+	 * of the delimiter.
 	 */
 	protected static class DelimiterInfo {
 		public int delimiterIndex;
 		public int delimiterLength;
 		public String delimiter;
 	}
-	
+
 	/**
 	 * Representation of replace and set requests.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected static class Request {
 		public final int offset;
 		public final int length;
 		public final String text;
-		
+
 		public Request(int offset, int length, String text) {
 			this.offset= offset;
 			this.length= length;
 			this.text= text;
 		}
-		
+
 		public Request(String text) {
 			this.offset= -1;
 			this.length= -1;
 			this.text= text;
 		}
-		
+
 		public boolean isReplaceRequest() {
 			return this.offset > -1 && this.length > -1;
 		}
-	}	
-	
-	
+	}
+
+
 	/** The line information */
 	private List fLines= new ArrayList();
 	/** The length of the tracked text */
 	private int fTextLength;
-	
+
 	/**
 	 * The active rewrite session.
 	 * @since 3.1
@@ -95,14 +95,14 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @since 3.1
 	 */
 	private List fPendingRequests;
-	
-	
+
+
 	/**
 	 * Creates a new line tracker.
 	 */
 	protected AbstractLineTracker() {
 	}
-			
+
 	/**
 	 * Binary search for the line at a given offset.
 	 *
@@ -110,19 +110,19 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @return the line of the offset
 	 */
 	private int findLine(int offset) {
-		
+
 		if (fLines.size() == 0)
 			return -1;
-			
+
 		int left= 0;
 		int right= fLines.size() -1;
 		int mid= 0;
 		Line line= null;
-		
+
 		while (left < right) {
-			
+
 			mid= (left + right) / 2;
-				
+
 			line= (Line) fLines.get(mid);
 			if (offset < line.offset) {
 				if (left == mid)
@@ -138,13 +138,13 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 				left= right= mid;
 			}
 		}
-		
+
 		line= (Line) fLines.get(left);
 		if (line.offset > offset)
-			-- left;		
+			-- left;
 		return left;
 	}
-	
+
 	/**
 	 * Returns the number of lines covered by the specified text range.
 	 *
@@ -155,173 +155,173 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @exception BadLocationException if range is undefined in this tracker
 	 */
 	private int getNumberOfLines(int startLine, int offset, int length) throws BadLocationException {
-		
+
 		if (length == 0)
 			return 1;
-			
+
 		int target= offset + length;
-		
+
 		Line l= (Line) fLines.get(startLine);
-		
+
 		if (l.delimiter == null)
 			return 1;
-		
+
 		if (l.offset + l.length > target)
 			return 1;
-		
+
 		if (l.offset + l.length == target)
 			return 2;
-			
+
 		return getLineNumberOfOffset(target) - startLine + 1;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineLength(int)
 	 */
 	public int getLineLength(int line) throws BadLocationException {
-		
+
 		checkRewriteSession();
-		
+
 		int lines= fLines.size();
-		
+
 		if (line < 0 || line > lines)
 			throw new BadLocationException();
-		
+
 		if (lines == 0 || lines == line)
 			return 0;
-				
+
 		Line l= (Line) fLines.get(line);
 		return l.length;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public int getLineNumberOfOffset(int position) throws BadLocationException {
-		
+
 		checkRewriteSession();
-				
+
 		if (position > fTextLength)
 			throw new BadLocationException();
-			
+
 		if (position == fTextLength) {
-			
+
 			int lastLine= fLines.size() - 1;
 			if (lastLine < 0)
 				return 0;
-							
+
 			Line l= (Line) fLines.get(lastLine);
 			return (l.delimiter != null ? lastLine + 1 : lastLine);
 		}
-		
+
 		return findLine(position);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
 	 */
-	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
-		
+	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {
+
 		checkRewriteSession();
-		
+
 		if (position > fTextLength)
 			throw new BadLocationException();
-			
+
 		if (position == fTextLength) {
 			int size= fLines.size();
 			if (size == 0)
 				return new Region(0, 0);
 			Line l= (Line) fLines.get(size - 1);
 			return (l.delimiter != null ? new Line(fTextLength, 0) : new Line(fTextLength - l.length, l.length));
-		}	
-		
+		}
+
 		return getLineInformation(findLine(position));
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
-		
+
 		checkRewriteSession();
-		
+
 		int lines= fLines.size();
-		
+
 		if (line < 0 || line > lines)
 			throw new BadLocationException();
-			
+
 		if (lines == 0)
 			return new Line(0, 0);
-			
+
 		if (line == lines) {
 			Line l= (Line) fLines.get(line - 1);
 			return new Line(l.offset + l.length, 0);
 		}
-		
+
 		Line l= (Line) fLines.get(line);
 		return (l.delimiter != null ? new Line(l.offset, l.length - l.delimiter.length()) : l);
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineOffset(int)
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
-		
+
 		checkRewriteSession();
-		
+
 		int lines= fLines.size();
-		
+
 		if (line < 0 || line > lines)
 			throw new BadLocationException();
-		
+
 		if (lines == 0)
 			return 0;
-			
+
 		if (line == lines) {
 			Line l= (Line) fLines.get(line - 1);
 			if (l.delimiter != null)
 				return l.offset + l.length;
 			throw new BadLocationException();
 		}
-		
+
 		Line l= (Line) fLines.get(line);
 		return l.offset;
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines()
 	 */
 	public int getNumberOfLines() {
-		
+
 		try {
 			checkRewriteSession();
 		} catch (BadLocationException x) {
 			// TODO there is currently no way to communicate that exception back to the document
 		}
-		
+
 		int lines= fLines.size();
-		
+
 		if (lines == 0)
 			return 1;
-			
+
 		Line l= (Line) fLines.get(lines - 1);
 		return (l.delimiter != null ? lines + 1 : lines);
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines(int, int)
 	 */
 	public int getNumberOfLines(int position, int length) throws BadLocationException {
-		
+
 		if (position < 0 || position + length > fTextLength)
 			throw new BadLocationException();
-			
+
 		if (length == 0) // optimization
 			return 1;
-			
+
 		return getNumberOfLines(getLineNumberOfOffset(position), position, length);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#computeNumberOfLines(java.lang.String)
 	 */
@@ -330,39 +330,39 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		int start= 0;
 		DelimiterInfo delimiterInfo= nextDelimiterInfo(text, start);
 		while (delimiterInfo != null && delimiterInfo.delimiterIndex > -1) {
-			++count;			
+			++count;
 			start= delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength;
 			delimiterInfo= nextDelimiterInfo(text, start);
 		}
-		return count;	
+		return count;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
 	 */
 	public String getLineDelimiter(int line) throws BadLocationException {
-		
+
 		checkRewriteSession();
-		
+
 		int lines= fLines.size();
-		
+
 		if (line < 0 || line > lines)
 			throw new BadLocationException();
-			
+
 		if (lines == 0)
 			return null;
-			
+
 		if (line == lines)
 			return null;
-					
+
 		Line l= (Line) fLines.get(line);
 		return l.delimiter;
 	}
-	
-	
+
+
 	/* ----------------- manipulation ------------------------------ */
-	
-	
+
+
 	/**
 	 * Returns the information about the first delimiter found in the given
 	 * text starting at the given offset.
@@ -372,8 +372,8 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @return the information of the first found delimiter or <code>null</code>
 	 */
 	protected abstract DelimiterInfo nextDelimiterInfo(String text, int offset);
-	
-	
+
+
 	/**
 	 * Creates the line structure for the given text. Newly created lines
 	 * are inserted into the line structure starting at the given
@@ -386,26 +386,26 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @return the number of newly created lines
 	 */
 	private int createLines(String text, int insertPosition, int offset) {
-		
+
 		int count= 0;
 		int start= 0;
 		DelimiterInfo delimiterInfo= nextDelimiterInfo(text, 0);
-		
-		
+
+
 		while (delimiterInfo != null && delimiterInfo.delimiterIndex > -1) {
-			
+
 			int index= delimiterInfo.delimiterIndex + (delimiterInfo.delimiterLength - 1);
-			
+
 			if (insertPosition + count >= fLines.size())
 				fLines.add(new Line(offset + start, offset + index, delimiterInfo.delimiter));
-			else 
+			else
 				fLines.add(insertPosition + count, new Line(offset + start, offset + index, delimiterInfo.delimiter));
-				
+
 			++count;
 			start= index + 1;
 			delimiterInfo= nextDelimiterInfo(text, start);
 		}
-		
+
 		if (start < text.length()) {
 			if (insertPosition + count < fLines.size()) {
 				// there is a line below the current
@@ -418,10 +418,10 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 				++count;
 			}
 		}
-		
+
 		return count;
 	}
-	
+
 	/**
 	 * Keeps track of the line information when text is inserted.
 	 * Returns the number of inserted lines.
@@ -433,25 +433,25 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @exception BadLocationException if offset is invalid in this tracker
 	 */
 	private int insert(int lineNumber, int offset, String text) throws BadLocationException {
-		
+
 		if (text == null || text.length() == 0)
 			return 0;
-			
+
 		fTextLength += text.length();
-		
+
 		int size= fLines.size();
-		
+
 		if (size == 0 || lineNumber >= size)
 			return createLines(text, size, offset);
-					
+
 		Line line= (Line) fLines.get(lineNumber);
 		DelimiterInfo delimiterInfo= nextDelimiterInfo(text, 0);
 		if (delimiterInfo == null || delimiterInfo.delimiterIndex == -1) {
 			line.length += text.length();
 			return 0;
 		}
-		
-		
+
+
 		// as there is a line break, split line but do so only if rest of line is not of length 0
 		int restLength= line.offset + line.length - offset;
 		if (restLength > 0) {
@@ -463,48 +463,48 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			//  and insert in line structure
 			fLines.add(lineNumber + 1, lineRest);
 		}
-		
+
 		// adapt the beginning of the split line
 		line.delimiter= delimiterInfo.delimiter;
 		int nextStart= offset + delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength;
 		line.length= nextStart - line.offset;
-		
+
 		// insert lines for the remaining text
 		text= text.substring(delimiterInfo.delimiterIndex + delimiterInfo.delimiterLength);
 		return createLines(text, lineNumber + 1, nextStart) + 1;
 	}
-		
+
 	/**
-	 * Keeps track of the line information when text is removed. Returns 
+	 * Keeps track of the line information when text is removed. Returns
 	 * whether the line at which the deletion start will thereby be deleted.
 	 *
 	 * @param lineNumber the lineNumber at which the deletion starts
 	 * @param offset the offset of the first deleted character
-	 * @param length the number of deleted characters 
+	 * @param length the number of deleted characters
 	 * @return <code>true</code> if the start line has been deleted, <code>false</code> otherwise
 	 * @exception BadLocationException if position is unknown to the tracker
 	 */
 	private boolean remove(int lineNumber, int offset, int length) throws BadLocationException {
-		
+
 		if (length == 0)
-			return false;		
-		
+			return false;
+
 		int removedLineEnds= getNumberOfLines(lineNumber, offset, length) - 1;
 		Line line= (Line) fLines.get(lineNumber);
-		
+
 		if ((lineNumber == fLines.size() - 1) && removedLineEnds > 0) {
-			line.length -= length; 
+			line.length -= length;
 			line.delimiter= null;
 		} else {
-			
+
 			++ lineNumber;
 			for (int i= 1; i <= removedLineEnds; i++) {
-				
+
 				if (lineNumber == fLines.size()) {
 					line.delimiter= null;
 					break;
 				}
-				
+
 				Line line2= (Line) fLines.get(lineNumber);
 				line.length += line2.length;
 				line.delimiter= line2.delimiter;
@@ -512,17 +512,17 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			}
 			line.length -= length;
 		}
-		
+
 		fTextLength -= length;
-		
+
 		if (line.length == 0) {
 			fLines.remove(line);
 			return true;
 		}
-		
-		return false;	
+
+		return false;
 	}
-	
+
 	/**
 	 * Adapts the offset of all lines with line numbers greater than the specified
 	 * one to the given delta.
@@ -537,40 +537,40 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			l.offset += delta;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#replace(int, int, java.lang.String)
 	 */
 	public void replace(int position, int length, String text) throws BadLocationException {
-		
+
 		if (hasActiveRewriteSession()) {
 			fPendingRequests.add(new Request(position, length, text));
-			
+
 		} else {
-		
+
 			int firstLine= getLineNumberOfOffset(position);
 			int insertLineNumber= firstLine;
-			
+
 			if (remove(firstLine, position, length))
 				-- firstLine;
-			
+
 			int lastLine= firstLine + insert(insertLineNumber, position, text);
-		
+
 //			int lines= fLines.size();
 //			if (lines > 0) {
-//				
+//
 //				// try to collapse the first and the second line if second line is empty
 //				if (0 <= firstLine && firstLine + 1 < lines) {
 //					Line l2= (Line) fLines.get(firstLine + 1);
 //					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
 //						// line is empty
-//						
+//
 //						// append empty line to precessor
 //						Line l1= (Line) fLines.get(firstLine);
 //						StringBuffer buffer= new StringBuffer();
 //						buffer.append(l1.delimiter);
 //						buffer.append(l2.delimiter);
-//						
+//
 //						// test whether this yields just one line rather then two
 //						DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
 //						if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
@@ -581,19 +581,19 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 //						}
 //					}
 //				}
-//				
+//
 //				// try to collapse the last inserted line with the following line
 //				if (lastLine < lines) {
 //					Line l2= (Line) fLines.get(lastLine);
 //					if (l2.delimiter != null && l2.length == l2.delimiter.length()) {
 //						// line is empty
-//						
+//
 //						// append empty line to precessor
 //						Line l1= (Line) fLines.get(lastLine -1);
 //						StringBuffer buffer= new StringBuffer();
 //						buffer.append(l1.delimiter);
 //						buffer.append(l2.delimiter);
-//						
+//
 //						// test whether this yields just one line rather then two
 //						DelimiterInfo info= nextDelimiterInfo(buffer.toString(), 0);
 //						if (info != null && info.delimiterIndex == 0 && info.delimiterLength == buffer.length()) {
@@ -604,16 +604,16 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 //					}
 //				}
 //			}
-		
+
 			int delta= -length;
 			if (text != null)
 				delta= text.length() + delta;
-			
+
 			if (delta != 0)
 				adaptLineOffsets(lastLine, delta);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#set(java.lang.String)
 	 */
@@ -629,8 +629,8 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			}
 		}
 	}
-	
-	
+
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTrackerExtension#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
 	 * @since 3.1
@@ -641,7 +641,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		fActiveRewriteSession= session;
 		fPendingRequests= new ArrayList(20);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTrackerExtension#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession, java.lang.String)
 	 * @since 3.1
@@ -653,10 +653,10 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			set(text);
 		}
 	}
-	
+
 	/**
 	 * Tells whether there's an active rewrite session.
-	 * 
+	 *
 	 * @return <code>true</code> if there is an active rewrite session,
 	 *         <code>false</code> otherwise
 	 * @since 3.1
@@ -664,10 +664,10 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	protected final boolean hasActiveRewriteSession() {
 		return fActiveRewriteSession != null;
 	}
-	
+
 	/**
 	 * Flushes the active rewrite session.
-	 * 
+	 *
 	 * @throws BadLocationException in case the recorded requests cannot be
 	 *             processed correctly
 	 * @since 3.1
@@ -675,12 +675,12 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	protected final void flushRewriteSession() throws BadLocationException {
 		if (DEBUG)
 			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
-		
+
 		Iterator e= fPendingRequests.iterator();
-		
+
 		fPendingRequests= null;
 		fActiveRewriteSession= null;
-		
+
 		while (e.hasNext()) {
 			Request request= (Request) e.next();
 			if (request.isReplaceRequest())
@@ -689,12 +689,12 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 				set(request.text);
 		}
 	}
-	
+
 	/**
 	 * Checks the presence of a rewrite session and flushes it.
 	 *
 	 * @throws BadLocationException in case flushing does not succeed
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected final void checkRewriteSession() throws BadLocationException {

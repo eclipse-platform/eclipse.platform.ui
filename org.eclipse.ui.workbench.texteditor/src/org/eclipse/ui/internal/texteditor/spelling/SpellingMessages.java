@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Spelling messages. Helper class to get NLSed messages.
- * 
+ *
  * @since 3.1
  */
 final class SpellingMessages extends NLS {

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.ITextViewer;
  * <p>
  * The interface can be implemented by clients.
  * </p>
- * 
+ *
  * @see IContextInformationPresenter
  */
 public interface IContextInformationValidator {

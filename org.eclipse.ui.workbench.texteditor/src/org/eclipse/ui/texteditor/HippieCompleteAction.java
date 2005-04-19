@@ -41,15 +41,15 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * This class implements the emacs style completion action. Completion action is
  * a stateful action, as the user may invoke it several times in a row in order
  * to scroll the possible completions.
- * 
+ *
  * TODO: Sort by editor type
  * TODO: Provide history option
- * 
+ *
  * @since 3.1
  * @author Genady Beryozkin, me@genady.org
  */
 final class HippieCompleteAction extends TextEditorAction {
-	
+
 	/**
 	 * This class represents the state of the last completion process. Each time
 	 * the user moves to a new position and calls this action an instance of
@@ -57,25 +57,25 @@ final class HippieCompleteAction extends TextEditorAction {
 	 * {@link HippieCompleteAction#fLastCompletion}.
 	 */
 	private static class CompletionState {
-		
+
 		/** The length of the last suggestion string */
 		int length;
-		
+
 		/** The index of next suggestion (index into the suggestion array) */
 		int nextSuggestion;
-		
+
 		/** The caret position at which we insert the suggestions */
 		final int startOffset;
-		
+
 		/**
 		 * The list of suggestions that was computed when the completion action
 		 * was first invoked
 		 */
 		final String[] suggestions;
-		
+
 		/**
 		 * Create a new completion state object
-		 * 
+		 *
 		 * @param suggestions the array of possible completions
 		 * @param startOffset the position in the parent document at which the
 		 *        completions will be inserted.
@@ -86,16 +86,16 @@ final class HippieCompleteAction extends TextEditorAction {
 			length= 0;
 			nextSuggestion= 0;
 		}
-		
+
 		/**
 		 * Advances the completion state to represent the next completion.
 		 */
 		public void advance() {
 			length= suggestions[nextSuggestion].length();
-			nextSuggestion= (nextSuggestion + 1) % suggestions.length;	
+			nextSuggestion= (nextSuggestion + 1) % suggestions.length;
 		}
 	}
-	
+
 	/**
 	 * Invalidate the completion state when the document contents changes not as
 	 * the result of the completion action itself.
@@ -103,14 +103,14 @@ final class HippieCompleteAction extends TextEditorAction {
 	class DocumentChangeListener implements IDocumentListener {
 		public void documentAboutToBeChanged(DocumentEvent event) {
 		}
-		
+
 		public void documentChanged(DocumentEvent event) {
 			if (!fModifyingLock) {
 				clearState();
 			}
 		}
 	}
-	
+
 	/**
 	 * This class invalidates the completion state when the selection changes.
 	 */
@@ -121,44 +121,44 @@ final class HippieCompleteAction extends TextEditorAction {
 			}
 		}
 	}
-	
+
 	/**
 	 * The document that will be manipulated (currently open in the editor)
 	 */
 	private IDocument fDocument;
-	
+
 	/**
 	 * The completion state that is used to continue the iteration over
 	 * completion suggestions
 	 */
 	private CompletionState fLastCompletion= null;
-	
+
 	/**
 	 * Modification lock that will prevent invalidation of the completion state
 	 * when the completion action modifies the document
 	 */
 	private boolean fModifyingLock= false;
-	
+
 	/**
 	 * The selection listener that is registered with the selection provider of
 	 * this editor.
 	 */
 	private SelectionChangeListener fSelectionListener;
-	
+
 	/**
 	 * The document change listener that is registered with the currently open
 	 * document.
 	 */
 	private DocumentChangeListener fDocumentListener;
-	
+
 	/**
 	 * The completion engine
 	 */
 	private final HippieCompletionEngine fEngine= new HippieCompletionEngine();
-	
+
 	/**
 	 * Creates a new action.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *        (described in <code>ResourceAction</code> constructor), or
@@ -168,24 +168,24 @@ final class HippieCompleteAction extends TextEditorAction {
 	HippieCompleteAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
+
 	/**
 	 * Invalidates the cached completions, removes all registered listeners and
 	 * sets the cached document to <code>null</code>.
 	 */
 	private void clearState() {
 		fLastCompletion= null;
-		
+
 		ITextEditor editor= getTextEditor();
 		if (editor != null && fSelectionListener != null)
 			editor.getSelectionProvider().removeSelectionChangedListener(fSelectionListener);
-		
+
 		if (fDocument != null && fDocumentListener != null)
 			fDocument.removeDocumentListener(fDocumentListener);
-		
+
 		fDocument= null;
 	}
-	
+
 	/**
 	 * Perform the next completion.
 	 */
@@ -201,10 +201,10 @@ final class HippieCompleteAction extends TextEditorAction {
 				clearState();
 				return;
 			}
-			
+
 			// advance the suggestion state
 			fLastCompletion.advance();
-			
+
 			// move the caret to the insertion point
 			ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
             sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
@@ -213,30 +213,30 @@ final class HippieCompleteAction extends TextEditorAction {
 			// allow changes
 			fModifyingLock= false;
 		}
-	}	
-	
+	}
+
 	/**
 	 * Return the list of suggestions from the current document. First the
 	 * document is searched backwards from the caret position and then forwards.
-	 * 
+	 *
 	 * @param prefix the completion prefix
 	 * @return all possible completions that were found in the current document
 	 * @throws BadLocationException if accessing the document fails
 	 */
 	private ArrayList createSuggestionsFromOpenDocument(String prefix) throws BadLocationException {
 		int selectionOffset= getSelectionOffset();
-		
+
 		ArrayList completions= new ArrayList();
 		completions.addAll(fEngine.getCompletionsBackwards(fDocument, prefix, selectionOffset));
 		completions.addAll(fEngine.getCompletionsForward(fDocument, prefix, selectionOffset));
-		
+
 		return completions;
 	}
-	
+
 	/**
 	 * Returns the document currently displayed in the editor, or
 	 * <code>null</code>
-	 * 
+	 *
 	 * @return the document currently displayed in the editor, or
 	 *         <code>null</code>
 	 */
@@ -247,15 +247,15 @@ final class HippieCompleteAction extends TextEditorAction {
 		IDocumentProvider provider= editor.getDocumentProvider();
 		if (provider == null)
 			return null;
-		
+
 		IDocument document= provider.getDocument(editor.getEditorInput());
 		return document;
 	}
-	
+
 	/**
 	 * Return the part of a word before the caret. If the caret is not at a
 	 * middle/end of a word, returns null.
-	 * 
+	 *
 	 * @return the prefix at the current cursor position that will be used in
 	 *         the search for possible completions
 	 * @throws BadLocationException if accessing the document fails
@@ -266,7 +266,7 @@ final class HippieCompleteAction extends TextEditorAction {
 			return null;
 		}
 		int pos= selection.getOffset();
-		
+
 		int prevNonAlpha= pos;
 		while (prevNonAlpha > 0 && Character.isJavaIdentifierPart(fDocument.getChar(prevNonAlpha-1))) {
 			prevNonAlpha--;
@@ -276,33 +276,33 @@ final class HippieCompleteAction extends TextEditorAction {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the current selection (or caret) offset.
-	 * 
+	 *
 	 * @return the current selection (or caret) offset
 	 */
 	private int getSelectionOffset() {
 		return ((ITextSelection) getTextEditor().getSelectionProvider().getSelection()).getOffset();
 	}
-	
+
 	/**
 	 * Create the array of suggestions. It scans all open text editors and
 	 * prefers suggestions from the currently open editor. It also adds the
 	 * empty suggestion at the end.
-	 * 
+	 *
 	 * @param prefix the prefix to search for
 	 * @return the list of all possible suggestions in the currently open
 	 *         editors
 	 * @throws BadLocationException if accessing the current document fails
 	 */
 	private String[] getSuggestions(String prefix) throws BadLocationException {
-		
+
 		ArrayList suggestions= createSuggestionsFromOpenDocument(prefix);
-		
+
 		IWorkbenchWindow window= getTextEditor().getSite().getWorkbenchWindow();
 		IEditorReference editorsArray[]= window.getActivePage().getEditorReferences();
-		
+
 		for (int i= 0; i < editorsArray.length; i++) {
 			IEditorPart realEditor= editorsArray[i].getEditor(false);
 			if (realEditor instanceof ITextEditor &&
@@ -310,18 +310,18 @@ final class HippieCompleteAction extends TextEditorAction {
 				ITextEditor textEditor= (ITextEditor)realEditor;
 				IEditorInput input= textEditor.getEditorInput();
 				IDocument doc= textEditor.getDocumentProvider().getDocument(input);
-				
+
 				suggestions.addAll(fEngine.getCompletions(doc, prefix));
 			}
-		}		
+		}
 		// add the empty suggestion
 		suggestions.add(""); //$NON-NLS-1$
-		
+
 		List uniqueSuggestions= fEngine.makeUnique(suggestions);
-		
+
 		return (String[]) uniqueSuggestions.toArray(new String[0]);
 	}
-	
+
 	/**
 	 * Installs the selection and document listeners. Both editor and cached
 	 * document must be valid.
@@ -330,30 +330,30 @@ final class HippieCompleteAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		Assert.isNotNull(editor);
 		Assert.isNotNull(fDocument);
-		
+
 		if (fSelectionListener == null)
 			fSelectionListener= new SelectionChangeListener();
 		editor.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
-		
+
 		if (fDocumentListener == null)
 			fDocumentListener= new DocumentChangeListener();
 		fDocument.addDocumentListener(fDocumentListener);
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the current completion state is still
 	 * valid given the current document and selection.
-	 * 
+	 *
 	 * @return <code>true</code> if the cached state is valid,
 	 *         <code>false</code> otherwise
 	 */
 	private boolean isStateValid() {
-		return fDocument != null 
-				&& fDocument.equals(getCurrentDocument()) 
-				&& fLastCompletion != null 
+		return fDocument != null
+				&& fDocument.equals(getCurrentDocument())
+				&& fLastCompletion != null
 				&& fLastCompletion.startOffset + fLastCompletion.length == getSelectionOffset();
 	}
-	
+
 	/**
 	 * Notifies the user that there are no suggestions.
 	 */
@@ -361,28 +361,28 @@ final class HippieCompleteAction extends TextEditorAction {
 		// TODO notify via status line?
 		getTextEditor().getSite().getShell().getDisplay().beep();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 		if (!validateEditorInputState())
 			return;
-		
+
 		if (!isStateValid())
 			updateState();
-		
+
 		if (isStateValid())
 			completeNext();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.IAction#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return canModifyEditor();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
@@ -390,7 +390,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		clearState(); // make sure to remove listers before the editor changes!
 		super.setEditor(editor);
 	}
-	
+
 	/**
 	 * Update the completion state. The completion cache is updated with the
 	 * completions based on the currently displayed document and the current
@@ -400,13 +400,13 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	private void updateState() {
 		Assert.isNotNull(getTextEditor());
-		
+
 		clearState();
-		
+
 		IDocument document= getCurrentDocument();
 		if (document != null) {
 			fDocument= document;
-			
+
 			String[] suggestions;
 			try {
 				String prefix= getCurrentPrefix();
@@ -419,21 +419,21 @@ final class HippieCompleteAction extends TextEditorAction {
 				log(e);
 				return;
 			}
-			
+
 			// if it is single empty suggestion
 			if (suggestions.length == 1) {
 				notifyUser();
 				return;
 			}
-			
+
 			installListeners();
 			fLastCompletion= new CompletionState(suggestions, getSelectionOffset());
 		}
 	}
-	
+
 	/**
 	 * Logs the exception.
-	 * 
+	 *
 	 * @param e the exception
 	 */
 	private void log(BadLocationException e) {

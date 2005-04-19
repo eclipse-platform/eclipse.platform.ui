@@ -19,16 +19,16 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * Extension interface for {@link org.eclipse.jface.text.contentassist.IContentAssistProcessor}
  * which provides the context for the
  * {@linkplain org.eclipse.jface.contentassist.ISubjectControlContentAssistant subject control content assistant}.
- * 
+ *
  * @since 3.0
  */
 public interface ISubjectControlContentAssistProcessor extends IContentAssistProcessor {
-	
+
 	/**
 	 * Returns a list of completion proposals based on the specified location
 	 * within the document that corresponds to the current cursor position
 	 * within the text viewer.
-	 * 
+	 *
 	 * @param contentAssistSubjectControl the content assist subject control whose
 	 *           document is used to compute the proposals
 	 * @param documentOffset an offset within the document for which
@@ -37,12 +37,12 @@ public interface ISubjectControlContentAssistProcessor extends IContentAssistPro
 	 *         proposals are possible
 	 */
 	ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset);
-	
+
 	/**
 	 * Returns information about possible contexts based on the specified
 	 * location within the document that corresponds to the current cursor
 	 * position within the content assist subject control.
-	 * 
+	 *
 	 * @param contentAssistSubjectControl the content assist subject control whose
 	 *           document is used to compute the possible contexts
 	 * @param documentOffset an offset within the document for which context

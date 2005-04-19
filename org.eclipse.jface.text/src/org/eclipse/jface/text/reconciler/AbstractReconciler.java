@@ -24,8 +24,8 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * Abstract implementation of {@link IReconciler}. The reconciler
  * listens to input document changes as well as changes of
- * the input document of the text viewer it is installed on. Depending on 
- * its configuration it manages the received change notifications in a 
+ * the input document of the text viewer it is installed on. Depending on
+ * its configuration it manages the received change notifications in a
  * queue folding neighboring or overlapping changes together. The reconciler
  * processes the dirty regions as a background activity after having waited for further
  * changes for the configured duration of time. A reconciler is started using the
@@ -38,7 +38,7 @@ import org.eclipse.jface.text.ITextViewer;
  * <p>
  * It is subclass responsibility to specify how dirty regions are processed.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.IDocumentListener
  * @see org.eclipse.jface.text.ITextInputListener
  * @see org.eclipse.jface.text.reconciler.DirtyRegion
@@ -46,12 +46,12 @@ import org.eclipse.jface.text.ITextViewer;
  */
 abstract public class AbstractReconciler implements IReconciler {
 
-	
+
 	/**
 	 * Background thread for the reconciling activity.
 	 */
 	class BackgroundThread extends Thread {
-		
+
 		/** Has the reconciler been canceled. */
 		private boolean fCanceled= false;
 		/** Has the reconciler been reset. */
@@ -60,9 +60,9 @@ abstract public class AbstractReconciler implements IReconciler {
 		private boolean fIsDirty= false;
 		/** Is a reconciling strategy active. */
 		private boolean fIsActive= false;
-		
+
 		/**
-		 * Creates a new background thread. The thread 
+		 * Creates a new background thread. The thread
 		 * runs with minimal priority.
 		 *
 		 * @param name the thread's name
@@ -72,7 +72,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			setPriority(Thread.MIN_PRIORITY);
 			setDaemon(true);
 		}
-		
+
 		/**
 		 * Returns whether a reconciling strategy is active right now.
 		 *
@@ -81,17 +81,17 @@ abstract public class AbstractReconciler implements IReconciler {
 		public boolean isActive() {
 			return fIsActive;
 		}
-		
+
 		/**
 		 * Returns whether some changes need to be processed.
-		 * 
+		 *
 		 * @return <code>true</code> if changes wait to be processed
 		 * @since 3.0
 		 */
 		public synchronized boolean isDirty() {
 			return fIsDirty;
 		}
-		
+
 		/**
 		 * Cancels the background thread.
 		 */
@@ -104,7 +104,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				fDirtyRegionQueue.notifyAll();
 			}
 		}
-		
+
 		/**
 		 * Suspends the caller of this method until this background thread has
 		 * emptied the dirty region queue.
@@ -123,33 +123,33 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			} while (isDirty);
 		}
-		
+
 		/**
 		 * Reset the background thread as the text viewer has been changed,
 		 */
 		public void reset() {
-			
+
 			if (fDelay > 0) {
-				
+
 				synchronized (this) {
 					fIsDirty= true;
 					fReset= true;
 				}
-				
+
 			} else {
-				
+
 				synchronized (this) {
 					fIsDirty= true;
 				}
-				
+
 				synchronized (fDirtyRegionQueue) {
 					fDirtyRegionQueue.notifyAll();
 				}
 			}
-            
+
             reconcilerReset();
 		}
-		
+
 		/**
 		 * The background activity. Waits until there is something in the
 		 * queue managing the changes that have been applied to the text viewer.
@@ -159,50 +159,50 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * </p>
 		 */
 		public void run() {
-			
+
 			synchronized (fDirtyRegionQueue) {
 				try {
 					fDirtyRegionQueue.wait(fDelay);
 				} catch (InterruptedException x) {
 				}
 			}
-			
+
 			initialProcess();
-			
+
 			while (!fCanceled) {
-				
+
 				synchronized (fDirtyRegionQueue) {
 					try {
 						fDirtyRegionQueue.wait(fDelay);
 					} catch (InterruptedException x) {
 					}
 				}
-					
+
 				if (fCanceled)
 					break;
-					
+
 				if (!isDirty())
 					continue;
-					
+
 				synchronized (this) {
 					if (fReset) {
 						fReset= false;
 						continue;
 					}
 				}
-				
+
 				DirtyRegion r= null;
 				synchronized (fDirtyRegionQueue) {
 					r= fDirtyRegionQueue.removeNextDirtyRegion();
 				}
-					
+
 				fIsActive= true;
-				
+
 				if (fProgressMonitor != null)
 					fProgressMonitor.setCanceled(false);
-					
+
 				process(r);
-				
+
 				synchronized (fDirtyRegionQueue) {
 					if (0 == fDirtyRegionQueue.getSize()) {
 						synchronized (this) {
@@ -211,52 +211,52 @@ abstract public class AbstractReconciler implements IReconciler {
 						fDirtyRegionQueue.notifyAll();
 					}
 				}
-				
+
 				fIsActive= false;
 			}
 		}
 	}
-	
+
 	/**
 	 * Internal document listener and text input listener.
 	 */
 	class Listener implements IDocumentListener, ITextInputListener {
-		
+
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
-		
+
 		/*
 		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
-			
+
 			if (!fThread.isDirty()&& fThread.isAlive())
 				aboutToBeReconciled();
-			
+
 			if (fProgressMonitor != null && fThread.isActive())
 				fProgressMonitor.setCanceled(true);
-				
+
 			if (fIsIncrementalReconciler)
 				createDirtyRegion(e);
-				
-			
+
+
 			fThread.reset();
-			
+
 		}
-				
+
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-			
+
 			if (oldInput == fDocument) {
-				
+
 				if (fDocument != null)
 					fDocument.removeDocumentListener(this);
-					
+
 				if (fIsIncrementalReconciler) {
 					fDirtyRegionQueue.purgeQueue();
 					if (fDocument != null && fDocument.getLength() > 0) {
@@ -266,25 +266,25 @@ abstract public class AbstractReconciler implements IReconciler {
 						fThread.suspendCallerWhileDirty();
 					}
 				}
-				
+
 				fDocument= null;
 			}
 		}
-		
+
 		/*
 		 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-			
+
 			fDocument= newInput;
 			if (fDocument == null)
 				return;
-				
-			
+
+
 			reconcilerDocumentChanged(fDocument);
-				
+
 			fDocument.addDocumentListener(this);
-			
+
 			if (!fThread.isDirty())
 				aboutToBeReconciled();
 
@@ -294,9 +294,9 @@ abstract public class AbstractReconciler implements IReconciler {
 			}
 
 			startReconciling();
-		}			
+		}
 	}
-	
+
 	/** Queue to manage the changes applied to the text viewer. */
 	private DirtyRegionQueue fDirtyRegionQueue;
 	/** The background thread. */
@@ -314,8 +314,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	private IDocument fDocument;
 	/** The text viewer */
 	private ITextViewer fViewer;
-	
-	
+
+
 	/**
 	 * Processes a dirty region. If the dirty region is <code>null</code> the whole
 	 * document is consider being dirty. The dirty region is partitioned by the
@@ -325,25 +325,25 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * @param dirtyRegion the dirty region to be processed
 	 */
 	abstract protected void process(DirtyRegion dirtyRegion);
-	
+
 	/**
 	 * Hook called when the document whose contents should be reconciled
 	 * has been changed, i.e., the input document of the text viewer this
-	 * reconciler is installed on. Usually, subclasses use this hook to 
+	 * reconciler is installed on. Usually, subclasses use this hook to
 	 * inform all their reconciling strategies about the change.
-	 * 
+	 *
 	 * @param newDocument the new reconciler document
 	 */
 	abstract protected void reconcilerDocumentChanged(IDocument newDocument);
-	
-	
+
+
 	/**
 	 * Creates a new reconciler without configuring it.
-	 */ 
+	 */
 	protected AbstractReconciler() {
 		super();
 	}
-		
+
 	/**
 	 * Tells the reconciler how long it should wait for further text changes before
 	 * activating the appropriate reconciling strategies.
@@ -353,11 +353,11 @@ abstract public class AbstractReconciler implements IReconciler {
 	public void setDelay(int delay) {
 		fDelay= delay;
 	}
-	
+
 	/**
 	 * Tells the reconciler whether any of the available reconciling strategies
 	 * is interested in getting detailed dirty region information or just in the
-	 * fact the the document has been changed. In the second case, the reconciling 
+	 * fact the the document has been changed. In the second case, the reconciling
 	 * can not incrementally be pursued.
 	 *
 	 * @param isIncremental indicates whether this reconciler will be configured with
@@ -369,74 +369,74 @@ abstract public class AbstractReconciler implements IReconciler {
 	public void setIsIncrementalReconciler(boolean isIncremental) {
 		fIsIncrementalReconciler= isIncremental;
 	}
-	
+
 	/**
 	 * Sets the progress monitor of this reconciler.
-	 * 
+	 *
 	 * @param monitor the monitor to be used
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}
-	
+
 	/**
 	 * Returns whether any of the reconciling strategies is interested in
 	 * detailed dirty region information.
-	 * 
+	 *
 	 * @return whether this reconciler is incremental
-	 * 
-	 * @see IReconcilingStrategy 
+	 *
+	 * @see IReconcilingStrategy
 	 */
 	protected boolean isIncrementalReconciler() {
 		return fIsIncrementalReconciler;
 	}
-	
+
 	/**
 	 * Returns the input document of the text viewer this reconciler is installed on.
-	 * 
+	 *
 	 * @return the reconciler document
 	 */
 	protected IDocument getDocument() {
 		return fDocument;
 	}
-	
+
 	/**
 	 * Returns the text viewer this reconciler is installed on.
-	 * 
+	 *
 	 * @return the text viewer this reconciler is installed on
 	 */
 	protected ITextViewer getTextViewer() {
 		return fViewer;
 	}
-	
+
 	/**
 	 * Returns the progress monitor of this reconciler.
-	 * 
+	 *
 	 * @return the progress monitor of this reconciler
 	 */
 	protected IProgressMonitor getProgressMonitor() {
 		return fProgressMonitor;
 	}
-	
+
 	/*
 	 * @see IReconciler#install(ITextViewer)
 	 */
 	public void install(ITextViewer textViewer) {
-		
+
 		Assert.isNotNull(textViewer);
 		fViewer= textViewer;
-		
+
 		synchronized (this) {
 			if (fThread != null)
 				return;
 			fThread= new BackgroundThread(getClass().getName());
 		}
-		
+
 		fDirtyRegionQueue= new DirtyRegionQueue();
-		
+
 		fListener= new Listener();
 		fViewer.addTextInputListener(fListener);
-		
+
 		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=67046
 		// if the reconciler gets installed on a viewer that already has a document
 		// (e.g. when reusing editors), we force the listener to register
@@ -449,20 +449,20 @@ abstract public class AbstractReconciler implements IReconciler {
 			fListener.inputDocumentChanged(fDocument, document);
 		}
 	}
-	
+
 	/*
 	 * @see IReconciler#uninstall()
 	 */
 	public void uninstall() {
 		if (fListener != null) {
-			
+
 			fViewer.removeTextInputListener(fListener);
 			if (fDocument != null) {
 				fListener.inputDocumentAboutToBeChanged(fDocument, null);
 				fListener.inputDocumentChanged(fDocument, null);
 			}
 			fListener= null;
-			
+
             synchronized (this) {
                 // http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
     			BackgroundThread bt= fThread;
@@ -471,36 +471,36 @@ abstract public class AbstractReconciler implements IReconciler {
             }
 		}
 	}
-		
+
 	/**
 	 * Creates a dirty region for a document event and adds it to the queue.
 	 *
 	 * @param e the document event for which to create a dirty region
 	 */
 	private void createDirtyRegion(DocumentEvent e) {
-		
+
 		if (e.getLength() == 0 && e.getText() != null) {
 			// Insert
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
-				
+
 		} else if (e.getText() == null || e.getText().length() == 0) {
 			// Remove
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
-				
+
 		} else {
 			// Replace (Remove + Insert)
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
 		}
 	}
-	
+
 	/**
 	 * Hook for subclasses which want to perform some
 	 * action as soon as reconciliation is needed.
 	 * <p>
 	 * Default implementation is to do nothing.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void aboutToBeReconciled() {
@@ -512,24 +512,24 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	protected void initialProcess() {
 	}
-	
+
 	/**
 	 * Forces the reconciler to reconcile the structure of the whole document.
 	 * Clients may extend this method.
 	 */
 	protected void forceReconciling() {
-		
+
 		if (fDocument != null) {
-			
+
 			if (fIsIncrementalReconciler) {
 				DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), fDocument.get());
 				createDirtyRegion(e);
 			}
-			
+
 			startReconciling();
 		}
 	}
-	
+
 	/**
 	 * Starts the reconciler to reconcile the queued dirty-regions.
 	 * Clients may extend this method.
@@ -537,7 +537,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	protected synchronized void startReconciling() {
 		if (fThread == null)
 			return;
-			
+
 		if (!fThread.isAlive()) {
 			try {
 				fThread.start();
@@ -551,7 +551,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			fThread.reset();
 		}
 	}
-    
+
     /**
      * Hook that is called after the reconciler thread has been reset.
      */

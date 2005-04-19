@@ -30,10 +30,10 @@ import org.eclipse.jface.text.Assert;
  * the end sequence required by the rule.
  */
 public class PatternRule implements IPredicateRule {
-	
+
 	/**
 	 * Comparator that orders <code>char[]</code> in decreasing array lengths.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static class DecreasingCharArrayLengthComparator implements Comparator {
@@ -97,14 +97,14 @@ public class PatternRule implements IPredicateRule {
 		Assert.isTrue(startSequence != null && startSequence.length() > 0);
 		Assert.isTrue(endSequence != null || breaksOnEOL);
 		Assert.isNotNull(token);
-		
+
 		fStartSequence= startSequence.toCharArray();
 		fEndSequence= (endSequence == null ? new char[0] : endSequence.toCharArray());
 		fToken= token;
 		fEscapeCharacter= escapeCharacter;
 		fBreaksOnEOL= breaksOnEOL;
 	}
-	
+
 	/**
 	 * Creates a rule for the given starting and ending sequence.
 	 * When these sequences are detected the rule will return the specified token.
@@ -123,7 +123,7 @@ public class PatternRule implements IPredicateRule {
 		this(startSequence, endSequence, token, escapeCharacter, breaksOnEOL);
 		fBreaksOnEOF= breaksOnEOF;
 	}
-	
+
 	/**
 	 * Creates a rule for the given starting and ending sequence.
 	 * When these sequences are detected the rule will return the specified token.
@@ -138,8 +138,8 @@ public class PatternRule implements IPredicateRule {
 	 * @param escapeCharacter any character following this one will be ignored
 	 * @param breaksOnEOL indicates whether the end of the line also terminates the pattern
 	 * @param breaksOnEOF indicates whether the end of the file also terminates the pattern
-	 * @param escapeContinuesLine indicates whether the specified escape character is used for line 
-	 *        continuation, so that an end of line immediately after the escape character does not 
+	 * @param escapeContinuesLine indicates whether the specified escape character is used for line
+	 *        continuation, so that an end of line immediately after the escape character does not
 	 *        terminate the pattern, even if <code>breakOnEOL</code> is set
 	 * @since 3.0
 	 */
@@ -147,10 +147,10 @@ public class PatternRule implements IPredicateRule {
 		this(startSequence, endSequence, token, escapeCharacter, breaksOnEOL, breaksOnEOF);
 		fEscapeContinuesLine= escapeContinuesLine;
 	}
-	
+
 	/**
 	 * Sets a column constraint for this rule. If set, the rule's token
-	 * will only be returned if the pattern is detected starting at the 
+	 * will only be returned if the pattern is detected starting at the
 	 * specified column. If the column is smaller then 0, the column
 	 * constraint is considered removed.
 	 *
@@ -161,8 +161,8 @@ public class PatternRule implements IPredicateRule {
 			column= UNDEFINED;
 		fColumn= column;
 	}
-	
-	
+
+
 	/**
 	 * Evaluates this rules without considering any column constraints.
 	 *
@@ -172,7 +172,7 @@ public class PatternRule implements IPredicateRule {
 	protected IToken doEvaluate(ICharacterScanner scanner) {
 		return doEvaluate(scanner, false);
 	}
-	
+
 	/**
 	 * Evaluates this rules without considering any column constraints. Resumes
 	 * detection, i.e. look sonly for the end sequence required by this rule if the
@@ -184,14 +184,14 @@ public class PatternRule implements IPredicateRule {
 	 * @since 2.0
 	 */
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
-		
+
 		if (resume) {
-			
+
 			if (endSequenceDetected(scanner))
 				return fToken;
-		
+
 		} else {
-			
+
 			int c= scanner.read();
 			if (c == fStartSequence[0]) {
 				if (sequenceDetected(scanner, fStartSequence, false)) {
@@ -200,32 +200,32 @@ public class PatternRule implements IPredicateRule {
 				}
 			}
 		}
-		
+
 		scanner.unread();
 		return Token.UNDEFINED;
-	}	
-	
+	}
+
 	/*
 	 * @see IRule#evaluate(ICharacterScanner)
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
-	}	
-	
+	}
+
 	/**
-	 * Returns whether the end sequence was detected. As the pattern can be considered 
-	 * ended by a line delimiter, the result of this method is <code>true</code> if the 
+	 * Returns whether the end sequence was detected. As the pattern can be considered
+	 * ended by a line delimiter, the result of this method is <code>true</code> if the
 	 * rule breaks on the end of the line, or if the EOF character is read.
 	 *
 	 * @param scanner the character scanner to be used
 	 * @return <code>true</code> if the end sequence has been detected
 	 */
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
-		
+
 		char[][] originalDelimiters= scanner.getLegalLineDelimiters();
 		int count= originalDelimiters.length;
 		if (fLineDelimiters == null || originalDelimiters.length != count) {
-			fSortedLineDelimiters= new char[count][]; 
+			fSortedLineDelimiters= new char[count][];
 		} else {
 			while (count > 0 && fLineDelimiters[count-1] == originalDelimiters[count-1])
 				count--;
@@ -235,7 +235,7 @@ public class PatternRule implements IPredicateRule {
 			System.arraycopy(fLineDelimiters, 0, fSortedLineDelimiters, 0, fLineDelimiters.length);
 			Arrays.sort(fSortedLineDelimiters, fLineDelimiterComparator);
 		}
-		
+
 		int c;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
@@ -248,7 +248,7 @@ public class PatternRule implements IPredicateRule {
 					}
 				} else
 					scanner.read();
-					
+
 			} else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
 				if (sequenceDetected(scanner, fEndSequence, true))
@@ -265,10 +265,10 @@ public class PatternRule implements IPredicateRule {
 		scanner.unread();
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether the next characters to be read by the character scanner
-	 * are an exact match with the given sequence. No escape characters are allowed 
+	 * are an exact match with the given sequence. No escape characters are allowed
 	 * within the sequence. If specified the sequence is considered to be found
 	 * when reading the EOF character.
 	 *
@@ -291,10 +291,10 @@ public class PatternRule implements IPredicateRule {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/*
 	 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
 	 * @since 2.0
@@ -302,12 +302,12 @@ public class PatternRule implements IPredicateRule {
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		if (fColumn == UNDEFINED)
 			return doEvaluate(scanner, resume);
-		
+
 		int c= scanner.read();
 		scanner.unread();
 		if (c == fStartSequence[0])
 			return (fColumn == scanner.getColumn() ? doEvaluate(scanner, resume) : Token.UNDEFINED);
-		return Token.UNDEFINED;	
+		return Token.UNDEFINED;
 	}
 
 	/*

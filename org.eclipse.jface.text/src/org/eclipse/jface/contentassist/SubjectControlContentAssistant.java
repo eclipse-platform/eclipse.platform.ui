@@ -16,11 +16,11 @@ import org.eclipse.jface.text.Assert;
 /**
  * The standard implementation of the {@link org.eclipse.jface.contentassist.ISubjectControlContentAssistant} interface.
  * Usually, clients instantiate this class and configure it before using it.
- * 
+ *
  * @since 3.0
  */
 public class SubjectControlContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements ISubjectControlContentAssistant {
-	
+
 	/*
 	 * @see ISubjectControlContentAssistant#install(IContentAssistSubjectControl)
 	 */

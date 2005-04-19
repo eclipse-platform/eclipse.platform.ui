@@ -27,25 +27,25 @@ import org.eclipse.ui.editors.text.FileBufferOperationAction;
 /**
  * A file buffer operation action that changes the line delimiters to a specified
  * line delimiter.
- * 
+ *
  * @since 3.1
  */
 public class ConvertLineDelimitersAction extends FileBufferOperationAction {
-	
+
 	private String fLabel;
-	
+
 	protected ConvertLineDelimitersAction(String lineDelimiter, String label) {
 		super(new ConvertLineDelimitersOperation(lineDelimiter));
 		setText(constructLabel(label, lineDelimiter, System.getProperty("line.separator"))); //$NON-NLS-1$
 		fLabel= Action.removeMnemonics(label);
 	}
-	
+
 	private static String constructLabel(String label, String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter))
-			return label + TextEditorMessages.ConvertLineDelimitersAction_default_label; 
+			return label + TextEditorMessages.ConvertLineDelimitersAction_default_label;
 		return label;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.FileBufferOperationAction#isAcceptableLocation(org.eclipse.core.runtime.IPath)
 	 */
@@ -53,17 +53,17 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return manager.isTextFileLocation(location);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.FileBufferOperationAction#collectFiles(org.eclipse.core.resources.IResource[])
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
-		
+
 		IFile[] files= super.collectFiles(resources);
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
-		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), NLSUtility.format(TextEditorMessages.ConvertLineDelimitersAction_dialog_title, fLabel), TextEditorMessages.ConvertLineDelimitersAction_dialog_description); 
+
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), NLSUtility.format(TextEditorMessages.ConvertLineDelimitersAction_dialog_title, fLabel), TextEditorMessages.ConvertLineDelimitersAction_dialog_description);
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {
@@ -71,5 +71,5 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 			return super.collectFiles(selectedResources);
 		}
 		return null;
-	}	
+	}
 }

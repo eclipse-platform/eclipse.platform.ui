@@ -20,7 +20,7 @@ package org.eclipse.jface.text.templates;
  * <p>
  * This class is not intended to be serialized.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class TemplateException extends Exception {
@@ -40,29 +40,29 @@ public class TemplateException extends Exception {
 	public TemplateException() {
 		super();
 	}
-	
+
 	/**
 	 * Creates a new template exception.
-	 * 
+	 *
 	 * @param message the message describing the problem that arised
 	 */
 	public TemplateException(String message) {
 		super(message);
 	}
-	
+
 	/**
 	 * Creates a new template exception.
-	 * 
+	 *
 	 * @param message the message describing the problem that arised
 	 * @param cause the original exception
 	 */
 	public TemplateException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 	/**
 	 * Creates a new template exception.
-	 * 
+	 *
 	 * @param cause the original exception
 	 */
 	public TemplateException(Throwable cause) {

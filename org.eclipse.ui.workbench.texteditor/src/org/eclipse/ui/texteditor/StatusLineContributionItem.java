@@ -34,7 +34,7 @@ import org.eclipse.jface.resource.JFaceColors;
  * @since 2.0
  */
 public class StatusLineContributionItem extends ContributionItem implements IStatusField, IStatusFieldExtension {
-	
+
 	/**
 	 * Internal mouse listener to track double clicking the status line item.
 	 * @since 3.0
@@ -48,13 +48,13 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 				fActionHandler.run();
 		}
 	}
-	
+
 	/**
 	 * Left and right margin used in CLabel.
 	 * @since 2.1
 	 */
 	private static final int INDENT= 3;
-	/** 
+	/**
 	 * Default number of characters that should fit into the item.
 	 * @since 3.0
 	 */
@@ -68,7 +68,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * Precomputed label height hint.
 	 * @since 3.0
 	 */
-	private int fFixedHeight= -1;	
+	private int fFixedHeight= -1;
 	/** The text */
 	private String fText;
 	/** The image */
@@ -95,21 +95,21 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	private int fWidthInChars;
 	/** The status line label widget */
 	private CLabel fLabel;
-	/** 
+	/**
 	 * The action handler.
 	 * @since 3.0
 	 */
 	private IAction fActionHandler;
-	/** 
-	 * The mouse listener 
+	/**
+	 * The mouse listener
 	 * @since 3.0
 	 */
 	private MouseListener fMouseListener;
-	
-	
+
+
 	/**
 	 * Creates a new item with the given id.
-	 * 
+	 *
 	 * @param id the item's id
 	 */
 	public StatusLineContributionItem(String id) {
@@ -118,7 +118,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 
 	/**
 	 * Creates a new item with the given attributes.
-	 * 
+	 *
 	 * @param id the item's id
 	 * @param visible the visibility of this item
 	 * @param widthInChars the width in characters
@@ -129,15 +129,15 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		setVisible(visible);
 		fWidthInChars= widthInChars;
 	}
-	
+
 	/*
 	 * @see IStatusField#setText(String)
 	 */
 	public void setText(String text) {
 		fText= text;
-		updateMessageLabel();		
+		updateMessageLabel();
 	}
-	
+
 	/*
 	 * @see IStatusField#setImage(Image)
 	 */
@@ -145,7 +145,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fImage= image;
 		updateMessageLabel();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IStatusFieldExtension#setErrorText(java.lang.String)
 	 * @since 3.0
@@ -163,7 +163,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fErrorImage= image;
 		updateMessageLabel();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IStatusFieldExtension#setToolTipText(java.lang.String)
 	 * @since 3.0
@@ -172,15 +172,15 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fToolTipText= string;
 		updateMessageLabel();
 	}
-	
+
 	/*
 	 * @see IContributionItem#fill(Composite)
 	 */
 	public void fill(Composite parent) {
-		
+
 		Label sep= new Label(parent, SWT.SEPARATOR);
-		fLabel= new CLabel(parent, SWT.SHADOW_NONE); 
-		
+		fLabel= new CLabel(parent, SWT.SHADOW_NONE);
+
 		fLabel.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fMouseListener= null;
@@ -194,32 +194,32 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		StatusLineLayoutData data= new StatusLineLayoutData();
 		data.widthHint= getWidthHint(parent);
 		fLabel.setLayoutData(data);
-		
+
 		data= new StatusLineLayoutData();
 		data.heightHint= getHeightHint(parent);
 		sep.setLayoutData(data);
-		
+
 		updateMessageLabel();
 	}
-	
+
 	public void setActionHandler(IAction actionHandler) {
 		if (fActionHandler != null && actionHandler == null && fMouseListener != null) {
 			if (!fLabel.isDisposed())
 				fLabel.removeMouseListener(fMouseListener);
 			fMouseListener= null;
 		}
-		
+
 		fActionHandler= actionHandler;
-		
+
 		if (fLabel != null && !fLabel.isDisposed() && fMouseListener == null && fActionHandler != null) {
 			fMouseListener= new Listener();
 			fLabel.addMouseListener(fMouseListener);
 		}
 	}
-	
+
 	/**
 	 * Returns the width hint for this label.
-	 * 
+	 *
 	 * @param control the root control of this label
 	 * @return the width hint for this label
 	 * @since 2.1
@@ -234,10 +234,10 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		}
 		return fFixedWidth;
 	}
-	
+
 	/**
 	 * Returns the height hint for this label.
-	 * 
+	 *
 	 * @param control the root control of this label
 	 * @return the height hint for this label
 	 * @since 3.0
@@ -251,10 +251,10 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		}
 		return fFixedHeight;
 	}
-	
+
 	/**
 	 * Updates the message label widget.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private void updateMessageLabel() {

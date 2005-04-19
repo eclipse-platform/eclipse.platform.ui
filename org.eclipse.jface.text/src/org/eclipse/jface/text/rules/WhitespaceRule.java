@@ -51,7 +51,7 @@ public class WhitespaceRule implements IRule {
 			scanner.unread();
 			return Token.WHITESPACE;
 		}
-		
+
 		scanner.unread();
 		return Token.UNDEFINED;
 	}

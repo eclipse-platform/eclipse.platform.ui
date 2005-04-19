@@ -18,8 +18,8 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
  * <p>
  * For example, to compare two text documents and find longest common sequences
  * of matching and non-matching lines, the implementation must break the document
- * into lines. <code>getRangeCount</code> would return the number of lines in the 
- * document, and <code>rangesEqual</code> would compare a specified line given 
+ * into lines. <code>getRangeCount</code> would return the number of lines in the
+ * document, and <code>rangesEqual</code> would compare a specified line given
  * with one in another <code>IRangeComparator</code>.
  * </p>
  * <p>
@@ -33,7 +33,7 @@ public interface IRangeComparator {
 	/**
 	 * Returns the number of comparable entities.
 	 *
-	 * @return the number of comparable entities 
+	 * @return the number of comparable entities
 	 */
 	int getRangeCount();
 
@@ -50,7 +50,7 @@ public interface IRangeComparator {
 
 	/**
 	 * Returns whether a comparison should be skipped because it would be too costly (or lengthy).
-	 * 
+	 *
 	 * @param length a number on which to base the decision whether to return
 	 * 	<code>true</code> or <code>false</code>
 	 * @param maxLength another number on which to base the decision whether to return

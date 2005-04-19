@@ -22,7 +22,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  * <p>
  * Note: Must be public since it is referenced from plugin.xml
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class QuickDiffPreferencePage extends AbstractConfigurationBlockPreferencePage {
@@ -33,22 +33,22 @@ public class QuickDiffPreferencePage extends AbstractConfigurationBlockPreferenc
 	protected String getHelpId() {
 		return ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.QuickDiffConfigurationBlock_description; 
+		String description= TextEditorMessages.QuickDiffConfigurationBlock_description;
 		setDescription(description);
 	}
-	
+
 	/*
 	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */

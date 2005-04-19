@@ -14,14 +14,14 @@ import java.text.MessageFormat;
 
 /**
  * A number of routines used for string externalization.
- * 
+ *
  * @since 3.1
  */
 public class NLSUtility {
 
 	/**
 	 * Formats the given string with the given argument.
-	 * 
+	 *
 	 * @param message the message to format, must not be <code>null</code>
 	 * @param argument the argument used to format the string
 	 * @return the formatted string
@@ -32,7 +32,7 @@ public class NLSUtility {
 
 	/**
 	 * Formats the given string with the given argument.
-	 * 
+	 *
 	 * @param message the message to format, must not be <code>null</code>
 	 * @param arguments the arguments used to format the string
 	 * @return the formatted string

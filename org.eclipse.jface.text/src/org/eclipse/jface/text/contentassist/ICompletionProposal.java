@@ -25,7 +25,7 @@ import org.eclipse.jface.text.IDocument;
  * In order to provide backward compatibility for clients of <code>ICompletionProposal</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension} since version 2.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension} since version 2.0 introducing
  *		the following functions:
  *			<ul>
  *				<li>handling of trigger characters other than ENTER</li>
@@ -33,18 +33,18 @@ import org.eclipse.jface.text.IDocument;
  *				<li>context information can be freely positioned</li>
  *			</ul>
  * </li>
- * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension2} since version 2.1 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension2} since version 2.1 introducing
  *		the following functions:
  *			<ul>
  *				<li>handling of trigger characters with modifiers</li>
  *				<li>visual indication for selection of a proposal</li>
  *			</ul>
  * </li>
- * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension3} since version 3.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension3} since version 3.0 introducing
  *		the following functions:
  *			<ul>
  *				<li>provision of a custom information control creator</li>
- *				<li>provide a custom completion text and offset for prefix completion</li> 
+ *				<li>provide a custom completion text and offset for prefix completion</li>
  *			</ul>
  * </li>
  * </ul>
@@ -53,7 +53,7 @@ import org.eclipse.jface.text.IDocument;
  * This interface can be implemented by clients. By default, clients use
  * {@link org.eclipse.jface.text.contentassist.CompletionProposal} as the
  * standard implementer of this interface.
- * </p> 
+ * </p>
  *
  * @see IContentAssistProcessor
  */
@@ -65,12 +65,12 @@ public interface ICompletionProposal {
 	 * @param document the document into which to insert the proposed completion
 	 */
 	void apply(IDocument document);
-	
+
 	/**
-	 * Returns the new selection after the proposal has been applied to 
+	 * Returns the new selection after the proposal has been applied to
 	 * the given document in absolute document coordinates. If it returns
 	 * <code>null</code>, no new selection is set.
-	 * 
+	 *
 	 * A document change can trigger other document changes, which have
 	 * to be taken into account when calculating the new selection. Typically,
 	 * this would be done by installing a document listener or by using a

@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IRegion;
 
 /**
  * URL hyperlink.
- * 
+ *
  * @since 3.1
  */
 public class URLHyperlink implements IHyperlink {
@@ -29,14 +29,14 @@ public class URLHyperlink implements IHyperlink {
 
 	/**
 	 * Creates a new URL hyperlink.
-	 * 
+	 *
 	 * @param region
 	 * @param urlString
 	 */
 	public URLHyperlink(IRegion region, String urlString) {
 		Assert.isNotNull(urlString);
 		Assert.isNotNull(region);
-		
+
 		fRegion= region;
 		fURLString= urlString;
 	}

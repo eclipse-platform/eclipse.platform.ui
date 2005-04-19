@@ -24,23 +24,23 @@ import org.eclipse.jface.text.Position;
  * insertion happens at a fragment's offset, the fragment is extended rather
  * than shifted. Also, the last fragment is extended if an insert operation
  * happens at the end of the fragment.
- * 
+ *
  * @since 3.0
  */
 class FragmentUpdater extends DefaultPositionUpdater {
-	
+
 	/** Indicates whether the position being updated represents the last fragment. */
 	private boolean fIsLast= false;
-	
+
 	/**
 	 * Creates the fragment updater for the given category.
-	 * 
+	 *
 	 * @param fragmentCategory the position category used for managing the fragments of a document
 	 */
 	protected FragmentUpdater(String fragmentCategory) {
 		super(fragmentCategory);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -56,10 +56,10 @@ class FragmentUpdater extends DefaultPositionUpdater {
 			fDocument= event.getDocument();
 
 			for (int i= 0; i < category.length; i++) {
-				
+
 				fPosition= category[i];
 				fIsLast= (i == category.length -1);
-				
+
 				fOriginalPosition.offset= fPosition.offset;
 				fOriginalPosition.length= fPosition.length;
 
@@ -71,14 +71,14 @@ class FragmentUpdater extends DefaultPositionUpdater {
 			// do nothing
 		}
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.DefaultPositionUpdater#adaptToInsert()
 	 */
 	protected void adaptToInsert() {
 		int myStart= fPosition.offset;
 		int myEnd= Math.max(myStart, fPosition.offset + fPosition.length - (fIsLast || isAffectingReplace() ? 0 : 1));
-		
+
 		if (myEnd < fOffset)
 			return;
 
@@ -97,12 +97,12 @@ class FragmentUpdater extends DefaultPositionUpdater {
 				fPosition.offset += fReplaceLength;
 		}
 	}
-	
+
 	/**
 	 * Returns whether this updater considers any position affected by the given
 	 * document event. A position is affected if either the offset or the length
 	 * of the position is modified but the position is not just shifted.
-	 * 
+	 *
 	 * @param event the event
 	 * @return <code>true</code> if there is any affected position,
 	 *         <code>false</code> otherwise
@@ -110,10 +110,10 @@ class FragmentUpdater extends DefaultPositionUpdater {
 	public boolean affectsPositions(DocumentEvent event) {
 		IDocument document= event.getDocument();
 		try {
-			
+
 			int index= document.computeIndexInCategory(getCategory(), event.getOffset());
 			Position[] fragments= document.getPositions(getCategory());
-			
+
 			if (0 < index) {
 				Position fragment= fragments[index - 1];
 				if (fragment.overlapsWith(event.getOffset(), event.getLength()))
@@ -121,16 +121,16 @@ class FragmentUpdater extends DefaultPositionUpdater {
 				if (index == fragments.length && fragment.offset + fragment.length == event.getOffset())
 					return true;
 			}
-			
+
 			if (index < fragments.length) {
 				Position fragment= fragments[index];
 				return fragment.overlapsWith(event.getOffset(), event.getLength());
 			}
-		
+
 		} catch (BadLocationException x) {
 		} catch (BadPositionCategoryException x) {
 		}
-		
-		return false;		
+
+		return false;
 	}
 }

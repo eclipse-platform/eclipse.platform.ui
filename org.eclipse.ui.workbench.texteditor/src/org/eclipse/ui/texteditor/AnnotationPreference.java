@@ -72,24 +72,24 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * preference page,</li>
  * <li>preference label.</li>
  * </ul>
- * 
+ *
  * @since 2.1
  */
 public class AnnotationPreference {
-	
+
 	/* String constants for style enumeration */
-	
-	/** 
-	 * Constant defining no decoration for the show in text style preference. 
+
+	/**
+	 * Constant defining no decoration for the show in text style preference.
 	 * @since 3.0
 	 */
 	public static final String STYLE_NONE= "NONE"; //$NON-NLS-1$
-	/** 
+	/**
 	 * Constant defining squiggly decoration for the show in text style preference.
 	 * @since 3.0
 	 */
 	public static final String STYLE_SQUIGGLES= "SQUIGGLES"; //$NON-NLS-1$
-	/** 
+	/**
 	 * Constant defining box decoration for the show in text style preference.
 	 * @since 3.0
 	 */
@@ -99,18 +99,18 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	public static final String STYLE_UNDERLINE= "UNDERLINE"; //$NON-NLS-1$
-	/** 
+	/**
 	 * Constant defining i-beam decoration for the show in text style preference.
 	 * @since 3.0
 	 */
 	public static final String STYLE_IBEAM= "IBEAM"; //$NON-NLS-1$
-	
+
 	/* IDs for presentation preference attributes */
-	
+
 	/**
-	 * The image to be used for drawing in the vertical ruler. 
+	 * The image to be used for drawing in the vertical ruler.
 	 * @since 3.0
-	 */ 
+	 */
 	protected final static Object IMAGE_DESCRIPTOR= new Object();
 	/**
 	 * The preference label.
@@ -127,7 +127,7 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	protected final static Object SYMBOLIC_IMAGE_NAME= new Object();
-	/** 
+	/**
 	 * Indicates whether the annotation type contributed to the overview ruler's header.
 	 * @since 3.0
 	 */
@@ -144,7 +144,7 @@ public class AnnotationPreference {
 	protected final static Object INCLUDE_ON_PREFERENCE_PAGE= new Object();
 
 	/* IDs for preference store access and initialization */
-	
+
 	/**
 	 * The preference key for the visibility inside text.
 	 * @since 3.0
@@ -215,7 +215,7 @@ public class AnnotationPreference {
 	 */
 	protected final static Object OVERVIEW_RULER_PREFERENCE_VALUE= new Object();
 	/**
-	 * The preference key for the visibility in the next/previous drop down toolbar action. 
+	 * The preference key for the visibility in the next/previous drop down toolbar action.
 	 * @since 3.0
 	 */
 	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_KEY= new Object();
@@ -234,13 +234,13 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	protected final static Object TEXT_STYLE_PREFERENCE_VALUE= new Object();
-	
+
 	/**
 	 * Array of all supported attributes.
 	 * @since 3.0
 	 */
 	protected final static Object[] ATTRIBUTES= new Object[] {
-			IMAGE_DESCRIPTOR, 
+			IMAGE_DESCRIPTOR,
 			PREFERENCE_LABEL,
 			PRESENTATION_LAYER,
 			SYMBOLIC_IMAGE_NAME,
@@ -266,7 +266,7 @@ public class AnnotationPreference {
 			TEXT_STYLE_PREFERENCE_VALUE,
 			INCLUDE_ON_PREFERENCE_PAGE
 	};
-	
+
 	/** The annotation type */
 	private Object fAnnotationType;
 	/** The marker type */
@@ -294,8 +294,8 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	private Map fAttributes= new HashMap();
-	
-	
+
+
 
 	/**
 	 * Creates a new uninitialized annotation preference. Note that instances
@@ -304,10 +304,10 @@ public class AnnotationPreference {
 	 */
 	public AnnotationPreference() {
 	}
-		
+
 	/**
 	 * Creates a new annotation preference for the given annotation type.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @param colorKey the preference key for the presentation color
 	 * @param textKey the preference key for the visibility inside text
@@ -322,10 +322,10 @@ public class AnnotationPreference {
 		setValue(OVERVIEW_RULER_PREFERENCE_KEY, overviewRulerKey);
 		setValue(PRESENTATION_LAYER, presentationLayer);
 	}
-	
+
 	/**
 	 * Sets the given value for the given attribute.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @param value the attribute value
 	 * @since 3.0
@@ -333,10 +333,10 @@ public class AnnotationPreference {
 	protected void setValue(Object attribute, Object value) {
 		fAttributes.put(attribute, value);
 	}
-	
+
 	/**
 	 * Sets the given value for the given attribute.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @param value the attribute value
 	 * @since 3.0
@@ -344,10 +344,10 @@ public class AnnotationPreference {
 	protected void setValue(Object attribute, int value) {
 		fAttributes.put(attribute, new Integer(value));
 	}
-	
+
 	/**
 	 * Sets the given value for the given attribute.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @param value the attribute value
 	 * @since 3.0
@@ -355,10 +355,10 @@ public class AnnotationPreference {
 	protected void setValue(Object attribute, boolean value) {
 		fAttributes.put(attribute, value ? Boolean.TRUE : Boolean.FALSE);
 	}
-	
+
 	/**
 	 * Returns the value of the given attribute as string.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @return the attribute value
 	 * @since 3.0
@@ -369,10 +369,10 @@ public class AnnotationPreference {
 			return (String) value;
 		return null;
 	}
-	
+
 	/**
 	 * Returns the value of the given attribute as boolean.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @return the attribute value
 	 * @since 3.0
@@ -386,7 +386,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the value of the given attribute as integer.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @return the attribute value
 	 * @since 3.0
@@ -397,10 +397,10 @@ public class AnnotationPreference {
 			return ((Integer) value).intValue();
 		return 0;
 	}
-	
+
 	/**
 	 * Returns the value of the given attribute.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @return the attribute value
 	 * @since 3.0
@@ -408,10 +408,10 @@ public class AnnotationPreference {
 	public Object getValue(Object attribute) {
 		return fAttributes.get(attribute);
 	}
-	
+
 	/**
 	 * Returns whether the given attribute is defined.
-	 * 
+	 *
 	 * @param attribute the attribute
 	 * @return <code>true</code> if the attribute has a value <code>false</code> otherwise
 	 * @since 3.0
@@ -419,79 +419,79 @@ public class AnnotationPreference {
 	public boolean hasValue(Object attribute) {
 		return fAttributes.get(attribute) != null;
 	}
-	
+
 	/**
 	 * Returns whether the given string is a preference key.
-	 * 
+	 *
 	 * @param key the string to test
 	 * @return <code>true</code> if the string is a preference key
 	 */
 	public boolean isPreferenceKey(String key) {
 		if (key == null)
 			return false;
-		
-		return key.equals(getStringValue(COLOR_PREFERENCE_KEY)) || 
-				key.equals(getStringValue(OVERVIEW_RULER_PREFERENCE_KEY)) || 
-				key.equals(getStringValue(TEXT_PREFERENCE_KEY)) || 
-				key.equals(getStringValue(HIGHLIGHT_PREFERENCE_KEY)) || 
-				key.equals(getStringValue(TEXT_STYLE_PREFERENCE_KEY)) || 
+
+		return key.equals(getStringValue(COLOR_PREFERENCE_KEY)) ||
+				key.equals(getStringValue(OVERVIEW_RULER_PREFERENCE_KEY)) ||
+				key.equals(getStringValue(TEXT_PREFERENCE_KEY)) ||
+				key.equals(getStringValue(HIGHLIGHT_PREFERENCE_KEY)) ||
+				key.equals(getStringValue(TEXT_STYLE_PREFERENCE_KEY)) ||
 				key.equals(getStringValue(VERTICAL_RULER_PREFERENCE_KEY));
 	}
-	
+
 	/**
 	 * Returns the annotation type. Should not be null in a completely set up
 	 * instance.
-	 * 
+	 *
 	 * @return the annotation type, <code>null</code> if the receiver has not
 	 *         been initialized yet
 	 */
 	public Object getAnnotationType() {
 		return fAnnotationType;
 	}
-	
+
 	/**
 	 * Returns the marker type.
-	 * 
+	 *
 	 * @return the marker type, or <code>null</code> if none is set
 	 * @deprecated since 3.0
 	 */
 	public String getMarkerType() {
 		return fMarkerType;
 	}
-	
+
 	/**
 	 * Returns the marker severity.
-	 * 
+	 *
 	 * @return the marker severity
 	 * @deprecated since 3.0
 	 */
 	public int getSeverity() {
 		return fSeverity;
 	}
-	
+
 	/**
 	 * Sets the annotation type. Note that instances with a <code>null</code>
 	 * annotation type are considered invalid and should not be used with the
 	 * framework.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 */
 	public void setAnnotationType(Object annotationType) {
 		fAnnotationType= annotationType;
 	}
-	
+
 	/**
 	 * Sets the marker type.
-	 * 
+	 *
 	 * @param markerType the marker type
 	 */
 	public void setMarkerType(String markerType) {
 		fMarkerType= markerType;
 	}
-	
+
 	/**
 	 * Sets the marker severity.
-	 * 
+	 *
 	 * @param severity the marker severity
 	 */
 	public void setSeverity(int severity) {
@@ -500,27 +500,27 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for the presentation color.
-	 * 
+	 *
 	 * @return the preference key for the presentation color or <code>null</code>
 	 *         if none is set
 	 */
 	public String getColorPreferenceKey() {
 		return getStringValue(COLOR_PREFERENCE_KEY);
 	}
-	
+
 	/**
 	 * Returns the default presentation color.
-	 * 
+	 *
 	 * @return the default presentation color or <code>null</code> if none is
 	 *         set
 	 */
 	public RGB getColorPreferenceValue() {
 		return (RGB) getValue(COLOR_PREFERENCE_VALUE);
 	}
-	
+
 	/**
 	 * Returns the presentation string for this annotation type.
-	 * 
+	 *
 	 * @return the presentation string for this annotation type or <code>null</code>
 	 *         if none is set
 	 */
@@ -530,26 +530,26 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for the visibility in the overview ruler.
-	 * 
+	 *
 	 * @return the preference key for the visibility in the overview ruler or
 	 *         <code>null</code> if none is set
 	 */
 	public String getOverviewRulerPreferenceKey() {
 		return getStringValue(OVERVIEW_RULER_PREFERENCE_KEY);
 	}
-	
+
 	/**
 	 * Returns the default visibility in the overview ruler.
-	 * 
+	 *
 	 * @return the default visibility in the overview ruler
 	 */
 	public boolean getOverviewRulerPreferenceValue() {
 		return getBooleanValue(OVERVIEW_RULER_PREFERENCE_VALUE);
 	}
-	
+
 	/**
 	 * Returns the preference key for the visibility in the vertical ruler.
-	 * 
+	 *
 	 * @return the preference key for the visibility in the vertical ruler or
 	 *         <code>null</code> if none is set
 	 * @since 3.0
@@ -557,20 +557,20 @@ public class AnnotationPreference {
 	public String getVerticalRulerPreferenceKey() {
 		return getStringValue(VERTICAL_RULER_PREFERENCE_KEY);
 	}
-	
+
 	/**
 	 * Returns the default visibility in the vertical ruler.
-	 * 
+	 *
 	 * @return the default visibility in the vertical ruler
 	 * @since 3.0
 	 */
 	public boolean getVerticalRulerPreferenceValue() {
 		return getBooleanValue(VERTICAL_RULER_PREFERENCE_VALUE);
 	}
-	
+
 	/**
 	 * Returns the presentation layer.
-	 * 
+	 *
 	 * @return the presentation layer
 	 */
 	public int getPresentationLayer() {
@@ -579,7 +579,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for the visibility inside text.
-	 * 
+	 *
 	 * @return the preference key for the visibility inside text or <code>null</code>
 	 *         if none is set
 	 */
@@ -589,16 +589,16 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the default visibility inside text.
-	 * 
+	 *
 	 * @return the default visibility inside text
 	 */
 	public boolean getTextPreferenceValue() {
 		return getBooleanValue(TEXT_PREFERENCE_VALUE);
 	}
-	
+
 	/**
 	 * Returns the preference key for highlighting inside text.
-	 * 
+	 *
 	 * @return the preference key for highlighting inside text or <code>null</code>
 	 *         if none is set
 	 * @since 3.0
@@ -609,26 +609,26 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the default value for highlighting inside text.
-	 * 
+	 *
 	 * @return the default value for highlighting inside text
 	 * @since 3.0
 	 */
 	public boolean getHighlightPreferenceValue() {
 		return getBooleanValue(HIGHLIGHT_PREFERENCE_VALUE);
 	}
-		
+
 	/**
 	 * Returns whether the annotation type contributes to the header of the overview ruler.
-	 * 
+	 *
 	 * @return <code>true</code> if the annotation type contributes to the header of the overview ruler
 	 */
 	public boolean contributesToHeader() {
 		return getBooleanValue(HEADER_VALUE);
 	}
-	
+
 	/**
 	 * Sets the preference key for the presentation color.
-	 * 
+	 *
 	 * @param colorKey the preference key
 	 */
 	public void setColorPreferenceKey(String colorKey) {
@@ -637,16 +637,16 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the default presentation color.
-	 * 
+	 *
 	 * @param colorValue the default color
 	 */
 	public void setColorPreferenceValue(RGB colorValue) {
 		setValue(COLOR_PREFERENCE_VALUE, colorValue);
 	}
-	
+
 	/**
 	 * Sets the presentation label of this annotation type.
-	 * 
+	 *
 	 * @param label the presentation label
 	 */
 	public void setPreferenceLabel(String label) {
@@ -655,45 +655,45 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the preference key for the visibility in the overview ruler.
-	 * 
+	 *
 	 * @param overviewRulerKey the preference key
 	 */
 	public void setOverviewRulerPreferenceKey(String overviewRulerKey) {
 		setValue(OVERVIEW_RULER_PREFERENCE_KEY, overviewRulerKey);
 	}
-	
+
 	/**
 	 * Sets the default visibility in the overview ruler.
-	 * 
+	 *
 	 * @param overviewRulerValue <code>true</code> if visible by default, <code>false</code> otherwise
 	 */
 	public void setOverviewRulerPreferenceValue(boolean overviewRulerValue) {
 		setValue(OVERVIEW_RULER_PREFERENCE_VALUE, overviewRulerValue);
 	}
-	
+
 	/**
 	 * Sets the preference key for the visibility in the vertical ruler.
-	 * 
+	 *
 	 * @param verticalRulerKey the preference key
 	 * @since 3.0
 	 */
 	public void setVerticalRulerPreferenceKey(String verticalRulerKey) {
 		setValue(VERTICAL_RULER_PREFERENCE_KEY, verticalRulerKey);
 	}
-	
+
 	/**
 	 * Sets the default visibility in the vertical ruler.
-	 * 
+	 *
 	 * @param verticalRulerValue <code>true</code> if visible by default, <code>false</code> otherwise
 	 * @since 3.0
 	 */
 	public void setVerticalRulerPreferenceValue(boolean verticalRulerValue) {
 		setValue(VERTICAL_RULER_PREFERENCE_VALUE, verticalRulerValue);
 	}
-	
+
 	/**
 	 * Sets the presentation layer.
-	 * 
+	 *
 	 * @param presentationLayer the presentation layer
 	 */
 	public void setPresentationLayer(int presentationLayer) {
@@ -702,7 +702,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the preference key for the visibility of squiggles inside text.
-	 * 
+	 *
 	 * @param textKey the preference key
 	 */
 	public void setTextPreferenceKey(String textKey) {
@@ -711,45 +711,45 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the default visibility inside text.
-	 * 
+	 *
 	 * @param textValue <code>true</code> if visible by default, <code>false</code> otherwise
 	 */
 	public void setTextPreferenceValue(boolean textValue) {
 		setValue(TEXT_PREFERENCE_VALUE, textValue);
 	}
-	
+
 	/**
 	 * Sets the preference key for highlighting inside text.
-	 * 
+	 *
 	 * @param highlightKey the preference key
 	 * @since 3.0
 	 */
 	public void setHighlightPreferenceKey(String highlightKey) {
 		setValue(HIGHLIGHT_PREFERENCE_KEY, highlightKey);
 	}
-	
+
 	/**
 	 * Sets the default value for highlighting inside text.
-	 * 
+	 *
 	 * @param highlightValue <code>true</code> if highlighted in text by default, <code>false</code> otherwise
 	 * @since 3.0
 	 */
 	public void setHighlightPreferenceValue(boolean highlightValue) {
 		setValue(HIGHLIGHT_PREFERENCE_VALUE, highlightValue);
 	}
-	
+
 	/**
 	 * Sets whether the annotation type contributes to the overview ruler's header.
-	 * 
+	 *
 	 * @param contributesToHeader <code>true</code> if in header, <code>false</code> otherwise
 	 */
 	public void setContributesToHeader(boolean contributesToHeader) {
 		setValue(HEADER_VALUE, contributesToHeader);
 	}
-	
+
 	/**
 	 * Returns the default value for go to next navigation enablement.
-	 * 
+	 *
 	 * @return <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -759,7 +759,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the default value for go to next navigation enablement.
-	 * 
+	 *
 	 * @param isGoToNextNavigationTarget <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -769,7 +769,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for go to next navigation enablement.
-	 * 
+	 *
 	 * @return the preference key or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
@@ -779,7 +779,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the preference key for go to next navigation enablement.
-	 * 
+	 *
 	 * @param isGoToNextNavigationTargetKey <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -789,7 +789,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the default value for go to previous navigation enablement.
-	 * 
+	 *
 	 * @return <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -799,7 +799,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the default value for go to previous navigation enablement.
-	 * 
+	 *
 	 * @param isGoToPreviousNavigationTarget <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -809,7 +809,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for go to previous navigation enablement.
-	 * 
+	 *
 	 * @return the preference key or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
@@ -819,7 +819,7 @@ public class AnnotationPreference {
 
 	/**
  	 * Sets the preference key for go to previous navigation enablement.
- 	 * 
+ 	 *
  	 * @param isGoToPreviousNavigationTargetKey the preference key
 	 * @since 3.0
 	 */
@@ -827,9 +827,9 @@ public class AnnotationPreference {
 		setValue(IS_GO_TO_PREVIOUS_TARGET_KEY, isGoToPreviousNavigationTargetKey);
 	}
 
-	/**	
+	/**
 	 * Returns the preference key for the visibility in the next/previous drop down toolbar action.
-	 * 
+	 *
 	 * @return the preference key or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
@@ -839,17 +839,17 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the preference key for the visibility in the next/previous drop down toolbar action.
-	 * 
+	 *
 	 * @param showInNextPrevDropdownToolbarActionKey the preference key
 	 * @since 3.0
 	 */
 	public void setShowInNextPrevDropdownToolbarActionKey(String showInNextPrevDropdownToolbarActionKey) {
 		setValue(SHOW_IN_NAVIGATION_DROPDOWN_KEY, showInNextPrevDropdownToolbarActionKey);
 	}
-	
+
 	/**
 	 * Returns the default value for the visibility in the next/previous drop down toolbar action.
-	 * 
+	 *
 	 * @return <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
@@ -859,17 +859,17 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the default value for the visibility in the next/previous drop down toolbar action.
-	 * 
+	 *
 	 * @param showInNextPrevDropdownToolbarAction <code>true</code> if enabled by default
 	 * @since 3.0
 	 */
 	public void setShowInNextPrevDropdownToolbarAction(boolean showInNextPrevDropdownToolbarAction) {
 		setValue(SHOW_IN_NAVIGATION_DROPDOWN_VALUE, showInNextPrevDropdownToolbarAction);
 	}
-	
+
 	/**
 	 * Sets the preference key for the text style property.
-	 * 
+	 *
 	 * @param key the new key
 	 * @since 3.0
 	 */
@@ -879,17 +879,17 @@ public class AnnotationPreference {
 
 	/**
 	 * Returns the preference key for the decoration style used when the annotation is shown in text.
-	 * 
+	 *
 	 * @return the preference key for the decoration style or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
 	public String getTextStylePreferenceKey() {
 		return getStringValue(TEXT_STYLE_PREFERENCE_KEY);
 	}
-	
+
 	/**
 	 * Returns the value for the decoration style used when the annotation is shown in text.
-	 * 
+	 *
 	 * @return the value for the decoration style or <code>null</code> if the key is undefined
 	 * @since 3.0
 	 */
@@ -899,7 +899,7 @@ public class AnnotationPreference {
 
 	/**
 	 * Sets the value for the text style property.
-	 * 
+	 *
 	 * @param value the new text decoration style
 	 * @since 3.0
 	 */
@@ -908,52 +908,52 @@ public class AnnotationPreference {
 				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLES.equals(value)
 				&& !STYLE_UNDERLINE.equals(value))
 			throw new IllegalArgumentException();
-		
+
 		setValue(TEXT_STYLE_PREFERENCE_VALUE, value);
 	}
-	
+
 	/**
 	 * Returns the image descriptor for the image to be drawn in the vertical ruler. The provided
 	 * image is only used, if <code>getAnnotationImageProvider</code> returns <code>null</code>.
-	 * 
+	 *
 	 * @return the image descriptor or <code>null</code>
 	 * @since 3.0
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		return (ImageDescriptor) getValue(IMAGE_DESCRIPTOR);
 	}
-	
+
 	/**
 	 * Sets the image descriptor for the image to be drawn in the vertical ruler.
-	 * 
+	 *
 	 * @param descriptor the image descriptor
 	 * @since 3.0
 	 */
 	public void setImageDescriptor(ImageDescriptor descriptor) {
 		setValue(IMAGE_DESCRIPTOR, descriptor);
 	}
-	
+
 	/**
 	 * Returns the symbolic name of the image to be drawn in the vertical ruler.
 	 * The image is only used if <code>getImageDescriptor</code> returns <code>null</code>.
-	 * 
+	 *
 	 * @return the symbolic name of the image or <code>null</code>
 	 * @since 3.0
 	 */
 	public String getSymbolicImageName() {
 		return getStringValue(SYMBOLIC_IMAGE_NAME);
 	}
-	
+
 	/**
 	 * Sets the symbolic name of the image to be drawn in the vertical ruler.
-	 * 
+	 *
 	 * @param symbolicImageName the symbolic image name
 	 * @since 3.0
 	 */
 	public void setSymbolicImageName(String symbolicImageName) {
 		setValue(SYMBOLIC_IMAGE_NAME, symbolicImageName);
 	}
-	
+
 	/**
 	 * Returns the annotation image provider. If no default annotation image
 	 * provider has been set, this method checks whether the annotation image
@@ -961,7 +961,7 @@ public class AnnotationPreference {
 	 * created if the configuration element's plug-in is loaded. When an
 	 * annotation image provider has been created successfully, it is set as
 	 * the default annotation image provider.
-	 * 
+	 *
 	 * @return the annotation image provider
 	 * @since 3.0
 	 */
@@ -980,11 +980,11 @@ public class AnnotationPreference {
 		}
 		return fAnnotationImageProvider;
 	}
-	
+
 	/**
 	 * Sets the annotation image provider who provides images for annotations
 	 * of the specified annotation type.
-	 * 
+	 *
 	 * @param provider the annotation image provider
 	 * @since 3.0
 	 */
@@ -992,10 +992,10 @@ public class AnnotationPreference {
 		fAnnotationImageProvider= provider;
 		setValue(IMAGE_PROVIDER, provider != null);
 	}
-	
+
 	/**
 	 * Sets the data needed to create the annotation image provider.
-	 * 
+	 *
 	 * @param configurationElement the configuration element
 	 * @param annotationImageProviderAttribute the attribute of the
 	 *            configuration element
@@ -1006,22 +1006,22 @@ public class AnnotationPreference {
 		fAnnotationImageProviderAttribute= annotationImageProviderAttribute;
 		setValue(IMAGE_PROVIDER, annotationImageProviderAttribute != null);
 	}
-	
+
 	/**
-	 * Sets the property of this annotation preference whether it should be included 
+	 * Sets the property of this annotation preference whether it should be included
 	 * on the default annotation preference page.
-	 * 
+	 *
 	 * @param includeOnPreferencePage the new value
 	 * @since 3.0
 	 */
 	public void setIncludeOnPreferencePage(boolean includeOnPreferencePage) {
 		setValue(INCLUDE_ON_PREFERENCE_PAGE, includeOnPreferencePage);
 	}
-	
+
 	/**
 	 * Returns the property of the receiver of whether it should be included on
 	 * the default annotation preference page.
-	 * 
+	 *
 	 * @return the includeOnPreferencePage property
 	 * @since 3.0
 	 */
@@ -1031,23 +1031,23 @@ public class AnnotationPreference {
 			return ((Boolean) value).booleanValue();
 		return true;
 	}
-	
+
 	/**
 	 * Merges the values of the given preference into this preference. Existing
 	 * values will not be overwritten. Subclasses may extend.
-	 * 
+	 *
 	 * @param preference the preference to merge into this preference
 	 * @since 3.0
 	 */
 	public void merge(AnnotationPreference preference) {
 		if (!getAnnotationType().equals(preference.getAnnotationType()))
 			return;
-		
+
 		for (int i= 0; i < ATTRIBUTES.length; i++) {
 			if (!hasValue(ATTRIBUTES[i]))
 				setValue(ATTRIBUTES[i], preference.getValue(ATTRIBUTES[i]));
 		}
-		
+
 		if (fAnnotationImageProvider == null)
 			fAnnotationImageProvider= preference.fAnnotationImageProvider;
 		if (fConfigurationElement == null)

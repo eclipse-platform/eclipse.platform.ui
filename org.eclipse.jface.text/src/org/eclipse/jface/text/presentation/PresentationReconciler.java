@@ -56,18 +56,18 @@ import org.eclipse.jface.text.TypedPosition;
  * </p>
  */
 public class PresentationReconciler implements IPresentationReconciler, IPresentationReconcilerExtension {
-	
+
 	/** Prefix of the name of the position category for tracking damage regions. */
 	protected final static String TRACKED_PARTITION= "__reconciler_tracked_partition"; //$NON-NLS-1$
-	
-	
+
+
 	/**
 	 * Internal listener class.
 	 */
-	class InternalListener implements 
-			ITextInputListener, IDocumentListener, ITextListener, 
+	class InternalListener implements
+			ITextInputListener, IDocumentListener, ITextListener,
 			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension, IDocumentPartitioningListenerExtension2 {
-				
+
 		/** Set to <code>true</code> if between a document about to be changed and a changed event. */
 		private boolean fDocumentChanging= false;
 		/**
@@ -75,50 +75,50 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @since 3.0
 		 */
 		private boolean fCachedRedrawState= true;
-		
+
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentAboutToBeChanged(IDocument oldDocument, IDocument newDocument) {
 			if (oldDocument != null) {
 				try {
-					
+
 					fViewer.removeTextListener(this);
 					oldDocument.removeDocumentListener(this);
 					oldDocument.removeDocumentPartitioningListener(this);
-					
+
 					oldDocument.removePositionUpdater(fPositionUpdater);
 					oldDocument.removePositionCategory(fPositionCategory);
-				
+
 				} catch (BadPositionCategoryException x) {
 					// should not happened for former input documents;
 				}
 			}
 		}
-		
+
 		/*
 		 * @see ITextInputListener#inputDocumenChanged(IDocument, IDocument)
 		 */
 		public void inputDocumentChanged(IDocument oldDocument, IDocument newDocument) {
-			
+
 			fDocumentChanging= false;
 			fCachedRedrawState= true;
-			
+
 			if (newDocument != null) {
-				
+
 				newDocument.addPositionCategory(fPositionCategory);
 				newDocument.addPositionUpdater(fPositionUpdater);
-				
+
 				newDocument.addDocumentPartitioningListener(this);
 				newDocument.addDocumentListener(this);
 				fViewer.addTextListener(this);
-				
+
 				setDocumentToDamagers(newDocument);
 				setDocumentToRepairers(newDocument);
 				processDamage(new Region(0, newDocument.getLength()), newDocument);
 			}
 		}
-		
+
 		/*
 		 * @see IDocumentPartitioningListener#documentPartitioningChanged(IDocument)
 		 */
@@ -128,7 +128,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			else
 				fDocumentPartitioningChanged= true;
 		}
-		
+
 		/*
 		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged(IDocument, IRegion)
 		 * @since 2.0
@@ -141,7 +141,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				fChangedDocumentPartitions= changedRegion;
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IDocumentPartitioningListenerExtension2#documentPartitioningChanged(org.eclipse.jface.text.DocumentPartitioningChangedEvent)
 		 * @since 3.0
@@ -151,12 +151,12 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			if (changedRegion != null)
 				documentPartitioningChanged(event.getDocument(), changedRegion);
 		}
-				
+
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
-			
+
 			fDocumentChanging= true;
 			if (fCachedRedrawState) {
 				try {
@@ -171,7 +171,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				}
 			}
 		}
-		
+
 		/*
 		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
@@ -185,19 +185,19 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			}
 			fDocumentChanging= false;
 		}
-		
+
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent e) {
-			
+
 			fCachedRedrawState= e.getViewerRedrawState();
 	 		if (!fCachedRedrawState)
 	 			return;
-	 			
+
 	 		IRegion damage= null;
 	 		IDocument document= null;
-	 		
+
 		 	if (e.getDocumentEvent() == null) {
 		 		document= fViewer.getDocument();
 		 		if (document != null)  {
@@ -219,37 +219,37 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 		document= de.getDocument();
 		 		damage= getDamage(de, true);
 		 	}
-		 	
+
 			if (damage != null && document != null)
 				processDamage(damage, document);
-		 	
+
 			fDocumentPartitioningChanged= false;
 			fChangedDocumentPartitions= null;
 		}
-		
+
 		/**
 		 * Translates the given text event into the corresponding range of the viewer's document.
-		 * 
+		 *
 		 * @param e the text event
 		 * @return the widget region corresponding the region of the given event
 		 * @since 2.1
 		 */
 		protected IRegion widgetRegion2ModelRegion(TextEvent e) {
-			
+
 			String text= e.getText();
 			int length= text == null ? 0 : text.length();
-			
+
 			if (fViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 				return extension.widgetRange2ModelRange(new Region(e.getOffset(), length));
 			}
-			
+
 			IRegion visible= fViewer.getVisibleRegion();
 			IRegion region= new Region(e.getOffset() + visible.getOffset(), length);
 			return region;
 		}
 	}
-	
+
 	/** The map of presentation damagers. */
 	private Map fDamagers;
 	/** The map of presentation repairers. */
@@ -272,11 +272,11 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * The partitioning used by this presentation reconciler.
 	 * @since 3.0
 	 */
-	private String fPartitioning;	
-	
+	private String fPartitioning;
+
 	/**
 	 * Creates a new presentation reconciler. There are no damagers or repairers
-	 * registered with this reconciler by default. The default partitioning 
+	 * registered with this reconciler by default. The default partitioning
 	 * <code>IDocumentExtension3.DEFAULT_PARTITIONING</code> is used.
 	 */
 	public PresentationReconciler() {
@@ -285,10 +285,10 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		fPositionCategory= TRACKED_PARTITION + hashCode();
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
-	
+
 	/**
 	 * Sets the document partitioning for this presentation reconciler.
-	 * 
+	 *
 	 * @param partitioning the document partitioning for this presentation reconciler.
 	 * @since 3.0
 	 */
@@ -296,7 +296,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		Assert.isNotNull(partitioning);
 		fPartitioning= partitioning;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.presentation.IPresentationReconcilerExtension#geDocumenttPartitioning()
 	 * @since 3.0
@@ -304,7 +304,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
-	
+
 	/**
 	 * Registers the given presentation damager for a particular content type.
 	 * If there is already a damager registered for this type, the old damager
@@ -314,18 +314,18 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @param contentType the content type under which to register
 	 */
 	public void setDamager(IPresentationDamager damager, String contentType) {
-		
+
 		Assert.isNotNull(contentType);
-		
-		if (fDamagers == null) 
+
+		if (fDamagers == null)
 			fDamagers= new HashMap();
-			
+
 		if (damager == null)
 			fDamagers.remove(contentType);
 		else
 			fDamagers.put(contentType, damager);
 	}
-	
+
 	/**
 	 * Registers the given presentation repairer for a particular content type.
 	 * If there is already a repairer registered for this type, the old repairer
@@ -335,62 +335,62 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @param contentType the content type under which to register
 	 */
 	public void setRepairer(IPresentationRepairer repairer, String contentType) {
-		
+
 		Assert.isNotNull(contentType);
-					
+
 		if (fRepairers == null)
 			fRepairers= new HashMap();
-		
+
 		if (repairer == null)
 			fRepairers.remove(contentType);
 		else
 			fRepairers.put(contentType, repairer);
 	}
-		
+
 	/*
 	 * @see IPresentationReconciler#install(ITextViewer)
 	 */
 	public void install(ITextViewer viewer) {
 		Assert.isNotNull(viewer);
-		
+
 		fViewer= viewer;
 		fViewer.addTextInputListener(fInternalListener);
 	}
-	
+
 	/*
 	 * @see IPresentationReconciler#uninstall()
 	 */
 	public void uninstall() {
 		fViewer.removeTextInputListener(fInternalListener);
-		
+
 		// Ensure we uninstall all listeners
 		fInternalListener.inputDocumentAboutToBeChanged(fViewer.getDocument(), null);
 	}
-	 
+
 	/*
 	 * @see IPresentationReconciler#getDamager(String)
 	 */
 	public IPresentationDamager getDamager(String contentType) {
-		
+
 		if (fDamagers == null)
 			return null;
-						
+
 		return (IPresentationDamager) fDamagers.get(contentType);
 	}
-	
+
 	/*
 	 * @see IPresentationReconciler#getRepairer(String)
 	 */
 	public IPresentationRepairer getRepairer(String contentType) {
-		
+
 		if (fRepairers == null)
 			return null;
-						
+
 		return (IPresentationRepairer) fRepairers.get(contentType);
 	}
-	
+
 	/**
-	 * Informs all registered damagers about the document on which they will work. 
+	 * Informs all registered damagers about the document on which they will work.
 	 *
 	 * @param document the document on which to work
 	 */
@@ -403,7 +403,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs all registered repairers about the document on which they will work.
 	 *
@@ -418,28 +418,28 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			}
 		}
 	}
-	
+
 	/**
 	 * Constructs a "repair description" for the given damage and returns this
 	 * description as a text presentation. For this, it queries the partitioning
 	 * of the damage region and asks the appropriate presentation repairer for
 	 * each partition to construct the "repair description" for this partition.
-	 * 
+	 *
 	 * @param damage the damage to be repaired
 	 * @param document the document whose presentation must be repaired
 	 * @return the presentation repair description as text presentation or
 	 *         <code>null</code> if the partitioning could not be computed
 	 */
-	protected TextPresentation createPresentation(IRegion damage, IDocument document) { 
+	protected TextPresentation createPresentation(IRegion damage, IDocument document) {
 		try {
 			if (fRepairers == null || fRepairers.isEmpty()) {
 				TextPresentation presentation= new TextPresentation(damage, 1);
 				presentation.setDefaultStyleRange(new StyleRange(damage.getOffset(), damage.getLength(), null, null));
 				return presentation;
 			}
-			
+
 			TextPresentation presentation= new TextPresentation(damage, 1000);
-			
+
 			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength(), false);
 			for (int i= 0; i < partitioning.length; i++) {
 				ITypedRegion r= partitioning[i];
@@ -447,22 +447,22 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				if (repairer != null)
 					repairer.createPresentation(presentation, r);
 			}
-			
+
 			return presentation;
-			
+
 		} catch (BadLocationException x) {
 		}
-		
+
 		return null;
 	}
-	
-		
+
+
 	/**
 	 * Checks for the first and the last affected partition affected by a
 	 * document event and calls their damagers. Invalidates everything from the
 	 * start of the damage for the first partition until the end of the damage
 	 * for the last partition.
-	 * 
+	 *
 	 * @param e the event describing the document change
 	 * @param optimize <code>true</code> if partition changes should be
 	 *        considered for optimization
@@ -471,50 +471,50 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @since 3.0
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
-		
+
 		if (fDamagers == null || fDamagers.isEmpty()) {
 			int length= e.getText() == null ? 0 : e.getText().length();
 			length= Math.max(e.getLength(), length);
 			length= Math.min(e.getDocument().getLength() - e.getOffset(), length);
 			return new Region(e.getOffset(), length);
 		}
-		
+
 		IRegion damage= null;
-		
+
 		try {
-			
+
 			ITypedRegion partition= getPartition(e.getDocument(), e.getOffset());
 			IPresentationDamager damager= getDamager(partition.getType());
 			if (damager == null)
 				return null;
-				
+
 			IRegion r= damager.getDamageRegion(partition, e, fDocumentPartitioningChanged);
-			
+
 			if (!fDocumentPartitioningChanged && optimize) {
 				damage= r;
 			} else {
-				
+
 				int damageEnd= getDamageEndOffset(e);
-				
+
 				int parititionDamageEnd= -1;
 				if (fChangedDocumentPartitions != null)
 					parititionDamageEnd= fChangedDocumentPartitions.getOffset() + fChangedDocumentPartitions.getLength();
-					
+
 				int end= Math.max(damageEnd, parititionDamageEnd);
-				
+
 				damage= end == -1 ? r : new Region(r.getOffset(), end - r.getOffset());
 			}
-			
+
 		} catch (BadLocationException x) {
 		}
-		
+
 		return damage;
 	}
-	
+
 	/**
 	 * Returns the end offset of the damage. If a partition has been split by
 	 * the given document event also the second half of the original
-	 * partition must be considered. This is achieved by using the remembered 
+	 * partition must be considered. This is achieved by using the remembered
 	 * partition range.
 	 *
 	 * @param e the event describing the change
@@ -522,34 +522,34 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @exception BadLocationException if method accesses invalid offset
 	 */
 	private int getDamageEndOffset(DocumentEvent e) throws BadLocationException {
-		
+
 		IDocument d= e.getDocument();
-		
+
 		int length= 0;
 		if (e.getText() != null) {
 			length= e.getText().length();
 			if (length > 0)
 				-- length;
 		}
-		
+
 		ITypedRegion partition= getPartition(d, e.getOffset() + length);
-		int endOffset= partition.getOffset() + partition.getLength();		
+		int endOffset= partition.getOffset() + partition.getLength();
 		if (endOffset == e.getOffset())
 			return -1;
-			
+
 		int end= fRememberedPosition == null ? -1 : fRememberedPosition.getOffset() + fRememberedPosition.getLength();
 		if (endOffset < end)
 			partition= getPartition(d, end);
-		
+
 		IPresentationDamager damager= getDamager(partition.getType());
 		if (damager == null)
 			return -1;
-			
+
 		IRegion r= damager.getDamageRegion(partition, e, fDocumentPartitioningChanged);
-		
+
 		return r.getOffset() + r.getLength();
 	}
-		
+
 	/**
 	 * Processes the given damage.
 	 * @param damage the damage to be repaired
@@ -562,7 +562,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				applyTextRegionCollection(p);
 		}
 	}
-	
+
 	/**
 	 * Applies the given text presentation to the text viewer the presentation
 	 * reconciler is installed on.
@@ -572,10 +572,10 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	private void applyTextRegionCollection(TextPresentation presentation) {
 		fViewer.changeTextPresentation(presentation, false);
 	}
-	
+
 	/**
 	 * Returns the partition for the given offset in the given document.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset
 	 * @return the partition

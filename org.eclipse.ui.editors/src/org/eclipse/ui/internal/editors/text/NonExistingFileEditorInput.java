@@ -26,7 +26,7 @@ import org.eclipse.ui.editors.text.ILocationProvider;
  * @since 3.1
  */
 public class NonExistingFileEditorInput implements IEditorInput, ILocationProvider {
-	
+
 	private static int fgNonExisting= 0;
 
 	private File fFile;
@@ -38,7 +38,7 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 		++fgNonExisting;
 		fName= namePrefix + " " + fgNonExisting; //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
@@ -93,22 +93,22 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 		}
 		return null;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o == this)
 			return true;
-		
+
 		if (o instanceof NonExistingFileEditorInput) {
 			NonExistingFileEditorInput input = (NonExistingFileEditorInput) o;
-			return fFile.equals(input.fFile);		
+			return fFile.equals(input.fFile);
 		}
-		
+
 		return false;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */

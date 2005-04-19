@@ -28,7 +28,7 @@ import org.eclipse.jface.text.source.VerticalRulerEvent;
 /**
  * A ruler action which can select the textual range of an annotation that has a
  * visual representation in a vertical ruler.
- * 
+ *
  * @since 3.0
  */
 public class SelectAnnotationRulerAction extends TextEditorAction implements IVerticalRulerListener {
@@ -41,13 +41,13 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the editor
-	 * 
+	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public SelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
@@ -64,7 +64,7 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 				((IVerticalRulerInfoExtension) service).addVerticalRulerListener(this);
 		}
 	}
-	
+
 	/**
 	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
 	 *
@@ -90,7 +90,7 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 		Position position= model.getPosition(a);
 		if (position == null)
 			return;
-		
+
 		getTextEditor().selectAndReveal(position.offset, position.length);
 	}
 

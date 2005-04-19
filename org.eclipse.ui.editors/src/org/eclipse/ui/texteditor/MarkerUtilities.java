@@ -35,7 +35,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Utility class for accessing marker attributes. The static methods provided
- * on this class provide internal exception handling (unexpected 
+ * on this class provide internal exception handling (unexpected
  * <code>CoreException</code>s are logged to workbench).
  * <p>
  * This class provides static methods only; it is not intended to be
@@ -43,16 +43,16 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  */
 public final class MarkerUtilities {
-	
+
 	/**
 	 * Internal marker super type hierarchy cache.
 	 * TODO this cache is currently unbound, i.e. only limited by the number of marker types
 	 */
 	private static class MarkerTypeHierarchy {
-		
+
 		private Map fTypeMap;
 		private Map fSuperTypesCache= new HashMap();
-		
+
 		public String[] getSuperTypes(String typeName) {
 			String[] cachedTypes= (String[]) fSuperTypesCache.get(typeName);
 			if (cachedTypes == null) {
@@ -61,7 +61,7 @@ public final class MarkerUtilities {
 			}
 			return cachedTypes;
 		}
-		
+
 		private String[] computeSuperTypes(String typeName) {
 			ArrayList types= new ArrayList();
 			appendAll(types, getDirectSuperTypes(typeName));
@@ -70,16 +70,16 @@ public final class MarkerUtilities {
 				String type= (String) types.get(index++);
 				appendAll(types, getDirectSuperTypes(type));
 			}
-			
+
 			String[] superTypes= new String[types.size()];
 			types.toArray(superTypes);
 			return superTypes;
 		}
-		
+
 		private String[] getDirectSuperTypes(String typeName) {
 			return (String[]) getTypeMap().get(typeName);
 		}
-		
+
 		private void appendAll(List list, Object[] objects) {
 			for (int i= 0; i < objects.length; i++) {
 				Object o= objects[i];
@@ -87,13 +87,13 @@ public final class MarkerUtilities {
 					list.add(o);
 			}
 		}
-		
+
 		private Map getTypeMap() {
 			if (fTypeMap == null)
 				fTypeMap= readTypes();
 			return fTypeMap;
 		}
-		
+
 		private Map readTypes() {
 			HashMap allTypes= new HashMap();
 			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
@@ -120,17 +120,17 @@ public final class MarkerUtilities {
 			return allTypes;
 		}
 	}
-	
+
 	private static MarkerTypeHierarchy fgMarkerTypeHierarchy;
-	
-	
-	
+
+
+
 	/**
 	 * Don't allow instantiation.
 	 */
 	private MarkerUtilities() {
 	}
-	
+
 	/**
 	 * Returns the ending character offset of the given marker.
 	 *
@@ -142,7 +142,7 @@ public final class MarkerUtilities {
 	public static int getCharEnd(IMarker marker) {
 		return getIntAttribute(marker, IMarker.CHAR_END, -1);
 	}
-	
+
 	/**
 	 * Returns the starting character offset of the given marker.
 	 *
@@ -154,11 +154,11 @@ public final class MarkerUtilities {
 	public static int getCharStart(IMarker marker) {
 		return getIntAttribute(marker, IMarker.CHAR_START, -1);
 	}
-	
+
 	/**
 	 * Returns the specified attribute of the given marker as an integer.
 	 * Returns the given default if the attribute value is not an integer.
-	 * 
+	 *
 	 * @param marker		the marker
 	 * @param attributeName	the name of the attribute
 	 * @param defaultValue	the default value
@@ -170,7 +170,7 @@ public final class MarkerUtilities {
 			return marker.getAttribute(attributeName, defaultValue);
 		return defaultValue;
 	}
-	
+
 	/**
 	 * Returns the line number of the given marker.
 	 *
@@ -182,7 +182,7 @@ public final class MarkerUtilities {
 	public static int getLineNumber(IMarker marker) {
 		return getIntAttribute(marker, IMarker.LINE_NUMBER, -1);
 	}
-	
+
 	/**
 	 * Returns the priority of the given marker.
 	 *
@@ -208,18 +208,18 @@ public final class MarkerUtilities {
 	public static int getSeverity(IMarker marker) {
 		return getIntAttribute(marker, IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 	}
-	
+
 	/**
 	 * Handles a core exception which occurs when accessing marker attributes.
-	 * 
+	 *
 	 * @param e the core exception
 	 */
 	private static void handleCoreException(CoreException e) {
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-		ILog log= Platform.getLog(bundle);		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		ILog log= Platform.getLog(bundle);
 		log.log(e.getStatus());
 	}
-	
+
 	/**
 	 * Returns whether the given marker is of the given type (either directly or indirectly).
 	 *
@@ -237,11 +237,11 @@ public final class MarkerUtilities {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the marker type of the given marker or <code>null</code> if
 	 * the type could not be determined.
-	 * 
+	 *
 	 * @param marker the marker
 	 * @return the marker type
 	 * @since 3.0
@@ -254,10 +254,10 @@ public final class MarkerUtilities {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the message associated with the given marker.
-	 * 
+	 *
 	 * @param marker the marker
 	 * @return the message associated with the marker or <code>null</code>
 	 * @since 3.0
@@ -265,7 +265,7 @@ public final class MarkerUtilities {
 	public static String getMessage(IMarker marker) {
 		return marker.getAttribute(IMarker.MESSAGE, null);
 	}
-	
+
 	/**
 	 * Sets the ending character offset of the given marker.
 	 *
@@ -277,9 +277,9 @@ public final class MarkerUtilities {
 	public static void setCharEnd(IMarker marker, int charEnd) {
 		setIntAttribute(marker, IMarker.CHAR_END, charEnd);
 	}
-	
+
 	/**
-	 * Sets the ending character offset in the given map using the standard 
+	 * Sets the ending character offset in the given map using the standard
 	 * marker attribute name as the key.
 	 *
 	 * @param map the map (key type: <code>String</code>, value type:
@@ -290,7 +290,7 @@ public final class MarkerUtilities {
 	public static void setCharEnd(Map map, int charEnd) {
 		map.put(IMarker.CHAR_END, new Integer(charEnd));
 	}
-	
+
 	/**
 	 * Sets the starting character offset of the given marker.
 	 *
@@ -302,9 +302,9 @@ public final class MarkerUtilities {
 	public static void setCharStart(IMarker marker, int charStart) {
 		setIntAttribute(marker, IMarker.CHAR_START, charStart);
 	}
-	
+
 	/**
-	 * Sets the starting character offset in the given map using the standard 
+	 * Sets the starting character offset in the given map using the standard
 	 * marker attribute name as the key.
 	 *
 	 * @param map the map (key type: <code>String</code>, value type:
@@ -315,10 +315,10 @@ public final class MarkerUtilities {
 	public static void setCharStart(Map map, int charStart) {
 		map.put(IMarker.CHAR_START, new Integer(charStart));
 	}
-	
+
 	/**
 	 * Sets the specified attribute of the given marker as an integer.
-	 * 
+	 *
 	 * @param marker the marker
 	 * @param attributeName the attribute name
 	 * @param value the int value
@@ -331,7 +331,7 @@ public final class MarkerUtilities {
 			handleCoreException(e);
 		}
 	}
-	
+
 	/**
 	 * Sets the line number of the given marker.
 	 *
@@ -343,7 +343,7 @@ public final class MarkerUtilities {
 	public static void setLineNumber(IMarker marker, int lineNum) {
 		setIntAttribute(marker, IMarker.LINE_NUMBER, lineNum);
 	}
-	
+
 	/**
 	 * Sets the line number in the given map using the standard marker attribute
 	 * name as the key.
@@ -356,7 +356,7 @@ public final class MarkerUtilities {
 	public static void setLineNumber(Map map, int lineNum) {
 		map.put(IMarker.LINE_NUMBER, new Integer(lineNum));
 	}
-	
+
 	/**
 	 * Sets the message in the given map using the standard marker attribute name
 	 * as the key.
@@ -369,36 +369,36 @@ public final class MarkerUtilities {
 	public static void setMessage(Map map, String message) {
 		map.put(IMarker.MESSAGE, message);
 	}
-	
+
 	/**
 	 * Creates a marker on the given resource with the given type and attributes.
 	 * <p>
 	 * This method modifies the workspace (progress is not reported to the user).</p>
 	 *
 	 * @param resource the resource
-	 * @param attributes the attribute map (key type: <code>String</code>, 
+	 * @param attributes the attribute map (key type: <code>String</code>,
 	 *   value type: <code>Object</code>)
 	 * @param markerType the type of marker
 	 * @throws CoreException if this method fails
 	 * @see IResource#createMarker(java.lang.String)
 	 */
 	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {
-		
+
 		IWorkspaceRunnable r= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker= resource.createMarker(markerType);
 				marker.setAttributes(attributes);
 			}
 		};
-		
+
 		resource.getWorkspace().run(r, null,IWorkspace.AVOID_UPDATE, null);
 	}
-	
+
 	/**
 	 * Returns the list of super types for the given marker.
 	 * The list is a depth first list and maintains the sequence in which
 	 * the super types are listed in the marker specification.
-	 * 
+	 *
 	 * @param markerType the marker's type
 	 * @return a depth-first list of all super types of the given marker type
 	 */

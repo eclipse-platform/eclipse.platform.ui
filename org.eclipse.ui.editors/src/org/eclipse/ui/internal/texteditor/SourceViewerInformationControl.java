@@ -45,27 +45,27 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * Source viewer based implementation of <code>IInformationControl</code>.
- * Displays information in a source viewer configured with the text editor 
+ * Displays information in a source viewer configured with the text editor
  * preference store.
- * 
+ *
  * @since 3.0
  */
 class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
-	
+
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
-	
-	
+
+
 	/** The control's shell */
 	private Shell fShell;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The control's source viewer */
-	private SourceViewer fViewer;	
+	private SourceViewer fViewer;
 	/** The optional status field. */
-	private Label fStatusField; 
+	private Label fStatusField;
 	/** The separator for the optional status field. */
-	private Label fSeparator; 
+	private Label fSeparator;
 	/** The font of the optional status text label.*/
 	private Font fStatusTextFont;
 	/** The maximal widget width. */
@@ -74,25 +74,25 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private int fMaxHeight;
 	/** The horizontal scroll index. */
 	private int fHorizontalScrollPixel;
-	
+
 	/**
 	 * Creates a source viewer information control with the given shell as
 	 * parent and the given font.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param symbolicFontName the symbolic font name
 	 */
 	public SourceViewerInformationControl(Shell parent, String symbolicFontName) {
 		this(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, symbolicFontName, null);
 	}
-	
+
 	/**
 	 * Creates a source viewer information control with the given shell as
 	 * parent. The given shell styles are applied to the created shell. The
 	 * given styles are applied to the created styled text widget. The text
 	 * widget will be initialized with the given font. The status field will
 	 * contain the given text or be hidden.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
@@ -105,7 +105,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		GridData gd;
 
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
-		Display display= fShell.getDisplay();		
+		Display display= fShell.getDisplay();
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
 		Composite composite= fShell;
@@ -127,27 +127,27 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			composite.setLayoutData(gd);
 			composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}		
+		}
 
 		// Source viewer
 		fViewer= new SourceViewer(composite, null, style);
 		fViewer.configure(new TextSourceViewerConfiguration(EditorsPlugin.getDefault().getPreferenceStore()));
 		fViewer.setEditable(false);
-		
+
 		fText= fViewer.getTextWidget();
 		gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		fText.setLayoutData(gd);
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		fText.setFont(JFaceResources.getFont(symbolicFontName));
-			
+
 		fText.addKeyListener(new KeyListener() {
-				
+
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
 					fShell.dispose();
 			}
-				
+
 			public void keyReleased(KeyEvent e) {}
 		});
 
@@ -175,10 +175,10 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 			fStatusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
-		
+
 		addDisposeListener(this);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 */
@@ -199,16 +199,16 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		}
 
 		String spaces= getSpacesForHorizontalScrolling();
-		
+
 		IDocument doc= new Document(content + spaces);
 		fViewer.setInput(doc);
 		fViewer.getTextWidget().setHorizontalPixel(fHorizontalScrollPixel);
 	}
-	
+
 	/**
 	 * Returns a run of spaces the length of which is at least
 	 * <code>fHorizontalScrollPixel</code>.
-	 * 
+	 *
 	 * @return the spaces to add to the document content to ensure that it can
 	 *         be scrolled at least <code>fHorizontalScrollPixel</code>
 	 */
@@ -231,12 +231,12 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
-		
+
 		fStatusTextFont= null;
 		fShell= null;
 		fText= null;
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControl#dispose()
 	 */
@@ -246,12 +246,12 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		else
 			widgetDisposed(null);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		
+
 		if (fStatusField != null) {
 			GridData gd= (GridData)fViewer.getTextWidget().getLayoutData();
 			Point statusSize= fStatusField.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -259,22 +259,22 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			gd.heightHint= height - statusSize.y - separatorSize.y;
 		}
 		fShell.setSize(width, height);
-		
+
 		if (fStatusField != null)
 			fShell.pack(true);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
-		Point textLocation= fText.getLocation();				
-		location.x += trim.x - textLocation.x;		
-		location.y += trim.y - textLocation.y;		
-		fShell.setLocation(location);		
+		Point textLocation= fText.getLocation();
+		location.x += trim.x - textLocation.x;
+		location.y += trim.y - textLocation.y;
+		fShell.setLocation(location);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
@@ -282,7 +282,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		fMaxWidth= maxWidth;
 		fMaxHeight= maxHeight;
 	}
-	
+
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
@@ -292,42 +292,42 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		size.y= Math.min(size.y, fMaxHeight);
 		return size;
 	}
-	
+
 	/*
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#removeDisposeListener(DisposeListener)
 	 */
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setForegroundColor(Color)
 	 */
 	public void setForegroundColor(Color foreground) {
 		fText.setForeground(foreground);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setBackgroundColor(Color)
 	 */
 	public void setBackgroundColor(Color background) {
 		fText.setBackground(background);
 	}
-	
+
 	/*
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
 		return fText.isFocusControl();
 	}
-	
+
 	/*
 	 * @see IInformationControl#setFocus()
 	 */
@@ -335,28 +335,28 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		fShell.forceFocus();
 		fText.setFocus();
 	}
-	
+
 	/*
 	 * @see IInformationControl#addFocusListener(FocusListener)
 	 */
 	public void addFocusListener(FocusListener listener) {
 		fText.addFocusListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#removeFocusListener(FocusListener)
 	 */
 	public void removeFocusListener(FocusListener listener) {
 		fText.removeFocusListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControlExtension#hasContents()
 	 */
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
 	}
-	
+
 	/**
 	 * @param scrollIndex the new horizontal scroll index.
 	 */

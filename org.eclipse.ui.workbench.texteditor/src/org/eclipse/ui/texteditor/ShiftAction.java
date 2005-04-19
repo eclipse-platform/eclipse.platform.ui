@@ -30,16 +30,16 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * @since 2.0
  */
 public class ShiftAction extends TextEditorAction implements IReadOnlyDependent {
-	
+
 	/** The text operation code */
 	private int fOperationCode= -1;
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
-	
+
 	/**
-	 * Creates and initializes the action for the given text editor and operation 
+	 * Creates and initializes the action for the given text editor and operation
 	 * code. The action configures its visual representation from the given resource
-	 * bundle. The action works by asking the text editor at the time for its 
+	 * bundle. The action works by asking the text editor at the time for its
 	 * text operation target adapter (using
 	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs that
 	 * operation with the given opcode.
@@ -56,9 +56,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		fOperationCode= operationCode;
 		update();
 	}
-	
+
 	/**
-	 * The <code>TextOperationAction</code> implementation of this 
+	 * The <code>TextOperationAction</code> implementation of this
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
 	 */
@@ -74,10 +74,10 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 			return;
 
 		Display display= null;
-		
+
 		IWorkbenchPartSite site= editor.getSite();
 		Shell shell= site.getShell();
-		if (shell != null && !shell.isDisposed()) 
+		if (shell != null && !shell.isDisposed())
 			display= shell.getDisplay();
 
 		BusyIndicator.showWhile(display, new Runnable() {
@@ -86,7 +86,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 			}
 		});
 	}
-	
+
 	/*
 	 * @see IUpdate#update()
 	 */
@@ -94,7 +94,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		super.update();
 		if (!isEnabled())
 			return;
-		
+
 		if (!canModifyEditor()) {
 			setEnabled(false);
 			return;
@@ -103,9 +103,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor != null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			
+
 	}
-	
+
 	/**
 	 * Enablement when tab key is pressed - the current selection has to be cover multiple lines.
 	 *
@@ -113,23 +113,23 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	 */
 	protected void updateForTab() {
 		super.update();
-		
+
 		if (isEnabled()) {
 			if (!canModifyEditor()) {
 				setEnabled(false);
 				return;
 			}
-		
+
 			ITextEditor editor= getTextEditor();
 			if (fOperationTarget == null && editor != null && fOperationCode != -1)
 				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			
+
 			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 			setEnabled(isEnabled);
 		}
-		
+
 	}
-	
+
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
@@ -137,25 +137,25 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		super.setEditor(editor);
 		fOperationTarget= null;
 	}
-	
+
 	/*
 	 * @see IReadOnlyDependent#isEnabled(boolean)
 	 */
 	public boolean isEnabled(boolean isWritable) {
-		
+
 		if (!isWritable)
 			return false;
-			
+
 		/*
 		 * Note that this implementation still honors the result returned by canDoOperation.
 		 * I.e. if the viewer is set to read-only, this method still returns false.
 		 * It covers the case in which the viewer is also writable.
-		 *  
+		 *
 		 */
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			
+
 		return (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 	}
 }

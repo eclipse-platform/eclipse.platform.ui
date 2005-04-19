@@ -52,22 +52,22 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
  * </p>
  * <h4>Nesting</h4>
  * <p>
- * A <code>LinkedModeModel</code> may be nested into another model. This 
- * happens when installing a model the positions of which all fit into a 
+ * A <code>LinkedModeModel</code> may be nested into another model. This
+ * happens when installing a model the positions of which all fit into a
  * single position in a parent model that has previously been installed on
  * the same document(s).
  * </p>
  * <p>
  * Clients may instantiate instances of this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class LinkedModeModel {
-	
+
 	/**
 	 * Checks whether there is already a model installed on <code>document</code>.
-	 * 
+	 *
 	 * @param document the <code>IDocument</code> of interest
 	 * @return <code>true</code> if there is an existing model, <code>false</code>
 	 *         otherwise
@@ -80,7 +80,7 @@ public class LinkedModeModel {
 	/**
 	 * Checks whether there is already a linked mode model installed on any of
 	 * the <code>documents</code>.
-	 * 
+	 *
 	 * @param documents the <code>IDocument</code>s of interest
 	 * @return <code>true</code> if there is an existing model, <code>false</code>
 	 *         otherwise
@@ -89,12 +89,12 @@ public class LinkedModeModel {
 		// if there is a manager, there also is a model
 		return LinkedModeManager.hasManager(documents);
 	}
-	
+
 	/**
-	 * Cancels any linked mode model on the specified document. If there is no 
+	 * Cancels any linked mode model on the specified document. If there is no
 	 * model, nothing happens.
-	 * 
-	 * @param document the document whose <code>LinkedModeModel</code> should 
+	 *
+	 * @param document the document whose <code>LinkedModeModel</code> should
 	 * 		  be cancelled
 	 */
 	public static void closeAllModels(IDocument document) {
@@ -104,7 +104,7 @@ public class LinkedModeModel {
 	/**
 	 * Returns the model currently active on <code>document</code> at
 	 * <code>offset</code>, or <code>null</code> if there is none.
-	 * 
+	 *
 	 * @param document the document for which the caller asks for a
 	 *        model
 	 * @param offset the offset into <code>document</code>, as there may be
@@ -130,7 +130,7 @@ public class LinkedModeModel {
 
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param edit the edition to apply to a document.
 		 */
 		public Replace(TextEdit edit) {
@@ -165,18 +165,18 @@ public class LinkedModeModel {
 	private class DocumentListener implements IDocumentListener {
 
 		private boolean fExit= false;
-		
+
 		/**
 		 * Checks whether <code>event</code> occurs within any of the positions
 		 * managed by this model. If not, the linked mode is left.
-		 * 
+		 *
 		 * @param event {@inheritDoc}
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			// don't react on changes executed by the parent model
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
-			
+
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
 				if (!group.isLegalEvent(event)) {
@@ -188,7 +188,7 @@ public class LinkedModeModel {
 
 		/**
 		 * Propagates a change to a linked position to all its sibling positions.
-		 * 
+		 *
 		 * @param event {@inheritDoc}
 		 */
 		public void documentChanged(DocumentEvent event) {
@@ -197,7 +197,7 @@ public class LinkedModeModel {
 				return;
 			}
 			fExit= false;
-			
+
 			// don't react on changes executed by the parent model
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
@@ -206,7 +206,7 @@ public class LinkedModeModel {
 			Map result= null;
 			for (Iterator it= fGroups.iterator(); it.hasNext();) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
-				
+
 				Map map= group.handleEvent(event);
 				if (result != null && map != null) {
 					// exit if more than one position was changed
@@ -223,7 +223,7 @@ public class LinkedModeModel {
 					IDocument doc= (IDocument) it2.next();
 					TextEdit edit= (TextEdit) result.get(doc);
 					Replace replace= new Replace(edit);
-				
+
 					// apply the edition, either as post notification replace
 					// on the calling document or directly on any other
 					// document
@@ -278,7 +278,7 @@ public class LinkedModeModel {
 	/**
 	 * Whether we are in the process of editing documents (set by <code>Replace</code>,
 	 * read by <code>DocumentListener</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if we are in the process of editing a
 	 *         document, <code>false</code> otherwise
 	 */
@@ -289,7 +289,7 @@ public class LinkedModeModel {
 	/**
 	 * Throws a <code>BadLocationException</code> if <code>group</code>
 	 * conflicts with this model's groups.
-	 * 
+	 *
 	 * @param group the group being checked
 	 * @throws BadLocationException if <code>group</code> conflicts with this
 	 *         model's groups
@@ -304,13 +304,13 @@ public class LinkedModeModel {
 	/**
 	 * Causes this model to exit. Called either if an illegal document change
 	 * is detected, or by the UI.
-	 * 
+	 *
 	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
 	 */
 	public void exit(int flags) {
 		if (!fIsActive)
 			return;
-		
+
 		fIsActive= false;
 
 		for (Iterator it= fDocuments.iterator(); it.hasNext(); ) {
@@ -339,12 +339,12 @@ public class LinkedModeModel {
 		if (fParentEnvironment != null)
 			fParentEnvironment.resume(flags);
 	}
-	
+
 	/**
 	 * Causes this model to stop forwarding updates. The positions are not
-	 * unregistered however, which will only happen when <code>exit</code> 
+	 * unregistered however, which will only happen when <code>exit</code>
 	 * is called, or after the next document change.
-	 * 
+	 *
 	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
 	 */
 	public void stopForwarding(int flags) {
@@ -355,7 +355,7 @@ public class LinkedModeModel {
 	 * Puts <code>document</code> into the set of managed documents. This
 	 * involves registering the document listener and adding our position
 	 * category.
-	 * 
+	 *
 	 * @param document the new document
 	 */
 	private void manageDocument(IDocument document) {
@@ -370,7 +370,7 @@ public class LinkedModeModel {
 
 	/**
 	 * Returns the position category used by this model.
-	 * 
+	 *
 	 * @return the position category used by this model
 	 */
 	private String getCategory() {
@@ -392,7 +392,7 @@ public class LinkedModeModel {
 	 * <p>
 	 * If <code>group</code> already exists, nothing happens.
 	 * </p>
-	 * 
+	 *
 	 * @param group the group to be added to this model
 	 * @throws BadLocationException if the group conflicts with the other groups
 	 *         in this model or violates the nesting requirements.
@@ -412,13 +412,13 @@ public class LinkedModeModel {
 		group.seal();
 		fGroups.add(group);
 	}
-	
+
 	/**
 	 * Creates a new model.
 	 */
 	public LinkedModeModel() {
 	}
-	
+
 	/**
 	 * Installs this model, which includes registering as document
 	 * listener on all involved documents and storing global information about
@@ -428,7 +428,7 @@ public class LinkedModeModel {
 	 * If an exception is thrown, the installation failed and
 	 * the model is unusable.
 	 * </p>
-	 * 
+	 *
 	 * @throws BadLocationException if some of the positions of this model
 	 *         were not valid positions on their respective documents
 	 */
@@ -436,18 +436,18 @@ public class LinkedModeModel {
 		if (!install(true))
 			Assert.isTrue(false);
 	}
-	
+
 	/**
 	 * Installs this model, which includes registering as document
 	 * listener on all involved documents and storing global information about
 	 * this model. If there is another model installed on the
 	 * document(s) targeted by the receiver that conflicts with it, installation
-	 * may fail.  
+	 * may fail.
 	 * <p>
 	 * The return value states whether installation was
 	 * successful; if not, the model is not installed and will not work.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if installation was successful,
 	 *         <code>false</code> otherwise
 	 * @throws BadLocationException if some of the positions of this model
@@ -456,7 +456,7 @@ public class LinkedModeModel {
 	public boolean tryInstall() throws BadLocationException {
 		return install(false);
 	}
-	
+
 	/**
 	 * Installs this model, which includes registering as document
 	 * listener on all involved documents and storing global information about
@@ -464,7 +464,7 @@ public class LinkedModeModel {
 	 * successful; if not, the model is not installed and will not work.
 	 * The return value can only then become <code>false</code> if
 	 * <code>force</code> was set to <code>false</code> as well.
-	 * 
+	 *
 	 * @param force if <code>true</code>, any other model that cannot
 	 *        coexist with this one is canceled; if <code>false</code>,
 	 *        install will fail when conflicts occur and return false
@@ -477,26 +477,26 @@ public class LinkedModeModel {
 		if (fIsSealed)
 			throw new IllegalStateException("model is already installed"); //$NON-NLS-1$
 		enforceNotEmpty();
-		
+
 		IDocument[] documents= getDocuments();
 		LinkedModeManager manager= LinkedModeManager.getLinkedManager(documents, force);
 		// if we force creation, we require a valid manager
 		Assert.isTrue(!(force && manager == null));
 		if (manager == null)
 			return false;
-		
+
 		if (!manager.nestEnvironment(this, force))
 			if (force)
 				Assert.isTrue(false);
 			else
 				return false;
-		
-		// we set up successfully. After this point, exit has to be called to 
+
+		// we set up successfully. After this point, exit has to be called to
 		// remove registered listeners...
 		fIsSealed= true;
 		if (fParentEnvironment != null)
 			fParentEnvironment.suspend();
-		
+
 		// register positions
 		try {
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
@@ -505,7 +505,7 @@ public class LinkedModeModel {
 	        }
 			return true;
 		} catch (BadLocationException e){
-			// if we fail to add, make sure to release all listeners again 
+			// if we fail to add, make sure to release all listeners again
 			exit(ILinkedModeListener.NONE);
 			throw e;
 		}
@@ -544,7 +544,7 @@ public class LinkedModeModel {
      * Returns whether the receiver can be nested into the given <code>parent</code>
      * model. If yes, the parent model and its position that the receiver
      * fits in are remembered.
-     * 
+     *
      * @param parent the parent model candidate
      * @return <code>true</code> if the receiver can be nested into <code>parent</code>, <code>false</code> otherwise
      */
@@ -556,7 +556,7 @@ public class LinkedModeModel {
 				return false;
 			}
 		}
-    	
+
     	Assert.isNotNull(fParentPosition);
     	fParentEnvironment= parent;
     	return true;
@@ -566,7 +566,7 @@ public class LinkedModeModel {
 	 * Called by nested models when a group is added to them. All
 	 * positions in all groups of a nested model have to fit inside a
 	 * single position in the parent model.
-	 * 
+	 *
 	 * @param group the group of the nested model to be adopted.
 	 * @param model the model to check against
 	 * @return <code>false</code> if it failed to enforce nestability
@@ -574,7 +574,7 @@ public class LinkedModeModel {
 	private boolean enforceNestability(LinkedPositionGroup group, LinkedModeModel model) {
 		Assert.isNotNull(model);
 		Assert.isNotNull(group);
-		
+
 		try {
 			for (Iterator it= model.fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup pg= (LinkedPositionGroup) it.next();
@@ -595,12 +595,12 @@ public class LinkedModeModel {
 
 	/**
 	 * Returns whether this model is nested.
-	 * 
+	 *
 	 * <p>
 	 * This method is part of the private protocol between
 	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if this model is nested,
 	 *         <code>false</code> otherwise
 	 */
@@ -611,12 +611,12 @@ public class LinkedModeModel {
 	/**
 	 * Returns the positions in this model that have a tab stop, in the
 	 * order they were added.
-	 * 
+	 *
 	 * <p>
 	 * This method is part of the private protocol between
 	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the positions in this model that have a tab stop, in the
 	 *         order they were added
 	 */
@@ -627,7 +627,7 @@ public class LinkedModeModel {
 	/**
 	 * Adds <code>listener</code> to the set of listeners that are informed
 	 * upon state changes.
-	 * 
+	 *
 	 * @param listener the new listener
 	 */
 	public void addLinkingListener(ILinkedModeListener listener) {
@@ -639,7 +639,7 @@ public class LinkedModeModel {
 	/**
 	 * Removes <code>listener</code> from the set of listeners that are
 	 * informed upon state changes.
-	 * 
+	 *
 	 * @param listener the new listener
 	 */
 	public void removeLinkingListener(ILinkedModeListener listener) {
@@ -650,12 +650,12 @@ public class LinkedModeModel {
 	 * Finds the position in this model that is closest after
 	 * <code>toFind</code>. <code>toFind</code> needs not be a position in
 	 * this model and serves merely as an offset.
-	 * 
+	 *
 	 * <p>
 	 * This method part of the private protocol between
 	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param toFind the position to search from
 	 * @return the closest position in the same document as <code>toFind</code>
 	 *         after the offset of <code>toFind</code>, or <code>null</code>
@@ -674,7 +674,7 @@ public class LinkedModeModel {
 	/**
 	 * Registers a <code>LinkedPosition</code> with this model. Called
 	 * by <code>PositionGroup</code>.
-	 * 
+	 *
 	 * @param position the position to register
 	 * @throws BadLocationException if the position cannot be added to its
 	 *         document
@@ -695,7 +695,7 @@ public class LinkedModeModel {
 			fPositionSequence.add(position);
 		}
 	}
-	
+
 	/**
 	 * Suspends this model.
 	 */
@@ -710,7 +710,7 @@ public class LinkedModeModel {
 	/**
 	 * Resumes this model. <code>flags</code> can be <code>NONE</code>
 	 * or <code>SELECT</code>.
-	 * 
+	 *
 	 * @param flags <code>NONE</code> or <code>SELECT</code>
 	 */
 	private void resume(int flags) {
@@ -724,7 +724,7 @@ public class LinkedModeModel {
 	/**
 	 * Returns whether an offset is contained by any position in this
 	 * model.
-	 * 
+	 *
 	 * @param offset the offset to check
 	 * @return <code>true</code> if <code>offset</code> is included by any
 	 *         position (see {@link LinkedPosition#includes(int)}) in this
@@ -740,19 +740,19 @@ public class LinkedModeModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the linked position group that contains <code>position</code>,
 	 * or <code>null</code> if <code>position</code> is not contained in any
 	 * group within this model. Group containment is tested by calling
 	 * <code>group.contains(position)</code> for every <code>group</code> in
 	 * this model.
-	 * 
+	 *
 	 * <p>
 	 * This method part of the private protocol between
 	 * <code>LinkedModeUI</code> and <code>LinkedModeModel</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param position the position the group of which is requested
 	 * @return the first group in this model for which
 	 *         <code>group.contains(position)</code> returns <code>true</code>,

@@ -24,10 +24,10 @@ import org.eclipse.jface.text.IEventConsumer;
  * processing the event.
  */
 interface IContentAssistListener2 extends IEventConsumer {
-	
+
 	/**
 	 * Verifies the key event.
-	 * 
+	 *
 	 * @param event the key event
 	 * @return <code>true</code> if processing should be continued by additional listeners
 	 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(VerifyEvent)

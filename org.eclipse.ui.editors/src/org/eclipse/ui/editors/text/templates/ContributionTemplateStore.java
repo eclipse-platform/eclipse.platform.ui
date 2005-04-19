@@ -41,7 +41,7 @@ import org.osgi.framework.Bundle;
  * <p>
  * Clients may instantiate but not subclass this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class ContributionTemplateStore extends TemplateStore {
@@ -50,20 +50,20 @@ public class ContributionTemplateStore extends TemplateStore {
 
 	private static final String ID= "id"; //$NON-NLS-1$
 	private static final String NAME= "name"; //$NON-NLS-1$
-	
+
 	private static final String CONTEXT_TYPE_ID= "contextTypeId"; //$NON-NLS-1$
 	private static final String DESCRIPTION= "description"; //$NON-NLS-1$
 
 	private static final String TEMPLATE= "template"; //$NON-NLS-1$
 	private static final String PATTERN= "pattern"; //$NON-NLS-1$
-	
+
 	private static final String INCLUDE= "include"; //$NON-NLS-1$
 	private static final String FILE= "file"; //$NON-NLS-1$
 	private static final String TRANSLATIONS= "translations"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new template store.
-	 * 
+	 *
 	 * @param store the preference store in which to store custom templates
 	 *        under <code>key</code>
 	 * @param key the key into <code>store</code> where to store custom
@@ -72,12 +72,12 @@ public class ContributionTemplateStore extends TemplateStore {
 	public ContributionTemplateStore(IPreferenceStore store, String key) {
 		super(store, key);
 	}
-	
+
 	/**
 	 * Creates a new template store with a context type registry. Only templates
 	 * that specify a context type contained in the registry will be loaded by
 	 * this store if the registry is not <code>null</code>.
-	 * 
+	 *
 	 * @param registry a context type registry, or <code>null</code> if all
 	 *        templates should be loaded
 	 * @param store the preference store in which to store custom templates
@@ -88,10 +88,10 @@ public class ContributionTemplateStore extends TemplateStore {
 	public ContributionTemplateStore(ContextTypeRegistry registry, IPreferenceStore store, String key) {
 		super(registry, store, key);
 	}
-	
+
 	/**
 	 * Loads the templates contributed via the templates extension point.
-	 * 
+	 *
 	 * @throws IOException {@inheritDoc}
 	 */
 	protected void loadContributedTemplates() throws IOException {
@@ -102,7 +102,7 @@ public class ContributionTemplateStore extends TemplateStore {
 			internalAdd(data);
 		}
 	}
-	
+
 	private Collection readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
 		Collection templates= new ArrayList();
 		for (int i= 0; i < extensions.length; i++) {
@@ -112,7 +112,7 @@ public class ContributionTemplateStore extends TemplateStore {
 				readIncludedTemplates(templates, extensions[i]);
 			}
 		}
-		
+
 		return templates;
 	}
 
@@ -173,7 +173,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	 * Validates a template against the context type registered in the context
 	 * type registry. Returns always <code>true</code> if no registry is
 	 * present.
-	 * 
+	 *
 	 * @param template the template to validate
 	 * @return <code>true</code> if validation is successful or no context
 	 *         type registry is specified, <code>false</code> if validation
@@ -181,9 +181,9 @@ public class ContributionTemplateStore extends TemplateStore {
 	 */
 	private boolean validateTemplate(Template template) {
 		String contextTypeId= template.getContextTypeId();
-		if (!contextExists(contextTypeId)) 
+		if (!contextExists(contextTypeId))
 			return false;
-		
+
 		if (getRegistry() != null) {
 			try {
 				getRegistry().getContextType(contextTypeId).validate(template.getPattern());
@@ -197,7 +197,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	/**
 	 * Returns <code>true</code> if a context type id specifies a valid context type
 	 * or if no context type registry is present.
-	 * 
+	 *
 	 * @param contextTypeId the context type id to look for
 	 * @return <code>true</code> if the context type specified by the id
 	 *         is present in the context type registry, or if no registry is
@@ -217,17 +217,17 @@ public class ContributionTemplateStore extends TemplateStore {
 		if (contextExists(contextTypeId)) {
 			String id= element.getAttributeAsIs(ID);
 			if (isValidTemplateId(id)) {
-				
+
 				String name= element.getAttribute(NAME);
 				if (name != null) {
-					
+
 					String pattern= element.getChildren(PATTERN)[0].getValue();
 					if (pattern != null) {
-						
+
 						String desc= element.getAttribute(DESCRIPTION);
 						if (desc == null)
 							desc= ""; //$NON-NLS-1$
-						
+
 						Template template= new Template(name, desc, contextTypeId, pattern);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
 						if (validateTemplate(template))
@@ -237,7 +237,7 @@ public class ContributionTemplateStore extends TemplateStore {
 			}
 		}
 	}
-	
+
 	private static boolean isValidTemplateId(String id) {
 		return id != null && id.trim().length() != 0; // TODO test validity?
 	}

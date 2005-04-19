@@ -15,7 +15,7 @@ package org.eclipse.jface.text.formatter;
  * Keys used by <code>IFormattingContext</code> objects to register specific
  * properties needed during the formatting process of a content formatter
  * implementing <code>IContentFormatterExtension</code>.
- * 
+ *
  * @see IFormattingContext
  * @see IFormattingStrategyExtension
  * @see IContentFormatterExtension

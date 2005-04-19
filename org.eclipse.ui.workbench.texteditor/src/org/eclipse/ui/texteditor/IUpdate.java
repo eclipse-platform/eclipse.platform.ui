@@ -16,7 +16,7 @@ package org.eclipse.ui.texteditor;
  * Indicates the support of an update method.
  */
 public interface IUpdate {
-	
+
 	/**
 	 * Requests that this object update itself.
 	 */

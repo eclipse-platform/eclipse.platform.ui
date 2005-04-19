@@ -19,7 +19,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 /**
  * Adapter for the managing bookmark action.
- * 
+ *
  * @since 2.0
  */
 public class BookmarkRulerAction extends AbstractRulerActionDelegate {

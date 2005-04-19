@@ -20,17 +20,17 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action that will revert a line in the currently displayed document to the state in the
  * reference document.
- * 
+ *
  * @since 3.0
  */
 public class RevertLineAction extends QuickDiffRestoreAction {
-	
+
 	/** The line to be restored. Set in <code>update()</code>. */
 	private int fLine;
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
@@ -54,14 +54,14 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
 			return false;
-		
+
 		if (info.getChangeType() == ILineDiffInfo.ADDED)
-			setText(QuickDiffMessages.RevertLineAction_delete_label); 
+			setText(QuickDiffMessages.RevertLineAction_delete_label);
 		else
-			setText(QuickDiffMessages.RevertLineAction_label); 
+			setText(QuickDiffMessages.RevertLineAction_label);
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction#runCompoundChange()
 	 */

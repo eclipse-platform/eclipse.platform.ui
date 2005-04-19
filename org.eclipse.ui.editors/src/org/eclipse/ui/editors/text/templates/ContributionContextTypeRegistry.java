@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  * <code>ContextType</code>s can be added either directly using
  * {@link #addContextType(TemplateContextType)} or by instantiating and adding a
  * contributed context type using {@link #addContextType(String)}.
- * 
+ *
  * @since 3.0
  */
 public class ContributionContextTypeRegistry extends ContextTypeRegistry {
@@ -47,7 +47,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	private static final String ID= "id"; //$NON-NLS-1$
 	private static final String NAME= "name"; //$NON-NLS-1$
 	private static final String CLASS= "class"; //$NON-NLS-1$
-	
+
 	private static final String RESOLVER= "resolver"; //$NON-NLS-1$
 	private static final String CONTEXT_TYPE_ID= "contextTypeId"; //$NON-NLS-1$
 	private static final String DESCRIPTION= "description"; //$NON-NLS-1$
@@ -59,20 +59,20 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 * contributions to the <code>org.eclipse.ui.editors.templates</code>
 	 * extension point are searched for the given identifier and the specified
 	 * context type instantiated if it is found.
-	 * 
+	 *
 	 * @param id the id for the context type as specified in XML
 	 */
 	public void addContextType(String id) {
 		Assert.isNotNull(id);
 		if (getContextType(id) != null)
 			return;
-		
+
 		TemplateContextType type= createContextType(id);
 		if (type != null)
 			addContextType(type);
-		
+
 	}
-	
+
 	/**
 	 * Tries to create a context type given an id. Contributions to the
 	 * <code>org.eclipse.ui.editors.templates</code> extension point are
@@ -80,14 +80,14 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 * instantiated if it is found. Any contributed
 	 * {@link org.eclipse.jface.text.templates.TemplateVariableResolver}s
 	 * are also instantiated and added to the context type.
-	 * 
+	 *
 	 * @param id the id for the context type as specified in XML
 	 * @return the instantiated and configured context type, or
 	 *         <code>null</code> if it is not found or cannot be instantiated
 	 */
 	public static TemplateContextType createContextType(String id) {
 		Assert.isNotNull(id);
-		
+
 		IConfigurationElement[] extensions= getTemplateExtensions();
 		TemplateContextType type;
 		try {
@@ -101,10 +101,10 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			EditorsPlugin.log(e);
 			type= null;
 		}
-		
+
 		return type;
 	}
-	
+
 	private static TemplateContextType createContextType(IConfigurationElement[] extensions, String contextTypeId) throws CoreException {
 		for (int i= 0; i < extensions.length; i++) {
 			// TODO create half-order over contributions
@@ -114,7 +114,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 					return createContextType(extensions[i]);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -122,7 +122,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 * Instantiates the resolvers contributed to the context type with id
 	 * <code>contextTypeId</code>. If instantiation of one resolver fails,
 	 * the exception are logged and operation continues.
-	 * 
+	 *
 	 * @param extensions the configuration elements to parse
 	 * @param contextTypeId the id of the context type for which resolvers are
 	 *        instantiated
@@ -144,9 +144,9 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 				}
 			}
 		}
-		
+
 		return (TemplateVariableResolver[]) resolvers.toArray(new TemplateVariableResolver[resolvers.size()]);
-			
+
 	}
 
 	private static IConfigurationElement[] getTemplateExtensions() {
@@ -160,10 +160,10 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			String name= element.getAttribute(NAME);
 			if (name == null)
 				name= id;
-			
+
 			contextType.setId(id);
 			contextType.setName(name);
-			
+
 			return contextType;
 		} catch (ClassCastException e) {
 			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "extension does not implement " + TemplateContextType.class.getName(), e)); //$NON-NLS-1$
@@ -177,17 +177,17 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 
 				TemplateVariableResolver resolver= (TemplateVariableResolver) element.createExecutableExtension(CLASS);
 				resolver.setType(type);
-				
+
 				String desc= element.getAttribute(DESCRIPTION);
 				resolver.setDescription(desc == null ? "" : desc); //$NON-NLS-1$
-				
+
 				return resolver;
 			}
 		} catch (ClassCastException e) {
 			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "extension does not implement " + TemplateVariableResolver.class.getName(), e)); //$NON-NLS-1$
 		}
-		
+
 		return null;
 	}
 }
-	
+

@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 /**
  * Formatting context used in formatting strategies implementing interface
  * <code>IFormattingStrategyExtension</code>.
- * 
+ *
  * @see IFormattingStrategyExtension
  * @since 3.0
  */
@@ -35,14 +35,14 @@ public interface IFormattingContext {
 	/**
 	 * Returns the preference keys used for the retrieval of formatting
 	 * preferences.
-	 * 
+	 *
 	 * @return The preference keys for formatting
 	 */
 	String[] getPreferenceKeys();
 
 	/**
 	 * Retrieves the property <code>key</code> from the formatting context
-	 * 
+	 *
 	 * @param key
 	 *                  Key of the property to store in the context
 	 * @return The property <code>key</code> if available, <code>null</code>
@@ -52,7 +52,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for a boolean preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for a boolean preference,
@@ -62,7 +62,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for a double preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for a double preference,
@@ -72,7 +72,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for a float preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for a float preference,
@@ -82,7 +82,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for an integer preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for an integer preference,
@@ -92,7 +92,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for a long preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for a long preference,
@@ -102,7 +102,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Is this preference key for a string preference?
-	 * 
+	 *
 	 * @param key
 	 *                  The preference key to query its type
 	 * @return <code>true</code> iff this key is for a string preference,
@@ -117,7 +117,7 @@ public interface IFormattingContext {
 	 * {@link #getPreferenceKeys()} must not be used in the preference store.
 	 * Otherwise the preferences are overwritten.
 	 * </p>
-	 * 
+	 *
 	 * @param map
 	 *                  Map to retrieve the preferences from
 	 * @param store
@@ -127,7 +127,7 @@ public interface IFormattingContext {
 
 	/**
 	 * Stores the property <code>key</code> in the formatting context.
-	 * 
+	 *
 	 * @param key
 	 *                  Key of the property to store in the context
 	 * @param property
@@ -143,7 +143,7 @@ public interface IFormattingContext {
 	 * {@link #getPreferenceKeys()} must not be used in the map. Otherwise the
 	 * preferences are overwritten.
 	 * </p>
-	 * 
+	 *
 	 * @param store
 	 *                  Preference store to retrieve the preferences from
 	 * @param map

@@ -19,28 +19,28 @@ import org.eclipse.jface.text.IInformationControlCreator;
  * <li>providing the range of lines for which the hover for a given line is valid</li>
  * <li>providing whether the information control can interact with the mouse cursor</li>
  * </ul>
- * 
+ *
  * @see org.eclipse.jface.text.IInformationControlCreator
  * @see org.eclipse.jface.text.source.IAnnotationHover
  * @since 3.0
  */
 public interface IAnnotationHoverExtension {
-	
+
 	/**
 	 * Returns the hover control creator of this annotation hover.
-	 * 
+	 *
 	 * @return the hover control creator
 	 */
 	IInformationControlCreator getHoverControlCreator();
-	
+
 	/**
 	 * Returns whether the provided information control can interact with the mouse cursor. I.e. the
 	 * hover must implement custom information control management.
-	 * 
+	 *
 	 * @return <code>true</code> if the mouse cursor can be handled
 	 */
 	boolean canHandleMouseCursor();
-	
+
 	/**
 	 * Returns the object which should be presented in the a
 	 * hover popup window. The information is requested based on
@@ -56,7 +56,7 @@ public interface IAnnotationHoverExtension {
 	/**
 	 * Returns the range of lines that include the given line number for which
 	 * the same hover information is valid.
-	 * 
+	 *
 	 * @param viewer the viewer which the hover is queried for
 	 * @param lineNumber the line number of the line for which a hover is displayed for
 	 * @return the computed line range

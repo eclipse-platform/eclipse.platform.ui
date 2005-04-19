@@ -31,7 +31,7 @@ package org.eclipse.jface.text.formatter;
  * This interface must be implemented by clients. Implementers should be
  * registered with a content formatter in order get involved in the formatting
  * process.
- * 
+ *
  * @see IFormattingContext
  * @since 3.0
  */
@@ -46,7 +46,7 @@ public interface IFormattingStrategyExtension {
 	/**
 	 * Informs the strategy about the start of a formatting process in which it
 	 * will participate.
-	 * 
+	 *
 	 * @param context
 	 *                  Formatting context used in the corresponding formatting
 	 *                  process.

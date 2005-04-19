@@ -41,36 +41,36 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 /**
  * Objects of this class provide access to all extensions declared for the <code>markerAnnotationSpecification</code> extension point.
  * The extensions are represented as instances of {@link org.eclipse.ui.texteditor.AnnotationPreference}.
- * 
+ *
  * @since 2.1
  */
 public class MarkerAnnotationPreferences {
-	
+
 	/**
 	 * Initializes the given preference store with the default marker annotation values.
-	 * 
+	 *
 	 * @param store the preference store to be initialized
 	 * @since 3.0
 	 */
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		
+
 		boolean ignoreAnnotationsPrefPage= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE);
 		boolean ignoreQuickDiffPrefPage= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE);
-		
+
 		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			
+
 			if (ignoreAnnotationsPrefPage && info.isIncludeOnPreferencePage() && isComplete(info))
 				continue;
-			
+
 			if (ignoreQuickDiffPrefPage && (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 					|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
 					|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-				)) 
+				))
 				continue;
-			
+
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
 			if (info.getVerticalRulerPreferenceKey() != null)
@@ -101,25 +101,25 @@ public class MarkerAnnotationPreferences {
 	 * This method is not part of the API and must only be called
 	 * by {@link org.eclipse.ui.editors.text.EditorsUI}
 	 * </p>
-	 * 
+	 *
 	 * @param store the preference store to be initialized
 	 * @throws IllegalStateException if not called by {@link org.eclipse.ui.editors.text.EditorsUI}
 	 * @since 3.0
 	 */
 	public static void useAnnotationsPreferencePage(IPreferenceStore store) throws IllegalStateException {
 		checkAccess();
-		
+
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, Boolean.toString(true));
-		
+
 		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			
+
 			// Only reset annotations shown on Annotations preference page
 			if (!info.isIncludeOnPreferencePage() || !isComplete(info))
 				continue;
-			
+
 			store.setToDefault(info.getTextPreferenceKey());
 			store.setToDefault(info.getOverviewRulerPreferenceKey());
 			if (info.getVerticalRulerPreferenceKey() != null)
@@ -137,7 +137,7 @@ public class MarkerAnnotationPreferences {
 				store.setToDefault(info.getTextStylePreferenceKey());
 		}
 	}
-	
+
 	/**
 	 * Removes the Quick Diff marker annotation values which are shown on the
 	 * general Quick Diff page from the given store and prevents
@@ -150,29 +150,29 @@ public class MarkerAnnotationPreferences {
 	 * This method is not part of the API and must only be called
 	 * by {@link EditorsUI}
 	 * </p>
-	 * 
+	 *
 	 * @param store the preference store to be initialized
 	 * @throws IllegalStateException if not called by {@link EditorsUI}
 	 * @since 3.0
 	 */
 	public static void useQuickDiffPreferencePage(IPreferenceStore store) throws IllegalStateException {
 		checkAccess();
-		
+
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, Boolean.toString(true));
-		
+
 		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			
+
 			// Only reset annotations shown on Quick Diff preference page
-			
+
 			if (!(info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-			)) 
+			))
 				continue;
-			
+
 			store.setToDefault(info.getTextPreferenceKey());
 			store.setToDefault(info.getOverviewRulerPreferenceKey());
 			if (info.getVerticalRulerPreferenceKey() != null)
@@ -190,10 +190,10 @@ public class MarkerAnnotationPreferences {
 				store.setToDefault(info.getTextStylePreferenceKey());
 		}
 	}
-	
+
 	/**
 	 * Checks correct access.
-	 * 
+	 *
 	 * @throws IllegalStateException if not called by {@link EditorsUI}
 	 * @since 3.0
 	 */
@@ -209,17 +209,17 @@ public class MarkerAnnotationPreferences {
 	private List fFragments;
 	/** The list of extensions. */
 	private List fPreferences;
-	
+
 	/**
 	 * Creates a new marker annotation preferences to access
 	 * marker annotation preferences.
 	 */
 	public MarkerAnnotationPreferences() {
 	}
-	
+
 	/**
 	 * Returns all extensions provided for the <code>markerAnnotationSpecification</code> extension point.
-	 * 
+	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code> extension point
 	 */
 	public List getAnnotationPreferences() {
@@ -227,13 +227,13 @@ public class MarkerAnnotationPreferences {
 			initialize();
 		return fPreferences;
 	}
-	
+
 	/**
 	 * Returns all extensions provided for the <code>markerAnnotationSpecification</code>
 	 * extension point including fragments. Fragments share the preference part
 	 * with a marker annotation specifications provided for a super type but do
 	 * change the presentation part.
-	 * 
+	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code>
 	 *         extension point including fragments
 	 */
@@ -242,17 +242,17 @@ public class MarkerAnnotationPreferences {
 			initialize();
 		return fFragments;
 	}
-	
+
 	/**
 	 * Reads all extensions provided for the <code>markerAnnotationSpecification</code> extension point and
 	 * translates them into <code>AnnotationPreference</code> objects.
 	 */
 	private void initialize() {
-		
+
 		// initialize lists - indicates that the initialization happened
 		fFragments= new ArrayList(2);
 		fPreferences= new ArrayList(2);
-		
+
 		// populate list
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
 		if (extensionPoint != null) {
@@ -274,19 +274,19 @@ public class MarkerAnnotationPreferences {
 			public int compare(Object o1, Object o2) {
 				if (o1 == o2)
 					return 0;
-					
+
 				AnnotationPreference ap1= (AnnotationPreference)o1;
 				AnnotationPreference ap2= (AnnotationPreference)o2;
 
 				String label1= ap1.getPreferenceLabel();
 				String label2= ap2.getPreferenceLabel();
-				
+
 				if (label1 == null && label2 == null)
 					return 0;
-				
+
 				if (label1 == null)
 					return -1;
-				
+
 				if (label2 == null)
 					return 1;
 
@@ -294,12 +294,12 @@ public class MarkerAnnotationPreferences {
 			}
 		});
 	}
-	
+
 	/**
 	 * Checks if <code>spec</code> has all the attributes previously required
 	 * by the marker annotation preference extension point. These are: color, text
 	 * and overview ruler preference keys.
-	 * 
+	 *
 	 * @param spec the <code>AnnotationPreference</code> to check
 	 * @return <code>true</code> if <code>spec</code> is complete, <code>false</code> otherwise
 	 * @since 3.0
@@ -313,18 +313,18 @@ public class MarkerAnnotationPreferences {
 
 	/**
 	 * Creates a <code>AnnotationPreference</code> the given configuration element.
-	 * 
+	 *
 	 * @param element the configuration element
 	 * @return the created annotation preference
 	 */
 	private AnnotationPreference createSpec(IConfigurationElement element) {
-		
+
 		String s;
 		int i;
 		boolean b;
-			
+
 		AnnotationPreference info= new AnnotationPreference();
-		
+
 		s= element.getAttribute("annotationType");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setAnnotationType(s);
@@ -336,33 +336,33 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setMarkerType(s);
-		
+
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			i= StringConverter.asInt(s, IMarker.SEVERITY_INFO);
 			info.setSeverity(i);
 		}
-		
+
 		s= element.getAttribute("textPreferenceKey");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setTextPreferenceKey(s);
-		
+
 		s= element.getAttribute("textPreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			b= StringConverter.asBoolean(s, false);
 			info.setTextPreferenceValue(b);
 		}
-		
+
 		s= element.getAttribute("highlightPreferenceKey");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setHighlightPreferenceKey(s);
-		
+
 		s= element.getAttribute("highlightPreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			b= StringConverter.asBoolean(s, false);
 			info.setHighlightPreferenceValue(b);
 		}
-		
+
 		s= element.getAttribute("overviewRulerPreferenceKey");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setOverviewRulerPreferenceKey(s);
@@ -382,23 +382,23 @@ public class MarkerAnnotationPreferences {
 			b= StringConverter.asBoolean(s, true);
 			info.setVerticalRulerPreferenceValue(b);
 		}
-		
+
 		s= element.getAttribute("colorPreferenceKey");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setColorPreferenceKey(s);
-		
+
 		s= element.getAttribute("colorPreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			RGB rgb= StringConverter.asRGB(s);
 			info.setColorPreferenceValue(rgb == null ? new RGB(0,0,0) : rgb);
 		}
-		
+
 		s= element.getAttribute("presentationLayer");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			i= StringConverter.asInt(s, 0);
 			info.setPresentationLayer(i);
 		}
-		
+
 		s= element.getAttribute("contributesToHeader");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 			b= StringConverter.asBoolean(s, false);
@@ -434,7 +434,7 @@ public class MarkerAnnotationPreferences {
 			b= StringConverter.asBoolean(s, false);
 			info.setIsGoToPreviousNavigationTarget(b);
 		}
-		
+
 		s= element.getAttribute("symbolicIcon");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setSymbolicImageName(s);
@@ -442,38 +442,38 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("icon");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setImageDescriptor(getImageDescriptor(s, element));
-		
+
 		s= element.getAttribute("annotationImageProvider"); //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setAnnotationImageProviderData(element, "annotationImageProvider"); //$NON-NLS-1$
-		
+
 		s= element.getAttribute("textStylePreferenceKey"); //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			info.setTextStylePreferenceKey(s);
-		
+
 		s= element.getAttribute("textStylePreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0) {
 
 			if (AnnotationPreference.STYLE_BOX.equals(s)
-					|| AnnotationPreference.STYLE_IBEAM.equals(s) 
+					|| AnnotationPreference.STYLE_IBEAM.equals(s)
 					|| AnnotationPreference.STYLE_SQUIGGLES.equals(s)
 					|| AnnotationPreference.STYLE_UNDERLINE.equals(s))
 				info.setTextStyleValue(s);
 			else
 				info.setTextStyleValue(AnnotationPreference.STYLE_NONE);
-				
+
 		}
-		
+
 		s= element.getAttribute("includeOnPreferencePage");  //$NON-NLS-1$
 		info.setIncludeOnPreferencePage(s == null || StringConverter.asBoolean(s, true));
 
 		return info;
 	}
-	
+
 	/**
 	 * Returns the image descriptor for the icon path specified by the given configuration
 	 * element.
-	 * 
+	 *
 	 * @param iconPath the icon path
 	 * @param element the configuration element
 	 * @return the image descriptor
@@ -484,7 +484,7 @@ public class MarkerAnnotationPreferences {
 		Bundle bundle= Platform.getBundle(pluginId);
 		if (bundle == null)
 			return null;
-		
+
 		try {
 			return ImageDescriptor.createFromURL(new URL(bundle.getEntry("/"), iconPath)); //$NON-NLS-1$
 		} catch (MalformedURLException x) {

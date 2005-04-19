@@ -73,11 +73,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class LinkedModeUI {
-	
+
 	/* cycle constants */
 	/**
 	 * Constant indicating that this UI should never cycle from the last
@@ -104,34 +104,34 @@ public class LinkedModeUI {
 	public interface ILinkedModeUIFocusListener {
 		/**
 		 * Called when the UI for the linked mode leaves a linked position.
-		 * 
+		 *
 		 * @param position the position being left
 		 * @param target the target where <code>position</code> resides in
 		 */
 		void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target);
 		/**
 		 * Called when the UI for the linked mode gives focus to a linked position.
-		 * 
+		 *
 		 * @param position the position being entered
 		 * @param target the target where <code>position</code> resides in
 		 */
 		void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target);
 	}
-	
+
 	/**
 	 * Null object implementation of focus listener.
 	 */
 	private static final class EmtpyFocusListener implements ILinkedModeUIFocusListener {
-		
+
 		public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 			// ignore
 		}
-		
+
 		public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 			// ignore
 		}
 	}
-	
+
 	/**
 	 * A link target consists of a viewer and gets notified if the linked mode UI on
 	 * it is being shown.
@@ -143,11 +143,11 @@ public class LinkedModeUI {
 	public static abstract class LinkedModeUITarget implements ILinkedModeUIFocusListener {
 		/**
 		 * Returns the viewer represented by this target, never <code>null</code>.
-		 * 
+		 *
 		 * @return the viewer associated with this target.
 		 */
 		public abstract ITextViewer getViewer();
-		
+
 		/**
 		 * The viewer's text widget is initialized when the UI first connects
 		 * to the viewer and never changed thereafter. This is to keep the
@@ -156,13 +156,13 @@ public class LinkedModeUI {
 		 * in a situation where we cannot uninstall the listeners and a memory leak.
 		 */
 		StyledText fWidget;
-		
+
 		/** The cached shell - same reason as fWidget. */
 		Shell fShell;
-		
+
 		/** The registered listener, or <code>null</code>. */
 		KeyListener fKeyListener;
-		
+
 		/** The cached custom annotation model. */
 		LinkedPositionAnnotations fAnnotationModel;
 	}
@@ -178,20 +178,20 @@ public class LinkedModeUI {
 			Assert.isNotNull(viewer);
 			fTextViewer= viewer;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeUI.ILinkedUITarget#getViewer()
 		 */
 		public ITextViewer getViewer() {
 			return fTextViewer;
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
 		public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -239,7 +239,7 @@ public class LinkedModeUI {
 		public boolean doit;
 		/**
 		 * Creates a new instance.
-		 * 
+		 *
 		 * @param flags the exit flags
 		 * @param doit the doit flag for the verify event
 		 */
@@ -260,9 +260,9 @@ public class LinkedModeUI {
 		/**
 		 * Checks whether the linked mode should be left after receiving the
 		 * given <code>VerifyEvent</code> and selection. Note that the event
-		 * carries widget coordinates as opposed to <code>offset</code> and 
+		 * carries widget coordinates as opposed to <code>offset</code> and
 		 * <code>length</code> which are document coordinates.
-		 * 
+		 *
 		 * @param model the linked mode model
 		 * @param event the verify event
 		 * @param offset the offset of the current selection
@@ -298,22 +298,22 @@ public class LinkedModeUI {
 		}
 
 		public void shellDeactivated(ShellEvent e) {
-// 			T ODO reenable after debugging 
+// 			T ODO reenable after debugging
 //			if (true) return;
-			
+
 			// from LinkedPositionUI:
-			
+
 			// don't deactivate on focus lost, since the proposal popups may take focus
 			// plus: it doesn't hurt if you can check with another window without losing linked mode
 			// since there is no intrusive popup sticking out.
-			
+
 			// need to check first what happens on reentering based on an open action
 			// Seems to be no problem
-			
+
 			// Better:
-			// Check with content assistant and only leave if its not the proposal shell that took the 
+			// Check with content assistant and only leave if its not the proposal shell that took the
 			// focus away.
-			
+
 			StyledText text;
 			final ITextViewer viewer;
 			Display display;
@@ -321,7 +321,7 @@ public class LinkedModeUI {
 			if (fCurrentTarget == null || (text= fCurrentTarget.fWidget) == null
 					|| text.isDisposed() || (display= text.getDisplay()) == null
 					|| display.isDisposed()
-					|| (viewer= fCurrentTarget.getViewer()) == null) 
+					|| (viewer= fCurrentTarget.getViewer()) == null)
 			{
 				leave(ILinkedModeListener.EXIT_ALL);
 			}
@@ -337,10 +337,10 @@ public class LinkedModeUI {
 									return;
 							}
 						}
-						
+
 						// else
 						leave(ILinkedModeListener.EXIT_ALL);
-						
+
 					}
 				});
 			}
@@ -367,13 +367,13 @@ public class LinkedModeUI {
 		}
 
 	}
-	
+
 	private class DocumentListener implements IDocumentListener {
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			
+
 			// default behavior: any document change outside a linked position
 			// causes us to exit
 			int end= event.getOffset() + event.getLength();
@@ -387,7 +387,7 @@ public class LinkedModeUI {
 								return;
 						}
 					}
-					
+
 					leave(ILinkedModeListener.EXTERNAL_MODIFICATION);
 					return;
 				}
@@ -440,7 +440,7 @@ public class LinkedModeUI {
 						// outside any edit box -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedModeListener.EXIT_ALL);
 						break;
-					} 
+					}
 
 					if (event.stateMask == SWT.SHIFT)
 						previous();
@@ -532,7 +532,7 @@ public class LinkedModeUI {
 							LinkedPosition pos= fModel.findPosition(find);
 							if (pos == null && fExitPosition != null && fExitPosition.includes(find))
 								pos= fExitPosition;
-								
+
 							if (pos != null)
 								switchPosition(pos, false, false);
 						}
@@ -542,9 +542,9 @@ public class LinkedModeUI {
 		}
 
 	}
-	
+
 	private class ProposalListener implements IProposalListener {
-		
+
 		/*
 		 * @see org.eclipse.jface.internal.text.link.contentassist.IProposalListener#proposalChosen(org.eclipse.jface.text.contentassist.ICompletionProposal)
 		 */
@@ -573,7 +573,7 @@ public class LinkedModeUI {
 	private ProposalListener fProposalListener= new ProposalListener();
 	/** The document listener. */
 	private IDocumentListener fDocumentListener= new DocumentListener();
-	
+
 	/** The last caret position, used by fCaretListener. */
 	private final Position fCaretPosition= new Position(0, 0);
 	/** The exit policy to control custom exit behaviour */
@@ -597,7 +597,7 @@ public class LinkedModeUI {
 	/** The position listener. */
 	private ILinkedModeUIFocusListener fPositionListener= new EmtpyFocusListener();
 	private IAutoEditStrategy fAutoEditVetoer= new IAutoEditStrategy() {
-		
+
 		/*
 		 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
 		 */
@@ -607,7 +607,7 @@ public class LinkedModeUI {
 				command.doit= false;
 				command.caretOffset= command.offset + command.length;
 			}
-			
+
 		}
 	};
 	/** Whether this UI is in simple highlighting mode or not. */
@@ -616,7 +616,7 @@ public class LinkedModeUI {
 	/**
 	 * Creates a new UI on the given model and the set of viewers. The model
 	 * must provide a tab stop sequence with a non-empty list of tab stops.
-	 * 
+	 *
 	 * @param model the linked mode model
 	 * @param targets the non-empty list of targets upon which the linked mode
 	 *        UI should act
@@ -627,7 +627,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Convenience constructor for just one viewer.
-	 * 
+	 *
 	 * @param model the linked mode model
 	 * @param viewer the viewer upon which the linked mode UI should act
 	 */
@@ -637,7 +637,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Convenience constructor for multiple viewers.
-	 * 
+	 *
 	 * @param model the linked mode model
 	 * @param viewers the non-empty list of viewers upon which the linked mode
 	 *        UI should act
@@ -652,7 +652,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Convenience constructor for one target.
-	 * 
+	 *
 	 * @param model the linked mode model
 	 * @param target the target upon which the linked mode UI should act
 	 */
@@ -662,7 +662,7 @@ public class LinkedModeUI {
 
 	/**
 	 * This does the actual constructor work.
-	 * 
+	 *
 	 * @param model the linked mode model
 	 * @param targets the non-empty array of targets upon which the linked mode ui
 	 *        should act
@@ -700,7 +700,7 @@ public class LinkedModeUI {
 	/**
 	 * Sets an <code>IExitPolicy</code> to customize the exit behavior of
 	 * this linked mode UI.
-	 * 
+	 *
 	 * @param policy the exit policy to use.
 	 */
 	public void setExitPolicy(IExitPolicy policy) {
@@ -710,7 +710,7 @@ public class LinkedModeUI {
 	/**
 	 * Sets the exit position to move the caret to when linked mode mode is
 	 * exited.
-	 * 
+	 *
 	 * @param target the target where the exit position is located
 	 * @param offset the offset of the exit position
 	 * @param length the length of the exit position (in case there should be a
@@ -742,12 +742,12 @@ public class LinkedModeUI {
 
 	/**
 	 * Sets the exit position to move the caret to when linked mode is exited.
-	 * 
+	 *
 	 * @param viewer the viewer where the exit position is located
 	 * @param offset the offset of the exit position
 	 * @param length the length of the exit position (in case there should be a
 	 *        selection)
-	 * @param sequence set to the tab stop position of the exit position, or 
+	 * @param sequence set to the tab stop position of the exit position, or
 	 * 		  <code>LinkedPositionGroup.NO_STOP</code> if there should be no tab stop.
 	 * @throws BadLocationException if the position is not valid in the
 	 *         viewer's document
@@ -760,13 +760,13 @@ public class LinkedModeUI {
 	 * Sets the cycling mode to either of <code>CYCLING_ALWAYS</code>,
 	 * <code>CYCLING_NEVER</code>, or <code>CYCLING_WHEN_NO_PARENT</code>,
 	 * which is the default.
-	 * 
+	 *
 	 * @param mode the new cycling mode.
 	 */
 	public void setCyclingMode(Object mode) {
 		if (mode != CYCLE_ALWAYS && mode != CYCLE_NEVER && mode != CYCLE_WHEN_NO_PARENT)
 			throw new IllegalArgumentException();
-		
+
 		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fModel.isNested())
 			fIterator.setCycling(true);
 		else
@@ -788,7 +788,7 @@ public class LinkedModeUI {
 			// dont't update caret, but rather select the current frame
 			leave(ILinkedModeListener.SELECT);
 	}
-	
+
 	private void triggerContextInfo() {
 		ITextOperationTarget target= fCurrentTarget.getViewer().getTextOperationTarget();
 		if (target != null) {
@@ -808,7 +808,7 @@ public class LinkedModeUI {
 				return;
 			}
 		}
-		
+
 		fAssistant.setCompletions(new ICompletionProposal[0]);
 		fAssistant.hidePossibleCompletions();
 	}
@@ -817,17 +817,17 @@ public class LinkedModeUI {
 		Assert.isNotNull(pos);
 		if (pos.equals(fFramePosition))
 			return;
-		
+
 		if (fFramePosition != null && fCurrentTarget != null)
 			fPositionListener.linkingFocusLost(fFramePosition, fCurrentTarget);
-	
+
 		// undo
 		endCompoundChange();
-	
+
 		redraw(); // redraw current position being left - usually not needed
 		IDocument oldDoc= fFramePosition == null ? null : fFramePosition.getDocument();
 		IDocument newDoc= pos.getDocument();
-		
+
 		switchViewer(oldDoc, newDoc, pos);
 		fFramePosition= pos;
 
@@ -843,10 +843,10 @@ public class LinkedModeUI {
 			triggerContentAssist();
 		if (fFramePosition != fExitPosition && fDoContextInfo)
 			triggerContextInfo();
-		
+
 		if (fFramePosition != null && fCurrentTarget != null)
 			fPositionListener.linkingFocusGained(fFramePosition, fCurrentTarget);
-		
+
 	}
 
 	private void ensureAnnotationModelInstalled() {
@@ -866,7 +866,7 @@ public class LinkedModeUI {
 			}
 		}
 	}
-	
+
 	private void uninstallAnnotationModel(LinkedModeUITarget target) {
 		ITextViewer viewer= target.getViewer();
 		if (viewer instanceof ISourceViewer) {
@@ -881,11 +881,11 @@ public class LinkedModeUI {
 
 	private void switchViewer(IDocument oldDoc, IDocument newDoc, LinkedPosition pos) {
 		if (oldDoc != newDoc) {
-			
+
 			// redraw current document with new position before switching viewer
 			if (fCurrentTarget.fAnnotationModel != null)
 				fCurrentTarget.fAnnotationModel.switchToPosition(fModel, pos);
-			
+
 			LinkedModeUITarget target= null;
 			for (int i= 0; i < fTargets.length; i++) {
 				if (fTargets[i].getViewer().getDocument() == newDoc) {
@@ -935,13 +935,13 @@ public class LinkedModeUI {
 			((ITextViewerExtension) viewer).prependVerifyKeyListener(fCurrentTarget.fKeyListener);
 		} else
 			fCurrentTarget.fKeyListener.setEnabled(true);
-		
+
 		registerAutoEditVetoer(viewer);
-		
+
 		((IPostSelectionProvider) viewer).addPostSelectionChangedListener(fSelectionListener);
 
 		createAnnotationModel();
-		
+
 		showSelection();
 
 		fCurrentTarget.fShell= fCurrentTarget.fWidget.getShell();
@@ -950,9 +950,9 @@ public class LinkedModeUI {
 		fCurrentTarget.fShell.addShellListener(fCloser);
 
 		fAssistant.install(viewer);
-		
+
 		viewer.addTextInputListener(fCloser);
-		
+
 		viewer.getDocument().addDocumentListener(fDocumentListener);
 	}
 
@@ -975,7 +975,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Registers our auto edit vetoer with the viewer.
-	 * 
+	 *
 	 * @param viewer the viewer we want to veto ui-triggered changes within
 	 *        linked positions
 	 */
@@ -1041,32 +1041,32 @@ public class LinkedModeUI {
 		Assert.isNotNull(fCurrentTarget);
 		ITextViewer viewer= fCurrentTarget.getViewer();
 		Assert.isNotNull(viewer);
-		
+
 		viewer.getDocument().removeDocumentListener(fDocumentListener);
 
 		fAssistant.uninstall();
 		fAssistant.removeProposalListener(fProposalListener);
 
 		fCurrentTarget.fWidget= null;
-		
+
 		Shell shell= fCurrentTarget.fShell;
 		fCurrentTarget.fShell= null;
-		
+
 		if (shell != null && !shell.isDisposed())
 			shell.removeShellListener(fCloser);
-		
+
 		// this one is asymmetric: we don't install the model in
 		// connect, but leave it to its callers to ensure they
 		// have the model installed if they need it
 		uninstallAnnotationModel(fCurrentTarget);
 
 		unregisterAutoEditVetoer(viewer);
-		
+
 		// don't remove the verify key listener to let it keep its position
 		// in the listener queue
 		if (fCurrentTarget.fKeyListener != null)
 			fCurrentTarget.fKeyListener.setEnabled(false);
-		
+
 		((IPostSelectionProvider) viewer).removePostSelectionChangedListener(fSelectionListener);
 
 		redraw();
@@ -1078,15 +1078,15 @@ public class LinkedModeUI {
 		fIsActive= false;
 
 		endCompoundChange();
-		
+
 		Display display= null;
 		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed())
 			display= fCurrentTarget.fWidget.getDisplay();
-		
+
 		if (fCurrentTarget.fAnnotationModel != null)
 			fCurrentTarget.fAnnotationModel.removeAllAnnotations();
 		disconnect();
-		
+
 		for (int i= 0; i < fTargets.length; i++) {
 			LinkedModeUITarget target= fTargets[i];
 			ITextViewer viewer= target.getViewer();
@@ -1094,22 +1094,22 @@ public class LinkedModeUI {
 				((ITextViewerExtension) viewer).removeVerifyKeyListener(target.fKeyListener);
 				target.fKeyListener= null;
 			}
-			
+
 			viewer.removeTextInputListener(fCloser);
 		}
-		
+
 		for (int i= 0; i < fTargets.length; i++) {
-			
+
 			if (fTargets[i].fAnnotationModel != null) {
 				fTargets[i].fAnnotationModel.removeAllAnnotations();
 				fTargets[i].fAnnotationModel.disconnect(fTargets[i].getViewer().getDocument());
 				fTargets[i].fAnnotationModel= null;
 			}
-			
+
 			uninstallAnnotationModel(fTargets[i]);
 		}
 
-		
+
 		if (fExitPosition != null)
 			fExitPosition.getDocument().removePosition(fExitPosition);
 
@@ -1122,7 +1122,7 @@ public class LinkedModeUI {
 			if (doc != null)
 				docs.add(doc);
 		}
-		
+
 		fModel.stopForwarding(flags);
 
 		Runnable runnable= new Runnable() {
@@ -1166,7 +1166,7 @@ public class LinkedModeUI {
 			fHasOpenCompoundChange= false;
 		}
 	}
-	
+
 	private void beginCompoundChange() {
 		if (!fHasOpenCompoundChange) {
 			ITextViewerExtension extension= (ITextViewerExtension) fCurrentTarget.getViewer();
@@ -1178,7 +1178,7 @@ public class LinkedModeUI {
 
 	/**
 	 * Returns the currently selected region or <code>null</code>.
-	 * 
+	 *
 	 * @return the currently selected region or <code>null</code>
 	 */
 	public IRegion getSelectedRegion() {
@@ -1197,34 +1197,34 @@ public class LinkedModeUI {
 	 * Sets the context info property. If set to <code>true</code>, context
 	 * info will be invoked on the current target's viewer whenever a position
 	 * is switched.
-	 * 
+	 *
 	 * @param doContextInfo <code>true</code> if context information should be
 	 *        displayed
 	 */
 	public void setDoContextInfo(boolean doContextInfo) {
 		fDoContextInfo= doContextInfo;
 	}
-	
+
 	/**
-	 * Sets the focus callback which will get informed when the focus of the 
+	 * Sets the focus callback which will get informed when the focus of the
 	 * linked mode UI changes.
 	 * <p>
 	 * If there is a listener installed already, it will be replaced.
 	 * </p>
-	 *  
+	 *
 	 * @param listener the new listener, never <code>null</code>.
 	 */
 	protected void setPositionListener(ILinkedModeUIFocusListener listener) {
 		Assert.isNotNull(listener);
 		fPositionListener= listener;
 	}
-	
+
 	/**
-	 * Sets the "simple" mode of the receiver. A linked mode UI in simple mode 
+	 * Sets the "simple" mode of the receiver. A linked mode UI in simple mode
 	 * merely draws the exit position, but not the target, focus, and slave
 	 * positions. Default is <code>false</code>. This method must be called
 	 * before it is entered.
-	 * 
+	 *
 	 * @param simple <code>true</code> if the UI should be in simple mode.
 	 */
 	public void setSimpleMode(boolean simple) {

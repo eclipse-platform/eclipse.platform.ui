@@ -31,32 +31,32 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * but can subsequently be changed using <code>setEditor</code>.</p>
  * <p>
  * If this class is used as is, it works by asking the text editor for its
- * text operation target adapter (using <code>getAdapter(ITextOperationTarget.class)</code>. 
+ * text operation target adapter (using <code>getAdapter(ITextOperationTarget.class)</code>.
  * The action runs this operation with the pre-configured opcode.</p>
  */
 public final class TextOperationAction extends TextEditorAction {
-	
+
 	/** The text operation code */
 	private int fOperationCode= -1;
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
-	/** 
+	/**
 	 * Indicates whether this action can be executed on read only editors
 	 * @since 2.0
 	 */
 	private boolean fRunsOnReadOnly= false;
-	
+
 	/**
-	 * Creates and initializes the action for the given text editor and operation 
+	 * Creates and initializes the action for the given text editor and operation
 	 * code. The action configures its visual representation from the given resource
-	 * bundle. The action works by asking the text editor at the time for its 
+	 * bundle. The action works by asking the text editor at the time for its
 	 * text operation target adapter (using
 	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs that
 	 * operation with the given opcode.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @param operationCode the operation code
@@ -67,23 +67,23 @@ public final class TextOperationAction extends TextEditorAction {
 		fOperationCode= operationCode;
 		update();
 	}
-	
+
 	/**
-	 * Creates and initializes the action for the given text editor and operation 
+	 * Creates and initializes the action for the given text editor and operation
 	 * code. The action configures its visual representation from the given resource
-	 * bundle. The action works by asking the text editor at the time for its 
+	 * bundle. The action works by asking the text editor at the time for its
 	 * text operation target adapter (using
 	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs that
 	 * operation with the given opcode.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @param operationCode the operation code
 	 * @param runsOnReadOnly <code>true</code> if action can be executed on read-only files
-	 * 
+	 *
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 * @since 2.0
 	 */
@@ -93,59 +93,59 @@ public final class TextOperationAction extends TextEditorAction {
 		fRunsOnReadOnly= runsOnReadOnly;
 		update();
 	}
-	
+
 	/**
-	 * The <code>TextOperationAction</code> implementation of this 
+	 * The <code>TextOperationAction</code> implementation of this
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
 	 */
 	public void run() {
 		if (fOperationCode == -1 || fOperationTarget == null)
 			return;
-			
+
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return;
 
 		if (!fRunsOnReadOnly && !validateEditorInputState())
 			return;
-			
+
 		Display display= null;
-		
+
 		IWorkbenchPartSite site= editor.getSite();
 		Shell shell= site.getShell();
-		if (shell != null && !shell.isDisposed()) 
+		if (shell != null && !shell.isDisposed())
 			display= shell.getDisplay();
-	
+
 		BusyIndicator.showWhile(display, new Runnable() {
 			public void run() {
 				fOperationTarget.doOperation(fOperationCode);
 			}
 		});
 	}
-	
+
 	/**
-	 * The <code>TextOperationAction</code> implementation of this 
+	 * The <code>TextOperationAction</code> implementation of this
 	 * <code>IUpdate</code> method discovers the operation through the current
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.
 	 */
 	public void update() {
 		super.update();
-		
+
 		if (!fRunsOnReadOnly && !canModifyEditor()) {
 			setEnabled(false);
 			return;
 		}
-		
+
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			
+
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 		setEnabled(isEnabled);
 	}
-	
+
 	/*
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */

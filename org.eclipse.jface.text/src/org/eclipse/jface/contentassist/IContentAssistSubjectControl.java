@@ -23,21 +23,21 @@ import org.eclipse.jface.text.IEventConsumer;
 /**
  * A content assist subject control can request assistance provided by a
  * {@linkplain org.eclipse.jface.contentassist.ISubjectControlContentAssistant subject control content assistant}.
- * 
+ *
  * @since 3.0
  */
 public interface IContentAssistSubjectControl {
 
 	/**
 	 * Returns the control of this content assist subject control.
-	 * 
+	 *
 	 * @return the control of this content assist subject control
 	 */
 	Control getControl();
 
 	/**
 	 * Returns the line height.
-	 * 
+	 *
 	 * @return line height in pixel
 	 * @exception org.eclipse.swt.SWTException
 	 *               <ul>
@@ -52,7 +52,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Returns the caret position relative to the start of the text in widget
 	 * coordinates.
-	 * 
+	 *
 	 * @return the caret position relative to the start of the text in widget
 	 *         coordinates
 	 * @exception org.eclipse.swt.SWTException
@@ -69,7 +69,7 @@ public interface IContentAssistSubjectControl {
 	 * Returns the x, y location of the upper left corner of the character
 	 * bounding box at the specified offset in the text. The point is relative
 	 * to the upper left corner of the widget client area.
-	 * 
+	 *
 	 * @param offset widget offset relative to the start of the content 0
 	 *           <= offset <= getCharCount()
 	 * @return x, y location of the upper left corner of the character bounding
@@ -86,7 +86,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Returns the line delimiter used for entering new lines by key down or
 	 * paste operation.
-	 * 
+	 *
 	 * @return line delimiter used for entering new lines by key down or paste
 	 *         operation
 	 * @exception org.eclipse.swt.SWTException
@@ -99,7 +99,7 @@ public interface IContentAssistSubjectControl {
 
 	/**
 	 * Returns the selected range in the subject's widget.
-	 * 
+	 *
 	 * @return start and length of the selection, x is the offset of the
 	 * @exception org.eclipse.swt.SWTException
 	 *			<ul>
@@ -111,7 +111,7 @@ public interface IContentAssistSubjectControl {
 
 	/**
 	 * Returns the selected range.
-	 * 
+	 *
 	 * @return start and length of the selection, x is the offset and y the
 	 *         length based on the subject's model (e.g. document)
 	 */
@@ -120,7 +120,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Sets the selected range. Offset and length based on the subject's
 	 * model (e.g. document).
-	 * 
+	 *
 	 * @param offset the offset of the selection based on the subject's model e.g. document
 	 * @param length the length of the selection based on the subject's model e.g. document
 	 */
@@ -129,7 +129,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Reveals the given region. Offset and length based on the subject's
 	 * model (e.g. document).
-	 * 
+	 *
 	 * @param offset the offset of the selection based on the subject's model e.g. document
 	 * @param length the length of the selection based on the subject's model e.g. document
 	 */
@@ -137,7 +137,7 @@ public interface IContentAssistSubjectControl {
 
 	/**
 	 * Returns this content assist subject control's document.
-	 * 
+	 *
 	 * @return the viewer's input document
 	 */
 	IDocument getDocument();
@@ -153,7 +153,7 @@ public interface IContentAssistSubjectControl {
 	 * then this method can be used but <code>prependVerifyKeyListener</code>
 	 * must return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param verifyKeyListener the listener to be added
 	 * @return <code>true</code> if the listener was added
 	 */
@@ -169,7 +169,7 @@ public interface IContentAssistSubjectControl {
 	 * listener, in which case <code>false</code> will be returned. However,
 	 * {@link #appendVerifyKeyListener(VerifyKeyListener)} might work.
 	 * </p>
-	 * 
+	 *
 	 * @param verifyKeyListener the listener to be inserted
 	 * @return <code>true</code> if the listener was added
 	 */
@@ -179,7 +179,7 @@ public interface IContentAssistSubjectControl {
 	 * Removes the verify key listener from this content assist subject control's
 	 * list of verify key listeners. If the listener is not registered, this
 	 * call has no effect.
-	 * 
+	 *
 	 * @param verifyKeyListener the listener to be removed
 	 */
 	void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener);
@@ -187,7 +187,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Tests whether a verify key listener can be added either using <code>prependVerifyKeyListener</code>
 	 * or {@link #appendVerifyKeyListener(VerifyKeyListener)}.
-	 * 
+	 *
 	 * @return <code>true</code> if adding verify key listeners is supported
 	 */
 	boolean supportsVerifyKeyListener();
@@ -196,7 +196,7 @@ public interface IContentAssistSubjectControl {
 	 * Adds the listener to the collection of listeners who will be notified
 	 * when keys are pressed and released on the system keyboard, by sending it
 	 * one of the messages defined in the {@link KeyListener} interface.
-	 * 
+	 *
 	 * @param keyListener the listener which should be notified
 	 * @exception IllegalArgumentException if the listener is <code>null</code>
 	 * @exception org.eclipse.swt.SWTException
@@ -204,7 +204,7 @@ public interface IContentAssistSubjectControl {
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
 	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
 	 *			</ul>
-	 * 
+	 *
 	 * @see KeyListener
 	 * @see #removeKeyListener(KeyListener)
 	 */
@@ -213,7 +213,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * Removes the listener from the collection of listeners who will be
 	 * notified when keys are pressed and released on the system keyboard.
-	 * 
+	 *
 	 * @param keyListener the listener which should be notified
 	 * @exception IllegalArgumentException if the listener is null</li>
 	 * @exception org.eclipse.swt.SWTException
@@ -229,7 +229,7 @@ public interface IContentAssistSubjectControl {
 	/**
 	 * If supported, registers an event consumer with this content assist
 	 * subject.
-	 * 
+	 *
 	 * @param eventConsumer the content assist subject control's event consumer. <code>null</code>
 	 *           is a valid argument.
 	 */
@@ -249,8 +249,8 @@ public interface IContentAssistSubjectControl {
 	 */
 	void removeSelectionListener(SelectionListener selectionListener);
 
-	/**	 
-	 * If supported, adds a selection listener. A Selection event is sent by the widget when the 
+	/**
+	 * If supported, adds a selection listener. A Selection event is sent by the widget when the
 	 * selection has changed.
 	 * <p>
 	 *

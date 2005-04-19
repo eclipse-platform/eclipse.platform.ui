@@ -31,7 +31,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 /**
  * Content assist processor for regular expressions.
- * 
+ *
  * @since 3.0
  */
 final class RegExContentAssistProcessor implements IContentAssistProcessor, ISubjectControlContentAssistProcessor {
@@ -40,13 +40,13 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	 * The available proposal strings.
 	 */
 	private final static HashMap fgProposalStrings= new HashMap();
-	
+
 	/**
 	 * The available proposal keys.
 	 */
 	private final static ArrayList fgProposalKeys= new ArrayList();
-	
-	
+
+
 	static {
 
 		//---------- Proposal Keys ----------
@@ -100,11 +100,11 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalKeys.add("{n}+");  //$NON-NLS-1$
 		fgProposalKeys.add("{n,}+");  //$NON-NLS-1$
 		fgProposalKeys.add("{n,m}+");  //$NON-NLS-1$
- 
+
 		fgProposalKeys.add("UV");  //$NON-NLS-1$
 		fgProposalKeys.add("U|V");  //$NON-NLS-1$
 		fgProposalKeys.add("(U)");  //$NON-NLS-1$
-		
+
 		fgProposalKeys.add("\\i");  //$NON-NLS-1$
 		fgProposalKeys.add("$i");  //$NON-NLS-1$
 
@@ -146,9 +146,9 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 //		fgProposalKeys.add("(?<=U)");  //$NON-NLS-1$
 //		fgProposalKeys.add("(?<!U)");  //$NON-NLS-1$
 //		fgProposalKeys.add("(?>U)");  //$NON-NLS-1$
-		
+
 		//---------- Proposals ----------
-		
+
 		fgProposalStrings.put("\\\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\0", "\\0"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\x", "\\x"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -160,7 +160,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalStrings.put("\\a", "\\a"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\e", "\\e"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\c", "\\c"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fgProposalStrings.put(".", "."); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\d", "\\d"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\D", "\\D"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -197,23 +197,23 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalStrings.put("{n}+", "{}+");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("{n,}+", "{,}+");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("{n,m}+", "{,}+");  //$NON-NLS-1$ //$NON-NLS-2$
- 
+
 		fgProposalStrings.put("UV", "");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("U|V", "|");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(U)", "()");  //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fgProposalStrings.put("\\i", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("$i", "$");  //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fgProposalStrings.put("\\", "\\");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\Q", "\\Q");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\E", "\\E");  //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fgProposalStrings.put("[ecq]", "[]"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("[^ecq]", "^"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("[e-q]", "[]"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("&&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fgProposalStrings.put("\\p{Lower}", "\\p{Lower}"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\p{Upper}", "\\p{Upper}"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\p{ASCII}", "\\p{ASCII}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -233,7 +233,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		fgProposalStrings.put("\\p{Sc}", "\\p{Sc}");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("\\P{InGreek}", "\\P{InGreek}");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("[\\p{L}&&[^\\p{Lu}]","[\\p{L}&&[^\\p{Lu}]");  //$NON-NLS-1$ //$NON-NLS-2$
- 
+
 		fgProposalStrings.put("(?:U)", "(?:)");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(?idmsux-idmsux)", "(?)");  //$NON-NLS-1$ //$NON-NLS-2$
 		fgProposalStrings.put("(?idmsux-idmsux:U)", "(?:)");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -248,43 +248,43 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	 * The context information validator.
 	 */
 	private IContextInformationValidator fValidator= new SubjectControlContextInformationValidator(this);
-	
+
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		return computeCompletionProposals((IContentAssistSubjectControl)null, documentOffset);
 	}
-	
+
 	/*
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		return computeContextInformation((IContentAssistSubjectControl)null, documentOffset);
 	}
-	
+
 	/*
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] {'\\', '[', '('};
 	}
-	
+
 	/*
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
 		return new char[] { };
-		
+
 	}
-	
+
 	/*
 	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
 	}
-	
+
 	/*
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
@@ -316,7 +316,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	public IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
 		return null;
 	}
-	
+
 	private void addProposal(String proposalKey, IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset, List results, boolean filter) {
 		String proposal= (String)fgProposalStrings.get(proposalKey);
 
@@ -330,7 +330,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 			}
 			if (selection == null || selection.length() == 0 || proposal.length() == 0 || proposal.charAt(0) != selection.charAt(0))
 				return;
-			
+
 			proposal= proposal.substring(1);
 		}
 
@@ -343,18 +343,18 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		// XXX: currently there's no smartness: position the cursor after the proposal
 //		if (relativeOffset > 0 && proposal.charAt(relativeOffset - 1) == '}')
 //			relativeOffset--;
-		
+
 		results.add(new CompletionProposal(proposal, documentOffset, 0, Math.max(0, relativeOffset), null, displayString, info, additionalInfo));
 	}
 
 	private IContextInformation createContextInformation(String proposalKey) {
 		return null;
 	}
-	
+
 	private String getString(String proposalKey, String type) {
 		return getString("FindReplace.regExContentAssist." + type + "." + proposalKey);  //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	private static String getString(String key) {
 		try {
 			return EditorMessages.getBundleForConstructedKeys().getString(key);
@@ -362,5 +362,5 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
+
 }

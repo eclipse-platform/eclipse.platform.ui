@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.texteditor;
 
- 
+
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 
@@ -44,13 +44,13 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	private static PaletteData fgPaletteData;
 	/** The image of this range indicator */
 	private Image fImage;
-	
+
 	/**
 	 * Creates a new range indicator.
 	 */
 	public DefaultRangeIndicator() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
 	 */
@@ -58,7 +58,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 		Point canvasSize= canvas.getSize();
 
-		int x= 0;		
+		int x= 0;
 		int y= bounds.y;
 		int w= canvasSize.x;
 		int h= bounds.height;
@@ -66,23 +66,23 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 		if (y + h > canvasSize.y)
 			h= canvasSize.y - y;
-		
+
 		if (y < 0) {
 			h= h + y;
-			y= 0;				
+			y= 0;
 		}
-		
+
 		if (h <= 0)
 			return;
 
 		Image image = getImage(canvas);
 		gc.drawImage(image, 0, 0, w, h, x, y, w, h);
-		
+
 		gc.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		gc.fillRectangle(x, bounds.y, w, b);
 		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
 	 */
@@ -92,7 +92,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 	/**
 	 * Returns the image of this range indicator.
-	 * 
+	 *
 	 * @param control the control
 	 * @return an image
 	 */
@@ -111,13 +111,13 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		} else {
 			Rectangle imageRectangle= fImage.getBounds();
 			Point controlSize= control.getSize();
-			
+
 			if (imageRectangle.width < controlSize.x || imageRectangle.height < controlSize.y) {
 				fImage.dispose();
 				fImage= createImage(control.getDisplay(), controlSize);
 			}
 		}
-		
+
 		return fImage;
 	}
 
@@ -136,7 +136,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 		if (fgPaletteData == null)
 			fgPaletteData= createPalette(display);
-		
+
 		ImageData imageData= new ImageData(width, height, 1, fgPaletteData);
 
 		for (int y= 0; y < height; y++)
@@ -148,7 +148,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 	/**
 	 * Creates and returns a new color palette data.
-	 * 
+	 *
 	 * @param display
 	 * @return the new color palette data
 	 */
@@ -165,7 +165,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 			c1= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 			c2= display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		}
-		
+
 		RGB rgbs[]= new RGB[] {
 			new RGB(c1.getRed(), c1.getGreen(), c1.getBlue()),
 			new RGB(c2.getRed(), c2.getGreen(), c2.getBlue())};

@@ -30,26 +30,26 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
  * access to the shared text colors and the log.
- * 
+ *
  * @since 2.1
  */
 public class EditorsPlugin extends AbstractUIPlugin {
 	private static EditorsPlugin fgInstance;
-	
+
 	public static EditorsPlugin getDefault() {
 		return fgInstance;
 	}
-	
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	public static void logErrorMessage(String message) {
 		if (message == null)
 			message= ""; //$NON-NLS-1$
 		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null));
 	}
-	
+
 	public static void logErrorStatus(String message, IStatus status) {
 		if (status == null) {
 			logErrorMessage(message);
@@ -59,17 +59,17 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		multi.add(status);
 		log(multi);
 	}
-	
+
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.EditorsPlugin_internal_error, e)); 
+		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, TextEditorMessages.EditorsPlugin_internal_error, e));
 	}
-	
-	
+
+
 	private ISharedTextColors fSharedTextColors;
 	private AnnotationTypeLookup fAnnotationTypeLookup;
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
-	
+
 	/**
 	 * Spelling service.
 	 * @since 3.1
@@ -80,22 +80,22 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fgInstance == null);
 		fgInstance= this;
 	}
-	
+
 	/**
 	 * Returns the shared text colors of this plug-in.
 	 *
 	 * @return the shared text colors
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	public ISharedTextColors getSharedTextColors() {
 		if (fSharedTextColors == null)
 			fSharedTextColors= new SharedTextColors();
 		return fSharedTextColors;
 	}
-	
+
 	/**
 	 * Returns the annotation type lookup of this plug-in.
-	 * 
+	 *
 	 * @return the annotation type lookup
 	 * @since 3.0
 	 */
@@ -104,10 +104,10 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fAnnotationTypeLookup= new AnnotationTypeLookup();
 		return fAnnotationTypeLookup;
 	}
-	
+
 	/**
 	 * Returns the annotation preference lookup of this plug-in.
-	 * 
+	 *
 	 * @return the annotation preference lookup
 	 * @since 3.0
 	 */
@@ -116,10 +116,10 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fAnnotationPreferenceLookup= new AnnotationPreferenceLookup();
 		return fAnnotationPreferenceLookup;
 	}
-	
+
 	/**
 	 * Returns the annotation type hierarchy for this plug-in.
-	 * 
+	 *
 	 * @return the annotation type hierarchy
 	 * @since 3.0
 	 */
@@ -138,17 +138,17 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fSharedTextColors.dispose();
 			fSharedTextColors= null;
 		}
-		
+
 		fAnnotationTypeLookup= null;
 		fAnnotationPreferenceLookup= null;
 		fAnnotationTypeHierarchy= null;
-		
+
 		super.stop(context);
 	}
 
 	/**
 	 * Returns the spelling service.
-	 * 
+	 *
 	 * @return the spelling service
 	 * @since 3.1
 	 */

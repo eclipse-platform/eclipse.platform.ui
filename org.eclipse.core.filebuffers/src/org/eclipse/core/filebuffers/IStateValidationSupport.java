@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IStatus;
  * {@link org.eclipse.core.filebuffers.IFileBufferManager} to batch the stages
  * of state validation when calling
  * {@link org.eclipse.core.filebuffers.IFileBufferManager#validateState(IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, Object)}.
- * 
+ *
  * @see org.eclipse.core.filebuffers.IFileBuffer
  * @since 3.1
  */
 public interface IStateValidationSupport {
-	
+
 	/**
 	 * Tells this buffer that the validation state is about to be changed. File
 	 * buffer listeners will receive a
@@ -31,7 +31,7 @@ public interface IStateValidationSupport {
 	 * response.
 	 */
 	void validationStateAboutToBeChanged();
-	
+
 	/**
 	 * Tells this buffer that the validation state has been changed to the given
 	 * value. After that call, {@link IFileBuffer#isStateValidated()} will
@@ -39,13 +39,13 @@ public interface IStateValidationSupport {
 	 * the provided status. File buffer listeners will receive a
 	 * {@link IFileBufferListener#stateValidationChanged(IFileBuffer, boolean)}
 	 * notification.
-	 * 
+	 *
 	 * @param validationState <code>true</code> if validated,
 	 *            <code>false</code> otherwise
 	 * @param status the status of the executed validate state operation
 	 */
 	void validationStateChanged(boolean validationState, IStatus status);
-	
+
 	/**
 	 * Tells this buffer that a initiated state validation failed. File buffer
 	 * listeners will receive a

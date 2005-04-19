@@ -31,14 +31,14 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 	/**
 	 * Creates and initializes the action for the given text editor.
 	 * The action configures its visual representation from the given resource
-	 * bundle. 
-	 * 
+	 * bundle.
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the text editor
 	 * @param toUpper <code>true</code> if this is an uppercase action, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public CaseAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean toUpper) {
@@ -54,7 +54,7 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return;
-		
+
 		if (!validateEditorInputState())
 			return;
 
@@ -65,7 +65,7 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 		IDocument document= viewer.getDocument();
 		if (document == null)
 			return;
-			
+
 		StyledText st= viewer.getTextWidget();
 		if (st == null)
 			return;
@@ -75,12 +75,12 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 			return;
 
 		try {
-			// if the selection is empty, we select the word / string using the viewer's 
+			// if the selection is empty, we select the word / string using the viewer's
 			// double-click strategy
 			if (sel.y == 0)  {
-				
+
 				// TODO find a better way to do this although there are multiple partitionings on a single document
-				
+
 //				String partition= getContentType(viewer, document, sel.x);
 //				SourceViewerConfiguration svc= fEditor.getSourceViewerConfiguration(); // never null when viewer instantiated
 //				ITextDoubleClickStrategy dcs= svc.getDoubleClickStrategy(viewer, partition);
@@ -88,7 +88,7 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 //					dcs.doubleClicked(viewer);
 //					sel= viewer.getSelectedRange();
 //				}
- 
+
 				if (sel.y == 0)
 					return;	// if the selection is still empty, we're done
 			}
@@ -105,7 +105,7 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 
 		// reinstall selection and move it into view
 		viewer.setSelectedRange(sel.x, sel.y);
-		// don't use the viewer's reveal feature in order to avoid jumping around		
+		// don't use the viewer's reveal feature in order to avoid jumping around
 		st.showSelection();
 	}
 

@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
- * 
+ *
  * @since 2.1
  */
 final class TextEditorMessages extends NLS {

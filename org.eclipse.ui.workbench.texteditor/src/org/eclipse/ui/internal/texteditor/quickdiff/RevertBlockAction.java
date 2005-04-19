@@ -18,9 +18,9 @@ import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Action that will revert a contiguous block of added, deleted and changes lines in the currently 
+ * Action that will revert a contiguous block of added, deleted and changes lines in the currently
  * displayed document to the state in the reference document.
- * 
+ *
  * @since 3.0
  */
 public class RevertBlockAction extends QuickDiffRestoreAction {
@@ -32,10 +32,10 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
-	 */	
+	 */
 	public RevertBlockAction(ITextEditor editor, boolean isRulerAction) {
 		super(PREFIX, editor, isRulerAction);
 	}
@@ -46,7 +46,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 	public boolean computeEnablement() {
 		if (!super.computeEnablement())
 			return false;
-		
+
 		fLine= getLastLine();
 		if (fLine == -1)
 			return false;
@@ -56,7 +56,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
 			return false;
-		
+
 		boolean hasBlock= false;
 		if (fLine > 0) {
 			info= differ.getLineInfo(fLine - 1);
@@ -68,7 +68,7 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 		}
 		if (hasBlock)
 			return true;
-		
+
 		return false;
 	}
 

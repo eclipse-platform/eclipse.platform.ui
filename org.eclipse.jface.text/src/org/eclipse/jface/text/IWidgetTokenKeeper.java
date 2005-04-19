@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 package org.eclipse.jface.text;
- 
+
 /**
  * A widget token keeper may require a widget token from an
  * {@link org.eclipse.jface.text.IWidgetTokenOwner} and release the token to the
@@ -20,7 +20,7 @@ package org.eclipse.jface.text;
  * The widget token owner and keeper interplay is utilized by a text viewer in
  * order to manage the appearance and disappearance of addition, on-top popup
  * windows such as text hovers, content assist, etc.
- * 
+ *
  * In order to provide backward compatibility for clients of
  * <code>IWidgetTokeKeeper</code>, extension interfaces are used as a means
  * of evolution. The following extension interfaces exist:
@@ -30,12 +30,12 @@ package org.eclipse.jface.text;
  *     the unprioritized scheme. It also allows a client to force a widget token
  *     keeper to accept focus.</li>
  * </ul>
- * 
+ *
  * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension
  * @since 2.0
- */ 
+ */
 public interface IWidgetTokenKeeper {
-	
+
 	/**
 	 * The given widget token owner requests the widget token from this token
 	 * keeper. Returns <code>true</code> if the token is released by this
@@ -44,7 +44,7 @@ public interface IWidgetTokenKeeper {
 	 * <p>
 	 * Replaced by
 	 * {@link IWidgetTokenKeeperExtension#requestWidgetToken(IWidgetTokenOwner, int)}.
-	 * 
+	 *
 	 * @param owner the token owner
 	 * @return <code>true</code> if token has been released <code>false</code>
 	 *         otherwise

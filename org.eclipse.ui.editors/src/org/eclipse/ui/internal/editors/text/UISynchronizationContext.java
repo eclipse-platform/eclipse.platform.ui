@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Synchronization context for file buffers whose documents are shown in the UI.
  * The synchronization runnable is executed in the UI thread.
- * 
+ *
  * @since 3.0
  */
 public class UISynchronizationContext implements ISynchronizationContext {

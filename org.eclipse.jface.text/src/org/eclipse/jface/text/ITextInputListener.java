@@ -18,23 +18,23 @@ package org.eclipse.jface.text;
  * serving as the text viewer's model is replaced.
  * <p>
  * Clients may implement this interface.
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.IDocument
  */
 public interface ITextInputListener {
-	
+
 	/**
 	 * Called before the input document is replaced.
-	 * 
+	 *
 	 * @param oldInput the text viewer's previous input document
 	 * @param newInput the text viewer's new input document
 	 */
 	void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput);
-	
+
 	/**
 	 * Called after the input document has been replaced.
-	 * 
+	 *
 	 * @param oldInput the text viewer's previous input document
 	 * @param newInput the text viewer's new input document
 	 */

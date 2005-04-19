@@ -18,7 +18,7 @@ import org.eclipse.jface.text.Assert;
  * <p>
  * Clients may instantiate and extend this class.
  * </p>
- * 
+ *
  * @see TemplateVariable
  * @since 3.0
  */
@@ -29,18 +29,18 @@ public class TemplateVariableResolver {
 
 	/** Description of the type resolved by this resolver. */
 	private String fDescription= null;
-	
+
 	/**
 	 * Creates an instance of <code>TemplateVariableResolver</code>.
-	 * 
+	 *
 	 * @param type the name of the type
 	 * @param description the description for the type
 	 */
 	protected TemplateVariableResolver(String type, String description) {
-	 	setType(type);   
+	 	setType(type);
 	 	setDescription(description);
 	}
-	
+
 	/**
 	 * Creates an empty instance.
 	 * <p>
@@ -52,10 +52,10 @@ public class TemplateVariableResolver {
 	 */
 	public TemplateVariableResolver() {
 	}
-	
+
 	/**
 	 * Returns the type of this resolver.
-	 * 
+	 *
 	 * @return the type
 	 */
 	public String getType() {
@@ -64,11 +64,11 @@ public class TemplateVariableResolver {
 
 	/**
 	 * Returns the description for the resolver.
-	 * 
+	 *
 	 * @return the description for the resolver
 	 */
 	public String getDescription() {
-		return fDescription;   
+		return fDescription;
 	}
 
 	/**
@@ -77,20 +77,20 @@ public class TemplateVariableResolver {
 	 * <code>String</code>) in the given context.
 	 * <p>
 	 * The default implementation looks up the type in the context.</p>
-	 * 
+	 *
 	 * @param context the context in which to resolve the type
 	 * @return the name of the text object of this type, or <code>null</code> if it cannot be determined
 	 */
 	protected String resolve(TemplateContext context) {
 		return context.getVariable(getType());
 	}
-	
+
 	/**
 	 * Returns all possible bindings available in <code>context</code>. The default
-	 * implementation simply returns an array which contains the result of 
+	 * implementation simply returns an array which contains the result of
 	 * {@link #resolve(TemplateContext)}, or an empty array if that call returns
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param context the context in which to resolve the type
 	 * @return an array of possible bindings of this type in <code>context</code>
 	 */
@@ -100,13 +100,13 @@ public class TemplateVariableResolver {
 			return new String[0];
 		return new String[] { binding };
 	}
-	
+
 	/**
 	 * Resolves <code>variable</code> in <code>context</code>. To resolve
 	 * means to find a valid binding of the receiver's type in the given <code>TemplateContext</code>.
 	 * If the variable can be successfully resolved, its value is set using
 	 * {@link TemplateVariable#setValues(String[])}.
-	 * 
+	 *
 	 * @param context the context in which variable is resolved
 	 * @param variable the variable to resolve
 	 */
@@ -127,7 +127,7 @@ public class TemplateVariableResolver {
 	 * returns <code>false</code>. Clients can overwrite this method to give
 	 * a hint about whether there should be e.g. prompting for input values for
 	 * ambiguous variables.
-	 * 
+	 *
 	 * @param context the context in which the resolved check should be
 	 *        evaluated
 	 * @return <code>true</code> if the receiver is unambiguously resolvable
@@ -136,7 +136,7 @@ public class TemplateVariableResolver {
 	protected boolean isUnambiguous(TemplateContext context) {
 		return false;
 	}
-	
+
 	/**
 	 * Sets the description.
 	 * <p>
@@ -144,7 +144,7 @@ public class TemplateVariableResolver {
 	 * can be contributed via an extension point and that should not be called
 	 * in client code; use {@link #TemplateVariableResolver(String, String)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @param description the description of this resolver
 	 */
 	public final void setDescription(String description) {
@@ -152,7 +152,7 @@ public class TemplateVariableResolver {
 		Assert.isTrue(fDescription == null); // may only be called once when initialized
 		fDescription= description;
 	}
-	
+
 	/**
 	 * Sets the type.
 	 * <p>
@@ -160,7 +160,7 @@ public class TemplateVariableResolver {
 	 * can be contributed via an extension point and that should not be called
 	 * in client code; use {@link #TemplateVariableResolver(String, String)} instead.
 	 * </p>
-	 * 
+	 *
 	 * @param type the type of this resolver
 	 */
 	public final void setType(String type) {

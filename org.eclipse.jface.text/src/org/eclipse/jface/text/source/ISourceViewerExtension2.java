@@ -15,11 +15,11 @@ package org.eclipse.jface.text.source;
  * Extension interface for {@link org.eclipse.jface.text.source.ISourceViewer}.<p>
  * Allows the source viewer to roll back a previous configuration process and allows
  * clients access to the viewer's visual annotation model.
- * 
+ *
  * @since 3.0
  */
 public interface ISourceViewerExtension2 {
-	
+
 	/**
 	 * Rolls back the configuration process of this source viewer. The source
 	 * viewer can be configured again after a call to this method. Unlike
@@ -28,10 +28,10 @@ public interface ISourceViewerExtension2 {
 	 * {@link ISourceViewer#configure(SourceViewerConfiguration)}.
 	 */
 	void unconfigure();
-	
+
 	/**
 	 * Returns the visual annotation model of this viewer.
-	 * 
+	 *
 	 * @return the visual annotation model of this viewer
 	 */
 	IAnnotationModel getVisualAnnotationModel();

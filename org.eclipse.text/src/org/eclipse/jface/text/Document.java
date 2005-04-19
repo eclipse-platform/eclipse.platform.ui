@@ -23,13 +23,13 @@ package org.eclipse.jface.text;
  * <p>
  * The document is ready to use. It has a default position category for which a
  * default position updater is installed.
- * 
+ *
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.SequentialRewriteTextStore
  */
 public class Document extends AbstractDocument {
-	
-	
+
+
 	/**
 	 * Creates a new empty document.
 	 */
@@ -39,7 +39,7 @@ public class Document extends AbstractDocument {
 		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}
-	
+
 	/**
 	 * Creates a new document with the given initial content.
 	 *
@@ -48,12 +48,12 @@ public class Document extends AbstractDocument {
 	public Document(String initialContent) {
 		super();
 		setTextStore(new GapTextStore(50, 300));
-		setLineTracker(new DefaultLineTracker());	
+		setLineTracker(new DefaultLineTracker());
 		getStore().set(initialContent);
 		getTracker().set(initialContent);
 		completeInitialization();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
 	 * @since 2.0
@@ -62,7 +62,7 @@ public class Document extends AbstractDocument {
 		ITextStore store= new SequentialRewriteTextStore(getStore());
 		setTextStore(store);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension#stopSequentialRewrite()
 	 * @since 2.0

@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <p>
  * This class may be subclassed.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class ConfigurationElementSorter {
@@ -51,16 +51,16 @@ public abstract class ConfigurationElementSorter {
 	/**
 	 * Sorts the given array based on its elements' configuration elements
 	 * according to the prerequisite relation of their defining plug-ins.
-	 * 
+	 *
 	 * @param elements the array to be sorted
 	 */
 	public final void sort(Object[] elements) {
 		Arrays.sort(elements, new ConfigurationElementComparator(elements));
 	}
-	
+
 	/**
 	 * Returns the configuration element for the given object.
-	 * 
+	 *
 	 * @param object the object
 	 * @return the object's configuration element, must not be <code>null</code>
 	 */
@@ -71,10 +71,10 @@ public abstract class ConfigurationElementSorter {
 	 * of their defining plug-ins.
 	 */
 	private class ConfigurationElementComparator implements Comparator {
-		
+
 		private Map fDescriptorMapping;
 		private Map fPrereqsMapping;
-		
+
 		public ConfigurationElementComparator(Object[] elements) {
 			Assert.isNotNull(elements);
 			initialize(elements);
@@ -88,17 +88,17 @@ public abstract class ConfigurationElementSorter {
 
 			if (dependsOn(object0, object1))
 				return -1;
-				
+
 			if (dependsOn(object1, object0))
 				return +1;
-			
+
 			return 0;
 		}
 
 		/**
 		 * Returns whether one configuration element depends on the other element.
 		 * This is done by checking the dependency chain of the defining plug-ins.
-		 * 
+		 *
 		 * @param element0 the first element
 		 * @param element1 the second element
 		 * @return <code>true</code> if <code>element0</code> depends on <code>element1</code>.
@@ -110,19 +110,19 @@ public abstract class ConfigurationElementSorter {
 
 			String pluginDesc0= (String)fDescriptorMapping.get(element0);
 			String pluginDesc1= (String)fDescriptorMapping.get(element1);
-			
+
 			// performance tuning - code below would give same result
 			if (pluginDesc0.equals(pluginDesc1))
 				return false;
-			
+
 			Set prereqUIds0= (Set)fPrereqsMapping.get(pluginDesc0);
-			
+
 			return prereqUIds0.contains(pluginDesc1);
 		}
-		
+
 		/**
 		 * Initialize this comparator.
-		 * 
+		 *
 		 * @param elements an array of Java editor hover descriptors
 		 */
 		private void initialize(Object[] elements) {
@@ -130,14 +130,14 @@ public abstract class ConfigurationElementSorter {
 			fDescriptorMapping= new HashMap(length);
 			fPrereqsMapping= new HashMap(length);
 			Set fBundleSet= new HashSet(length);
-			
+
 			for (int i= 0; i < length; i++) {
 			    IExtension extension = getConfigurationElement(elements[i]).getDeclaringExtension();
 				Bundle bundle = Platform.getBundle(extension.getNamespace());
 				fDescriptorMapping.put(elements[i], bundle.getSymbolicName());
 				fBundleSet.add(bundle);
 			}
-			
+
 			Iterator iter= fBundleSet.iterator();
 			while (iter.hasNext()) {
 				Bundle bundle= (Bundle)iter.next();
@@ -145,7 +145,7 @@ public abstract class ConfigurationElementSorter {
 				toTest.remove(bundle);
 				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
 				fPrereqsMapping.put(bundle.getSymbolicName(), prereqUIds);
-				
+
 				String requires = (String)bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
 				ManifestElement[] manifestElements;
                 try {
@@ -157,10 +157,10 @@ public abstract class ConfigurationElementSorter {
     				TextEditorPlugin.getDefault().getLog().log(status);
                     continue;
                 }
-                
+
                 if (manifestElements == null)
                 	continue;
-                
+
 				int i= 0;
 				while (i < manifestElements.length && !toTest.isEmpty()) {
 					String prereqUId= manifestElements[i].getValue();
@@ -176,11 +176,11 @@ public abstract class ConfigurationElementSorter {
 				}
 			}
 		}
-		
+
 		/**
 		 * Returns the unique extension point identifier for the
 		 * configuration element which belongs to the given bundle.
-		 * 
+		 *
 		 * @param bundle the bundle
 		 * @return the unique extension point identifier or "unknown" if not found
 		 * @since 3.0.1

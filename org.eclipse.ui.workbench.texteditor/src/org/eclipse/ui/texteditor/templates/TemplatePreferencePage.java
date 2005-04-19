@@ -86,7 +86,7 @@ import org.eclipse.ui.internal.texteditor.NLSUtility;
  * {@link ContextTypeRegistry} and should set the preference store. They may
  * optionally override {@link #isShowFormatterSetting()}.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class TemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -95,21 +95,21 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * Label provider for templates.
 	 */
 	private class TemplateLabelProvider extends LabelProvider implements ITableLabelProvider {
-	
+
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
-	
+
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			TemplatePersistenceData data = (TemplatePersistenceData) element;
 			Template template= data.getTemplate();
-			
+
 			switch (columnIndex) {
 				case 0:
 					return template.getName();
@@ -127,12 +127,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 
-	/** Qualified key for formatter preference. */ 
+	/** Qualified key for formatter preference. */
 	private static final String DEFAULT_FORMATTER_PREFERENCE_KEY= "org.eclipse.ui.texteditor.templates.preferences.format_templates"; //$NON-NLS-1$
 
 	/** The table presenting the templates. */
 	private CheckboxTableViewer fTableViewer;
-	
+
 	/* buttons */
 	private Button fAddButton;
 	private Button fEditButton;
@@ -151,68 +151,68 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/** The context type registry. */
 	private ContextTypeRegistry fContextTypeRegistry;
 
-	
+
 	/**
 	 * Creates a new template preference page.
 	 */
 	protected TemplatePreferencePage() {
 		super();
-		
-		setDescription(TextEditorTemplateMessages.TemplatePreferencePage_message); 
+
+		setDescription(TextEditorTemplateMessages.TemplatePreferencePage_message);
 	}
-	
+
 	/**
 	 * Returns the template store.
-	 * 
+	 *
 	 * @return the template store
 	 */
 	public TemplateStore getTemplateStore() {
 		return fTemplateStore;
 	}
-	
+
 	/**
 	 * Returns the context type registry.
-	 * 
+	 *
 	 * @return the context type registry
 	 */
 	public ContextTypeRegistry getContextTypeRegistry() {
 		return fContextTypeRegistry;
 	}
-	
+
 	/**
 	 * Sets the template store.
-	 * 
+	 *
 	 * @param store the new template store
 	 */
 	public void setTemplateStore(TemplateStore store) {
 		fTemplateStore= store;
 	}
-	
+
 	/**
 	 * Sets the context type registry.
-	 * 
+	 *
 	 * @param registry the new context type registry
 	 */
 	public void setContextTypeRegistry(ContextTypeRegistry registry) {
 		fContextTypeRegistry= registry;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
-	protected Control createContents(Composite ancestor) {	
+	protected Control createContents(Composite ancestor) {
 		Composite parent= new Composite(ancestor, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		parent.setLayout(layout);				
+		parent.setLayout(layout);
 
         Composite innerParent= new Composite(parent, SWT.NONE);
         GridLayout innerLayout= new GridLayout();
@@ -225,28 +225,28 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
         innerParent.setLayoutData(gd);
 
 		Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		
+
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint= convertWidthInCharsToPixels(3);
 		data.heightHint= convertHeightInCharsToPixels(10);
 		table.setLayoutData(data);
-				
+
 		table.setHeaderVisible(true);
-		table.setLinesVisible(true);		
+		table.setLinesVisible(true);
 
 		TableLayout tableLayout= new TableLayout();
 		table.setLayout(tableLayout);
 
-		TableColumn column1= new TableColumn(table, SWT.NONE);		
-		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name); 
+		TableColumn column1= new TableColumn(table, SWT.NONE);
+		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name);
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
-		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context); 
-	
+		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
+
 		TableColumn column3= new TableColumn(table, SWT.NONE);
-		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description); 
-		
-		fTableViewer= new CheckboxTableViewer(table);		
+		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+
+		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
 		fTableViewer.setContentProvider(new TemplateContentProvider());
 
@@ -262,18 +262,18 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 				return super.compare(viewer, object1, object2);
 			}
-			
+
 			public boolean isSorterProperty(Object element, String property) {
 				return true;
 			}
 		});
-		
+
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
 				edit();
 			}
 		});
-		
+
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				selectionChanged1();
@@ -293,9 +293,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		buttons.setLayout(layout);
-		
+
 		fAddButton= new Button(buttons, SWT.PUSH);
-		fAddButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_new); 
+		fAddButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_new);
 		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -304,7 +304,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fEditButton= new Button(buttons, SWT.PUSH);
-		fEditButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_edit); 
+		fEditButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_edit);
 		fEditButton.setLayoutData(getButtonGridData(fEditButton));
 		fEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -313,7 +313,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fRemoveButton= new Button(buttons, SWT.PUSH);
-		fRemoveButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_remove); 
+		fRemoveButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_remove);
 		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -322,9 +322,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		createSeparator(buttons);
-				
+
 		fRestoreButton= new Button(buttons, SWT.PUSH);
-		fRestoreButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_restore); 
+		fRestoreButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_restore);
 		fRestoreButton.setLayoutData(getButtonGridData(fRestoreButton));
 		fRestoreButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -333,27 +333,27 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fRevertButton= new Button(buttons, SWT.PUSH);
-		fRevertButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_revert); 
+		fRevertButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_revert);
 		fRevertButton.setLayoutData(getButtonGridData(fRevertButton));
 		fRevertButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				revert();
 			}
 		});
-		
+
 		createSeparator(buttons);
 
 		fImportButton= new Button(buttons, SWT.PUSH);
-		fImportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_import); 
+		fImportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_import);
 		fImportButton.setLayoutData(getButtonGridData(fImportButton));
 		fImportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				import_();
 			}
 		});
-		
+
 		fExportButton= new Button(buttons, SWT.PUSH);
-		fExportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_export); 
+		fExportButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_export);
 		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -362,10 +362,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		});
 
 		fPatternViewer= doCreateViewer(parent);
-		
+
 		if (isShowFormatterSetting()) {
 			fFormatButton= new Button(parent, SWT.CHECK);
-			fFormatButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_use_code_formatter); 
+			fFormatButton.setText(TextEditorTemplateMessages.TemplatePreferencePage_use_code_formatter);
 	        GridData gd1= new GridData();
 	        gd1.horizontalSpan= 2;
 	        fFormatButton.setLayoutData(gd1);
@@ -374,15 +374,15 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		fTableViewer.setInput(fTemplateStore);
 		fTableViewer.setAllChecked(false);
-		fTableViewer.setCheckedElements(getEnabledTemplates());		
+		fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		updateButtons();
         configureTableResizing(innerParent, buttons, table, column1, column2, column3);
-		
-		Dialog.applyDialogFont(parent);		
+
+		Dialog.applyDialogFont(parent);
 		return parent;
 	}
-    
+
 	/**
 	 * Creates a separator between buttons
 	 * @param parent
@@ -401,7 +401,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/**
 	 * Returns whether the formatter preference checkbox should be shown.
-	 * 
+	 *
 	 * @return <code>true</code> if the formatter preference checkbox should
 	 *         be shown, <code>false</code> otherwise
 	 */
@@ -411,7 +411,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/**
      * Correctly resizes the table so no phantom columns appear
-     * 
+     *
 	 * @param parent the parent control
 	 * @param buttons the buttons
 	 * @param table the table
@@ -453,8 +453,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
             }
         });
     }
-    
-	
+
+
 	private TemplatePersistenceData[] getEnabledTemplates() {
 		List enabled= new ArrayList();
 		TemplatePersistenceData[] datas= fTemplateStore.getTemplateData(false);
@@ -464,31 +464,31 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 		return (TemplatePersistenceData[]) enabled.toArray(new TemplatePersistenceData[enabled.size()]);
 	}
-	
+
 	private SourceViewer doCreateViewer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText(TextEditorTemplateMessages.TemplatePreferencePage_preview); 
+		label.setText(TextEditorTemplateMessages.TemplatePreferencePage_preview);
 		GridData data= new GridData();
 		data.horizontalSpan= 2;
 		label.setLayoutData(data);
-		
+
 		SourceViewer viewer= createViewer(parent);
 		viewer.setEditable(false);
-	
+
 		Control control= viewer.getControl();
 		data= new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan= 2;
 		data.heightHint= convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
-		
+
 		return viewer;
 	}
-	
+
 	/**
 	 * Creates, configures and returns a source viewer to present the template
 	 * pattern on the preference page. Clients may override to provide a custom
 	 * source viewer featuring e.g. syntax coloring.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @return a configured source viewer
 	 */
@@ -506,16 +506,16 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		// TODO replace SWTUtil
 //		data.widthHint= SWTUtil.getButtonWidthHint(button);
 //		data.heightHint= SWTUtil.getButtonHeightHint(button);
-	
+
 		return data;
 	}
-	
-	private void selectionChanged1() {		
+
+	private void selectionChanged1() {
 		updateViewerInput();
-		
+
 		updateButtons();
 	}
-	
+
 	/**
 	 * Updates the pattern viewer.
 	 */
@@ -526,7 +526,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
 			Template template= data.getTemplate();
 			fPatternViewer.getDocument().set(template.getPattern());
-		} else {		
+		} else {
 			fPatternViewer.getDocument().set(""); //$NON-NLS-1$
 		}
 	}
@@ -547,35 +547,35 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				break;
 			}
 		}
-		
+
 		fEditButton.setEnabled(selectionCount == 1);
 		fExportButton.setEnabled(selectionCount > 0);
 		fRemoveButton.setEnabled(selectionCount > 0 && selectionCount <= itemCount);
 		fRestoreButton.setEnabled(canRestore);
 		fRevertButton.setEnabled(canRevert);
 	}
-	
-	private void add() {		
-		
+
+	private void add() {
+
 		Iterator it= fContextTypeRegistry.contextTypes();
 		if (it.hasNext()) {
 			Template template= new Template("", "", ((TemplateContextType) it.next()).getId(), "");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			
+
 			Template newTemplate= editTemplate(template, false, true);
 			if (newTemplate != null) {
 				TemplatePersistenceData data= new TemplatePersistenceData(newTemplate, true);
 				fTemplateStore.add(data);
 				fTableViewer.refresh();
 				fTableViewer.setChecked(data, true);
-				fTableViewer.setSelection(new StructuredSelection(data));			
+				fTableViewer.setSelection(new StructuredSelection(data));
 			}
 		}
 	}
 
 	/**
-	 * Creates the edit dialog. Subclasses may override this method to provide a 
+	 * Creates the edit dialog. Subclasses may override this method to provide a
 	 * custom dialog.
-	 * 
+	 *
 	 * @param template the template being edited
 	 * @param edit whether the dialog should be editable
 	 * @param isNameModifiable whether the template name may be modified
@@ -587,9 +587,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	/**
-	 * Creates the edit dialog. Subclasses may override this method to provide a 
+	 * Creates the edit dialog. Subclasses may override this method to provide a
 	 * custom dialog.
-	 * 
+	 *
 	 * @param template the template being edited
 	 * @param edit whether the dialog should be editable
 	 * @param isNameModifiable whether the template name may be modified
@@ -606,10 +606,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	private void edit() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
-		Object[] objects= selection.toArray();		
+		Object[] objects= selection.toArray();
 		if ((objects == null) || (objects.length != 1))
 			return;
-		
+
 		TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
 		edit(data);
 	}
@@ -621,8 +621,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 			if (!newTemplate.getName().equals(oldTemplate.getName()) &&
 				MessageDialog.openQuestion(getShell(),
-				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_title, 
-				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_message)) 
+				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_title,
+				TextEditorTemplateMessages.TemplatePreferencePage_question_create_new_message))
 			{
 				data= new TemplatePersistenceData(newTemplate, true);
 				fTemplateStore.add(data);
@@ -633,19 +633,19 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			}
 			selectionChanged1();
 			fTableViewer.setChecked(data, data.isEnabled());
-			fTableViewer.setSelection(new StructuredSelection(data));			
+			fTableViewer.setSelection(new StructuredSelection(data));
 		}
 	}
-		
+
 	private void import_() {
 		FileDialog dialog= new FileDialog(getShell());
-		dialog.setText(TextEditorTemplateMessages.TemplatePreferencePage_import_title); 
-		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_import_extension}); 
+		dialog.setText(TextEditorTemplateMessages.TemplatePreferencePage_import_title);
+		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_import_extension});
 		String path= dialog.open();
-		
+
 		if (path == null)
 			return;
-		
+
 		try {
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			File file= new File(path);
@@ -664,7 +664,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					}
 				}
 			}
-			
+
 			fTableViewer.refresh();
 			fTableViewer.setAllChecked(false);
 			fTableViewer.setCheckedElements(getEnabledTemplates());
@@ -675,7 +675,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			openReadErrorDialog(e);
 		}
 	}
-	
+
 	private void export() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 		Object[] templates= selection.toArray();
@@ -683,32 +683,32 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		TemplatePersistenceData[] datas= new TemplatePersistenceData[templates.length];
 		for (int i= 0; i != templates.length; i++)
 			datas[i]= (TemplatePersistenceData) templates[i];
-		
+
 		export(datas);
 	}
-	
+
 	private void export(TemplatePersistenceData[] templates) {
 		FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
-		dialog.setText(NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_title, new Integer(templates.length))); 
-		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_export_extension}); 
-		dialog.setFileName(TextEditorTemplateMessages.TemplatePreferencePage_export_filename); 
+		dialog.setText(NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_title, new Integer(templates.length)));
+		dialog.setFilterExtensions(new String[] {TextEditorTemplateMessages.TemplatePreferencePage_export_extension});
+		dialog.setFileName(TextEditorTemplateMessages.TemplatePreferencePage_export_filename);
 		String path= dialog.open();
-		
+
 		if (path == null)
 			return;
-		
-		File file= new File(path);		
+
+		File file= new File(path);
 
 		if (file.isHidden()) {
-			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title; 
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, file.getAbsolutePath()); 
+			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, file.getAbsolutePath());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
-		
+
 		if (file.exists() && !file.canWrite()) {
-			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title; 
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, file.getAbsolutePath()); 
+			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, file.getAbsolutePath());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
@@ -725,7 +725,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					try {
 						output.close();
 					} catch (IOException e2) {
-						// ignore 
+						// ignore
 					}
 				}
 				openWriteErrorDialog(e);
@@ -735,10 +735,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private boolean confirmOverwrite(File file) {
 		return MessageDialog.openQuestion(getShell(),
-			TextEditorTemplateMessages.TemplatePreferencePage_export_exists_title, 
-			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, file.getAbsolutePath())); 
+			TextEditorTemplateMessages.TemplatePreferencePage_export_exists_title,
+			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, file.getAbsolutePath()));
 	}
-	
+
 	private void remove() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
@@ -750,14 +750,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		fTableViewer.refresh();
 	}
-	
+
 	private void restoreDeleted() {
 		fTemplateStore.restoreDeleted();
 		fTableViewer.refresh();
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 		updateButtons();
 	}
-	
+
 	private void revert() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
@@ -771,16 +771,16 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		selectionChanged1();
 		fTableViewer.setChecked(getEnabledTemplates(), true);
 	}
-	
+
 	/*
 	 * @see Control#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible)
-			setTitle(TextEditorTemplateMessages.TemplatePreferencePage_title); 
+			setTitle(TextEditorTemplateMessages.TemplatePreferencePage_title);
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
@@ -791,22 +791,22 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 
 		fTemplateStore.restoreDefaults();
-		
+
 		// refresh
 		fTableViewer.refresh();
 		fTableViewer.setAllChecked(false);
-		fTableViewer.setCheckedElements(getEnabledTemplates());		
+		fTableViewer.setCheckedElements(getEnabledTemplates());
 	}
 
 	/*
 	 * @see PreferencePage#performOk()
-	 */	
+	 */
 	public boolean performOk() {
 		if (isShowFormatterSetting()) {
 			IPreferenceStore prefs= getPreferenceStore();
 			prefs.setValue(getFormatterPreferenceKey(), fFormatButton.getSelection());
 		}
-		
+
 		try {
 			fTemplateStore.save();
 		} catch (IOException e) {
@@ -814,11 +814,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 
 		return super.performOk();
-	}	
-	
+	}
+
 	/**
 	 * Returns the key to use for the formatter preference.
-	 * 
+	 *
 	 * @return the formatter preference key
 	 */
 	protected String getFormatterPreferenceKey() {
@@ -837,23 +837,23 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 		return super.performCancel();
 	}
-	
+
 	private void openReadErrorDialog(Exception e) {
-		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_read_title; 
-		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_read_message; 
+		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_read_title;
+		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_read_message;
 		MessageDialog.openError(getShell(), title, message);
 	}
-	
+
 	private void openWriteErrorDialog(Exception e) {
-		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_write_title; 
-		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_write_message; 
-		MessageDialog.openError(getShell(), title, message);		
+		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_write_title;
+		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_write_message;
+		MessageDialog.openError(getShell(), title, message);
 	}
-	
+
 	protected SourceViewer getViewer() {
 		return fPatternViewer;
 	}
-	
+
 	protected TableViewer getTableViewer() {
 		return fTableViewer;
 	}

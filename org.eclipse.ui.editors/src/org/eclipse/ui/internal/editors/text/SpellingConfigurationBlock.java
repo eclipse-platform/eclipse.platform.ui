@@ -60,31 +60,31 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
  * Configures spelling preferences.
- * 
+ *
  * @since 3.1
  */
 class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
-	
+
 	/**
 	 * Error preferences block.
 	 */
 	private static class ErrorPreferences implements ISpellingPreferenceBlock {
-		
+
 		/** Error message */
 		private String fMessage;
-		
+
 		/** Error label */
 		private Label fLabel;
-		
+
 		/**
 		 * Initialize with the given error message.
-		 * 
+		 *
 		 * @param message the error message
 		 */
 		protected ErrorPreferences(String message) {
 			fMessage= message;
 		}
-		
+
 		/*
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#createControl(org.eclipse.swt.widgets.Composite)
 		 */
@@ -94,7 +94,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			fLabel= new Label(inner, SWT.CENTER);
 			fLabel.setText(fMessage);
-			
+
 			return inner;
 		}
 
@@ -150,14 +150,14 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		/** Status monitor to which status changes are forwarded */
 		private IPreferenceStatusMonitor fForwardedMonitor;
-		
+
 		/** Latest reported status */
 		private IStatus fStatus;
 
 		/**
 		 * Initializes with the given status monitor to which status
 		 * changes are forwarded.
-		 * 
+		 *
 		 * @param forwardedMonitor
 		 */
 		public ForwardingStatusMonitor(IPreferenceStatusMonitor forwardedMonitor) {
@@ -171,10 +171,10 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			fStatus= status;
 			fForwardedMonitor.statusChanged(status);
 		}
-		
+
 		/**
 		 * Returns the latest reported status.
-		 * 
+		 *
 		 * @return the latest reported status, can be <code>null</code>
 		 */
 		public IStatus getStatus() {
@@ -184,7 +184,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	/** The overlay preference store. */
 	private final OverlayPreferenceStore fStore;
-	
+
 	/* The controls */
 	private Combo fProviderCombo;
 	private Button fEnablementCheckbox;
@@ -192,7 +192,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private Composite fComboGroup;
 	private Composite fGroup;
 	private StackLayout fStackLayout;
-	
+
 	/* the model */
 	private final Map fProviderDescriptors;
 	private final Map fProviderPreferences;
@@ -201,7 +201,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private ForwardingStatusMonitor fStatusMonitor;
 
 	private ISpellingPreferenceBlock fCurrentBlock;
-	
+
 
 	public SpellingConfigurationBlock(OverlayPreferenceStore store, IPreferenceStatusMonitor statusMonitor) {
 		Assert.isNotNull(store);
@@ -223,12 +223,12 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		
+
 		ArrayList overlayKeys= new ArrayList();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SpellingService.PREFERENCE_SPELLING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, SpellingService.PREFERENCE_SPELLING_ENGINE));
-		
+
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
@@ -236,7 +236,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	/**
 	 * Creates page for spelling preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
@@ -251,16 +251,16 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		PixelConverter pc= new PixelConverter(composite);
 		layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-		
-		
+
+
 		/* check box for new editors */
 		fEnablementCheckbox= new Button(composite, SWT.CHECK);
-		fEnablementCheckbox.setText(TextEditorMessages.SpellingConfigurationBlock_enable); 
+		fEnablementCheckbox.setText(TextEditorMessages.SpellingConfigurationBlock_enable);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fEnablementCheckbox.setLayoutData(gd);
 		fEnablementCheckbox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled= fEnablementCheckbox.getSelection(); 
+				boolean enabled= fEnablementCheckbox.getSelection();
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, enabled);
 				updateCheckboxDependencies();
 			}
@@ -268,7 +268,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		Label label= new Label(composite, SWT.CENTER);
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
@@ -279,23 +279,23 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			GridLayout gridLayout= new GridLayout(2, false);
 			gridLayout.marginWidth= 0;
 			fComboGroup.setLayout(gridLayout);
-		
+
 			Label comboLabel= new Label(fComboGroup, SWT.CENTER);
 			gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_CENTER);
 			comboLabel.setLayoutData(gd);
-			comboLabel.setText(TextEditorMessages.SpellingConfigurationBlock_combo_caption); 
-			
+			comboLabel.setText(TextEditorMessages.SpellingConfigurationBlock_combo_caption);
+
 			label= new Label(composite, SWT.CENTER);
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 			label.setLayoutData(gd);
-			
+
 			fProviderCombo= new Combo(fComboGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
 			gd= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
 			fProviderCombo.setLayoutData(gd);
 
 			fProviderViewer= createProviderViewer();
 		}
-		
+
 		Composite groupComp= new Composite(composite, SWT.NONE);
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan= 2;
@@ -303,14 +303,14 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		GridLayout gridLayout= new GridLayout(1, false);
 		gridLayout.marginWidth= 0;
 		groupComp.setLayout(gridLayout);
-		
+
 		/* contributed provider preferences. */
 		fGroup= new Composite(groupComp, SWT.NONE);
 		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
 		fGroup.setLayoutData(gd);
 		fStackLayout= new StackLayout();
 		fGroup.setLayout(fStackLayout);
-		
+
 		return composite;
 	}
 
@@ -345,7 +345,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			public Image getImage(Object element) {
 				return null;
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
@@ -379,7 +379,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			private boolean isPerformRevert() {
 				Shell shell= viewer.getControl().getShell();
-				MessageDialog dialog= new MessageDialog(shell, TextEditorMessages.SpellingConfigurationBlock_error_title, null, TextEditorMessages.SpellingConfigurationBlock_error_message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1); 
+				MessageDialog dialog= new MessageDialog(shell, TextEditorMessages.SpellingConfigurationBlock_error_title, null, TextEditorMessages.SpellingConfigurationBlock_error_message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 1);
 				return dialog.open() == 0;
 			}
 
@@ -396,7 +396,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		});
 		viewer.setInput(fProviderDescriptors);
 		viewer.refresh();
-		
+
 		return viewer;
 	}
 
@@ -418,7 +418,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Platform.run(runnable);
 		}
 	}
-	
+
 	private void setEnabled(Control control, boolean enabled) {
 		if (control instanceof Composite) {
 			Control[] children= ((Composite) control).getChildren();
@@ -433,7 +433,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
 		if (desc == null) {
 			// safety in case there is no such descriptor
-			String message= TextEditorMessages.SpellingConfigurationBlock_error_not_exist; 
+			String message= TextEditorMessages.SpellingConfigurationBlock_error_not_exist;
 			EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 			fCurrentBlock= new ErrorPreferences(message);
 		} else {
@@ -448,7 +448,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				}
 			}
 		}
-		
+
 		Control control= (Control) fProviderControls.get(id);
 		if (control == null) {
 			final Control[] result= new Control[1];
@@ -462,7 +462,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Platform.run(runnable);
 			control= result[0];
 			if (control == null) {
-				String message= TextEditorMessages.SpellingConfigurationBlock_info_no_preferences; 
+				String message= TextEditorMessages.SpellingConfigurationBlock_info_no_preferences;
 				EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 				control= new ErrorPreferences(message).createControl(fGroup);
 			} else {
@@ -474,7 +474,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		control.pack();
 		fGroup.layout();
 		fGroup.getParent().layout();
-		
+
 		fStatusMonitor.statusChanged(new StatusInfo());
 		ISafeRunnable runnable= new ISafeRunnable() {
 			public void run() throws Exception {
@@ -496,7 +496,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
 		if (block == null)
 			return true;
-		
+
 		final Boolean[] result= new Boolean[] { Boolean.TRUE };
 		ISafeRunnable runnable= new ISafeRunnable() {
 			public void run() throws Exception {
@@ -508,7 +508,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		Platform.run(runnable);
 		return result[0].booleanValue();
 	}
-	
+
 	public void performOk() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
@@ -522,7 +522,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Platform.run(runnable);
 		}
 	}
-	
+
 	public void performDefaults() {
 		restoreFromPreferences();
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
@@ -537,7 +537,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			Platform.run(runnable);
 		}
 	}
-	
+
 	public void dispose() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
@@ -555,7 +555,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private void restoreFromPreferences() {
 		boolean enabled= fStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED);
 		fEnablementCheckbox.setSelection(enabled);
-		
+
 		if (fProviderViewer == null)
 			updateListDependencies();
 		else {
@@ -563,7 +563,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			if (desc != null)
 				fProviderViewer.setSelection(new StructuredSelection(desc), true);
 		}
-		
+
 		updateCheckboxDependencies();
 	}
 }

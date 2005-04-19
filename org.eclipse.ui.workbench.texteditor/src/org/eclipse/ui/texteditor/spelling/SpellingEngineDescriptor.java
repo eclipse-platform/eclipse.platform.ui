@@ -25,11 +25,11 @@ import org.eclipse.ui.internal.texteditor.spelling.EmptySpellingPreferenceBlock;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class SpellingEngineDescriptor {
-	
+
 	/** Name of the <code>label</code> attribute. */
 	private static final String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
 	/** Name of the <code>class</code> attribute. */
@@ -59,7 +59,7 @@ public class SpellingEngineDescriptor {
 	 * <p>
 	 * This method is for internal use only.
 	 * </p>
-	 * 
+	 *
 	 * @param element the extension point element to be described.
 	 */
 	public SpellingEngineDescriptor(IConfigurationElement element) {
@@ -69,7 +69,7 @@ public class SpellingEngineDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the label of this extension.
-	 * 
+	 *
 	 * @return the label for this extension.
 	 */
 	public String getLabel() {
@@ -82,7 +82,7 @@ public class SpellingEngineDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the id of this extension.
-	 * 
+	 *
 	 * @return the id for this extension.
 	 */
 	public String getId() {
@@ -95,7 +95,7 @@ public class SpellingEngineDescriptor {
 
 	/**
 	 * Creates a spelling engine as described in the extension's xml.
-	 * 
+	 *
 	 * @return the created spelling engine
 	 * @throws CoreException if the creation failed
 	 */
@@ -106,7 +106,7 @@ public class SpellingEngineDescriptor {
 	/**
 	 * Returns <code>true</code> iff a preferences class has been
 	 * specified for this engine.
-	 * 
+	 *
 	 * @return <code>true</code> iff a preferences class has been
 	 *         specified for this engine
 	 */
@@ -118,10 +118,10 @@ public class SpellingEngineDescriptor {
 				fHasPreferences= Boolean.TRUE;
 		return fHasPreferences.booleanValue();
 	}
-	
+
 	/**
 	 * Creates a spelling preferences block as described in the extension's xml.
-	 * 
+	 *
 	 * @return the created spelling preferences block
 	 * @throws CoreException if the creation failed
 	 */
@@ -130,10 +130,10 @@ public class SpellingEngineDescriptor {
 			return (ISpellingPreferenceBlock) fConfiguration.createExecutableExtension(PREFERENCES_CLASS_ATTRIBUTE);
 		return new EmptySpellingPreferenceBlock();
 	}
-	
+
 	/**
 	 * States whether the plugin declaring this extension has been loaded already.
-	 * 
+	 *
 	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
@@ -144,7 +144,7 @@ public class SpellingEngineDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the default attribute value of this extension.
-	 * 
+	 *
 	 * @return the default attribute value for this extension.
 	 */
 	public boolean isDefault() {

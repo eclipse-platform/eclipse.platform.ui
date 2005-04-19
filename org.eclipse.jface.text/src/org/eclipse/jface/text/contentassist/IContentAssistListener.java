@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IEventConsumer;
  * processing the event.
  */
 interface IContentAssistListener extends IEventConsumer {
-	
+
 	/**
 	 * Verifies the key event.
 	 *

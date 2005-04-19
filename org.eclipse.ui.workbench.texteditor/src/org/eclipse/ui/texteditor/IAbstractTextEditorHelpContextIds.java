@@ -24,14 +24,14 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  */
 public interface IAbstractTextEditorHelpContextIds {
-	
-	/** 
-	 * The string with which all other defined ids are prefixed to construct help context ids. 
+
+	/**
+	 * The string with which all other defined ids are prefixed to construct help context ids.
 	 * Value: <code>"org.eclipse.ui."</code>
 	 */
 	public static final String PREFIX= PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
-	
-	/** 
+
+	/**
 	 * The string which is appended to action ids to construct help context ids.
 	 * Value: <code>"_action_context"</code>
 	 */
@@ -86,7 +86,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.1
 	 */
 	public static final String CUT_LINE_ACTION= PREFIX + ITextEditorActionConstants.CUT_LINE + ACTION_POSTFIX;
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.DeleteLineToBeginning_action_context"</code>
@@ -114,7 +114,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.1
 	 */
 	public static final String CUT_LINE_TO_END_ACTION= PREFIX + ITextEditorActionConstants.CUT_LINE_TO_END + ACTION_POSTFIX;
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.SetMark_action_context"</code>
@@ -232,7 +232,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS + ACTION_POSTFIX;
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToUNIX_action_context"</code>
@@ -240,7 +240,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX + ACTION_POSTFIX;
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.ConvertLineDelimitersToMAC_action_context"</code>
@@ -248,7 +248,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @deprecated since 3.1 No longer supported as editor actions.
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= PREFIX + ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC + ACTION_POSTFIX;
-	
+
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.find_replace_dialog_context"</code>
@@ -303,7 +303,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.0
 	 */
 	public static final String TOGGLE_INSERT_MODE_ACTION= PREFIX + "toggle_insert_mode" + ACTION_POSTFIX; //$NON-NLS-1$;;
-    
+
     /**
      * Help context id for the hippie completion action.
      * Value: <code>"org.eclipse.ui.hippie_completion_action_context"</code>

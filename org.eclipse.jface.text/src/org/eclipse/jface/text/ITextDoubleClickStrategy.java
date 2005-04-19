@@ -18,7 +18,7 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface or use the standard implementation
  * <code>DefaultTextDoubleClickStrategy</code>.
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
  */

@@ -15,7 +15,7 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 
 /**
  * The next pulldown action delegate.
- * 
+ *
  * @since 3.0
  */
 public class NextPulldownActionDelegate extends NextPreviousPulldownActionDelegate {

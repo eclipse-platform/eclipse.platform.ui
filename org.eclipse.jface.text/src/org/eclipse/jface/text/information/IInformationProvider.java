@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.information;
- 
+
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 
@@ -20,25 +20,25 @@ import org.eclipse.jface.text.ITextViewer;
  * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link IInformationProviderExtension} since version 2.1 introducing 
+ * <li>{@link IInformationProviderExtension} since version 2.1 introducing
  *		the ability to handle documents with multiple partitions</li>
- * <li>{@link IInformationProviderExtension2} since version 3.0 introducing 
+ * <li>{@link IInformationProviderExtension2} since version 3.0 introducing
  *		the ability to handle documents with multiple partitions</li>
  * </ul>
  * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @since 2.0
  */
 public interface IInformationProvider {
-	
+
 	/**
-	 * Returns the region of the text viewer's document close to the given 
+	 * Returns the region of the text viewer's document close to the given
 	 * offset that contains a subject about which information can be provided.<p>
-	 * For example, if information can be provided on a per code block basis, 
+	 * For example, if information can be provided on a per code block basis,
 	 * the offset should be used to find the enclosing code block and the source
 	 * range of the block should be returned.
 	 *
@@ -47,13 +47,13 @@ public interface IInformationProvider {
 	 * @return the region of the text viewer's document containing the information subject
 	 */
 	IRegion getSubject(ITextViewer textViewer, int offset);
-	
+
 	/**
 	 * Returns the information about the given subject or <code>null</code> if
 	 * no information is available. It depends on the concrete configuration in which
 	 * format the information is to be provided. For example, information presented
 	 * in an information control displaying HTML, should be provided in HTML.
-	 *  
+	 *
 	 * @param textViewer the viewer in whose document the subject is contained
 	 * @param subject the text region constituting the information subject
 	 * @return the information about the subject

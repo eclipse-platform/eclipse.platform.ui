@@ -25,7 +25,7 @@ import org.eclipse.jface.text.ITextViewer;
  * annotations that are attached to document regions that are visible in the
  * view port. If independent, the presented annotations can also be attached to
  * invisible document regions.
- * 
+ *
  * This interfaces comprises three contracts:
  * <ul>
  * <li>The vertical ruler retrieves the annotations it presents from an
@@ -48,7 +48,7 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface or use the default implementation
  * provided by {@link org.eclipse.jface.text.source.CompositeRuler} and
  * {@link org.eclipse.jface.text.source.VerticalRuler}.
- * 
+ *
  * @see org.eclipse.jface.text.source.IVerticalRulerExtension
  * @see org.eclipse.jface.text.ITextViewer
  */
@@ -61,7 +61,7 @@ public interface IVerticalRuler extends IVerticalRulerInfo {
 	 * @param model the new annotation model, may be <code>null</code>
 	 */
 	void setModel(IAnnotationModel model);
-		
+
 	/**
 	 * Returns the current annotation model of this ruler or <code>null</code>
 	 * if the ruler has no model.
@@ -69,13 +69,13 @@ public interface IVerticalRuler extends IVerticalRulerInfo {
 	 * @return this ruler's annotation model or <code>null</code> if there is no model
 	 */
 	IAnnotationModel getModel();
-		
+
 	/**
-	 * Forces the vertical ruler to synchronize itself with its 
+	 * Forces the vertical ruler to synchronize itself with its
 	 * annotation model and its viewer's view port.
 	 */
 	void update();
-	
+
 	/**
 	 * Creates the ruler's SWT control.
 	 *

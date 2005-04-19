@@ -25,7 +25,7 @@ import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
  * Empty preference block for extensions to the
  * <code>org.eclipse.ui.workbench.texteditor.spellingEngine</code> extension
  * point that do not specify their own.
- * 
+ *
  * @since 3.1
  */
 public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
@@ -41,9 +41,9 @@ public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= 30;
 		label.setLayoutData(gd);
-		
+
 		label= new Label(inner, SWT.CENTER);
-		label.setText(SpellingMessages.EmptySpellingPreferenceBlock_emptyCaption); 
+		label.setText(SpellingMessages.EmptySpellingPreferenceBlock_emptyCaption);
 		gd= new GridData(GridData.CENTER);
 		label.setLayoutData(gd);
 
@@ -51,7 +51,7 @@ public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= 30;
 		label.setLayoutData(gd);
-		
+
 		return inner;
 	}
 

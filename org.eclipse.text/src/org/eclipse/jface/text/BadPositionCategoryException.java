@@ -22,7 +22,7 @@ package org.eclipse.jface.text;
  * @see org.eclipse.jface.text.IDocument
  */
 public class BadPositionCategoryException extends Exception {
-	
+
 	/**
 	 * Serial version UID for this class.
 	 * <p>
@@ -38,7 +38,7 @@ public class BadPositionCategoryException extends Exception {
 	public BadPositionCategoryException() {
 		super();
 	}
-	
+
 	/**
 	 * Creates a new bad position category exception.
 	 *

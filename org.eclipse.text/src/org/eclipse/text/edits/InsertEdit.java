@@ -14,21 +14,21 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Text edit to insert a text at a given position in a 
+ * Text edit to insert a text at a given position in a
  * document.
  * <p>
  * An insert edit is equivalent to <code>ReplaceEdit(offset, 0, text)
  * </code>
- * 
+ *
  * @since 3.0
  */
 public final class InsertEdit extends TextEdit {
-	
+
 	private String fText;
-	
+
 	/**
 	 * Constructs a new insert edit.
-	 * 
+	 *
 	 * @param offset the insertion offset
 	 * @param text the text to insert
 	 */
@@ -36,7 +36,7 @@ public final class InsertEdit extends TextEdit {
 		super(offset, 0);
 		fText= text;
 	}
-	
+
 	/*
 	 * Copy constructor
 	 */
@@ -44,23 +44,23 @@ public final class InsertEdit extends TextEdit {
 		super(other);
 		fText= other.fText;
 	}
-	
+
 	/**
 	 * Returns the text to be inserted.
-	 * 
+	 *
 	 * @return the edit's text.
 	 */
 	public String getText() {
 		return fText;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#doCopy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		return new InsertEdit(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see TextEdit#accept0
 	 */
@@ -73,24 +73,24 @@ public final class InsertEdit extends TextEdit {
 
 	/* non Java-doc
 	 * @see TextEdit#performDocumentUpdating
-	 */	
+	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), fText);
 		fDelta= fText.length() - getLength();
 		return fDelta;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren
-	 */	
+	 */
 	/* package */ boolean deleteChildren() {
 		return false;
 	}
-	
+
 	/* non Java-doc
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return super.toString() + " <<" + fText; //$NON-NLS-1$
-	}	
+	}
 }

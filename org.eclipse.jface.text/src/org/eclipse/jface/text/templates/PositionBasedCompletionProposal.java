@@ -32,7 +32,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * @since 3.0
  */
 final class PositionBasedCompletionProposal implements ICompletionProposal, ICompletionProposalExtension2 {
-	
+
 	/** The string to be displayed in the completion proposal popup */
 	private String fDisplayString;
 	/** The replacement string */
@@ -74,7 +74,7 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 	public PositionBasedCompletionProposal(String replacementString, Position replacementPosition, int cursorPosition, Image image, String displayString, IContextInformation contextInformation, String additionalProposalInfo) {
 		Assert.isNotNull(replacementString);
 		Assert.isTrue(replacementPosition != null);
-		
+
 		fReplacementString= replacementString;
 		fReplacementPosition= replacementPosition;
 		fCursorPosition= cursorPosition;
@@ -94,7 +94,7 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 			// ignore
 		}
 	}
-	
+
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */

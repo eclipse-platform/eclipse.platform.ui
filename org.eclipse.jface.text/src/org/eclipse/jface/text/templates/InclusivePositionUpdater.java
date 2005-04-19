@@ -18,7 +18,7 @@ import org.eclipse.jface.text.Position;
 /**
  * Position updater that takes any change in [position.offset, position.offset + position.length] as
  * belonging to the position.
- * 
+ *
  * @since 3.0
  */
 class InclusivePositionUpdater implements IPositionUpdater {
@@ -28,7 +28,7 @@ class InclusivePositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Creates a new updater for the given <code>category</code>.
-	 * 
+	 *
 	 * @param category the new category.
 	 */
 	public InclusivePositionUpdater(String category) {
@@ -59,7 +59,7 @@ class InclusivePositionUpdater implements IPositionUpdater {
 				int length= position.getLength();
 				int end= offset + length;
 
-				if (offset > eventOffset + eventOldLength) 
+				if (offset > eventOffset + eventOldLength)
 					// position comes way
 					// after change - shift
 					position.setOffset(offset + deltaLength);
@@ -93,7 +93,7 @@ class InclusivePositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Returns the position category.
-	 * 
+	 *
 	 * @return the position category
 	 */
 	public String getCategory() {

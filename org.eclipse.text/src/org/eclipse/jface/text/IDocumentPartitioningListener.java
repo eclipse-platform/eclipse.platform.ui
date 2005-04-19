@@ -16,7 +16,7 @@ package org.eclipse.jface.text;
  * Interface of objects which are interested in getting informed
  * about changes of a document's partitioning. Clients may
  * implement this interface.<p>
- * 
+ *
  * In order to provided backward compatibility for clients of <code>IDocumentPartitioningListener</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
@@ -34,7 +34,7 @@ package org.eclipse.jface.text;
  * @see org.eclipse.jface.text.IDocumentPartitioner
  */
 public interface IDocumentPartitioningListener {
-	
+
 	/**
 	 * The partitioning of the given document changed.
 	 * <p>
@@ -43,9 +43,9 @@ public interface IDocumentPartitioningListener {
 	 * <p>
 	 * In version 3.0 this method has been replaces by
 	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}<p>
-	 * 
+	 *
 	 * @param document the document whose partitioning changed
-	 * 
+	 *
 	 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged(IDocument, IRegion)
 	 * @see IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)
 	 * @see IDocument#addDocumentPartitioningListener(IDocumentPartitioningListener)

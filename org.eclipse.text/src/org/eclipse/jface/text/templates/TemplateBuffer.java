@@ -17,19 +17,19 @@ import org.eclipse.jface.text.Assert;
  * <p>
  * Clients may instantiate this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class TemplateBuffer {
-	
+
 	/** The string of the template buffer */
 	private String fString;
 	/** The variable positions of the template buffer */
 	private TemplateVariable[] fVariables;
-	
+
 	/**
 	 * Creates a template buffer.
-	 * 
+	 *
 	 * @param string the string
 	 * @param variables the variable positions
 	 */
@@ -39,7 +39,7 @@ public final class TemplateBuffer {
 
 	/**
 	 * Sets the content of the template buffer.
-	 * 
+	 *
 	 * @param string the string
 	 * @param variables the variable positions
 	 */
@@ -52,7 +52,7 @@ public final class TemplateBuffer {
 		fString= string;
 		fVariables= copy(variables);
 	}
-	
+
 	/**
 	 * Returns a copy of the given array.
 	 *
@@ -71,17 +71,17 @@ public final class TemplateBuffer {
 
 	/**
 	 * Returns the string of the template buffer.
-	 * 
+	 *
 	 * @return the string representation of the template buffer
 	 */
 	public final String getString() {
 		return fString;
 	}
-	
+
 	/**
 	 * Returns the variable positions of the template buffer. The returned array is
 	 * owned by this variable and must not be modified.
-	 * 
+	 *
 	 * @return the variable positions of the template buffer
 	 */
 	public final TemplateVariable[] getVariables() {

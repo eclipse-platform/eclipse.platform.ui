@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Helper class which wraps the specified resource bundle
  * and offers methods to access the bundle.
- * 
+ *
  * @since 3.0
  */
 public final class QuickDiffMessages extends NLS {
@@ -27,7 +27,7 @@ public final class QuickDiffMessages extends NLS {
 
 	/**
 	 * Returns the message bundle which contains constructed keys.
-	 * 
+	 *
 	 * @since 3.1
 	 * @return the message bundle
 	 */

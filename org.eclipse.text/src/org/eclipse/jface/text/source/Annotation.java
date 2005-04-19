@@ -20,15 +20,15 @@ package org.eclipse.jface.text.source;
  * type are of type <code>"org.eclipse.text.annotation.unknown"</code>.
  */
 public class Annotation {
-	
+
 	/**
 	 * Constant for unknown annotation types.<p>
 	 * Value: <code>"org.eclipse.text.annotation.unknown"</code>
 	 * @since 3.0
 	 */
-	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$	
-	
-	
+	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$
+
+
 	/**
 	 * The type of this annotation.
 	 * @since 3.0
@@ -49,18 +49,18 @@ public class Annotation {
 	 * @since 3.0
 	 */
 	private String fText;
-	
-	
+
+
 	/**
 	 * Creates a new annotation that is not persistent and type less.
 	 */
 	protected Annotation() {
 		this(null, false, null);
 	}
-	
+
 	/**
 	 * Creates a new annotation with the given properties.
-	 * 
+	 *
 	 * @param type the type of this annotation
 	 * @param isPersistent <code>true</code> if this annotation is
 	 *            persistent, <code>false</code> otherwise
@@ -72,20 +72,20 @@ public class Annotation {
 		fIsPersistent= isPersistent;
 		fText= text;
 	}
-	
+
 	/**
 	 * Creates a new annotation with the given persistence state.
-	 * 
+	 *
 	 * @param isPersistent <code>true</code> if persistent, <code>false</code> otherwise
 	 * @since 3.0
 	 */
 	public Annotation(boolean isPersistent) {
 		this(null, isPersistent, null);
 	}
-	
+
 	/**
 	 * Returns whether this annotation is persistent.
-	 * 
+	 *
 	 * @return <code>true</code> if this annotation is persistent, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
@@ -93,41 +93,41 @@ public class Annotation {
 	public boolean isPersistent() {
 		return fIsPersistent;
 	}
-	
+
 	/**
 	 * Sets the type of this annotation.
-	 * 
+	 *
 	 * @param type the annotation type
 	 * @since 3.0
 	 */
 	public void setType(String type) {
 		fType= type;
 	}
-	
+
 	/**
 	 * Returns the type of the annotation.
-	 * 
+	 *
 	 * @return the type of the annotation
 	 * @since 3.0
 	 */
 	public String getType() {
 		return fType == null? TYPE_UNKNOWN : fType;
 	}
-	
+
 	/**
 	 * Marks this annotation deleted according to the value of the
 	 * <code>deleted</code> parameter.
-	 * 
+	 *
 	 * @param deleted <code>true</code> if annotation should be marked as deleted
 	 * @since 3.0
 	 */
 	public void markDeleted(boolean deleted) {
 		fMarkedAsDeleted= deleted;
 	}
-	
+
 	/**
 	 * Returns whether this annotation is marked as deleted.
-	 * 
+	 *
 	 * @return <code>true</code> if annotation is marked as deleted, <code>false</code>
 	 *         otherwise
 	 * @since 3.0
@@ -135,20 +135,20 @@ public class Annotation {
 	public boolean isMarkedDeleted() {
 		return fMarkedAsDeleted;
 	}
-	
+
 	/**
 	 * Sets the text associated with this annotation.
-	 * 
+	 *
 	 * @param text the text associated with this annotation
 	 * @since 3.0
 	 */
 	public void setText(String text) {
 		fText= text;
 	}
-	
+
 	/**
 	 * Returns the text associated with this annotation.
-	 * 
+	 *
 	 * @return the text associated with this annotation or <code>null</code>
 	 * @since 3.0
 	 */

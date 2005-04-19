@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Widget;
  * Helper class for testing widget state.
  */
 class Helper2 {
-	
+
 	/**
 	 * Returns whether the widget is <code>null</code> or disposed.
 	 *

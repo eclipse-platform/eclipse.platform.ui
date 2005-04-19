@@ -17,15 +17,15 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * A default implementation of the {@link SubjectControlContextInformationValidator} interface.
- * This implementation determines whether the information is valid by asking the content 
- * assist processor for all  context information objects for the current position. If the 
- * currently displayed information is in the result set, the context information is 
+ * This implementation determines whether the information is valid by asking the content
+ * assist processor for all  context information objects for the current position. If the
+ * currently displayed information is in the result set, the context information is
  * considered valid.
- * 
+ *
  * @since 3.0
  */
 public final class SubjectControlContextInformationValidator implements ISubjectControlContextInformationValidator {
-	
+
 	/** The content assist processor. */
 	private IContentAssistProcessor fProcessor;
 	/** The context information to be validated. */
@@ -36,7 +36,7 @@ public final class SubjectControlContextInformationValidator implements ISubject
 	/**
 	 * Creates a new context information validator which is ready to be installed on
 	 * a particular context information.
-	 * 
+	 *
 	 * @param processor the processor to be used for validation
 	 */
 	public SubjectControlContextInformationValidator(IContentAssistProcessor processor) {

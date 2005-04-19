@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 2.1
  */
 public interface IDocumentProviderExtension2 {
-	
+
 	/**
 	 * Sets this providers progress monitor.
 	 * @param progressMonitor
 	 */
 	void setProgressMonitor(IProgressMonitor progressMonitor);
-	
+
 	/**
 	 * Returns this providers progress monitor.
 	 * @return IProgressMonitor

@@ -21,31 +21,31 @@ import org.eclipse.jface.text.Position;
  * exists for compatibility reasons.
  * <p>
  * Internal class. This class is not intended to be used by clients.
- * 
+ *
  * @since 3.0
  */
 public class ChildDocument extends ProjectionDocument {
-	
+
 	/**
 	 * Position reflecting a visible region. The exclusive end offset of the position
 	 * is considered being overlapping with the visible region.
 	 */
 	static private class VisibleRegion extends Position {
-		
+
 		/**
 		 * Creates a new visible region.
-		 * 
+		 *
 		 * @param regionOffset the offset of the region
 		 * @param regionLength the length of the region
 		 */
 		public VisibleRegion(int regionOffset, int regionLength) {
 			super(regionOffset, regionLength);
 		}
-		
+
 		/**
 		 * If <code>regionOffset</code> is the end of the visible region and the <code>regionLength == 0</code>,
 		 * the <code>regionOffset</code> is considered overlapping with the visible region.
-		 * 
+		 *
 		 * @see org.eclipse.jface.text.Position#overlapsWith(int, int)
 		 */
 		public boolean overlapsWith(int regionOffset, int regionLength) {
@@ -56,7 +56,7 @@ public class ChildDocument extends ProjectionDocument {
 
 	/**
 	 * Creates a new child document.
-	 * 
+	 *
 	 * @param masterDocument @inheritDoc
 	 */
 	public ChildDocument(IDocument masterDocument) {
@@ -65,7 +65,7 @@ public class ChildDocument extends ProjectionDocument {
 
 	/**
 	 * Returns the parent document of this child document.
-	 * 
+	 *
 	 * @return the parent document of this child document
 	 * @see ProjectionDocument#getMasterDocument()
 	 */
@@ -76,7 +76,7 @@ public class ChildDocument extends ProjectionDocument {
 	/**
 	 * Sets the parent document range covered by this child document to the
 	 * given range.
-	 * 
+	 *
 	 * @param offset the offset of the range
 	 * @param length the length of the range
 	 * @throws BadLocationException if the given range is not valid
@@ -87,7 +87,7 @@ public class ChildDocument extends ProjectionDocument {
 
 	/**
 	 * Returns the parent document range of this child document.
-	 * 
+	 *
 	 * @return the parent document range of this child document
 	 */
 	public Position getParentDocumentRange() {

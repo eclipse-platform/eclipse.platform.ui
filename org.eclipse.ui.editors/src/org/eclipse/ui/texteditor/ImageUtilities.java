@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Canvas;
  * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities}
  */
 public class ImageUtilities {
-	
+
 	/**
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *
@@ -36,7 +36,7 @@ public class ImageUtilities {
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
 		org.eclipse.jface.text.source.ImageUtilities.drawImage(image, gc, canvas, r, halign, valign);
 	}
-	
+
 	/**
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *

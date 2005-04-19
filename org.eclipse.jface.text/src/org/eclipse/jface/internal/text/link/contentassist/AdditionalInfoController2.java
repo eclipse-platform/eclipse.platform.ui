@@ -31,31 +31,31 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 
 /**
  * Displays the additional information available for a completion proposal.
- * 
+ *
  * @since 2.0
  */
 class AdditionalInfoController2 extends AbstractInformationControlManager implements Runnable {
-	
+
 	/**
 	 * Internal table selection listener.
 	 */
 	private class TableSelectionListener implements SelectionListener {
-		
+
 		/*
 		 * @see SelectionListener#widgetSelected(SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
 			handleTableSelectionChanged();
 		}
-		
+
 		/*
 		 * @see SelectionListener#widgetDefaultSelected(SelectionEvent)
 		 */
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
-	
-	
+
+
 	/** The proposal table */
 	private Table fProposalTable;
 	/** The thread controlling the delayed display of the additional info */
@@ -72,11 +72,11 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	private SelectionListener fSelectionListener= new TableSelectionListener();
 	/** The delay after which additional information is displayed */
 	private int fDelay;
-	
-	
+
+
 	/**
 	 * Creates a new additional information controller.
-	 * 
+	 *
 	 * @param creator the information control creator to be used by this controller
 	 * @param delay time in milliseconds after which additional info should be displayed
 	 */
@@ -86,7 +86,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] {ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#install(Control)
 	 */
@@ -96,9 +96,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 			// already installed
 			return;
 		}
-		
+
 		super.install(control);
-		
+
 		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
@@ -106,7 +106,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	 		if (fThread != null)
 	 			fThread.interrupt();
 			fThread= new Thread(this, ContentAssistMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
-		
+
 			fStartSignal= new Object();
 			synchronized (fStartSignal) {
 				fThread.start();
@@ -118,46 +118,46 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 			}
 		}
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#disposeInformationControl()
-	 */	
+	 */
 	 public void disposeInformationControl() {
-		
+
 	 	synchronized (fThreadAccess) {
 	 		if (fThread != null) {
 	 			fThread.interrupt();
 	 			fThread= null;
 	 		}
 	 	}
-		
+
 		if (fProposalTable != null && !fProposalTable.isDisposed()) {
 			fProposalTable.removeSelectionListener(fSelectionListener);
 			fProposalTable= null;
 		}
-		
+
 		super.disposeInformationControl();
 	}
-	
+
 	/*
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		try {
 			while (true) {
-				
+
 				synchronized (fMutex) {
-					
+
 					if (fStartSignal != null) {
 						synchronized (fStartSignal) {
 							fStartSignal.notifyAll();
 							fStartSignal= null;
 						}
 					}
-					
+
 					// Wait for a selection event to occur.
 					fMutex.wait();
-					
+
 					while (true) {
 						fIsReset= false;
 						// Delay before showing the popup.
@@ -166,7 +166,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 							break;
 					}
 				}
-				
+
 				if (fProposalTable != null && !fProposalTable.isDisposed()) {
 					fProposalTable.getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -175,23 +175,23 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 						}
 					});
 				}
-				
+
 			}
 		} catch (InterruptedException e) {
 		}
-		
+
 		synchronized (fThreadAccess) {
 			// only null fThread if it is us!
 			if (Thread.currentThread() == fThread)
 				fThread= null;
 		}
 	}
-	
+
 	/**
 	 *Handles a change of the line selected in the associated selector.
 	 */
 	public void handleTableSelectionChanged() {
-		
+
 		if (fProposalTable != null && !fProposalTable.isDisposed() && fProposalTable.isVisible()) {
 			synchronized (fMutex) {
 				fIsReset= true;
@@ -199,45 +199,45 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 			}
 		}
 	}
-			
+
 	/*
 	 * @see AbstractInformationControlManager#computeInformation()
 	 */
 	protected void computeInformation() {
-		
+
 		if (fProposalTable == null || fProposalTable.isDisposed())
 			return;
-			
+
 		TableItem[] selection= fProposalTable.getSelection();
 		if (selection != null && selection.length > 0) {
-			
+
 			TableItem item= selection[0];
-			
+
 			// compute information
 			String information= null;
 			Object d= item.getData();
-			
+
 			if (d instanceof ICompletionProposal) {
 				ICompletionProposal p= (ICompletionProposal) d;
 				information= p.getAdditionalProposalInfo();
 			}
-			
+
 			if (d instanceof ICompletionProposalExtension3)
 				setCustomInformationControlCreator(((ICompletionProposalExtension3) d).getInformationControlCreator());
 			else
 				setCustomInformationControlCreator(null);
-			
+
 			// compute subject area
 			setMargins(4, -1);
 			Rectangle area= fProposalTable.getBounds();
 			area.x= 0; // subject area is the whole subject control
 			area.y= 0;
-			
+
 			// set information & subject area
 			setInformation(information, area);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(Control, IInformationControl)
 	 */

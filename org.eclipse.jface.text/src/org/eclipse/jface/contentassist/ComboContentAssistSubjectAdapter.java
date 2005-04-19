@@ -33,7 +33,7 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * Adapts a {@link org.eclipse.swt.widgets.Combo} to a {@link org.eclipse.jface.contentassist.IContentAssistSubjectControl}.
- * 
+ *
  * <p>
  *	Known issues:
  *  <ul>
@@ -57,7 +57,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		 * Updates this document with changes in {@link #fCombo}.
 		 */
 		private ModifyListener fModifyListener;
-		
+
 		private InternalDocument() {
 			super(fCombo.getText());
 			fModifyListener= new ModifyListener() {
@@ -70,7 +70,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 			};
 			fCombo.addModifyListener(fModifyListener);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractDocument#replace(int, int, java.lang.String)
 		 */
@@ -81,7 +81,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 			fCombo.addModifyListener(fModifyListener);
 		}
 	}
-	
+
 	/**
 	 * The combo widget.
 	 */
@@ -90,7 +90,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 
 	/**
 	 * Creates a content assist subject control adapter for the given combo.
-	 * 
+	 *
 	 * @param combo the combo to adapt
 	 */
 	public ComboContentAssistSubjectAdapter(Combo combo) {
@@ -98,7 +98,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		fCombo= combo;
 		fModifyListeners= new HashMap();
 	 }
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getControl()
 	 */
@@ -162,7 +162,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		}
 		return document;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
 	 */
@@ -189,10 +189,10 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 			 */
 			public void handleEvent(Event e) {
 				selectionListener.widgetSelected(new SelectionEvent(e));
-	
+
 			}
 		};
-		fCombo.addListener(SWT.Modify, listener); 
+		fCombo.addListener(SWT.Modify, listener);
 		fModifyListeners.put(selectionListener, listener);
 		return true;
 	}

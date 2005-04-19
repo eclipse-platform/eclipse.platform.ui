@@ -61,11 +61,11 @@ class DeleteLineTarget {
 		 * 1) Moving the caret does not fire a selection event
 		 * 2) There is no support in StyledText for a CaretListener
 		 * 3) The AcceleratorScope and KeybindingService classes are internal
-		 * 
+		 *
 		 * This kludge works by comparing the offset of the caret to the offset
 		 * recorded the last time the action was run. If they differ, we do not
 		 * continue the session.
-		 * 
+		 *
 		 * @see #saveState
 		 * @see #checkState
 		 */
@@ -80,23 +80,23 @@ class DeleteLineTarget {
 
 		/**
 		 * Creates the clipboard.
-		 * 
+		 *
 		 * @param viewer the text viewer
 		 */
 		public DeleteLineClipboard(ITextViewer viewer) {
 			Assert.isNotNull(viewer);
-			fViewer= viewer;	
+			fViewer= viewer;
 		}
 
 		/**
 		 * Returns the text viewer.
-		 * 
+		 *
 		 * @return the text viewer
 		 */
 		public ITextViewer getViewer() {
-			return fViewer;	
+			return fViewer;
 		}
-		
+
 		/**
 		 * Saves the current state, to be compared later using
 		 * <code>checkState</code>.
@@ -104,17 +104,17 @@ class DeleteLineTarget {
 		private void saveState() {
 			fIndex= fViewer.getTextWidget().getCaretOffset();
 		}
-	
+
 		/**
 		 * Checks that the state has not changed since it was saved.
-		 * 
+		 *
 		 * @return returns <code>true</code> if the current state is the same as
 		 * when it was last saved.
 		 */
 		private boolean hasSameState() {
 			return fIndex == fViewer.getTextWidget().getCaretOffset();
 		}
-		
+
 		/**
 		 * Checks the state of the clipboard.
 		 */
@@ -140,7 +140,7 @@ class DeleteLineTarget {
 
 		/**
 		 * Appends the given string to this clipboard.
-		 * 
+		 *
 		 * @param deltaString the string to append
 		 */
 		public void append(String deltaString) {
@@ -150,93 +150,93 @@ class DeleteLineTarget {
 			Object[] data= new Object[] { string };
 			fClipboard.setContents(data, dataTypes);
 		}
-		
+
 		/**
 		 * Uninstalls this action.
 		 */
 		private void uninstall() {
-	
+
 			if (fClipboard == null)
 				return;
-	
+
 			StyledText text= fViewer.getTextWidget();
 			if (text == null)
 				return;
-	
+
 			fViewer.getSelectionProvider().removeSelectionChangedListener(this);
 			text.removeFocusListener(this);
 			text.removeMouseListener(this);
 			text.removeModifyListener(this);
-	
+
 			fClipboard.dispose();
 			fClipboard= null;
 		}
 
-		/** 
+		/**
 		 * Mark whether a deletion is in progress.
-		 * 
+		 *
 		 * @param deleting <code>true</code> if a deletion is in progress
 		 */
 		public void setDeleting(boolean deleting) {
-			fDeleting= deleting;	
+			fDeleting= deleting;
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)
 		 */
 		public void focusGained(FocusEvent e) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.FocusListener#focusLost(FocusEvent)
 		 */
 		public void focusLost(FocusEvent e) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.jface.text.ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
 			uninstall();
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.ModifyListener#modifyText(ModifyEvent)
 		 */
 		public void modifyText(ModifyEvent e) {
 			if (!fDeleting)
 				uninstall();
-		}		
+		}
 	}
 
 	/**
@@ -246,7 +246,7 @@ class DeleteLineTarget {
 
 	/**
 	 * Creates a new target.
-	 * 
+	 *
 	 * @param viewer the viewer that the new target operates on
 	 */
 	public DeleteLineTarget(ITextViewer viewer) {
@@ -255,7 +255,7 @@ class DeleteLineTarget {
 
 	/**
 	 * Returns the document's delete region specified by position and type.
-	 * 
+	 *
 	 * @param document	the document
 	 * @param position	the position
 	 * @param type the line deletion type, must be one of
@@ -280,7 +280,7 @@ class DeleteLineTarget {
 			length= position - offset;
 			break;
 
-		case DeleteLineAction.TO_END:		
+		case DeleteLineAction.TO_END:
 			offset= position;
 
 			IRegion lineRegion= document.getLineInformation(line);
@@ -294,17 +294,17 @@ class DeleteLineTarget {
 				length= end - offset;
 			}
 			break;
-						
+
 		default:
 			throw new IllegalArgumentException();
 		}
-		
+
 		return new Region(offset, length);
 	}
-	
+
 	/**
 	 * Deletes the specified fraction of the line of the given offset.
-	 * 
+	 *
 	 * @param document the document
 	 * @param position the offset
 	 * @param type the line deletion type, must be one of
@@ -317,10 +317,10 @@ class DeleteLineTarget {
 		IRegion deleteRegion= getDeleteRegion(document, position, type);
 		int offset= deleteRegion.getOffset();
 		int length= deleteRegion.getLength();
-		
+
 		if (length == 0)
 			return;
-			
+
 		if (copyToClipboard) {
 
 			fClipboard.checkState();
@@ -331,21 +331,21 @@ class DeleteLineTarget {
 					throw e;
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
 				// don't delete if copy to clipboard fails, rather log & abort
-				
+
 				// log
-				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.Editor_error_clipboard_copy_failed_message, e); 
+				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.Editor_error_clipboard_copy_failed_message, e);
 				TextEditorPlugin.getDefault().getLog().log(status);
-				
+
 				fClipboard.uninstall();
 				return; // don't delete
 			}
-	
+
 			fClipboard.setDeleting(true);
 			document.replace(offset, length, null);
 			fClipboard.setDeleting(false);
-	
+
 			fClipboard.saveState();
-		
+
 		} else {
 			document.replace(offset, length, null);
 		}

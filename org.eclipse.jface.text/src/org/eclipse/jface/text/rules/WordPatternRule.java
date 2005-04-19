@@ -16,7 +16,7 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * A specific single line rule which stipulates that the start 
+ * A specific single line rule which stipulates that the start
  * and end sequence occur within a single word, as defined by a word detector.
  *
  * @see IWordDetector
@@ -64,7 +64,7 @@ public class WordPatternRule extends SingleLineRule {
 	/**
 	 * Returns whether the end sequence was detected.
 	 * The rule acquires the rest of the word, using the
-	 * provided word detector, and tests to determine if 
+	 * provided word detector, and tests to determine if
 	 * it ends with the end sequence.
 	 *
 	 * @param scanner the scanner to be used
@@ -78,7 +78,7 @@ public class WordPatternRule extends SingleLineRule {
 			c= scanner.read();
 		}
 		scanner.unread();
-		
+
 		if (fBuffer.length() >= fEndSequence.length) {
 			for (int i=fEndSequence.length - 1, j= fBuffer.length() - 1; i >= 0; i--, j--) {
 				if (fEndSequence[i] != fBuffer.charAt(j)) {
@@ -88,11 +88,11 @@ public class WordPatternRule extends SingleLineRule {
 			}
 			return true;
 		}
-		
+
 		unreadBuffer(scanner);
 		return false;
 	}
-	
+
 	/**
 	 * Returns the characters in the buffer to the scanner.
 	 * Note that the rule must also return the characters

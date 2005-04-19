@@ -41,13 +41,13 @@ import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 
 /**
  * Configures quick diff preferences
- * 
+ *
  * @since 3.0
  */
 class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
-	
+
 	private OverlayPreferenceStore fStore;
-	
+
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -57,20 +57,20 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
 		}
 	};
-	
+
 	/**
-	 * List for the reference provider default. 
+	 * List for the reference provider default.
 	 * @since 3.0
 	 */
 	private Combo fQuickDiffProviderCombo;
 	/**
 	 * The reference provider default's list model.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	private String[][] fQuickDiffProviderListModel;
 	/**
 	 * The quick diff color model.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	private String[][] fQuickDiffModel;
 	/**
@@ -84,7 +84,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	private Button fQuickDiffOverviewRulerCheckBox;
 
-	
+
 
 	public QuickDiffConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
@@ -94,31 +94,31 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffModel= createQuickDiffModel(markerAnnotationPreferences);
 		fQuickDiffProviderListModel= createQuickDiffReferenceListModel();
 	}
-	
+
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys(MarkerAnnotationPreferences preferences) {
 		ArrayList overlayKeys= new ArrayList();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER));
-		
+
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			
+
 			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-			) { 
+			) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
 			}
 		}
-		
+
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
 	}
-	
+
 	private String[][] createQuickDiffModel(MarkerAnnotationPreferences preferences) {
 		String[][] items= new String[3][];
 
@@ -126,15 +126,15 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange")) //$NON-NLS-1$
-				items[0]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_changeColor }; 
+				items[0]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_changeColor };
 			else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
-				items[1]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_additionColor }; 
+				items[1]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_additionColor };
 			else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-				items[2]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_deletionColor }; 
+				items[2]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_deletionColor };
 		}
 		return items;
 	}
-	
+
 	private String[][] createQuickDiffReferenceListModel() {
 		java.util.List descriptors= new QuickDiff().getReferenceProviderDescriptors();
 		ArrayList listModelItems= new ArrayList();
@@ -150,8 +150,8 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 				i= label.indexOf("(&"); //$NON-NLS-1$
 				if(i >= 0)
 					j = label.indexOf(')',i);
-			}		
-			
+			}
+
 			i= label.indexOf('&');
 			while (i >= 0) {
 				if (i < label.length())
@@ -166,25 +166,25 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		listModelItems.toArray(items);
 		return items;
 	}
-	
-	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
+
+	private Button addCheckBox(Composite parent, String label, String key, int indentation) {
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(fCheckBoxListener);
-		
+
 		fCheckBoxes.put(checkBox, key);
-		
+
 		return checkBox;
 	}
-	
+
 	/**
 	 * Creates page for hover preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the created child composite
 	 */
@@ -194,13 +194,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 
-		String label= TextEditorMessages.QuickDiffConfigurationBlock_showForNewEditors; 
+		String label= TextEditorMessages.QuickDiffConfigurationBlock_showForNewEditors;
 		addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
 
-		label= TextEditorMessages.QuickDiffConfigurationBlock_showInOverviewRuler; 
+		label= TextEditorMessages.QuickDiffConfigurationBlock_showInOverviewRuler;
 		fQuickDiffOverviewRulerCheckBox= new Button(composite, SWT.CHECK);
 		fQuickDiffOverviewRulerCheckBox.setText(label);
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 0;
 		gd.horizontalSpan= 2;
@@ -215,7 +215,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		// spacer
 		Label l= new Label(composite, SWT.LEFT );
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -224,14 +224,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		l.setLayoutData(gd);
 
 		Group group= new Group(composite, SWT.NONE);
-		group.setText(TextEditorMessages.QuickDiffConfigurationBlock_colorTitle); 
+		group.setText(TextEditorMessages.QuickDiffConfigurationBlock_colorTitle);
 		layout= new GridLayout();
 		layout.numColumns= 2;
 		group.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
 		group.setLayoutData(gd);
-		
+
 		fQuickDiffColorEditors= new ColorEditor[3];
 		for (int i= 0; i < fQuickDiffModel.length; i++) {
 			label= fQuickDiffModel[i][2];
@@ -248,7 +248,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 				public void widgetDefaultSelected(SelectionEvent e) {
 					// do nothing
 				}
-				
+
 				public void widgetSelected(SelectionEvent e) {
 					String key= fQuickDiffModel[index][0];
 					PreferenceConverter.setValue(fStore, key, editor.getColorValue());
@@ -256,16 +256,16 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			});
 		}
 
-		
+
 		// spacer
 		l= new Label(composite, SWT.LEFT );
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= 5;
 		l.setLayoutData(gd);
-		
+
 		l= new Label(composite, SWT.LEFT);
-		l.setText(TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderTitle); 
+		l.setText(TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderTitle);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		l.setLayoutData(gd);
@@ -278,12 +278,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		editorComposite.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 
 		fQuickDiffProviderCombo= new Combo(editorComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fQuickDiffProviderCombo.setLayoutData(gd);
-						
+
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -291,22 +291,22 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fQuickDiffProviderCombo.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				int i= fQuickDiffProviderCombo.getSelectionIndex();
 				fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, fQuickDiffProviderListModel[i][0]);
 			}
 
 		});
-		
+
 		return composite;
 	}
-	
+
 	private void updateProviderList() {
 		String defaultProvider= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 		for (int j= 0; j < fQuickDiffProviderListModel.length; j++) {
@@ -318,7 +318,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	public void initialize() {
-		
+
 		for (int i= 0; i < fQuickDiffProviderListModel.length; i++) {
 			String label= fQuickDiffProviderListModel[i][1];
 			fQuickDiffProviderCombo.add(label);
@@ -328,7 +328,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 				updateProviderList();
 			}
 		});
-		
+
 		initializeFields();
 	}
 
@@ -339,14 +339,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fStore.getBoolean(key));
 		}
-        
+
 		updateQuickDiffControls();
 	}
 
 	public boolean canPerformOk() {
 		return true;
 	}
-	
+
 	public void performOk() {
 	}
 

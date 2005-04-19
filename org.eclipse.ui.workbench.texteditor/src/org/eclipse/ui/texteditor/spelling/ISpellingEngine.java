@@ -25,7 +25,7 @@ import org.eclipse.jface.text.IRegion;
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface ISpellingEngine {
@@ -33,7 +33,7 @@ public interface ISpellingEngine {
 	/**
 	 * Checks the given regions in the given document. Reports all found
 	 * spelling problems to the collector.
-	 * 
+	 *
 	 * @param document the document to check
 	 * @param regions the regions to check
 	 * @param context the context

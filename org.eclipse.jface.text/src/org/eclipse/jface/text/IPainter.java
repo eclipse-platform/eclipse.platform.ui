@@ -37,13 +37,13 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.IPaintPositionManager}. The painter can use
  * this updater to manage its state information.
  * <p>
- * 
+ *
  * @see org.eclipse.jface.text.PaintManager
  * @see org.eclipse.jface.text.IPaintPositionManager
  * @since 2.1
  */
 public interface IPainter {
-	
+
 	/**
 	 * Constant describing the reason of a repaint request: selection changed.
 	 */
@@ -68,21 +68,21 @@ public interface IPainter {
 	 * Constant describing the reason of a repaint request: paint manager or painter configuration changed.
 	 */
 	int CONFIGURATION= 16;
-	
 
-	/**	
+
+	/**
 	 * Disposes this painter. Prior to disposing, a painter should be deactivated. A disposed
 	 * painter can not be reactivated.
-	 * 
+	 *
 	 * @see #deactivate(boolean)
 	 */
 	void dispose();
-	
+
 	/**
 	 * Requests this painter to repaint because of the given reason. Based on
 	 * the given reason the painter can decide whether it will repaint or not.
 	 * If it repaints and is inactive, it will activate itself.
-	 * 
+	 *
 	 * @param reason the repaint reason, value is one of the constants defined
 	 *            in this interface
 	 */
@@ -93,17 +93,17 @@ public interface IPainter {
 	 * have any effect. <code>redraw</code> indicates whether the painter
 	 * should remove any decoration it previously applied. A deactivated painter
 	 * can be reactivated by calling <code>paint</code>.
-	 * 
+	 *
 	 * @param redraw <code>true</code> if any previously applied decoration
 	 *            should be removed
 	 * @see #paint(int)
 	 */
 	void deactivate(boolean redraw);
-	
+
 	/**
 	 * Sets the paint position manager that can be used by this painter or removes any previously
 	 * set paint position manager.
-	 * 
+	 *
 	 * @param manager the paint position manager or <code>null</code>
 	 */
 	void setPositionManager(IPaintPositionManager manager);

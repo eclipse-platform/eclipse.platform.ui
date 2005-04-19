@@ -13,7 +13,7 @@ package org.eclipse.core.filebuffers;
 /**
  * This interface provides the list of status codes that are used by the file
  * buffer plug-in when it throws {@link org.eclipse.core.runtime.CoreException}.
- * 
+ *
  * @since 3.1
  */
 public interface IFileBufferStatusCodes {
@@ -22,7 +22,7 @@ public interface IFileBufferStatusCodes {
 	 * Changing the content of a file buffer failed.
 	 */
 	int CONTENT_CHANGE_FAILED= 1;
-	
+
 	/**
 	 * Creation of file buffer failed.
 	 */

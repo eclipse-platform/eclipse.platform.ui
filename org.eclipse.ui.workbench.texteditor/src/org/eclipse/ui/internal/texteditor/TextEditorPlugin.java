@@ -38,14 +38,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * This class provides static methods and fields only; it is not intended to be
  * instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @since 2.1
  */
 public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistryChangeListener {
 
 	/** The plug-in instance */
 	private static TextEditorPlugin fgPlugin;
-	
+
 	/** The last edit position */
 	private EditPosition fLastEditPosition;
 	/** The action which goes to the last edit position */
@@ -74,7 +74,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 
 	/**
 	 * Returns the plug-in instance.
-	 * 
+	 *
 	 * @return the text editor plug-in instance
 	 * @since 3.0
 	 */
@@ -86,7 +86,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 * Text editor UI plug-in Id (value <code>"org.eclipse.ui.workbench.texteditor"</code>).
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.ui.workbench.texteditor"; //$NON-NLS-1$
-	
+
 	/**
 	 * Extension Id of quick diff reference provider extension point.
 	 * (value <code>"quickDiffReferenceProvider"</code>).
@@ -119,10 +119,10 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 			fLastEditPositionDependentActions= null;
 		}
 	}
-	
+
 	/**
 	 * Adds the given action to the last edit position dependent actions.
-	 * 
+	 *
 	 * @param action the goto last edit position action
 	 */
 	void addLastEditPositionDependentAction(IAction action) {
@@ -135,7 +135,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 
 	/**
 	 * Removes the given action from the last edit position dependent actions.
-	 * 
+	 *
 	 * @param action the action that depends on the last edit position
 	 */
 	void removeLastEditPositionDependentAction(IAction action) {
@@ -145,7 +145,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 			fLastEditPositionDependentActions.remove(action);
 	}
 
-	
+
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 * @since 3.0
@@ -156,7 +156,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		fSpellingEngineRegistry= new SpellingEngineRegistry();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 * @since 3.0
@@ -178,20 +178,20 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		if (fSpellingEngineRegistry != null && event.getExtensionDeltas(PLUGIN_ID, SpellingEngineRegistry.SPELLING_ENGINE_EXTENSION_POINT).length > 0)
 			fSpellingEngineRegistry.reloadExtensions();
 	}
-	
+
 	/**
 	 * Returns this plug-ins quick diff extension registry.
-	 *  
+	 *
 	 * @return the quick diff extension registry or <code>null</code> if this plug-in has been shutdown
 	 * @since 3.0
 	 */
 	public QuickDiffExtensionsRegistry getQuickDiffExtensionRegistry() {
 		return fQuickDiffExtensionRegistry;
 	}
-	
+
 	/**
 	 * Returns this plug-ins spelling engine registry.
-	 *  
+	 *
 	 * @return the spelling engine registry or <code>null</code> if this plug-in has been shutdown
 	 * @since 3.1
 	 */

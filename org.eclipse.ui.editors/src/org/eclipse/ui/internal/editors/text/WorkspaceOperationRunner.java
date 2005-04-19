@@ -28,15 +28,15 @@ import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
  * @since 3.0
  */
 public class WorkspaceOperationRunner implements IRunnableContext {
-	
+
 	private IProgressMonitor fProgressMonitor;
-	
+
 	public WorkspaceOperationRunner() {
 	}
-	
+
 	/**
 	 * Sets the progress monitor.
-	 * 
+	 *
 	 * @param progressMonitor the progress monitor to set
 	 */
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
@@ -46,7 +46,7 @@ public class WorkspaceOperationRunner implements IRunnableContext {
 	/**
 	 * Returns the progress monitor. It there is no progress monitor the monitor\
 	 * is set to the <code>NullProgressMonitor</code>.
-	 * 
+	 *
 	 * @return the progress monitor
 	 */
 	public IProgressMonitor getProgressMonitor() {
@@ -64,7 +64,7 @@ public class WorkspaceOperationRunner implements IRunnableContext {
 		else
 			run(fork, cancelable, runnable, ResourcesPlugin.getWorkspace().getRoot());
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */

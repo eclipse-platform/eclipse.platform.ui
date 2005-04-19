@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
- 
+
 import org.eclipse.swt.graphics.Font;
 
 
@@ -19,22 +19,22 @@ import org.eclipse.swt.graphics.Font;
  * <p>
  * Allows to set the font of the vertical ruler and to set the location of the
  * last mouse button activity.
- * 
+ *
  * @since 2.0
  */
 public interface IVerticalRulerExtension {
-	
+
 	/**
 	 * Sets the font of this vertical ruler.
-	 * 
+	 *
 	 * @param font the new font of the vertical ruler
 	 */
 	void setFont(Font font);
-	
+
 	/**
 	 * Sets the location of the last mouse button activity. This method is used for
 	 * example by external mouse listeners.
-	 * 
+	 *
 	 * @param x the x-coordinate
 	 * @param y the y-coordinate
 	 */

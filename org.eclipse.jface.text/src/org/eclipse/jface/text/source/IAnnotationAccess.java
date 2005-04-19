@@ -15,7 +15,7 @@ package org.eclipse.jface.text.source;
  * the API of {@link org.eclipse.jface.text.source.Annotation}. With version
  * 3.0 all this information is now available from the annotation itself.
  * <p>
- * 
+ *
  * In order to provide backward compatibility for clients of
  * <code>IAnnotationAccess</code>, extension interfaces are used as a means
  * of evolution. The following extension interfaces exist:
@@ -25,7 +25,7 @@ package org.eclipse.jface.text.source;
  * </ul>
  * <p>
  * Clients usually implement this interface and its extension interfaces.
- * 
+ *
  * @see org.eclipse.jface.text.source.IAnnotationAccessExtension
  * @see org.eclipse.jface.text.source.Annotation
  * @since 2.1
@@ -34,7 +34,7 @@ public interface IAnnotationAccess {
 
 	/**
 	 * Returns the type of the given annotation.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return the type of the given annotation or <code>null</code> if it has none.
 	 * @deprecated use <code>Annotation.getType()</code>
@@ -43,18 +43,18 @@ public interface IAnnotationAccess {
 
 	/**
 	 * Returns whether the given annotation spans multiple lines.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the annotation spans multiple lines,
 	 * 	<code>false</code> otherwise
-	 * 
+	 *
 	 * @deprecated assumed to always return <code>true</code>
 	 */
 	boolean isMultiLine(Annotation annotation);
-	
+
 	/**
 	 * Returns whether the given annotation is temporary rather than persistent.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return <code>true</code> if the annotation is temporary,
 	 * 	<code>false</code> otherwise

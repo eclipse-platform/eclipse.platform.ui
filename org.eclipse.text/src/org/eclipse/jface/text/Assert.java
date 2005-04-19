@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
- 
+
 /**
  * <code>Assert</code> is useful for for embedding runtime sanity checks
  * in code. The static predicate methods all test a condition and throw some
@@ -20,7 +20,7 @@ package org.eclipse.jface.text;
  * thrown when something is misbehaving. Assertion failures are invariably
  * unspecified behavior; consequently, clients should never rely on
  * these being thrown (or not thrown). <b>If you find yourself in the
- * position where you need to catch an assertion failure, you have most 
+ * position where you need to catch an assertion failure, you have most
  * certainly written your program incorrectly.</b>
  * </p>
  * <p>
@@ -29,12 +29,12 @@ package org.eclipse.jface.text;
  * </p>
  */
 public final class Assert {
-		
+
 		/**
 		 * <code>AssertionFailedException</code> is a runtime exception thrown
 		 * by some of the methods in <code>Assert</code>.
 		 * <p>
-		 * This class is not declared public to prevent some misuses; programs that catch 
+		 * This class is not declared public to prevent some misuses; programs that catch
 		 * or otherwise depend on assertion failures are susceptible to unexpected
 		 * breakage when assertions in the code are added or removed.
 		 * </p>
@@ -43,7 +43,7 @@ public final class Assert {
 		 * </p>
 		 */
 		private static class AssertionFailedException extends RuntimeException {
-	
+
 			/**
 			 * Serial version UID for this class.
 			 * <p>
@@ -58,21 +58,21 @@ public final class Assert {
 			 */
 			public AssertionFailedException() {
 			}
-			
+
 			/**
 			 * Constructs a new exception with the given message.
-			 * 
+			 *
 			 * @param detail the detailed message
 			 */
 			public AssertionFailedException(String detail) {
 			    super(detail);
 			}
 		}
-		
+
 	/* This class is not intended to be instantiated. */
 	private Assert() {
 	}
-	
+
 	/**
 	 * Asserts that an argument is legal. If the given boolean is
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
@@ -90,7 +90,7 @@ public final class Assert {
 		}
 		return isLegal(expression, "");//$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Asserts that an argument is legal. If the given boolean is
 	 * not <code>true</code>, an <code>IllegalArgumentException</code>
@@ -108,7 +108,7 @@ public final class Assert {
 			throw new IllegalArgumentException("assertion failed; " + message); //$NON-NLS-1$
 		return expression;
 	}
-	
+
 	/**
 	 * Asserts that the given object is not <code>null</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -117,11 +117,11 @@ public final class Assert {
 	 * <code>null</code> unless <b>explicitly</b> allowed in the method's
 	 * specification. Similarly, results returned from API methods are never
 	 * <code>null</code> unless <b>explicitly</b> allowed in the method's
-	 * specification. Implementations are encouraged to make regular use of 
-	 * <code>Assert.isNotNull</code> to ensure that <code>null</code> 
+	 * specification. Implementations are encouraged to make regular use of
+	 * <code>Assert.isNotNull</code> to ensure that <code>null</code>
 	 * parameters are detected as early as possible.
 	 * </p>
-	 * 
+	 *
 	 * @param object the value to test
 	 * @exception RuntimeException an unspecified unchecked exception if the object
 	 *   is <code>null</code>
@@ -133,7 +133,7 @@ public final class Assert {
 		}
 		isNotNull(object, "");//$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Asserts that the given object is not <code>null</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -143,11 +143,11 @@ public final class Assert {
 	 * <code>null</code> unless <b>explicitly</b> allowed in the method's
 	 * specification. Similarly, results returned from API methods are never
 	 * <code>null</code> unless <b>explicitly</b> allowed in the method's
-	 * specification. Implementations are encouraged to make regular use of 
-	 * <code>Assert.isNotNull</code> to ensure that <code>null</code> 
+	 * specification. Implementations are encouraged to make regular use of
+	 * <code>Assert.isNotNull</code> to ensure that <code>null</code>
 	 * parameters are detected as early as possible.
 	 * </p>
-	 * 
+	 *
 	 * @param object the value to test
 	 * @param message the message to include in the exception
 	 * @exception RuntimeException an unspecified unchecked exception if the object
@@ -157,7 +157,7 @@ public final class Assert {
 		if (object == null)
 			throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.
@@ -173,7 +173,7 @@ public final class Assert {
 		}
 		return isTrue(expression, "");//$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Asserts that the given boolean is <code>true</code>. If this
 	 * is not the case, some kind of unchecked exception is thrown.

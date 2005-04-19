@@ -24,40 +24,40 @@ import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
 
 public class DelegatingAnnotationPreference extends AnnotationPreference {
-	
+
 	private AnnotationType fType;
 	private AnnotationPreferenceLookup fLookup;
 	private Set fCache= new HashSet();
-	
+
 	public DelegatingAnnotationPreference(AnnotationType type, AnnotationPreferenceLookup lookup) {
 		fType= type;
 		fLookup= lookup;
 	}
-	
+
 	private boolean isCached(Object attribute) {
 		return fCache.contains(attribute);
 	}
-	
+
 	private void markCached(Object attribute) {
 		fCache.add(attribute);
 	}
-	
+
 	private AnnotationPreference getDefiningPreference(Object attribute) {
-		
+
 		AnnotationPreference p= fLookup.getAnnotationPreferenceFragment(fType.getType());
 		if (p != null && p.hasValue(attribute))
 			return p;
-		
+
 		String[] superTypes= fType.getSuperTypes();
 		for (int i= 0; i < superTypes.length; i++) {
 			p= fLookup.getAnnotationPreferenceFragment(superTypes[i]);
 			if (p != null && p.hasValue(attribute))
 				return p;
 		}
-		
+
 		return null;
 	}
-	
+
 	private Object getAttributeValue(Object attribute) {
 		if (!isCached(attribute)) {
 			AnnotationPreference preference= getDefiningPreference(attribute);
@@ -67,21 +67,21 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 		}
 		return getValue(attribute);
 	}
-	
+
 	private boolean getBooleanAttributeValue(Object attribute) {
 		Object value= getAttributeValue(attribute);
 		if (value instanceof Boolean)
 			return ((Boolean) value).booleanValue();
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getAnnotationType()
 	 */
 	public Object getAnnotationType() {
 		return fType.getType();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AnnotationPreference#contributesToHeader()
 	 */

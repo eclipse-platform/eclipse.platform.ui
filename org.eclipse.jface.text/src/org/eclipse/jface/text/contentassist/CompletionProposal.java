@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
  * The standard implementation of the <code>ICompletionProposal</code> interface.
  */
 public final class CompletionProposal implements ICompletionProposal {
-	
+
 	/** The string to be displayed in the completion proposal popup. */
 	private String fDisplayString;
 	/** The replacement string. */
@@ -70,7 +70,7 @@ public final class CompletionProposal implements ICompletionProposal {
 		Assert.isTrue(replacementOffset >= 0);
 		Assert.isTrue(replacementLength >= 0);
 		Assert.isTrue(cursorPosition >= 0);
-		
+
 		fReplacementString= replacementString;
 		fReplacementOffset= replacementOffset;
 		fReplacementLength= replacementLength;
@@ -91,7 +91,7 @@ public final class CompletionProposal implements ICompletionProposal {
 			// ignore
 		}
 	}
-	
+
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */

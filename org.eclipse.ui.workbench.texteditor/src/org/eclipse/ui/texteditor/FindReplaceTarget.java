@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IRegion;
  * @since 2.1
  */
 class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2, IFindReplaceTargetExtension3 {
-	
+
 	/** The editor */
 	private AbstractTextEditor fEditor;
 	/** The find/replace target */
@@ -32,7 +32,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 
 	/**
 	 * Creates a new find/replace target.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @param target the wrapped find/replace target
 	 */
@@ -40,19 +40,19 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		fEditor= editor;
 		fTarget= target;
 	}
-	
+
 	/**
 	 * Returns the wrapped find/replace target.
-	 * 
+	 *
 	 * @return the wrapped find/replace target
 	 */
 	private IFindReplaceTarget getTarget() {
 		return fTarget;
 	}
-	
+
 	/**
 	 * Returns the find/replace target extension.
-	 * 
+	 *
 	 * @return the find/replace target extension
 	 */
 	private IFindReplaceTargetExtension getExtension() {
@@ -60,7 +60,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			return (IFindReplaceTargetExtension) fTarget;
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
 	 */
@@ -141,7 +141,7 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			((IFindReplaceTargetExtension3)getTarget()).replaceSelection(text, regExReplace);
 			return;
 		}
-		
+
 		// fallback
 		if (!regExReplace && getTarget() != null)
 			getTarget().replaceSelection(text);

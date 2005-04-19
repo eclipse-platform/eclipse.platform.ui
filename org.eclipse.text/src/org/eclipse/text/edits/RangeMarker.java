@@ -14,23 +14,23 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * A range marker can be used to track positions when executing 
+ * A range marker can be used to track positions when executing
  * text edits.
- * 
+ *
  * @since 3.0
  */
 public final class RangeMarker extends TextEdit {
-	
+
 	/**
 	 * Creates a new range marker for the given offset and length.
-	 * 
+	 *
 	 * @param offset the marker's offset
 	 * @param length the marker's length
 	 */
 	public RangeMarker(int offset, int length) {
 		super(offset, length);
 	}
-	
+
 	/*
 	 * Copy constructor
 	 */
@@ -40,11 +40,11 @@ public final class RangeMarker extends TextEdit {
 
 	/* non Java-doc
 	 * @see TextEdit#copy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		return new RangeMarker(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see TextEdit#accept0
 	 */
@@ -57,15 +57,15 @@ public final class RangeMarker extends TextEdit {
 
 	/* non Java-doc
 	 * @see TextEdit#performDocumentUpdating
-	 */	
+	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren
-	 */	
+	 */
 	/* package */ boolean deleteChildren() {
 		return false;
 	}

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 abstract class SingleCharReader extends Reader {
-	
+
 	/**
 	 * @see Reader#read()
 	 */
@@ -36,15 +36,15 @@ abstract class SingleCharReader extends Reader {
 			cbuf[i]= (char)ch;
 		}
 		return len;
-	}		
-	
+	}
+
 	/**
 	 * @see Reader#ready()
-	 */		
+	 */
     public boolean ready() throws IOException {
 		return true;
 	}
-	
+
 	/**
 	 * Returns the readable content as string.
 	 * @return the readable content as string

@@ -42,34 +42,34 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * This registry manages sharable document factories. Document factories are specified 
+ * This registry manages sharable document factories. Document factories are specified
  * in <code>plugin.xml</code> per file name extension.
  */
 public class ExtensionsRegistry {
-	
+
 	/**
 	 * Adapts IContentType with the ability to check
 	 * equality. This allows to use them in a collection.
 	 */
 	private static class ContentTypeAdapter {
-		
+
 		/** The adapted content type. */
 		private IContentType fContentType;
 
 		/**
 		 * Creates a new content type adapter for the
 		 * given content type.
-		 * 
+		 *
 		 * @param contentType the content type to be adapted
 		 */
 		public ContentTypeAdapter(IContentType  contentType) {
 			Assert.isNotNull(contentType);
 			fContentType= contentType;
 		}
-		
+
 		/**
 		 * Return the adapted content type.
-		 * 
+		 *
 		 * @return the content type
 		 */
 		public IContentType getContentType() {
@@ -78,7 +78,7 @@ public class ExtensionsRegistry {
 
 		/**
 		 * Return the Id of the adapted content type.
-		 * 
+		 *
 		 * @return the Id
 		 */
 		public String getId() {
@@ -91,7 +91,7 @@ public class ExtensionsRegistry {
 		public boolean equals(Object obj) {
 			return obj instanceof ContentTypeAdapter && fContentType.getId().equals(((ContentTypeAdapter)obj).getId());
 		}
-		
+
 		/*
 		 * @see java.lang.Object#hashCode()
 		 */
@@ -99,9 +99,9 @@ public class ExtensionsRegistry {
 			return fContentType.getId().hashCode();
 		}
 	}
-	
+
 	private final static String WILDCARD= "*";  //$NON-NLS-1$
-	
+
 	/** The mapping between file attributes and configuration elements describing document factories. */
 	private Map fFactoryDescriptors= new HashMap();
 	/** The mapping between configuration elements for document factories and instantiated document factories. */
@@ -116,8 +116,8 @@ public class ExtensionsRegistry {
 	private Map fAnnotationModelFactories= new HashMap();
 	/** The content type manager. */
 	private IContentTypeManager fContentTypeManager= Platform.getContentTypeManager();
-	
-	
+
+
 	/**
 	 * Creates a new document factory registry and initializes it with the information
 	 * found in the plug-in registry.
@@ -132,16 +132,16 @@ public class ExtensionsRegistry {
 		initialize("annotationModelCreation", "contentTypeId", true, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("annotationModelCreation", "fileNames", false, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
 		initialize("annotationModelCreation", "extensions", false, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 	}
-	
+
 	/**
 	 * Reads the comma-separated value from the given configuration element for the given attribute name and remembers
 	 * the configuration element in the given map under the individual tokens of the attribute value.
-	 * 
+	 *
 	 * @param attributeName the name of the attribute
 	 * @param element the configuration element
-	 * @param map the map which remembers the configuration element 
+	 * @param map the map which remembers the configuration element
 	 */
 	private void read(String attributeName, IConfigurationElement element, Map map) {
 		String value= element.getAttribute(attributeName);
@@ -149,7 +149,7 @@ public class ExtensionsRegistry {
 			StringTokenizer tokenizer= new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token= tokenizer.nextToken().trim();
-				
+
 				Set s= (Set) map.get(token);
 				if (s == null) {
 					s= new HashSet();
@@ -159,21 +159,21 @@ public class ExtensionsRegistry {
 			}
 		}
 	}
-	
+
 	/**
 	 * Reads the value from the given configuration element for the given attribute name and remembers
 	 * the configuration element in the given map under the individual content type of the attribute value.
-	 * 
+	 *
 	 * @param attributeName the name of the attribute
 	 * @param element the configuration element
-	 * @param map the map which remembers the configuration element 
+	 * @param map the map which remembers the configuration element
 	 */
 	private void readContentType(String attributeName, IConfigurationElement element, Map map) {
 		String value= element.getAttribute(attributeName);
 		if (value != null) {
 			IContentType contentType= fContentTypeManager.getContentType(value);
 			if (contentType == null) {
-				log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_contentTypeDoesNotExist, new Object[] { value }), null)); 
+				log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_contentTypeDoesNotExist, new Object[] { value }), null));
 				return;
 			}
 			ContentTypeAdapter adapter= new ContentTypeAdapter(contentType);
@@ -185,7 +185,7 @@ public class ExtensionsRegistry {
 			s.add(element);
 		}
 	}
-	
+
 	/**
 	 * Adds an entry to the log of this plug-in for the given status
 	 * @param status the status to log
@@ -194,25 +194,25 @@ public class ExtensionsRegistry {
 		ILog log= FileBuffersPlugin.getDefault().getLog();
 		log.log(status);
 	}
-	
+
 	/**
 	 * Initializes this registry. It retrieves all implementers of the given
 	 * extension point and remembers those implementers based on the
 	 * file name extensions in the given map.
-	 * 
+	 *
 	 * @param extensionPointName the name of the extension point
 	 * @param childElementName the name of the child elements
 	 * @param isContentTypeId the child element is a content type id
-	 * @param descriptors the map to be filled 
+	 * @param descriptors the map to be filled
 	 */
 	private void initialize(String extensionPointName, String childElementName, boolean isContentTypeId, Map descriptors) {
-		
+
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(FileBuffersPlugin.PLUGIN_ID, extensionPointName);
 		if (extensionPoint == null) {
-			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_extensionPointNotFound, new Object[] { extensionPointName}), null)); 
+			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_extensionPointNotFound, new Object[] { extensionPointName}), null));
 			return;
 		}
-		
+
 		IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
 			if (isContentTypeId)
@@ -221,12 +221,12 @@ public class ExtensionsRegistry {
 				read(childElementName, elements[i], descriptors);
 		}
 	}
-	
+
 	/**
 	 * Returns the executable extension for the given configuration element.
 	 * If there is no instantiated extension remembered for this
 	 * element, a new extension is created and put into the cache if it is of the requested type.
-	 * 
+	 *
 	 * @param entry the configuration element
 	 * @param extensions the map of instantiated extensions
 	 * @param extensionType the requested result type
@@ -236,24 +236,24 @@ public class ExtensionsRegistry {
 		Object extension= extensions.get(entry);
 		if (extension != null)
 			return extension;
-			
+
 		try {
 			extension= entry.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException x) {
 			log(x.getStatus());
 		}
-		
+
 		if (extensionType.isInstance(extension)) {
 			extensions.put(entry, extension);
 			return extension;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns the first enumerated element of the given set.
-	 * 
+	 *
 	 * @param set the set from which to choose
 	 * @return the selected configuration element
 	 */
@@ -279,7 +279,7 @@ public class ExtensionsRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a sharable document factory for the given content types.
 	 *
@@ -299,12 +299,12 @@ public class ExtensionsRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a sharable document factory for the given content types. This
 	 * method considers the base content types of the given set of content
 	 * types.
-	 * 
+	 *
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
 	 */
@@ -318,10 +318,10 @@ public class ExtensionsRegistry {
 		}
 		return factory;
 	}
-	
+
 	/**
 	 * Returns the set of setup participants for the given file name or extension.
-	 * 
+	 *
 	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
@@ -329,7 +329,7 @@ public class ExtensionsRegistry {
 		Set set= (Set) fSetupParticipantDescriptors.get(nameOrExtension);
 		if (set == null)
 			return null;
-		
+
 		List participants= new ArrayList();
 		Iterator e= set.iterator();
 		while (e.hasNext()) {
@@ -338,13 +338,13 @@ public class ExtensionsRegistry {
 			if (participant != null)
 				participants.add(participant);
 		}
-		
+
 		return participants;
 	}
-	
+
 	/**
 	 * Returns the set of setup participants for the given content types.
-	 * 
+	 *
 	 * @param contentTypes the contentTypes to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
@@ -356,7 +356,7 @@ public class ExtensionsRegistry {
 			if (set != null)
 				resultSet.addAll(set);
 		}
-		
+
 		List participants= new ArrayList();
 		Iterator e= resultSet.iterator();
 		while (e.hasNext()) {
@@ -365,15 +365,15 @@ public class ExtensionsRegistry {
 			if (participant != null)
 				participants.add(participant);
 		}
-		
+
 		return participants.isEmpty() ? null : participants;
 	}
-	
+
 	/**
 	 * Returns the set of setup participants for the given content types. This
 	 * method considers the base content types of the given set of content
 	 * types.
-	 * 
+	 *
 	 * @param contentTypes the contentTypes to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
@@ -387,7 +387,7 @@ public class ExtensionsRegistry {
 		}
 		return participants;
 	}
-	
+
 	/**
 	 * Returns a sharable annotation model factory for the given content types.
 	 *
@@ -407,12 +407,12 @@ public class ExtensionsRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a sharable annotation model factory for the given content types.
 	 * This method considers the base content types of the given set of content
 	 * types.
-	 * 
+	 *
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable annotation model factory or <code>null</code>
 	 */
@@ -426,7 +426,7 @@ public class ExtensionsRegistry {
 		}
 		return factory;
 	}
-	
+
 	/**
 	 * Returns a sharable annotation model factory for the given file name or file extension.
 	 *
@@ -441,10 +441,10 @@ public class ExtensionsRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the set of content types for the given location.
-	 * 
+	 *
 	 * @param location the location for which to look up the content types
 	 * @return the set of content types for the location
 	 */
@@ -464,12 +464,12 @@ public class ExtensionsRegistry {
 		}
 		return fContentTypeManager.findContentTypesFor(location.lastSegment());
 	}
-	
+
 	/**
 	 * Returns the set of direct base content types for the given set of content
 	 * types. Returns <code>null</code> if non of the given content types has
 	 * a direct base content type.
-	 * 
+	 *
 	 * @param contentTypes the content types
 	 * @return the set of direct base content types
 	 */
@@ -480,7 +480,7 @@ public class ExtensionsRegistry {
 			if (baseType != null)
 				baseTypes.add(baseType);
 		}
-		
+
 		IContentType[] result= null;
 		int size= baseTypes.size();
 		if (size > 0) {
@@ -489,7 +489,7 @@ public class ExtensionsRegistry {
 		}
 		return result;
 	}
-		
+
 	/**
 	 * Returns the sharable document factory for the given location.
 	 *
@@ -506,40 +506,40 @@ public class ExtensionsRegistry {
 			factory= getDocumentFactory(WILDCARD);
 		return factory;
 	}
-	
+
 	/**
 	 * Returns the sharable set of document setup participants for the given location.
-	 * 
+	 *
 	 * @param location the location for which to look up the setup participants
 	 * @return the sharable set of document setup participants
 	 */
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
 		List participants= new ArrayList();
-		
+
 		List p= getDocumentSetupParticipants(findContentTypes(location));
 		if (p != null)
 			participants.addAll(p);
-		
+
 		p= getDocumentSetupParticipants(location.lastSegment());
 		if (p != null)
 			participants.addAll(p);
-		
+
 		p= getDocumentSetupParticipants(location.getFileExtension());
 		if (p != null)
 			participants.addAll(p);
-			
+
 		p= getDocumentSetupParticipants(WILDCARD);
 		if (p != null)
 			participants.addAll(p);
-			
+
 		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
 		participants.toArray(result);
 		return result;
 	}
-	
+
 	/**
 	 * Returns the sharable annotation model factory for the given location.
-	 * 
+	 *
 	 * @param location the location for which to look up the factory
 	 * @return the sharable annotation model factory
 	 */

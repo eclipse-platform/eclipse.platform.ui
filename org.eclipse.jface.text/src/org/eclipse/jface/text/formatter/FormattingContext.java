@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Default implementation of <code>IFormattingContext</code>.
- * 
+ *
  * @since 3.0
  */
 public class FormattingContext implements IFormattingContext {

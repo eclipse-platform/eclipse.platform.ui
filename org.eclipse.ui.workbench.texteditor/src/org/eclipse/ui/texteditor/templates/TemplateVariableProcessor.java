@@ -32,16 +32,16 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  * This class should not be used by clients and may become package visible in
  * the future.
  * </p>
- * 
+ *
  * @since 3.0
  */
-final class TemplateVariableProcessor implements IContentAssistProcessor {	
+final class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	private static Comparator fgTemplateVariableProposalComparator= new Comparator() {
 		public int compare(Object arg0, Object arg1) {
 			TemplateVariableProposal proposal0= (TemplateVariableProposal) arg0;
 			TemplateVariableProposal proposal1= (TemplateVariableProposal) arg1;
-			
+
 			return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
 		}
 
@@ -51,7 +51,7 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		public boolean equals(Object arg0) {
 			return false;
 		}
-		
+
 		/*
 		 * Returns Object#hashCode.
 		 * @see java.lang.Object#hashCode()
@@ -61,28 +61,28 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		}
 	};
 
-	
+
 	/** the context type */
 	private TemplateContextType fContextType;
-	
+
 	/**
 	 * Sets the context type.
-	 * 
+	 *
 	 * @param contextType the context type for this processor
 	 */
 	public void setContextType(TemplateContextType contextType) {
-		fContextType= contextType;	
+		fContextType= contextType;
 	}
-	
+
 	/**
 	 * Returns the context type.
-	 * 
+	 *
 	 * @return the context type
 	 */
 	public TemplateContextType getContextType() {
-		return fContextType;	
-	}	
-	
+		return fContextType;
+	}
+
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
@@ -91,8 +91,8 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		if (fContextType == null)
 			return null;
 
-		List proposals= new ArrayList();		
-		
+		List proposals= new ArrayList();
+
 		String text= viewer.getDocument().get();
 		int start= getStart(text, documentOffset);
 		int end= documentOffset;
@@ -122,13 +122,13 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 
 		if (start >= 1 && string.charAt(start - 1) == '$')
 			return start - 1;
-				
+
 		while ((start != 0) && Character.isUnicodeIdentifierPart(string.charAt(start - 1)))
 			start--;
 
 		if (start >= 2 && string.charAt(start - 1) == '{' && string.charAt(start - 2) == '$')
 			return start - 2;
-			
+
 		return end;
 	}
 

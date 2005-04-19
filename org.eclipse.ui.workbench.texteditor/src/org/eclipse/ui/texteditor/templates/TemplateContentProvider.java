@@ -18,17 +18,17 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 /**
  * A content provider for the template preferenc page's table viewer.
- * 
+ *
  * @since 3.0
  */
 class TemplateContentProvider implements IStructuredContentProvider {
 
 	/** The template store. */
-	private TemplateStore fStore;	
+	private TemplateStore fStore;
 
 	/*
 	 * @see IStructuredContentProvider#getElements(Object)
-	 */	
+	 */
 	public Object[] getElements(Object input) {
 		return fStore.getTemplateData(false);
 	}
@@ -46,6 +46,6 @@ class TemplateContentProvider implements IStructuredContentProvider {
 	public void dispose() {
 		fStore= null;
 	}
-	
+
 }
 

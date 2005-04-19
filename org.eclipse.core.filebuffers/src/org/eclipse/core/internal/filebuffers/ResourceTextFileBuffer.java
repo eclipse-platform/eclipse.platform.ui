@@ -45,8 +45,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.0
  */
 public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextFileBuffer {
-	 
-	
+
+
 	private class DocumentListener implements IDocumentListener {
 
 		/*
@@ -64,7 +64,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fManager.fireDirtyStateChanged(ResourceTextFileBuffer.this, fCanBeSaved);
 		}
 	}
-	
+
 	/**
 	 * Reader chunk size.
 	 */
@@ -80,23 +80,23 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/**
 	 * Constant for representing the OK status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_ok, null); 
+	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_ok, null);
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.FileBuffer_status_error, null); 
-	/** 
+	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.FileBuffer_status_error, null);
+	/**
 	 * Constant denoting UTF-8 encoding.
 	 */
 	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constant denoting an empty set of properties
 	 * @since 3.1
 	 */
 	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
-	
-	
+
+
 	/** The element's document */
 	protected IDocument fDocument;
 	/** The encoding used to create the document from the storage or <code>null</code> for workbench encoding. */
@@ -121,7 +121,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public IDocument getDocument() {
 		return fDocument;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
 	 */
@@ -152,7 +152,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			handleCoreException(x);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getStatus()
 	 */
@@ -162,7 +162,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				return fStatus;
 			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
 		}
-		return STATUS_ERROR;	
+		return STATUS_ERROR;
 	}
 
 	/*
@@ -191,10 +191,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				return desc.getContentType();
 			return null;
 		} catch (IOException x) {
-			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFile.getFullPath().toOSString()), x)); 
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFile.getFullPath().toOSString()), x));
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#addFileBufferContentListeners()
 	 */
@@ -202,7 +202,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		if (fDocument != null)
 			fDocument.addDocumentListener(fDocumentListener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#removeFileBufferContentListeners()
 	 */
@@ -210,11 +210,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		if (fDocument != null)
 			fDocument.removeDocumentListener(fDocumentListener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#initializeFileBufferContent(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {		
+	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {
 		try {
 			fEncoding= null;
 			fExplicitEncoding= null;
@@ -238,13 +238,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			} else {
 				cacheEncodingState();
 			}
-			
-			
+
+
 			fDocument= fManager.createEmptyDocument(getLocation());
 			setDocumentContent(fDocument, fFile, fEncoding);
-			
+
 			fAnnotationModel= fManager.createAnnotationModel(getLocation());
-						
+
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
@@ -253,7 +253,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 	/**
 	 * Sets whether the underlying file has a BOM.
-	 * 
+	 *
 	 * @throws CoreException if reading of file's content description fails
 	 */
 	protected void setHasBOM() throws CoreException {
@@ -261,7 +261,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		IContentDescription description= fFile.getContentDescription();
 		fHasBOM= description != null && description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#connected()
 	 */
@@ -270,7 +270,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		if (fAnnotationModel != null)
 			fAnnotationModel.connect(fDocument);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
 	 */
@@ -280,16 +280,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		fDocument= null;
 		super.dispose();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		String encoding= computeEncoding();
 		try {
-			
+
 			byte[] bytes= fDocument.get().getBytes(encoding);
-			
+
 			/*
 			 * XXX:
 			 * This is a workaround for a corresponding bug in Java readers and writer,
@@ -302,25 +302,25 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				System.arraycopy(bytes, 0, bytesWithBOM, bomLength, bytes.length);
 				bytes= bytesWithBOM;
 			}
-			
+
 			InputStream stream= new ByteArrayInputStream(bytes);
 			if (fFile.exists()) {
-								
+
 				if (!overwrite)
 					checkSynchronizationState();
-							
-					
+
+
 				// here the file synchronizer should actually be removed and afterwards added again. However,
 				// we are already inside an operation, so the delta is sent AFTER we have added the listener
 				fFile.setContents(stream, overwrite, true, monitor);
 				// set synchronization stamp to know whether the file synchronizer must become active
 				fSynchronizationStamp= fFile.getModificationStamp();
-				
+
 				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
 					persistableModel.commit(fDocument);
 				}
-				
+
 			} else {
 
 				monitor= Progress.getMonitor(monitor);
@@ -330,33 +330,33 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
 					creator.createContainer(subMonitor);
 					subMonitor.done();
-					
+
 					subMonitor= new SubProgressMonitor(monitor, 1);
 					fFile.create(stream, false, subMonitor);
 					subMonitor.done();
-					
+
 				} finally {
 					monitor.done();
 				}
-				
+
 				// set synchronization stamp to know whether the file synchronizer must become active
 				fSynchronizationStamp= fFile.getModificationStamp();
-				
+
 				// TODO commit persistable annotation model
 			}
-			
+
 		} catch (UnsupportedEncodingException x) {
-			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_unsupported_encoding_message_arg, encoding); 
+			String message= NLSUtility.format(FileBuffersMessages.ResourceTextFileBuffer_error_unsupported_encoding_message_arg, encoding);
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
-		}	
+		}
 	}
-	
+
 	private String computeEncoding() {
 		// User-defined encoding has first priority
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
-		
+
 		// Probe content
 		InputStream stream= new DocumentInputStream(fDocument);
 		try {
@@ -366,7 +366,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				String encoding= description.getCharset();
 				if (encoding != null)
 					return encoding;
-			} 
+			}
 		} catch (IOException ex) {
 			// try next strategy
 		} finally {
@@ -376,7 +376,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			} catch (IOException x) {
 			}
 		}
-		
+
 		// Use file's encoding if the file has a BOM
 		if (fHasBOM)
 			return fEncoding;
@@ -389,10 +389,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return fManager.getDefaultEncoding();
 		}
 	}
-	
+
 	/**
 	 * Internally caches the text resource's encoding.
-	 * 
+	 *
 	 * @throws CoreException if the encoding cannot be retrieved from the resource
 	 * @since 3.1
 	 */
@@ -404,28 +404,28 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fEncoding= fFile.getCharset();
 		setHasBOM();
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#handleFileContentChanged()
 	 */
 	protected void handleFileContentChanged(boolean revert) throws CoreException {
-		
+
 		IDocument document= fManager.createEmptyDocument(fFile.getLocation());
 		IStatus status= null;
-		
+
 		try {
 			cacheEncodingState();
 			setDocumentContent(document, fFile, fEncoding);
 		} catch (CoreException x) {
 			status= x.getStatus();
 		}
-		
+
 		String newContent= document.get();
 		boolean replaceContent= !newContent.equals(fDocument.get());
-			
+
 		if (replaceContent)
 			fManager.fireBufferContentAboutToBeReplaced(this);
-		
+
 		removeFileBufferContentListeners();
 		if (replaceContent)
 			fDocument.set(newContent);
@@ -433,10 +433,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		fSynchronizationStamp= fFile.getModificationStamp();
 		fStatus= status;
 		addFileBufferContentListeners();
-		
+
 		if (replaceContent)
-			fManager.fireBufferContentReplaced(this);			
-		
+			fManager.fireBufferContentReplaced(this);
+
 		if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 			IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
 			try {
@@ -448,10 +448,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				fStatus= x.getStatus();
 			}
 		}
-		
+
 		fManager.fireDirtyStateChanged(this, fCanBeSaved);
 	}
-	
+
 	/**
 	 * Initializes the given document with the given stream using the given encoding.
 	 *
@@ -464,7 +464,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		InputStream contentStream= file.getContents();
 		Reader in= null;
 		try {
-			
+
 			if (encoding == null)
 				encoding= fManager.getDefaultEncoding();
 
@@ -482,7 +482,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					n += bytes;
 				} while (n < IContentDescription.BOM_UTF_8.length);
 			}
-			
+
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
 			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);
 			char[] readBuffer= new char[READER_CHUNK_SIZE];
@@ -491,9 +491,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				buffer.append(readBuffer, 0, n);
 				n= in.read(readBuffer);
 			}
-			
+
 			document.set(buffer.toString());
-		
+
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
@@ -506,18 +506,18 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					contentStream.close();
 			} catch (IOException x) {
 			}
-		}	
+		}
 	}
-	
+
 	/**
-	 * Checks whether the given file is synchronized with the the local file system. 
+	 * Checks whether the given file is synchronized with the the local file system.
 	 * If the file has been changed, a <code>CoreException</code> is thrown.
-	 * 
+	 *
 	 * @exception CoreException if file has been changed on the file system
 	 */
 	private void checkSynchronizationState() throws CoreException {
 		if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) {
-			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null);  
+			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null);
 			throw new CoreException(status);
 		}
 	}

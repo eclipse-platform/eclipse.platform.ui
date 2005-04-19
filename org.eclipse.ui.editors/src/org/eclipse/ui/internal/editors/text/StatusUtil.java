@@ -17,7 +17,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 
 /**
  * A utility class to work with IStatus.
- * 
+ *
  * @since 3.1
  */
 public class StatusUtil {
@@ -26,7 +26,7 @@ public class StatusUtil {
 	 * Compares two instances of {@link IStatus}. The more severe is returned:
 	 * An error is more severe than a warning, and a warning is more severe
 	 * than OK. If the two statuses have the same severity, the second is returned.
-	 * 
+	 *
 	 * @param s1 a status object
 	 * @param s2 a status object
 	 * @return the more severe status
@@ -42,9 +42,9 @@ public class StatusUtil {
 	 * Finds the most severe status from a array of statuses.
 	 * An error is more severe than a warning, and a warning is more severe
 	 * than OK.
-	 * 
+	 *
 	 * @param status an array with status objects
-	 * @return the most severe status object 
+	 * @return the most severe status object
 	 */
 	public static IStatus getMostSevere(IStatus[] status) {
 		IStatus max= null;
@@ -59,10 +59,10 @@ public class StatusUtil {
 		}
 		return max;
 	}
-		
+
 	/**
 	 * Applies the status to the status line of a dialog page.
-	 * 
+	 *
 	 * @param page the dialog page
 	 * @param status the status
 	 */
@@ -76,18 +76,18 @@ public class StatusUtil {
 			case IStatus.WARNING:
 				page.setMessage(message, IMessageProvider.WARNING);
 				page.setErrorMessage(null);
-				break;				
+				break;
 			case IStatus.INFO:
 				page.setMessage(message, IMessageProvider.INFORMATION);
 				page.setErrorMessage(null);
-				break;			
+				break;
 			default:
 				if (message.length() == 0) {
 					message= null;
 				}
 				page.setMessage(null);
 				page.setErrorMessage(message);
-				break;		
+				break;
 		}
 	}
 }

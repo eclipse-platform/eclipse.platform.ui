@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * The local implementation of <code>ILineDiffInfo</code>. As instances are
  * also <code>Annotation</code>s, they can be used in
  * <code>DocumentLineDiffer</code>s <code>IAnnotationModel</code> protocol.
- * 
+ *
  * @since 3.0
  */
 public final class DiffRegion extends Annotation implements ILineDiffInfo {
@@ -40,7 +40,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 
 	/**
 	 * Creates a new diff region.
-	 * 
+	 *
 	 * @param difference
 	 * @param offset
 	 * @param differences
@@ -77,10 +77,10 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	 */
 	public int getRemovedLinesBelow() {
 		if (fOffset == fDifference.rightLength() - 1) {
-			
+
 			if (getChangeType() != UNCHANGED)
 				return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
-			
+
 			for (ListIterator it= fList.listIterator(); it.hasNext();) {
 				if (fDifference.equals(it.next())) {
 					if (it.hasNext()) {
@@ -168,15 +168,15 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		int l= fDifference.leftLength();
 		int c= Math.min(r, l);
 		int a= r - l;
-		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, new Integer(c)) : null; 
+		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, new Integer(c)) : null;
 		String added;
 		if (a > 0)
-			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, new Integer(a)); 
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, new Integer(a));
 		else if (a < 0)
-			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, new Integer(-a)); 
+			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, new Integer(-a));
 		else
 			added= null;
-		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.quickdiff_annotation_line_plural : QuickDiffMessages.quickdiff_annotation_line_singular; 
+		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.quickdiff_annotation_line_plural : QuickDiffMessages.quickdiff_annotation_line_singular;
 
 		String ret= (changed != null ? changed : "") + (changed != null ? " " + line : "")   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				+ (changed != null && added != null ? ", " : " ") + (added != null ? added : "")  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$

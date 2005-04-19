@@ -22,7 +22,7 @@ import org.eclipse.jface.text.Position;
  * together) of the change. If the region containing the position is replaced,
  * the position is placed at the same location inside the replacement text, but
  * always inside the replacement text.
- * 
+ *
  * @since 3.1
  */
 public final class NonDeletingPositionUpdater implements IPositionUpdater {
@@ -31,7 +31,7 @@ public final class NonDeletingPositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Creates a new updater for the given <code>category</code>.
-	 * 
+	 *
 	 * @param category the new category.
 	 */
 	public NonDeletingPositionUpdater(String category) {
@@ -63,7 +63,7 @@ public final class NonDeletingPositionUpdater implements IPositionUpdater {
 				int length= position.getLength();
 				int end= offset + length;
 
-				if (offset > eventOldEndOffset) { 
+				if (offset > eventOldEndOffset) {
 					// position comes way after change - shift
 					position.setOffset(offset + deltaLength);
 				} else if (end < eventOffset) {
@@ -72,7 +72,7 @@ public final class NonDeletingPositionUpdater implements IPositionUpdater {
 					// event completely internal to the position - adjust length
 					position.setLength(length + deltaLength);
 				} else if (offset < eventOffset) {
-					// event extends over end of position - include the 
+					// event extends over end of position - include the
 					// replacement text into the position
 					position.setLength(eventNewEndOffset - offset);
 				} else if (end > eventOldEndOffset) {
@@ -98,7 +98,7 @@ public final class NonDeletingPositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Returns the position category.
-	 * 
+	 *
 	 * @return the position category
 	 */
 	public String getCategory() {

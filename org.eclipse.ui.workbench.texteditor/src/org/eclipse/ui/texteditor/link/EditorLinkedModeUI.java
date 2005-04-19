@@ -23,15 +23,15 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A <code>LinkedModeUI</code> that takes care of updating the focus editor's
  * navigation history.
- * 
+ *
  * @since 3.0
  */
 public class EditorLinkedModeUI extends LinkedModeUI {
-	
+
 	/**
 	 * Updates the editor navigation history upon linked focus changes.
-	 * 
-	 * @since 3.0 
+	 *
+	 * @since 3.0
 	 */
 	private static class EditorHistoryUpdater implements ILinkedModeUIFocusListener {
 
@@ -57,8 +57,8 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 			// does nothing
 		}
 	}
-	
-	
+
+
 	/**
 	 * @param model
 	 * @param viewer
@@ -67,7 +67,7 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 		super(model, viewer);
 		setPositionListener(new EditorHistoryUpdater());
 	}
-	
+
 	/**
 	 * @param model
 	 * @param viewers
@@ -85,7 +85,7 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 		super(model, target);
 		setPositionListener(new EditorHistoryUpdater());
 	}
-	
+
 	/**
 	 * @param model
 	 * @param targets

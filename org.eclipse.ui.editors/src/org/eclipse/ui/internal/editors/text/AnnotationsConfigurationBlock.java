@@ -63,7 +63,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * Configures Annotation preferences.
- * 
+ *
  * @since 3.0
  */
 class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
@@ -88,7 +88,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			this.verticalRulerKey= verticalRulerKey;
 		}
 	}
-	
+
 	private static final class ItemContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -101,19 +101,19 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	private final class ItemLabelProvider extends LabelProvider implements IColorProvider {
-		
+
 		public String getText(Object element) {
 			return ((ListItem) element).label;
 		}
-		
-		
+
+
 		public Image getImage(Object element) {
 			ListItem item= (ListItem) element;
 			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
 				return item.image;
-			
+
 			return null; // don't show icon if preference is not to show in vertical ruler
 		}
 
@@ -134,11 +134,11 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Returns a specification of a color that lies between the given
 		 * foreground and background color using the given scale factor.
-		 * 
+		 *
 		 * @param fg the foreground color
 		 * @param bg the background color
 		 * @param scale the scale factor
@@ -152,20 +152,20 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			);
 		}
 	}
-	
+
 	private static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
 		}
 	}
-	
+
 	/* copied from DefaultMarkerAnnotationAccess */
 	public static final String ERROR_SYSTEM_IMAGE= "error"; //$NON-NLS-1$
 	public static final String WARNING_SYSTEM_IMAGE= "warning"; //$NON-NLS-1$
 	public static final String INFO_SYSTEM_IMAGE= "info"; //$NON-NLS-1$
 	public static final String TASK_SYSTEM_IMAGE= "task"; //$NON-NLS-1$
 	public static final String BOOKMARK_SYSTEM_IMAGE= "bookmark"; //$NON-NLS-1$
-	
+
 	private final static Map MAPPING;
 
 	static {
@@ -176,14 +176,14 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		MAPPING.put(TASK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_TASK_TSK);
 		MAPPING.put(BOOKMARK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
 	}
-	
-	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_HIGHLIGHT, ""}; 
-	final static String[] UNDERLINE= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE}; 
-	final static String[] BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX}; 
-	final static String[] IBEAM= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM}; 
-	final static String[] SQUIGGLES= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES}; 
 
-	
+	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_HIGHLIGHT, ""};
+	final static String[] UNDERLINE= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE};
+	final static String[] BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX};
+	final static String[] IBEAM= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM};
+	final static String[] SQUIGGLES= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES};
+
+
 
 	private OverlayPreferenceStore fStore;
 	private ColorEditor fAnnotationForegroundColorEditor;
@@ -191,13 +191,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	private Button fShowInTextCheckBox;
 	private Button fShowInOverviewRulerCheckBox;
 	private Button fShowInVerticalRulerCheckBox;
-	
+
 	private StructuredViewer fAnnotationTypeViewer;
 	private final ListItem[] fListModel;
 
 	private ComboViewer fDecorationViewer;
 	private final Set fImageKeys= new HashSet();
-	
+
 	public AnnotationsConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		MarkerAnnotationPreferences markerAnnotationPreferences= new MarkerAnnotationPreferences();
@@ -205,9 +205,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fStore.addKeys(createOverlayStoreKeys(markerAnnotationPreferences));
 		fListModel= createAnnotationTypeListModel(markerAnnotationPreferences);
 	}
-	
+
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys(MarkerAnnotationPreferences preferences) {
-		
+
 		ArrayList overlayKeys= new ArrayList();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 
@@ -232,16 +232,16 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
-		
+
 		PixelConverter pixelConverter= new PixelConverter(parent);
 
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		composite.setLayout(layout);
-				
+
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_annotationPresentationOptions); 
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_annotationPresentationOptions);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
@@ -254,7 +254,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		editorComposite.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 
 		fAnnotationTypeViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fAnnotationTypeViewer.setLabelProvider(new ItemLabelProvider());
@@ -262,7 +262,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(20);
 		fAnnotationTypeViewer.getControl().setLayoutData(gd);
-		
+
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -270,23 +270,23 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.numColumns= 2;
 		optionsComposite.setLayout(layout);
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_labels_showIn); 
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_labels_showIn);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
         gd.horizontalSpan= 2;
         label.setLayoutData(gd);
-        
+
 		// we only allow to set either "show in text" or "highlight in text", but not both
-        
+
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInTextCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInText); 
+		fShowInTextCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInText);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;
 		fShowInTextCheckBox.setLayoutData(gd);
-		
+
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
 		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
@@ -294,25 +294,25 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
 		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, UNDERLINE, IBEAM});
-		
+
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler); 
+        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 20;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
-		
+
 		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler); 
+		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 20;
 		fShowInVerticalRulerCheckBox.setLayoutData(gd);
-		
+
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_color); 
+		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_color);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;
@@ -329,12 +329,12 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				handleAnnotationListSelection();
 			}
 		});
-		
+
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				final boolean value= fShowInTextCheckBox.getSelection();
@@ -357,43 +357,43 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				fAnnotationTypeViewer.refresh(item);
 			}
 		});
-		
+
 		fShowInOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				fStore.setValue(item.overviewRulerKey, fShowInOverviewRulerCheckBox.getSelection());
 				fAnnotationTypeViewer.refresh(item);
 			}
 		});
-		
+
 		fShowInVerticalRulerCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				fStore.setValue(item.verticalRulerKey, fShowInVerticalRulerCheckBox.getSelection());
 				fAnnotationTypeViewer.refresh(item);
 			}
 		});
-		
+
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				PreferenceConverter.setValue(fStore, item.colorKey, fAnnotationForegroundColorEditor.getColorValue());
 				fAnnotationTypeViewer.refresh(item);
 			}
 		});
-		
+
 		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			/*
@@ -402,7 +402,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
 				ListItem item= getSelectedItem();
-				
+
 				if (fShowInTextCheckBox.getSelection()) {
 					if (HIGHLIGHT.equals(decoration)) {
 						fStore.setValue(item.highlightKey, true);
@@ -421,28 +421,28 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 						}
 					}
 				}
-				
+
 				fAnnotationTypeViewer.refresh(item);
-			}			
+			}
 		});
-		
+
 		composite.layout();
 		return composite;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#canPerformOk()
 	 */
 	public boolean canPerformOk() {
 		return true;
 	}
-	
+
 	/*
 	 * @see PreferencePage#performOk()
 	 */
 	public void performOk() {
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
@@ -451,21 +451,21 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fAnnotationTypeViewer.refresh();
 		handleAnnotationListSelection();
 	}
-	
+
 	private void handleAnnotationListSelection() {
 		ListItem item= getSelectedItem();
-		
+
 		RGB rgb= PreferenceConverter.getColor(fStore, item.colorKey);
 		fAnnotationForegroundColorEditor.setColorValue(rgb);
-		
+
 		boolean highlight= item.highlightKey == null ? false : fStore.getBoolean(item.highlightKey);
 		boolean showInText = item.textKey == null ? false : fStore.getBoolean(item.textKey);
 		fShowInTextCheckBox.setSelection(showInText || highlight);
-		
+
 		updateDecorationViewer(item, true);
 
 		fShowInOverviewRulerCheckBox.setSelection(fStore.getBoolean(item.overviewRulerKey));
-		
+
 		if (item.verticalRulerKey != null) {
 			fShowInVerticalRulerCheckBox.setSelection(fStore.getBoolean(item.verticalRulerKey));
 			fShowInVerticalRulerCheckBox.setEnabled(true);
@@ -474,11 +474,11 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			fShowInVerticalRulerCheckBox.setEnabled(false);
 		}
 	}
-	
-	
-	
+
+
+
 	public void initialize() {
-	    
+
 		fAnnotationTypeViewer.setInput(fListModel);
 		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -487,26 +487,26 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				}
 			}
 		});
-		
+
 	}
 
 	private ListItem[] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
 		ArrayList listModelItems= new ArrayList();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
-		
+
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			if (info.isIncludeOnPreferencePage()) {
 				String label= info.getPreferenceLabel();
 				if (containsMoreThanOne(preferences.getAnnotationPreferences().iterator(), label))
 					label += " (" + info.getAnnotationType() + ")";  //$NON-NLS-1$//$NON-NLS-2$
-				
+
 				Image image= getImage(info);
-				
+
 				listModelItems.add(new ListItem(label, image, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()));
 			}
 		}
-		
+
 		Comparator comparator= new Comparator() {
 			/*
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -516,44 +516,44 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 					return -1;
 				if (!(o1 instanceof ListItem))
 					return 1;
-				
+
 				String label1= ((ListItem)o1).label;
 				String label2= ((ListItem)o2).label;
-				
+
 				return Collator.getInstance().compare(label1, label2);
-				
+
 			}
 		};
 		Collections.sort(listModelItems, comparator);
-		
+
 		ListItem[] items= new ListItem[listModelItems.size()];
 		listModelItems.toArray(items);
 		return items;
 	}
-	
+
 	/**
 	 * Returns the image for the given annotation and the given annotation preferences or
 	 * <code>null</code> if there is no such image.
-	 * 
+	 *
 	 * @param preference the annotation preference
 	 * @return the image or <code>null</code>
 	 * @since 3.1
 	 */
 	private Image getImage(AnnotationPreference preference) {
-		
+
 		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
 
 		String annotationType= (String) preference.getAnnotationType();
 		if (annotationType == null)
 			return null;
-		
+
 		String customImage= annotationType + "__AnnotationsConfigurationBlock_Image"; //$NON-NLS-1$
-		
+
 		Image image;
 		image= registry.get(customImage);
 		if (image != null)
 			return image;
-		
+
 		image= registry.get(annotationType);
 		if (image == null) {
 			ImageDescriptor descriptor= preference.getImageDescriptor();
@@ -568,10 +568,10 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				}
 			}
 		}
-		
+
 		if (image == null)
 			return image;
-		
+
 		// create custom image
 		final int SIZE= 16; // square images
 		ImageData data= image.getImageData();
@@ -584,10 +584,10 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			ImageData mask= data.getTransparencyMask();
 			ImageData resized= new ImageData(SIZE, SIZE, data.depth, data.palette);
 			ImageData resizedMask= new ImageData(SIZE, SIZE, mask.depth, mask.palette);
-			
+
 			int xo= Math.max(0, (SIZE - data.width) / 2);
 			int yo= Math.max(0, (SIZE - data.height) / 2);
-			
+
 			for (int y= 0; y < SIZE; y++) {
 				for (int x= 0; x < SIZE; x++) {
 					if (y >= yo && x >= xo && y < yo + data.height && x < xo + data.width) {
@@ -596,10 +596,10 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 					}
 				}
 			}
-			
+
 			copy= new Image(Display.getCurrent(), resized, resizedMask);
 		}
-		
+
 		fImageKeys.add(customImage);
 		registry.put(customImage, copy);
 		return copy;
@@ -608,7 +608,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	/**
 	 * Translates the given symbolic image name into the according symbolic image name
 	 * the {@link org.eclipse.ui.ISharedImages} understands.
-	 * 
+	 *
 	 * @param symbolicImageName the symbolic system image name to be translated
 	 * @return the shared image name
 	 * @since 3.1
@@ -616,7 +616,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	private String translateSymbolicImageName(String symbolicImageName) {
 		return (String) MAPPING.get(symbolicImageName);
 	}
-	
+
 	private boolean containsMoreThanOne(Iterator annotationPrefernceIterator, String label) {
 		if (label == null)
 			return false;
@@ -631,7 +631,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see IPreferenceConfigurationBlock#dispose()
 	 */
@@ -642,7 +642,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			String string= (String) it.next();
 			registry.remove(string);
 		}
-		
+
 		fImageKeys.clear();
 	}
 
@@ -655,28 +655,28 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		// only one case where the combo is not enabled: if both the highlight and textStyle keys are null
 		final boolean enabled= fShowInTextCheckBox.getSelection() && !(item.highlightKey == null && item.textStyleKey == null);
 		fDecorationViewer.getControl().setEnabled(enabled);
-		
+
 		if (changed) {
 			String[] selection= null;
 			ArrayList list= new ArrayList();
-			
+
 			// highlighting
 			if (item.highlightKey != null) {
 				list.add(HIGHLIGHT);
 				if (fStore.getBoolean(item.highlightKey))
 					selection= HIGHLIGHT;
 			}
-			
+
 			// legacy default= squiggly lines
 			list.add(SQUIGGLES);
-			
+
 			// advanced styles
 			if (item.textStyleKey != null) {
 				list.add(UNDERLINE);
 				list.add(BOX);
 				list.add(IBEAM);
 			}
-			
+
 			// set selection
 			if (selection == null) {
 				String val= item.textStyleKey == null ? SQUIGGLES[1] : fStore.getString(item.textStyleKey);
@@ -688,7 +688,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 					}
 				}
 			}
-			
+
 			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
 			if (selection != null)
 				fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);

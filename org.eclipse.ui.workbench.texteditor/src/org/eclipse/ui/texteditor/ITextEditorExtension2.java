@@ -18,7 +18,7 @@ package org.eclipse.ui.texteditor;
  * <li>modifiable state of the editor's input
  * <li>validate state of editor input
  * </ul>
- * 
+ *
  * @since 2.1
  */
 public interface ITextEditorExtension2 {
@@ -39,7 +39,7 @@ public interface ITextEditorExtension2 {
 	 * Validates the state of the given editor input. The predominate intent
 	 * of this method is to take any action probably necessary to ensure that
 	 * the input can persistently be changed.
-	 * 
+	 *
 	 * @return <code>true</code> if the input was validated, <code>false</code> otherwise
 	 */
 	boolean validateEditorInputState();

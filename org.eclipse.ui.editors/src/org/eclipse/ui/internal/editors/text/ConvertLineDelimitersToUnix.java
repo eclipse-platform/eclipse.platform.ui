@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.editors.text;
 /**
  * A file buffer operation action that changes the line delimiters to a Unix
  * line delimiter.
- * 
+ *
  * @since 3.1
  */
 public class ConvertLineDelimitersToUnix extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToUnix() {
-		super("\n", TextEditorMessages.ConvertLineDelimitersToUnix_label); 
+		super("\n", TextEditorMessages.ConvertLineDelimitersToUnix_label);
 	}
 }

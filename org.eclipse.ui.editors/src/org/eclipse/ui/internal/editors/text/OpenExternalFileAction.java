@@ -48,7 +48,7 @@ import org.eclipse.ui.part.FileEditorInput;
  * @since 3.0
  */
 public class OpenExternalFileAction extends Action implements IWorkbenchWindowActionDelegate {
-	
+
 	static class FileLabelProvider extends LabelProvider {
 		/*
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
@@ -61,8 +61,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			return super.getText(element);
 		}
 	}
-	
-	
+
+
 	private IWorkbenchWindow fWindow;
 	private String fFilterPath;
 
@@ -104,14 +104,14 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	 */
 	public void run() {
 		FileDialog dialog= new FileDialog(fWindow.getShell(), SWT.OPEN | SWT.MULTI);
-		dialog.setText(TextEditorMessages.OpenExternalFileAction_title); 
-		dialog.setFilterPath(fFilterPath); 
+		dialog.setText(TextEditorMessages.OpenExternalFileAction_title);
+		dialog.setFilterPath(fFilterPath);
 		dialog.open();
 		String[] names= dialog.getFileNames();
 
 		if (names != null) {
 			fFilterPath= dialog.getFilterPath();
-			
+
 			int numberOfFilesNotFound= 0;
 			StringBuffer notFound= new StringBuffer();
 			for (int i= 0; i < names.length; i++) {
@@ -129,13 +129,13 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 					if (++numberOfFilesNotFound > 1)
 						notFound.append('\n');
 					notFound.append(file.getName());
-				}				
+				}
 			}
-			
+
 			if (numberOfFilesNotFound > 0) {
-				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.OpenExternalFileAction_message_fileNotFound : TextEditorMessages.OpenExternalFileAction_message_filesNotFound; 
+				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.OpenExternalFileAction_message_fileNotFound : TextEditorMessages.OpenExternalFileAction_message_filesNotFound;
 				String msg= MessageFormat.format(msgFmt, new Object[] { notFound.toString() });
-				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg); 
+				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg);
 			}
 		}
 	}
@@ -155,7 +155,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			return new FileEditorInput(workspaceFile);
 		return new JavaFileEditorInput(file);
 	}
-	
+
 	private IFile getWorkspaceFile(File file) {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IPath location= Path.fromOSString(file.getAbsolutePath());
@@ -167,11 +167,11 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			return files[0];
 		return selectWorkspaceFile(files);
 	}
-	
+
 	private IFile[] filterNonExistentFiles(IFile[] files){
 		if (files == null)
 			return null;
-		
+
 		int length= files.length;
 		ArrayList existentFiles= new ArrayList(length);
 		for (int i= 0; i < length; i++) {
@@ -184,8 +184,8 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IFile selectWorkspaceFile(IFile[] files) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new FileLabelProvider());
 		dialog.setElements(files);
-		dialog.setTitle(TextEditorMessages.OpenExternalFileAction_title_selectWorkspaceFile); 
-		dialog.setMessage(TextEditorMessages.OpenExternalFileAction_message_fileLinkedToMultiple); 
+		dialog.setTitle(TextEditorMessages.OpenExternalFileAction_title_selectWorkspaceFile);
+		dialog.setMessage(TextEditorMessages.OpenExternalFileAction_message_fileLinkedToMultiple);
 		if (dialog.open() == Window.OK)
 			return (IFile) dialog.getFirstResult();
 		return null;

@@ -24,16 +24,16 @@ package org.eclipse.core.filebuffers;
  * This interface can be implemented by clients. Clients use
  * {@link org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(ISynchronizationContext)}
  * to install a particular synchronization context with a file buffer manager.
- * 
+ *
  * @since 3.0
  */
 public interface ISynchronizationContext {
-	
+
 	/**
 	 * Executes the given runnable according to the specified
 	 * synchronization/execution policy.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param runnable the runnable to be executed
 	 */
 	void run(Runnable runnable);

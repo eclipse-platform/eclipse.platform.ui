@@ -13,18 +13,18 @@ package org.eclipse.jface.text.information;
 import org.eclipse.jface.text.IInformationControlCreator;
 
 /**
- * Extends {@link org.eclipse.jface.text.information.IInformationProvider} with 
+ * Extends {@link org.eclipse.jface.text.information.IInformationProvider} with
  * the ability to provide its own information presenter control creator.
- * 
+ *
  * @see org.eclipse.jface.text.IInformationControlCreator
  * @see org.eclipse.jface.text.information.IInformationProvider
  * @since 3.0
  */
 public interface IInformationProviderExtension2 {
-	
+
 	/**
 	 * Returns the information control creator of this information provider.
-	 * 
+	 *
 	 * @return the information control creator
 	 */
 	IInformationControlCreator getInformationPresenterControlCreator();

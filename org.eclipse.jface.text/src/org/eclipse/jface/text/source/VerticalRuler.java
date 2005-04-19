@@ -50,7 +50,7 @@ import org.eclipse.jface.text.TextEvent;
  * The same can be achieved by using <code>CompositeRuler</code> configured
  * with an <code>AnnotationRulerColumn</code>. Clients may use this class as
  * is.
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  */
 public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtension {
@@ -59,7 +59,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * Internal listener class.
 	 */
 	class InternalListener implements IViewportListener, IAnnotationModelListener, ITextListener {
-		
+
 		/*
 		 * @see IViewportListener#viewportChanged(int)
 		 */
@@ -67,14 +67,14 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			if (verticalPosition != fScrollPos)
 				redraw();
 		}
-		
+
 		/*
 		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
 			update();
 		}
-		
+
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
@@ -83,7 +83,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 				redraw();
 		}
 	}
-	
+
 	/** The vertical ruler's text viewer */
 	private ITextViewer fTextViewer;
 	/** The ruler's canvas */
@@ -105,7 +105,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @since 3.0
 	 */
 	private IAnnotationAccess fAnnotationAccess;
-	
+
 	/**
 	 * Constructs a vertical ruler with the given width.
 	 *
@@ -114,11 +114,11 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	public VerticalRuler(int width) {
 		this(width, null);
 	}
-	
+
 	/**
 	 * Constructs a vertical ruler with the given width and the given annotation
 	 * access.
-	 * 
+	 *
 	 * @param width the width of the vertical ruler
 	 * @param annotationAcccess the annotation access
 	 * @since 3.0
@@ -127,91 +127,91 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		fWidth= width;
 		fAnnotationAccess= annotationAcccess;
 	}
-	
+
 	/*
 	 * @see IVerticalRuler#getControl()
 	 */
 	public Control getControl() {
 		return fCanvas;
 	}
-	
+
 	/*
 	 * @see IVerticalRuler#createControl(Composite, ITextViewer)
 	 */
 	public Control createControl(Composite parent, ITextViewer textViewer) {
-		
+
 		fTextViewer= textViewer;
-		
+
 		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
-		
+
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fTextViewer != null)
 					doubleBufferPaint(event.gc);
 			}
 		});
-		
+
 		fCanvas.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
-				fTextViewer= null;		
+				fTextViewer= null;
 			}
 		});
-		
+
 		fCanvas.addMouseListener(new MouseListener() {
 			public void mouseUp(MouseEvent event) {
 			}
-			
+
 			public void mouseDown(MouseEvent event) {
 				fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 			}
-			
+
 			public void mouseDoubleClick(MouseEvent event) {
 				fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 			}
 		});
-		
+
 		if (fTextViewer != null) {
 			fTextViewer.addViewportListener(fInternalListener);
 			fTextViewer.addTextListener(fInternalListener);
 		}
-		
+
 		return fCanvas;
 	}
-	
+
 	/**
 	 * Disposes the ruler's resources.
 	 */
 	private void handleDispose() {
-		
+
 		if (fTextViewer != null) {
 			fTextViewer.removeViewportListener(fInternalListener);
 			fTextViewer.removeTextListener(fInternalListener);
 			fTextViewer= null;
 		}
-		
+
 		if (fModel != null)
 			fModel.removeAnnotationModelListener(fInternalListener);
-		
+
 		if (fBuffer != null) {
 			fBuffer.dispose();
 			fBuffer= null;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Double buffer drawing.
-	 * 
+	 *
 	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
-		
+
 		Point size= fCanvas.getSize();
-		
+
 		if (size.x <= 0 || size.y <= 0)
 			return;
-		
+
 		if (fBuffer != null) {
 			Rectangle r= fBuffer.getBounds();
 			if (r.width != size.x || r.height != size.y) {
@@ -221,36 +221,36 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 		if (fBuffer == null)
 			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-			
+
 		GC gc= new GC(fBuffer);
 		gc.setFont(fTextViewer.getTextWidget().getFont());
 		try {
 			gc.setBackground(fCanvas.getBackground());
 			gc.fillRectangle(0, 0, size.x, size.y);
-			
+
 			if (fTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
 				doPaint(gc);
-				
+
 		} finally {
 			gc.dispose();
 		}
-		
+
 		dest.drawImage(fBuffer, 0, 0);
 	}
-	
+
 	/**
 	 * Returns the document offset of the upper left corner of the
 	 * widgets view port, possibly including partially visible lines.
-	 * 
+	 *
 	 * @return the document offset of the upper left corner including partially visible lines
 	 * @since 2.0
 	 */
 	private int getInclusiveTopIndexStartOffset() {
-		
+
 		StyledText textWidget= fTextViewer.getTextWidget();
-		if (textWidget != null && !textWidget.isDisposed()) {	
+		if (textWidget != null && !textWidget.isDisposed()) {
 			int top= -1;
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				top= textWidget.getTopIndex();
@@ -263,29 +263,29 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 				if ((textWidget.getTopPixel() % textWidget.getLineHeight()) != 0)
 					top--;
 			}
-			
+
 			try {
 				IDocument document= fTextViewer.getDocument();
 				return document.getLineOffset(top);
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return -1;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
-	 * 
+	 *
 	 * @param gc  the GC to draw into
 	 */
 	protected void doPaint(GC gc) {
-	
+
 		if (fModel == null || fTextViewer == null)
 			return;
-		
+
 		IAnnotationAccessExtension annotationAccessExtension= null;
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
 			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
@@ -296,11 +296,11 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight= fTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
-		
+
 		Point d= fCanvas.getSize();
 		fScrollPos= styledText.getTopPixel();
 		int lineheight= styledText.getLineHeight();
-			
+
 		int topLine= -1, bottomLine= -1;
 		try {
 			IRegion region= fTextViewer.getVisibleRegion();
@@ -309,17 +309,17 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		} catch (BadLocationException x) {
 			return;
 		}
-				
+
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int maxLayer= 1;	// loop at least once though layers.
-		
+
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
 				IAnnotationPresentation annotationPresentation= null;
 				Annotation annotation= (Annotation) iter.next();
-				
+
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
 					lay= annotationAccessExtension.getLayer(annotation);
@@ -330,32 +330,32 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
-				
+
 				Position position= fModel.getPosition(annotation);
 				if (position == null)
 					continue;
-					
+
 				if (!position.overlapsWith(topLeft, viewPort))
 					continue;
-					
+
 				try {
-					
+
 					int offset= position.getOffset();
 					int length= position.getLength();
-					
+
 					int startLine= doc.getLineOfOffset(offset);
 					if (startLine < topLine)
 						startLine= topLine;
-					
+
 					int endLine= startLine;
 					if (length > 0)
 						endLine= doc.getLineOfOffset(offset + length - 1);
 					if (endLine > bottomLine)
 						endLine= bottomLine;
-					
+
 					startLine -= topLine;
 					endLine -= topLine;
-					
+
 					r.x= 0;
 					r.y= (startLine * lineheight) - fScrollPos;
 					r.width= d.x;
@@ -363,37 +363,37 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					if (lines < 0)
 						lines= -lines;
 					r.height= (lines+1) * lineheight;
-					
+
 					if (r.y < d.y && annotationAccessExtension != null)  // annotation within visible area
 						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
 					else if (annotationPresentation != null)
 						annotationPresentation.paint(gc, fCanvas, r);
-					
+
 				} catch (BadLocationException e) {
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background. Uses
 	 * <code>ITextViewerExtension5</code> for its implementation. Will replace
 	 * <code>doPaint(GC)</code>.
-	 * 
+	 *
 	 * @param gc  the GC to draw into
 	 */
 	protected void doPaint1(GC gc) {
 
 		if (fModel == null || fTextViewer == null)
 			return;
-		
+
 		IAnnotationAccessExtension annotationAccessExtension= null;
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension)
 			annotationAccessExtension= (IAnnotationAccessExtension) fAnnotationAccess;
 
 		ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 		StyledText textWidget= fTextViewer.getTextWidget();
-		
+
 		fScrollPos= textWidget.getTopPixel();
 		int lineheight= textWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
@@ -407,7 +407,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			while (iter.hasNext()) {
 				IAnnotationPresentation annotationPresentation= null;
 				Annotation annotation= (Annotation) iter.next();
-				
+
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
 					lay= annotationAccessExtension.getLayer(annotation);
@@ -450,7 +450,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			}
 		}
 	}
-		
+
 	/**
 	 * Thread-safe implementation.
 	 * Can be called from any thread.
@@ -467,10 +467,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 						redraw();
 					}
 				});
-			}	
+			}
 		}
 	}
-		
+
 	/**
 	 * Redraws the vertical ruler.
 	 */
@@ -481,74 +481,74 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			gc.dispose();
 		}
 	}
-	
+
 	/*
 	 * @see IVerticalRuler#setModel(IAnnotationModel)
 	 */
 	public void setModel(IAnnotationModel model) {
 		if (model != fModel) {
-			
+
 			if (fModel != null)
 				fModel.removeAnnotationModelListener(fInternalListener);
-			
+
 			fModel= model;
-			
+
 			if (fModel != null)
 				fModel.addAnnotationModelListener(fInternalListener);
-			
+
 			update();
 		}
 	}
-		
+
 	/*
 	 * @see IVerticalRuler#getModel()
 	 */
 	public IAnnotationModel getModel() {
 		return fModel;
 	}
-	
+
 	/*
 	 * @see IVerticalRulerInfo#getWidth()
 	 */
 	public int getWidth() {
 		return fWidth;
 	}
-	
+
 	/*
 	 * @see IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
 	public int getLineOfLastMouseButtonActivity() {
 		return fLastMouseButtonActivityLine;
 	}
-	
+
 	/*
 	 * @see IVerticalRulerInfo#toDocumentLineNumber(int)
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
-		
+
 		if (fTextViewer == null)
 			return -1;
-			
+
 		StyledText text= fTextViewer.getTextWidget();
 		int line= ((y_coordinate + fScrollPos) / text.getLineHeight());
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
-	
+
 	/**
 	 * Returns the line of the viewer's document that corresponds to the given widget line.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param widgetLine the widget line
 	 * @return the corresponding line of the viewer's document
 	 * @since 2.1
 	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
-		
+
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.widgetLine2ModelLine(widgetLine);
 		}
-		
+
 		try {
 			IRegion r= viewer.getVisibleRegion();
 			IDocument d= viewer.getDocument();
@@ -557,7 +557,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 		return widgetLine;
 	}
-	
+
 	/*
 	 * @see IVerticalRulerExtension#setFont(Font)
 	 * @since 2.0
@@ -572,10 +572,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	public void setLocationOfLastMouseButtonActivity(int x, int y) {
 		fLastMouseButtonActivityLine= toDocumentLineNumber(y);
 	}
-	
+
 	/**
 	 * Adds the given mouse listener.
-	 * 
+	 *
 	 * @param listener the listener to be added
 	 * @deprecated will be removed
 	 * @since 2.0
@@ -587,7 +587,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 	/**
 	 * Removes the given mouse listener.
-	 * 
+	 *
 	 * @param listener the listener to be removed
 	 * @deprecated will be removed
 	 * @since 2.0

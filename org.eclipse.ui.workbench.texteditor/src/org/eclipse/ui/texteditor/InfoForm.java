@@ -33,12 +33,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * A form consisting of a title, a banner, and a info text. Banner and info text are
  * separated by a separator line. This form must be handled like a SWT widget.
- * 
+ *
  * @since 2.0
  * @deprecated since 3.0. there is no replacement, use org.eclipse.ui.forms to define a component with a similar look and function.
  */
 public class InfoForm {
-	
+
 	/** The form's root widget */
 	private ScrolledComposite fScrolledComposite;
 	/** The background color */
@@ -55,7 +55,7 @@ public class InfoForm {
 	private Label fText;
 	/** The preference change listener */
 	private IPropertyChangeListener fPropertyChangeListener;
-	
+
 	/**
 	 * Creates a new info form.
 	 * @param parent the parent composite
@@ -86,7 +86,7 @@ public class InfoForm {
 				fSeparatorColor= null;
 				fHeader= null;
 				fBanner= null;
-				fText= null;		
+				fText= null;
 			}
 		});
 
@@ -103,13 +103,13 @@ public class InfoForm {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint= 2;
 		separator.setLayoutData(data);
-					
+
 		fText= createLabel(composite, null);
 		createLabel(composite, null);
-		
+
 		fScrolledComposite.setContent(composite);
 		fScrolledComposite.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
+
 		createActionControls(composite);
 	}
 
@@ -119,7 +119,7 @@ public class InfoForm {
 	 */
 	protected void createActionControls(Composite parent) {
 	}
-	
+
 	/**
 	 * Returns the control of this form.
 	 * @return the root control of this form
@@ -127,7 +127,7 @@ public class InfoForm {
 	public Control getControl() {
 		return fScrolledComposite;
 	}
-	
+
 	/**
 	 * Sets the header text of this info form.
 	 * @param header the header text
@@ -135,7 +135,7 @@ public class InfoForm {
 	public void setHeaderText(String header) {
 		fHeader.setText(header);
 	}
-	
+
 	/**
 	 * Sets the banner text of this info form.
 	 * @param banner the banner text
@@ -143,7 +143,7 @@ public class InfoForm {
 	public void setBannerText(String banner) {
 		fBanner.setText(banner);
 	}
-	
+
 	/**
 	 * Sets the info of this info form
 	 * @param info the info text
@@ -155,18 +155,18 @@ public class InfoForm {
 	/*
 	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	protected void handlePropertyChange(PropertyChangeEvent event) {		
-		
+	protected void handlePropertyChange(PropertyChangeEvent event) {
+
 		if (fHeader != null)
 			fHeader.setFont(JFaceResources.getHeaderFont());
 
 		if (fBanner != null)
 			fBanner.setFont(JFaceResources.getBannerFont());
-		
+
 		Control control= fScrolledComposite.getContent();
 		fScrolledComposite.setMinSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		fScrolledComposite.setContent(control);
-		
+
 		fScrolledComposite.layout(true);
 		fScrolledComposite.redraw();
 	}
@@ -188,7 +188,7 @@ public class InfoForm {
 		composite.setBackground(fSeparatorColor);
 		return composite;
 	}
-		
+
 	/*
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createLabel(Composite, String)
 	 */

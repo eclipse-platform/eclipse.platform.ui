@@ -21,7 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
  * <p>
  * Clients may extend this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class TemplateContext {
@@ -35,7 +35,7 @@ public abstract class TemplateContext {
 
 	/**
 	 * Creates a template context of a particular context type.
-	 * 
+	 *
 	 * @param contextType the context type of this context
 	 */
 	protected TemplateContext(TemplateContextType contextType) {
@@ -45,44 +45,44 @@ public abstract class TemplateContext {
 
 	/**
 	 * Returns the context type of this context.
-	 * 
+	 *
 	 * @return the context type of this context
 	 */
 	public TemplateContextType getContextType() {
-	 	return fContextType;   
+	 	return fContextType;
 	}
-	
+
 	/**
 	 * Sets or clears the read-only flag.
-	 * 
+	 *
 	 * @param readOnly the new read-only state
 	 */
 	public void setReadOnly(boolean readOnly) {
-		fReadOnly= readOnly;	
+		fReadOnly= readOnly;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the receiver is read-only, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the receiver is read-only, <code>false</code> otherwise
 	 */
 	public boolean isReadOnly() {
-		return fReadOnly;	
+		return fReadOnly;
 	}
-	
+
 	/**
 	 * Defines the value of a variable.
-	 * 
+	 *
 	 * @param name the name of the variable
 	 * @param value the value of the variable, <code>null</code> to undefine a variable
 	 */
 	public void setVariable(String name, String value) {
 		fVariables.put(name, value);
 	}
-	
+
 	/**
 	 * Returns the value of a defined variable.
-	 * 
+	 *
 	 * @param name the name of the variable
 	 * @return returns the value of the variable, <code>null</code> if the variable was not defined
 	 */
@@ -96,23 +96,23 @@ public abstract class TemplateContext {
 	 * Evaluation means translating the template into a <code>TemplateBuffer</code>,
 	 * resolving the defined variables in this context and possibly formatting
 	 * the resolved buffer.</p>
-	 * 
+	 *
 	 * @param template the template to evaluate
 	 * @return returns the buffer with the evaluated template or <code>null</code> if the buffer could not be created
 	 * @throws BadLocationException if evaluation fails due to concurrently changed documents etc.
 	 * @throws TemplateException if the template specification is not valid
 	 */
 	public abstract TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException;
-	
+
 	/**
 	 * Tests if the specified template can be evaluated in this context.
 	 * <p>Examples are templates defined for a different context (e.g. a javadoc
 	 * template cannot be evaluated in Java context).</p>
-	 * 
+	 *
 	 * @param template the <code>Template</code> to check
 	 * @return <code>true</code> if <code>template</code> can be evaluated
 	 *         in this context, <code>false</code> otherwise
 	 */
 	public abstract boolean canEvaluate(Template template);
-	
+
 }

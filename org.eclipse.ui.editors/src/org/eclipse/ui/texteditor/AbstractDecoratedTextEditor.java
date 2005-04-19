@@ -83,13 +83,13 @@ import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
- * but used in many heavy weight (and especially source editing) editors, such as line numbers, 
+ * but used in many heavy weight (and especially source editing) editors, such as line numbers,
  * change ruler, overview ruler, print margins, current line highlighting, etc.
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
-	
+
 	/**
 	 * Preference key for showing the line number ruler.
 	 */
@@ -127,7 +127,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	private final static String DISABLE_OVERWRITE_MODE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE;
-	
+
 	/**
 	 * Adapter class for <code>IGotoMarker</code>.
 	 */
@@ -136,40 +136,40 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			AbstractDecoratedTextEditor.this.gotoMarker(marker);
 		}
 	}
-	
+
 	/**
 	 * The annotation preferences.
 	 */
 	private MarkerAnnotationPreferences fAnnotationPreferences;
-	/** 
+	/**
 	 * The overview ruler of this editor.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
-	 * compatibility reasons and will be made <code>private</code> soon. Use 
+	 * compatibility reasons and will be made <code>private</code> soon. Use
 	 * {@link #getOverviewRuler()} instead.</p>
 	 */
 	protected IOverviewRuler fOverviewRuler;
 	/**
 	 * Helper for accessing annotation from the perspective of this editor.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
-	 * compatibility reasons and will be made <code>private</code> soon. Use 
+	 * compatibility reasons and will be made <code>private</code> soon. Use
 	 * {@link #getAnnotationAccess()} instead.</p>
 	 */
 	protected IAnnotationAccess fAnnotationAccess;
 	/**
 	 * Helper for managing the decoration support of this editor's viewer.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
-	 * compatibility reasons and will be made <code>private</code> soon. Use 
+	 * compatibility reasons and will be made <code>private</code> soon. Use
 	 * {@link #getSourceViewerDecorationSupport(ISourceViewer)} instead.</p>
 	 */
 	protected SourceViewerDecorationSupport fSourceViewerDecorationSupport;
 	/**
 	 * The line number column.
-	 * 
+	 *
 	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
-	 * compatibility reasons and will be made <code>private</code> soon. Use 
+	 * compatibility reasons and will be made <code>private</code> soon. Use
 	 * {@link AbstractTextEditor#getVerticalRuler()} to access the vertical bar instead.</p>
 	 */
 	protected LineNumberRulerColumn fLineNumberRulerColumn;
@@ -185,16 +185,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * The annotation ruler column used in the vertical ruler.
 	 */
 	private AnnotationRulerColumn fAnnotationRulerColumn;
-	/** 
+	/**
 	 * The editor's implicit document provider.
 	 */
 	private IDocumentProvider fImplicitDocumentProvider;
-	/** 
+	/**
 	 * The editor's goto marker adapter.
 	 */
 	private Object fGotoMarkerAdapter= new GotoMarkerAdapter();
-	
-	
+
+
 	/**
 	 * Creates a new text editor.
 	 */
@@ -205,7 +205,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		initializeKeyBindingScopes();
 		initializeEditor();
 	}
-	
+
 	/**
 	 * Initializes this editor. Subclasses may re-implement. If sub-classes do
 	 * not change the contract, this method should not be extended, i.e. do not
@@ -223,7 +223,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });  //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * @see IWorkbenchPart#dispose()
 	 */
@@ -232,11 +232,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			fSourceViewerDecorationSupport.dispose();
 			fSourceViewerDecorationSupport= null;
 		}
-		
+
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
 		fAnnotationRulerColumn= null;
-		
+
 		super.dispose();
 	}
 
@@ -244,14 +244,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		
+
 		fAnnotationAccess= createAnnotationAccess();
 		fOverviewRuler= createOverviewRuler(getSharedColors());
-		
+
 		ISourceViewer viewer= new SourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
-		
+
 		return viewer;
 	}
 
@@ -273,7 +273,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Creates the annotation access for this editor.
-	 * 
+	 *
 	 * @return the created annotation access
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
@@ -283,7 +283,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Configures the decoration support for this editor's source viewer. Subclasses may override this
 	 * method, but should call their superclass' implementation at some point.
-	 * 
+	 *
 	 * @param support the decoration support to configure
 	 */
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
@@ -291,7 +291,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext())
 			support.setAnnotationPreference((AnnotationPreference) e.next());
-		
+
 		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
 		support.setSymbolicFontName(getFontPropertyPreferenceKey());
@@ -304,15 +304,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		super.createPartControl(parent);
 		if (fSourceViewerDecorationSupport != null)
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
-		
+
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
 
 		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
 	}
-	
-	
+
+
 	/*
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#createStatusControl(org.eclipse.swt.widgets.Composite, org.eclipse.core.runtime.IStatus)
 	 * @since 3.1
@@ -322,7 +322,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		DefaultEncodingSupport encodingSupport= null;
 		if (adapter instanceof DefaultEncodingSupport)
 			encodingSupport= (DefaultEncodingSupport)adapter;
-		
+
 		if (encodingSupport == null || !encodingSupport.isEncodingError(status))
 			return super.createStatusControl(parent, status);
 
@@ -335,18 +335,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		composite.setLayout(new GridLayout());
 		composite.setBackground(bgColor);
 		composite.setForeground(fgColor);
-		
+
 		Control control= super.createStatusControl(composite, status);
 		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Composite buttonComposite= new Composite(composite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		buttonComposite.setBackground(bgColor);
 		buttonComposite.setForeground(fgColor);
-		
+
 		encodingSupport.createStatusEncodingChangeControl(buttonComposite, status);
-//		
+//
 //		Button button= new Button(buttonComposite, SWT.PUSH | SWT.FLAT);
 //		button.setText(action.getText());
 //		button.addSelectionListener(new SelectionAdapter() {
@@ -357,17 +357,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 //				action.run();
 //			}
 //		});
-//		
+//
 //		Label filler= new Label(buttonComposite, SWT.NONE);
 //		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
 //		filler.setBackground(bgColor);
-//		
+//
 		return composite;
 	}
-	
+
 	/**
 	 * Tells whether the overview ruler is visible.
-	 * 
+	 *
 	 * @return whether the overview ruler is visible
 	 */
 	protected boolean isOverviewRulerVisible() {
@@ -381,7 +381,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	public void showChangeInformation(boolean show) {
 		if (show == fIsChangeInformationShown)
 			return;
-		
+
 		if (fIsChangeInformationShown) {
 			uninstallChangeRulerModel();
 			showChangeRuler(false); // hide change ruler if its displayed - if the line number ruler is showing, only the colors get removed by de-installing the model
@@ -389,7 +389,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			ensureChangeInfoCanBeDisplayed();
 			installChangeRulerModel();
 		}
-		
+
 		if (getChangeColumn() != null && getChangeColumn().getModel() != null)
 			fIsChangeInformationShown= true;
 		else
@@ -397,7 +397,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Installs the differ annotation model with the current quick diff display. 
+	 * Installs the differ annotation model with the current quick diff display.
 	 */
 	private void installChangeRulerModel() {
 		IChangeRulerColumn column= getChangeColumn();
@@ -441,7 +441,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				hideLineNumberRuler();
 				showLineNumberRuler();
 			}
-		} else 
+		} else
 			showChangeRuler(true);
 	}
 
@@ -451,11 +451,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	public boolean isChangeInformationShowing() {
 		return fIsChangeInformationShown;
 	}
-	
+
 	/**
 	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
 	 * a new differ is created and attached to the annotation model.
-	 * 
+	 *
 	 * @return the line differ, or <code>null</code> if none could be found or created
 	 */
 	private IAnnotationModel getOrCreateDiffer() {
@@ -470,7 +470,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					ISourceViewer viewer= getSourceViewer();
 					if (viewer == null)
 						return null;
-						
+
 					IAnnotationModel m= viewer.getAnnotationModel();
 					IAnnotationModelExtension model;
 					if (m instanceof IAnnotationModelExtension)
@@ -482,14 +482,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 		} else if (differ instanceof ILineDifferExtension && !fIsChangeInformationShown)
 			((ILineDifferExtension) differ).resume();
-		
+
 		return differ;
 	}
-	
+
 	/**
 	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @return the line differ, or <code>null</code> if none could be found
 	 */
 	private IAnnotationModel getDiffer() {
@@ -497,14 +497,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer == null)
 			return null;
-			
+
 		IAnnotationModel m= viewer.getAnnotationModel();
 		IAnnotationModelExtension model;
 		if (m instanceof IAnnotationModelExtension)
 			model= (IAnnotationModelExtension) m;
 		else
 			return null;
-		
+
 		// get diff model if it exists already
 		return model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 	}
@@ -512,7 +512,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Returns the <code>IChangeRulerColumn</code> of this editor, or <code>null</code> if there is none. Either
 	 * the line number bar or a separate change ruler column can be returned.
-	 * 
+	 *
 	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>.
 	 */
 	private IChangeRulerColumn getChangeColumn() {
@@ -527,7 +527,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Sets the display state of the separate change ruler column (not the quick diff display on
 	 * the line number ruler column) to <code>show</code>.
-	 * 
+	 *
 	 * @param show <code>true</code> if the change ruler column should be shown, <code>false</code> if it should be hidden
 	 */
 	private void showChangeRuler(boolean show) {
@@ -556,7 +556,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Hides the line number ruler column.
 	 */
@@ -572,24 +572,24 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (fIsChangeInformationShown)
 			showChangeRuler(true);
 	}
-	
+
 	/**
-	 * Returns whether the line number ruler column should be 
+	 * Returns whether the line number ruler column should be
 	 * visible according to the preference store settings. Subclasses may override this
 	 * method to provide a custom preference setting.
-	 * 
+	 *
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isLineNumberRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(LINE_NUMBER_RULER) : false;
 	}
-	
+
 	/**
 	 * Returns whether the overwrite mode is enabled according to the preference
 	 * store settings. Subclasses may override this method to provide a custom
 	 * preference setting.
-	 * 
+	 *
 	 * @return <code>true</code> if overwrite mode is enabled
 	 * @since 3.1
 	 */
@@ -599,26 +599,26 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Returns whether quick diff info should be visible upon opening an editor 
+	 * Returns whether quick diff info should be visible upon opening an editor
 	 * according to the preference store settings.
-	 * 
+	 *
 	 * @return <code>true</code> if the line numbers should be visible
 	 */
 	protected boolean isPrefQuickDiffAlwaysOn() {
 		IPreferenceStore store= getPreferenceStore();
 		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
 	}
-	
+
 	/**
 	 * Initializes the given line number ruler column from the preference store.
-	 * 
+	 *
 	 * @param rulerColumn the ruler column to be initialized
 	 */
 	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
-		
+
 			RGB rgb=  null;
 			// foreground color
 			if (store.contains(LINE_NUMBER_COLOR)) {
@@ -630,8 +630,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			if (rgb == null)
 				rgb= new RGB(0, 0, 0);
 			rulerColumn.setForeground(sharedColors.getColor(rgb));
-			
-			
+
+
 			rgb= null;
 			// background color: same as editor, or system default
 			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
@@ -642,31 +642,31 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
 				}
 			}
-			rulerColumn.setBackground(sharedColors.getColor(rgb));			
-			
+			rulerColumn.setBackground(sharedColors.getColor(rgb));
+
 			rulerColumn.redraw();
 		}
 	}
-	
+
 	/**
 	 * Initializes the given change ruler column from the preference store.
-	 * 
+	 *
 	 * @param changeColumn the ruler column to be initialized
 	 */
 	private void initializeChangeRulerColumn(IChangeRulerColumn changeColumn) {
 		ISharedTextColors sharedColors= getSharedColors();
 		IPreferenceStore store= getPreferenceStore();
-	
+
 		if (store != null) {
 			ISourceViewer v= getSourceViewer();
 			if (v != null && v.getAnnotationModel() != null) {
 				changeColumn.setModel(v.getAnnotationModel());
 			}
-			
+
 			Iterator iter= fAnnotationPreferences.getAnnotationPreferences().iterator();
 			while (iter.hasNext()) {
 				AnnotationPreference pref= (AnnotationPreference) iter.next();
-				
+
 				if ("org.eclipse.ui.workbench.texteditor.quickdiffChange".equals(pref.getAnnotationType())) { //$NON-NLS-1$
 					RGB rgb= getColorPreference(store, pref);
 					changeColumn.setChangedColor(sharedColors.getColor(rgb));
@@ -678,7 +678,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					changeColumn.setDeletedColor(sharedColors.getColor(rgb));
 				}
 			}
-			
+
 			RGB rgb= null;
 			// background color: same as editor, or system default
 			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
@@ -689,14 +689,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
 				}
 			}
-			changeColumn.setBackground(sharedColors.getColor(rgb));			
+			changeColumn.setBackground(sharedColors.getColor(rgb));
 
 			if (changeColumn instanceof LineNumberChangeRulerColumn) {
 				LineNumberChangeRulerColumn lncrc= (LineNumberChangeRulerColumn) changeColumn;
 				lncrc.setDisplayMode(store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));
 			}
 		}
-	
+
 		changeColumn.redraw();
 	}
 
@@ -707,12 +707,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * the value is taken from the <code>AnnotationPreference</code>'s default
 	 * color value.
 	 * <p>
-	 * The return value is 
+	 * The return value is
 	 * </p>
-	 * 
+	 *
 	 * @param store the preference store
 	 * @param pref the annotation preference
-	 * @return the RGB color preference, not <code>null</code> 
+	 * @return the RGB color preference, not <code>null</code>
 	 */
 	private RGB getColorPreference(IPreferenceStore store, AnnotationPreference pref) {
 		RGB rgb= null;
@@ -729,7 +729,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
-	 * 
+	 *
 	 * @return the created line number column
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
@@ -744,12 +744,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 		return fLineNumberRulerColumn;
 	}
-	
+
 	/**
 	 * Creates and returns a <code>LineChangeHover</code> to be used on this editor's change
 	 * ruler column. This default implementation returns a plain <code>LineChangeHover</code>.
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @return the change hover to be used by this editors quick diff display
 	 */
 	protected LineChangeHover createChangeHover() {
@@ -757,9 +757,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Creates a new change ruler column for quick diff display independent of the 
+	 * Creates a new change ruler column for quick diff display independent of the
 	 * line number ruler column
-	 * 
+	 *
 	 * @return a new change ruler column
 	 */
 	protected IChangeRulerColumn createChangeRulerColumn() {
@@ -769,15 +769,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		initializeChangeRulerColumn(fChangeRulerColumn);
 		return fChangeRulerColumn;
 	}
-	
+
 	/**
 	 * Returns {@link #createCompositeRuler()}. Subclasses should not override this method, but
 	 * rather <code>createCompositeRuler</code> if they want to contribute their own vertical ruler
 	 * implementation. If not an instance of {@link CompositeRuler} is returned, the built-in ruler
 	 * columns (line numbers, annotations) will not work.
-	 * 
+	 *
 	 * <p>May become <code>final</code> in the future.</p>
-	 * 
+	 *
 	 * @see AbstractTextEditor#createVerticalRuler()
 	 */
 	protected IVerticalRuler createVerticalRuler() {
@@ -804,7 +804,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 		return ruler;
 	}
-	
+
 	/**
 	 * Creates a composite ruler to be used as the vertical ruler by this editor.
 	 * Subclasses may re-implement this method.
@@ -814,28 +814,28 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected CompositeRuler createCompositeRuler() {
 		CompositeRuler ruler= new CompositeRuler();
 		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess()));
-		
+
 		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
 		else if (isPrefQuickDiffAlwaysOn())
 			ruler.addDecorator(1, createChangeRulerColumn());
-			
+
 		return ruler;
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		
-		try {			
+
+		try {
 
 			ISourceViewer sourceViewer= getSourceViewer();
 			if (sourceViewer == null)
 				return;
-				
-			String property= event.getProperty();	
-			
+
+			String property= event.getProperty();
+
 			if (fSourceViewerDecorationSupport != null && fOverviewRuler != null && OVERVIEW_RULER.equals(property))  {
 				if (isOverviewRulerVisible())
 					showOverviewRuler();
@@ -843,12 +843,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					hideOverviewRuler();
 				return;
 			}
-			
+
 			if (DISABLE_OVERWRITE_MODE.equals(property)) {
 				enableOverwriteMode(isOverwriteModeEnabled());
 				return;
 			}
-			
+
 			if (LINE_NUMBER_RULER.equals(property)) {
 				if (isLineNumberRulerVisible())
 					showLineNumberRuler();
@@ -856,7 +856,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					hideLineNumberRuler();
 				return;
 			}
-			
+
 			if (AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON.equals(property)) {
 				showChangeInformation(isPrefQuickDiffAlwaysOn());
 			}
@@ -867,7 +867,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					sourceViewer.getTextWidget().setTabs(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 				return;
 			}
-			
+
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE.equals(property) && sourceViewer instanceof ITextViewerExtension6) {
 				IPreferenceStore store= getPreferenceStore();
 				if (store != null)
@@ -876,21 +876,21 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			if (fLineNumberRulerColumn != null
-				&&	(LINE_NUMBER_COLOR.equals(property) 
+				&&	(LINE_NUMBER_COLOR.equals(property)
 				||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)
 				||	PREFERENCE_COLOR_BACKGROUND.equals(property))) {
-					
+
 				initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 			}
-			
+
 			if (fChangeRulerColumn != null
-				&&	(LINE_NUMBER_COLOR.equals(property) 
+				&&	(LINE_NUMBER_COLOR.equals(property)
 				||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)
 				||	PREFERENCE_COLOR_BACKGROUND.equals(property))) {
-					
+
 				initializeChangeRulerColumn(fChangeRulerColumn);
 			}
-			
+
 			if (fLineNumberRulerColumn instanceof LineNumberChangeRulerColumn
 					&& AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE.equals(property)) {
 				initializeChangeRulerColumn(getChangeColumn());
@@ -908,7 +908,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					}
 				}
 			}
-			
+
 			AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
 			if (annotationPreference != null && event.getNewValue() instanceof Boolean) {
 				Object type= annotationPreference.getAnnotationType();
@@ -918,7 +918,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					fAnnotationRulerColumn.removeAnnotationType(type);
 				getVerticalRuler().update();
 			}
-			
+
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}
@@ -926,7 +926,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Returns the <code>AnnotationPreference</code> corresponding to <code>colorKey</code>.
-	 * 
+	 *
 	 * @param colorKey the color key.
 	 * @return the corresponding <code>AnnotationPreference</code>
 	 */
@@ -938,27 +938,27 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the annotation preference for which the given
 	 * preference matches a vertical ruler preference key.
-	 * 
+	 *
 	 * @param preferenceKey the preference key string
 	 * @return the annotation preference or <code>null</code> if none
 	 */
 	private AnnotationPreference getVerticalRulerAnnotationPreference(String preferenceKey) {
 		if (preferenceKey == null)
 			return null;
-		
+
 		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
-			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey())) 
+			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey()))
 				return info;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Shows the overview ruler.
 	 */
@@ -980,10 +980,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(false);
 		}
 	}
-	
+
 	/**
-	 * Returns the annotation access. 
-	 * 
+	 * Returns the annotation access.
+	 *
 	 * @return the annotation access
 	 */
 	protected IAnnotationAccess getAnnotationAccess() {
@@ -991,10 +991,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			fAnnotationAccess= createAnnotationAccess();
 		return fAnnotationAccess;
 	}
-	
+
 	/**
 	 * Returns the annotation preference lookup.
-	 * 
+	 *
 	 * @return the annotation preference lookup
 	 */
 	protected AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
@@ -1003,7 +1003,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Returns the overview ruler.
-	 * 
+	 *
 	 * @return the overview ruler
 	 */
 	protected IOverviewRuler getOverviewRuler() {
@@ -1014,7 +1014,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Returns the source viewer decoration support.
-	 * 
+	 *
 	 * @param viewer the viewer for which to return a decoration support
 	 * @return the source viewer decoration support
 	 */
@@ -1028,56 +1028,56 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Returns the annotation preferences.
-	 * 
+	 *
 	 * @return the annotation preferences
 	 */
 	protected MarkerAnnotationPreferences getAnnotationPreferences() {
 		return fAnnotationPreferences;
 	}
-	
-	
+
+
 	/**
 	 * If the editor can be saved all marker ranges have been changed according to
 	 * the text manipulations. However, those changes are not yet propagated to the
 	 * marker manager. Thus, when opening a marker, the marker's position in the editor
 	 * must be determined as it might differ from the position stated in the marker.
-	 * 
+	 *
 	 * @param marker the marker to go to
 	 * @deprecated visibility will be reduced, use <code>getAdapter(IGotoMarker.class) for accessing this method</code>
 	 */
 	public void gotoMarker(IMarker marker) {
-		
+
 		if (getSourceViewer() == null)
 			return;
-		
+
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);
-		
+
 		if (start < 0 || end < 0) {
-			
+
 			// there is only a line number
 			int line= MarkerUtilities.getLineNumber(marker);
 			if (line > -1) {
-				
+
 				// marker line numbers are 1-based
 				-- line;
-				
+
 				try {
-					
+
 					IDocument document= getDocumentProvider().getDocument(getEditorInput());
 					selectAndReveal(document.getLineOffset(line), document.getLineLength(line));
-					
+
 				} catch (BadLocationException x) {
 					// marker refers to invalid text position -> do nothing
 				}
 			}
-			
+
 		} else {
-			
+
 			// look up the current range of the marker when the document has been edited
 			IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
 			if (model instanceof AbstractMarkerAnnotationModel) {
-				
+
 				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
 				Position pos= markerModel.getMarkerPosition(marker);
 				if (pos != null && !pos.isDeleted()) {
@@ -1085,20 +1085,20 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					start= pos.getOffset();
 					end= pos.getOffset() + pos.getLength();
 				}
-				
+
 				if (pos != null && pos.isDeleted()) {
 					// do nothing if position has been deleted
 					return;
 				}
 			}
-			
+
 			IDocument document= getDocumentProvider().getDocument(getEditorInput());
 			int length= document.getLength();
 			if (end - 1 < length && start < length)
 				selectAndReveal(start, end - start);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
 	 */
@@ -1106,13 +1106,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// see bug 42230
 		return super.isErrorStatus(status) && status.getCode() != IResourceStatus.READ_ONLY_LOCAL && status.getSeverity() != IStatus.CANCEL;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
 	protected void createActions() {
 		super.createActions();
-		
+
 		ResourceAction action= new AddMarkerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
@@ -1122,13 +1122,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
 		setAction(IDEActionFactory.ADD_TASK.getId(), action);
-		
+
 		action= new ChangeEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.CHANGE_ENCODING);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CHANGE_ENCODING);
 		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);
 		markAsPropertyDependentAction(ITextEditorActionConstants.CHANGE_ENCODING, true);
-		
+
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleLineNumbersAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				toggleLineNumberRuler();
@@ -1136,7 +1136,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
 		setAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE, action);
-		
+
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleQuickDiffAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				toggleQuickDiffRuler();
@@ -1144,21 +1144,21 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_TOGGLE);
 		setAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE, action);
-		
+
 		action= new RevertLineAction(this, false);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERTLINE);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE, action);
-		
+
 		action= new RevertSelectionAction(this, false);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION, action);
-		
+
 		action= new RevertBlockAction(this, false);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK, action);
-		
+
 		action= new RestoreAction(this, false);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION, action);
 
-		IAction action2= new CompositeRevertAction(new IAction[] { 
+		IAction action2= new CompositeRevertAction(new IAction[] {
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
 										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION),
@@ -1180,7 +1180,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		};
 		setAction(ITextEditorActionConstants.RULER_PREFERENCES, action);
-		
+
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ContextPreferencesAction.") { //$NON-NLS-1$
 			public void run() {
 				String[] preferencePages= collectContextMenuPreferencePages();
@@ -1190,7 +1190,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 	}
-	
+
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
@@ -1201,7 +1201,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			return getAnnotationAccess();
 		return super.getAdapter(adapter);
 	}
-	
+
 	/*
 	 * If there is no explicit document provider set, the implicit one is
 	 * re-initialized based on the given editor input.
@@ -1234,10 +1234,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		super.disposeDocumentProvider();
 		fImplicitDocumentProvider= null;
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#doSetInput(IEditorInput)
-	 * 
+	 *
 	 * This implementation also updates change information in the quick diff
 	 * ruler.
 	 */
@@ -1250,13 +1250,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			} else
 				showChangeInformation(false);
 		}
-		
+
 		super.doSetInput(input);
-		
+
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.1
@@ -1266,7 +1266,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		 * XXX: workaround for reliable menu item ordering.
 		 * This can be changed once the action contribution story converges,
 		 * see http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-ui-home/R3_1/dynamic_teams/dynamic_teams.html#actionContributions
-		 */ 
+		 */
 		// pre-install menus for contributions and call super
 		menu.add(new Separator("debug")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -1276,24 +1276,24 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
 		super.rulerContextMenuAboutToShow(menu);
-		
+
 		/* quick diff */
 		if (isEditorInputModifiable()) {
 			IAction quickdiffAction= getAction(ITextEditorActionConstants.QUICKDIFF_TOGGLE);
 			quickdiffAction.setChecked(isChangeInformationShowing());
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, quickdiffAction);
-			
+
 			if (isChangeInformationShowing()) {
 				TextEditorAction revertLine= new RevertLineAction(this, true);
 				TextEditorAction revertSelection= new RevertSelectionAction(this, true);
 				TextEditorAction revertBlock= new RevertBlockAction(this, true);
 				TextEditorAction revertDeletion= new RestoreAction(this, true);
-				
+
 				revertSelection.update();
 				revertBlock.update();
 				revertLine.update();
 				revertDeletion.update();
-				
+
 				// only add block action if selection action is not enabled
 				if (revertSelection.isEnabled())
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
@@ -1305,12 +1305,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
 			}
 		}
-		
+
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
 		lineNumberAction.setChecked(fLineNumberRulerColumn != null);
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, lineNumberAction);
-		
+
 		IAction preferencesAction= getAction(ITextEditorActionConstants.RULER_PREFERENCES);
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
@@ -1319,7 +1319,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Toggles the line number global preference and shows the line number ruler
 	 * accordingly.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void toggleLineNumberRuler() {
@@ -1329,18 +1329,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			showLineNumberRuler();
 		else
 			hideLineNumberRuler();
-		
+
 		// globally
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		if (store != null) {
 			store.setValue(LINE_NUMBER_RULER, newSetting);
 		}
 	}
-	
+
 	/**
 	 * Toggles the quick diff global preference and shows the quick diff ruler
 	 * accordingly.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void toggleQuickDiffRuler() {
@@ -1348,7 +1348,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// change locally to ensure we get it right even if our setting
 		// does not adhere to the global setting
 		showChangeInformation(newSetting);
-		
+
 		// change global setting which will inform other interested parties
 		// the it is changed
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
@@ -1356,7 +1356,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, newSetting);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.1
@@ -1375,7 +1375,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * <p>
 	 * Subclasses may extend or replace.
 	 * </p>
-	 * 
+	 *
 	 * @return the preference page ids to show, may be empty
 	 * @since 3.1
 	 */
@@ -1388,7 +1388,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			"org.eclipse.ui.editors.preferencePages.Spelling", //$NON-NLS-1$
 		};
 	}
-	
+
 	/**
 	 * Returns the preference page ids of the preference pages to be shown when
 	 * executing the preferences action from the editor ruler context menu.
@@ -1399,7 +1399,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * <p>
 	 * Subclasses may extend or replace.
 	 * </p>
-	 * 
+	 *
 	 * @return the preference page ids to show, may be empty
 	 * @since 3.1
 	 */

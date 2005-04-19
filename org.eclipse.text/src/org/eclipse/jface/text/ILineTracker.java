@@ -33,14 +33,14 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.ConfigurableLineTracker}.
  */
 public interface ILineTracker {
-		
+
 	/**
 	 * Returns the strings this tracker considers as legal line delimiters.
 	 *
 	 * @return the legal line delimiters
 	 */
 	String[] getLegalLineDelimiters();
-			
+
 	/**
 	 * Returns the line delimiter of the specified line. Returns <code>null</code> if the
 	 * line is not closed with a line delimiter.
@@ -50,22 +50,22 @@ public interface ILineTracker {
 	 * @exception BadLocationException if the line number is invalid in this tracker's line structure
 	 */
 	String getLineDelimiter(int line) throws BadLocationException;
-	
+
 	/**
 	 * Computes the number of lines in the given text.
-	 * 
+	 *
 	 * @param text the text whose number of lines should be computed
 	 * @return the number of lines in the given text
 	 */
 	int computeNumberOfLines(String text);
-	
+
 	/**
 	 * Returns the number of lines.
 	 *
 	 * @return the number of lines in this tracker's line structure
 	 */
 	int getNumberOfLines();
-	
+
 	/**
 	 * Returns the number of lines which are occupied by a given text range.
 	 *
@@ -75,7 +75,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if specified range is unknown to this tracker
 	 */
 	int getNumberOfLines(int offset, int length) throws BadLocationException;
-	
+
 	/**
 	 * Returns the position of the first character of the specified line.
 	 *
@@ -84,7 +84,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if the line is unknown to this tracker
 	 */
 	int getLineOffset(int line) throws BadLocationException;
-	
+
 	/**
 	 * Returns length of the specified line including the line's delimiter.
 	 *
@@ -93,7 +93,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if line is unknown to this tracker
 	 */
 	int getLineLength(int line) throws BadLocationException;
-	
+
 	/**
 	 * Returns the line number the character at the given offset belongs to.
 	 *
@@ -102,7 +102,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if the offset is invalid in this tracker
 	 */
 	int getLineNumberOfOffset(int offset) throws BadLocationException;
-	
+
 	/**
 	 * Returns a line description of the line at the given offset.
 	 * The description contains the start offset and the length of the line
@@ -113,7 +113,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if offset is invalid in this tracker
 	 */
 	IRegion getLineInformationOfOffset(int offset) throws BadLocationException;
-	
+
 	/**
 	 * Returns a line description of the given line. The description
 	 * contains the start offset and the length of the line excluding the line's
@@ -124,7 +124,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if line is unknown to this tracker
 	 */
 	IRegion getLineInformation(int line) throws BadLocationException;
-		
+
 	/**
 	 * Informs the line tracker about the specified change in the tracked text.
 	 *
@@ -134,7 +134,7 @@ public interface ILineTracker {
 	 * @exception BadLocationException if specified range is unknown to this tracker
 	 */
 	void replace(int offset, int length, String text) throws BadLocationException;
-	
+
 	/**
 	 * Sets the tracked text to the specified text.
 	 *

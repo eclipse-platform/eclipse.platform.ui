@@ -19,14 +19,14 @@ import org.eclipse.jface.text.IDocument;
  * This interface is the expected interface of extensions provided for the
  * <code>"org.eclipse.core.filebuffers.documentCreation"</code> extension
  * point.
- * 
+ *
  * @since 3.0
  */
 public interface IDocumentFactory {
-	
+
 	/**
 	 * Creates and returns a new, empty document.
-	 * 
+	 *
 	 * @return a new, empty document
 	 */
 	IDocument createDocument();

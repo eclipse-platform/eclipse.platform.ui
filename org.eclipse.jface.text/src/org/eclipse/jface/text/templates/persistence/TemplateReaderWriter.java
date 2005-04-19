@@ -48,7 +48,7 @@ import org.eclipse.jface.text.templates.Template;
  * Serializes templates as character or byte stream and reads the same format
  * back. Clients may instantiate this class, it is not intended to be
  * subclassed.
- * 
+ *
  * @since 3.0
  */
 public class TemplateReaderWriter {
@@ -61,91 +61,91 @@ public class TemplateReaderWriter {
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
-	
+
 	/**
 	 * Create a new instance.
 	 */
 	public TemplateReaderWriter() {
 	}
-	
+
 	/**
 	 * Reads templates from a reader and returns them. The reader must present
 	 * a serialized form as produced by the <code>save</code> method.
-	 * 
+	 *
 	 * @param reader the reader to read templates from
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws IOException if reading from the stream fails 
-	 */	
+	 * @throws IOException if reading from the stream fails
+	 */
 	public TemplatePersistenceData[] read(Reader reader) throws IOException {
 		return read(reader, null);
 	}
-	
+
 	/**
 	 * Reads the template with identifier <code>id</code> from a reader and
 	 * returns it. The reader must present a serialized form as produced by the
 	 * <code>save</code> method.
-	 * 
+	 *
 	 * @param reader the reader to read templates from
 	 * @param id the id of the template to return
 	 * @return the read template, encapsulated in an instances of
 	 *         <code>TemplatePersistenceData</code>
 	 * @throws IOException if reading from the stream fails
 	 * @since 3.1
-	 */	
+	 */
 	public TemplatePersistenceData readSingle(Reader reader, String id) throws IOException {
 		TemplatePersistenceData[] datas= read(new InputSource(reader), null, id);
 		if (datas.length > 0)
 			return datas[0];
 		return null;
 	}
-	
+
 	/**
 	 * Reads templates from a stream and adds them to the templates.
-	 * 
+	 *
 	 * @param reader the reader to read templates from
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws IOException if reading from the stream fails 
-	 */	
+	 * @throws IOException if reading from the stream fails
+	 */
 	public TemplatePersistenceData[] read(Reader reader, ResourceBundle bundle) throws IOException {
 		return read(new InputSource(reader), bundle, null);
 	}
-	
+
 	/**
 	 * Reads templates from a stream and adds them to the templates.
-	 * 
+	 *
 	 * @param stream the byte stream to read templates from
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws IOException if reading from the stream fails 
-	 */	
+	 * @throws IOException if reading from the stream fails
+	 */
 	public TemplatePersistenceData[] read(InputStream stream, ResourceBundle bundle) throws IOException {
 		return read(new InputSource(stream), bundle, null);
 	}
-	
+
 	/**
 	 * Reads templates from an <code>InputSource</code> and adds them to the templates.
-	 * 
+	 *
 	 * @param source the input source
 	 * @param bundle a resource bundle to use for translating the read templates, or <code>null</code> if no translation should occur
 	 * @param singleId the template id to extract, or <code>null</code> to read in all templates
 	 * @return the read templates, encapsulated in instances of <code>TemplatePersistenceData</code>
-	 * @throws IOException if reading from the stream fails 
-	 */	
+	 * @throws IOException if reading from the stream fails
+	 */
 	private TemplatePersistenceData[] read(InputSource source, ResourceBundle bundle, String singleId) throws IOException {
 		try {
 			Collection templates= new ArrayList();
 			Set ids= new HashSet();
-			
+
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-			DocumentBuilder parser= factory.newDocumentBuilder();		
+			DocumentBuilder parser= factory.newDocumentBuilder();
 			Document document= parser.parse(source);
-			
+
 			NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
-			
+
 			int count= elements.getLength();
 			for (int i= 0; i != count; i++) {
-				Node node= elements.item(i);					
+				Node node= elements.item(i);
 				NamedNodeMap attributes= node.getAttributes();
 
 				if (attributes == null)
@@ -154,25 +154,25 @@ public class TemplateReaderWriter {
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id))
 					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
-				
+
 				if (singleId != null && !singleId.equals(id))
 					continue;
-				
+
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
-				
+
 				String name= getStringValue(attributes, NAME_ATTRIBUTE);
 				name= translateString(name, bundle);
 
 				String description= getStringValue(attributes, DESCRIPTION_ATTRIBUTE, ""); //$NON-NLS-1$
 				description= translateString(description, bundle);
-				
+
 				String context= getStringValue(attributes, CONTEXT_ATTRIBUTE);
 
 				if (name == null || context == null)
 					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
 
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
-				
+
 				StringBuffer buffer= new StringBuffer();
 				NodeList children= node.getChildNodes();
 				for (int j= 0; j != children.getLength(); j++) {
@@ -186,15 +186,15 @@ public class TemplateReaderWriter {
 				Template template= new Template(name, description, context, pattern);
 				TemplatePersistenceData data= new TemplatePersistenceData(template, enabled, id);
 				data.setDeleted(deleted);
-				
+
 				templates.add(data);
-				
+
 				if (singleId != null && singleId.equals(id))
 					break;
 			}
-			
+
 			return (TemplatePersistenceData[]) templates.toArray(new TemplatePersistenceData[templates.size()]);
-			
+
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);
 		} catch (SAXException e) {
@@ -206,97 +206,97 @@ public class TemplateReaderWriter {
 			else
 				throw new IOException(e.getMessage());
 		}
-		
+
 		return null; // dummy
 	}
-	
+
 	/**
 	 * Saves the templates as XML, encoded as UTF-8 onto the given byte stream.
-	 * 
+	 *
 	 * @param templates the templates to save
 	 * @param stream the byte output to write the templates to in XML
-	 * @throws IOException if writing the templates fails 
+	 * @throws IOException if writing the templates fails
 	 */
 	public void save(TemplatePersistenceData[] templates, OutputStream stream) throws IOException {
 		save(templates, new StreamResult(stream));
 	}
-	
+
 	/**
 	 * Saves the templates as XML.
-	 * 
+	 *
 	 * @param templates the templates to save
 	 * @param writer the writer to write the templates to in XML
-	 * @throws IOException if writing the templates fails 
+	 * @throws IOException if writing the templates fails
 	 */
 	public void save(TemplatePersistenceData[] templates, Writer writer) throws IOException {
 		save(templates, new StreamResult(writer));
 	}
-	
+
 	/**
 	 * Saves the templates as XML.
-	 * 
+	 *
 	 * @param templates the templates to save
 	 * @param result the stream result to write to
-	 * @throws IOException if writing the templates fails 
+	 * @throws IOException if writing the templates fails
 	 */
 	private void save(TemplatePersistenceData[] templates, StreamResult result) throws IOException {
 		try {
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder= factory.newDocumentBuilder();		
+			DocumentBuilder builder= factory.newDocumentBuilder();
 			Document document= builder.newDocument();
 
 			Node root= document.createElement(TEMPLATE_ROOT); //$NON-NLS-1$
 			document.appendChild(root);
-			
+
 			for (int i= 0; i < templates.length; i++) {
 				TemplatePersistenceData data= templates[i];
 				Template template= data.getTemplate();
-				
+
 				Node node= document.createElement(TEMPLATE_ELEMENT);
 				root.appendChild(node);
-				
+
 				NamedNodeMap attributes= node.getAttributes();
-				
+
 				String id= data.getId();
 				if (id != null) {
 					Attr idAttr= document.createAttribute(ID_ATTRIBUTE);
 					idAttr.setValue(id);
 					attributes.setNamedItem(idAttr);
 				}
-				
+
 				if (template != null) {
 					Attr name= document.createAttribute(NAME_ATTRIBUTE);
 					name.setValue(template.getName());
 					attributes.setNamedItem(name);
 				}
-	
+
 				if (template != null) {
 					Attr description= document.createAttribute(DESCRIPTION_ATTRIBUTE);
 					description.setValue(template.getDescription());
 					attributes.setNamedItem(description);
 				}
-	
+
 				if (template != null) {
 					Attr context= document.createAttribute(CONTEXT_ATTRIBUTE);
 					context.setValue(template.getContextTypeId());
 					attributes.setNamedItem(context);
 				}
-				
+
 				Attr enabled= document.createAttribute(ENABLED_ATTRIBUTE);
 				enabled.setValue(data.isEnabled() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
 				attributes.setNamedItem(enabled);
-				
+
 				Attr deleted= document.createAttribute(DELETED_ATTRIBUTE);
 				deleted.setValue(data.isDeleted() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
 				attributes.setNamedItem(deleted);
-				
+
 				if (template != null) {
 					Text pattern= document.createTextNode(template.getPattern());
-					node.appendChild(pattern);			
+					node.appendChild(pattern);
 				}
-			}		
-			
-			
+			}
+
+
 			Transformer transformer=TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
@@ -310,7 +310,7 @@ public class TemplateReaderWriter {
 			if (e.getException() instanceof IOException)
 				throw (IOException) e.getException();
 			Assert.isTrue(false);
-		}		
+		}
 	}
 
 	private boolean getBooleanValue(NamedNodeMap attributes, String attribute, boolean defaultValue) throws SAXException {
@@ -324,7 +324,7 @@ public class TemplateReaderWriter {
 		else
 			throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.illegal_boolean_attribute")); //$NON-NLS-1$
 	}
-	
+
 	private String getStringValue(NamedNodeMap attributes, String name) throws SAXException {
 		String val= getStringValue(attributes, name, null);
 		if (val == null)
@@ -340,7 +340,7 @@ public class TemplateReaderWriter {
 	private String translateString(String str, ResourceBundle bundle) {
 		if (bundle == null)
 			return str;
-		
+
 		int idx= str.indexOf('%');
 		if (idx == -1) {
 			return str;
@@ -359,7 +359,7 @@ public class TemplateReaderWriter {
 		buf.append(str.substring(k));
 		return buf.toString();
 	}
-	
+
 	private String getBundleString(String key, ResourceBundle bundle) {
 		if (bundle != null) {
 			try {

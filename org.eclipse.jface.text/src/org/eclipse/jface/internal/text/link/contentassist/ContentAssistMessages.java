@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 
 /**
  * Helper class to get NLSed messages.
- * 
+ *
  * @since 3.0
  */
 class ContentAssistMessages {
@@ -32,7 +32,7 @@ class ContentAssistMessages {
 
 	/**
 	 * Gets a string from the resource bundle.
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be null
 	 * @return the string from the resource bundle
 	 */
@@ -43,10 +43,10 @@ class ContentAssistMessages {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the given arguments.
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be null
 	 * @param args the arguments used to format the string
 	 * @return the formatted string
@@ -63,7 +63,7 @@ class ContentAssistMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the given argument.
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be null
 	 * @param arg the argument used to format the string
 	 * @return the formatted string

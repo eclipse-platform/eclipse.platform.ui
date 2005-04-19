@@ -12,16 +12,16 @@ package org.eclipse.jface.text.reconciler;
 
 
 /**
- * Extends {@link org.eclipse.jface.text.reconciler.IReconciler} with 
+ * Extends {@link org.eclipse.jface.text.reconciler.IReconciler} with
  * the ability to be aware of documents with multiple partitions.
- * 
+ *
  * @since 3.0
  */
 public interface IReconcilerExtension {
-	
+
 	/**
 	 * Returns the partitioning this reconciler is using.
-	 * 
+	 *
 	 * @return the partitioning this reconciler is using
 	 */
 	String getDocumentPartitioning();

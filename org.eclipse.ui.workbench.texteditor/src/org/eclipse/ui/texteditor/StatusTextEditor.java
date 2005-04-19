@@ -29,7 +29,7 @@ import org.eclipse.ui.IEditorInput;
  * @since 2.0
  */
 public class StatusTextEditor extends AbstractTextEditor {
-	
+
 	/** The root composite of this editor */
 	private Composite fParent;
 	/** The layout used to manage the regular and the status page */
@@ -51,23 +51,23 @@ public class StatusTextEditor extends AbstractTextEditor {
 		fDefaultComposite= new Composite(fParent, SWT.NONE);
 		fDefaultComposite.setLayout(new FillLayout());
 		super.createPartControl(fDefaultComposite);
-		
+
 		updatePartControl(getEditorInput());
 	}
-	
+
 	/**
-	 * Checks if the status of the given input is OK. If not the 
+	 * Checks if the status of the given input is OK. If not the
 	 * status control is shown rather than the default control.
-	 * 
+	 *
 	 * @param input the input whose status is checked
 	 */
 	public void updatePartControl(IEditorInput input) {
-		
+
 		if (fStatusControl != null) {
 			fStatusControl.dispose();
 			fStatusControl= null;
 		}
-		
+
 		Control front= null;
 		if (fParent != null && input != null) {
 			if (getDocumentProvider() instanceof IDocumentProviderExtension) {
@@ -83,15 +83,15 @@ public class StatusTextEditor extends AbstractTextEditor {
 		}
 
 		if (fStackLayout.topControl != front) {
-			fStackLayout.topControl= front;		
+			fStackLayout.topControl= front;
 			fParent.layout();
 			updateStatusFields();
 		}
 	}
-	
+
 	/**
 	 * Returns whether the given status indicates an error. Subclasses may override.
-	 * 
+	 *
 	 * @param status the status to be checked
 	 * @return <code>true</code> if the status indicates an error, <code>false</code> otherwise\
 	 * @since 3.0
@@ -99,11 +99,11 @@ public class StatusTextEditor extends AbstractTextEditor {
 	protected boolean isErrorStatus(IStatus status) {
 		return status != null && !status.isOK();
 	}
-	
+
 	/**
 	 * Creates the status control for the given status.
 	 * May be overridden by subclasses.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @param status the status
 	 * @return the new status control
@@ -115,37 +115,37 @@ public class StatusTextEditor extends AbstractTextEditor {
 		infoForm.setInfo(getStatusMessage(status));
 		return infoForm.getControl();
 	}
-	
+
 	/**
 	 * Returns a header for the given status
-	 * 
+	 *
 	 * @param status the status whose message is returned
 	 * @return a header for the given status
 	 */
 	protected String getStatusHeader(IStatus status) {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a banner for the given status.
-	 * 
+	 *
 	 * @param status the status whose message is returned
 	 * @return a banner for the given status
 	 */
 	protected String getStatusBanner(IStatus status) {
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns a message for the given status.
-	 * 
+	 *
 	 * @param status the status whose message is returned
 	 * @return a message for the given status
 	 */
 	protected String getStatusMessage(IStatus status) {
 		return status.getMessage();
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#updateStatusField(String)
 	 */
@@ -162,7 +162,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 				}
 			}
 		}
-		
+
 		super.updateStatusField(category);
 	}
 
@@ -172,9 +172,9 @@ public class StatusTextEditor extends AbstractTextEditor {
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		if (fParent != null && !fParent.isDisposed())
-			updatePartControl(getEditorInput());			
+			updatePartControl(getEditorInput());
 	}
-	
+
 	/*
 	 * @see ITextEditor#doRevertToSaved()
 	 */
@@ -184,7 +184,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#sanityCheckState(IEditorInput)
 	 */
@@ -194,7 +194,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleEditorInputChanged()
 	 * @since 3.1
@@ -204,7 +204,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleElementContentReplaced()
 	 * @since 3.1

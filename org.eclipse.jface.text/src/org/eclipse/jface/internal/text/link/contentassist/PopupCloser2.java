@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Table;
  * associated windows be closed.
  */
 class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListener {
-	
+
 	/** The content assistant to be monitored */
 	private ContentAssistant2 fContentAssistant;
 	/** The table of a selector popup opened by the content assistant */
@@ -42,10 +42,10 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 	/** The shell on which some listeners are registered. */
 	private Shell fShell;
 
-	
+
 	/**
 	 * Installs this closer on the given table opened by the given content assistant.
-	 * 
+	 *
 	 * @param contentAssistant the content assistant
 	 * @param table the table to be tracked
 	 */
@@ -64,7 +64,7 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 				fScrollbar.addSelectionListener(this);
 		}
 	}
-	
+
 	/**
 	 * Uninstalls this closer if previously installed.
 	 */
@@ -78,27 +78,27 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 		if (Helper2.okToUse(fTable))
 			fTable.removeFocusListener(this);
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 	 */
 	public void focusGained(FocusEvent e) {
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 	 */
@@ -112,7 +112,7 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 			}
 		});
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
 	 * @since 3.1
@@ -121,8 +121,8 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 		if (fContentAssistant != null)
 			fContentAssistant.hide();
 	}
-	
-	
+
+
 	/*
 	 * @see org.eclipse.swt.events.ShellAdapter#shellClosed(org.eclipse.swt.events.ShellEvent)
 	 * @since 3.1

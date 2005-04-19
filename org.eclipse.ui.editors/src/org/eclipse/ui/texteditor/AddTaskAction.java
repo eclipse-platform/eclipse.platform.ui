@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.texteditor;
 
- 
+
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -26,14 +26,14 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
  * @since 2.0
  */
 public class AddTaskAction extends AddMarkerAction {
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @see AddMarkerAction#AddMarkerAction(ResourceBundle, String, ITextEditor, String, boolean)
@@ -42,12 +42,12 @@ public class AddTaskAction extends AddMarkerAction {
 	public AddTaskAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor, IMarker.TASK, false);
 	}
-	
+
 	/*
 	 * @see IAction#run()
 	 */
 	public void run() {
-		
+
 		IResource resource= getResource();
 		if (resource == null)
 			return;

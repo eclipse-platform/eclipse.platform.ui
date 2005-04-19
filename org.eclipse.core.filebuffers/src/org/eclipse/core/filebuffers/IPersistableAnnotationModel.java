@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocument;
 /**
  * Tagging interface for {@link org.eclipse.jface.text.source.IAnnotationModel} implementers that offer
  * state persistence.
- * 
+ *
  * @since 3.0
  */
 public interface IPersistableAnnotationModel {
@@ -28,7 +28,7 @@ public interface IPersistableAnnotationModel {
 	/**
 	 * Transforms the current transient state of the annotation model into a
 	 * persistent state.
-	 * 
+	 *
 	 * @param document the document the annotation model is connected to
 	 * @throws CoreException in case the transformation fails
 	 */
@@ -37,7 +37,7 @@ public interface IPersistableAnnotationModel {
 	/**
 	 * Changes the current transient state of the annotation model to match the
 	 * last persisted state.
-	 * 
+	 *
 	 * @param document the document the annotation model is connected to
 	 * @throws CoreException in case accessing the persisted state
 	 */
@@ -49,7 +49,7 @@ public interface IPersistableAnnotationModel {
 	 * I.e. external modification may have caused changes to the persistent
 	 * state since the last <code>commit</code> or <code>revert</code>
 	 * operation.
-	 * 
+	 *
 	 * @param document the document the annotation model is connected to
 	 * @throws CoreException in case accessing the persistent state fails
 	 */

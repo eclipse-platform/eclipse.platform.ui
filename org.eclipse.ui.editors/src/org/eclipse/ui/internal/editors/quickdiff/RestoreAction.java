@@ -19,7 +19,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action that will restore a block of deleted lines at the current caret position in an editor.
- * 
+ *
  * @since 3.1
  */
 public class RestoreAction extends QuickDiffRestoreAction {
@@ -35,7 +35,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
@@ -49,7 +49,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 	public boolean computeEnablement() {
 		if (!super.computeEnablement())
 			return false;
-		
+
 		fLine= getLastLine();
 		if (fLine == -1)
 			return false;
@@ -59,7 +59,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info == null || (info.getRemovedLinesAbove() <= 0 && info.getRemovedLinesBelow() <= 0))
 			return false;
-		
+
 		if (info.getRemovedLinesBelow() == 0) {
 			fLine--;
 		} else if (info.getRemovedLinesAbove() != 0) {

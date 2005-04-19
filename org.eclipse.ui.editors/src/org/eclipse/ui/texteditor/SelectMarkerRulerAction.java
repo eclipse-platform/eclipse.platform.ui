@@ -52,7 +52,7 @@ import org.eclipse.ui.PlatformUI;
 
 
 /**
- * A ruler action which can select the textual range of a marker 
+ * A ruler action which can select the textual range of a marker
  * that has a visual representation in a vertical ruler.
  * <p>
  * This class may be instantiated but is not intended for sub-classing.
@@ -81,7 +81,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
 	 * @param editor the editor
 	 * @param ruler the ruler
-	 * 
+	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
@@ -92,7 +92,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		fBundle= bundle;
 		fPrefix= prefix;
 	}
-	
+
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
 	 * its visual representation from the given resource bundle.
@@ -106,7 +106,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {
 		this(bundle, prefix, editor, ruler);
 	}
-			
+
 	/*
 	 * @see IUpdate#update()
 	 */
@@ -119,11 +119,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @see Action#run()
 	 */
 	public void run() {
-		
+
 		IMarker marker= chooseMarker(fMarkers);
 		if (marker == null)
 			return;
-		
+
 		boolean isProblemMarker= MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM);
 		boolean isTaskMarker= MarkerUtilities.isMarkerType(marker, IMarker.TASK);
 		if (isProblemMarker || isTaskMarker) {
@@ -142,7 +142,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 				} catch (InvocationTargetException x) {
 					selectionSet= false;
 				}
-				
+
 				if (selectionSet)
 					return;
 			}
@@ -158,18 +158,18 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Chooses the marker with the highest layer. If there are multiple
 	 * markers at the found layer, the first marker is taken.
-	 * 
+	 *
 	 * @param markers the list of markers to choose from
 	 * @return the chosen marker or <code>null</code> if none of the given markers has a marker annotation in the model
 	 */
 	protected IMarker chooseMarker(List markers) {
-		
+
 		AbstractMarkerAnnotationModel model= getAnnotationModel();
 		IAnnotationAccessExtension access= getAnnotationAccessExtension();
-		
+
 		IMarker marker= null;
 		int maxLayer= 0;
-		
+
 		Iterator iter= markers.iterator();
 		while (iter.hasNext()) {
 			IMarker m= (IMarker) iter.next();
@@ -189,13 +189,13 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 				}
 			}
 		}
-		
+
 		return marker;
 	}
-	
+
 	/**
 	 * Returns the annotation access extension.
-	 * 
+	 *
 	 * @return the annotation access extension or <code>null</code> if
 	 * 			this action's editor has no such extension
 	 * @since 3.0
@@ -204,24 +204,24 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
 		if (adapter instanceof IAnnotationAccessExtension)
 			return (IAnnotationAccessExtension)adapter;
-		
+
 		return null;
 	}
-	
-	/** 
-	 * Returns the resource for which to create the marker, 
+
+	/**
+	 * Returns the resource for which to create the marker,
 	 * or <code>null</code> if there is no applicable resource.
 	 *
 	 * @return the resource for which to create the marker or <code>null</code>
 	 */
 	protected IResource getResource() {
 		IEditorInput input= fTextEditor.getEditorInput();
-		
+
 		IResource resource= (IResource) input.getAdapter(IFile.class);
-		
+
 		if (resource == null)
 			resource= (IResource) input.getAdapter(IResource.class);
-			
+
 		return resource;
 	}
 
@@ -268,7 +268,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -280,20 +280,20 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param message the message to be logged with the given exception
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-		ILog log= Platform.getLog(bundle);		
-		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		ILog log= Platform.getLog(bundle);
+
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
 		else
 			log.log(exception.getStatus());
-		
-		
+
+
 		Shell shell= fTextEditor.getSite().getShell();
 		String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		
-		ErrorDialog.openError(shell, title, msg, exception.getStatus());		
+
+		ErrorDialog.openError(shell, title, msg, exception.getStatus());
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 					}
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.SelectMarkerRulerAction_getMarker); 
+				handleCoreException(x, TextEditorMessages.SelectMarkerRulerAction_getMarker);
 			}
 		}
 

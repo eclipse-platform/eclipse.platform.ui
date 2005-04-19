@@ -22,16 +22,16 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface ISpellingPreferenceBlock {
 
 	/**
 	 * Creates the control that will be displayed on the preference page.
-	 * 
+	 *
 	 * @param parent the parent composite to which to add the preferences control
-	 * @return the control that was added to <code>parent</code> 
+	 * @return the control that was added to <code>parent</code>
 	 */
 	Control createControl(Composite parent);
 
@@ -39,18 +39,18 @@ public interface ISpellingPreferenceBlock {
 	 * Called after creating the control. Implementations should load the
 	 * preferences values and update the controls accordingly. A status
 	 * monitor is supplied to allow for status reporting to the user.
-	 * 
+	 *
 	 * @param statusMonitor the status monitor
 	 */
 	void initialize(IPreferenceStatusMonitor statusMonitor);
 
 	/**
 	 * Sets the enablement of all controls of this preference block.
-	 * 
+	 *
 	 * @param enabled <code>true</code> iff the controls should be enabled
 	 */
 	void setEnabled(boolean enabled);
-	
+
 	/**
 	 * Returns <code>true</code> iff {@link #performOk()} may be called. A
 	 * preference block may, for example, return <code>false</code> if
@@ -65,12 +65,12 @@ public interface ISpellingPreferenceBlock {
 	 * settings on {@link #performOk()} without a preceding call to this
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> iff <code>performOk()</code> may be
 	 *         called
 	 */
 	boolean canPerformOk();
-	
+
 	/**
 	 * Called when the <code>OK</code> button is pressed on the preference
 	 * page. Implementations should commit the configured preference

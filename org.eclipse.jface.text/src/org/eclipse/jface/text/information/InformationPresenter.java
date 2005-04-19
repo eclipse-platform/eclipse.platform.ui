@@ -49,7 +49,7 @@ import org.eclipse.jface.text.TextUtilities;
 /**
  * Standard implementation of <code>IInformationPresenter</code>.
  * This implementation extends <code>AbstractInformationControlManager</code>.
- * The information control is made visible on request by calling 
+ * The information control is made visible on request by calling
  * {@link #showInformationControl(Rectangle)}.
  * <p>
  * Usually, clients instantiate this class and configure it before using it. The configuration
@@ -57,89 +57,89 @@ import org.eclipse.jface.text.TextUtilities;
  * must create an information control expecting information in the same format the configured
  * {@link org.eclipse.jface.text.information.IInformationProvider}s  use to encode the information they provide.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IInformationPresenterExtension, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
-	
-	
-	/** 
+
+
+	/**
 	 * Priority of the info controls managed by this information presenter.
 	 * Default value: <code>5</code>.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	/*
 	 * 5 as value has been chosen in order to beat the hovers of {@link org.eclipse.jface.text.TextViewerHoverManager}
 	 */
 	public static final int WIDGET_PRIORITY= 5;
-	
-	
+
+
 	/**
 	 * Internal information control closer. Listens to several events issued by its subject control
 	 * and closes the information control when necessary.
 	 */
 	class Closer implements IInformationControlCloser, ControlListener, MouseListener, FocusListener, IViewportListener, KeyListener {
-		
+
 		/** The subject control. */
 		private Control fSubjectControl;
 		/** The information control. */
 		private IInformationControl fInformationControlToClose;
 		/** Indicates whether this closer is active. */
 		private boolean fIsActive= false;
-		
+
 		/*
 		 * @see IInformationControlCloser#setSubjectControl(Control)
 		 */
 		public void setSubjectControl(Control control) {
 			fSubjectControl= control;
 		}
-		
+
 		/*
 		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
 			fInformationControlToClose= control;
 		}
-		
+
 		/*
 		 * @see IInformationControlCloser#start(Rectangle)
 		 */
 		public void start(Rectangle informationArea) {
-			
+
 			if (fIsActive)
 				return;
 			fIsActive= true;
-			
+
 			if (fSubjectControl != null && ! fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addFocusListener(this);
 				fSubjectControl.addKeyListener(this);
 			}
-			
+
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.addFocusListener(this);
-			
-			fTextViewer.addViewportListener(this);			
+
+			fTextViewer.addViewportListener(this);
 		}
-		
+
 		/*
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
-			
+
 			if (!fIsActive)
 				return;
 			fIsActive= false;
-			
-			fTextViewer.removeViewportListener(this);			
-			
+
+			fTextViewer.removeViewportListener(this);
+
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.removeFocusListener(this);
-				
+
 			hideInformationControl();
-						
+
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeMouseListener(this);
@@ -147,47 +147,47 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.removeKeyListener(this);
 			}
 		}
-		
+
 		/*
 		 * @see ControlListener#controlResized(ControlEvent)
 		 */
 		 public void controlResized(ControlEvent e) {
 			stop();
 		}
-		
+
 		/*
 		 * @see ControlListener#controlMoved(ControlEvent)
 		 */
 		 public void controlMoved(ControlEvent e) {
 			stop();
 		}
-		
+
 		/*
 		 * @see MouseListener#mouseDown(MouseEvent)
 		 */
 		 public void mouseDown(MouseEvent e) {
 			stop();
 		}
-		
+
 		/*
 		 * @see MouseListener#mouseUp(MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
 		}
-		
+
 		/*
 		 * @see MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
 			stop();
 		}
-		
+
 		/*
 		 * @see FocusListener#focusGained(FocusEvent)
 		 */
 		public void focusGained(FocusEvent e) {
 		}
-		
+
 		/*
 		 * @see FocusListener#focusLost(FocusEvent)
 		 */
@@ -200,29 +200,29 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				}
 			});
 		}
-		
+
 		/*
 		 * @see IViewportListenerListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int topIndex) {
 			stop();
 		}
-		
+
 		/*
 		 * @see KeyListener#keyPressed(KeyEvent)
 		 */
 		public void keyPressed(KeyEvent e) {
 			stop();
 		}
-		
+
 		/*
 		 * @see KeyListener#keyReleased(KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
 		}
 	}
-	
-	
+
+
 	/** The text viewer this information presenter works on */
 	private ITextViewer fTextViewer;
 	/** The map of <code>IInformationProvider</code> objects */
@@ -234,16 +234,16 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @since 3.0
 	 */
 	private String fPartitioning;
-	
+
 	/**
 	 * Creates a new information presenter that uses the given information control creator.
 	 * The presenter is not installed on any text viewer yet. By default, an information
-	 * control closer is set that closes the information control in the event of key strokes, 
+	 * control closer is set that closes the information control in the event of key strokes,
 	 * resizing, moves, focus changes, mouse clicks, and disposal - all of those applied to
-	 * the information control's parent control. Also, the setup ensures that the information 
+	 * the information control's parent control. Also, the setup ensures that the information
 	 * control when made visible will request the focus. By default, the default document
 	 * partitioning {@link IDocumentExtension3#DEFAULT_PARTITIONING} is used.
-	 * 
+	 *
 	 * @param creator the information control creator to be used
 	 */
 	public InformationPresenter(IInformationControlCreator creator) {
@@ -252,10 +252,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		takesFocusWhenVisible(true);
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
-	
+
 	/**
 	 * Sets the document partitioning to be used by this information presenter.
-	 * 
+	 *
 	 * @param partitioning the document partitioning to be used by this information presenter
 	 * @since 3.0
 	 */
@@ -263,7 +263,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		Assert.isNotNull(partitioning);
 		fPartitioning= partitioning;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationPresenterExtension#getDocumentPartitioning()
 	 * @since 3.0
@@ -271,59 +271,59 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
-	
+
 	/**
 	 * Registers a given information provider for a particular content type.
-	 * If there is already a provider registered for this type, the new provider 
+	 * If there is already a provider registered for this type, the new provider
 	 * is registered instead of the old one.
 	 *
 	 * @param provider the information provider to register, or <code>null</code> to remove an existing one
 	 * @param contentType the content type under which to register
-	 */	
+	 */
 	 public void setInformationProvider(IInformationProvider provider, String contentType) {
-		
+
 		Assert.isNotNull(contentType);
-					
+
 		if (fProviders == null)
 			fProviders= new HashMap();
-			
+
 		if (provider == null)
 			fProviders.remove(contentType);
 		else
 			fProviders.put(contentType, provider);
 	}
-	
+
 	/*
 	 * @see IInformationPresenter#getInformationProvider(String)
 	 */
 	public IInformationProvider getInformationProvider(String contentType) {
 		if (fProviders == null)
 			return null;
-						
+
 		return (IInformationProvider) fProviders.get(contentType);
 	}
-	
+
 	/**
 	 * Sets a offset to override the selection. Setting the value to <code>-1</code> will disable
 	 * overriding.
-	 * 
+	 *
 	 * @param offset the offset to override selection or <code>-1</code>
 	 */
 	public void setOffset(int offset) {
 		fOffset= offset;
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#computeInformation()
 	 */
 	protected void computeInformation() {
-		
+
 		int offset= fOffset < 0 ? fTextViewer.getSelectedRange().x : fOffset;
 		if (offset == -1)
 			return;
 
-		fOffset= -1;			
-			
+		fOffset= -1;
+
 		IInformationProvider provider= null;
 		try {
 			String contentType= TextUtilities.getContentType(fTextViewer.getDocument(), getDocumentPartitioning(), offset, true);
@@ -332,7 +332,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		}
 		if (provider == null)
 			return;
-			
+
 		IRegion subject= provider.getSubject(fTextViewer, offset);
 		if (subject == null)
 			return;
@@ -350,7 +350,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
 		}
 	}
-	
+
 	/**
 	 * Determines the graphical area covered by the given text region.
 	 *
@@ -358,51 +358,51 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @return the graphical extend of the given region
 	 */
 	private Rectangle computeArea(IRegion region) {
-				
+
 		int start= 0;
 		int end= 0;
-		
+
 		IRegion widgetRegion= modelRange2WidgetRange(region);
 		if (widgetRegion != null) {
 			start= widgetRegion.getOffset();
 			end= widgetRegion.getOffset() + widgetRegion.getLength();
 		}
-		
+
 		StyledText styledText= fTextViewer.getTextWidget();
 		Point upperLeft= styledText.getLocationAtOffset(start);
 		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
-		
+
 		for (int i= start +1; i < end; i++) {
-			
+
 			Point p= styledText.getLocationAtOffset(i);
-			
+
 			if (upperLeft.x > p.x)
 				upperLeft.x= p.x;
-				
+
 			if (upperLeft.y > p.y)
 				upperLeft.y= p.y;
-				
+
 			if (lowerRight.x  < p.x)
 				lowerRight.x= p.x;
-				
+
 			if (lowerRight.y < p.y)
 				lowerRight.y= p.y;
 		}
-		
+
 		GC gc= new GC(styledText);
 		lowerRight.x +=  gc.getFontMetrics().getAverageCharWidth();
 		lowerRight.y += styledText.getLineHeight();
 		gc.dispose();
-		
+
 		int width= lowerRight.x - upperLeft.x;
 		int height= lowerRight.y - upperLeft.y;
 		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
 	}
-	
+
 	/**
 	 * Translated the given range in the viewer's document into the corresponding
 	 * range of the viewer's widget.
-	 * 
+	 *
 	 * @param region the range in the viewer's document
 	 * @return the corresponding widget range
 	 * @since 2.1
@@ -421,7 +421,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 
 		return new Region(start, end - start);
 	}
-	
+
 	/*
 	 * @see IInformationPresenter#install(ITextViewer)
 	 */
@@ -429,14 +429,14 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		fTextViewer= textViewer;
 		install(fTextViewer.getTextWidget());
 	}
-	
+
 	/*
 	 * @see IInformationPresenter#uninstall()
 	 */
 	public void uninstall() {
 		dispose();
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
 	 */
@@ -449,8 +449,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
 			if (owner.requestWidgetToken(this))
 				super.showInformationControl(subjectArea);
-				
-		} 
+
+		}
 	}
 
 	/*
@@ -466,7 +466,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			}
 		}
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
 	 */
@@ -480,7 +480,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
 	 */

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
  * appearance and behavior depending on its actual arrangement of ruler columns.
  * A vertical ruler column supports a subset of the contract of a vertical
  * ruler.
- * 
+ *
  * @see org.eclipse.jface.text.source.CompositeRuler
  * @since 2.0
  */
@@ -36,12 +36,12 @@ public interface IVerticalRulerColumn {
 	 * @param model the new annotation model, may be <code>null</code>
 	 */
 	void setModel(IAnnotationModel model);
-		
+
 	/**
 	 * Redraws this column.
 	 */
 	void redraw();
-	
+
 	/**
 	 * Creates the column's SWT control.
 	 *
@@ -50,24 +50,24 @@ public interface IVerticalRulerColumn {
 	 * @return the column's SWT control
 	 */
 	Control createControl(CompositeRuler parentRuler, Composite parentControl);
-	
+
 	/**
 	 * Returns the column's SWT control.
 	 *
 	 * @return the column's SWT control
 	 */
 	Control getControl();
-	
+
 	/**
 	 * Returns the width of this column's control.
 	 *
 	 * @return the width of this column's control
 	 */
 	int getWidth();
-	
+
 	/**
 	 * Sets the font of this ruler column.
-	 * 
+	 *
 	 * @param font the new font of the ruler column
 	 */
 	void setFont(Font font);

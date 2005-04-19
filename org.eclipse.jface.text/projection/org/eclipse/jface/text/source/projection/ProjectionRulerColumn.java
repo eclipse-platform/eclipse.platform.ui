@@ -35,16 +35,16 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 /**
  * A ruler column for controlling the behavior of a
  * {@link org.eclipse.jface.text.source.projection.ProjectionViewer}.
- * 
+ *
  * @since 3.0
  */
 class ProjectionRulerColumn extends AnnotationRulerColumn {
-	
+
 	private ProjectionAnnotation fCurrentAnnotation;
 
 	/**
 	 * Creates a new projection ruler column.
-	 * 
+	 *
 	 * @param model the column's annotation model
 	 * @param width the width in pixels
 	 * @param annotationAccess the annotation access
@@ -52,17 +52,17 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	public ProjectionRulerColumn(IAnnotationModel model, int width, IAnnotationAccess annotationAccess) {
 		super(model, width, annotationAccess);
 	}
-	
+
 	/**
 	 * Creates a new projection ruler column.
-	 * 
+	 *
 	 * @param width the width in pixels
 	 * @param annotationAccess the annotation access
 	 */
 	public ProjectionRulerColumn(int width, IAnnotationAccess annotationAccess) {
 		super(width, annotationAccess);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseClicked(int)
 	 */
@@ -74,25 +74,25 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 			model.toggleExpansionState(annotation);
 		}
 	}
-	
+
 	/**
 	 * Returns the projection annotation of the column's annotation
 	 * model that contains the given line.
-	 * 
+	 *
 	 * @param line the line
 	 * @param exact <code>true</code> if the annotation range must match exactly
 	 * @return the projection annotation containing the given line
 	 */
 	private ProjectionAnnotation findAnnotation(int line, boolean exact) {
-		
+
 		ProjectionAnnotation previousAnnotation= null;
-		
+
 		IAnnotationModel model= getModel();
 		if (model != null) {
 			IDocument document= getCachedTextViewer().getDocument();
-			
+
 			int previousDistance= Integer.MAX_VALUE;
-			
+
 			Iterator e= model.getAnnotationIterator();
 			while (e.hasNext()) {
 				Object next= e.next();
@@ -101,11 +101,11 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					Position p= model.getPosition(annotation);
 					if (p == null)
 						continue;
-					
+
 					int distance= getDistance(annotation, p, document, line);
 					if (distance == -1)
 						continue;
-					
+
 					if (!exact) {
 						if (distance < previousDistance) {
 							previousAnnotation= annotation;
@@ -117,14 +117,14 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 				}
 			}
 		}
-		
+
 		return previousAnnotation;
 	}
-	
+
 	/**
-	 * Returns the distance of the given line to the the start line of the given position in the given document. The distance is  
+	 * Returns the distance of the given line to the the start line of the given position in the given document. The distance is
 	 * <code>-1</code> when the line is not included in the given position.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @param position the position
 	 * @param document the document
@@ -155,7 +155,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		}
 		return -1;
 	}
-	
+
 	private boolean clearCurrentAnnotation() {
 		if (fCurrentAnnotation != null) {
 			fCurrentAnnotation.setRangeIndication(false);
@@ -164,18 +164,18 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		Control control= super.createControl(parentRuler, parentControl);
-		
+
 		// set background
 		Display display= parentControl.getDisplay();
 		Color background= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		control.setBackground(background);
-		
+
 		// install hover listener
 		control.addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseExit(MouseEvent e) {
@@ -183,7 +183,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					redraw();
 			}
 		});
-		
+
 		// install mouse move listener
 		control.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
@@ -206,7 +206,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		});
 		return control;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
 	 */
@@ -217,7 +217,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		}
 		super.setModel(model);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#isPropagatingMouseListener()
 	 */

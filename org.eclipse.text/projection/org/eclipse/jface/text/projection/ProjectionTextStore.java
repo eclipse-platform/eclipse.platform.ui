@@ -21,17 +21,17 @@ import org.eclipse.jface.text.Region;
 /**
  * A text store representing the projection defined by the given document
  * information mapping.
- * 
+ *
  * @since 3.0
  */
 class ProjectionTextStore implements ITextStore {
-	
+
 	/**
 	 * Implementation of {@link IRegion} that can be reused
-	 * by setting the offset and the length. 
+	 * by setting the offset and the length.
 	 */
 	private static class ReusableRegion implements IRegion {
-		
+
 		private int fOffset;
 		private int fLength;
 
@@ -48,10 +48,10 @@ class ProjectionTextStore implements ITextStore {
 		public int getOffset() {
 			return fOffset;
 		}
-		
+
 		/**
 		 * Updates this region.
-		 * 
+		 *
 		 * @param offset the new offset
 		 * @param length the new length
 		 */
@@ -60,19 +60,19 @@ class ProjectionTextStore implements ITextStore {
 			fLength= length;
 		}
 	}
-	
+
 	/** The master document */
 	private IDocument fMasterDocument;
 	/** The document information mapping */
 	private IMinimalMapping fMapping;
 	/** Internal region used for querying the mapping. */
 	private ReusableRegion fReusableRegion= new ReusableRegion();
-	
-	
+
+
 	/**
 	 * Creates a new projection text store for the given master document and
 	 * the given document information mapping.
-	 * 
+	 *
 	 * @param masterDocument the master document
 	 * @param mapping the document information mapping
 	 */
@@ -80,7 +80,7 @@ class ProjectionTextStore implements ITextStore {
 		fMasterDocument= masterDocument;
 		fMapping= mapping;
 	}
-	
+
 	private void internalError() {
 		throw new IllegalStateException();
 	}
@@ -89,11 +89,11 @@ class ProjectionTextStore implements ITextStore {
 	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
 	 */
 	public void set(String contents) {
-		
+
 		IRegion masterRegion= fMapping.getCoverage();
 		if (masterRegion == null)
 			internalError();
-		
+
 		try {
 			fMasterDocument.replace(masterRegion.getOffset(), masterRegion.getLength(), contents);
 		} catch (BadLocationException e) {
@@ -112,7 +112,7 @@ class ProjectionTextStore implements ITextStore {
 		} catch (BadLocationException e) {
 			internalError();
 		}
-	}		
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#getLength()
@@ -120,7 +120,7 @@ class ProjectionTextStore implements ITextStore {
 	public int getLength() {
 		return fMapping.getImageLength();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
@@ -131,11 +131,11 @@ class ProjectionTextStore implements ITextStore {
 		} catch (BadLocationException e) {
 			internalError();
 		}
-		
+
 		// unreachable
 		return (char) 0;
 	}
-	
+
 	/*
 	 * @see ITextStore#get(int, int)
 	 */
@@ -151,7 +151,7 @@ class ProjectionTextStore implements ITextStore {
 		} catch (BadLocationException e) {
 			internalError();
 		}
-		
+
 		// unreachable
 		return null;
 	}

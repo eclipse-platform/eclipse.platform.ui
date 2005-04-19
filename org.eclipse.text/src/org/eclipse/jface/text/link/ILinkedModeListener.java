@@ -17,7 +17,7 @@ package org.eclipse.jface.text.link;
  * <p>
  * This interface may implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface ILinkedModeListener {
@@ -47,7 +47,7 @@ public interface ILinkedModeListener {
 
 	/**
 	 * The leave event occurs when linked is left.
-	 * 
+	 *
 	 * @param model the model being left
 	 * @param flags the reason and commands for leaving linked mode
 	 */
@@ -56,7 +56,7 @@ public interface ILinkedModeListener {
 	/**
 	 * The suspend event occurs when a nested linked mode is installed within
 	 * <code>model</code>.
-	 * 
+	 *
 	 * @param model the model being suspended due to a nested model being
 	 *        installed
 	 */
@@ -64,7 +64,7 @@ public interface ILinkedModeListener {
 
 	/**
 	 * The resume event occurs when a nested linked mode exits.
-	 * 
+	 *
 	 * @param model the linked mode model being resumed due to a nested mode
 	 *        exiting
 	 * @param flags the commands to execute when resuming after suspend

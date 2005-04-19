@@ -30,7 +30,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 	/**
 	 * Constructs and links a LinkeRangeDifference to another LinkedRangeDifference
-	 * 
+	 *
 	 * @param next the next difference
 	 * @param operation the operation code. Either {@link #INSERT} or {@link #DELETE}
 	 */
@@ -41,16 +41,16 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 	/**
 	 * Returns the next difference.
-	 * 
+	 *
 	 * @return the next difference
 	 */
 	LinkedRangeDifference getNext() {
 		return fNext;
 	}
-	
+
 	/**
 	 * Returns whether this difference represents a delete operation.
-	 * 
+	 *
 	 * @return <code>true</code> if this difference represents a delete operation
 	 */
 	boolean isDelete() {
@@ -59,7 +59,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 	/**
 	 * Returns whether this difference represents an insert operation.
-	 * 
+	 *
 	 * @return <code>true</code> if this difference represents an insert operation
 	 */
 	boolean isInsert() {
@@ -68,7 +68,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
 	/**
 	 * Sets the next difference of this <code>LinkedRangeDifference</code>
-	 * 
+	 *
 	 * @param next the next difference
 	 */
 	void setNext(LinkedRangeDifference next) {

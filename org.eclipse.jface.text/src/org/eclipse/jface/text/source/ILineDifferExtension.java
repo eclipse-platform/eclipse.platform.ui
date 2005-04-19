@@ -16,7 +16,7 @@ package org.eclipse.jface.text.source;
  * Introduces the concept of suspending a differ. A <code>ILineDiffer</code> may
  * be suspended into a dormant state, and resumed to normal operation.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface ILineDifferExtension {

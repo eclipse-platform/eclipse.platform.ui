@@ -18,40 +18,40 @@ import org.eclipse.jface.text.IRegion;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IHyperlink {
 
 	/**
 	 * The region covered by this type of hyperlink.
-	 * 
+	 *
 	 * @return the hyperlink region
 	 */
 	IRegion getHyperlinkRegion();
-	
+
 	/**
 	 * Optional label for this type of hyperlink.
 	 * <p>
 	 * This type label can be used by {@link IHyperlinkPresenter}s
 	 * which show several hyperlinks at once.
 	 * </p>
-	 * 
+	 *
 	 * @return the type label or <code>null</code> if none
 	 */
 	String getTypeLabel();
-	
+
 	/**
 	 * Optional text for this hyperlink.
 	 * <p>
 	 * This can be used in situations where there are
 	 * several targets for the same hyperlink location.
 	 * </p>
-	 * 
+	 *
 	 * @return the text or <code>null</code> if none
 	 */
 	String getHyperlinkText();
-	
+
 	/**
 	 * Opens the given hyperlink.
 	 */

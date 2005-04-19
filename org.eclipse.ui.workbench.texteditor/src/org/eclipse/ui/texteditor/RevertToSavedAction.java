@@ -24,14 +24,14 @@ import java.util.ResourceBundle;
  * </p>
  */
 public class RevertToSavedAction extends TextEditorAction {
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
@@ -39,14 +39,14 @@ public class RevertToSavedAction extends TextEditorAction {
 	public RevertToSavedAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 	}
-	
+
 	/*
 	 * @see IAction#run()
 	 */
 	public void run() {
 		getTextEditor().doRevertToSaved();
 	}
-	
+
 	/*
 	 * @see TextEditorAction#update()
 	 */

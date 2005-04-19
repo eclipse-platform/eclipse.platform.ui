@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 package org.eclipse.jface.text;
- 
+
 /**
  * Extension interface {@link org.eclipse.jface.text.IInformationControl}.
  * <p>
@@ -19,14 +19,14 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.IInformationControlExtension2}to specify the
  * concrete nature of the information control's input, only the implementer can
  * know whether it has something to show or not.
- * 
+ *
  * @since 2.0
- */ 
+ */
 public interface IInformationControlExtension {
-	
+
 	/**
 	 * Returns whether this information control has contents to be displayed.
-	 * 
+	 *
 	 * @return <code>true</code> if there is contents to be displayed.
 	 */
 	boolean hasContents();

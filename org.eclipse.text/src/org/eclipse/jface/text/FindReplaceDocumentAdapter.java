@@ -22,23 +22,23 @@ import java.util.regex.PatternSyntaxException;
  * <p>
  * Replaces
  * {@link org.eclipse.jface.text.IDocument#search(int, String, boolean, boolean, boolean)}.
- * 
+ *
  * @since 3.0
  */
 public class FindReplaceDocumentAdapter implements CharSequence {
-	
+
 	/**
 	 * Internal type for operation codes.
 	 */
 	private static class FindReplaceOperationCode {
 	}
-	
+
 	// Find/replace operation codes.
 	private static final FindReplaceOperationCode FIND_FIRST= new FindReplaceOperationCode();
 	private static final FindReplaceOperationCode FIND_NEXT= new FindReplaceOperationCode();
 	private static final FindReplaceOperationCode REPLACE= new FindReplaceOperationCode();
 	private static final FindReplaceOperationCode REPLACE_FIND_NEXT= new FindReplaceOperationCode();
-	
+
 	/**
 	 * The adapted document.
 	 */
@@ -53,7 +53,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * The matcher used in findReplace.
 	 */
 	private Matcher fFindReplaceMatcher;
-	
+
 	/**
 	 * The match offset from the last findReplace call.
 	 */
@@ -61,14 +61,14 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 	/**
 	 * Constructs a new find replace document adapter.
-	 * 
+	 *
 	 * @param document the adapted document
 	 */
 	public FindReplaceDocumentAdapter(IDocument document) {
 		Assert.isNotNull(document);
 		fDocument= document;
 	}
-	
+
 	/**
 	 * Returns the location of a given string in this adapter's document based on a set of search criteria.
 	 *
@@ -76,10 +76,10 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @param findString the string to find
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive indicates whether lower and upper case should be distinguished
-	 * @param wholeWord indicates whether the findString should be limited by white spaces as 
+	 * @param wholeWord indicates whether the findString should be limited by white spaces as
 	 * 			defined by Character.isWhiteSpace. Must not be used in combination with <code>regExSearch</code>.
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * 			Must not be used in combination with <code>wholeWord</code>. 
+	 * 			Must not be used in combination with <code>wholeWord</code>.
 	 * @return the find or replace region or <code>null</code> if there was no match
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws PatternSyntaxException if a regular expression has invalid syntax
@@ -92,7 +92,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			startOffset= 0;
 		if (startOffset == -1 && !forwardSearch)
 			startOffset= length() - 1;
-		
+
 		return findReplace(FIND_FIRST, startOffset, findString, null, forwardSearch, caseSensitive, wholeWord, regExSearch);
 	}
 
@@ -109,11 +109,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * 			this value is only used in the REPLACE and REPLACE_FIND operations and otherwise ignored
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive indicates whether lower and upper case should be distinguished
-	 * @param wholeWord indicates whether the findString should be limited by white spaces as 
+	 * @param wholeWord indicates whether the findString should be limited by white spaces as
 	 * 			defined by Character.isWhiteSpace. Must not be used in combination with <code>regExSearch</code>.
 	 * @param regExSearch if <code>true</code> this operation represents a regular expression
 	 * 			Must not be used in combination with <code>wholeWord</code>.
-	 * @param operationCode specifies what kind of operation is executed 
+	 * @param operationCode specifies what kind of operation is executed
 	 * @return the find or replace region or <code>null</code> if there was no match
 	 * @throws BadLocationException if startOffset is an invalid document offset
 	 * @throws IllegalStateException if a REPLACE or REPLACE_FIND operation is not preceded by a successful FIND operation
@@ -123,7 +123,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 		// Validate option combinations
 		Assert.isTrue(!(regExSearch && wholeWord));
-		
+
 		// Validate state
 		if ((operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) && (fFindReplaceState != FIND_FIRST && fFindReplaceState != FIND_NEXT))
 			throw new IllegalStateException("illegal findReplace state: cannot replace without preceding find"); //$NON-NLS-1$
@@ -133,18 +133,18 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 			if (findString == null || findString.length() == 0)
 				return null;
-			
-			// Validate start offset 
+
+			// Validate start offset
 			if (startOffset < 0 || startOffset >= length())
 				throw new BadLocationException();
-			
+
 			int patternFlags= 0;
-			
+
 			if (regExSearch)
 				patternFlags |= Pattern.MULTILINE;
-			
+
 			if (!caseSensitive)
-				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE; 
+				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
 
 			if (wholeWord)
 				findString= "\\b" + findString + "\\b"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -160,17 +160,17 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				 */
 				// fFindReplaceMatcher.reset();
 			} else {
-				Pattern pattern= Pattern.compile(findString, patternFlags); 
+				Pattern pattern= Pattern.compile(findString, patternFlags);
 				fFindReplaceMatcher= pattern.matcher(this);
 			}
 		}
 
 		// Set state
 		fFindReplaceState= operationCode;
-		
+
 		if (operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) {
 			if (regExSearch) {
-				Pattern pattern= fFindReplaceMatcher.pattern(); 
+				Pattern pattern= fFindReplaceMatcher.pattern();
 				Matcher replaceTextMatcher= pattern.matcher(fFindReplaceMatcher.group());
 				try {
 					replaceText= replaceTextMatcher.replaceFirst(replaceText);
@@ -181,7 +181,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 			int offset= fFindReplaceMatcher.start();
 			fDocument.replace(offset, fFindReplaceMatcher.group().length(), replaceText);
-			
+
 			if (operationCode == REPLACE) {
 				return new Region(offset, replaceText.length());
 			}
@@ -198,17 +198,17 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 				if (operationCode == REPLACE_FIND_NEXT)
 					fFindReplaceState= FIND_NEXT;
-				
+
 				if (found && fFindReplaceMatcher.group().length() > 0)
 					return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
 				return null;
-			} 
-			
+			}
+
 			// backward search
 			boolean found= fFindReplaceMatcher.find(0);
 			int index= -1;
 			int length= -1;
-			while (found && fFindReplaceMatcher.start() + fFindReplaceMatcher.group().length() <= fFindReplaceMatchOffset + 1) { 
+			while (found && fFindReplaceMatcher.start() + fFindReplaceMatcher.group().length() <= fFindReplaceMatchOffset + 1) {
 				index= fFindReplaceMatcher.start();
 				length= fFindReplaceMatcher.group().length();
 				found= fFindReplaceMatcher.find(index + 1);
@@ -221,21 +221,21 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 			return null;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Converts a non-regex string to a pattern
 	 * that can be used with the regex search engine.
-	 * 
+	 *
 	 * @param string the non-regex pattern
 	 * @return the string converted to a regex pattern
 	 */
 	private String asRegPattern(String string) {
 		StringBuffer out= new StringBuffer(string.length());
 		boolean quoting= false;
-		
+
 		for (int i= 0, length= string.length(); i < length; i++) {
 			char ch= string.charAt(i);
 			if (ch == '\\') {
@@ -244,7 +244,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					quoting= false;
 				}
 				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
+				continue;
 			}
 			if (!quoting) {
 				out.append("\\Q"); //$NON-NLS-1$
@@ -254,10 +254,10 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		}
 		if (quoting)
 			out.append("\\E"); //$NON-NLS-1$
-		
+
 		return out.toString();
 	}
-	
+
 	/**
 	 * Substitutes the previous match with the given text.
 	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
@@ -277,7 +277,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	}
 
 	// ---------- CharSequence implementation ----------
-	
+
 	/*
 	 * @see java.lang.CharSequence#length()
 	 */

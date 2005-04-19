@@ -27,40 +27,40 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Provides the strategy for determining annotation types for given markers.
- * 
+ *
  * @since 3.0
  */
 public final class AnnotationTypeLookup {
-	
+
 	/**
 	 * Record representing an annotation type mapping.
 	 */
 	private static class AnnotationTypeMapping {
-		
+
 		final static int UNDEFINED= -1;
-		
+
 		String fAnnotationType;
 		String fMarkerType;
 		int fMarkerSeverity= UNDEFINED;
-				
+
 		boolean isMarkerSeverityDefined() {
 			return fMarkerSeverity != UNDEFINED;
 		}
 	}
-	
+
 	/** The lookup table for marker to annotation type mappings. */
 	private Map fMapping;
-	
+
 	/**
 	 * Creates a new annotation lookup object.
 	 */
 	public AnnotationTypeLookup() {
 	}
-	
+
 	/**
 	 * Computes the annotation type that corresponds to the state of
 	 * the given marker.
-	 * 
+	 *
 	 * @param marker the marker
 	 * @return the annotation type or <code>null</code>
 	 */
@@ -72,11 +72,11 @@ public final class AnnotationTypeLookup {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Computes the annotation type that corresponds to the given marker type and
 	 * the given marker severity.
-	 * 
+	 *
 	 * @param markerType the marker type
 	 * @param markerSeverity the marker severity
 	 * @return the annotation type or <code>null</code>
@@ -93,11 +93,11 @@ public final class AnnotationTypeLookup {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the annotation type for the given marker type and the given
 	 * marker severity.
-	 * 
+	 *
 	 * @param markerType the marker type
 	 * @param severity the marker severity
 	 * @return the annotation type
@@ -105,20 +105,20 @@ public final class AnnotationTypeLookup {
 	private String lookupAnnotationType(String markerType, int severity) {
 		if (fMapping == null)
 			initializeMapping();
-		
+
 		Object value= fMapping.get(markerType);
-		
+
 		if (value instanceof String)
 			return (String) value;
-		
+
 		if (value instanceof Map) {
 			Map severityMap= (Map) value;
 			return (String) severityMap.get(new Integer(severity));
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Initializes the mapping between markers and their property values and
 	 * annotation types.
@@ -132,7 +132,7 @@ public final class AnnotationTypeLookup {
 				Object severityMap= fMapping.get(atm.fMarkerType);
 				if (!(severityMap instanceof Map)) {
 					severityMap= new HashMap();
-					fMapping.put(atm.fMarkerType, severityMap); 
+					fMapping.put(atm.fMarkerType, severityMap);
 				}
 				Map map= (Map) severityMap;
 				map.put(new Integer(atm.fMarkerSeverity), atm.fAnnotationType);
@@ -141,11 +141,11 @@ public final class AnnotationTypeLookup {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the list of annotation type mappings generated from the
 	 * extensions provided for the annotation type extension point.
-	 * 
+	 *
 	 * @return a list of annotation type mappings
 	 */
 	private List getAnnotationTypeMappings() {
@@ -156,12 +156,12 @@ public final class AnnotationTypeLookup {
 		readExtensionPoint(annotationTypeMappings, "annotationTypes", "name"); //$NON-NLS-1$ //$NON-NLS-2$
 		return annotationTypeMappings;
 	}
-	
+
 	/**
 	 * Reads the extensions provided for the given extension point name. Uses
 	 * the given type attribute name to create annotation type mappings that
 	 * are appended to the given list.
-	 * 
+	 *
 	 * @param annotationTypeMappings the list to be populated
 	 * @param extensionPointName the name of the extension point to read
 	 * @param typeAttributeName the name of attribute specifying the annotation
@@ -181,16 +181,16 @@ public final class AnnotationTypeLookup {
 
 	/**
 	 * Creates an annotation type mapping from the given configuration element.
-	 * 
+	 *
 	 * @param element the configuration element
 	 * @param typeAttributeName the name of the attribute specifying the
 	 *            annotation type
 	 * @return the annotation type mapping or <code>null</code>
 	 */
 	private AnnotationTypeMapping createMapping(IConfigurationElement element, String typeAttributeName) {
-		
+
 		AnnotationTypeMapping mapping= new AnnotationTypeMapping();
-		
+
 		String s= element.getAttribute(typeAttributeName);  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		mapping.fAnnotationType= s;
@@ -198,11 +198,11 @@ public final class AnnotationTypeLookup {
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		mapping.fMarkerType= s;
-		
+
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			mapping.fMarkerSeverity= StringConverter.asInt(s, AnnotationTypeMapping.UNDEFINED);
-		
+
 		return mapping;
 	}
 }

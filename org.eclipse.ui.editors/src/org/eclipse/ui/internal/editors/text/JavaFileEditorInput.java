@@ -31,7 +31,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 
 	/**
 	 * The workbench adapter which simply provides the label.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private class WorkbenchAdapter implements IWorkbenchAdapter {
@@ -41,21 +41,21 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 		public Object[] getChildren(Object o) {
 			return null;
 		}
-	
+
 		/*
 		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 		 */
 		public ImageDescriptor getImageDescriptor(Object object) {
 			return null;
 		}
-	
+
 		/*
 		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 		 */
 		public String getLabel(Object o) {
 			return ((JavaFileEditorInput)o).getName();
 		}
-	
+
 		/*
 		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 		 */
@@ -128,7 +128,7 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
 		}
 		return null;
 	}
-    
+
     /*
      * @see org.eclipse.ui.IPathEditorInput#getPath()
      * @since 3.1
@@ -136,27 +136,27 @@ public class JavaFileEditorInput implements IPathEditorInput, ILocationProvider 
     public IPath getPath() {
         return Path.fromOSString(fFile.getAbsolutePath());
     }
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o == this)
 			return true;
-		
+
 		if (o instanceof JavaFileEditorInput) {
 			JavaFileEditorInput input= (JavaFileEditorInput) o;
-			return fFile.equals(input.fFile);		
+			return fFile.equals(input.fFile);
 		}
-		
+
         if (o instanceof IPathEditorInput) {
             IPathEditorInput input= (IPathEditorInput)o;
             return getPath().equals(input.getPath());
         }
-		
+
 		return false;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */

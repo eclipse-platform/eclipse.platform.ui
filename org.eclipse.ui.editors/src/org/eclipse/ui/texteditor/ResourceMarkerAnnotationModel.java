@@ -25,7 +25,7 @@ import org.eclipse.jface.text.Assert;
 
 
 /**
- * A marker annotation model whose underlying source of markers is 
+ * A marker annotation model whose underlying source of markers is
  * a resource in the workspace.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.</p>
@@ -49,7 +49,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		}
 	}
-	
+
 	/** The workspace. */
 	private IWorkspace fWorkspace;
 	/** The resource. */
@@ -57,7 +57,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	/** The resource change listener. */
 	private IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
 
-	
+
 	/**
 	 * Creates a marker annotation model with the given resource as the source
 	 * of the markers.
@@ -83,10 +83,10 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * @param markerDeltas the array of marker deltas
 	 */
 	protected void update(IMarkerDelta[] markerDeltas) {
-		
+
 		if (markerDeltas.length ==  0)
 			return;
-		
+
 		for (int i= 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta= markerDeltas[i];
 			switch (delta.getKind()) {
@@ -101,10 +101,10 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					break;
 			}
 		}
-		
+
 		fireModelChanged();
 	}
-			
+
 	/*
 	 * @see AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
 	 */
@@ -114,7 +114,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		else
 			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
 	}
-	
+
 	/*
 	 * @see AbstractMarkerAnnotationModel#deleteMarkers(IMarker[])
 	 */
@@ -127,7 +127,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		}, null, IWorkspace.AVOID_UPDATE, null);
 	}
-	
+
 	/*
 	 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
 	 */
@@ -137,7 +137,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 	/**
 	 * Returns the resource serving as the source of markers for this annotation model.
-	 * 
+	 *
 	 * @return the resource serving as the source of markers for this annotation model
 	 * @since 2.0
 	 */

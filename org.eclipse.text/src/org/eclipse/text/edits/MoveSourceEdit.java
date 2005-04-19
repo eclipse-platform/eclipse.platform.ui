@@ -26,8 +26,8 @@ import org.eclipse.jface.text.Region;
 /**
  * A move source edit denotes the source of a move operation. Move
  * source edits are only valid inside an edit tree if they have a
- * corresponding target edit. Furthermore the corresponding target 
- * edit can't be a direct or indirect child of the source edit. 
+ * corresponding target edit. Furthermore the corresponding target
+ * edit can't be a direct or indirect child of the source edit.
  * Violating one of two requirements will result in a <code>
  * MalformedTreeException</code> when executing the edit tree.
  * <p>
@@ -35,23 +35,23 @@ import org.eclipse.jface.text.Region;
  * source modifier can provide a set of replace edits which will
  * to applied to the source before it gets inserted at the target
  * position.
- * 
+ *
  * @see org.eclipse.text.edits.MoveTargetEdit
  * @see org.eclipse.text.edits.CopySourceEdit
- *  
- * @since 3.0 
+ *
+ * @since 3.0
  */
 public final class MoveSourceEdit extends TextEdit {
 
 	private MoveTargetEdit fTarget;
 	private ISourceModifier fModifier;
-	
+
 	private String fSourceContent;
 	private MultiTextEdit fSourceRoot;
-	
+
 	/**
 	 * Constructs a new move source edit.
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length
 	 */
@@ -61,7 +61,7 @@ public final class MoveSourceEdit extends TextEdit {
 
 	/**
 	 * Constructs a new copy source edit.
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length
 	 * @param target the edit's target
@@ -79,22 +79,22 @@ public final class MoveSourceEdit extends TextEdit {
 		if (other.fModifier != null)
 			fModifier= other.fModifier.copy();
 	}
-	
+
 	/**
 	 * Returns the associated traget edit or <code>null</code>
 	 * if no target edit is associated yet.
-	 * 
+	 *
 	 * @return the target edit or <code>null</code>
 	 */
 	public MoveTargetEdit getTargetEdit() {
 		return fTarget;
 	}
-	
+
 	/**
 	 * Sets the target edit.
-	 * 
+	 *
 	 * @param edit the new target edit.
-	 * 
+	 *
 	 * @exception MalformedTreeException is thrown if the target edit
 	 *  is a direct or indirect child of the source edit
 	 */
@@ -102,29 +102,29 @@ public final class MoveSourceEdit extends TextEdit {
 		fTarget= edit;
 		fTarget.setSourceEdit(this);
 	}
-	
+
 	/**
 	 * Returns the current source modifier or <code>null</code>
 	 * if no source modifier is set.
-	 * 
+	 *
 	 * @return the source modifier
 	 */
 	public ISourceModifier getSourceModifier() {
 		return fModifier;
 	}
-	
+
 	/**
 	 * Sets the optional source modifier.
-	 * 
+	 *
 	 * @param modifier the source modifier or <code>null</code>
-	 *  if no source modification is need. 
+	 *  if no source modification is need.
 	 */
 	public void setSourceModifier(ISourceModifier modifier) {
 		fModifier= modifier;
 	}
 
 	//---- API for MoveTargetEdit ---------------------------------------------
-	
+
 	/* package */ String getContent() {
 		// The source content can be null if the edit wasn't executed
 		// due to an exclusion list of the text edit processor. Return
@@ -133,28 +133,28 @@ public final class MoveSourceEdit extends TextEdit {
 			return ""; //$NON-NLS-1$
 		return fSourceContent;
 	}
-	
+
 	/* package */ MultiTextEdit getSourceRoot() {
 		return fSourceRoot;
 	}
-	
+
 	/* package */ void clearContent() {
 		fSourceContent= null;
 		fSourceRoot= null;
 	}
-	
+
 	//---- Copying -------------------------------------------------------------
-	
+
 	/* non Java-doc
 	 * @see TextEdit#doCopy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		return new MoveSourceEdit(this);
 	}
 
 	/* non Java-doc
 	 * @see TextEdit#postProcessCopy
-	 */	
+	 */
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fTarget != null) {
 			MoveSourceEdit source= (MoveSourceEdit)copier.getCopy(this);
@@ -163,9 +163,9 @@ public final class MoveSourceEdit extends TextEdit {
 				source.setTargetEdit(target);
 		}
 	}
-	
+
 	//---- Visitor -------------------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see TextEdit#accept0
 	 */
@@ -177,11 +177,11 @@ public final class MoveSourceEdit extends TextEdit {
 	}
 
 	//---- consistency check ----------------------------------------------------------------
-	
+
 	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
-		// performSourceComputation) we only do something if we don't have a 
+		// performSourceComputation) we only do something if we don't have a
 		// computated source already.
 		if (fSourceContent == null) {
 			if (sourceEdits.size() <= result) {
@@ -201,7 +201,7 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 		return result;
 	}
-	
+
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
@@ -214,14 +214,14 @@ public final class MoveSourceEdit extends TextEdit {
 	}
 
 	//---- source computation --------------------------------------------------------------
-	
+
 	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 		// always perform source computation independent of processor.considerEdit
-		// The target might need the source and the source is computed in a 
+		// The target might need the source and the source is computed in a
 		// temporary buffer.
 		performSourceComputation(processor, document);
 	}
-	
+
 	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			TextEdit[] children= removeChildren();
@@ -249,37 +249,37 @@ public final class MoveSourceEdit extends TextEdit {
 			Assert.isTrue(false);
 		}
 	}
-	
+
 	private int getStyle(TextEditProcessor processor) {
 		// we never need undo while performing local edits.
 		if ((processor.getStyle() & TextEdit.UPDATE_REGIONS) != 0)
 			return TextEdit.UPDATE_REGIONS;
 		return TextEdit.NONE;
 	}
-	
+
 	//---- document updating ----------------------------------------------------------------
-	
+
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
 		fDelta= -getLength();
 		return fDelta;
 	}
-	
+
 	//---- region updating --------------------------------------------------------------
-	
+
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren
-	 */	
+	 */
 	/* package */ boolean deleteChildren() {
 		return false;
 	}
-	
+
 	//---- content transformation --------------------------------------------------
-	
+
 	private boolean needsTransformation() {
 		return fModifier != null;
 	}
-	
+
 	private void applyTransformation(IDocument document, int style) throws MalformedTreeException {
 		if ((style & TextEdit.UPDATE_REGIONS) != 0 && fSourceRoot != null) {
 			Map editMap= new HashMap();
@@ -305,14 +305,14 @@ public final class MoveSourceEdit extends TextEdit {
 			}
 		}
 	}
-	
+
 	private TextEdit createEdit(Map editMap) {
 		MultiTextEdit result= new MultiTextEdit(0, fSourceRoot.getLength());
 		editMap.put(result, fSourceRoot);
 		createEdit(fSourceRoot, result, editMap);
 		return result;
 	}
-	
+
 	private static void createEdit(TextEdit source, TextEdit target, Map editMap) {
 		TextEdit[] children= source.getChildren();
 		for (int i= 0; i < children.length; i++) {
@@ -327,7 +327,7 @@ public final class MoveSourceEdit extends TextEdit {
 			createEdit(child, marker, editMap);
 		}
 	}
-	
+
 	private void insertEdits(TextEdit root, List edits) {
 		while(edits.size() > 0) {
 			ReplaceEdit edit= (ReplaceEdit)edits.remove(0);
@@ -360,7 +360,7 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 		parent.addChild(edit);
 	}
-		
+
 	public static IRegion intersect(TextEdit op1, TextEdit op2) {
 		int offset1= op1.getOffset();
 		int length1= op1.getLength();
@@ -375,38 +375,38 @@ public final class MoveSourceEdit extends TextEdit {
 		if (offset1 < offset2) {
 			int end= Math.max(end1, end2);
 			return new Region(offset2, end - offset2 + 1);
-		} 
+		}
 		int end= Math.max(end1, end2);
-		return new Region(offset1, end - offset1 + 1); 		
+		return new Region(offset1, end - offset1 + 1);
 	}
-		
+
 	private static ReplaceEdit[] splitEdit(ReplaceEdit edit, IRegion intersect) {
 		if (edit.getOffset() != intersect.getOffset())
 			return splitIntersectRight(edit, intersect);
 		return splitIntersectLeft(edit, intersect);
 	}
-		
+
 	private static ReplaceEdit[] splitIntersectRight(ReplaceEdit edit, IRegion intersect) {
 		ReplaceEdit[] result= new ReplaceEdit[2];
 		// this is the actual delete. We use replace to only deal with one type
 		result[0]= new ReplaceEdit(intersect.getOffset(), intersect.getLength(), ""); //$NON-NLS-1$
 		result[1]= new ReplaceEdit(
-							edit.getOffset(), 
-							intersect.getOffset() - edit.getOffset(), 
+							edit.getOffset(),
+							intersect.getOffset() - edit.getOffset(),
 							edit.getText());
 		return result;
 	}
-		
+
 	private static ReplaceEdit[] splitIntersectLeft(ReplaceEdit edit, IRegion intersect) {
 		ReplaceEdit[] result= new ReplaceEdit[2];
 		result[0]= new ReplaceEdit(intersect.getOffset(), intersect.getLength(), edit.getText());
 		result[1]= new ReplaceEdit(	// this is the actual delete. We use replace to only deal with one type
-							intersect.getOffset() + intersect.getLength(), 
+							intersect.getOffset() + intersect.getLength(),
 							edit.getLength() - intersect.getLength(),
 							""); //$NON-NLS-1$
 		return result;
 	}
-		
+
 	private static void restorePositions(Map editMap) {
 		for (Iterator iter= editMap.keySet().iterator(); iter.hasNext();) {
 			TextEdit marker= (TextEdit)iter.next();
@@ -418,5 +418,5 @@ public final class MoveSourceEdit extends TextEdit {
 				edit.adjustLength(marker.getLength() - edit.getLength());
 			}
 		}
-	}		
+	}
 }

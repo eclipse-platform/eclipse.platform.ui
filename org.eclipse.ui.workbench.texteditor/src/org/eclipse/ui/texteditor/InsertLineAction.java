@@ -26,7 +26,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * Instead of breaking the line where we are, we do the following:
  * <p><b>Smart Enter</b>
  * <ul>
- * <li> if the caret is on a line containing any non-whitespace, a line is inserted below the 
+ * <li> if the caret is on a line containing any non-whitespace, a line is inserted below the
  * current one and the caret moved to it,</li>
  * <li> if the caret is on a whitespace-only line, a line is inserted below the current line,
  * but the caret stays in its position.</li>
@@ -34,7 +34,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * </p>
  * <p><b>Smart Enter Inverse</b>
  * <ul>
- * <li> if the caret is on a line containing any non-whitespace, we insert a line above the 
+ * <li> if the caret is on a line containing any non-whitespace, we insert a line above the
  * current one and move the caret to it (i.e. it stays at the same offset in the widget),</li>
  * <li> if the caret is on a whitespace-only line, a line is inserted above the current line,
  * but the caret stays in its logical position (i.e., it gets shifted one line down in the
@@ -45,9 +45,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class InsertLineAction extends TextEditorAction {
 
-	/** 
+	/**
 	 * <code>true</code> if this action inserts a line above the current (Smart Enter Inverse),
-	 * <code>false</code> otherwise 
+	 * <code>false</code> otherwise
 	 */
 	protected boolean fAbove;
 
@@ -62,7 +62,7 @@ public class InsertLineAction extends TextEditorAction {
 		super(bundle, prefix, textEditor);
 		fAbove= above;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
 	 */
@@ -84,29 +84,29 @@ public class InsertLineAction extends TextEditorAction {
 		 * the text widget, any auto-indent strategies can pick up on the
 		 * delimiter and perform any content-dependent modifications.
 		 */
-		
+
 		ITextEditor ed= getTextEditor();
 		if (!(ed instanceof AbstractTextEditor))
 			return;
-		
+
 		if (!validateEditorInputState())
 			return;
-		
+
 		AbstractTextEditor editor= (AbstractTextEditor) ed;
 		ISourceViewer sv= editor.getSourceViewer();
 		if (sv == null)
 			return;
-		
+
 		IDocument document= sv.getDocument();
 		if (document == null)
 			return;
-		
+
 		StyledText st= sv.getTextWidget();
 		if (st == null || st.isDisposed())
 			return;
 
 		try {
-			// get current line 
+			// get current line
 			int widgetOffset= st.getCaretOffset();
 			int offset= AbstractTextEditor.widgetOffset2ModelOffset(sv, widgetOffset);
 			int currentLineNumber= document.getLineOfOffset(offset);
@@ -121,11 +121,11 @@ public class InsertLineAction extends TextEditorAction {
 			} else {
 				insertionOffset= currentLine.getOffset() + currentLine.getLength();
 			}
-			
+
 			boolean updateCaret= true;
 			int widgetInsertionOffset= AbstractTextEditor.modelOffset2WidgetOffset(sv, insertionOffset);
 			if (widgetInsertionOffset == -1 && fAbove) {
-				// assume that the previous line was not accessible 
+				// assume that the previous line was not accessible
 				// (e.g. folded, or we are on line 0)
 				// -> we insert the newline at the beginning of the current line, after any leading WS
 				insertionOffset= currentLine.getOffset() + getIndentationLength(document, currentLine);
@@ -134,7 +134,7 @@ public class InsertLineAction extends TextEditorAction {
 			}
 			if (widgetInsertionOffset == -1)
 				return;
-			
+
 			// mark caret
 			Position caret= new Position(insertionOffset, 0);
 			document.addPosition(caret);
@@ -160,7 +160,7 @@ public class InsertLineAction extends TextEditorAction {
 
 	/**
 	 * Computes the indentation length of a line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line
 	 * @return the number of whitespace characters at the beginning of

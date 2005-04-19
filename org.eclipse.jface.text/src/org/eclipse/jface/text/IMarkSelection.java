@@ -22,30 +22,30 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * This interface is not intended to be implemented by clients others than
  * {@link org.eclipse.jface.text.ITextViewer} implementers.
- * 
+ *
  * @since 2.0
  */
 public interface IMarkSelection extends ISelection {
 
 	/**
 	 * Returns the marked document.
-	 * 
+	 *
 	 * @return the marked document
 	 */
 	IDocument getDocument();
-	
+
 	/**
 	 * Returns the mark position. The offset may be <code>-1</code> if there's no marked region.
-	 * 
+	 *
 	 * @return the mark position or <code>-1</code> if there is no marked region
 	 */
 	int getOffset();
-	
+
 	/**
 	 * Returns the length of the mark selection. The length may be negative, if the caret
-	 * is before the mark position. The length has no meaning if <code>getOffset()</code> 
+	 * is before the mark position. The length has no meaning if <code>getOffset()</code>
 	 * returns <code>-1</code>.
-	 * 
+	 *
 	 * @return the length of the mark selection. Result is undefined for <code>getOffset == -1</code>
 	 */
 	int getLength();

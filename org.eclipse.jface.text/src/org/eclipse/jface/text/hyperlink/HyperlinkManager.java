@@ -37,7 +37,7 @@ import org.eclipse.jface.text.Region;
 
 /**
  * Default implementation of a hyperlink manager.
- * 
+ *
  * @since 3.1
  */
 public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveListener, FocusListener {
@@ -46,13 +46,13 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 * Detection strategy.
 	 */
 	private static final class DETECTION_STRATEGY {
-		
+
 		String fName;
-		
+
 		private DETECTION_STRATEGY(String name) {
 			fName= name;
 		}
-		
+
 		/*
 		 * @see java.lang.Object#toString()
 		 */
@@ -61,14 +61,14 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 		}
 	}
 
-	
+
 	/**
 	 * The first detected hyperlink is passed to the
 	 * hyperlink presenter and no further detector
 	 * is consulted.
 	 */
 	public static final DETECTION_STRATEGY FIRST= new DETECTION_STRATEGY("first"); //$NON-NLS-1$
-	
+
 	/**
 	 * All detected hyperlinks from all detectors are collected
 	 * and passed to the hyperlink presenter.
@@ -78,7 +78,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 * </p>
 	 */
 	public static final DETECTION_STRATEGY ALL= new DETECTION_STRATEGY("all"); //$NON-NLS-1$
-	
+
 	/**
 	 * All detected hyperlinks from all detectors are collected
 	 * and all those with the longest region are passed to the
@@ -89,7 +89,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 * </p>
 	 */
 	public static final DETECTION_STRATEGY LONGEST_REGION_ALL= new DETECTION_STRATEGY("all with same longest region"); //$NON-NLS-1$
-	
+
 	/**
 	 * All detected hyperlinks from all detectors are collected
 	 * and form all those with the longest region only the first
@@ -97,7 +97,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 */
 	public static final DETECTION_STRATEGY LONGEST_REGION_FIRST= new DETECTION_STRATEGY("first with longest region"); //$NON-NLS-1$
 
-	
+
 	/** The text viewer on which this hyperlink manager works. */
 	private ITextViewer fTextViewer;
 	/** The session is active. */
@@ -113,10 +113,10 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	/** The detection strategy. */
 	private final DETECTION_STRATEGY fDetectionStrategy;
 
-	
+
 	/**
 	 * Creates a new hyperlink manager.
-	 * 
+	 *
 	 * @param detectionStrategy the detection strategy one of {{@link #ALL}, {@link #FIRST}, {@link #LONGEST_REGION_ALL}, {@link #LONGEST_REGION_FIRST}}
 	 */
 	public HyperlinkManager(DETECTION_STRATEGY detectionStrategy) {
@@ -126,7 +126,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 
 	/**
 	 * Installs this hyperlink manager with the given arguments.
-	 * 
+	 *
 	 * @param textViewer the text viewer
 	 * @param hyperlinkPresenter the hyperlink presenter
 	 * @param hyperlinkDetectors the array of hyperlink detectors, must not be empty
@@ -137,29 +137,29 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 		Assert.isNotNull(hyperlinkPresenter);
 		fTextViewer= textViewer;
 		fHyperlinkPresenter= hyperlinkPresenter;
-		Assert.isLegal(!fHyperlinkPresenter.canShowMultipleHyperlinks() && (fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST)); 
+		Assert.isLegal(!fHyperlinkPresenter.canShowMultipleHyperlinks() && (fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST));
 		setHyperlinkDetectors(hyperlinkDetectors);
 		setHyperlinkStateMask(eventStateMask);
-		
-		StyledText text= fTextViewer.getTextWidget();			
+
+		StyledText text= fTextViewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return;
-		
+
 		text.addKeyListener(this);
 		text.addMouseListener(this);
 		text.addMouseMoveListener(this);
 		text.addFocusListener(this);
-		
+
 		fHyperlinkPresenter.install(fTextViewer);
 	}
-	
+
 	/**
 	 * Sets the hyperlink detectors for this hyperlink manager.
 	 * <p>
 	 * It is allowed to call this method after this
 	 * hyperlink manger has been installed.
 	 * </p>
-	 * 
+	 *
 	 * @param hyperlinkDetectors and array of hyperlink detectors, must not be empty
 	 */
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors) {
@@ -172,7 +172,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the SWT event state mask which in combination
 	 * with the left mouse button triggers the hyperlink mode.
@@ -180,7 +180,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	 * It is allowed to call this method after this
 	 * hyperlink manger has been installed.
 	 * </p>
-	 *  
+	 *
 	 * @param eventStateMask the SWT event state mask to activate hyperlink mode
 	 */
 	public void setHyperlinkStateMask(int eventStateMask) {
@@ -188,7 +188,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	}
 
 	/**
-	 * Uninstalls this hyperlink manager. 
+	 * Uninstalls this hyperlink manager.
 	 */
 	public void uninstall() {
 		deactivate();
@@ -201,7 +201,7 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 			text.removeFocusListener(this);
 		}
 		fHyperlinkPresenter.uninstall();
-		
+
 		fHyperlinkPresenter= null;
 		fTextViewer= null;
 		fHyperlinkDetectors= null;
@@ -216,11 +216,11 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 	}
 
 	protected IHyperlink[] findHyperlinks() {
-		int offset= getCurrentTextOffset();				
+		int offset= getCurrentTextOffset();
 		if (offset == -1)
 			return null;
-		
-		boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks(); 
+
+		boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks();
 		IRegion region= new Region(offset, 0);
 		List allHyperlinks= new ArrayList(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
@@ -228,13 +228,13 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 				IHyperlinkDetector detector= fHyperlinkDetectors[i];
 				if (detector == null)
 					continue;
-				
+
 				IHyperlink[] hyperlinks= detector.detectHyperlinks(fTextViewer, region, canShowMultipleHyperlinks);
 				if (hyperlinks == null)
 					continue;
-				
+
 				Assert.isLegal(hyperlinks.length > 0);
-				
+
 				if (fDetectionStrategy == FIRST) {
 					if (hyperlinks.length == 1)
 						return hyperlinks;
@@ -243,10 +243,10 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 				allHyperlinks.addAll(Arrays.asList(hyperlinks));
 			}
 		}
-		
+
 		if (allHyperlinks.isEmpty())
 			return null;
-		
+
 		if (fDetectionStrategy != ALL) {
 			int maxLength= computeLongestHyperlinkLength(allHyperlinks);
 			Iterator iter= new ArrayList(allHyperlinks).iterator();
@@ -256,14 +256,14 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 					allHyperlinks.remove(hyperlink);
 			}
 		}
-		
+
 		if (fDetectionStrategy == LONGEST_REGION_FIRST)
 			return new IHyperlink[] {(IHyperlink)allHyperlinks.get(0)};
-		
+
 		return (IHyperlink[])allHyperlinks.toArray(new IHyperlink[allHyperlinks.size()]);
-		
+
 	}
-	
+
 	protected int computeLongestHyperlinkLength(List hyperlinks) {
 		Assert.isLegal(hyperlinks != null && !hyperlinks.isEmpty());
 		Iterator iter= hyperlinks.iterator();
@@ -279,26 +279,26 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 
 	protected int getCurrentTextOffset() {
 
-		try {					
-			StyledText text= fTextViewer.getTextWidget();			
+		try {
+			StyledText text= fTextViewer.getTextWidget();
 			if (text == null || text.isDisposed())
 				return -1;
 
-			Display display= text.getDisplay();				
+			Display display= text.getDisplay();
 			Point absolutePosition= display.getCursorLocation();
 			Point relativePosition= text.toControl(absolutePosition);
-			
+
 			int widgetOffset= text.getOffsetAtLocation(relativePosition);
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
-			
+
 			return widgetOffset + fTextViewer.getVisibleRegion().getOffset();
 
 		} catch (IllegalArgumentException e) {
 			return -1;
-		}			
+		}
 	}
 
 	/*
@@ -308,65 +308,65 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 
 		if (fActive) {
 			deactivate();
-			return;	
+			return;
 		}
 
 		if (event.keyCode != fHyperlinkStateMask) {
 			deactivate();
 			return;
 		}
-		
+
 		fActive= true;
 
-//			removed for #25871			
+//			removed for #25871
 //
 //			ITextViewer viewer= getSourceViewer();
 //			if (viewer == null)
 //				return;
-//			
+//
 //			IRegion region= getCurrentTextRegion(viewer);
 //			if (region == null)
 //				return;
-//			
+//
 //			highlightRegion(viewer, region);
-//			activateCursor(viewer);												
+//			activateCursor(viewer);
 	}
 
 	/*
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
 	public void keyReleased(KeyEvent event) {
-		
+
 		if (!fActive)
 			return;
 
-		deactivate();				
+		deactivate();
 	}
 
 	/*
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
-		
+
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDown(MouseEvent event) {
-		
+
 		if (!fActive)
 			return;
-			
+
 		if (event.stateMask != fHyperlinkStateMask) {
 			deactivate();
-			return;	
+			return;
 		}
-		
+
 		if (event.button != 1) {
 			deactivate();
-			return;	
-		}			
+			return;
+		}
 	}
 
 	/*
@@ -378,26 +378,26 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 			fActiveHyperlinks= null;
 			return;
 		}
-			
+
 		if (e.button != 1)
 			fActiveHyperlinks= null;
-		
+
 		deactivate();
 
 		if (fActiveHyperlinks != null)
 			fActiveHyperlinks[0].open();
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseMove(MouseEvent event) {
-		
+
 		if (event.widget instanceof Control && !((Control) event.widget).isFocusControl()) {
 			deactivate();
 			return;
 		}
-		
+
 		if (!fActive) {
 			if (event.stateMask != fHyperlinkStateMask)
 				return;
@@ -410,18 +410,18 @@ public class HyperlinkManager implements KeyListener, MouseListener, MouseMoveLi
 			deactivate();
 			return;
 		}
-			
+
 		if ((event.stateMask & SWT.BUTTON1) != 0 && text.getSelectionCount() != 0) {
 			deactivate();
 			return;
 		}
-	
+
 		fActiveHyperlinks= findHyperlinks();
 		if (fActiveHyperlinks == null || fActiveHyperlinks.length == 0) {
 			fHyperlinkPresenter.hideHyperlinks();
 			return;
 		}
-		
+
 		fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
 	}
 

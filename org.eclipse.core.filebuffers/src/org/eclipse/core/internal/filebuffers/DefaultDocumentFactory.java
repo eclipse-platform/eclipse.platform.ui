@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IDocument;
  * The default document factory.
  */
 public class DefaultDocumentFactory implements IDocumentFactory {
-	
+
 	public DefaultDocumentFactory() {
 	}
 

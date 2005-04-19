@@ -21,13 +21,13 @@ import org.eclipse.jface.text.IInformationControlCreator;
 
 
 /**
- * A hover for line oriented diffs. It determines the text to show as hover for a certain line in the 
+ * A hover for line oriented diffs. It determines the text to show as hover for a certain line in the
  * document.
- * 
+ *
  * @since 3.0
  */
 public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtension {
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
 	 */
@@ -38,7 +38,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	/**
 	 * Formats the source w/ syntax coloring etc. This implementation replaces tabs with spaces.
 	 * May be overridden by subclasses.
-	 * 
+	 *
 	 * @param content the hover content
 	 * @return <code>content</code> reformatted
 	 */
@@ -59,7 +59,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * Returns a replacement for the tab character. The default implementation
 	 * returns a tabulator character, but subclasses may override to specify a
 	 * number of spaces.
-	 * 
+	 *
 	 * @return a whitespace String that will be substituted for the tabulator
 	 *         character
 	 */
@@ -68,14 +68,14 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	}
 
 	/**
-	 * Computes the content of the hover for the document contained in <code>viewer</code> on 
-	 * line <code>line</code>. 
-	 * 
+	 * Computes the content of the hover for the document contained in <code>viewer</code> on
+	 * line <code>line</code>.
+	 *
 	 * @param viewer the connected viewer
 	 * @param first the first line in <code>viewer</code>'s document to consider
 	 * @param last the last line in <code>viewer</code>'s document to consider
 	 * @param maxLines the max number of lines
-	 * @return The hover content corresponding to the parameters 
+	 * @return The hover content corresponding to the parameters
 	 * @see #getHoverInfo(ISourceViewer, int)
 	 * @see #getHoverInfo(ISourceViewer, ILineRange, int)
 	 */
@@ -98,9 +98,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 * Takes a list of <code>ILineDiffInfo</code>s and computes a hover of at most <code>maxLines</code>.
 	 * Added lines are prefixed with a <code>'+'</code>, changed lines with <code>'>'</code> and
 	 * deleted lines with <code>'-'</code>.
-	 * <p>Deleted and added lines can even each other out, so that a number of deleted lines get 
+	 * <p>Deleted and added lines can even each other out, so that a number of deleted lines get
 	 * displayed where - in the current document - the added lines are.
-	 * 
+	 *
 	 * @param diffInfos a <code>List</code> of <code>ILineDiffInfo</code>
 	 * @param maxLines the maximum number of lines. Note that adding up all annotations might give
 	 * more than that due to deleted lines.
@@ -109,7 +109,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	protected String decorateText(List diffInfos, int maxLines) {
 		/* maxLines controls the size of the hover (not more than what fits into the display are of
 		 * the viewer).
-		 * added controls how many lines are added - added lines are 
+		 * added controls how many lines are added - added lines are
 		 */
 		String text= ""; //$NON-NLS-1$
 		int added= 0;
@@ -145,7 +145,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 	/**
 	 * Trims trailing spaces
-	 * 
+	 *
 	 * @param text a <code>String</code>
 	 * @return a copy of <code>text</code> with trailing spaces removed
 	 */
@@ -167,7 +167,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 		if (model == null)
 			return null;
-		
+
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModel diffModel= ((IAnnotationModelExtension)model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 			if (diffModel != null)
@@ -180,25 +180,25 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 	/**
 	 * Computes the block of lines which form a contiguous block of changes covering <code>line</code>.
-	 * 
+	 *
 	 * @param viewer the source viewer showing
 	 * @param line the line which a hover is displayed for
 	 * @param min the first line in <code>viewer</code>'s document to consider
 	 * @param max the last line in <code>viewer</code>'s document to consider
-	 * @return the selection in the document displayed in <code>viewer</code> containing <code>line</code> 
+	 * @return the selection in the document displayed in <code>viewer</code> containing <code>line</code>
 	 * that is covered by the hover information returned by the receiver.
 	 */
 	protected Point computeLineRange(ISourceViewer viewer, int line, int min, int max) {
-		/* Algorithm: 
-		 * All lines that have changes to themselves (added, changed) are taken that form a 
+		/* Algorithm:
+		 * All lines that have changes to themselves (added, changed) are taken that form a
 		 * contiguous block of lines that includes <code>line</code>.
-		 * 
-		 * If <code>line</code> is itself unchanged, if there is a deleted line either above or 
-		 * below, or both, the lines +/- 1 from <code>line</code> are included in the search as well, 
+		 *
+		 * If <code>line</code> is itself unchanged, if there is a deleted line either above or
+		 * below, or both, the lines +/- 1 from <code>line</code> are included in the search as well,
 		 * without applying this last rule to them, though. (I.e., if <code>line</code> is unchanged,
 		 * but has a deleted line above, this one is taken in. If the line above has changes, the block
 		 * is extended from there. If the line has no changes itself, the search stops).
-		 * 
+		 *
 		 * The block never extends the visible line range of the viewer.
 		 */
 
@@ -214,7 +214,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		while (l >= min && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(--l);
 		}
-		
+
 		int first= Math.min(l + 1, line);
 
 		// forward search
@@ -225,9 +225,9 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		while (l <= max && info != null && (info.getChangeType() == ILineDiffInfo.CHANGED || info.getChangeType() == ILineDiffInfo.ADDED)) {
 			info= differ.getLineInfo(++l);
 		}
-		
+
 		int last= Math.max(l - 1, line);
-		
+
 		return new Point(first, last);
 	}
 
@@ -245,12 +245,12 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		int first= adaptFirstLine(sourceViewer, lineRange.getStartLine());
 		int last= adaptLastLine(sourceViewer, lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
 		String content= computeContent(sourceViewer, first, last, visibleLines);
-		return formatSource(content);	
+		return formatSource(content);
 	}
 
 	/**
 	 * Adapts the start line to the implementation of <code>ILineDiffInfo</code>.
-	 * 
+	 *
 	 * @param viewer the source viewer
 	 * @param startLine the line to adapt
 	 * @return <code>startLine - 1</code> if that line exists and is an
@@ -270,7 +270,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 	/**
 	 * Adapts the last line to the implementation of <code>ILineDiffInfo</code>.
-	 * 
+	 *
 	 * @param viewer the source viewer
 	 * @param lastLine the line to adapt
 	 * @return <code>lastLine - 1</code> if that line exists and is an

@@ -21,7 +21,7 @@ package org.eclipse.jface.text;
  * <p>
  * Managing objects can use the <code>setLockObject</code> method in order to
  * synchronize whole sets of objects.
- * 
+ *
  * @since 3.0
  */
 public interface ISynchronizable {
@@ -31,7 +31,7 @@ public interface ISynchronizable {
 	 * <code>null</code> subsequent calls to specified methods of this object
 	 * are synchronized on this lock object. Which methods are synchronized is
 	 * specified by the implementer.
-	 * 
+	 *
 	 * @param lockObject the lock object. May be <code>null</code>.
 	 */
     void setLockObject(Object lockObject);
@@ -40,7 +40,7 @@ public interface ISynchronizable {
 	 * Returns the lock object or <code>null</code> if there is none. Clients
 	 * should use the lock object in order to synchronize concurrent access to
 	 * the implementer.
-	 * 
+	 *
 	 * @return the lock object or <code>null</code>
 	 */
     Object getLockObject();

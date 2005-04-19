@@ -31,22 +31,22 @@ import org.eclipse.ui.PlatformUI;
  * The preference page for setting the editor options.
  * <p>
  * This class is internal and not intended to be used by clients.</p>
- * 
+ *
  * @since 3.1
  */
 public class LanguageEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
 
 
-	
+
+
 	public LanguageEditorPreferencePage() {
 		setDescription("Configure the preferences for individual languages on their respective page."); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
-	
+
 	/*
 	 * @see IWorkbenchPreferencePage#init()
-	 */	
+	 */
 	public void init(IWorkbench workbench) {
 	}
 
@@ -63,10 +63,10 @@ public class LanguageEditorPreferencePage extends PreferencePage implements IWor
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
-		
+
 		return composite;
 	}
-	
+
 	/*
 	 * @see PreferencePage#performOk()
 	 */

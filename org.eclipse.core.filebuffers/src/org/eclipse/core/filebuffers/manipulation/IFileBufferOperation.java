@@ -25,17 +25,17 @@ import org.eclipse.core.filebuffers.IFileBuffer;
  * manipulation such as creating file buffers, state validation, committing file
  * buffers, etc. Thus, the purpose of <code>IFileBufferOperation</code> is
  * constrained to buffer content manipulation.
- * 
+ *
  * @see org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner
- * @since 3.1 
+ * @since 3.1
  */
 public interface IFileBufferOperation {
-	
+
 	/**
 	 * Returns the name of this file buffer operation. The operation name is
 	 * used by the <code>FileBufferOperationRunner</code> while reporting
 	 * progress.
-	 * 
+	 *
 	 * @return the operation name or <code>null</code>
 	 */
 	String getOperationName();
@@ -43,7 +43,7 @@ public interface IFileBufferOperation {
 	/**
 	 * Runs this operation, that is manipulates the content of the given file
 	 * buffer.
-	 * 
+	 *
 	 * @param fileBuffer the file buffer
 	 * @param monitor the progress monitor
 	 * @throws CoreException in case the content manipulation failed

@@ -18,7 +18,7 @@ import org.eclipse.jface.text.IMarkRegionTarget;
 
 /**
  * An action to handle emacs-like marked regions.
- * 
+ *
  * @since 2.0
  */
 public class MarkAction extends TextEditorAction {
@@ -35,10 +35,10 @@ public class MarkAction extends TextEditorAction {
 
 	/**
 	 * Constructor for MarkAction.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @param type the mark action type, must be one of
@@ -57,11 +57,11 @@ public class MarkAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return;
-			
+
 		IMarkRegionTarget target= (IMarkRegionTarget) editor.getAdapter(IMarkRegionTarget.class);
 		if (target == null)
 			return;
-		
+
 		switch (fType) {
 		case SET_MARK:
 			target.setMarkAtCursor(true);
@@ -70,10 +70,10 @@ public class MarkAction extends TextEditorAction {
 		case CLEAR_MARK:
 			target.setMarkAtCursor(false);
 			break;
-			
+
 		case SWAP_MARK:
 			target.swapMarkAndCursor();
 			break;
-		}		
+		}
 	}
 }

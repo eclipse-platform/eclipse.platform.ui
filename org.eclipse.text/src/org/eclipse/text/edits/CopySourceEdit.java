@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IDocument;
  * A copy source edit denotes the source of a copy operation. Copy
  * source edits are only valid inside an edit tree if they have a
  * corresponding traget edit. Furthermore the corresponding
- * target edit can't be a direct or indirect child of the source 
+ * target edit can't be a direct or indirect child of the source
  * edit. Violating one of two requirements will result in a <code>
  * MalformedTreeException</code> when executing the edit tree.
  * <p>
@@ -29,19 +29,19 @@ import org.eclipse.jface.text.IDocument;
  * source modifier can provide a set of replace edits which will
  * to applied to the source before it gets inserted at the target
  * position.
- * 
+ *
  * @see org.eclipse.text.edits.CopyTargetEdit
- *  
- * @since 3.0 
+ *
+ * @since 3.0
  */
 public final class CopySourceEdit extends TextEdit {
 
 	private CopyTargetEdit fTarget;
 	private ISourceModifier fModifier;
-	
+
 	private String fSourceContent;
 	private TextEdit fSourceRoot;
-	
+
 	private static class PartialCopier extends TextEditVisitor {
 		TextEdit fResult;
 		List fParents= new ArrayList();
@@ -85,10 +85,10 @@ public final class CopySourceEdit extends TextEdit {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Constructs a new copy source edit.
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length
 	 */
@@ -98,7 +98,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	/**
 	 * Constructs a new copy source edit.
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length
 	 * @param target the edit's target
@@ -120,18 +120,18 @@ public final class CopySourceEdit extends TextEdit {
 	/**
 	 * Returns the associated traget edit or <code>null</code>
 	 * if no target edit is associated yet.
-	 * 
+	 *
 	 * @return the target edit or <code>null</code>
 	 */
 	public CopyTargetEdit getTargetEdit() {
 		return fTarget;
 	}
-	
+
 	/**
 	 * Sets the target edit.
-	 * 
+	 *
 	 * @param edit the new target edit.
-	 * 
+	 *
 	 * @exception MalformedTreeException is thrown if the target edit
 	 *  is a direct or indirect child of the source edit
 	 */
@@ -142,34 +142,34 @@ public final class CopySourceEdit extends TextEdit {
 			fTarget.setSourceEdit(this);
 		}
 	}
-	
+
 	/**
 	 * Returns the current source modifier or <code>null</code>
 	 * if no source modifier is set.
-	 * 
+	 *
 	 * @return the source modifier
 	 */
 	public ISourceModifier getSourceModifier() {
 		return fModifier;
 	}
-	
+
 	/**
 	 * Sets the optional source modifier.
-	 * 
+	 *
 	 * @param modifier the source modifier or <code>null</code>
-	 *  if no source modification is need. 
+	 *  if no source modification is need.
 	 */
 	public void setSourceModifier(ISourceModifier modifier) {
 		fModifier= modifier;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#doCopy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		return new CopySourceEdit(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see TextEdit#accept0
 	 */
@@ -190,14 +190,14 @@ public final class CopySourceEdit extends TextEdit {
 			return ""; //$NON-NLS-1$
 		return fSourceContent;
 	}
-	
+
 	/* package */ void clearContent() {
 		fSourceContent= null;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#postProcessCopy
-	 */	
+	 */
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fTarget != null) {
 			CopySourceEdit source= (CopySourceEdit)copier.getCopy(this);
@@ -206,13 +206,13 @@ public final class CopySourceEdit extends TextEdit {
 				source.setTargetEdit(target);
 		}
 	}
-	
+
 	//---- consistency check ----------------------------------------------------
-	
+
 	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
-		// performSourceComputation) we only do something if we don't have a 
+		// performSourceComputation) we only do something if we don't have a
 		// computated source already.
 		if (fSourceContent == null) {
 			if (sourceEdits.size() <= result) {
@@ -232,7 +232,7 @@ public final class CopySourceEdit extends TextEdit {
 		}
 		return result;
 	}
-	
+
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
@@ -243,16 +243,16 @@ public final class CopySourceEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_tree")); //$NON-NLS-1$
 		*/
 	}
-	
+
 	//---- source computation -------------------------------------------------------
-	
+
 	/* package */ void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 		// always perform source computation independent of processor.considerEdit
-		// The target might need the source and the source is computed in a 
+		// The target might need the source and the source is computed in a
 		// temporary buffer.
 		performSourceComputation(processor, document);
 	}
-	
+
 	/* package */ void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			MultiTextEdit root= new MultiTextEdit(getOffset(), getLength());
@@ -277,13 +277,13 @@ public final class CopySourceEdit extends TextEdit {
 			}
 		} catch (BadLocationException cannotHappen) {
 			Assert.isTrue(false);
-		}		
+		}
 	}
-	
+
 	private boolean needsTransformation() {
 		return fModifier != null;
 	}
-	
+
 	private void applyTransformation(IDocument document) throws MalformedTreeException {
 		TextEdit newEdit= new MultiTextEdit(0, document.getLength());
 		ReplaceEdit[] replaces= fModifier.getModifications(document.get());
@@ -296,20 +296,20 @@ public final class CopySourceEdit extends TextEdit {
 			Assert.isTrue(false);
 		}
 	}
-	
+
 	//---- document updating ----------------------------------------------------------------
-	
+
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
 
 	//---- region updating ----------------------------------------------------------------
-	
+
 	/* non Java-doc
 	 * @see TextEdit#deleteChildren
-	 */	
+	 */
 	/* package */ boolean deleteChildren() {
 		return false;
-	}	
+	}
 }

@@ -25,15 +25,15 @@ import org.eclipse.ui.editors.text.FileBufferOperationHandler;
 
 /**
  * A file buffer operation action that removes trailing whitespace.
- * 
+ *
  * @since 3.1
  */
 public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler {
-		
+
 	public RemoveTrailingWhitespaceHandler() {
 		super(new RemoveTrailingWhitespaceOperation());
 	}
-		
+
 	/*
 	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#isAcceptableLocation(org.eclipse.core.runtime.IPath)
 	 */
@@ -41,17 +41,17 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return manager.isTextFileLocation(location);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#collectFiles(org.eclipse.core.resources.IResource[])
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
-		
+
 		IFile[] files= super.collectFiles(resources);
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
-		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_title, TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_description); 
+
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_title, TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_description);
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {
@@ -59,5 +59,5 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 			return super.collectFiles(selectedResources);
 		}
 		return null;
-	}	
+	}
 }

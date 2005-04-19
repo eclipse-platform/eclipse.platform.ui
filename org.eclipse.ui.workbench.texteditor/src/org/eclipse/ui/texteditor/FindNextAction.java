@@ -41,7 +41,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class FindNextAction extends ResourceAction implements IUpdate {
@@ -68,25 +68,25 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private boolean fWholeWordInit;
 	/**
 	 * The regExSearch flag as initially given in the dialog settings.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private boolean fRegExSearch;
 	/**
 	 * The last selection set by find/replace.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private String fSelection;
-	
+
 	/**
-	 * Creates a new find/replace action for the given workbench part. 
-	 * The action configures its visual representation from the given 
+	 * Creates a new find/replace action for the given workbench part.
+	 * The action configures its visual representation from the given
 	 * resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param workbenchPart the workbench part
 	 * @param forward the search direction
@@ -98,20 +98,20 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		fForward= forward;
 		update();
 	}
-	
+
 	/**
-	 * Creates a new find/replace action for the given workbench window. 
-	 * The action configures its visual representation from the given 
+	 * Creates a new find/replace action for the given workbench window.
+	 * The action configures its visual representation from the given
 	 * resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param workbenchWindow the workbench window
 	 * @param forward the search direction
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
-	 * 
+	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
 	public FindNextAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
@@ -130,7 +130,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 		if ((string == null || fRegExSearch && string.equals(fSelection)) && !fFindHistory.isEmpty())
 			string= (String) fFindHistory.get(0);
-			
+
 		return string;
 	}
 
@@ -143,14 +143,14 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		IEditorPart editor= fWorkbenchPart.getSite().getPage().getActiveEditor();
 		if (editor == null)
 			return null;
-			
+
 		IEditorActionBarContributor contributor= editor.getEditorSite().getActionBarContributor();
 		if (contributor instanceof EditorActionBarContributor) {
 			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Sets the "no matches found" error message to the status line.
 	 *
@@ -160,10 +160,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		fWorkbenchPart.getSite().getShell().getDisplay().beep();
 
 		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)				
+		if (manager == null)
 			return;
 
-		manager.setMessage(EditorMessages.FindNext_Status_noMatch_label); 
+		manager.setMessage(EditorMessages.FindNext_Status_noMatch_label);
 	}
 
 	/**
@@ -171,13 +171,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 */
 	private void statusClear() {
 		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)				
+		if (manager == null)
 			return;
-			
+
 		manager.setErrorMessage(""); //$NON-NLS-1$
 		manager.setMessage(""); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 *	@see IAction#run()
 	 */
@@ -188,9 +188,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			fFindString= getFindString();
 			if (fFindString == null) {
 				statusNotFound();
-				return;	
+				return;
 			}
-			
+
 			statusClear();
 			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, fWholeWordInit && !fRegExSearch, fRegExSearch))
 				statusNotFound();
@@ -198,20 +198,20 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			writeConfiguration();
 		}
 	}
-	
+
 	/*
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		
+
 		if (fWorkbenchPart == null && fWorkbenchWindow != null)
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
-			
+
 		if (fWorkbenchPart != null)
 			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
 		else
 			fTarget= null;
-			
+
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
 
@@ -244,16 +244,16 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		}
 		return findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 	}
-	
+
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
-	 * 
+	 *
 	 * @param findString the string to search for
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive should the search honor cases
 	 * @param wrapSearch	should the search wrap to the start/end if end/start reached
 	 * @param wholeWord does the find string represent a complete word
-	 * @param regExSearch if <code>true</code> findString represents a regular expression 
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return <code>true</code> if the find string can be found using the given options
 	 * @since 3.0
 	 */
@@ -268,10 +268,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 		if (index != -1)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	private void beep() {
 		Shell shell= null;
 		if (fWorkbenchPart != null)
@@ -285,15 +285,15 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Searches for a string starting at the given offset and using the specified search
-	 * directives. If a string has been found it is selected and its start offset is 
+	 * directives. If a string has been found it is selected and its start offset is
 	 * returned.
 	 *
 	 * @param offset the offset at which searching starts
 	 * @param findString the string which should be found
 	 * @param forwardSearch the direction of the search
 	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself 
-	 * @param regExSearch if <code>true</code> findString represents a regular expression 
+	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
+	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the position of the specified string, or -1 if the string has not been found
 	 * @since 3.0
 	 */
@@ -307,13 +307,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		}
 		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
-	
+
 	//--------------- configuration handling --------------
-	
+
 	/**
-	 * Returns the dialog settings object used to share state 
+	 * Returns the dialog settings object used to share state
 	 * between several find/replace dialogs.
-	 * 
+	 *
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
@@ -323,20 +323,20 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			fDialogSettings= settings.addNewSection(FindReplaceDialog.class.getName());
 		return fDialogSettings;
 	}
-	
+
 	/**
 	 * Initializes itself from the dialog settings with the same state
 	 * as at the previous invocation.
 	 */
 	private void readConfiguration() {
 		IDialogSettings s= getDialogSettings();
-			
+
 		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
 		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
 		fRegExSearch= s.getBoolean("isRegEx"); //$NON-NLS-1$
 		fSelection= s.get("selection"); //$NON-NLS-1$
-		
+
 		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
 			fFindHistory.clear();
@@ -366,7 +366,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if (index != -1)
 			fFindHistory.remove(index);
 		fFindHistory.add(0, fFindString);
-		
+
 		while (fFindHistory.size() > 8)
 			fFindHistory.remove(8);
 		String[] names= new String[fFindHistory.size()];
@@ -376,14 +376,14 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Returns the actual selection of the find replace target.
-	 * 
+	 *
 	 * @return the actual selection of the find replace target
 	 */
 	private String getSelectionString() {
-		
+
 		/*
 		 * 1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
-		 * Now uses TextUtilities rather than focusing on '\n'  
+		 * Now uses TextUtilities rather than focusing on '\n'
 		 */
 		String selection= fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {
@@ -394,5 +394,5 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 				return selection;
 		}
 		return null;
-	}	
+	}
 }

@@ -13,27 +13,27 @@ package org.eclipse.jface.text;
 
 /**
  * Description of the state of document rewrite sessions.
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4
  * @see org.eclipse.jface.text.IDocumentRewriteSessionListener
  * @since 3.1
  */
 public class DocumentRewriteSessionEvent {
-	
+
 	public final static Object SESSION_START= new Object();
 	public final static Object SESSION_STOP= new Object();
-	
+
 	/** The changed document */
 	public IDocument fDocument;
 	/** The session */
 	public DocumentRewriteSession fSession;
 	/** The change type */
 	public Object fChangeType;
-	
+
 	/**
 	 * Creates a new document event.
-	 * 
+	 *
 	 * @param doc the changed document
 	 * @param session the session
 	 * @param changeType the change type. This is either
@@ -43,12 +43,12 @@ public class DocumentRewriteSessionEvent {
 	public DocumentRewriteSessionEvent(IDocument doc, DocumentRewriteSession session, Object changeType) {
 		Assert.isNotNull(doc);
 		Assert.isNotNull(session);
-		
+
 		fDocument= doc;
 		fSession= session;
 		fChangeType= changeType;
 	}
-	
+
 	/**
 	 * Returns the changed document.
 	 *
@@ -62,16 +62,16 @@ public class DocumentRewriteSessionEvent {
 	 * Returns the change type of this event. This is either
 	 * {@link DocumentRewriteSessionEvent#SESSION_START}or
 	 * {@link DocumentRewriteSessionEvent#SESSION_STOP}.
-	 * 
+	 *
 	 * @return the change type of this event
 	 */
 	public Object getChangeType() {
 		return fChangeType;
 	}
-	
+
 	/**
 	 * Returns the rewrite session.
-	 * 
+	 *
 	 * @return the rewrite session
 	 */
 	public DocumentRewriteSession getSession() {

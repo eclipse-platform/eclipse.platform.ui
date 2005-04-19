@@ -24,7 +24,7 @@ package org.eclipse.ui.texteditor.spelling;
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see SpellingService
  * @since 3.1
  */

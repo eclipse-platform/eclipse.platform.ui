@@ -50,27 +50,27 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  * Shared document provider specialized for {@link org.eclipse.core.resources.IStorage}s.
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
-	
+
 	/**
 	 * Default file size.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected static final int DEFAULT_FILE_SIZE= 15 * 1024;
-	
+
 	/**
 	 * Constant denoting an empty set of properties
 	 * @since 3.1
 	 */
 	private static final QualifiedName[] NO_PROPERTIES= new QualifiedName[0];
-	
-	
+
+
 	/**
-	 * Bundle of all required information to allow {@link org.eclipse.core.resources.IStorage} as underlying document resources. 
+	 * Bundle of all required information to allow {@link org.eclipse.core.resources.IStorage} as underlying document resources.
 	 * @since 2.0
 	 */
 	protected class StorageInfo extends ElementInfo {
-		
+
 		/** The flag representing the cached state whether the storage is modifiable. */
 		public boolean fIsModifiable= false;
 		/** The flag representing the cached state whether the storage is read-only. */
@@ -79,10 +79,10 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		public boolean fUpdateCache= true;
 		/** The encoding used to create the document from the storage or <code>null</code> for workbench encoding. */
 		public String fEncoding;
-		
+
 		/**
 		 * Creates a new storage info.
-		 * 
+		 *
 		 * @param document the document
 		 * @param model the annotation model
 		 */
@@ -91,29 +91,29 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			fEncoding= null;
 		}
 	}
-	
+
 	/**
 	 * Creates a new document provider.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public StorageDocumentProvider() {
 		super();
 	}
-	
+
 	/**
 	 * Initializes the given document with the given stream.
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
 	 * @throws CoreException if the given stream can not be read
-	 * 
+	 *
 	 * @deprecated use encoding based version instead
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream) throws CoreException {
 		setDocumentContent(document, contentStream, null);
 	}
-	
+
 	/**
 	 * Initializes the given document with the given stream using the given encoding.
 	 *
@@ -124,14 +124,14 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 2.0
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
-		
+
 		Reader in= null;
-		
+
 		try {
-			
+
 			if (encoding == null)
 				encoding= getDefaultEncoding();
-				
+
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
 			StringBuffer buffer= new StringBuffer(DEFAULT_FILE_SIZE);
 			char[] readBuffer= new char[2048];
@@ -140,9 +140,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				buffer.append(readBuffer, 0, n);
 				n= in.read(readBuffer);
 			}
-			
+
 			document.set(buffer.toString());
-		
+
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
@@ -155,9 +155,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					contentStream.close();
 			} catch (IOException x) {
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * Initializes the given document from the given editor input using the default character encoding.
 	 *
@@ -171,7 +171,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		return setDocumentContent(document, editorInput, null);
 	}
-	
+
 	/**
 	 * Initializes the given document from the given editor input using the given character encoding.
 	 *
@@ -198,14 +198,14 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		return null;
 	}
-	
+
 	/**
 	 * Factory method for creating empty documents.
 	 * @return the newly created document
@@ -214,12 +214,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected IDocument createEmptyDocument() {
 		return new Document();
 	}
-		
+
 	/*
 	 * @see AbstractDocumentProvider#createDocument(Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
-		
+
 		if (element instanceof IEditorInput) {
 			IDocument document= createEmptyDocument();
 			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element))) {
@@ -227,55 +227,55 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				return document;
 			}
 		}
-	
+
 		return null;
 	}
-	
+
 	/**
 	 * Sets up the given document as it would be provided for the given element. The
 	 * content of the document is not changed. This default implementation is empty.
 	 * Subclasses may reimplement.
-	 * 
+	 *
 	 * @param element the blue-print element
 	 * @param document the document to set up
 	 * @since 3.0
 	 */
 	protected void setupDocument(Object element, IDocument document) {
 	}
-	
+
 	/*
 	 * @see AbstractDocumentProvider#createElementInfo(Object)
 	 * @since 2.0
 	 */
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
-			
+
 			IDocument document= null;
 			IStatus status= null;
-			
+
 			try {
 				document= createDocument(element);
 			} catch (CoreException x) {
 				status= x.getStatus();
 				document= createEmptyDocument();
 			}
-			
+
 			ElementInfo info= new StorageInfo(document, createAnnotationModel(element));
 			info.fStatus= status;
 			((StorageInfo)info).fEncoding= getPersistedEncoding(element);
-			
+
 			return info;
 		}
-		
+
 		return super.createElementInfo(element);
 	}
-	
+
 	/*
 	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 	}
-	
+
 	/**
 	 * Defines the standard procedure to handle <code>CoreExceptions</code>. Exceptions
 	 * are written to the plug-in log.
@@ -286,18 +286,18 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
 
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-		ILog log= Platform.getLog(bundle);		
-		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		ILog log= Platform.getLog(bundle);
+
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
 		else
 			log.log(exception.getStatus());
 	}
-	
+
 	/**
 	 * Updates the internal cache for the given input.
-	 * 
+	 *
 	 * @param input the input whose cache will be updated
 	 * @throws CoreException if the storage cannot be retrieved from the input
 	 * @since 2.0
@@ -313,12 +313,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					info.fIsModifiable= !readOnly;
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.StorageDocumentProvider_updateCache); 
+				handleCoreException(x, TextEditorMessages.StorageDocumentProvider_updateCache);
 			}
 			info.fUpdateCache= false;
 		}
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#isReadOnly(Object)
 	 * @since 2.0
@@ -331,7 +331,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isReadOnly); 
+						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isReadOnly);
 					}
 				}
 				return info.fIsReadOnly;
@@ -339,7 +339,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		return super.isReadOnly(element);
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 * @since 2.0
@@ -352,7 +352,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					try {
 						updateCache((IStorageEditorInput) element);
 					} catch (CoreException x) {
-						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isModifiable); 
+						handleCoreException(x, TextEditorMessages.StorageDocumentProvider_isModifiable);
 					}
 				}
 				return info.fIsModifiable;
@@ -360,7 +360,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		return super.isModifiable(element);
 	}
-	
+
 	/*
 	 * @see AbstractDocumentProvider#doUpdateStateCache(Object)
 	 * @since 2.0
@@ -373,7 +373,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		super.doUpdateStateCache(element);
 	}
-	
+
 	/*
 	 * @see IStorageDocumentProvider#getDefaultEncoding()
 	 * @since 2.0
@@ -381,7 +381,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	public String getDefaultEncoding() {
 		return ResourcesPlugin.getEncoding();
 	}
-	
+
 	/*
 	 * @see IStorageDocumentProvider#getEncoding(Object)
 	 * @since 2.0
@@ -395,7 +395,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		return null;
 	}
-	
+
 	/*
 	 * @see IStorageDocumentProvider#setEncoding(Object, String)
 	 * @since 2.0
@@ -413,7 +413,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
 	 * @since 3.1
@@ -440,9 +440,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 					name= storage.getName();
 				String message;
 				if (name != null)
-					message= NLSUtility.format(TextEditorMessages.StorageDocumentProvider_getContentDescriptionFor, name); 
+					message= NLSUtility.format(TextEditorMessages.StorageDocumentProvider_getContentDescriptionFor, name);
 				else
-					message= TextEditorMessages.StorageDocumentProvider_getContentDescription; 
+					message= TextEditorMessages.StorageDocumentProvider_getContentDescription;
 				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
 			} finally {
 				try {
@@ -454,10 +454,10 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		return super.getContentType(element);
 	}
-	
+
 	/**
 	 * Returns the persisted encoding for the given element.
-	 * 
+	 *
 	 * @param element the element for which to get the persisted encoding
 	 * @return the persisted encoding
 	 * @since 2.1
@@ -478,7 +478,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 
 	/**
 	 * Persists the given encoding for the given element.
-	 * 
+	 *
 	 * @param element the element for which to store the persisted encoding
 	 * @param encoding the encoding
 	 * @throws CoreException if the operation fails

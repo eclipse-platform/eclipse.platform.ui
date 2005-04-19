@@ -17,7 +17,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 /**
  * Adapter for the select marker action.
- * 
+ *
  * @since 2.0
  */
 public class SelectRulerAction extends AbstractRulerActionDelegate {

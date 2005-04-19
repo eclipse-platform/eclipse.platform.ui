@@ -21,21 +21,21 @@ package org.eclipse.jface.text;
  * During this callback the listener is allowed to modify the presentation. Text
  * presentation listeners are thus a mean to participate in the process of text
  * presentation creation.
- * 
+ *
  * @since 3.0
  */
 public interface ITextViewerExtension4 {
-	
+
 	/**
 	 * Instructs the receiver to request the {@link IWidgetTokenKeeper}
 	 * currently holding the widget token to take the keyboard focus.
-	 * 
+	 *
 	 * @return <code>true</code> if there was any
 	 *         <code>IWidgetTokenKeeper</code> that was asked to take the
 	 *         focus, <code>false</code> otherwise
 	 */
 	boolean moveFocusToWidgetToken();
-	
+
 	/**
 	 * Adds the given text presentation listener to this text viewer.
 	 * This call has no effect if the listener is already registered
@@ -44,12 +44,12 @@ public interface ITextViewerExtension4 {
 	 * @param listener the text presentation listener
 	 */
 	void addTextPresentationListener(ITextPresentationListener listener);
-	
+
 	/**
 	 * Removes the given text presentation listener from this text viewer.
 	 * This call has no effect if the listener is not registered with this
 	 * text viewer.
-	 *  
+	 *
 	 * @param listener the text presentation listener
 	 */
 	void removeTextPresentationListener(ITextPresentationListener listener);

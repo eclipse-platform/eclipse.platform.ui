@@ -20,34 +20,34 @@ import org.eclipse.jface.text.IDocument;
  * @since 2.0
  */
 public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implements IPartitionTokenScanner {
-	
+
 	/** The content type of the partition in which to resume scanning. */
 	protected String fContentType;
 	/** The offset of the partition inside which to resume. */
 	protected int fPartitionOffset;
-	
-	
+
+
 	/*
 	 * @see RuleBasedScanner#setRules(IRule[])
 	 */
 	public void setRules(IRule[] rules) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/*
 	 * @see RuleBasedScanner#setRules(IRule[])
 	 */
 	public void setPredicateRules(IPredicateRule[] rules) {
 		super.setRules(rules);
 	}
-	
+
 	/*
 	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
 	public void setRange(IDocument document, int offset, int length) {
 		setPartialRange(document, offset, length, null, -1);
 	}
-	
+
 	/*
 	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
 	 */
@@ -64,27 +64,27 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		}
 		super.setRange(document, offset, length);
 	}
-	
+
 	/*
 	 * @see ITokenScanner#nextToken()
 	 */
 	public IToken nextToken() {
-	
-		
+
+
 		if (fContentType == null || fRules == null) {
 			//don't try to resume
 			return super.nextToken();
 		}
-		
+
 		// inside a partition
-		
+
 		fColumn= UNDEFINED;
 		boolean resume= (fPartitionOffset > -1 && fPartitionOffset < fOffset);
 		fTokenOffset= resume ? fPartitionOffset : fOffset;
-				
+
 		IPredicateRule rule;
 		IToken token;
-		
+
 		for (int i= 0; i < fRules.length; i++) {
 			rule= (IPredicateRule) fRules[i];
 			token= rule.getSuccessToken();
@@ -96,7 +96,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 				}
 			}
 		}
-		
+
 		// haven't found any rule for this type of partition
 		fContentType= null;
 		if (resume)

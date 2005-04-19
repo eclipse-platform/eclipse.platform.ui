@@ -29,10 +29,10 @@ public final class DocLineComparator implements IRangeComparator {
 
 		/** Document */
 		private IDocument fDocument;
-		
+
 		/** Offset */
 		private int fOffset;
-		
+
 		/** Length */
 		private int fLength;
 
@@ -43,11 +43,11 @@ public final class DocLineComparator implements IRangeComparator {
 		public DocumentCharSequence() {
 			// do nothing
 		}
-		
+
 		/**
 		 * Initialize with the sequence of characters in the given document
 		 * starting at the given offset with the given length.
-		 * 
+		 *
 		 * @param document The document
 		 * @param offset The offset
 		 * @param length The length
@@ -57,7 +57,7 @@ public final class DocLineComparator implements IRangeComparator {
 			fOffset= offset;
 			fLength= length;
 		}
-		
+
 		/*
 		 * @see java.lang.CharSequence#length()
 		 */
@@ -83,7 +83,7 @@ public final class DocLineComparator implements IRangeComparator {
 			return new DocumentCharSequence(fDocument, start, end - start);
 		}
 
-		
+
 		/*
 		 * @see java.lang.Object#hashCode()
 		 */
@@ -93,8 +93,8 @@ public final class DocLineComparator implements IRangeComparator {
 				hash= 29*hash + charAt(i);
 			return hash;
 		}
-		
-		
+
+
 		/*
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
@@ -112,52 +112,52 @@ public final class DocLineComparator implements IRangeComparator {
 					return false;
 			return true;
 		}
-		
+
 		/**
 		 * Sets the document to the given.
-		 * 
+		 *
 		 * @param document the document to be set
 		 */
 		public void setDocument(IDocument document) {
 			fDocument= document;
 		}
-		
+
 		/**
 		 * Sets the offset to the given value.
-		 * 
+		 *
 		 * @param offset the offset to be set
 		 */
 		public void setOffset(int offset) {
 			fOffset= offset;
 		}
-		
+
 		/**
 		 * Sets the length to the given value.
-		 * 
+		 *
 		 * @param length the length to be set
 		 */
 		public void setLength(int length) {
 			fLength= length;
 		}
 	}
-	
+
 	private final IDocument fDocument;
 	private final int fLineOffset;
 	private final int fLineCount;
 	private final int fLength;
 	private final boolean fIgnoreWhiteSpace;
 	private final int fMaxOffset;
-	
-	
+
+
 	private boolean fSkip= false;
 	private int fLastOffset;
 	private int fLastLength;
-	
+
 	/** Cached document character sequence */
 	private DocumentCharSequence fThisBuffer= new DocumentCharSequence();
 	/** Cached document character sequence */
 	private DocumentCharSequence fOtherBuffer= new DocumentCharSequence();
-	
+
 	/**
 	 * Creates a <code>DocLineComparator</code> for the given document range.
 	 * ignoreWhiteSpace controls whether comparing lines (in method
@@ -181,7 +181,7 @@ public final class DocLineComparator implements IRangeComparator {
 			} catch (BadLocationException ex) {
 			}
 			fLineOffset= lineOffset;
-			
+
 			fMaxOffset= start + fLength;
 
 			if (fLength == 0)
@@ -211,10 +211,10 @@ public final class DocLineComparator implements IRangeComparator {
 	public int getRangeCount() {
 		return fLineCount;
 	}
-	
+
 	/**
 	 * Computes the length of line <code>line</code>.
-	 * 
+	 *
 	 * @param line the line requested
 	 * @return the line length or <code>0</code> if <code>line</code> is not a valid line in the document
 	 */
@@ -260,7 +260,7 @@ public final class DocLineComparator implements IRangeComparator {
 				dlc.extract(otherIndex, fOtherBuffer);
 				return compare(fThisBuffer, fOtherBuffer);
 			}
-				
+
 			int tlen= getLineLength(thisIndex);
 			int olen= dlc.getLineLength(otherIndex);
 			if (tlen == olen) {
@@ -268,14 +268,14 @@ public final class DocLineComparator implements IRangeComparator {
 				dlc.extract(otherIndex, fOtherBuffer);
 				return fThisBuffer.equals(fOtherBuffer);
 			}
-			
+
 		}
 		return false;
 	}
 
 	/**
 	 * Aborts the comparison if the number of tokens is too large.
-	 * 
+	 *
 	 * @param length the current edit distance
 	 * @param max the maximal edit distance
 	 * @param other the comparator with which to compare
@@ -284,9 +284,9 @@ public final class DocLineComparator implements IRangeComparator {
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
 		return fSkip;
 	}
-		
+
 	//---- private methods
-	
+
 	/**
 	 * Extract a single line from the underlying document without the line separator
 	 * into the given document based character sequence.
@@ -300,7 +300,7 @@ public final class DocLineComparator implements IRangeComparator {
 				int docLine= fLineOffset + line;
 				if (fLastOffset == -1)
 					fLastOffset= fDocument.getLineOffset(docLine);
-				
+
 				buffer.setDocument(fDocument);
 				buffer.setOffset(fLastOffset);
 				buffer.setLength(fLastLength);
@@ -313,15 +313,15 @@ public final class DocLineComparator implements IRangeComparator {
 		buffer.setOffset(0);
 		buffer.setLength(0);
 	}
-	
+
 	private boolean compare(CharSequence s1, CharSequence s2) {
 		int l1= s1.length();
 		int l2= s2.length();
 		int c1= 0, c2= 0;
 		int i1= 0, i2= 0;
-		
+
 		while (c1 != -1) {
-			
+
 			c1= -1;
 			while (i1 < l1) {
 				char c= s1.charAt(i1++);
@@ -330,7 +330,7 @@ public final class DocLineComparator implements IRangeComparator {
 					break;
 				}
 			}
-			
+
 			c2= -1;
 			while (i2 < l2) {
 				char c= s2.charAt(i2++);
@@ -339,7 +339,7 @@ public final class DocLineComparator implements IRangeComparator {
 					break;
 				}
 			}
-				
+
 			if (c1 != c2)
 				return false;
 		}

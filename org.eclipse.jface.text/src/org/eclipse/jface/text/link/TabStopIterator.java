@@ -40,7 +40,7 @@ class TabStopIterator {
 
 		/**
 		 * {@inheritDoc}
-		 * 
+		 *
 		 * <p><code>o1</code> and <code>o2</code> are required to be instances
 		 * of <code>LinkedPosition</code>.</p>
 		 */
@@ -52,12 +52,12 @@ class TabStopIterator {
 				return i;
 			return p1.getOffset() - p2.getOffset();
 		}
-		
+
 	}
-	
+
 	/** The comparator to sort the list of positions. */
 	private static final Comparator fComparator= new SequenceComparator();
-	
+
 	/** The iteration sequence. */
 	private final ArrayList fList;
 	/** The size of <code>fList</code>. */
@@ -77,9 +77,9 @@ class TabStopIterator {
 	}
 
 	boolean hasNext(LinkedPosition current) {
-		return getNextIndex(current) != fSize;				
+		return getNextIndex(current) != fSize;
 	}
-	
+
 	private int getNextIndex(LinkedPosition current) {
 		if (current != null && fList.get(fIndex) != current)
 			return findNext(current);
@@ -89,12 +89,12 @@ class TabStopIterator {
 			// default: increase
 			return fIndex + 1;
 	}
-	
+
 	/**
 	 * Finds the closest position in the iteration set that follows after
 	 * <code>current</code> and sets <code>fIndex</code> accordingly. If <code>current</code>
 	 * is in the iteration set, the next in turn is chosen.
-	 * 
+	 *
 	 * @param current the current position
 	 * @return <code>true</code> if there is a next position, <code>false</code> otherwise
 	 */
@@ -107,9 +107,9 @@ class TabStopIterator {
 				return 0;
 			return index + 1;
 		}
-		
+
 		// index == -1
-		
+
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
 		for (Iterator it= fList.iterator(); it.hasNext(); ) {
@@ -118,7 +118,7 @@ class TabStopIterator {
 				if (found == null || found.offset > p.offset)
 					found= p;
 		}
-		
+
 		if (found != null) {
 			return fList.indexOf(found);
 		} else if (fIsCycling) {
@@ -128,9 +128,9 @@ class TabStopIterator {
 	}
 
 	boolean hasPrevious(LinkedPosition current) {
-		return getPreviousIndex(current) != -1;				
+		return getPreviousIndex(current) != -1;
 	}
-	
+
 	private int getPreviousIndex(LinkedPosition current) {
 		if (current != null && fList.get(fIndex) != current)
 			return findPrevious(current);
@@ -144,7 +144,7 @@ class TabStopIterator {
 	 * Finds the closest position in the iteration set that precedes
 	 * <code>current</code>. If <code>current</code>
 	 * is in the iteration set, the previous in turn is chosen.
-	 * 
+	 *
 	 * @param current the current position
 	 * @return the index of the previous position
 	 */
@@ -157,9 +157,9 @@ class TabStopIterator {
 				return fSize - 1;
 			return index - 1;
 		}
-		
+
 		// index == -1
-		
+
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
 		for (Iterator it= fList.iterator(); it.hasNext(); ) {
@@ -196,7 +196,7 @@ class TabStopIterator {
 		fList.add(fSize++, position);
 		Collections.sort(fList, fComparator);
 	}
-	
+
 	void removePosition(Position position) {
 		if (fList.remove(position))
 			fSize--;
@@ -208,7 +208,7 @@ class TabStopIterator {
 	boolean isCycling() {
 		return fIsCycling;
 	}
-	
+
 	LinkedPosition[] getPositions() {
 		return (LinkedPosition[]) fList.toArray(new LinkedPosition[fSize]);
 	}

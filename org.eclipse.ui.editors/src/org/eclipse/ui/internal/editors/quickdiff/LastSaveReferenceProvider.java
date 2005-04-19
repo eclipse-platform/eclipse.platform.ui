@@ -45,7 +45,7 @@ import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 /**
  * Default provider for the quickdiff display - the saved document is taken as
  * the reference.
- * 
+ *
  * @since 3.0
  */
 public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, IElementStateListener {
@@ -98,9 +98,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		 * Calls
 		 * {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)}
 		 * and returns {@link Status#OK_STATUS}.
-		 * 
+		 *
 		 * {@inheritDoc}
-		 * 
+		 *
 		 * @param monitor {@inheritDoc}
 		 * @return {@link Status#OK_STATUS}
 		 */
@@ -127,9 +127,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		if (monitor != null) {
 			monitor.setCanceled(true);
 		}
-		
+
 		IDocumentProvider provider= fDocumentProvider;
-		
+
 		synchronized (fLock) {
 			if (provider != null)
 				provider.removeElementStateListener(this);
@@ -159,8 +159,8 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			provider= targetEditor.getDocumentProvider();
 			input= targetEditor.getEditorInput();
 		}
-		
-		
+
+
 		// dispose if the editor input or document provider have changed
 		// note that they may serve multiple editors
 		if (provider != fDocumentProvider || input != fEditorInput) {
@@ -189,7 +189,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 
 	/**
 	 * Reads in the saved document into <code>fReference</code>.
-	 * 
+	 *
 	 * @param monitor a progress monitor, or <code>null</code>
 	 * @param force <code>true</code> if the reference document should also
 	 *        be read if the current document is <code>null</code>,<code>false</code>
@@ -202,12 +202,12 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		IEditorInput inp= fEditorInput;
 		IDocument doc= fReference;
 		ITextEditor editor= fEditor;
-		
+
 		if (prov instanceof IStorageDocumentProvider && inp instanceof IStorageEditorInput) {
-			
+
 			IStorageEditorInput input= (IStorageEditorInput) inp;
 			IStorageDocumentProvider provider= (IStorageDocumentProvider) prov;
-			
+
 			if (doc == null)
 				if (force || fDocumentRead)
 					doc= new Document();
@@ -215,7 +215,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					return;
 
 			IJobManager jobMgr= Platform.getJobManager();
-			
+
 			try {
 				IStorage storage= input.getStorage();
 				// check for null for backward compatibility (we used to check before...)
@@ -235,28 +235,28 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				// delay for any other job requiring the lock on file
 				try {
 					lockDocument(monitor, jobMgr, rule);
-					
+
 					String encoding;
 					if (storage instanceof IEncodedStorage)
 						encoding= ((IEncodedStorage) storage).getCharset();
 					else
 						encoding= null;
-					
+
 					boolean skipUTF8BOM= isUTF8BOM(encoding, storage);
-					
+
 					setDocumentContent(doc, storage, encoding, monitor, skipUTF8BOM);
 				} finally {
 					unlockDocument(jobMgr, rule);
 					fProgressMonitor= null;
 				}
-				
+
 			} catch (CoreException e) {
 				return;
 			}
-			
+
 			if (monitor != null && monitor.isCanceled())
 				return;
-			
+
 			// update state
 			synchronized (fLock) {
 				if (fDocumentProvider == provider && fEditorInput == input) {
@@ -306,20 +306,20 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	/**
-	 * Adds this as element state listener in the UI thread as it can otherwise 
+	 * Adds this as element state listener in the UI thread as it can otherwise
 	 * conflict with other listener additions, since DocumentProvider is not
 	 * thread-safe.
-	 * 
+	 *
 	 * @param editor the editor to get the display from
 	 * @param provider the document provider to register as element state listener
 	 */
 	private void addElementStateListener(ITextEditor editor, final IDocumentProvider provider) {
 		// addElementStateListener adds at most once - no problem to call
 		provider.addElementStateListener(this);
-		
+
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=66686 and
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56871
-		
+
 //		// repeatedly
 //		Runnable runnable= new Runnable() {
 //			public void run() {
@@ -329,14 +329,14 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 //				}
 //			}
 //		};
-//		
+//
 //		Display display= null;
 //		if (editor != null) {
 //			IWorkbenchPartSite site= editor.getSite();
 //			if (site != null)
 //				site.getWorkbenchWindow().getShell().getDisplay();
 //		}
-//		
+//
 //		if (display != null && !display.isDisposed())
 //			display.asyncExec(runnable);
 //		else
@@ -346,7 +346,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	/**
 	 * Initializes the given document with the given stream using the given
 	 * encoding.
-	 * 
+	 *
 	 * @param document the document to be initialized
 	 * @param storage the storage which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
@@ -358,16 +358,16 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		Reader in= null;
 		InputStream contentStream= storage.getContents();
 		try {
-			
+
 			if (skipUTF8BOM) {
 				for (int i= 0; i < 3; i++)
 					if (contentStream.read() == -1) {
 						throw new IOException(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.notEnoughBytesForBOM")); //$NON-NLS-1$
 				}
 			}
-			
+
 			final int DEFAULT_FILE_SIZE= 15 * 1024;
-			
+
 			if (encoding == null)
 				in= new BufferedReader(new InputStreamReader(contentStream), DEFAULT_FILE_SIZE);
 			else
@@ -378,13 +378,13 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			while (n > 0) {
 				if (monitor != null && monitor.isCanceled())
 					return;
-				
+
 				buffer.append(readBuffer, 0, n);
 				n= in.read(readBuffer);
 			}
-			
+
 			document.set(buffer.toString());
-			
+
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "Failed to access or read underlying storage", x)); //$NON-NLS-1$
 		} finally {
@@ -398,11 +398,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the <code>encoding</code> is UTF-8 and
 	 * the file contains a BOM. Taken from ResourceTextFileBuffer.java.
-	 * 
+	 *
 	 * <p>
 	 * XXX:
 	 * This is a workaround for a corresponding bug in Java readers and writer,
@@ -431,7 +431,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		}
 		return false;
 	}
-	
+
 	/* IElementStateListener implementation */
 
 	/*

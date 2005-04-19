@@ -51,17 +51,17 @@ import org.eclipse.ui.PlatformUI;
 
 
 /**
- * A ruler action which can add and remove markers which have a visual 
+ * A ruler action which can add and remove markers which have a visual
  * representation in the ruler.
  * <p>
  * This class may be instantiated but is not intended for sub-classing.
  * </p>
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
-	
+
 	/** The maximum length of an proposed label. */
 	private static final int MAX_LABEL_LENGTH= 80;
-	
+
 	/** The vertical ruler info of the editor. */
 	private IVerticalRulerInfo fRuler;
 	/** The associated editor */
@@ -81,7 +81,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/** The cached action label when removing a marker. */
 	private String fRemoveLabel;
 
-	
+
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
 	 * its visual representation from the given resource bundle.
@@ -92,7 +92,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param editor the editor
 	 * @param ruler the ruler
 	 * @param markerType the type of marker
-	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created 
+	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @since 2.0
 	 */
@@ -109,11 +109,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		fAddLabel= getString(bundle, prefix + "add.label", prefix + "add.label"); //$NON-NLS-2$ //$NON-NLS-1$
 		fRemoveLabel= getString(bundle, prefix + "remove.label", prefix + "remove.label"); //$NON-NLS-2$ //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
 	 * its visual representation from the given resource bundle.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 * @param ruler the ruler
@@ -126,7 +126,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		this(bundle, prefix, editor, ruler, markerType, askForLabel);
 	}
 
-	
+
 	/**
 	 * Returns this action's text editor.
 	 *
@@ -135,7 +135,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected ITextEditor getTextEditor() {
 		return fTextEditor;
 	}
-	
+
 	/**
 	 * Returns this action's vertical ruler.
 	 *
@@ -147,7 +147,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			return (IVerticalRuler) fRuler;
 		return null;
 	}
-	
+
 	/**
 	 * Returns this action's vertical ruler info.
 	 *
@@ -157,7 +157,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected IVerticalRulerInfo getVerticalRulerInfo() {
 		return fRuler;
 	}
-	
+
 	/**
 	 * Returns this action's resource bundle.
 	 *
@@ -166,7 +166,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected ResourceBundle getResourceBundle() {
 		return fBundle;
 	}
-	
+
 	/**
 	 * Returns this action's resource key prefix.
 	 *
@@ -175,7 +175,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected String getResourceKeyPrefix() {
 		return fPrefix;
 	}
-	
+
 	/*
 	 * @see IUpdate#update()
 	 */
@@ -205,20 +205,20 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			removeMarkers(fMarkers);
 	}
 
-	/** 
-	 * Returns the resource for which to create the marker, 
+	/**
+	 * Returns the resource for which to create the marker,
 	 * or <code>null</code> if there is no applicable resource.
 	 *
 	 * @return the resource for which to create the marker or <code>null</code>
 	 */
 	protected IResource getResource() {
 		IEditorInput input= fTextEditor.getEditorInput();
-		
+
 		IResource resource= (IResource) input.getAdapter(IFile.class);
-		
+
 		if (resource == null)
 			resource= (IResource) input.getAdapter(IResource.class);
-			
+
 		return resource;
 	}
 
@@ -265,7 +265,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -277,20 +277,20 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param message the message to be logged with the given exception
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-		ILog log= Platform.getLog(bundle);		
-		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		ILog log= Platform.getLog(bundle);
+
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
 		else
 			log.log(exception.getStatus());
-		
-		
+
+
 		Shell shell= getTextEditor().getSite().getShell();
 		String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		
-		ErrorDialog.openError(shell, title, msg, exception.getStatus());		
+
+		ErrorDialog.openError(shell, title, msg, exception.getStatus());
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 					}
 				}
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.MarkerRulerAction_getMarker); 
+				handleCoreException(x, TextEditorMessages.MarkerRulerAction_getMarker);
 			}
 		}
 
@@ -337,14 +337,14 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			if (!askForLabel(attributes))
 				return;
 		}
-		
+
 		try {
 			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
 		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.MarkerRulerAction_addMarker); 
+			handleCoreException(x, TextEditorMessages.MarkerRulerAction_addMarker);
 		}
 	}
-	
+
 	/**
 	 * Removes the given markers.
 	 *
@@ -361,10 +361,10 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				}
 			}, null, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.MarkerRulerAction_removeMarkers); 
+			handleCoreException(x, TextEditorMessages.MarkerRulerAction_removeMarkers);
 		}
 	}
-	
+
 	/**
 	 * Asks the user for a marker label. Returns <code>true</code> if a label
 	 * is entered, <code>false</code> if the user cancels the input dialog.
@@ -372,7 +372,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * map of attributes.
 	 *
 	 * @param attributes the map of attributes
-	 * @return <code>true</code> if the map of attributes has successfully been initialized 
+	 * @return <code>true</code> if the map of attributes has successfully been initialized
 	 */
 	protected boolean askForLabel(Map attributes) {
 
@@ -389,7 +389,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			}
 		};
 		InputDialog dialog= new InputDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator);
-		
+
 		String label= null;
 		if (dialog.open() != Window.CANCEL)
 			label= dialog.getValue();
@@ -412,9 +412,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @return the initial marker attributes
 	 */
 	protected Map getInitialAttributes() {
-		
+
 		Map attributes= new HashMap(11);
-		
+
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IDocument document= provider.getDocument(fTextEditor.getEditorInput());
 		int line= fRuler.getLineOfLastMouseButtonActivity();
@@ -423,17 +423,17 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		int length= 0;
 
 		try {
-			
+
 			IRegion lineInformation= document.getLineInformation(line);
 			start= lineInformation.getOffset();
 			length= lineInformation.getLength();
-				
+
 			end= start + length;
-			
-			
+
+
 		} catch (BadLocationException x) {
 		}
-		
+
 		// marker line numbers are 1-based
 		MarkerUtilities.setMessage(attributes, getLabelProposal(document, start, length));
 		MarkerUtilities.setLineNumber(attributes, line + 1);
@@ -442,7 +442,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 		return attributes;
 	}
-	
+
 	/**
 	 * Returns the initial label for the marker.
 	 *

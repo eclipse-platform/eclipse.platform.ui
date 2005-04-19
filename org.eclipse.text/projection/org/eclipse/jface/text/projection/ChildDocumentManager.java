@@ -20,11 +20,11 @@ import org.eclipse.jface.text.IDocument;
  * class exists for compatibility reasons.
  * <p>
  * Internal class. This class is not intended to be used by clients.
- * 
+ *
  * @since 3.0
  */
 public class ChildDocumentManager extends ProjectionDocumentManager {
-	
+
 	/*
 	 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument)
 	 */

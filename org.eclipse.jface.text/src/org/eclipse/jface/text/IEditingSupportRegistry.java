@@ -24,22 +24,22 @@ public interface IEditingSupportRegistry {
 	/**
 	 * Register a support with the registry. If the support is already
 	 * registered, nothing happens.
-	 * 
+	 *
 	 * @param support an editor support
 	 */
 	public void register(IEditingSupport support);
-	
+
 	/**
 	 * Deregister a support with the registry. If the support is not registered,
 	 * or <code>support</code> is <code>null</code>, nothing happens.
-	 * 
+	 *
 	 * @param support the helper to deregister, or <code>null</code>
 	 */
 	public void unregister(IEditingSupport support);
-	
+
 	/**
 	 * Returns the current editor helpers.
-	 * 
+	 *
 	 * @return an non- <code>null</code> array of currently registered editor
 	 *         helpers
 	 */

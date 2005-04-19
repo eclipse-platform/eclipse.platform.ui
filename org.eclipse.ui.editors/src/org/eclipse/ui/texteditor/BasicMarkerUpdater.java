@@ -18,71 +18,71 @@ import org.eclipse.core.resources.IMarker;
 
 
 /**
- * Updates a marker's positional attributes which are 
+ * Updates a marker's positional attributes which are
  * start position, end position, and line number.
  */
 public final class BasicMarkerUpdater implements IMarkerUpdater {
-	
+
 	private final static String[] ATTRIBUTES= {
 		IMarker.CHAR_START,
 		IMarker.CHAR_END,
 		IMarker.LINE_NUMBER
 	};
-	
+
 	/**
 	 * Creates a new basic marker updater.
 	 */
 	public BasicMarkerUpdater() {
 		super();
 	}
-		
+
 	/*
 	 * @see IMarkerUpdater#getAttribute()
 	 */
 	public String[] getAttribute() {
 		return ATTRIBUTES;
 	}
-	
+
 	/*
 	 * @see IMarkerUpdater#getMarkerType()
 	 */
 	public String getMarkerType() {
 		return null;
 	}
-	
+
 	/*
 	 * @see IMarkerUpdater#updateMarker(IMarker, IDocument, Position)
 	 */
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
-		
+
 		if (position == null)
 			return true;
-			
+
 		if (position.isDeleted())
 			return false;
-		
+
 		boolean offsetsInitialized= false;
 		boolean offsetsChanged= false;
 		int markerStart= MarkerUtilities.getCharStart(marker);
 		int markerEnd= MarkerUtilities.getCharEnd(marker);
-		
+
 		if (markerStart != -1 && markerEnd != -1) {
-			
+
 			offsetsInitialized= true;
-			
+
 			int offset= position.getOffset();
 			if (markerStart != offset) {
 				MarkerUtilities.setCharStart(marker, offset);
 				offsetsChanged= true;
 			}
-			
+
 			offset += position.getLength();
 			if (markerEnd != offset) {
 				MarkerUtilities.setCharEnd(marker, offset);
 				offsetsChanged= true;
 			}
 		}
-		
+
 		if (!offsetsInitialized || (offsetsChanged && MarkerUtilities.getLineNumber(marker) != -1)) {
 			try {
 				// marker line numbers are 1-based
@@ -90,7 +90,7 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return true;
 	}
 }

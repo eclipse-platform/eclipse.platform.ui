@@ -23,14 +23,14 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.Region}.
  */
 public interface IRegion {
-		
+
 	/**
 	 * Returns the length of the region.
 	 *
 	 * @return the length of the region
 	 */
 	int getLength();
-	
+
 	/**
 	 * Returns the offset of the region.
 	 *

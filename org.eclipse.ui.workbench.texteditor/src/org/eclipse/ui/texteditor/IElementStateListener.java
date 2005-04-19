@@ -32,11 +32,11 @@ package org.eclipse.ui.texteditor;
  * 		state validation events.</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.eclipse.ui.texteditor.IElementStateListenerExtension
  */
 public interface IElementStateListener {
-	
+
 	/**
 	 * Notifies that the dirty state of the given element has changed.
 	 *
@@ -44,28 +44,28 @@ public interface IElementStateListener {
 	 * @param isDirty the new dirty state
 	 */
 	void elementDirtyStateChanged(Object element, boolean isDirty);
-	
+
 	/**
 	 * Notifies that the content of the given element is about to be replaced.
 	 *
 	 * @param element the element
 	 */
 	void elementContentAboutToBeReplaced(Object element);
-	
+
 	/**
 	 * Notifies that the content of the given element has been replaced.
 	 *
 	 * @param element the element
 	 */
 	void elementContentReplaced(Object element);
-		
+
 	/**
 	 * Notifies that the given element has been deleted.
 	 *
 	 * @param element the element
 	 */
 	void elementDeleted(Object element);
-	
+
 	/**
 	 * Notifies that the element has moved. If <code>movedElement</code>
 	 * is <code>null</code> it is similar to <code>elementDeleted(originalElement)</code>.

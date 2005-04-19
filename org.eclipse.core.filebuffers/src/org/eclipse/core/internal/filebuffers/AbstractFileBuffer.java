@@ -23,34 +23,34 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
  * @since 3.0
  */
 public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidationSupport {
-	
-	
+
+
 	public abstract void create(IPath location, IProgressMonitor monitor) throws CoreException;
-	
+
 	public abstract void connect();
-	
+
 	public abstract void disconnect() throws CoreException;
-	
+
 	/**
 	 * Returns whether this file buffer has been disconnected.
-	 * 
+	 *
 	 * @return <code>true</code> if already disposed, <code>false</code> otherwise
 	 * @since 3.1
 	 */
 	protected abstract boolean isDisconnected();
-	
+
 	/**
 	 * Disposes this file buffer.
 	 * This implementation is always empty.
 	 * <p>
 	 * Subclasses may extend but must call <code>super.dispose()</code>.
 	 * <p>
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected void dispose() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateAboutToBeChanged()
 	 */

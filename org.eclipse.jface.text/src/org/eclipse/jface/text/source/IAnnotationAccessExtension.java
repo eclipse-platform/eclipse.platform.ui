@@ -24,12 +24,12 @@ import org.eclipse.swt.widgets.Canvas;
  * <li> means to paint a given annotation</li>
  * <li> information about the type hierarchy of the annotation type of a given annotation</li>
  * <ul>.
- * 
+ *
  * @see org.eclipse.jface.text.source.IAnnotationAccess
  * @since 3.0
  */
 public interface IAnnotationAccessExtension {
-	
+
 	/**
 	 * The default annotation layer.
 	 */
@@ -37,57 +37,57 @@ public interface IAnnotationAccessExtension {
 
 	/**
 	 * Returns the label for the given annotation's type.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return the label the given annotation's type or <code>null</code> if no such label exists
 	 */
 	String getTypeLabel(Annotation annotation);
-	
+
 	/**
 	 * Returns the layer for given annotation. Annotations are considered
 	 * being located at layers and are considered being painted starting with
 	 * layer 0 upwards. Thus an annotation at layer 5 will be drawn on top of
 	 * all co-located annotations at the layers 4 - 0.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return the layer of the given annotation
 	 */
 	int getLayer(Annotation annotation);
-	
+
 	/**
 	 * Draws a graphical representation of the given annotation within the given bounds.
-	 * 
+	 *
 	 * @param annotation the given annotation
 	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
 	 */
 	void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds);
-	
+
 	/**
 	 * Returns <code>true</code> if painting <code>annotation</code> will produce something
 	 * meaningful, <code>false</code> if not. E.g. if no image is available.
-	 * 
+	 *
 	 * @param annotation the annotation to check whether it can be painted
 	 * @return <code>true</code> if painting <code>annotation</code> will succeed
 	 */
 	boolean isPaintable(Annotation annotation);
-	
+
 	/**
 	 * Returns <code>true</code> if the given annotation is of the given type
 	 * or <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @param potentialSupertype the potential super annotation type
 	 * @return <code>true</code> if annotation type is a sub-type of the potential annotation super type
 	 */
 	boolean isSubtype(Object annotationType, Object potentialSupertype);
-	
+
 	/**
-	 * Returns the list of super types for the given annotation type. This does not include the type 
+	 * Returns the list of super types for the given annotation type. This does not include the type
 	 * itself. The index in the array of super types indicates the length of the path in the hierarchy
 	 * graph to the given annotation type.
-	 * 
+	 *
 	 * @param annotationType the annotation type to check
 	 * @return the super types for the given annotation type
 	 */

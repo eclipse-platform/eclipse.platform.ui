@@ -53,12 +53,12 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients should subclass and override just those methods which must be
  * specific to their needs.
- * 
+ *
  * @see org.eclipse.jface.text.source.ISourceViewer
  */
 public class SourceViewerConfiguration {
-	
-	
+
+
 	/**
 	 * Creates a new source viewer configuration that behaves according to
 	 * specification of this class' methods.
@@ -66,7 +66,7 @@ public class SourceViewerConfiguration {
 	public SourceViewerConfiguration() {
 		super();
 	}
-		
+
 	/**
 	 * Returns the visual width of the tab character. This implementation always
 	 * returns 4.
@@ -77,9 +77,9 @@ public class SourceViewerConfiguration {
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return 4;
 	}
-	
+
 	/**
-	 * Returns the undo manager for the given source viewer. This implementation 
+	 * Returns the undo manager for the given source viewer. This implementation
 	 * always returns a new instance of <code>DefaultUndoManager</code> whose
 	 * history length is set to 25.
 	 *
@@ -89,7 +89,7 @@ public class SourceViewerConfiguration {
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
 		return new DefaultUndoManager(25);
 	}
-		
+
 	/**
 	 * Returns the reconciler ready to be used with the given source viewer.
 	 * This implementation always returns <code>null</code>.
@@ -100,9 +100,9 @@ public class SourceViewerConfiguration {
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		return null;
 	}
-		
+
 	/**
-	 * Returns the presentation reconciler ready to be used with the given source viewer. 
+	 * Returns the presentation reconciler ready to be used with the given source viewer.
 	 * This implementation always returns <code>null</code>.
 	 *
 	 * @param sourceViewer the source viewer
@@ -114,7 +114,7 @@ public class SourceViewerConfiguration {
 
 		return reconciler;
 	}
-	
+
 	/**
 	 * Returns the content formatter ready to be used with the given source viewer.
 	 * This implementation always returns <code>null</code>.
@@ -125,7 +125,7 @@ public class SourceViewerConfiguration {
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		return null;
 	}
-		
+
 	/**
 	 * Returns the content assistant ready to be used with the given source viewer.
 	 * This implementation always returns <code>null</code>.
@@ -136,10 +136,10 @@ public class SourceViewerConfiguration {
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the auto indentation strategy ready to be used with the given source viewer
-	 * when manipulating text of the given content type. This implementation always 
+	 * when manipulating text of the given content type. This implementation always
 	 * returns an new instance of <code>DefaultAutoIndentStrategy</code>.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
@@ -153,7 +153,7 @@ public class SourceViewerConfiguration {
 
 	/**
 	 * Returns the auto edit strategies ready to be used with the given source viewer
-	 * when manipulating text of the given content type. For backward compatibility, this implementation always 
+	 * when manipulating text of the given content type. For backward compatibility, this implementation always
 	 * returns an array containing the result of {@link #getAutoIndentStrategy(ISourceViewer, String)}.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
@@ -163,7 +163,7 @@ public class SourceViewerConfiguration {
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };
 	}
-	
+
 	/**
 	 * Returns the default prefixes to be used by the line-prefix operation
 	 * in the given source viewer for text of the given content type. This implementation always
@@ -202,7 +202,7 @@ public class SourceViewerConfiguration {
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "\t", "    ", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-		
+
 	/**
 	 * Returns the annotation hover which will provide the information to be
 	 * shown in a hover popup window when requested for the given
@@ -258,7 +258,7 @@ public class SourceViewerConfiguration {
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the text hover which will provide the information to be shown
 	 * in a text hover popup window when requested for the given source viewer and
@@ -272,12 +272,12 @@ public class SourceViewerConfiguration {
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the information control creator. The creator is a factory creating information
 	 * controls for the given source viewer. This implementation always returns a creator for
 	 * <code>DefaultInformationControl</code> instances.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the information control creator or <code>null</code> if no information support should be installed
 	 * @since 2.0
@@ -289,7 +289,7 @@ public class SourceViewerConfiguration {
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns the information presenter which will determine and shown
 	 * information requested for the current cursor position. This implementation
@@ -302,10 +302,10 @@ public class SourceViewerConfiguration {
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns all configured content types for the given source viewer. This list
-	 * tells the caller which content types must be configured for the given source 
+	 * tells the caller which content types must be configured for the given source
 	 * viewer, i.e. for which content types the given source viewer's functionalities
 	 * must be specified. This implementation always returns <code>
 	 * new String[] { IDocument.DEFAULT_CONTENT_TYPE }</code>.
@@ -316,12 +316,12 @@ public class SourceViewerConfiguration {
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE };
 	}
-	
+
 	/**
 	 * Returns the configured partitioning for the given source viewer. The partitioning is
 	 * used when the querying content types from the source viewer's input document.  This
 	 * implementation always returns <code>IDocumentExtension3.DEFAULT_PARTITIONING</code>.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the configured partitioning
 	 * @see #getConfiguredContentTypes(ISourceViewer)
@@ -330,7 +330,7 @@ public class SourceViewerConfiguration {
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
-	
+
 	/**
 	 * Returns the hyperlink detectors which be used to detect hyperlinks
 	 * in the given source viewer. This
@@ -343,14 +343,14 @@ public class SourceViewerConfiguration {
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		if (sourceViewer == null)
 			return null;
-		
+
 		return new IHyperlinkDetector[] {new URLHyperlinkDetector(sourceViewer)};
 	}
 
 	/**
 	 * Returns the hyperlink presenter for the given source viewer.
 	 * This implementation always returns the {@link DefaultHyperlinkPresenter}.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the hyperlink presenter or <code>null</code> if no hyperlink support should be installed
 	 * @since 3.1
@@ -358,7 +358,7 @@ public class SourceViewerConfiguration {
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
 		return new DefaultHyperlinkPresenter(new RGB(0, 0, 255));
 	}
-	
+
 	/**
 	 * Returns the SWT event state mask which in combination
 	 * with the left mouse button activates hyperlinking.

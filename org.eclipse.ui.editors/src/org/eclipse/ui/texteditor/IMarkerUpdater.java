@@ -18,23 +18,23 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * A marker updater is responsible for saving changes to markers.
- * Marker updaters either update markers of a specific types or 
- * any type. Also they either assume update responsibility for a 
+ * Marker updaters either update markers of a specific types or
+ * any type. Also they either assume update responsibility for a
  * specific set of marker attributes or any marker attribute.
  * Marker updater must be registered with an
  * {@link org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel}.
  */
 public interface IMarkerUpdater {
-	
+
 	/**
 	 * Returns the marker type for which this updater is responsible. If
 	 * the result is <code>null</code>, the updater assumes responsibility
 	 * for any marker type.
-	 * 
+	 *
 	 * @return the marker type or <code>null</code> for any marker type
 	 */
 	String getMarkerType();
-	
+
 	/**
 	 * Returns the attributes for which this updater is responsible. If the
 	 * result is <code>null</code>, the updater assumes responsibility for
@@ -43,7 +43,7 @@ public interface IMarkerUpdater {
 	 * @return the attributes or <code>null</code> for any attribute
 	 */
 	String[] getAttribute();
-	
+
 	/**
 	 * Updates the given marker according to the position of the given document.
 	 * If the given position is <code>null</code>, the marker is assumed to

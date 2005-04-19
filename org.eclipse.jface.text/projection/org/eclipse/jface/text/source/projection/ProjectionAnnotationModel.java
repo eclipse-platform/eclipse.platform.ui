@@ -24,12 +24,12 @@ import org.eclipse.jface.text.source.AnnotationModel;
  * expansion state of the managed projection annotations.
  * <p>
  * Do not subclass. Use it as is.
- * 
+ *
  * @since 3.0
  */
 public class ProjectionAnnotationModel extends AnnotationModel {
-		
-	
+
+
 	/**
 	 * Creates a new, empty projection annotation model.
 	 */
@@ -39,7 +39,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	/**
 	 * Changes the state of the given annotation to collapsed. An appropriate
 	 * annotation model change event is sent out.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 */
 	public void collapse(Annotation annotation) {
@@ -55,7 +55,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	/**
 	 * Changes the state of the given annotation to expanded. An appropriate
 	 * annotation model change event is sent out.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 */
 	public void expand(Annotation annotation) {
@@ -67,29 +67,29 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			}
 		}
 	}
-	
+
 	/**
 	 * Toggles the expansion state of the given annotation. An appropriate
 	 * annotation model change event is sent out.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 */
 	public void toggleExpansionState(Annotation annotation) {
 		if (annotation instanceof ProjectionAnnotation) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
-			
+
 			if (projection.isCollapsed())
 				projection.markExpanded();
 			else
 				projection.markCollapsed();
-	
+
 			modifyAnnotation(projection, true);
 		}
 	}
-	
+
 	/**
 	 * Expands all annotations that overlap with the given range and are collapsed.
-	 * 
+	 *
 	 * @param offset the range offset
 	 * @param length the range length
 	 * @return <code>true</code> if any annotation has been expanded, <code>false</code> otherwise
@@ -97,11 +97,11 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	public boolean expandAll(int offset, int length) {
 		return expandAll(offset, length, true);
 	}
-	
+
 	/**
 	 * Expands all annotations that overlap with the given range and are collapsed. Fires a model change event if
-	 * requested. 
-	 * 
+	 * requested.
+	 *
 	 * @param offset the offset of the range
 	 * @param length the length of the range
 	 * @param fireModelChanged <code>true</code> if a model change event
@@ -109,9 +109,9 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * @return <code>true</code> if any annotation has been expanded, <code>false</code> otherwise
 	 */
 	protected boolean expandAll(int offset, int length, boolean fireModelChanged) {
-		
+
 		boolean expanding= false;
-		
+
 		Iterator iterator= getAnnotationIterator();
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
@@ -124,16 +124,16 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 				}
 			}
 		}
-		
+
 		if (expanding && fireModelChanged)
 			fireModelChanged();
-		
+
 		return expanding;
 	}
-	
+
 	/**
 	 * Modifies the annotation model.
-	 * 
+	 *
 	 * @param deletions the list of deleted annotations
 	 * @param additions the set of annotations to add together with their associated position
 	 * @param modifications the list of modified annotations

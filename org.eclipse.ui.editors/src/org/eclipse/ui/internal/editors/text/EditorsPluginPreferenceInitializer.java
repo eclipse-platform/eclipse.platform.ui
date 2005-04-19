@@ -21,7 +21,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
  * Preference initializer for Editors UI plug-in.
- * 
+ *
  * @since 3.1
  */
 public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -35,10 +35,10 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		migrateOverviewRulerPreference(store);
 	}
-	
+
 	/**
 	 * Migrates the overview ruler preference by re-enabling it.
-	 * 
+	 *
 	 * @param store the preference store to migrate
 	 * @since 3.1
 	 */
@@ -47,7 +47,7 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		String postfix= "_migration"; //$NON-NLS-1$
 		String MIGRATED= "migrated_3.1"; //$NON-NLS-1$
 		String migrationKey= preference + postfix;
-		
+
 		String migrationValue= store.getString(migrationKey);
 		if (!MIGRATED.equals(migrationValue)) {
 			store.setValue(migrationKey, MIGRATED);

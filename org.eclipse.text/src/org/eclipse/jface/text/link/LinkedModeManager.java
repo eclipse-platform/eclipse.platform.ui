@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IDocument;
  * is at most one <code>LinkedModeManager</code> installed on the same document. The <code>getManager</code>
  * methods will return the existing instance if any of the specified documents already have an installed
  * manager.
- * 
+ *
  * @since 3.0
  */
 class LinkedModeManager {
@@ -56,25 +56,25 @@ class LinkedModeManager {
 		public void resume(LinkedModeModel model, int flags) {
 			// not interested
 		}
-		
+
 	}
-	
+
 	/** Global map from documents to managers. */
 	private static Map fManagers= new HashMap();
 
 	/**
 	 * Returns whether there exists a <code>LinkedModeManager</code> on <code>document</code>.
-	 * 
+	 *
 	 * @param document the document of interest
 	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on <code>document</code>, <code>false</code> otherwise
 	 */
 	public static boolean hasManager(IDocument document) {
 		return fManagers.get(document) != null;
 	}
-	
+
 	/**
 	 * Returns whether there exists a <code>LinkedModeManager</code> on any of the <code>documents</code>.
-	 * 
+	 *
 	 * @param documents the documents of interest
 	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on any of the <code>documents</code>, <code>false</code> otherwise
 	 */
@@ -85,12 +85,12 @@ class LinkedModeManager {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns the manager for the given documents. If <code>force</code> is 
+	 * Returns the manager for the given documents. If <code>force</code> is
 	 * <code>true</code>, any existing conflicting managers are canceled, otherwise,
 	 * the method may return <code>null</code> if there are conflicts.
-	 * 
+	 *
 	 * @param documents the documents of interest
 	 * @param force whether to kill any conflicting managers
 	 * @return a manager able to cover the requested documents, or <code>null</code> if there is a conflict and <code>force</code> was set to <code>false</code>
@@ -98,7 +98,7 @@ class LinkedModeManager {
 	public static LinkedModeManager getLinkedManager(IDocument[] documents, boolean force) {
 		if (documents == null || documents.length == 0)
 			return null;
-		
+
 		Set mgrs= new HashSet();
 		LinkedModeManager mgr= null;
 		for (int i= 0; i < documents.length; i++) {
@@ -115,19 +115,19 @@ class LinkedModeManager {
 			} else {
 				return null;
 			}
-		
+
 		if (mgrs.size() == 0)
 			mgr= new LinkedModeManager();
-		
+
 		for (int i= 0; i < documents.length; i++)
 			fManagers.put(documents[i], mgr);
-		
+
 		return mgr;
 	}
-	
+
 	/**
 	 * Cancels any linked mode manager for the specified document.
-	 * 
+	 *
 	 * @param document the document whose <code>LinkedModeManager</code> should be cancelled
 	 */
 	public static void cancelManager(IDocument document) {
@@ -135,39 +135,39 @@ class LinkedModeManager {
 		if (mgr != null)
 			mgr.closeAllEnvironments();
 	}
-	
+
 	/** The hierarchy of environments managed by this manager. */
 	private Stack fEnvironments= new Stack();
 	private Listener fListener= new Listener();
 
 	/**
 	 * Notify the manager about a leaving model.
-	 * 
+	 *
 	 * @param model
 	 * @param flags
 	 */
 	private void left(LinkedModeModel model, int flags) {
 		if (!fEnvironments.contains(model))
 			return;
-		
+
 		while (!fEnvironments.isEmpty()) {
 			LinkedModeModel env= (LinkedModeModel) fEnvironments.pop();
 			if (env == model)
 				break;
 			env.exit(ILinkedModeListener.NONE);
 		}
-		
+
 		if (fEnvironments.isEmpty()) {
 			removeManager();
 		}
 	}
-	
+
 	private void closeAllEnvironments() {
 		while (!fEnvironments.isEmpty()) {
 			LinkedModeModel env= (LinkedModeModel) fEnvironments.pop();
 			env.exit(ILinkedModeListener.NONE);
 		}
-	
+
 		removeManager();
 	}
 
@@ -178,13 +178,13 @@ class LinkedModeManager {
 				it.remove();
 		}
 	}
-	
+
     /**
-     * Tries to nest the given <code>LinkedModeModel</code> onto the top of 
+     * Tries to nest the given <code>LinkedModeModel</code> onto the top of
      * the stack of environments managed by the receiver. If <code>force</code>
      * is <code>true</code>, any environments on the stack that create a conflict
      * are killed.
-     *  
+     *
      * @param model the model to nest
      * @param force whether to force the addition of the model
      * @return <code>true</code> if nesting was successful, <code>false</code> otherwise (only possible if <code>force</code> is <code>false</code>
@@ -199,7 +199,7 @@ class LinkedModeManager {
     				fEnvironments.push(model);
     				return true;
     			}
-    			
+
     			LinkedModeModel top= (LinkedModeModel) fEnvironments.peek();
     			if (model.canNestInto(top)) {
     				model.addLinkingListener(fListener);
@@ -220,9 +220,9 @@ class LinkedModeManager {
     }
 
 	/**
-	 * Returns the <code>LinkedModeModel</code> that is on top of the stack of 
+	 * Returns the <code>LinkedModeModel</code> that is on top of the stack of
 	 * environments managed by the receiver.
-	 * 
+	 *
 	 * @return the topmost <code>LinkedModeModel</code>
 	 */
 	public LinkedModeModel getTopEnvironment() {

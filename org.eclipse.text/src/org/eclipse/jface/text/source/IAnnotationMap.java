@@ -32,7 +32,7 @@ import org.eclipse.jface.text.ISynchronizable;
  * <code>entrySet</code>, and <code>keySet</code> are not synchronized on
  * the annotation map's lock object.
  * <p>
- * 
+ *
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @since 3.0
  */
@@ -40,35 +40,35 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 
 	/**
 	 * Returns an iterator for a copy of this annotation map's values.
-	 * 
+	 *
 	 * @return an iterator for a copy of this map's values
 	 */
 	Iterator valuesIterator();
 
 	/**
 	 * Returns an iterator for a copy of this map's key set.
-	 * 
+	 *
 	 * @return an iterator for a copy of this map's key set
 	 */
 	Iterator keySetIterator();
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	Set entrySet();
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	Set keySet();
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * The returned collection is not synchronized on this annotation map's lock object.
 	 */
 	Collection values();

@@ -20,17 +20,17 @@ import org.eclipse.jface.text.IDocument;
  * A move target edit denotes the target of a move operation. Move
  * target edits are only valid inside an edit tree if they have a
  * corresponding source edit. Furthermore a target edit can't
- * can't be a direct or indirect child of its associated source edit. 
+ * can't be a direct or indirect child of its associated source edit.
  * Violating one of two requirements will result in a <code>
  * MalformedTreeException</code> when executing the edit tree.
  * <p>
  * Move target edits can't be used as a parent for other edits.
  * Trying to add an edit to a move target edit results in a <code>
  * MalformedTreeException</code> as well.
- * 
+ *
  * @see org.eclipse.text.edits.MoveSourceEdit
  * @see org.eclipse.text.edits.CopyTargetEdit
- * 
+ *
  * @since 3.0
  */
 public final class MoveTargetEdit extends TextEdit {
@@ -39,7 +39,7 @@ public final class MoveTargetEdit extends TextEdit {
 
 	/**
 	 * Constructs a new move target edit
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 */
 	public MoveTargetEdit(int offset) {
@@ -48,7 +48,7 @@ public final class MoveTargetEdit extends TextEdit {
 
 	/**
 	 * Constructs an new move target edit
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param source the corresponding source edit
 	 */
@@ -67,21 +67,21 @@ public final class MoveTargetEdit extends TextEdit {
 	/**
 	 * Returns the associated source edit or <code>null</code>
 	 * if no source edit is associated yet.
-	 * 
+	 *
 	 * @return the source edit or <code>null</code>
 	 */
 	public MoveSourceEdit getSourceEdit() {
 		return fSource;
 	}
-					
+
 	/**
 	 * Sets the source edit.
-	 * 
+	 *
 	 * @param edit the source edit
-	 * 
+	 *
 	 * @exception MalformedTreeException is thrown if the target edit
 	 *  is a direct or indirect child of the source edit
-	 */	
+	 */
 	public void setSourceEdit(MoveSourceEdit edit) {
 		if (fSource != edit) {
 			fSource= edit;
@@ -94,17 +94,17 @@ public final class MoveTargetEdit extends TextEdit {
 			}
 		}
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#doCopy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		return new MoveTargetEdit(this);
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#postProcessCopy
-	 */	
+	 */
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
 			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(this);
@@ -113,7 +113,7 @@ public final class MoveTargetEdit extends TextEdit {
 				target.setSourceEdit(source);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see TextEdit#accept0
 	 */
@@ -125,34 +125,34 @@ public final class MoveTargetEdit extends TextEdit {
 	}
 
 	//---- consistency check ----------------------------------------------------------
-	
+
 	/* non Java-doc
 	 * @see TextEdit#traverseConsistencyCheck
-	 */	
+	 */
 	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
-	
+
 	/* non Java-doc
 	 * @see TextEdit#performConsistencyCheck
-	 */	
+	 */
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.different_target")); //$NON-NLS-1$
 	}
-	
+
 	//---- document updating ----------------------------------------------------------------
-	
+
 	/* non Java-doc
 	 * @see TextEdit#performDocumentUpdating
-	 */	
+	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
 		fDelta= source.length() - getLength();
-		
+
 		MultiTextEdit sourceRoot= fSource.getSourceRoot();
 		if (sourceRoot != null) {
 			sourceRoot.internalMoveTree(getOffset());
@@ -168,9 +168,9 @@ public final class MoveTargetEdit extends TextEdit {
 		fSource.clearContent();
 		return fDelta;
 	}
-	
+
 	//---- region updating --------------------------------------------------------------
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
 	 */
@@ -185,7 +185,7 @@ public final class MoveTargetEdit extends TextEdit {
 		}
 		return accumulatedDelta + fDelta;
 	}
-	
+
 	/* package */ boolean deleteChildren() {
 		return false;
 	}

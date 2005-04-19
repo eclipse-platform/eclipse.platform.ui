@@ -19,7 +19,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  * @since 2.0
  */
 public class MarkerRulerInfoAction extends MarkerRulerAction {
-	
+
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
 	 * its visual representation from the given resource bundle.
@@ -29,7 +29,7 @@ public class MarkerRulerInfoAction extends MarkerRulerAction {
 	 * @param ruler the ruler
 	 * @param editor the editor
 	 * @param markerType the type of marker
-	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created 
+	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created
 	 * @deprecated use super class constructor instead
 	 */
 	public MarkerRulerInfoAction(ResourceBundle bundle, String prefix, IVerticalRulerInfo ruler, ITextEditor editor, String markerType, boolean askForLabel) {

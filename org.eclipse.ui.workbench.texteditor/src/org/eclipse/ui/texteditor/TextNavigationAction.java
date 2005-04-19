@@ -30,7 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * @since 2.0
  */
 public class TextNavigationAction extends Action {
-	
+
 	/** The text widget */
 	private StyledText fTextWidget;
 	/** The styled text action id */
@@ -39,8 +39,8 @@ public class TextNavigationAction extends Action {
 	private String fActionId;
 	/** This action's action definition id */
 	private String fActionDefinitionId;
-	
-	
+
+
 	/**
 	 * Creates a new <code>TextNavigationAction</code>.
 	 * @param textWidget the text widget
@@ -53,7 +53,7 @@ public class TextNavigationAction extends Action {
 
 	/**
 	 * Returns the text widget this actions is bound to.
-	 * 
+	 *
 	 * @return returns the text widget this actions is bound to
 	 */
 	protected StyledText getTextWidget() {
@@ -75,21 +75,21 @@ public class TextNavigationAction extends Action {
 		event.y= selection.y;
 		fTextWidget.notifyListeners(SWT.Selection, event);
 	}
-	
+
 	/**
 	 * Sends a selection event with the current selection to all
 	 * selection listeners of the action's text widget
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void fireSelectionChanged() {
 		fireSelectionChanged(null);
 	}
-	
+
 	/**
 	 * Fires a selection event to all selection listener of the action's
 	 * text widget if the current selection differs from the given selection.
-	 * 
+	 *
 	 * @param oldSelection the old selection
 	 * @since 3.0
 	 */
@@ -105,37 +105,37 @@ public class TextNavigationAction extends Action {
 	public void runWithEvent(Event event) {
 		run();
 	}
-	
+
 	/*
 	 * @see IAction#setActionDefinitionId(String)
 	 */
 	public void setActionDefinitionId(String id) {
 		fActionDefinitionId= id;
 	}
-	
+
 	/*
 	 * @see IAction#getActionDefinitionId()
 	 */
 	public String getActionDefinitionId() {
 		return fActionDefinitionId;
 	}
-	
+
 	/*
 	 * @see IAction#setId(String)
 	 */
 	public void setId(String id) {
 		fActionId= id;
-	}	
-	
+	}
+
 	/*
 	 * @see IAction#getId()
 	 */
 	public String getId() {
 		return fActionId;
 	}
-	
-	
-// ----------------------------------------------------------------------------------------------------------------------------------	
+
+
+// ----------------------------------------------------------------------------------------------------------------------------------
 // All the subsequent methods are just empty method bodies.
 
 	/*

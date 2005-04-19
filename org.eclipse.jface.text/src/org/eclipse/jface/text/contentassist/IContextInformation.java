@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
  * In order to provide backward compatibility for clients of <code>IContextInformation</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.contentassist.IContextInformation} since version 2.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.IContextInformation} since version 2.0 introducing
  * 		the ability to freely position the context information.</li>
  * </ul>
  * </p>
@@ -28,16 +28,16 @@ import org.eclipse.swt.graphics.Image;
  * The interface can be implemented by clients.
  * By default, clients use {@link org.eclipse.jface.text.contentassist.ContextInformation}
  * as the standard implementer of this interface.
- * </p> 
+ * </p>
  *
  * @see IContentAssistProcessor
  */
 public interface IContextInformation {
-	
+
 	/**
 	 * Returns the string to be displayed in the list of contexts.
-	 * This method is used to supply a unique presentation for 
-	 * situations where the context is ambiguous. These strings are 
+	 * This method is used to supply a unique presentation for
+	 * situations where the context is ambiguous. These strings are
 	 * used to allow the user to select the specific context.
 	 *
 	 * @return the string to be displayed for the context
@@ -51,22 +51,22 @@ public interface IContextInformation {
 	 * @return the image to be shown or <code>null</code> if no image is desired
 	 */
 	Image getImage();
-	
+
 	/**
 	 * Returns the string to be displayed in the tool tip like information popup.
 	 *
 	 * @return the string to be displayed
 	 */
 	String getInformationDisplayString();
-	
+
 	/**
-	 * Compares the given object with this receiver. Two context informations are 
-	 * equal if there information display strings and their context display strings 
+	 * Compares the given object with this receiver. Two context informations are
+	 * equal if there information display strings and their context display strings
 	 * are equal.
 	 *
 	 * @see Object#equals(Object)
 	 */
-	boolean equals(Object object);	
+	boolean equals(Object object);
 }
 
 

@@ -24,15 +24,15 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Abstract preference page which is used to wrap a
  * {@link org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock}.
- * 
+ *
  * @since 3.0
  */
 abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	
+
+
 	private IPreferenceConfigurationBlock fConfigurationBlock;
 	private OverlayPreferenceStore fOverlayStore;
-	
+
 
 	/**
 	 * Creates a new preference page.
@@ -43,15 +43,15 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		fOverlayStore= new OverlayPreferenceStore(getPreferenceStore(), new OverlayPreferenceStore.OverlayKey[] {});
 		fConfigurationBlock= createConfigurationBlock(fOverlayStore);
 	}
-	
+
 	protected abstract IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore);
 	protected abstract String getHelpId();
 	protected abstract void setDescription();
 	protected abstract void setPreferenceStore();
-	
+
 	/*
 	 * @see IWorkbenchPreferencePage#init()
-	 */	
+	 */
 	public void init(IWorkbench workbench) {
 	}
 
@@ -62,67 +62,67 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpId());
 	}
-	
+
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		
+
 		fOverlayStore.load();
 		fOverlayStore.start();
-		
+
 		Control content= fConfigurationBlock.createControl(parent);
-		
+
 		initialize();
-		
+
 		Dialog.applyDialogFont(content);
 		return content;
 	}
-	
+
 	private void initialize() {
 		fConfigurationBlock.initialize();
 	}
-	
+
     /*
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		
+
 		if (!fConfigurationBlock.canPerformOk())
 			return false;
-		
+
 		fConfigurationBlock.performOk();
 
 		fOverlayStore.propagate();
-		
+
 		EditorsPlugin.getDefault().savePluginPreferences();
-		
+
 		return true;
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
 	public void performDefaults() {
-		
+
 		fOverlayStore.loadDefaults();
 		fConfigurationBlock.performDefaults();
 
 		super.performDefaults();
 	}
-	
+
 	/*
 	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
-		
+
 		fConfigurationBlock.dispose();
-		
+
 		if (fOverlayStore != null) {
 			fOverlayStore.stop();
 			fOverlayStore= null;
 		}
-		
+
 		super.dispose();
 	}
 }

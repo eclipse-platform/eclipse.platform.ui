@@ -21,10 +21,10 @@ package org.eclipse.jface.text;
  * <code>hashCode</code> as it would be a value object.
  */
 public class TypedPosition extends Position {
-	
+
 	/** The type of the region described by this position */
 	private String fType;
-	
+
 	/**
 	 * Creates a position along the given specification.
 	 *
@@ -36,7 +36,7 @@ public class TypedPosition extends Position {
 		super(offset, length);
 		fType= type;
 	}
-	
+
 	/**
 	 * Creates a position based on the typed region.
 	 *
@@ -46,16 +46,16 @@ public class TypedPosition extends Position {
 		super(region.getOffset(), region.getLength());
 		fType= region.getType();
 	}
-	
+
 	/**
 	 * Returns the type of the position
 	 *
 	 * @return the type of this position
-	 */	
+	 */
 	public String getType() {
 		return fType;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -68,7 +68,7 @@ public class TypedPosition extends Position {
 		}
 		return false;
 	}
-	
+
 	 /*
 	 * @see java.lang.Object#hashCode()
 	 */

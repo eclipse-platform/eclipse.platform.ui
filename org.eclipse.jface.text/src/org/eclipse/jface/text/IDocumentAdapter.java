@@ -32,15 +32,15 @@ import org.eclipse.swt.custom.StyledTextContent;
  *     2.0 introducing a way of batching a sequence of document changes into a
  *     single styled text content notification</li>
  * </ul>
- * 
+ *
  * @see org.eclipse.jface.text.IDocumentAdapterExtension
  * @see org.eclipse.jface.text.IDocument
  */
 public interface IDocumentAdapter extends StyledTextContent {
-	
+
 	/**
 	 * Sets the adapters document.
-	 * 
+	 *
 	 * @param document the document to be adapted
 	 */
 	void setDocument(IDocument document);

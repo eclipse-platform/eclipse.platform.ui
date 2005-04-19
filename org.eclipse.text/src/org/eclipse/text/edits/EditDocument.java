@@ -22,13 +22,13 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 
 /* package */ class EditDocument implements IDocument {
-	
+
 	private StringBuffer fBuffer;
-	
+
 	public EditDocument(String content) {
 		fBuffer= new StringBuffer(content);
 	}
-	
+
 	public void addDocumentListener(IDocumentListener listener) {
 		throw new UnsupportedOperationException();
 	}

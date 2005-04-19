@@ -15,13 +15,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
- 
+
 /**
- * A text store that optimizes a given source text store for sequential rewriting. 
+ * A text store that optimizes a given source text store for sequential rewriting.
  * While rewritten it keeps a list of replace command that serve as patches for
  * the source store. Only on request, the source store is indeed manipulated
  * by applying the patch commands to the source text store.
- * 
+ *
  * @since 2.0
  */
 public class SequentialRewriteTextStore implements ITextStore {
@@ -33,8 +33,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		public int newOffset;
 		public final int offset;
 		public final int length;
-		public final String text;	
-		
+		public final String text;
+
 		public Replace(int offset, int newOffset, int length, String text) {
 			this.newOffset= newOffset;
 			this.offset= offset;
@@ -44,33 +44,33 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/** The list of buffered replacements. */
-	private List fReplaceList;	
+	private List fReplaceList;
 	/** The source text store */
 	private ITextStore fSource;
 	/** A flag to enforce sequential access. */
 	private static final boolean ASSERT_SEQUENTIALITY= false;
-	
-	
+
+
 	/**
 	 * Creates a new sequential rewrite store for the given source store.
-	 * 
+	 *
 	 * @param source the source text store
 	 */
 	public SequentialRewriteTextStore(ITextStore source) {
 		fReplaceList= new LinkedList();
 		fSource= source;
 	}
-	
+
 	/**
 	 * Returns the source store of this rewrite store.
-	 * 
+	 *
 	 * @return  the source store of this rewrite store
 	 */
 	public ITextStore getSourceStore() {
 		commit();
 		return fSource;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
@@ -92,20 +92,20 @@ public class SequentialRewriteTextStore implements ITextStore {
 					for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
 						Replace replace= (Replace) i.next();
 						replace.newOffset += delta;
-					}	
+					}
 				}
-				
+
 				fReplaceList.add(0, new Replace(offset, offset, length, text));
 
-			// forward				
+			// forward
 			} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
-				int delta= getDelta(lastReplace);					
+				int delta= getDelta(lastReplace);
 				fReplaceList.add(new Replace(offset - delta, offset, length, text));
 
 			} else if (ASSERT_SEQUENTIALITY) {
 				throw new IllegalArgumentException();
 
-			} else {				
+			} else {
 				commit();
 				fSource.replace(offset, length, text);
 			}
@@ -119,62 +119,62 @@ public class SequentialRewriteTextStore implements ITextStore {
 		fSource.set(text);
 		fReplaceList.clear();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
-		
+
 		if (fReplaceList.size() == 0)
 			return fSource.get(offset, length);
-		
-		
+
+
 		Replace firstReplace= (Replace) fReplaceList.get(0);
 		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
-		
+
 		// before
 		if (offset + length <= firstReplace.newOffset) {
 			return fSource.get(offset, length);
-			
-			// after				
+
+			// after
 		} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
 			int delta= getDelta(lastReplace);
 			return fSource.get(offset - delta, length);
-			
+
 		} else if (ASSERT_SEQUENTIALITY) {
 			throw new IllegalArgumentException();
-			
+
 		} else {
-			
+
 			int delta= 0;
 			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-				Replace replace= (Replace) i.next();				
-				
+				Replace replace= (Replace) i.next();
+
 				if (offset + length < replace.newOffset) {
-					return fSource.get(offset - delta, length);	
-					
+					return fSource.get(offset - delta, length);
+
 				} else if (offset >= replace.newOffset && offset + length <= replace.newOffset + replace.text.length()) {
 					return replace.text.substring(offset - replace.newOffset, offset - replace.newOffset + length);
-					
+
 				} else if (offset >= replace.newOffset + replace.text.length()) {
 					delta= getDelta(replace);
-					continue;		
-					
-				} else {				
+					continue;
+
+				} else {
 					commit();
 					return fSource.get(offset, length);
 				}
 			}
-			
+
 			return fSource.get(offset - delta, length);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns the difference between the offset in the source store and the "same" offset in the
 	 * rewrite store after the replace operation.
-	 * 
+	 *
 	 * @param replace the replace command
 	 * @return the difference
 	 */
@@ -188,37 +188,37 @@ public class SequentialRewriteTextStore implements ITextStore {
 	public char get(int offset) {
 		if (fReplaceList.size() == 0)
 			return fSource.get(offset);
-		
+
 		Replace firstReplace= (Replace) fReplaceList.get(0);
 		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
-		
+
 		// before
 		if (offset < firstReplace.newOffset) {
 			return fSource.get(offset);
-			
-			// after				
+
+			// after
 		} else if (offset >= lastReplace.newOffset + lastReplace.text.length()) {
 			int delta= getDelta(lastReplace);
 			return fSource.get(offset - delta);
-			
+
 		} else if (ASSERT_SEQUENTIALITY) {
 			throw new IllegalArgumentException();
-			
-		} else {				
-			
+
+		} else {
+
 			int delta= 0;
 			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
 				Replace replace= (Replace) i.next();
-				
+
 				if (offset < replace.newOffset)
-					return fSource.get(offset - delta);	
-				
+					return fSource.get(offset - delta);
+
 				else if (offset < replace.newOffset + replace.text.length())
-					return replace.text.charAt(offset - replace.newOffset);					
-				
+					return replace.text.charAt(offset - replace.newOffset);
+
 				delta= getDelta(replace);
 			}
-			
+
 			return fSource.get(offset - delta);
 		}
 	}
@@ -229,11 +229,11 @@ public class SequentialRewriteTextStore implements ITextStore {
 	public int getLength() {
 		if (fReplaceList.size() == 0)
 			return fSource.getLength();
-		
+
 		Replace lastReplace= (Replace) fReplaceList.get(fReplaceList.size() - 1);
 		return fSource.getLength() + getDelta(lastReplace);
 	}
-	
+
 	/**
 	 * Disposes this rewrite store.
 	 */
@@ -241,7 +241,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		fReplaceList= null;
 		fSource= null;
 	}
-	
+
 	/**
 	 * Commits all buffered replace commands.
 	 */
@@ -249,10 +249,10 @@ public class SequentialRewriteTextStore implements ITextStore {
 
 		if (fReplaceList.size() == 0)
 			return;
-		
-		StringBuffer buffer= new StringBuffer();		
 
-		int delta= 0;				
+		StringBuffer buffer= new StringBuffer();
+
+		int delta= 0;
 		for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
 			Replace replace= (Replace) i.next();
 
@@ -261,10 +261,10 @@ public class SequentialRewriteTextStore implements ITextStore {
 			buffer.append(replace.text);
 			delta= getDelta(replace);
 		}
-		
+
 		int offset= buffer.length() - delta;
 		buffer.append(fSource.get(offset, fSource.getLength() - offset));
-		
+
 		fSource.set(buffer.toString());
 		fReplaceList.clear();
 	}

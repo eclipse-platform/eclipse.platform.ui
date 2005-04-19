@@ -30,7 +30,7 @@ import org.eclipse.jface.text.presentation.IPresentationRepairer;
 
 /**
  * A standard implementation of a syntax driven presentation damager
- * and presentation repairer. It uses a token scanner to scan 
+ * and presentation repairer. It uses a token scanner to scan
  * the document and to determine its damage and new text presentation.
  * The tokens returned by the scanner are supposed to return text attributes
  * as their data.
@@ -39,33 +39,33 @@ import org.eclipse.jface.text.presentation.IPresentationRepairer;
  * @since 2.0
  */
 public class DefaultDamagerRepairer implements IPresentationDamager, IPresentationRepairer {
-	
-	
+
+
 	/** The document this object works on */
 	protected IDocument fDocument;
 	/** The scanner it uses */
 	protected ITokenScanner fScanner;
 	/** The default text attribute if non is returned as data by the current token */
 	protected TextAttribute fDefaultTextAttribute;
-	
+
 	/**
-	 * Creates a damager/repairer that uses the given scanner and returns the given default 
+	 * Creates a damager/repairer that uses the given scanner and returns the given default
 	 * text attribute if the current token does not carry a text attribute.
 	 *
 	 * @param scanner the token scanner to be used
 	 * @param defaultTextAttribute the text attribute to be returned if non is specified by the current token,
 	 * 			may not be <code>null</code>
-	 * 
+	 *
 	 * @deprecated use DefaultDamagerRepairer(ITokenScanner) instead
 	 */
 	public DefaultDamagerRepairer(ITokenScanner scanner, TextAttribute defaultTextAttribute) {
-		
+
 		Assert.isNotNull(defaultTextAttribute);
-		
+
 		fScanner= scanner;
 		fDefaultTextAttribute= defaultTextAttribute;
 	}
-	
+
 	/**
 	 * Creates a damager/repairer that uses the given scanner. The scanner may not be <code>null</code>
 	 * and is assumed to return only token that carry text attributes.
@@ -73,13 +73,13 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 * @param scanner the token scanner to be used, may not be <code>null</code>
 	 */
 	public DefaultDamagerRepairer(ITokenScanner scanner) {
-		
+
 		Assert.isNotNull(scanner);
-		
+
 		fScanner= scanner;
 		fDefaultTextAttribute= new TextAttribute(null);
 	}
-	
+
 	/*
 	 * @see IPresentationDamager#setDocument(IDocument)
 	 * @see IPresentationRepairer#setDocument(IDocument)
@@ -87,10 +87,10 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	public void setDocument(IDocument document) {
 		fDocument= document;
 	}
-	
-	
+
+
 	//---- IPresentationDamager
-	
+
 	/**
 	 * Returns the end offset of the line that contains the specified offset or
 	 * if the offset is inside a line delimiter, the end offset of the next line.
@@ -100,11 +100,11 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 * @exception BadLocationException if offset is invalid in the current document
 	 */
 	protected int endOfLineOf(int offset) throws BadLocationException {
-		
+
 		IRegion info= fDocument.getLineInformationOfOffset(offset);
 		if (offset <= info.getOffset() + info.getLength())
 			return info.getOffset() + info.getLength();
-			
+
 		int line= fDocument.getLineOfOffset(offset);
 		try {
 			info= fDocument.getLineInformation(line + 1);
@@ -113,63 +113,63 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 			return fDocument.getLength();
 		}
 	}
-	
+
 	/*
 	 * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
 	 */
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
-		
+
 		if (!documentPartitioningChanged) {
 			try {
-				
+
 				IRegion info= fDocument.getLineInformationOfOffset(e.getOffset());
 				int start= Math.max(partition.getOffset(), info.getOffset());
-				
+
 				int end= e.getOffset() + (e.getText() == null ? e.getLength() : e.getText().length());
-				
+
 				if (info.getOffset() <= end && end <= info.getOffset() + info.getLength()) {
 					// optimize the case of the same line
 					end= info.getOffset() + info.getLength();
-				} else 
+				} else
 					end= endOfLineOf(end);
-					
+
 				end= Math.min(partition.getOffset() + partition.getLength(), end);
 				return new Region(start, end - start);
-			
+
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return partition;
 	}
-	
+
 	//---- IPresentationRepairer
-	
+
 	/*
 	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
 	 */
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
-		
+
 		if (fScanner == null) {
 			// will be removed if deprecated constructor will be removed
 			addRange(presentation, region.getOffset(), region.getLength(), fDefaultTextAttribute);
 			return;
 		}
-		
+
 		int lastStart= region.getOffset();
 		int length= 0;
 		boolean firstToken= true;
 		IToken lastToken= Token.UNDEFINED;
 		TextAttribute lastAttribute= getTokenTextAttribute(lastToken);
-		
+
 		fScanner.setRange(fDocument, lastStart, region.getLength());
-		
+
 		while (true) {
-			IToken token= fScanner.nextToken();			
+			IToken token= fScanner.nextToken();
 			if (token.isEOF())
 				break;
-			
-			TextAttribute attribute= getTokenTextAttribute(token);			
+
+			TextAttribute attribute= getTokenTextAttribute(token);
 			if (lastAttribute != null && lastAttribute.equals(attribute)) {
 				length += fScanner.getTokenLength();
 				firstToken= false;
@@ -180,13 +180,13 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 				lastToken= token;
 				lastAttribute= attribute;
 				lastStart= fScanner.getTokenOffset();
-				length= fScanner.getTokenLength();						    
+				length= fScanner.getTokenLength();
 			}
 		}
 
 		addRange(presentation, lastStart, length, lastAttribute);
 	}
-	
+
 	/**
 	 * Returns a text attribute encoded in the given token. If the token's
 	 * data is not <code>null</code> and a text attribute it is assumed that
@@ -198,11 +198,11 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 */
 	protected TextAttribute getTokenTextAttribute(IToken token) {
 		Object data= token.getData();
-		if (data instanceof TextAttribute) 
+		if (data instanceof TextAttribute)
 			return (TextAttribute) data;
 		return fDefaultTextAttribute;
 	}
-	
+
 	/**
 	 * Adds style information to the given text presentation.
 	 *

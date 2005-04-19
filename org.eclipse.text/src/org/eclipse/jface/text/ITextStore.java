@@ -19,7 +19,7 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.SequentialRewriteTextStore}.
  */
 public interface ITextStore {
-	
+
 	/**
 	 * Returns the character at the specified offset.
 	 *
@@ -27,7 +27,7 @@ public interface ITextStore {
 	 * @return the character at this offset
 	 */
 	char get(int offset);
-	
+
 	/**
 	 * Returns the text of the specified character range.
 	 *
@@ -36,14 +36,14 @@ public interface ITextStore {
 	 * @return the text of the range
 	 */
 	String get(int offset, int length);
-	
+
 	/**
 	 * Returns number of characters stored in this text store.
 	 *
 	 * @return the number of characters stored in this text store
 	 */
 	int getLength();
-	
+
 	/**
 	 * Replaces the specified character range with the given text.
 	 * <code>replace(getLength(), 0, "some text")</code> is a valid
@@ -54,7 +54,7 @@ public interface ITextStore {
 	 * @param text the substitution text
 	 */
 	void replace(int offset, int length, String text);
-	
+
 	/**
 	 * Replace the content of the text store with the given text.
 	 * Convenience method for <code>replace(0, getLength(), text</code>.

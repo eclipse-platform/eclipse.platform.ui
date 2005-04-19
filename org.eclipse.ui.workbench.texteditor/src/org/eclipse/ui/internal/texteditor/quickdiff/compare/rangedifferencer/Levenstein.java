@@ -23,29 +23,29 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * Levenstein distance and edit script computation using a dynamic programming algorithm.
- * The algorithm is O(n*m) in time where n and m are the number of elements in 
- * the two ranges to compare. It does not implement the greedy Ukkonen algorithm.  
- * 
+ * The algorithm is O(n*m) in time where n and m are the number of elements in
+ * the two ranges to compare. It does not implement the greedy Ukkonen algorithm.
+ *
  * @since 3.1
  */
 public final class Levenstein {
 	/* debug output */
 	private static final boolean DEBUG= false;
 	private static final boolean MATRIX= false;
-	
+
 	/* edit cost constants */
 	private static final int COST_DELETE= 1;
 	private static final int COST_INSERT= 1;
 	private static final int COST_CHANGE= 1;
 	private static final int SKIP= Integer.MAX_VALUE;
-	
+
 	private static final RangeDifference[] EMPTY_DIFFERENCES= new RangeDifference[0];
 	private static final int NO_DISTANCE= 0;
-	
+
 	private interface CellComputer {
 		int computeCell(int row, int col);
 	}
-	
+
 	private final class DefaultCellComputer implements CellComputer {
 		public int computeCell(int row, int column) {
 			if (row == fRowStart)
@@ -70,22 +70,22 @@ public final class Levenstein {
 			int fromAbove= sum(getAt(row - fStep, col), COST_INSERT);
 			int fromLeft= sum(getAt(row, col - fStep), COST_DELETE);
 			int minDiag= getAt(row - fStep, col - fStep);
-			
+
 			int minCellValue= Math.min(Math.min(fromAbove, fromLeft), minDiag);
 			int minCost= minCost(row, col, minCellValue);
-			
+
 			if (minCellValue == fromAbove || minCellValue == fromLeft)
 				return minCellValue;
-			
+
 			Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
-			
+
 			int nextCharCost= rangesEqual(row, col) ? 0 : COST_CHANGE;
 			minCost= sum(minCost, nextCharCost);
 			int cost= minDiag + nextCharCost;
 			return cost;
 		}
 	}
-	
+
 	/**
 	 * Reduces the needed comparisons - can not be used for hirschberg as we
 	 * don't have global values there.
@@ -118,38 +118,38 @@ public final class Levenstein {
 			int fromAbove= sum(getAt(row - fStep, col), Levenstein.COST_INSERT);
 			int fromLeft= sum(getAt(row, col - fStep), Levenstein.COST_DELETE);
 			int minDiag= getAt(row - fStep, col - fStep);
-			
+
 			int minCellValue= Math.min(Math.min(fromAbove, fromLeft), minDiag);
 			int minCost= minCost(row, col, minCellValue);
-			
+
 			if (minCost > fMaxCost) {
 				return Levenstein.SKIP;
 			} else if (minCellValue == fromAbove || minCellValue == fromLeft) {
 				return minCellValue;
 			} else {
 				Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
-				
+
 				int nextCharCost= rangesEqual(row, col) ? 0 : Levenstein.COST_CHANGE;
 				minCost= Levenstein.sum(minCost, nextCharCost);
 				if (minCost > fMaxCost)
 					return Levenstein.SKIP;
 				int cost= minDiag + nextCharCost;
-				fMaxCost= Math.min(fMaxCost, maxCost(row, col, cost)); 
+				fMaxCost= Math.min(fMaxCost, maxCost(row, col, cost));
 				return cost;
 			}
 		}
 	}
-	
+
 	/* the domain ranges we compare */
 	private IRangeComparator fLeft;
 	private IRangeComparator fRight;
 	private IProgressMonitor fProgressMonitor;
-	
+
 	/* algorithmic variables - may or may not be used by a method, always
 	 * nulled out by clear().
 	 */
 	/* package visible for testing */
-	
+
 	/** The matrix for full blown N * M edit distance and script computation. */
 	int[][] fMatrix;
 	/** The two columns for dynamic algorithms - the last row. */
@@ -170,17 +170,17 @@ public final class Levenstein {
 	private int fColStart;
 	/** The last (inclusive) column of the matrix. */
 	private int fColEnd;
-	/** 
+	/**
 	 * Maximum cost of the remaining computation given the current state of the
-	 * computation. For edit distance calculation, this may be used to prune 
-	 * impossible cells. 
+	 * computation. For edit distance calculation, this may be used to prune
+	 * impossible cells.
 	 */
 	private int fMaxCost;
 
 	/* statistics collection */
 	/** Keeps track of the number of needed comparisons. */
 	private long fComparisons;
-	
+
 	/**
 	 * For each row, Hirschberg stores the column of the optimal alignment
 	 * in the next row of the matrix.
@@ -193,18 +193,18 @@ public final class Levenstein {
 	private boolean[] fOptimalSplitValues;
 	/** List of differences computed by the walkback methods. */
 	private List fDiffs;
-	
+
 	/** Normal matrix cell computer. */
 	final CellComputer fStandardCC= new DefaultCellComputer();
 	/** Optimized cell computer for that prunes impossible cells. */
 	final CellComputer fOptimizedCC= new OptimizedCellComputer();
 	/** The current cell computer. */
 	CellComputer fCellComputer= fStandardCC;
-	
+
 	/**
 	 * Convenience method to compute the edit script between two range
 	 * comparators, see <code>RangeDifferencer</code>.
-	 * 
+	 *
 	 * @param left the left hand side domain range
 	 * @param right the right hand side domain range
 	 * @return the edit script from left to right
@@ -213,11 +213,11 @@ public final class Levenstein {
 		Levenstein levenstein= new Levenstein(left, right);
 		return levenstein.editScriptHirschberg();
 	}
-	
+
 	/**
 	 * Convenience method to compute the edit script between two range
 	 * comparators, see <code>RangeDifferencer</code>.
-	 * 
+	 *
 	 * @param pm a progress monitor, or <code>null</code> if no progress should be reported
 	 * @param left the left hand side domain range
 	 * @param right the right hand side domain range
@@ -227,22 +227,22 @@ public final class Levenstein {
 		Levenstein levenstein= new Levenstein(pm, left, right);
 		return levenstein.editScriptHirschberg();
 	}
-	
+
 	/**
 	 * Create a new differ that operates on the two domain range comparators
 	 * given.
-	 *  
+	 *
 	 * @param left the left domain range
 	 * @param right the right domain range
 	 */
 	public Levenstein(IRangeComparator left, IRangeComparator right) {
 		this(null, left, right);
 	}
-	
+
 	/**
 	 * Create a new differ that operates on the two domain range comparators
 	 * given.
-	 *  
+	 *
 	 * @param pm a progress monitor, or <code>null</code> if no progress should be reported
 	 * @param left the left domain range
 	 * @param right the right domain range
@@ -257,36 +257,36 @@ public final class Levenstein {
 		else
 			fProgressMonitor= new NullProgressMonitor();
 	}
-	
+
 	/**
 	 * Computes the edit distance.
-	 * 
+	 *
 	 * @return the edit distance of the two range comparators
 	 */
 	public int editDistance() {
 		try {
 			fCellComputer= fOptimizedCC;
 			initRows();
-			
+
 			if (MATRIX) printHeader(fLeft, fRight);
-			
+
 			internalEditDistance(1, fRight.getRangeCount(), 1, fLeft.getRangeCount());
-			
+
 			if (fProgressMonitor.isCanceled())
 				return NO_DISTANCE;
-			
+
 			if (DEBUG)
 				System.out.println("" + fComparisons + " comparisons");  //$NON-NLS-1$//$NON-NLS-2$
-			
+
 			return getAt(fRowEnd, fColEnd);
 		} finally {
 			clear();
 		}
 	}
-	
+
 	/**
 	 * Computes the edit script. This is quadratic in space and time.
-	 * 
+	 *
 	 * @return the shortest edit script between the two range comparators
 	 */
 	public RangeDifference[] editScript() {
@@ -299,7 +299,7 @@ public final class Levenstein {
 
 			// build the matrix
 			internalEditDistance(1, fRight.getRangeCount(), 1, fLeft.getRangeCount());
-			
+
 			if (fProgressMonitor.isCanceled())
 				return EMPTY_DIFFERENCES;
 
@@ -318,13 +318,13 @@ public final class Levenstein {
 	/**
 	 * Computes the edit script. This is quadratic in time but linear in space;
 	 * it is about twice as slow as the <code>editScript</code> method.
-	 * 
+	 *
 	 * @return the shortest edit script between the two range comparators
 	 */
 	public RangeDifference[] editScriptHirschberg() {
 		try {
 			fCellComputer= fStandardCC;
-		
+
 			initRows();
 			fResultRow= new int[fCurrentRow.length];
 			fOptimalSplitColumn= new int[fRight.getRangeCount() + 1];
@@ -334,7 +334,7 @@ public final class Levenstein {
 
 			if (fProgressMonitor.isCanceled())
 				return EMPTY_DIFFERENCES;
-			
+
 			if (DEBUG)
 				System.out.println("" + fComparisons + " comparisons"); //$NON-NLS-1$//$NON-NLS-2$
 
@@ -355,15 +355,15 @@ public final class Levenstein {
 			fResultRow= new int[fLeft.getRangeCount() + 1];
 			fOptimalSplitColumn= new int[fRight.getRangeCount() + 1];
 			fOptimalSplitValues= new boolean[fRight.getRangeCount() + 1];
-			
+
 			int dist= hirschberg(1, fRight.getRangeCount(), 1, fLeft.getRangeCount());
 
 			if (fProgressMonitor.isCanceled())
 				return NO_DISTANCE;
-			
+
 			if (DEBUG)
 				System.out.println("" + fComparisons + " comparisons"); //$NON-NLS-1$//$NON-NLS-2$
-			
+
 			return dist;
 
 		} finally {
@@ -374,91 +374,91 @@ public final class Levenstein {
 	void initMatrix() {
 		initMatrix(fRight.getRangeCount() + 1, fLeft.getRangeCount() + 1);
 	}
-	
+
 	void initMatrix(int rows, int columns) {
 		if (fMatrix == null || fMatrix.length < rows || fMatrix[0].length < columns)
 			fMatrix= new int[rows][columns];
 	}
-	
+
 	void initRows() {
 		initRows(fLeft.getRangeCount() + 1);
 	}
-	
+
 	void initRows(int columns) {
 		if (fCurrentRow == null || fCurrentRow.length < columns)
 			fCurrentRow= new int[columns];
 		if (fPreviousRow == null || fPreviousRow.length < columns)
 			fPreviousRow= new int[columns];
 	}
-	
+
 	/*
 	 * Fill the matrix, but do not allocate it.
 	 */
 	void internalEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
-		
+
 		Assert.isTrue(rStart <= rEnd + 1);
 		Assert.isTrue(lStart <= lEnd + 1);
-		
+
 		// build the matrix
 		fStep= 1;
 		fRowStart= rStart - fStep;
 		fRowEnd= rEnd;
-		
+
 		fColStart= lStart - fStep;
 		fColEnd= lEnd;
-		
+
 		fMaxCost= maxCost(fRowStart, fColStart, 0);
-		
+
 		for (fRow= fRowStart; fRow <= fRowEnd; fRow += fStep) { // for every row
-			
+
 			fProgressMonitor.worked(1);
-			
+
 			for (int col= fColStart; col <= fColEnd; col += fStep) { // for every column
-				
+
 				if (fProgressMonitor.isCanceled())
 					return;
-				
+
 				setAt(fRow, col, fCellComputer.computeCell(fRow, col));
 			}
-			
+
 			if (MATRIX) printRow();
-			
+
 			swapRows();
 		}
 	}
-	
+
 	/*
 	 * Fill the matrix, but do not allocate it.
 	 */
 	void internalReverseEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
-		
+
 		Assert.isTrue(rStart <= rEnd + 1);
 		Assert.isTrue(lStart <= lEnd + 1);
-		
+
 		// build the matrix
 		fStep= -1;
 		fRowStart= rEnd - fStep;
 		fRowEnd= rStart;
-		
+
 		fColStart= lEnd - fStep;
 		fColEnd= lStart;
-		
+
 		fMaxCost= maxCost(fRowStart, fColStart, 0);
-		
+
 		for (fRow= fRowStart; fRow >= fRowEnd; fRow += fStep) { // for every row
-			
+
 			fProgressMonitor.worked(1);
-			
+
 			for (int col= fColStart; col >= fColEnd; col += fStep) { // for every column
 
 				if (fProgressMonitor.isCanceled())
 					return;
-				
+
 				setAt(fRow, col, fCellComputer.computeCell(fRow, col));
 			}
-			
+
 			if (MATRIX) printRow();
-			
+
 			swapRows();
 		}
 	}
@@ -481,38 +481,38 @@ public final class Levenstein {
 	}
 
 	/* access methods for the compare algorithm */
-	
+
 	/**
 	 * Returns the matrix value for [row, column]. Note that not the entire
 	 * matrix may be available at all times.
-	 * 
+	 *
 	 * @param row the row (right domain index)
 	 * @param column (left domain index)
 	 * @return the matrix value for the given row and column
 	 */
 	private int getAt(int row, int column) {
-		
+
 		// shift reverse iteration towards left by one
 		if (fStep < 0)
 			column--;
-		
+
 		if (fMatrix != null)
 			return fMatrix[row][column];
-		
+
 		if (row == fRow)
 			return fCurrentRow[column];
-		
+
 		if (row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))
 			return fPreviousRow[column];
-		
+
 		Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
 		return SKIP; // dummy
 	}
-	
+
 	/**
 	 * Sets the matrix value at [row, column]. Note that not the entire
 	 * matrix may be available at all times.
-	 * 
+	 *
 	 * @param row the row (right domain index)
 	 * @param column (left domain index)
 	 * @param value the value to set
@@ -522,7 +522,7 @@ public final class Levenstein {
 		// shift reverse iteration towards left by one
 		if (fStep < 0)
 			column--;
-		
+
 		if (fMatrix != null) {
 			fMatrix[row][column]= value;
 		} else {
@@ -536,7 +536,7 @@ public final class Levenstein {
 				Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/*
 	 * Compares the two domain element ranges corresponding to the cell at
 	 * [r,l], that is the (zero-based) elements at r - 1 and l - 1.
@@ -555,7 +555,7 @@ public final class Levenstein {
 			return SKIP;
 		return sum;
 	}
-	
+
 	/*
 	 * Computes the best possible edit distance from cell [r,l] if getting
 	 * there has cost cCur.
@@ -570,8 +570,8 @@ public final class Levenstein {
 	}
 
 	/*
-	 * Computes the worst possible edit distance from cell [r,l] if getting 
-	 * there has cost cCur. 
+	 * Computes the worst possible edit distance from cell [r,l] if getting
+	 * there has cost cCur.
 	 */
 	private int maxCost(int r, int l, int cCur) {
 		// maximal cost from cell [r,l] to [rCount, lCount] if cell cost == cost
@@ -580,27 +580,27 @@ public final class Levenstein {
 			return SKIP;
 		return cCur + Math.max(Math.abs(fRowEnd - r), Math.abs(fColEnd - l)) * COST_CHANGE;
 	}
-	
+
 	/* classic implementation */
 
 	private RangeDifference[] walkback() {
 		fDiffs= new LinkedList();
-		
+
 		int row= fRowEnd, col= fColEnd;
 		RangeDifference difference= null;
-		
+
 		int cell= fMatrix[row][col]; // edit distance
-		
+
 		while (row > 0 || col > 0) {
 			int diag, above, left;
-			
+
 			if (row == 0) {
-				// slide deletes along row 0 
+				// slide deletes along row 0
 				diag= SKIP;
 				above= SKIP;
 				left= col - 1;
 			} else if (col == 0) {
-				// slide inserts along column 0 
+				// slide inserts along column 0
 				diag= SKIP;
 				above= row - 1;
 				left= SKIP;
@@ -610,7 +610,7 @@ public final class Levenstein {
 				above= fMatrix[row - 1][col];
 				left= fMatrix[row][col - 1];
 			}
-			
+
 			if (left == cell - 1 && left <= diag && left <= above) {
 				// delete
 				col--;
@@ -618,7 +618,7 @@ public final class Levenstein {
 				difference.fLeftStart= col;
 				difference.fLeftLength++;
 				difference.fRightStart= row;
-				
+
 				cell= left;
 			} else if (above == cell - 1 && above <= diag) {
 				// insert
@@ -627,7 +627,7 @@ public final class Levenstein {
 				difference.fLeftStart= col;
 				difference.fRightStart= row;
 				difference.fRightLength++;
-				
+
 				cell= above;
 			} else {
 				col--;
@@ -646,30 +646,30 @@ public final class Levenstein {
 				} else {
 					Assert.isTrue(false, "illegal matrix"); //$NON-NLS-1$
 				}
-				
+
 				cell= diag;
 			}
-			
+
 		}
-		
+
 		return (RangeDifference[]) fDiffs.toArray(new RangeDifference[fDiffs.size()]);
 	}
 
 	private RangeDifference getChange(RangeDifference difference) {
 		if (difference != null)
 			return difference;
-		
+
 		difference= new RangeDifference(RangeDifference.CHANGE);
 		fDiffs.add(0, difference);
 		return difference;
 	}
 
 	/* hirschberg's algorithm */
-	
+
 	private int hirschberg(int rStart, int rEnd, int lStart, int lEnd) {
-		
+
 		/* trivial cases */
-		
+
 		if (rEnd < rStart) {
 			// right range is empty
 			return lEnd - lStart + 1;
@@ -697,12 +697,12 @@ public final class Levenstein {
 //			Arrays.fill(fOptimalSplitValues, rStart, rEnd + 1, false);
 //			return rEnd - rStart + 1;
 //		}
-		
+
 		/* divide & conquer */
-		
+
 		// split rows at half
 		int rowSplit= (rStart + rEnd + 1) / 2 - 1;
-		
+
 		// compute edit distance of (r1,left) in linear space into fPreviousRow
 		internalEditDistance(rStart, rowSplit, lStart, lEnd);
 		int[] tmp= fPreviousRow;
@@ -710,7 +710,7 @@ public final class Levenstein {
 		fResultRow= tmp;
 		// compute backwards edit distance of (r2,left) in linear space into fPreviousRow
 		internalReverseEditDistance(rowSplit + 1, rEnd, lStart, lEnd);
-		
+
 		// find optimal alignment - the column in which to split the
 		// left hand side
 		int columnSplit= SKIP, distance= SKIP;
@@ -721,13 +721,13 @@ public final class Levenstein {
 				columnSplit= col;
 			}
 		}
-		
+
 		if (fProgressMonitor.isCanceled())
 			return NO_DISTANCE;
-		
+
 		Assert.isTrue(distance != SKIP);
 		Assert.isTrue(columnSplit != SKIP);
-		
+
 		if (distance == 0) {
 			// optimize for large unchanged parts
 			// no further partitioning needed, this part is equal
@@ -741,29 +741,29 @@ public final class Levenstein {
 			}
 			return distance;
 		}
-		
-		// store alignment: from [rowSplit, ?] connect to [rowSplit + 1, columnSplit] 
+
+		// store alignment: from [rowSplit, ?] connect to [rowSplit + 1, columnSplit]
 		fOptimalSplitColumn[rowSplit]= columnSplit;
 		fOptimalSplitValues[rowSplit]= false;
-		
+
 		// divide at column & conquer
 		// TODO guard against stack overflow
 		hirschberg(rStart, rowSplit, lStart, columnSplit);
 		hirschberg(rowSplit + 1, rEnd, columnSplit + 1, lEnd);
-		
+
 		return distance;
 	}
 
 	private RangeDifference[] buildDifferencesHirschberg() {
 		fDiffs= new LinkedList();
-		
+
 		RangeDifference difference= null;
 		int previousColumn= 0;
-		
+
 		for (int row= 1; row < fOptimalSplitColumn.length; row++) {
 			int previousRow= row - 1;
 			int column= fOptimalSplitColumn[row]; // from (row-1), jump to column (column) in row (row)
-			
+
 			if (column == previousColumn + 1) {
 				// diagonal
 				if (fOptimalSplitValues[row]) {
@@ -780,7 +780,7 @@ public final class Levenstein {
 				// downwards / insert
 				difference= getChange(difference, previousRow, previousColumn);
 				difference.fRightLength++;
-				
+
 			} else if (column > previousColumn) {
 				// rightward / deletes
 				difference= getChange(difference, previousRow, previousColumn);
@@ -788,17 +788,17 @@ public final class Levenstein {
 			} else {
 				Assert.isTrue(false, "Illegal edit description"); //$NON-NLS-1$
 			}
-			
+
 			previousColumn= column;
 		}
-		
+
 		if (previousColumn < fLeft.getRangeCount()) {
-			
+
 			// trailing deletions
 			difference= getChange(difference, fOptimalSplitColumn.length - 1, previousColumn);
 			difference.fLeftLength += fLeft.getRangeCount() - previousColumn;
 		}
-		
+
 		return (RangeDifference[]) fDiffs.toArray(new RangeDifference[fDiffs.size()]);
 	}
 
@@ -812,14 +812,14 @@ public final class Levenstein {
 	}
 
 	/* pretty printing for debug output */
-	
+
 	private void printRow() {
 		if (fMatrix != null)
 			print(fMatrix[fRow]);
 		else
 			print(fCurrentRow);
 	}
-	
+
 	private static void printHeader(IRangeComparator left, IRangeComparator right) {
 		System.out.println("============================="); //$NON-NLS-1$
 		System.out.println("= s1: " + left.toString()); //$NON-NLS-1$
@@ -833,5 +833,5 @@ public final class Levenstein {
 		}
 		System.out.println();
 	}
-	
+
 }

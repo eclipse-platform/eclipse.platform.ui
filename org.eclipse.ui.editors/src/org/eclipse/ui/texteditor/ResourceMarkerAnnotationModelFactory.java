@@ -18,7 +18,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * An annotation model factory for resource marker annotation models.
- * 
+ *
  * @since 3.0
  */
 public class ResourceMarkerAnnotationModelFactory implements IAnnotationModelFactory {

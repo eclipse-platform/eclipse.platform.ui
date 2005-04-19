@@ -21,7 +21,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * Combines a list of actions, taking the personality of the first that is
  * enabled.
- * 
+ *
  * @since 3.1
  */
 public final class CompositeRevertAction extends Action implements IUpdate {
@@ -33,7 +33,7 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 
 	/**
 	 * Creates an action combining the two given actions.
-	 * 
+	 *
 	 * @param actions the list of actions
 	 */
 	public CompositeRevertAction(IAction[] actions) {
@@ -44,7 +44,7 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 		System.arraycopy(actions, 0, fActions, 0, actions.length);
 		update(); // take personality of the first action
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -54,19 +54,19 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 				((IUpdate) fActions[i]).update();
 		}
 		IAction action= getEnabledAction();
-		
+
 		if (action == null)
 			return;
 		setText(action.getText());
 		setToolTipText(action.getToolTipText());
 	}
-	
-	
+
+
 	public boolean isEnabled() {
 		update();
 		return getEnabledAction() != null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -75,11 +75,11 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 		if (action != null)
 			action.run();
 	}
-	
+
 	/**
 	 * Returns the first enabled action, or <code>null</code> if none is
 	 * enabled.
-	 * 
+	 *
 	 * @return the first enabled action, or <code>null</code> if none is
 	 *         enabled
 	 */

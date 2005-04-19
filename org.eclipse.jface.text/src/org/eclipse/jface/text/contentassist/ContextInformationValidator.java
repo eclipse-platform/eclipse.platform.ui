@@ -15,13 +15,13 @@ import org.eclipse.jface.text.ITextViewer;
 
 /**
  * A default implementation of the <code>IContextInfomationValidator</code> interface.
- * This implementation determines whether the information is valid by asking the content 
- * assist processor for all  context information objects for the current position. If the 
- * currently displayed information is in the result set, the context information is 
+ * This implementation determines whether the information is valid by asking the content
+ * assist processor for all  context information objects for the current position. If the
+ * currently displayed information is in the result set, the context information is
  * considered valid.
  */
 public final class ContextInformationValidator implements IContextInformationValidator {
-	
+
 	/** The content assist processor. */
 	private IContentAssistProcessor fProcessor;
 	/** The context information to be validated. */
@@ -32,7 +32,7 @@ public final class ContextInformationValidator implements IContextInformationVal
 	/**
 	 * Creates a new context information validator which is ready to be installed on
 	 * a particular context information.
-	 * 
+	 *
 	 * @param processor the processor to be used for validation
 	 */
 	public ContextInformationValidator(IContentAssistProcessor processor) {

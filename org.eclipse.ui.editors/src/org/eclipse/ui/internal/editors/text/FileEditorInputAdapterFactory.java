@@ -22,7 +22,7 @@ import org.eclipse.ui.editors.text.ILocationProvider;
  * @since 3.0
  */
 public class FileEditorInputAdapterFactory implements IAdapterFactory {
-	
+
 	private static class LocationProvider implements ILocationProvider {
 		/*
 		 * @see org.eclipse.ui.editors.text.ILocationProvider#getLocation(java.lang.Object)
@@ -35,10 +35,10 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 	}
-	
+
 	/** The list of provided adapters. */
 	private static final Class[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
-	
+
 	/** The provided location provider */
 	private ILocationProvider fLocationProvider= new LocationProvider();
 

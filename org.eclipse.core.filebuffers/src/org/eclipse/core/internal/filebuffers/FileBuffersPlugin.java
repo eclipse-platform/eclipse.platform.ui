@@ -19,18 +19,18 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * The plug-in runtime class for the file buffers plug-in (id <code>"org.eclipse.core.filebuffers"</code>).
- * 
+ *
  * @since 3.0
  */
 public class FileBuffersPlugin extends Plugin {
-	
+
 	public final static String PLUGIN_ID= "org.eclipse.core.filebuffers";  //$NON-NLS-1$
-	
+
 	/** The shared plug-in instance */
 	private static FileBuffersPlugin fgPlugin;
 	/** The file buffer manager */
 	private ITextFileBufferManager fTextFileBufferManager;
-	
+
 	/**
 	 * Creates a plug-in instance.
 	 */
@@ -41,7 +41,7 @@ public class FileBuffersPlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance.
-	 * 
+	 *
 	 * @return the default plug-in instance
 	 */
 	public static FileBuffersPlugin getDefault() {
@@ -50,7 +50,7 @@ public class FileBuffersPlugin extends Plugin {
 
 	/**
 	 * Returns the text file buffer manager of this plug-in.
-	 * 
+	 *
 	 * @return the text file buffer manager of this plug-in
 	 */
 	public ITextFileBufferManager getFileBufferManager()  {

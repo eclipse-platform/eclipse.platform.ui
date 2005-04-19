@@ -22,14 +22,14 @@ import org.eclipse.ui.internal.texteditor.*;
 /**
  * Provides the strategy for finding the annotation preference for a given
  * annotation.
- * 
+ *
  * @since 3.0
  */
 public class AnnotationPreferenceLookup {
-	
+
 	/** The map between annotation types and annotation preference fragments. */
 	private Map fFragments;
-	
+
 	/**
 	 * Creates a new annotation preference lookup object.
 	 */
@@ -38,24 +38,24 @@ public class AnnotationPreferenceLookup {
 
 	/**
 	 * Returns the annotation preference of a given annotation.
-	 * 
+	 *
 	 * @param annotation the annotation
 	 * @return the annotation preference for the given annotation or <code>null</code>
 	 */
 	public AnnotationPreference getAnnotationPreference(Annotation annotation) {
 		return getAnnotationPreference(annotation.getType());
 	}
-	
+
 	/**
 	 * Returns the annotation preference defined for the given annotation type.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @return the annotation preference for the given annotation type or <code>null</code>
 	 */
 	public AnnotationPreference getAnnotationPreference(String annotationType) {
 		if (annotationType == null || annotationType == Annotation.TYPE_UNKNOWN)
 			return null;
-		
+
 		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
 		AnnotationType type= hierarchy.getAnnotationType(annotationType);
 		AnnotationPreference preference= type.getPreference();
@@ -63,16 +63,16 @@ public class AnnotationPreferenceLookup {
 			preference= new DelegatingAnnotationPreference(type, this);
 			type.setAnnotationPreference(preference);
 		}
-		
+
 		return preference;
 	}
-	
+
 	/**
 	 * Returns the annotation preference fragment defined for the given
 	 * annotation type.
 	 * <p>
 	 * For internal use only. Not intended to be called by clients.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @return the defined annotation preference fragment
 	 */
@@ -80,10 +80,10 @@ public class AnnotationPreferenceLookup {
 		Map fragments= getPreferenceFragments();
 		return (AnnotationPreference) fragments.get(annotationType);
 	}
-	
+
 	/**
 	 * Returns the annotation type hierarchy and creates it when not yet done.
-	 * 
+	 *
 	 * @return the annotation type hierarchy
 	 */
 	private AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
@@ -93,7 +93,7 @@ public class AnnotationPreferenceLookup {
 	/**
 	 * Returns a map between annotation type names and annotation preference
 	 * fragments and creates it if not yet done.
-	 * 
+	 *
 	 * @return the map between annotation type names and annotation preference fragments
 	 */
 	private Map getPreferenceFragments() {
@@ -107,7 +107,7 @@ public class AnnotationPreferenceLookup {
 				AnnotationPreference preference= (AnnotationPreference) fFragments.get(annotationType);
 				if (preference == null)
 					fFragments.put(annotationType, fragment);
-				else 
+				else
 					preference.merge(fragment);
 			}
 		}

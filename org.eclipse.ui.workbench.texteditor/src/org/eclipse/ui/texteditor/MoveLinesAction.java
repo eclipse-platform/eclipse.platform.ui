@@ -40,7 +40,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * @since 3.0
  */
 public class MoveLinesAction extends TextEditorAction {
-	
+
 	/**
 	 * Detects the end of a compound edit command. The user is assumed to have ended the command
 	 * when
@@ -53,30 +53,30 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private class ExitStrategy implements VerifyKeyListener, MouseListener, FocusListener, IDocumentListener {
 
-		/** 
+		/**
 		 * The widget this instance is registered with for <code>VerifyKey</code>-, <code>Mouse</code>-
 		 * and <code>FocusEvent</code>s, or <code>null</code> if not registered.
 		 */
 		private StyledText fWidgetEventSource;
 		/**
-		 * The document this instance is registered with for <code>DocumentEvent</code>s, 
+		 * The document this instance is registered with for <code>DocumentEvent</code>s,
 		 * or <code>null</code> if not registered.
 		 */
 		private IDocument fDocumentEventSource;
-		/** 
+		/**
 		 * Indicates whether there are any pending registrations.<br/>
 		 * Invariant: <code>fIsInstalled || (fWidgetEventSource == fDocumentEventSource == null)</code>
-		 */ 
+		 */
 		private boolean fIsInstalled;
-		
-		/** 
-		 * Installs the exit strategy with all event sources. 
+
+		/**
+		 * Installs the exit strategy with all event sources.
 		 */
 		public void install() {
 			if (fIsInstalled)
 				uninstall();
 			fIsInstalled= true;
-			
+
 			ISourceViewer viewer= fEditor.getSourceViewer();
 			if (viewer == null)
 				return;
@@ -84,18 +84,18 @@ public class MoveLinesAction extends TextEditorAction {
 			fWidgetEventSource= viewer.getTextWidget();
 			if (fWidgetEventSource == null)
 				return;
-			
+
 			fWidgetEventSource.addVerifyKeyListener(this);
 			fWidgetEventSource.addMouseListener(this);
 			fWidgetEventSource.addFocusListener(this);
-		
+
 			fDocumentEventSource= viewer.getDocument();
 			if (fDocumentEventSource != null)
 				fDocumentEventSource.addDocumentListener(this);
 		}
-		
+
 		/**
-		 * Uninstalls the exit strategy with all event sources it was previously registered with. 
+		 * Uninstalls the exit strategy with all event sources it was previously registered with.
 		 */
 		public void uninstall() {
 			if (fWidgetEventSource != null) {
@@ -141,10 +141,10 @@ public class MoveLinesAction extends TextEditorAction {
 		public void documentChanged(DocumentEvent event) {}
 	}
 
-	/* keys */	
-	
+	/* keys */
+
 	/** Key for status message upon illegal move. <p>Value {@value}</p> */
-	
+
 	/* state variables - define what this action does */
 
 	/** <code>true</code> if lines are shifted upwards, <code>false</code> otherwise. */
@@ -153,15 +153,15 @@ public class MoveLinesAction extends TextEditorAction {
 	private final boolean fCopy;
 	/** The editor we are working on. */
 	private final  AbstractTextEditor fEditor;
-	
+
 	/* compound members of this action */
-	
-	/** The exit strategy that will detect the ending of a compound edit */  
+
+	/** The exit strategy that will detect the ending of a compound edit */
 	private final ExitStrategy fExitStrategy= new ExitStrategy();
 
 	/* process variables - may change in every run() */
-	
-	/** 
+
+	/**
 	 * Set to <code>true</code> by <code>getMovingSelection</code> if the resulting selection
 	 * should include the last delimiter.
 	 */
@@ -174,10 +174,10 @@ public class MoveLinesAction extends TextEditorAction {
 //	private EditDescription fDescription= new EditDescription();
 
 	/**
-	 * Creates and initializes the action for the given text editor. 
+	 * Creates and initializes the action for the given text editor.
 	 * The action configures its visual representation from the given resource
-	 * bundle. 
-	 * 
+	 * bundle.
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
@@ -201,9 +201,9 @@ public class MoveLinesAction extends TextEditorAction {
 	private void beginCompoundEdit() {
 		if (fEditInProgress || fEditor == null)
 			return;
-			
+
 		fEditInProgress= true;
-		
+
 		fExitStrategy.install();
 
 		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
@@ -216,7 +216,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * Checks if <code>selection</code> is contained by the visible region of <code>viewer</code>.
 	 * As a special case, a selection is considered contained even if it extends over the visible
 	 * region, but the extension stays on a partially contained line and contains only white space.
-	 * 
+	 *
 	 * @param selection the selection to be checked
 	 * @param viewer the viewer displaying a visible region of <code>selection</code>'s document.
 	 * @return <code>true</code>, if <code>selection</code> is contained, <code>false</code> otherwise.
@@ -225,13 +225,13 @@ public class MoveLinesAction extends TextEditorAction {
 		int min= selection.getOffset();
 		int max= min + selection.getLength();
 		IDocument document= viewer.getDocument();
-		
+
 		IRegion visible;
 		if (viewer instanceof ITextViewerExtension5)
 			visible= ((ITextViewerExtension5) viewer).getModelCoverage();
 		else
 			visible= viewer.getVisibleRegion();
-		
+
 		int visOffset= visible.getOffset();
 		try {
 			if (visOffset > min) {
@@ -263,33 +263,33 @@ public class MoveLinesAction extends TextEditorAction {
 	private void endCompoundEdit() {
 		if (!fEditInProgress || fEditor == null)
 			return;
-			
+
 		fExitStrategy.uninstall();
 
 		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.endCompoundChange();
 		}
-		
+
 		fEditInProgress= false;
 	}
 
 	/**
 	 * Given a selection on a document, computes the lines fully or partially covered by
-	 * <code>selection</code>. A line in the document is considered covered if 
+	 * <code>selection</code>. A line in the document is considered covered if
 	 * <code>selection</code> comprises any characters on it, including the terminating delimiter.
-	 * <p>Note that the last line in a selection is not considered covered if the selection only 
+	 * <p>Note that the last line in a selection is not considered covered if the selection only
 	 * comprises the line delimiter at its beginning (that is considered part of the second last
-	 * line). 
+	 * line).
 	 * As a special case, if the selection is empty, a line is considered covered if the caret is
-	 * at any position in the line, including between the delimiter and the start of the line. The 
+	 * at any position in the line, including between the delimiter and the start of the line. The
 	 * line containing the delimiter is not considered covered in that case.
 	 * </p>
-	 * 
-	 * @param document the document <code>selection</code> refers to 
+	 *
+	 * @param document the document <code>selection</code> refers to
 	 * @param selection a selection on <code>document</code>
 	 * @param viewer the <code>ISourceViewer</code> displaying <code>document</code>
-	 * @return a selection describing the range of lines (partially) covered by 
+	 * @return a selection describing the range of lines (partially) covered by
 	 * <code>selection</code>, without any terminating line delimiters
 	 * @throws BadLocationException if the selection is out of bounds (when the underlying document has changed during the call)
 	 */
@@ -303,7 +303,7 @@ public class MoveLinesAction extends TextEditorAction {
 		if (delim != null)
 			high -= delim.length();
 
-		// the new selection will cover the entire lines being moved, except for the last line's 
+		// the new selection will cover the entire lines being moved, except for the last line's
 		// delimiter. The exception to this rule is an empty last line, which will stay covered
 		// including its delimiter
 		if (delim != null && document.getLineLength(endLine) == delim.length())
@@ -315,10 +315,10 @@ public class MoveLinesAction extends TextEditorAction {
 	}
 
 	/**
-	 * Computes the region of the skipped line given the text block to be moved. If 
+	 * Computes the region of the skipped line given the text block to be moved. If
 	 * <code>fUpwards</code> is <code>true</code>, the line above <code>selection</code>
 	 * is selected, otherwise the line below.
-	 * 
+	 *
 	 * @param document the document <code>selection</code> refers to
 	 * @param selection the selection on <code>document</code> that will be moved.
 	 * @return the region comprising the line that <code>selection</code> will be moved over, without its terminating delimiter.
@@ -338,9 +338,9 @@ public class MoveLinesAction extends TextEditorAction {
 
 	/**
 	 * Checks for white space in a string.
-	 * 
+	 *
 	 * @param string the string to be checked or <code>null</code>
-	 * @return <code>true</code> if <code>string</code> contains only white space or is 
+	 * @return <code>true</code> if <code>string</code> contains only white space or is
 	 * <code>null</code>, <code>false</code> otherwise
 	 */
 	private boolean isWhitespace(String string) {
@@ -351,13 +351,13 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void runWithEvent(Event event) {
-		
+
 		updateShortCut(event);
 
 		// get involved objects
 		if (fEditor == null)
 			return;
-		
+
 		if (!validateEditorInputState())
 			return;
 
@@ -377,9 +377,9 @@ public class MoveLinesAction extends TextEditorAction {
 		Point p= viewer.getSelectedRange();
 		if (p == null)
 			return;
-			
+
 		ITextSelection sel= new TextSelection(document, p.x, p.y);
-			
+
 		ITextSelection skippedLine= getSkippedLine(document, sel);
 		if (skippedLine == null)
 			return;
@@ -387,8 +387,8 @@ public class MoveLinesAction extends TextEditorAction {
 		try {
 
 			ITextSelection movingArea= getMovingSelection(document, sel, viewer);
-			
-			// if either the skipped line or the moving lines are outside the widget's 
+
+			// if either the skipped line or the moving lines are outside the widget's
 			// visible area, bail out
 			if (!containedByVisibleRegion(movingArea, viewer) || !containedByVisibleRegion(skippedLine, viewer))
 				return;
@@ -398,7 +398,7 @@ public class MoveLinesAction extends TextEditorAction {
 			String skipped= skippedLine.getText();
 			if (moving == null || skipped == null)
 				return;
-				
+
 			String delim;
 			String insertion;
 			int offset, deviation;
@@ -429,7 +429,7 @@ public class MoveLinesAction extends TextEditorAction {
 			}
 
 			// modify the document
-			beginCompoundEdit(); 
+			beginCompoundEdit();
 			if (fCopy) {
 //				fDescription= new EditDescription(offset, 0, insertion.length());
 				document.replace(offset, 0, insertion);
@@ -452,11 +452,11 @@ public class MoveLinesAction extends TextEditorAction {
 			return;
 		}
 	}
-	
+
 	/**
 	 * Saves the state mask of <code>event</code> for comparison with the next event in order to
 	 * detect key changes in the set of keys pressed by the user.
-	 * 
+	 *
 	 * @param event the event that triggered this action
 	 */
 	private void updateShortCut(Event event) {
@@ -466,7 +466,7 @@ public class MoveLinesAction extends TextEditorAction {
 	/**
 	 * Performs similar to AbstractTextEditor.selectAndReveal, but does not update
 	 * the viewers highlight area.
-	 * 
+	 *
 	 * @param viewer the viewer that we want to select on
 	 * @param offset the offset of the selection
 	 * @param length the length of the selection
@@ -479,7 +479,7 @@ public class MoveLinesAction extends TextEditorAction {
 		if (st != null)
 			st.showSelection(); // only minimal scrolling
 	}
-	
+
 	/**
 	 * Displays information in the status line why a line move is not possible
 	 */
@@ -487,7 +487,7 @@ public class MoveLinesAction extends TextEditorAction {
 		IEditorStatusLine status= (IEditorStatusLine) fEditor.getAdapter(IEditorStatusLine.class);
 		if (status == null)
 			return;
-		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null); 
+		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null);
 	}
 
 	/*
@@ -495,9 +495,9 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	public void update() {
 		super.update();
-		
+
 		if (isEnabled())
 			setEnabled(canModifyEditor());
-		
+
 	}
 }

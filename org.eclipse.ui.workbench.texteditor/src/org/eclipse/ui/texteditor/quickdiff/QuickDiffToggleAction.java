@@ -40,26 +40,26 @@ import org.eclipse.ui.internal.texteditor.quickdiff.RevertSelectionAction;
 /**
  * Action to toggle the line number bar's quick diff display. When turned on, quick diff shows
  * the changes relative to the saved version of the file.
- * 
+ *
  * @since 3.0
  */
 public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
-	
+
 	/** The editor we are working on. */
 	ITextEditor fEditor= null;
-	
+
 	/** Our UI proxy action. */
 	IAction fProxy;
-	
+
 	/** The restore actions associated with this toggle action. */
-	QuickDiffRestoreAction[] fRestoreActions= 
-		new QuickDiffRestoreAction[] { 
-			new RevertSelectionAction(fEditor, true), 
-			new RevertBlockAction(fEditor, true), 
-			new RevertLineAction(fEditor, true), 
+	QuickDiffRestoreAction[] fRestoreActions=
+		new QuickDiffRestoreAction[] {
+			new RevertSelectionAction(fEditor, true),
+			new RevertBlockAction(fEditor, true),
+			new RevertLineAction(fEditor, true),
 			new RestoreAction(fEditor, true),
 		};
-		
+
 	/** The menu listener that adds the ruler context menu. */
 	private IMenuListener fListener= new IMenuListener() {
 		/** Group name for additions, in CompilationUnitEditor... */
@@ -94,7 +94,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 					manager.insertAfter(GROUP_RESTORE, new Separator(GROUP_QUICKDIFF));
 
 				// create quickdiff menu
-				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID); 
+				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID);
 				List descriptors= new QuickDiff().getReferenceProviderDescriptors();
 				for (Iterator it= descriptors.iterator(); it.hasNext();) {
 					ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) it.next();
@@ -122,7 +122,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			}
 		}
 	};
-	
+
 	/*
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
@@ -152,7 +152,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * Installs a submenu with <code>fEditor</code>'s ruler context menu that contains the choices
 	 * for the quick diff reference. This allows the toggle action to lazily install the menu once
 	 * quick diff has been enabled.
-	 * 
+	 *
 	 * @see QuickDiffToggleAction
 	 */
 	private void setPopupMenu() {
@@ -164,7 +164,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	/**
 	 * States whether this toggle action has been installed and a incremental differ has been
 	 * installed with the line number bar.
-	 * 
+	 *
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	boolean isConnected() {
@@ -180,10 +180,10 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		fProxy= action;
 		if (fEditor == null)
 			return;
-			
+
 		if (fEditor instanceof ITextEditorExtension3) {
 			ITextEditorExtension3 extension= (ITextEditorExtension3)fEditor;
-			extension.showChangeInformation(!extension.isChangeInformationShowing()); 
+			extension.showChangeInformation(!extension.isChangeInformationShowing());
 		}
 	}
 
@@ -201,9 +201,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		if (fProxy == null)
 			return;
 		if (isConnected())
-			fProxy.setText(QuickDiffMessages.quickdiff_toggle_disable); 
+			fProxy.setText(QuickDiffMessages.quickdiff_toggle_disable);
 		else
-			fProxy.setText(QuickDiffMessages.quickdiff_toggle_enable); 
+			fProxy.setText(QuickDiffMessages.quickdiff_toggle_enable);
 	}
 
 }

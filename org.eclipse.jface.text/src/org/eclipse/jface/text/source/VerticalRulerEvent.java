@@ -14,16 +14,16 @@ package org.eclipse.jface.text.source;
 /**
  * An event sent to {@link org.eclipse.jface.text.source.IVerticalRulerListener} instances when annotation
  * related event occurs on the vertical ruler.
- * 
+ *
  * @since 3.0
  */
 public class VerticalRulerEvent {
-	
+
 	private Annotation fAnnotation;
-	
+
 	/**
 	 * Creates a new event.
-	 * 
+	 *
 	 * @param annotation the annotation concerned, or <code>null</code>
 	 */
 	public VerticalRulerEvent(Annotation annotation) {
@@ -36,7 +36,7 @@ public class VerticalRulerEvent {
 	public Annotation getSelectedAnnotation() {
 		return fAnnotation;
 	}
-	
+
 	/**
 	 * @param annotation the concerned annotation, or <code>null</code>
 	 */

@@ -30,7 +30,7 @@ import org.eclipse.jface.text.contentassist.ContextInformationPopup.ContextFrame
 /**
  * This content assist adapter delegates the calls either to
  * a text viewer or to a content assist subject control.
- * 
+ *
  * @since 3.0
  */
 final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl {
@@ -39,16 +39,16 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	 * The text viewer which is used as content assist subject control.
 	 */
 	private ITextViewer fViewer;
-	
+
 	/**
 	 * The content assist subject control.
 	 */
 	private IContentAssistSubjectControl fContentAssistSubjectControl;
 
-	
+
 	/**
 	 * Creates an adapter for the given content assist subject control.
-	 * 
+	 *
 	 * @param contentAssistSubjectControl the content assist subject control
 	 */
 	ContentAssistSubjectControlAdapter(IContentAssistSubjectControl contentAssistSubjectControl) {
@@ -58,7 +58,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 
 	/**
 	 * Creates an adapter for the given text viewer.
-	 * 
+	 *
 	 * @param viewer the text viewer
 	 */
 	public ContentAssistSubjectControlAdapter(ITextViewer viewer) {
@@ -138,7 +138,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		else
 			fViewer.getTextWidget().addKeyListener(keyListener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
@@ -169,7 +169,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			e.prependVerifyKeyListener(verifyKeyListener);
 			return true;
 		} else {
-			
+
 			StyledText textWidget= fViewer.getTextWidget();
 			if (Helper.okToUse(textWidget)) {
 				textWidget.addVerifyKeyListener(verifyKeyListener);
@@ -178,7 +178,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
@@ -198,7 +198,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
 	 */
@@ -255,7 +255,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 	/**
 	 * Returns the characters which when typed by the user should automatically
-	 * initiate proposing completions. The position is used to determine the 
+	 * initiate proposing completions. The position is used to determine the
 	 * appropriate content assist processor to invoke.
 	 *
 	 * @param contentAssistant the content assistant
@@ -268,7 +268,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			return contentAssistant.getCompletionProposalAutoActivationCharacters(fContentAssistSubjectControl, offset);
 		return contentAssistant.getCompletionProposalAutoActivationCharacters(fViewer, offset);
 	}
-	
+
 	/**
 	 * Returns the characters which when typed by the user should automatically
 	 * initiate the presentation of context information. The position is used
@@ -288,7 +288,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 
 	/**
 	* Creates and returns a completion proposal popup for the given content assistant.
-	* 
+	*
 	* @param contentAssistant the content assistant
 	* @param controller the additional info controller
 	* @return the completion proposal popup
@@ -297,12 +297,12 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		if (fContentAssistSubjectControl != null)
 			return new CompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
 		return new CompletionProposalPopup(contentAssistant, fViewer, controller);
-		
+
 	}
 
 	/**
 	 * Creates and returns a context info popup for the given content assistant.
-	 * 
+	 *
 	 * @param contentAssistant the content assistant
 	 * @return the context info popup or <code>null</code>
 	 */
@@ -310,13 +310,13 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		if (fContentAssistSubjectControl != null)
 			return new ContextInformationPopup(contentAssistant, fContentAssistSubjectControl);
 		return new ContextInformationPopup(contentAssistant, fViewer);
-		
+
 	}
 
 	/**
-	 * Returns the context information validator that should be used to 
+	 * Returns the context information validator that should be used to
 	 * determine when the currently displayed context information should
-	 * be dismissed. The position is used to determine the appropriate 
+	 * be dismissed. The position is used to determine the appropriate
 	 * content assist processor to invoke.
 	 *
 	 * @param contentAssistant the content assistant
@@ -330,8 +330,8 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	}
 
 	/**
-	 * Returns the context information presenter that should be used to 
-	 * display context information. The position is used to determine the 
+	 * Returns the context information presenter that should be used to
+	 * display context information. The position is used to determine the
 	 * appropriate content assist processor to invoke.
 	 *
 	 * @param contentAssistant the content assistant
@@ -346,7 +346,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 
 	/**
 	 * Installs this adapter's information validator on the given context frame.
-	 * 
+	 *
 	 * @param frame the context frame
 	 */
 	public void installValidator(ContextFrame frame) {
@@ -359,7 +359,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 
 	/**
 	 * Installs this adapter's information presenter on the given context frame.
-	 * 
+	 *
 	 * @param frame the context frame
 	 */
 	public void installContextInformationPresenter(ContextFrame frame) {
@@ -372,7 +372,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 
 	/**
 	 * Returns an array of context information objects computed based
-	 * on the specified document position. The position is used to determine 
+	 * on the specified document position. The position is used to determine
 	 * the appropriate content assist processor to invoke.
 	 *
 	 * @param contentAssistant the content assistant

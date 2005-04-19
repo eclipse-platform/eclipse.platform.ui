@@ -21,12 +21,12 @@ import org.eclipse.jface.text.IRegion;
  * A multi-text edit can be used to aggregate several edits into
  * one edit. The edit itself doesn't modify a document.
  * <p>
- * Clients are allowed to implement subclasses of a multi-text 
+ * Clients are allowed to implement subclasses of a multi-text
  * edit.Subclasses must implement <code>doCopy()</code> to ensure
- * the a copy of the right type is created. Not implementing 
+ * the a copy of the right type is created. Not implementing
  * <code>doCopy()</code> in subclasses will result in an assertion
- * failure during copying. 
- * 
+ * failure during copying.
+ *
  * @since 3.0
  */
 public class MultiTextEdit extends TextEdit {
@@ -36,22 +36,22 @@ public class MultiTextEdit extends TextEdit {
 	/**
 	 * Creates a new <code>MultiTextEdit</code>. The range
 	 * of the edit is determined by the range of its children.
-	 * 
+	 *
 	 * Adding this edit to a parent edit sets its range to the
-	 * range covered by its children. If the edit doesn't have 
-	 * any children its offset is set to the parent's offset 
+	 * range covered by its children. If the edit doesn't have
+	 * any children its offset is set to the parent's offset
 	 * and its length is set to 0.
 	 */
 	public MultiTextEdit() {
 		super(0, Integer.MAX_VALUE);
 		fDefined= false;
 	}
-	
+
 	/**
 	 * Creates a new </code>MultiTextEdit</code> for the given
-	 * range. Adding a child to this edit which isn't covered 
+	 * range. Adding a child to this edit which isn't covered
 	 * by the given range will result in an exception.
-	 * 
+	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length.
 	 * @see TextEdit#addChild(TextEdit)
@@ -61,7 +61,7 @@ public class MultiTextEdit extends TextEdit {
 		super(offset, length);
 		fDefined= true;
 	}
-	
+
 	/*
 	 * Copy constructor.
 	 */
@@ -70,14 +70,14 @@ public class MultiTextEdit extends TextEdit {
 	}
 
 	/**
-	 * Checks the edit's integrity. 
+	 * Checks the edit's integrity.
 	 * <p>
 	 * Note that this method <b>should only be called</b> by the edit
 	 * framework and not by normal clients.</p>
 	 *<p>
 	 * This default implementation does nothing. Subclasses may override
 	 * if needed.</p>
-	 * 
+	 *
 	 * @exception MalformedTreeException if the edit isn't in a valid state
 	 *  and can therefore not be executed
 	 */
@@ -93,29 +93,29 @@ public class MultiTextEdit extends TextEdit {
 			return true;
 		return hasChildren();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public final int getOffset() {
 		if (fDefined)
 			return super.getOffset();
-		
-		List/*<TextEdit>*/ children= internalGetChildren();	
+
+		List/*<TextEdit>*/ children= internalGetChildren();
 		if (children == null || children.size() == 0)
 			return 0;
 		// the children are already sorted
 		return ((TextEdit)children.get(0)).getOffset();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public final int getLength() {
 		if (fDefined)
 			return super.getLength();
-		
-		List/*<TextEdit>*/ children= internalGetChildren();	
+
+		List/*<TextEdit>*/ children= internalGetChildren();
 		if (children == null || children.size() == 0)
 			return 0;
 		// the children are already sorted
@@ -123,7 +123,7 @@ public class MultiTextEdit extends TextEdit {
 		TextEdit last= (TextEdit)children.get(children.size() - 1);
 		return last.getOffset() - first.getOffset() + last.getLength();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -133,17 +133,17 @@ public class MultiTextEdit extends TextEdit {
 		// an undefined multiple text edit covers everything
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.text.edits.TextEdit#canZeroLengthCover()
 	 */
 	protected boolean canZeroLengthCover() {
 		return true;
 	}
-	
+
 	/*
 	 * @see TextEdit#copy
-	 */	
+	 */
 	protected TextEdit doCopy() {
 		Assert.isTrue(MultiTextEdit.class == getClass(), "Subclasses must reimplement copy0"); //$NON-NLS-1$
 		return new MultiTextEdit(this);
@@ -167,7 +167,7 @@ public class MultiTextEdit extends TextEdit {
 		if (fDefined)
 			super.adjustOffset(delta);
 	}
-	
+
 	/*
 	 * @see org.eclipse.text.edits.TextEdit#adjustLength(int)
 	 * @since 3.1
@@ -176,29 +176,29 @@ public class MultiTextEdit extends TextEdit {
 		if (fDefined)
 			super.adjustLength(delta);
 	}
-	
+
 	/*
 	 * @see TextEdit#performConsistencyCheck
-	 */	
+	 */
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		checkIntegrity();
 	}
-	
+
 	/*
 	 * @see TextEdit#performDocumentUpdating
-	 */	
+	 */
 	/* package */ int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
 	}
-	
+
 	/*
 	 * @see TextEdit#deleteChildren
-	 */	
+	 */
 	/* package */ boolean deleteChildren() {
 		return false;
 	}
-	
+
 	/* package */ void aboutToBeAdded(TextEdit parent) {
 		defineRegion(parent.getOffset());
 	}
@@ -216,7 +216,7 @@ public class MultiTextEdit extends TextEdit {
 		}
 		fDefined= true;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

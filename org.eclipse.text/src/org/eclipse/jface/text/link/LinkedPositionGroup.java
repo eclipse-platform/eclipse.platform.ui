@@ -44,11 +44,11 @@ import org.eclipse.jface.text.Region;
  * <p>
  * Clients may instantiate this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class LinkedPositionGroup {
-	
+
 	/** Sequence constant declaring that a position should not be stopped by. */
 	public static final int NO_STOP= -1;
 
@@ -70,11 +70,11 @@ public class LinkedPositionGroup {
 	 */
 	/** The position including the most recent <code>DocumentEvent</code>. */
 	private LinkedPosition fLastPosition;
-	/** The region covered by <code>fLastPosition</code> before the document 
+	/** The region covered by <code>fLastPosition</code> before the document
 	 * change.
 	 */
 	private IRegion fLastRegion;
-	
+
 	/**
 	 * Adds a position to this group. The document region defined by the
 	 * position must contain the same content (and thus have the same length) as
@@ -89,7 +89,7 @@ public class LinkedPositionGroup {
 	 * Once a group has been added to a <code>LinkedModeModel</code>, it
 	 * becomes <em>sealed</em> and no positions may be added any more.
 	 * </p>
-	 * 
+	 *
 	 * @param position the position to add
 	 * @throws BadLocationException if the position is invalid or conflicts with
 	 *         other positions in the group
@@ -116,7 +116,7 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Enforces the invariant that all positions must contain the same string.
-	 * 
+	 *
 	 * @param position the position to check
 	 * @throws BadLocationException if the equal content check fails
 	 */
@@ -131,7 +131,7 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Enforces the invariant that all positions must be disjoint.
-	 * 
+	 *
 	 * @param position the position to check
 	 * @throws BadLocationException if the disjointness check fails
 	 */
@@ -145,7 +145,7 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Enforces the disjointness for another group
-	 * 
+	 *
 	 * @param group the group to check
 	 * @throws BadLocationException if the disjointness check fails
 	 */
@@ -158,17 +158,17 @@ public class LinkedPositionGroup {
 	}
 
 	/**
-	 * Checks whether <code>event</code> is a legal event for this group. An 
+	 * Checks whether <code>event</code> is a legal event for this group. An
 	 * event is legal if it touches at most one position contained within this
 	 * group.
-	 * 
+	 *
 	 * @param event the document event to check
 	 * @return <code>true</code> if <code>event</code> is legal
 	 */
 	boolean isLegalEvent(DocumentEvent event) {
 		fLastPosition= null;
 		fLastRegion= null;
-		
+
 		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
 			LinkedPosition pos= (LinkedPosition) it.next();
 			if (overlapsOrTouches(pos, event)) {
@@ -177,19 +177,19 @@ public class LinkedPositionGroup {
 					fLastRegion= null;
 					return false;
 				}
-					
+
 				fLastPosition= pos;
 				fLastRegion= new Region(pos.getOffset(), pos.getLength());
 			}
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Checks whether the given event touches the given position. To touch means
 	 * to overlap or come up to the borders of the position.
-	 * 
+	 *
 	 * @param position the position
 	 * @param event the event
 	 * @return <code>true</code> if <code>position</code> and
@@ -203,7 +203,7 @@ public class LinkedPositionGroup {
 	 * Creates an edition of a document change that will forward any
 	 * modification in one position to all linked siblings. The return value is
 	 * a map from <code>IDocument</code> to <code>TextEdit</code>.
-	 * 
+	 *
 	 * @param event the document event to check
 	 * @return a map of edits, grouped by edited document, or <code>null</code>
 	 *         if there are no edits
@@ -214,12 +214,12 @@ public class LinkedPositionGroup {
 
 			Map map= new HashMap();
 
-			
+
 			int relativeOffset= event.getOffset() - fLastRegion.getOffset();
 			if (relativeOffset < 0) {
 				relativeOffset= 0;
 			}
-			
+
 			int eventEnd= event.getOffset() + event.getLength();
 			int lastEnd= fLastRegion.getOffset() + fLastRegion.getLength();
 			int length;
@@ -227,7 +227,7 @@ public class LinkedPositionGroup {
 				length= lastEnd - relativeOffset - fLastRegion.getOffset();
 			else
 				length= eventEnd - relativeOffset - fLastRegion.getOffset();
-						
+
 			String text= event.getText(); //$NON-NLS-1$
 			if (text == null)
 				text= ""; //$NON-NLS-1$
@@ -236,7 +236,7 @@ public class LinkedPositionGroup {
 				LinkedPosition p= (LinkedPosition) it.next();
 				if (p == fLastPosition || p.isDeleted())
 					continue; // don't re-update the origin of the change
-				
+
 				List edits= (List) map.get(p.getDocument());
 				if (edits == null) {
 					edits= new ArrayList();
@@ -272,7 +272,7 @@ public class LinkedPositionGroup {
 			((LinkedPosition) fPositions.get(0)).setSequenceNumber(0);
 		}
 	}
-	
+
 	IDocument[] getDocuments() {
 		IDocument[] docs= new IDocument[fPositions.size()];
 		int i= 0;
@@ -282,7 +282,7 @@ public class LinkedPositionGroup {
 		}
 		return docs;
 	}
-	
+
 	void register(LinkedModeModel model) throws BadLocationException {
 		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
             LinkedPosition pos= (LinkedPosition) it.next();
@@ -293,7 +293,7 @@ public class LinkedPositionGroup {
 	/**
 	 * Returns the position in this group that encompasses all positions in
 	 * <code>group</code>.
-	 * 
+	 *
 	 * @param group the group to be adopted
 	 * @return a position in the receiver that contains all positions in <code>group</code>,
 	 *         or <code>null</code> if none can be found
@@ -325,7 +325,7 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Finds the closest position to <code>toFind</code>.
-	 * 
+	 *
 	 * @param toFind the linked position for which to find the closest position
 	 * @return the closest position to <code>toFind</code>.
 	 */
@@ -341,7 +341,7 @@ public class LinkedPositionGroup {
 	/**
 	 * Returns <code>true</code> if <code>offset</code> is contained in any
 	 * position in this group.
-	 * 
+	 *
 	 * @param offset the offset to check
 	 * @return <code>true</code> if offset is contained by this group
 	 */
@@ -357,19 +357,19 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Returns whether this group contains any positions.
-	 * 
+	 *
 	 * @return <code>true</code> if this group is empty, <code>false</code>
 	 *         if it is not
 	 */
 	public boolean isEmtpy() {
 		return fPositions.size() == 0;
 	}
-	
+
 	/**
 	 * Returns the positions contained in the receiver as an array. The
 	 * positions are the actual positions and must not be modified; the array
 	 * is a copy of internal structures.
-	 * 
+	 *
 	 * @return the positions of this group in no particular order
 	 */
 	public LinkedPosition[] getPositions() {
@@ -378,7 +378,7 @@ public class LinkedPositionGroup {
 
 	/**
 	 * Returns <code>true</code> if the receiver contains <code>position</code>.
-	 * 
+	 *
 	 * @param position the position to check
 	 * @return <code>true</code> if the receiver contains <code>position</code>
 	 */

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  * <p>
  * Clients may instantiate or extend this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class ProposalPosition extends LinkedPosition {
@@ -32,7 +32,7 @@ public class ProposalPosition extends LinkedPosition {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset of the position
 	 * @param length the length of the position
@@ -43,10 +43,10 @@ public class ProposalPosition extends LinkedPosition {
 		super(document, offset, length, sequence);
 		fProposals= copy(proposals);
 	}
-	
+
 	/**
 	 * Creates a new instance, with no sequence number.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset of the position
 	 * @param length the length of the position
@@ -56,7 +56,7 @@ public class ProposalPosition extends LinkedPosition {
 		super(document, offset, length, LinkedPositionGroup.NO_STOP);
 		fProposals= copy(proposals);
 	}
-	
+
 	private ICompletionProposal[] copy(ICompletionProposal[] proposals) {
 		if (proposals != null) {
 			ICompletionProposal[] copy= new ICompletionProposal[proposals.length];
@@ -65,7 +65,7 @@ public class ProposalPosition extends LinkedPosition {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -81,7 +81,7 @@ public class ProposalPosition extends LinkedPosition {
 	/**
 	 * Returns the proposals attached to this position. The returned array is owned by
 	 * this <code>ProposalPosition</code> and may not be modified by clients.
-	 * 
+	 *
 	 * @return an array of choices, including the initial one. Callers must not
 	 *         modify it.
 	 */

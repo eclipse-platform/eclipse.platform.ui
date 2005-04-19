@@ -49,16 +49,16 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * File buffer operation action.
- * 
+ *
  * @since 3.1
  */
 public class FileBufferOperationAction extends Action implements IWorkbenchWindowActionDelegate {
-		
+
 	private Set fResources;
 	private IPath fLocation;
 	private IWorkbenchWindow fWindow;
 	protected IFileBufferOperation fFileBufferOperation;
-	
+
 	protected FileBufferOperationAction(IFileBufferOperation fileBufferOperation) {
 		Assert.isNotNull(fileBufferOperation);
 		fFileBufferOperation= fileBufferOperation;
@@ -79,18 +79,18 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		
+
 		fResources= new HashSet();
 		fLocation= null;
-		
+
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
-			
+
 			Iterator e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
@@ -123,17 +123,17 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				}
 			}
 		}
-		
+
 		action.setText(getText());
 		action.setEnabled(!fResources.isEmpty() || fLocation != null);
 	}
-	
+
 	protected final IWorkbenchWindow getWorkbenchWindow() {
 		if (fWindow == null)
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return fWindow;
 	}
-	
+
 	protected final Shell getShell() {
 		IWorkbenchWindow window= getWorkbenchWindow();
 		return window == null ? null : window.getShell();
@@ -151,7 +151,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			doRun(null, fLocation, fFileBufferOperation);
 		}
 	}
-	
+
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set files= new HashSet();
 		for (int i= 0; i < resources.length; i++) {
@@ -161,14 +161,14 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 		}
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
-	
+
 	protected final void doRun(final IFile[] files, final IPath location, final IFileBufferOperation fileBufferOperation) {
-		Job job= new Job(fileBufferOperation.getOperationName()) { 
+		Job job= new Job(fileBufferOperation.getOperationName()) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
-				
+
 				try {
-					
+
 					int ticks= 100;
 					monitor.beginTask(fFileBufferOperation.getOperationName(), ticks);
 					try {
@@ -178,7 +178,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 							locations= generateLocations(files, new SubProgressMonitor(monitor, 30));
 						} else
 							locations= new IPath[] { location };
-						
+
 						if (locations != null && locations.length > 0) {
 							FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
 							runner.execute(locations, fileBufferOperation, new SubProgressMonitor(monitor, ticks));
@@ -187,7 +187,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 					} finally {
 						monitor.done();
 					}
-					
+
 				} catch (OperationCanceledException e) {
 					status= new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.CANCEL, "", null); //$NON-NLS-1$
 				} catch (CoreException e) {
@@ -196,13 +196,13 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				return status;
 			}
 		};
-		
+
 		job.setUser(true);
 		job.schedule();
 	}
-	
+
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
-		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationAction_collectionFiles_label, files.length);  
+		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationAction_collectionFiles_label, files.length);
 		try {
 			Set locations= new HashSet();
 			for (int i= 0; i < files.length; i++) {
@@ -212,12 +212,12 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				progressMonitor.worked(1);
 			}
 			return (IPath[]) locations.toArray(new IPath[locations.size()]);
-			
+
 		} finally {
 			progressMonitor.done();
 		}
 	}
-	
+
 	protected boolean isAcceptableLocation(IPath location) {
 		return true;
 	}

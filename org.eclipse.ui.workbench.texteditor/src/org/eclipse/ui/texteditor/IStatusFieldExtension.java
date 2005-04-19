@@ -21,40 +21,40 @@ import org.eclipse.swt.graphics.Image;
  *    <li>set tool tip</li>
  *    <li>control visibility</li>
  * </ul>
- * 
+ *
  * @since 3.0
  */
 public interface IStatusFieldExtension {
 	/**
 	 * Sets the text of this status field.
 	 * <p>
-	 * The error text overrides the current text until the error 
+	 * The error text overrides the current text until the error
 	 * text is cleared (set to <code>null</code>).
 	 * </p>
-	 * 
+	 *
 	 * @param text the error text shown in the status field or <code>null</code> to clear
 	 * @see IStatusField#setText(String)
 	 */
 	void setErrorText(String text);
-	
+
 	/**
 	 * Sets the error image of this status field.
 	 * <p>
-	 * The error image overrides the current image until the error 
+	 * The error image overrides the current image until the error
 	 * image is cleared (set to <code>null</code>).
 	 * </p>
-	 * 
+	 *
 	 * @param image the error image shown in the status field or <code>null</code> to clear
 	 * @see IStatusField#setImage(Image)
 	 */
 	void setErrorImage(Image image);
-	
+
 	/**
 	 * Sets tool tip text for this status field.
 	 *
 	 * @param string the new tool tip text or <code>null</code> to clear
 	 */
-	void setToolTipText (String string);	
+	void setToolTipText (String string);
 
 	/**
 	 * Sets whether this status field is visible within the status line.

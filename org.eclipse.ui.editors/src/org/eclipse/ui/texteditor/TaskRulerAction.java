@@ -31,19 +31,19 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
  * @since 2.0
  */
 public class TaskRulerAction extends AbstractRulerActionDelegate {
-	
+
 	/**
 	 * Adds a task marker over the ruler context menu. Uses the Workbench's Task properties dialog.
 	 */
 	static class TaskMarkerRulerAction extends MarkerRulerAction {
-		
+
 		/**
 		 * Creates a new action for the given ruler and editor. The action configures
 		 * its visual representation from the given resource bundle.
 		 *
 		 * @param bundle the resource bundle
 		 * @param prefix a prefix to be prepended to the various resource keys
-		 *   (described in <code>ResourceAction</code> constructor), or 
+		 *   (described in <code>ResourceAction</code> constructor), or
 		 *   <code>null</code> if none
 		 * @param editor the text editor
 		 * @param ruler the vertical ruler info
@@ -52,7 +52,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 		public TaskMarkerRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 			super(bundle, prefix, editor, ruler, IMarker.TASK, false);
 		}
-		
+
 		/*
 		 * @see MarkerRulerAction#addMarker()
 		 */
@@ -60,7 +60,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 			IResource resource= getResource();
 			if (resource == null)
 				return;
-				
+
            TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
             dialog.setResource(resource);
             dialog.setInitialAttributes(getInitialAttributes());

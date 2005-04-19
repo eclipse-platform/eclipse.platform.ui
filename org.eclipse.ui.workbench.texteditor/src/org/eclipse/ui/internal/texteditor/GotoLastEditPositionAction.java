@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * Goes to last edit position.
- * 
+ *
  * @see org.eclipse.ui.internal.texteditor.EditPosition
  * @since 2.1
  */
@@ -81,9 +81,9 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		IWorkbenchWindow window= getWindow();
 		if (window == null)
 			return;
-		
+
 		IWorkbenchPage page= window.getActivePage();
-			
+
 		IEditorPart editor;
 		try {
 			editor= page.openEditor(editPosition.getEditorInput(), editPosition.getEditorId());
@@ -96,8 +96,8 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 			ITextEditor textEditor= (ITextEditor)editor;
 			textEditor.selectAndReveal(pos.offset, pos.length);
 			return;
-		} 
-		
+		}
+
 		/*
 		 * Workaround: send out a text selection
 		 * XXX: Needs to be improved, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=32214
@@ -106,11 +106,11 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 			IEditorSite site= editor.getEditorSite();
 			if (site == null)
 				return;
-			
+
 			ISelectionProvider provider= editor.getEditorSite().getSelectionProvider();
 			if (provider == null)
 				return;
-			
+
 			provider.setSelection(new TextSelection(pos.offset, pos.length));
 		}
 	}
@@ -134,7 +134,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 
 	/**
 	 * Returns the workbench window.
-	 * 
+	 *
 	 * @return the workbench window
 	 */
 	private IWorkbenchWindow getWindow() {

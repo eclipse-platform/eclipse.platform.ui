@@ -29,10 +29,10 @@ public class LinkedPosition extends Position {
 	/** The document this position belongs to. */
 	private IDocument fDocument;
 	private int fSequenceNumber;
-	
+
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset of the position
 	 * @param length the length of the position
@@ -48,7 +48,7 @@ public class LinkedPosition extends Position {
 	/**
 	 * Creates a new instance. Equivalent to calling
 	 * <code>LinkedPosition(document, offset, length, LinkedPositionGroup.NO_STOP)</code>
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the offset of the position
 	 * @param length the length of the position
@@ -63,7 +63,7 @@ public class LinkedPosition extends Position {
 	public IDocument getDocument() {
 		return fDocument;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.Position#equals(java.lang.Object)
 	 */
@@ -74,10 +74,10 @@ public class LinkedPosition extends Position {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether this position overlaps with <code>position</code>.
-	 * 
+	 *
 	 * @param position the position to check.
 	 * @return <code>true</code> if this position overlaps with
 	 *         <code>position</code>,<code>false</code> otherwise
@@ -88,7 +88,7 @@ public class LinkedPosition extends Position {
 
 	/**
 	 * Returns whether this position includes <code>event</code>.
-	 * 
+	 *
 	 * @param event the event to check.
 	 * @return <code>true</code> if this position includes <code>event</code>,
 	 *         <code>false</code> otherwise
@@ -99,7 +99,7 @@ public class LinkedPosition extends Position {
 
 	/**
 	 * Returns whether this position includes <code>position</code>.
-	 * 
+	 *
 	 * @param position the position to check.
 	 * @return <code>true</code> if this position includes
 	 *         <code>position</code>,<code>false</code> otherwise
@@ -107,12 +107,12 @@ public class LinkedPosition extends Position {
 	public boolean includes(LinkedPosition position) {
 		return includes(position.getDocument(), position.getOffset(), position.getLength());
 	}
-	
+
 	/**
 	 * Overrides {@link Position#includes(int)}so every offset is considered
 	 * included that lies in between the first and last offset of this position,
 	 * and offsets that are right at the end of the position.
-	 * 
+	 *
 	 * @param pOffset the offset to check
 	 * @return <code>true</code> if <code>pOffset</code> is in
 	 *         <code>[offset, offset + length]</code>
@@ -120,14 +120,14 @@ public class LinkedPosition extends Position {
 	public boolean includes(int pOffset) {
 		return this.offset <= pOffset && pOffset <= this.offset + this.length;
 	}
-	
+
 	/**
 	 * Returns whether this position includes the range given by
 	 * <code>offset</code> and <code>length</code>. A range is included by
-	 * a <code>LinkedPosition</code> if {@link #includes(int) includes(offset)} 
+	 * a <code>LinkedPosition</code> if {@link #includes(int) includes(offset)}
 	 * returns true for every offset in the range, including the borders of the
 	 * range.
-	 * 
+	 *
 	 * @param doc the document that the given range refers to, may be <code>null</code>
 	 * @param off the offset of the range, referring to <code>document</code>
 	 * @param len the length of the range
@@ -137,12 +137,12 @@ public class LinkedPosition extends Position {
 	 */
 	protected boolean includes(IDocument doc, int off, int len) {
 		return doc == fDocument && off >= offset && len + off <= offset + length;
-		
+
 	}
 
 	/**
 	 * Returns the content of this position on the referenced document.
-	 * 
+	 *
 	 * @return the content of the document at this position
 	 * @throws BadLocationException if the position is not valid
 	 */
@@ -152,7 +152,7 @@ public class LinkedPosition extends Position {
 
 	/**
 	 * Returns the sequence number of this position.
-	 * 
+	 *
 	 * @return the sequence number of this position
 	 */
 	public int getSequenceNumber() {
@@ -161,13 +161,13 @@ public class LinkedPosition extends Position {
 
 	/**
 	 * Sets the sequence number of this position.
-	 * 
+	 *
 	 * @param sequence the new sequence number
 	 */
 	public void setSequenceNumber(int sequence) {
 		fSequenceNumber= sequence;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.Position#hashCode()
 	 */

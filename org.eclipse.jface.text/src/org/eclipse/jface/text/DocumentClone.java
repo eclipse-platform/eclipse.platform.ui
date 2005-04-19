@@ -13,18 +13,18 @@ package org.eclipse.jface.text;
 
 /**
  * An {@link org.eclipse.jface.text.IDocument} that is a read-only clone of another document.
- * 
+ *
  * @since 3.0
  */
 class DocumentClone extends AbstractDocument {
-	
+
 	private static class StringTextStore implements ITextStore {
-		
+
 		private String fContent;
-		
+
 		/**
 		 * Creates a new string text store with the given content.
-		 * 
+		 *
 		 * @param content the content
 		 */
 		public StringTextStore(String content) {
@@ -64,12 +64,12 @@ class DocumentClone extends AbstractDocument {
 		 */
 		public void set(String text) {
 		}
-		
+
 	}
-	
+
 	/**
 	 * Creates a new document clone with the given content.
-	 * 
+	 *
 	 * @param content the content
 	 * @param lineDelimiters the line delimiters
 	 */
@@ -77,7 +77,7 @@ class DocumentClone extends AbstractDocument {
 		super();
 		setTextStore(new StringTextStore(content));
 		ConfigurableLineTracker tracker= new ConfigurableLineTracker(lineDelimiters);
-		setLineTracker(tracker);	
+		setLineTracker(tracker);
 		getTracker().set(content);
 		completeInitialization();
 	}

@@ -30,11 +30,11 @@ import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class SpellingService {
-	
+
 	/**
 	 * A named preference that controls if spelling is enabled or disabled.
 	 * <p>
@@ -42,7 +42,7 @@ public class SpellingService {
 	 * </p>
 	 */
 	public static final String PREFERENCE_SPELLING_ENABLED= "spellingEnabled"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls which spelling engine is used.
 	 * The value is the spelling engine's extension id.
@@ -51,13 +51,13 @@ public class SpellingService {
 	 * </p>
 	 */
 	public static final String PREFERENCE_SPELLING_ENGINE= "spellingEngine"; //$NON-NLS-1$
-	
+
 	/** Preferences */
 	private IPreferenceStore fPreferences;
-	
+
 	/**
 	 * Initializes the spelling service with the given preferences.
-	 * 
+	 *
 	 * @param preferences the preferences
 	 * @see SpellingService#PREFERENCE_SPELLING_ENABLED
 	 * @see SpellingService#PREFERENCE_SPELLING_ENGINE
@@ -70,7 +70,7 @@ public class SpellingService {
 	 * Checks the given document. Reports all found spelling problems to the
 	 * collector. The spelling engine is chosen based on the settings
 	 * from the given preferences.
-	 * 
+	 *
 	 * @param document the document to check
 	 * @param context the context
 	 * @param collector the problem collector
@@ -84,7 +84,7 @@ public class SpellingService {
 	 * Checks the given regions in the given document. Reports all found
 	 * spelling problems to the collector. The spelling engine is chosen
 	 * based on the settings from the given preferences.
-	 * 
+	 *
 	 * @param document the document to check
 	 * @param regions the regions to check
 	 * @param context the context
@@ -118,7 +118,7 @@ public class SpellingService {
 	/**
 	 * Returns all spelling engine descriptors from extensions to the
 	 * spelling engine extension point.
-	 * 
+	 *
 	 * @return all spelling engine descriptors
 	 */
 	public SpellingEngineDescriptor[] getSpellingEngineDescriptors() {
@@ -131,7 +131,7 @@ public class SpellingService {
 	/**
 	 * Returns the default spelling engine descriptor from extensions to
 	 * the spelling engine extension point.
-	 * 
+	 *
 	 * @return the default spelling engine descriptor or
 	 *         <code>null</code> if none could be found
 	 */
@@ -146,7 +146,7 @@ public class SpellingService {
 	 * Returns the descriptor of the active spelling engine based on the
 	 * value of the <code>PREFERENCE_SPELLING_ENGINE</code> preference
 	 * in the given preferences.
-	 * 
+	 *
 	 * @param preferences the preferences
 	 * @return the descriptor of the active spelling engine or
 	 *         <code>null</code> if none could be found
@@ -164,12 +164,12 @@ public class SpellingService {
 			descriptor= registry.getDefaultDescriptor();
 		return descriptor;
 	}
-	
+
 	/**
 	 * Creates a spelling engine based on the value of the
 	 * <code>PREFERENCE_SPELLING_ENGINE</code> preference in the given
 	 * preferences.
-	 * 
+	 *
 	 * @param preferences the preferences
 	 * @return the created spelling engine or <code>null</code> if none
 	 *         could be created
@@ -185,7 +185,7 @@ public class SpellingService {
 
 	/**
 	 * Returns the spelling engine registry.
-	 *  
+	 *
 	 * @return the spelling engine registry or <code>null</code> if the plug-in has been shutdown
 	 */
 	private SpellingEngineRegistry getSpellingEngineRegistry() {

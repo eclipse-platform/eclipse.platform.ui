@@ -33,11 +33,11 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  * A completion processor that computes template proposals. Subclasses need to
  * provide implementations for {@link #getTemplates(String)},
  * {@link #getContextType(ITextViewer, IRegion)} and {@link #getImage(Template)}.
- * 
+ *
  * @since 3.0
  */
 public abstract class TemplateCompletionProcessor implements IContentAssistProcessor {
-	
+
 	private static final class ProposalComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
 			return ((TemplateProposal) o2).getRelevance() - ((TemplateProposal) o1).getRelevance();
@@ -45,7 +45,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	}
 
 	private static final Comparator fgProposalComparator= new ProposalComparator();
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer,
 	 *      int)
@@ -53,7 +53,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
-		
+
 		// adjust offset to end of normalized selection
 		if (selection.getOffset() == offset)
 			offset= selection.getOffset() + selection.getLength();
@@ -63,9 +63,9 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 		TemplateContext context= createContext(viewer, region);
 		if (context == null)
 			return new ICompletionProposal[0];
-		
+
 		context.setVariable("selection", selection.getText()); // name of the selection variables {line, word}_selection //$NON-NLS-1$
-		
+
 		Template[] templates= getTemplates(context.getContextType().getId());
 
 		List matches= new ArrayList();
@@ -91,7 +91,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * Forwards to {@link #createProposal(Template, TemplateContext, IRegion, int)}.
 	 * Do neither call nor override.
 	 * </p>
-	 * 
+	 *
 	 * @param template the template to be applied by the proposal
 	 * @param context the context for the proposal
 	 * @param region the region the proposal applies to
@@ -111,7 +111,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * {@link TemplateProposal}. Subclasses may replace this method to provide
 	 * their own implementations.
 	 * </p>
-	 * 
+	 *
 	 * @param template the template to be applied by the proposal
 	 * @param context the context for the proposal
 	 * @param region the region the proposal applies to
@@ -125,17 +125,17 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 
 	/**
 	 * Returns the templates valid for the context type specified by <code>contextTypeId</code>.
-	 * 
+	 *
 	 * @param contextTypeId the context type id
 	 * @return the templates valid for this context type id
 	 */
 	protected abstract Template[] getTemplates(String contextTypeId);
 
 	/**
-	 * Creates a concrete template context for the given region in the document. This involves finding out which 
+	 * Creates a concrete template context for the given region in the document. This involves finding out which
 	 * context type is valid at the given location, and then creating a context of this type. The default implementation
 	 * returns a <code>DocumentTemplateContext</code> for the context type at the given location.
-	 * 
+	 *
 	 * @param viewer the viewer for which the context is created
 	 * @param region the region into <code>document</code> for which the context is created
 	 * @return a template context that can handle template insertion at the given location, or <code>null</code>
@@ -152,7 +152,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	/**
 	 * Returns the context type that can handle template insertion at the given region
 	 * in the viewer's document.
-	 * 
+	 *
 	 * @param viewer the text viewer
 	 * @param region the region into the document displayed by viewer
 	 * @return the context type that can handle template expansion for the given location, or <code>null</code> if none exists
@@ -163,7 +163,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * Returns the relevance of a template given a prefix. The default
 	 * implementation returns a number greater than zero if the template name
 	 * starts with the prefix, and zero otherwise.
-	 * 
+	 *
 	 * @param template the template to compute the relevance for
 	 * @param prefix the prefix after which content assist was requested
 	 * @return the relevance of <code>template</code>
@@ -171,7 +171,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 */
 	protected int getRelevance(Template template, String prefix) {
 		if (template.getName().startsWith(prefix))
-			return 90; 
+			return 90;
 		return 0;
 	}
 
@@ -179,7 +179,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * Heuristically extracts the prefix used for determining template relevance
 	 * from the viewer's document. The default implementation returns the String from
 	 * offset backwards that forms a java identifier.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param offset offset into document
 	 * @return the prefix to consider
@@ -190,7 +190,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 		IDocument document= viewer.getDocument();
 		if (i > document.getLength())
 			return ""; //$NON-NLS-1$
-		
+
 		try {
 			while (i > 0) {
 				char ch= document.getChar(i - 1);
@@ -207,7 +207,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 
 	/**
 	 * Returns the image to be used for the proposal for <code>template</code>.
-	 * 
+	 *
 	 * @param template the template for which an image should be returned
 	 * @return the image for <code>template</code>
 	 */

@@ -23,16 +23,16 @@ import org.eclipse.jface.resource.JFaceColors;
 
 /**
  * A message line displaying a status.
- * 
+ *
  * @since 3.0
  */
 class MessageLine extends CLabel {
-	
+
 	private Color fNormalMsgAreaBackground;
 
 	/**
 	 * Creates a new message line as a child of the given parent.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 */
 	public MessageLine(Composite parent) {
@@ -41,7 +41,7 @@ class MessageLine extends CLabel {
 
 	/**
 	 * Creates a new message line as a child of the parent and with the given SWT stylebits.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param style the style
 	 */
@@ -50,18 +50,18 @@ class MessageLine extends CLabel {
 		fNormalMsgAreaBackground= getBackground();
 	}
 
-	
+
 	private Image findImage(IStatus status) {
 		if (status.isOK()) {
 			return null;
-		} 
+		}
 		return null;
 	}
 
 	/**
 	 * Sets the message and image to the given status.
 	 * <code>null</code> is a valid argument and will set the empty text and no image
-	 * 
+	 *
 	 * @param status the status
 	 */
 	public void setErrorStatus(IStatus status) {
@@ -73,10 +73,10 @@ class MessageLine extends CLabel {
 				setBackground(JFaceColors.getErrorBackground(getDisplay()));
 				return;
 			}
-		}		
-		setText(""); //$NON-NLS-1$	
+		}
+		setText(""); //$NON-NLS-1$
 		setImage(null);
-		setBackground(fNormalMsgAreaBackground);	
-	}	
+		setBackground(fNormalMsgAreaBackground);
+	}
 }
 

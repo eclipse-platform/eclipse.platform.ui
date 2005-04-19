@@ -23,7 +23,7 @@ import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
  * <p>
  * Note: Must be public since it is referenced from plugin.xml
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class SpellingPreferencePage extends AbstractConfigurationBlockPreferencePage {
@@ -40,17 +40,17 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 			handleStatusChanged(status);
 		}
 	}
-	
+
 	/**
 	 * Handles status changes.
-	 * 
+	 *
 	 * @param status the new status
 	 */
 	protected void handleStatusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
@@ -63,7 +63,7 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 	 */
 	protected void setDescription() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */

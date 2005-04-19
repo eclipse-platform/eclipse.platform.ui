@@ -29,21 +29,21 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  * This class should not be used by clients and may become package visible in
  * the future.
  * </p>
- * 
+ *
  * @since 3.0
  */
 final class TemplateVariableProposal implements ICompletionProposal {
 
 	private TemplateVariableResolver fVariable;
 	private int fOffset;
-	private int fLength;	
+	private int fLength;
 	private ITextViewer fViewer;
-	
+
 	private Point fSelection;
 
 	/**
 	 * Creates a template variable proposal.
-	 * 
+	 *
 	 * @param variable the template variable
 	 * @param offset the offset to replace
 	 * @param length the length to replace
@@ -55,7 +55,7 @@ final class TemplateVariableProposal implements ICompletionProposal {
 		fLength= length;
 		fViewer= viewer;
 	}
-	
+
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
@@ -68,7 +68,7 @@ final class TemplateVariableProposal implements ICompletionProposal {
 
 		} catch (BadLocationException e) {
 			Shell shell= fViewer.getTextWidget().getShell();
-			MessageDialog.openError(shell, TextEditorTemplateMessages.TemplateVariableProposal_error_title, e.getMessage()); 
+			MessageDialog.openError(shell, TextEditorTemplateMessages.TemplateVariableProposal_error_title, e.getMessage());
 		}
 	}
 

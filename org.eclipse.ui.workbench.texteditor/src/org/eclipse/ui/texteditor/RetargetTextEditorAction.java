@@ -12,7 +12,7 @@
 
 package org.eclipse.ui.texteditor;
 
- 
+
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.events.HelpEvent;
@@ -32,7 +32,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * its visual presentation.
  */
 public final class RetargetTextEditorAction extends ResourceAction {
-	
+
 	/** The target action. */
 	private IAction fAction;
 	/** The default label if there is no target action. */
@@ -50,14 +50,14 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	};
 
 	/**
-	 * Creates a new action. The action configures its initial visual 
+	 * Creates a new action. The action configures its initial visual
 	 * representation from the given resource bundle. If this action's
-	 * wrapped action is set to <code>null</code> it also uses the 
+	 * wrapped action is set to <code>null</code> it also uses the
 	 * information in the resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
  	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
@@ -74,16 +74,16 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		fDefaultText= getText();
 		installHelpListener();
 	}
-	
+
 	/**
-	 * Creates a new action. The action configures its initial visual 
+	 * Creates a new action. The action configures its initial visual
 	 * representation from the given resource bundle. If this action's
-	 * wrapped action is set to <code>null</code> it also uses the 
+	 * wrapped action is set to <code>null</code> it also uses the
 	 * information in the resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
@@ -94,9 +94,9 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	}
 
 	/**
-	 * Creates a new action. The action configures its initial visual 
+	 * Creates a new action. The action configures its initial visual
 	 * representation from the given resource bundle. If this action's
-	 * wrapped action is set to <code>null</code> it also uses the 
+	 * wrapped action is set to <code>null</code> it also uses the
 	 * information in the resource bundle. The action gets the given
 	 * action id.
 	 *
@@ -120,11 +120,11 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		setId(actionId);
 		installHelpListener();
 	}
-	
+
 	/**
-	 * Creates a new action. The action configures its initial visual 
+	 * Creates a new action. The action configures its initial visual
 	 * representation from the given resource bundle. If this action's
-	 * wrapped action is set to <code>null</code> it also uses the 
+	 * wrapped action is set to <code>null</code> it also uses the
 	 * information in the resource bundle. The action gets the given
 	 * action id.
 	 *
@@ -141,7 +141,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		setId(actionId);
 		installHelpListener();
 	}
-	
+
 	/**
 	 * Updates to the changes of the underlying action.
 	 *
@@ -160,31 +160,31 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			setChecked(bool.booleanValue());
 		}
 	}
-	
+
 	/**
 	 * Sets the underlying action.
 	 *
 	 * @param action the underlying action
 	 */
 	public void setAction(IAction action) {
-		
+
 		if (fAction != null) {
 			fAction.removePropertyChangeListener(fListener);
 			fAction= null;
 		}
-		
+
 		fAction= action;
-		
+
 		if (fAction == null) {
-			
+
 			setEnabled(false);
 			if (getStyle() == AS_CHECK_BOX || getStyle() == AS_RADIO_BUTTON)
 			   setChecked(false);
 			setText(fDefaultText);
 			setToolTipText(""); //$NON-NLS-1$
-		
+
 		} else {
-						
+
 			setEnabled(fAction.isEnabled());
 			if (fAction.getStyle() == AS_CHECK_BOX || fAction.getStyle() ==  AS_RADIO_BUTTON)
 			   super.setChecked(fAction.isChecked());
@@ -196,7 +196,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 
 	/**
 	 * Installs the help listener.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private void installHelpListener() {
@@ -217,18 +217,18 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		});
 	}
 
-	/** 
+	/**
 	 * The <code>RetargetTextEditorAction</code> implementation of this method declared on
 	 * <code>IAction</code> stores the help listener in a local field. The
 	 * supplied listener is only used if there is no handler.
-	 * 
+	 *
 	 * @param listener the help listener
 	 * @since 2.1
 	 */
 	public void setHelpListener(HelpListener listener) {
 		fLocalHelpListener= listener;
 	}
-	
+
 	/*
 	 * @see IAction#run()
 	 */

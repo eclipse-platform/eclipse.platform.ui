@@ -22,20 +22,20 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * This class contains the hippie completion engine methods that actually 
+ * This class contains the hippie completion engine methods that actually
  * compute the possible completions.
  * <p>
  * This engine is used by the <code>org.eclipse.ui.texteditor.HippieCompleteAction</code>.
  * </p>
- * 
+ *
  * TODO: Sort by editor type
  * TODO: Provide history option
- * 
+ *
  * @since 3.1
  * @author Genady Beryozkin, me@genady.org
  */
 public final class HippieCompletionEngine {
-	
+
 	/**
 	 * Regular expression that is used to find words.
 	 */
@@ -46,33 +46,33 @@ public final class HippieCompletionEngine {
 	// with a 1.5 JRE, you can do this:
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaUnicodeIdentifierPart}+"; //$NON-NLS-1$
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaJavaIdentifierPart}+"; //$NON-NLS-1$
-	
+
 	/**
 	 * Is completion case sensitive? Even if set to <code>false</code>, the
 	 * case of the prefix won't be changed.
 	 */
 	private static final boolean CASE_SENSITIVE= true;
-	
+
 	/**
 	 * Creates a new engine.
 	 */
 	public HippieCompletionEngine() {
 	}
-	
+
 	/*
 	 * Copied from {@link FindReplaceDocumentAdapter#asRegPattern(java.lang.String)}.
 	 */
 	/**
 	 * Converts a non-regex string to a pattern that can be used with the regex
 	 * search engine.
-	 * 
+	 *
 	 * @param string the non-regex pattern
 	 * @return the string converted to a regex pattern
 	 */
 	private String asRegPattern(CharSequence string) {
 		StringBuffer out= new StringBuffer(string.length());
 		boolean quoting= false;
-		
+
 		for (int i= 0, length= string.length(); i < length; i++) {
 			char ch= string.charAt(i);
 			if (ch == '\\') {
@@ -81,7 +81,7 @@ public final class HippieCompletionEngine {
 					quoting= false;
 				}
 				out.append("\\\\"); //$NON-NLS-1$
-				continue;                               
+				continue;
 			}
 			if (!quoting) {
 				out.append("\\Q"); //$NON-NLS-1$
@@ -91,14 +91,14 @@ public final class HippieCompletionEngine {
 		}
 		if (quoting)
 			out.append("\\E"); //$NON-NLS-1$
-		
+
 		return out.toString();
 	}
-	
+
 	/**
 	 * The method is equivalent to
 	 * <code>getForwardCompletions(document, prefix, 0)</code>
-	 * 
+	 *
 	 * @param document the document to scan
 	 * @param prefix the completion prefix
 	 * @return the list of completions that are result of this document scan.
@@ -109,11 +109,11 @@ public final class HippieCompletionEngine {
 	public List getCompletions(IDocument document, CharSequence prefix) throws BadLocationException {
 		return getCompletionsForward(document, prefix, 0);
 	}
-	
+
 	/**
 	 * Return the list of completion suggestions the correspond to the provided
 	 * prefix
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param prefix the prefix to search for
 	 * @param firstPosition the initial position in the document that the search
@@ -130,12 +130,12 @@ public final class HippieCompletionEngine {
         if (firstPosition == document.getLength()) {
             return res;
         }
-		
+
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
-		
-		// search only at word boundaries 
+
+		// search only at word boundaries
 		String searchPattern= "\\b" + asRegPattern(prefix); //$NON-NLS-1$
-		
+
 		IRegion reg= searcher.find(firstPosition, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
 			// try to complete to a word. case is irrelevant here.
@@ -150,37 +150,37 @@ public final class HippieCompletionEngine {
 			}
 			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
 		}
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * Search for possible completions in the backward direction. If there
      * is a possible completion that begins before <code>firstPosition</code>
      * but ends after that position, it will be included in the resutls.
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param prefix the completion prefix
 	 * @param firstPosition the caret position
 	 * @return a {@link List} of possible completions ({@link String}s)
-	 *         from the caret position to the beginning of the document. 
+	 *         from the caret position to the beginning of the document.
      *         The empty suggestion is not included in the results.
 	 * @throws BadLocationException if any error occurs
 	 */
 	public List getCompletionsBackwards(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {
 		ArrayList res= new ArrayList();
-        
-        // FindReplaceDocumentAdapter expects the start offset to be before the 
+
+        // FindReplaceDocumentAdapter expects the start offset to be before the
         // actual caret position, probably for compatibility with forward search.
         if (firstPosition == 0) {
             return res;
         }
-		
+
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
-		
-		// search only at word boundaries 
+
+		// search only at word boundaries
 		String searchPattern= "\\b" + asRegPattern(prefix); //$NON-NLS-1$
-		
+
 		IRegion reg= searcher.find(0, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
 			// try to complete to a word. case is of no matter here
@@ -199,21 +199,21 @@ public final class HippieCompletionEngine {
 			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
 		}
         Collections.reverse(res);
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * Remove duplicate suggestions (excluding the prefix), leaving the closest
 	 * to list head.
-	 * 
+	 *
 	 * @param suggestions a list of suggestions ({@link String}).
 	 * @return a list of unique completion suggestions.
 	 */
 	public List makeUnique(List suggestions) {
 		HashSet seenAlready= new HashSet();
 		ArrayList uniqueSuggestions= new ArrayList();
-		
+
 		for (Iterator i= suggestions.iterator(); i.hasNext();) {
 			String suggestion= (String) i.next();
 			if (!seenAlready.contains(suggestion)) {

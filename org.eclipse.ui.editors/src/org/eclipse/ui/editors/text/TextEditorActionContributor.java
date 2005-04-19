@@ -31,42 +31,42 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  * 		<li>Add Task</li>
  * 		<li>Change Encoding</li>
  * </ul>
- * 
+ *
  * @since 2.0
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
 	/** Change encoding action. */
 	private RetargetTextEditorAction fChangeEncodingAction;
-	
+
 	/**
 	 * Creates a new contributor.
 	 */
 	public TextEditorActionContributor() {
 		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
-	}	
-	
+	}
+
 	/**
 	 * Internally sets the active editor to the actions provided by this contributor.
 	 * Cannot be overridden by subclasses.
-	 * 
+	 *
 	 * @param part the editor
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
-				
+
 		ITextEditor textEditor= null;
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
-		
+
 		IActionBars actionBars= getActionBars();
 		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), getAction(textEditor, IDEActionFactory.ADD_TASK.getId()));
 			actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), getAction(textEditor, IDEActionFactory.BOOKMARK.getId()));
 		}
-			
+
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
 	}
-	
+
 	/*
 	 * @see IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
 	 */
@@ -74,7 +74,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		super.setActiveEditor(part);
 		doSetActiveEditor(part);
 	}
-	
+
 	/*
 	 * @see IEditorActionBarContributor#dispose()
 	 */
@@ -88,7 +88,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 */
 	public void init(IActionBars bars) {
 		super.init(bars);
-		
+
 		IMenuManager menuManager= bars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null)

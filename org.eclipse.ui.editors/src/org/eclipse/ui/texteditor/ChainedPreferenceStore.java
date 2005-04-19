@@ -47,19 +47,19 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * that are visible to clients.
 	 */
 	private class PropertyChangeListener implements IPropertyChangeListener {
-		
+
 		/** Preference store to listen too. */
 		private IPreferenceStore fPreferenceStore;
 
 		/**
 		 * Initialize with the given preference store.
-		 * 
+		 *
 		 * @param preferenceStore the preference store
 		 */
 		public PropertyChangeListener(IPreferenceStore preferenceStore) {
 			setPreferenceStore(preferenceStore);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
@@ -67,44 +67,44 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 			IPreferenceStore childPreferenceStore= getPreferenceStore();
 			handlePropertyChangeEvent(childPreferenceStore, event);
 		}
-		
+
 		/**
 		 * Registers this listener on the preference store.
 		 */
 		public void register() {
 			getPreferenceStore().addPropertyChangeListener(this);
 		}
-		
+
 		/**
 		 * Unregisters this listener from the preference store.
 		 */
 		public void unregister() {
 			getPreferenceStore().removePropertyChangeListener(this);
 		}
-		
+
 		/**
 		 * Returns the preference store.
-		 * 
+		 *
 		 * @return the preference store
 		 */
 		public IPreferenceStore getPreferenceStore() {
 			return fPreferenceStore;
 		}
-		
+
 		/**
 		 * Sets the preference store.
-		 * 
+		 *
 		 * @param preferenceStore the preference store to set
 		 */
 		public void setPreferenceStore(IPreferenceStore preferenceStore) {
 			fPreferenceStore= preferenceStore;
 		}
-		
+
 	}
 
 	/**
 	 * Sets the chained preference stores.
-	 * 
+	 *
 	 * @param preferenceStores the chained preference stores to set
 	 */
 	public ChainedPreferenceStore(IPreferenceStore[] preferenceStores) {
@@ -154,8 +154,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 	/**
 	 * Fire the given property change event.
-	 * 
-	 * @param event the property change event 
+	 *
+	 * @param event the property change event
 	 */
 	private void firePropertyChangeEvent(PropertyChangeEvent event) {
 		Object[] listeners= fClientListeners.getListeners();
@@ -400,7 +400,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 	/**
 	 * Handle property change event from the child listener with the given child preference store.
-	 * 
+	 *
 	 * @param childPreferenceStore the child preference store
 	 * @param event the event
 	 */
@@ -410,14 +410,14 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		Object newValue= event.getNewValue();
 
 		IPreferenceStore visibleStore= getVisibleStore(property);
-		
+
 		/*
 		 * Assume that the property is there but has no default value (its owner relies on the default-default value)
 		 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=52827
-		 */ 
+		 */
 		if (visibleStore == null && newValue != null)
 			visibleStore= childPreferenceStore;
-		
+
 		if (visibleStore == null) {
 			// no visible store
 			if (oldValue != null)
@@ -466,15 +466,15 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 					break;
 				}
 			}
-			
+
 			if (eventBeforeVisibleStore) {
 				// removal in child, before visible store
-				
+
 				/*
 				 * The original event's new value can be non-null (removed assertion).
 				 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=69419
 				 */
-				
+
 				newValue= getOtherValue(property, visibleStore, oldValue);
 				if (!newValue.equals(oldValue))
 					// removal in child, before visible store, different old value -> change in this chained preference store
@@ -488,7 +488,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	/**
 	 * Returns an object of the same dynamic type as <code>thisValue</code>, the returned object
 	 * encapsulates the value of the <code>property</code> from the preference <code>store</code>.
-	 * 
+	 *
 	 * @param property the name of the considered property
 	 * @param store the preference store
 	 * @param thisValue the given value
@@ -515,14 +515,14 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	/**
 	 * Returns the preference store from which the given property's value
 	 * is visible.
-	 * 
+	 *
 	 * @param property the name of the property
 	 * @return the preference store from which the property's value is visible,
 	 * 	<code>null</code> if the property is unknown
 	 */
 	private IPreferenceStore getVisibleStore(String property) {
 		IPreferenceStore visibleStore= null;
-		
+
 		for (int i= 0, length= fPreferenceStores.length; i < length && visibleStore == null; i++) {
 			IPreferenceStore store= fPreferenceStores[i];
 			if (store.contains(property))

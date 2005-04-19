@@ -61,7 +61,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.ITextInputListener
  * @see org.eclipse.jface.text.IDocumentListener
@@ -71,7 +71,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @see KeyListener
  */
 public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
-	
+
 	/**
 	 * Represents an undo-able edit command.
 	 * <p>
@@ -79,7 +79,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * </p>
 	 */
 	class TextCommand extends AbstractOperation {
-		
+
 		/** The start index of the replaced text */
 		protected int fStart= -1;
 		/** The end index of the replaced text */
@@ -88,7 +88,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected String fText;
 		/** The replaced text */
 		protected String fPreservedText;
-		
+
 		/**
 		 * Creates a new text command.
 		 *
@@ -99,7 +99,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    super(JFaceTextMessages.getString("DefaultUndoManager.operationLabel")); //$NON-NLS-1$
 		    addContext(context);
 		}
-		
+
 		/**
 		 * Re-initializes this text command.
 		 */
@@ -107,7 +107,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fStart= fEnd= -1;
 			fText= fPreservedText= null;
 		}
-		
+
 		/**
 		 * Sets the start and the end index of this command.
 		 *
@@ -120,7 +120,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fText= null;
 			fPreservedText= null;
 		}
-		
+
 		/*
 		 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
 		 * @since 3.1
@@ -128,10 +128,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public void dispose() {
 		    reinitialize();
 		}
-			
+
 		/**
 		 * Undo the change described by this command.
-		 * 
+		 *
 		 * @since 2.0
 		 */
 		protected void undoTextChange() {
@@ -140,7 +140,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 		 * @since 3.1
@@ -148,16 +148,16 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public boolean canUndo() {
 		    return isConnected() && isValid();
 		}
-		
+
 		/**
 		 * Return whether the text command is redoable.
 		 * In general, a text command is redoable and the operation history determines
-		 * when redo is appropriate.  However, we have a special case involving fCurrent, 
+		 * when redo is appropriate.  However, we have a special case involving fCurrent,
 		 * which may be the pending undo change but is not yet in the operation history.
-		 * 
+		 *
 		 * We special case this here.  If fCurrent is a valid pending change, then
 		 * redo should not be available.
-		 * 
+		 *
 		 * @see #canUndo
 		 * @return a boolean indicating whether the command can be undone.
 		 * @since 3.1
@@ -173,7 +173,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public boolean canExecute() {
 		    return isConnected();
 		}
-		
+
 		/*
 		 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 		 * @since 3.1
@@ -182,7 +182,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			// Text commands execute as they are typed, so executing one has no effect.
 		    return Status.OK_STATUS;
 		}
-		
+
 		/*
 		 * Undo the change described by this command. Also selects and
 		 * reveals the change.
@@ -191,7 +191,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		/**
 		 * Undo the change described by this command. Also selects and
 		 * reveals the change.
-		 * 
+		 *
 		 * @param monitor	the progress monitor to use if necessary
 		 * @param uiInfo	an adaptable that can provide UI info if needed
 		 * @return the status
@@ -204,10 +204,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
-		
+
 		/**
 		 * Re-applies the change described by this command.
-		 * 
+		 *
 		 * @since 2.0
 		 */
 		protected void redoTextChange() {
@@ -216,9 +216,9 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		/**
-		 * Re-applies the change described by this command that previously been 
+		 * Re-applies the change described by this command that previously been
 		 * rolled back. Also selects and reveals the change.
 		 *
 		 * @param monitor	the progress monitor to use if necessary
@@ -233,7 +233,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
-				
+
 		/**
 		 * Updates the command stack in response to committing
 		 * the current change into this command.
@@ -241,7 +241,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected void updateCommandStack() {
 		    addToCommandStack(this);
 		}
-		
+
 		/**
 		 * Creates a new uncommitted text command depending on whether
 		 * a compound change is currently being executed.
@@ -249,30 +249,30 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @return a new, uncommitted text command or a compound text command
 		 */
 		protected TextCommand createCurrent() {
-			return fFoldingIntoCompoundChange ? new CompoundTextCommand(fUndoContext) : new TextCommand(fUndoContext);		
+			return fFoldingIntoCompoundChange ? new CompoundTextCommand(fUndoContext) : new TextCommand(fUndoContext);
 		}
-				
+
 		/**
 		 * Commits the current change into this command.
 		 */
 		protected void commit() {
-			
+
 			if (fStart < 0) {
 				reinitialize();
-			} else {	
-				
+			} else {
+
 				fText= fTextBuffer.toString();
 				fTextBuffer.setLength(0);
 				fPreservedText= fPreservedTextBuffer.toString();
 				fPreservedTextBuffer.setLength(0);
-				
+
 				if (!isPrimer())
 					updateCommandStack();
 			}
-			
+
 			setNewCurrent();
 		}
-		
+
 		/**
 		 * Updates the text from the buffers without resetting
 		 * the buffers or adding anything to the stack.
@@ -285,30 +285,30 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				fPreservedText= fPreservedTextBuffer.toString();
 			}
 		}
-		
+
 		/**
 		 * Checks whether this text command is valid for undo or redo.
-		 * 
+		 *
 		 * @return <code>true</code> if the command is valid for undo or redo
 		 * @since 3.1
 		 */
 		protected boolean isValid() {
-		    return fStart > -1 && 
-		    	fEnd > -1 && 
+		    return fStart > -1 &&
+		    	fEnd > -1 &&
 		    	fText != null;
 		}
-		
+
 		/**
 		 * Returns whether the receiver is a primer command.
 		 * Primer commands are put on the stack in advance.
-		 * 
+		 *
 		 * @return <code>true</code> if the command is a primer
 		 * @since 3.1
 		 */
 		protected boolean isPrimer() {
 		    return false;
 		}
-		
+
 		/*
 		 * @see java.lang.Object#toString()
 		 * @since 3.1
@@ -333,16 +333,16 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    return text.toString();
 		}
 	}
-	
+
 	/**
 	 * Represents an undo-able edit command consisting of several
 	 * individual edit commands.
 	 */
 	class CompoundTextCommand extends TextCommand {
-		
+
 		/** The list of individual commands */
 		private List fCommands= new ArrayList();
-		
+
 		/**
 		 * Creates a new compound text command.
 		 *
@@ -352,7 +352,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		CompoundTextCommand(IUndoContext context) {
 		    super(context);
 		}
-		
+
 		/**
 		 * Adds a new individual command to this compound command.
 		 *
@@ -361,76 +361,76 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected void add(TextCommand command) {
 			fCommands.add(command);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#undo()
 		 */
-		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {		
+		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
 				extension= (ITextViewerExtension) fTextViewer;
-				
+
 			if (extension != null)
 				extension.setRedraw(false);
-				
+
 			try {
-				
+
 				int size= fCommands.size();
 				if (size > 0) {
-					
+
 					TextCommand c;
-					
+
 					for (int i= size -1; i > 0;  --i) {
 						c= (TextCommand) fCommands.get(i);
 						c.undoTextChange();
 					}
-					
+
 					c= (TextCommand) fCommands.get(0);
 					c.undo(monitor, uiInfo);
 				}
-					
+
 			} finally {
 				if (extension != null)
 					extension.setRedraw(true);
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#redo()
 		 */
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
-			
+
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
 				extension= (ITextViewerExtension) fTextViewer;
-				
+
 			if (extension != null)
 				extension.setRedraw(false);
-			
+
 			try {
-				
+
 				int size= fCommands.size();
 				if (size > 0) {
-					
+
 					TextCommand c;
-					
+
 					for (int i= 0; i < size -1;  ++i) {
 						c= (TextCommand) fCommands.get(i);
 						c.redoTextChange();
 					}
-					
+
 					c= (TextCommand) fCommands.get(size -1);
 					c.redo(monitor, uiInfo);
 				}
-				
+
 			} finally {
 				if (extension != null)
 					extension.setRedraw(true);
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 		/*
 		 * @see TextCommand#updateCommandStack
 		 */
@@ -440,25 +440,25 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			c.fEnd= fEnd;
 			c.fText= fText;
 			c.fPreservedText= fPreservedText;
-			
+
 			add(c);
-			
+
 			if (!fFoldingIntoCompoundChange)
 				super.updateCommandStack();
 		}
-		
+
 		/*
 		 * @see TextCommand#createCurrent
 		 */
 		protected TextCommand createCurrent() {
-			
+
 			if (!fFoldingIntoCompoundChange)
 				return new TextCommand(fUndoContext);
-			
+
 			reinitialize();
 			return this;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#commit()
 		 */
@@ -473,10 +473,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 			super.commit();
 		}
-		
+
 		/**
 		 * Checks whether the command is valid for undo or redo.
-		 * 
+		 *
 		 * @return true if the command is valid.
 		 * @since 3.1
 		 */
@@ -486,7 +486,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    return false;
 		}
 	}
-	
+
 	/**
 	 * Represents the text command used to prime the operation history.
 	 * A primer command is added to the stack whenever the undo history
@@ -496,7 +496,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	class PrimerTextCommand extends TextCommand {
-				
+
 		/**
 		 * Creates a new primer text command.
 		 *
@@ -505,19 +505,19 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		PrimerTextCommand(IUndoContext context) {
 		    super(context);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#isPrimer()
 		 */
 		protected boolean isPrimer() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 		 */
 		public boolean canUndo() {
-			// there is another pending change after the primer.  
+			// there is another pending change after the primer.
 			if (this != fCurrent && fCurrent != null) {
 				fCurrent.pretendCommit();
 				return fCurrent.canUndo();
@@ -527,18 +527,18 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    return super.canUndo();
 		}
 	}
-	
+
 	/**
 	 * Internal listener to mouse and key events.
 	 */
 	class KeyAndMouseListener implements MouseListener, KeyListener {
-		
+
 		/*
 		 * @see MouseListener#mouseDoubleClick
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
 		}
-		
+
 		/*
 		 * If the right mouse button is pressed, the current editing command is closed
 		 * @see MouseListener#mouseDown
@@ -547,7 +547,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			if (e.button == 1)
 				commit();
 		}
-		
+
 		/*
 		 * @see MouseListener#mouseUp
 		 */
@@ -559,7 +559,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 */
 		public void keyReleased(KeyEvent e) {
 		}
-		
+
 		/*
 		 * On cursor keys, the current editing command is closed
 		 * @see KeyListener#keyPressed
@@ -575,12 +575,12 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 	}
-	
+
 	/**
 	 * Internal listener to document changes.
 	 */
 	class DocumentListener implements IDocumentListener {
-		
+
 		private String fReplacedText;
 
 		/*
@@ -600,7 +600,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public void documentChanged(DocumentEvent event) {
 			// Check the special cases involving the primer command before
 			// and after processing the change.
-			
+
 			IUndoableOperation op= fHistory.getUndoOperation(fUndoContext);
 			if (op == null) {
 				// there's been a change to the document but no primer was installed.  This can happen if there
@@ -609,9 +609,9 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				op= new PrimerTextCommand(fUndoContext);
 				addToCommandStack((TextCommand)op);
 			}
-			
+
 			processChange(event.getOffset(), event.getOffset() + event.getLength(), event.getText(), fReplacedText);
-			
+
 			// If the current undo operation is one that we used to prime the history,
 			// then we need to notify the history that the primer has changed.  This
 			// ensures that the canUndo() and canRedo() status are updated properly.
@@ -619,7 +619,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				fHistory.operationChanged(op);
 		}
 	}
-	
+
 	/**
 	 * Internal text input listener.
 	 */
@@ -645,16 +645,16 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				newInput.addDocumentListener(fDocumentListener);
 			}
 		}
-		
+
 	}
-	
+
 	/*
 	 * @see IOperationHistoryListener
 	 * @since 3.1
 	 */
 	class HistoryListener implements IOperationHistoryListener {
 		private IUndoableOperation fOperation;
-		
+
 		public void historyNotification(OperationHistoryEvent event) {
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.ABOUT_TO_UNDO:
@@ -683,7 +683,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 
 	}
-	
+
 	/*
 	 * @see IOperationApprover
 	 * @since 3.1
@@ -709,8 +709,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 					// the approval sequence.  See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
 					if (history.getUndoOperation(fUndoContext) != op)
 					{
-						// now we know that fCurrent is valid and has been added to the undo history.  We want 
-						// to invoke undo on this one instead of the current operation.  We return a CANCEL_STATUS 
+						// now we know that fCurrent is valid and has been added to the undo history.  We want
+						// to invoke undo on this one instead of the current operation.  We return a CANCEL_STATUS
 						// from this method in order to cause the originally proposed command to stay on the stack.
 						try {
 							history.undo(fUndoContext, null, uiInfo);
@@ -718,48 +718,48 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 							openErrorDialog(JFaceTextMessages.getString("DefaultUndoManager.error.undoFailed.title"), ex); //$NON-NLS-1$
 						}
 						return Status.CANCEL_STATUS;
-					} 
+					}
 					// fCurrent was valid but for some reason should not be committed.  This is unexpected.
 					// Create a new one for future edits and allow the suggested undo to proceed.
 					fCurrent = fCurrent.createCurrent();
 				}
-			} 
+			}
 			return Status.OK_STATUS;
 		}
 		public IStatus proceedRedoing(IUndoableOperation op, IOperationHistory history, IAdaptable uiInfo ) {
 			return Status.OK_STATUS;
 		}
 	}
-	
+
 	/** Text buffer to collect text which is inserted into the viewer */
 	private StringBuffer fTextBuffer= new StringBuffer();
 	/** Text buffer to collect viewer content which has been replaced */
-	private StringBuffer fPreservedTextBuffer= new StringBuffer(); 
+	private StringBuffer fPreservedTextBuffer= new StringBuffer();
 	/** The internal key and mouse event listener */
 	private KeyAndMouseListener fKeyAndMouseListener;
 	/** The internal document listener */
 	private DocumentListener fDocumentListener;
 	/** The internal text input listener */
 	private TextInputListener fTextInputListener;
-	
-	
+
+
 	/** Indicates inserting state */
 	private boolean fInserting= false;
 	/** Indicates overwriting state */
 	private boolean fOverwriting= false;
 	/** Indicates whether the current change belongs to a compound change */
 	private boolean fFoldingIntoCompoundChange= false;
-	
+
 	/** The text viewer the undo manager is connected to */
 	private ITextViewer fTextViewer;
-	
+
 	/** Supported undo level */
 	private int fUndoLevel;
 	/** The currently constructed edit command */
 	private TextCommand fCurrent;
 	/** The last delete edit command */
 	private TextCommand fPreviousDelete;
-	
+
 	/**
 	 * The undo context.
 	 * @since 3.1
@@ -781,7 +781,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.1
 	 */
 	private IOperationApprover fOperationApprover= new OperationApprover();
-	
+
 	/**
 	 * Creates a new undo manager who remembers the specified number of edit commands.
 	 *
@@ -791,16 +791,16 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	    fHistory= OperationHistoryFactory.getOperationHistory();
 		setMaximalUndoLevel(undoLevel);
 	}
-	
+
 	/**
 	 * Returns whether this undo manager is connected to a text viewer.
-	 * 
+	 *
 	 * @return <code>true</code> if connected, <code>false</code> otherwise
 	 */
 	private boolean isConnected() {
 		return fTextViewer != null;
 	}
-	
+
 	/*
 	 * @see IUndoManager#beginCompoundChange
 	 */
@@ -810,8 +810,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			commit();
 		}
 	}
-	
-	
+
+
 	/*
 	 * @see IUndoManager#endCompoundChange
 	 */
@@ -821,7 +821,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			commit();
 		}
 	}
-		
+
 	/**
 	 * Registers all necessary listeners with the text viewer.
 	 */
@@ -838,7 +838,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			listenToTextChanges(true);
 		}
 	}
-	
+
 	/**
 	 * Unregister all previously installed listeners from the text viewer.
 	 */
@@ -859,10 +859,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fHistory.removeOperationHistoryListener(fHistoryListener);
 		}
 	}
-	
+
 	/**
 	 * Adds the given command to the operation history.
-	 * 
+	 *
 	 * @param command the command to be added
 	 * @since 3.1
 	 */
@@ -872,16 +872,16 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 	/**
 	 * Disposes the command stack.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void disposeCommandStack() {
 	    fHistory.dispose(fUndoContext, true, true, true);
 	}
-	
+
 	/**
 	 * Initializes the command stack.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void initializeCommandStack() {
@@ -889,7 +889,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fHistory.dispose(fUndoContext, true, true, false);
 
 	}
-	
+
 	/**
 	 * Creates the new current, open text command and assigns it to <code>fCurrent</code>.
 	 *
@@ -898,18 +898,18 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	private void setNewCurrent() {
 		// if the history is empty, we need to prime it by adding
 		// the new command
-		if (fHistory.getUndoHistory(fUndoContext).length == 0 && 
+		if (fHistory.getUndoHistory(fUndoContext).length == 0 &&
 				fHistory.getRedoHistory(fUndoContext).length == 0) {
 			fCurrent= new PrimerTextCommand(fUndoContext);
 			addToCommandStack(fCurrent);
 		} else {
 			if (fCurrent == null)
 				fCurrent= new TextCommand(fUndoContext);
-			else 
+			else
 				fCurrent= fCurrent.createCurrent();
 		}
 	}
-	
+
 	/**
 	 * Switches the state of whether there is a text listener or not.
 	 *
@@ -928,19 +928,19 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 	}
-	
+
 	/**
 	 * Closes the current editing command and opens a new one.
 	 */
 	private void commit() {
-		
+
 		fInserting= false;
 		fOverwriting= false;
 		fPreviousDelete.reinitialize();
-		
+
 		fCurrent.commit();
 	}
-	
+
 	/**
 	 * Checks whether the given text starts with a line delimiter and
 	 * subsequently contains a white space only.
@@ -949,10 +949,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @return <code>true</code> if the text is a line delimiter followed by whitespace, <code>false</code> otherwise
 	 */
 	private boolean isWhitespaceText(String text) {
-				
+
 		if (text == null || text.length() == 0)
 			return false;
-		
+
 		String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
 		int index= TextUtilities.startsWith(delimiters, text);
 		if (index > -1) {
@@ -965,28 +965,28 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private void processChange(int modelStart, int modelEnd, String insertedText, String replacedText) {
-		
+
 		if (insertedText == null)
 			insertedText= ""; //$NON-NLS-1$
-			
+
 		if (replacedText == null)
 			replacedText= ""; //$NON-NLS-1$
-		
+
 		int length= insertedText.length();
 		int diff= modelEnd - modelStart;
-		
+
 		// normalize
 		if (diff < 0) {
 			int tmp= modelEnd;
 			modelEnd= modelStart;
 			modelStart= tmp;
 		}
-				
+
 		if (modelStart == modelEnd) {
 			// text will be inserted
 			if ((length == 1) || isWhitespaceText(insertedText)) {
@@ -994,7 +994,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				if (!fInserting || (modelStart != fCurrent.fStart + fTextBuffer.length())) {
 					commit();
 					fInserting= true;
-				} 
+				}
 				if (fCurrent.fStart < 0)
 					fCurrent.fStart= fCurrent.fEnd= modelStart;
 				if (length > 0)
@@ -1011,14 +1011,14 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				// text will be deleted by backspace or DEL key or empty clipboard
 				length= replacedText.length();
 				String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
-				
+
 				if ((length == 1) || TextUtilities.equals(delimiters, replacedText) > -1) {
-					
+
 					// whereby selection is empty
-					
+
 					if (fPreviousDelete.fStart == modelStart && fPreviousDelete.fEnd == modelEnd) {
 						// repeated DEL
-							
+
 							// correct wrong settings of fCurrent
 						if (fCurrent.fStart == modelEnd && fCurrent.fEnd == modelStart) {
 							fCurrent.fStart= modelStart;
@@ -1027,27 +1027,27 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 							// append to buffer && extend command range
 						fPreservedTextBuffer.append(replacedText);
 						++fCurrent.fEnd;
-						
+
 					} else if (fPreviousDelete.fStart == modelEnd) {
 						// repeated backspace
-						
+
 							// insert in buffer and extend command range
 						fPreservedTextBuffer.insert(0, replacedText);
 						fCurrent.fStart= modelStart;
-					
+
 					} else {
 						// either DEL or backspace for the first time
-						
+
 						commit();
-						
+
 						// as we can not decide whether it was DEL or backspace we initialize for backspace
 						fPreservedTextBuffer.append(replacedText);
 						fCurrent.fStart= modelStart;
 						fCurrent.fEnd= modelEnd;
 					}
-					
+
 					fPreviousDelete.set(modelStart, modelEnd);
-					
+
 				} else if (length > 0) {
 					// whereby selection is not empty
 					commit();
@@ -1057,7 +1057,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				}
 			} else {
 				// text will be replaced
-								
+
 				if (length == 1) {
 					length= replacedText.length();
 					String[] delimiters= fTextViewer.getDocument().getLegalLineDelimiters();
@@ -1077,7 +1077,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 						fPreservedTextBuffer.append(replacedText);
 						return;
 					}
-				} 
+				}
 				// because of typing or pasting whereby selection is not empty
 				commit();
 				fCurrent.fStart= modelStart;
@@ -1085,13 +1085,13 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				fTextBuffer.append(insertedText);
 				fPreservedTextBuffer.append(replacedText);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Shows the given exception in an error dialog.
-	 * 
-	 * @param title the dialog title 
+	 *
+	 * @param title the dialog title
 	 * @param ex the exception
 	 * @since 3.1
 	 */
@@ -1127,7 +1127,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		if (isConnected()) {
 			fHistory.setLimit(fUndoContext, fUndoLevel);
 		}
-	}	
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
@@ -1137,27 +1137,27 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fTextViewer= textViewer;
 		    if (fUndoContext == null)
 		        fUndoContext= new ObjectUndoContext(this);
-			
+
 		    fHistory.setLimit(fUndoContext, fUndoLevel);
-			
+
 			initializeCommandStack();
-			
+
 			// open up the current command and add it to the history.
 			setNewCurrent();
-			
+
 			fPreviousDelete= new TextCommand(fUndoContext);
 			addListeners();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#disconnect()
 	 */
 	public void disconnect() {
 		if (isConnected()) {
-			
+
 			removeListeners();
-			
+
 			fCurrent= null;
 			fTextViewer= null;
 			disposeCommandStack();
@@ -1166,7 +1166,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fUndoContext= null;
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#reset()
 	 */
@@ -1181,21 +1181,21 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fPreservedTextBuffer.setLength(0);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#redoable()
 	 */
 	public boolean redoable() {
 	    return fHistory.canRedo(fUndoContext);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#undoable()
 	 */
 	public boolean undoable() {
 	    return fHistory.canUndo(fUndoContext);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#redo()
 	 */
@@ -1208,7 +1208,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManager#undo()
 	 */
@@ -1221,10 +1221,10 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 	}
-	
+
 	/**
 	 * Selects and reveals the specified range.
-	 * 
+	 *
 	 * @param offset the offset of the range
 	 * @param length the length of the range
 	 * @since 3.0
@@ -1238,8 +1238,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		fTextViewer.setSelectedRange(offset, length);
 		fTextViewer.revealRange(offset, length);
-	}	
-	
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.IUndoManagerExtension#getUndoContext()
 	 * @since 3.1

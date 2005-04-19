@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Position;
  * each viewer which all wrap the same element specific model annotation model.
  */
 class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelListener {
-	
+
 	/** The wrapped model annotation model */
 	private IAnnotationModel fModel;
 
@@ -44,7 +44,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	public VisualAnnotationModel(IAnnotationModel modelAnnotationModel) {
 		fModel= modelAnnotationModel;
 	}
-	
+
 	/**
 	 * Returns the visual annotation model's wrapped model based annotation model.
 	 *
@@ -53,7 +53,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	public IAnnotationModel getModelAnnotationModel() {
 		return fModel;
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#addAnnotationModelListener(IAnnotationModelListener)
 	 */
@@ -64,7 +64,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 
 		super.addAnnotationModelListener(listener);
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#connect(IDocument)
 	 */
@@ -73,7 +73,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 		if (fModel != null)
 			fModel.connect(document);
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#disconnect(IDocument)
 	 */
@@ -82,12 +82,12 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 		if (fModel != null)
 			fModel.disconnect(document);
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
-		
+
 		if (fModel == null)
 			return super.getAnnotationIterator();
 
@@ -103,22 +103,22 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 
 		return a.iterator();
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#getPosition(Annotation)
 	 */
 	public Position getPosition(Annotation annotation) {
-		
+
 		Position p= (Position) getAnnotationMap().get(annotation);
 		if (p != null)
 			return p;
-		
+
 		if (fModel != null)
 			return fModel.getPosition(annotation);
-		
+
 		return null;
 	}
-	
+
 	/*
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
@@ -131,7 +131,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
 	 */

@@ -23,45 +23,45 @@ import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 
 /**
  * Access class for the quick diff reference provider extension point.
- * 
+ *
  * @since 3.0
  */
 public class QuickDiffExtensionsRegistry {
-	
+
 	/** The default reference provider's descriptor. */
 	private ReferenceProviderDescriptor fDefaultDescriptor;
 	/** The list returned to callers of <code>getExtensions</code>. */
 	private List fDescriptors;
 
 	/**
-	 * Creates a new instance. 
+	 * Creates a new instance.
 	 */
 	public QuickDiffExtensionsRegistry() {
 	}
-	
+
 	/**
 	 * Returns the first descriptor with the <code>default</code> attribute set to <code>true</code>.
-	 * 
+	 *
 	 * @return the descriptor of the default reference provider.
 	 */
 	public synchronized ReferenceProviderDescriptor getDefaultProvider() {
 		ensureRegistered();
 		return fDefaultDescriptor;
 	}
-	
+
 	/**
 	 * Returns a non-modifiable list of <code>ReferenceProviderDescriptor</code> describing all extension
 	 * to the <code>quickDiffReferenceProvider</code> extension point.
-	 * 
+	 *
 	 * @return the list of extensions to the <code>quickDiffReferenceProvider</code> extension point.
 	 */
 	public synchronized List getReferenceProviderDescriptors() {
 		ensureRegistered();
 		return fDescriptors;
 	}
-	
+
 	/**
-	 * Ensures that the extensions are read and stored in <code>fDescriptors</code>. 
+	 * Ensures that the extensions are read and stored in <code>fDescriptors</code>.
 	 */
 	private void ensureRegistered() {
 		if (fDescriptors == null)
@@ -87,7 +87,7 @@ public class QuickDiffExtensionsRegistry {
 				fDefaultDescriptor= desc;
 			list.add(desc);
 		}
-		
+
 		fDescriptors= Collections.unmodifiableList(list);
 	}
 }

@@ -25,11 +25,11 @@ import org.eclipse.core.runtime.IPath;
  * Facade for the file buffers plug-in. Provides access to the text file buffer
  * manager and helper methods for location handling. This facade is available
  * independent from the activation status of the file buffers plug-in.
- * 
+ *
  * @since 3.0
  */
 public final class FileBuffers {
-	
+
 	/**
 	 * Cannot be instantiated.
 	 */
@@ -40,18 +40,18 @@ public final class FileBuffers {
 	 * Returns the text file buffer manager. May return <code>null</code> if
 	 * the file buffers plug-in may no be activated. This is, for example, the
 	 * case when the method is called on plug-in shutdown.
-	 * 
+	 *
 	 * @return the text file buffer manager or <code>null</code>
 	 */
 	public static ITextFileBufferManager getTextFileBufferManager()  {
 		FileBuffersPlugin plugin= FileBuffersPlugin.getDefault();
 		return plugin != null ? plugin.getFileBufferManager() : null;
 	}
-	
+
 	/**
 	 * Returns the workspace file at the given location or <code>null</code> if
 	 * the location is not a valid location in the workspace.
-	 * 
+	 *
 	 * @param location the location
 	 * @return the workspace file at the location or <code>null</code>
 	 */
@@ -66,17 +66,17 @@ public final class FileBuffers {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a copy of the given location in a normalized form.
-	 * 
+	 *
 	 * @param location the location to be normalized
 	 * @return normalized copy of location
 	 */
 	public static IPath normalizeLocation(IPath location) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects= workspaceRoot.getProjects();
-		
+
 		for (int i= 0, length= projects.length; i < length; i++) {
 			if (projects[i].isAccessible()) {
 				IPath path= projects[i].getLocation();
@@ -93,27 +93,27 @@ public final class FileBuffers {
 		}
 		return location.makeAbsolute();
 	}
-	
+
 	/**
 	 * Returns the file in the local file system for the given location.
 	 * <p>
 	 * The location is either a full path of a workspace resource or an
 	 * absolute path in the local file system.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location
 	 * @return the {@link File} in the local file system for the given location
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
 		if (location == null)
 			return null;
-		
+
 		IFile file= getWorkspaceFileAtLocation(location);
 		if (file != null) {
 			IPath path= file.getLocation();
 			return path.toFile();
 		}
-		
+
 		return location.toFile();
 	}
 }

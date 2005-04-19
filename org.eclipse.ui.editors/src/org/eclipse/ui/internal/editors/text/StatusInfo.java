@@ -17,19 +17,19 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
- * A settable IStatus. 
+ * A settable IStatus.
  * Can be an error, warning, info or ok. For error, info and warning states,
  * a message describes the problem.
- * 
+ *
  * @since 2.1
  */
 class StatusInfo implements IStatus {
 
-	/** The message of this status.  */	
+	/** The message of this status.  */
 	private String fStatusMessage;
 	/** The severity of this status. */
 	private int fSeverity;
-	
+
 	/**
 	 * Creates a status set to OK (no message).
 	 */
@@ -39,16 +39,16 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Creates a status with the given severity and message.
-	 * 
+	 *
 	 * @param severity the severity of this status: ERROR, WARNING, INFO and OK.
 	 * @param message the message of this status. Applies only for ERROR,
 	 * WARNING and INFO.
-	 */	
+	 */
 	public StatusInfo(int severity, String message) {
 		fStatusMessage= message;
 		fSeverity= severity;
-	}		
-	
+	}
+
 	/*
 	 * @see org.eclipse.core.runtime.IStatus#isOK()
 	 */
@@ -58,7 +58,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns whether this status indicates a warning.
-	 * 
+	 *
 	 * @return <code>true</code> if this status has severity
 	 *    {@link IStatus#WARNING} and <code>false</code> otherwise
 	 */
@@ -68,36 +68,36 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns whether this status indicates an info.
-	 * 
+	 *
 	 * @return <code>true</code> if this status has severity
 	 *    {@link IStatus#INFO} and <code>false</code> otherwise
 	 */
 	public boolean isInfo() {
 		return fSeverity == IStatus.INFO;
-	}	
+	}
 
 	/**
 	 * Returns whether this status indicates an error.
-	 * 
+	 *
 	 * @return <code>true</code> if this status has severity
 	 *    {@link IStatus#ERROR} and <code>false</code> otherwise
 	 */
 	public boolean isError() {
 		return fSeverity == IStatus.ERROR;
 	}
-	
+
 	/*
 	 * @see IStatus#getMessage()
 	 */
 	public String getMessage() {
 		return fStatusMessage;
 	}
-	
+
 	/**
 	 * Sets the status to ERROR.
-	 * 
+	 *
 	 * @param errorMessage the error message which can be an empty string, but not <code>null</code>
-	 */	
+	 */
 	public void setError(String errorMessage) {
 		Assert.isNotNull(errorMessage);
 		fStatusMessage= errorMessage;
@@ -106,9 +106,9 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to WARNING.
-	 * 
+	 *
 	 * @param warningMessage the warning message which can be an empty string, but not <code>null</code>
-	 */		
+	 */
 	public void setWarning(String warningMessage) {
 		Assert.isNotNull(warningMessage);
 		fStatusMessage= warningMessage;
@@ -117,23 +117,23 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Sets the status to INFO.
-	 * 
+	 *
 	 * @param infoMessage the info message which can be an empty string, but not <code>null</code>
-	 */		
+	 */
 	public void setInfo(String infoMessage) {
 		Assert.isNotNull(infoMessage);
 		fStatusMessage= infoMessage;
 		fSeverity= IStatus.INFO;
-	}	
+	}
 
 	/**
 	 * Sets the status to OK.
-	 */		
+	 */
 	public void setOK() {
 		fStatusMessage= null;
 		fSeverity= IStatus.OK;
 	}
-	
+
 	/*
 	 * @see IStatus#matches(int)
 	 */
@@ -143,7 +143,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>false</code>.
-	 * 
+	 *
 	 * @see IStatus#isMultiStatus()
 	 */
 	public boolean isMultiStatus() {
@@ -166,7 +166,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>null</code>.
-	 * 
+	 *
 	 * @see IStatus#getException()
 	 */
 	public Throwable getException() {
@@ -175,7 +175,7 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always the error severity.
-	 * 
+	 *
 	 * @see IStatus#getCode()
 	 */
 	public int getCode() {
@@ -184,11 +184,11 @@ class StatusInfo implements IStatus {
 
 	/**
 	 * Returns always <code>null</code>.
-	 * 
+	 *
 	 * @see IStatus#getChildren()
 	 */
 	public IStatus[] getChildren() {
 		return new IStatus[0];
-	}	
+	}
 
 }

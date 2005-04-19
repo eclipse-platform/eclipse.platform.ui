@@ -53,19 +53,19 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 		/**
 		 * Operation created by the document provider and to be executed by the providers runnable context.
-		 * 
+		 *
 		 * @since 3.0
 		 */
 		protected static abstract class DocumentProviderOperation implements IRunnableWithProgress {
-			
+
 			/**
 			 * The actual functionality of this operation.
-			 * 
+			 *
 			 * @param monitor a progress monitor to track execution
 			 * @throws CoreException
 			 */
 			protected abstract void execute(IProgressMonitor monitor) throws CoreException;
-			
+
 			/*
 			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -77,12 +77,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				}
 			}
 		}
-		
+
 		/**
 		 * Collection of all information managed for a connected element.
 		 */
 		protected class ElementInfo implements IDocumentListener {
-			
+
 			/** The element for which the info is stored */
 			public Object fElement;
 			/** How often the element has been connected */
@@ -93,18 +93,18 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			public IDocument fDocument;
 			/** The element's annotation model */
 			public IAnnotationModel fModel;
-			/** 
+			/**
 			 * Has element state been validated
 			 * @since 2.0
 			 */
 			public boolean fIsStateValidated;
-			/** 
+			/**
 			 * The status of this element
 			 * @since 2.0
 			 */
 			public IStatus fStatus;
-			
-			
+
+
 			/**
 			 * Creates a new element info, initialized with the given
 			 * document and annotation model.
@@ -119,7 +119,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				fCanBeSaved= false;
 				fIsStateValidated= false;
 			}
-			
+
 			/**
 			 * An element info equals another object if this object is an element info
 			 * and if the documents of the two element infos are equal.
@@ -132,14 +132,14 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				}
 				return false;
 			}
-			
+
 			/*
 			 * @see Object#hashCode()
 			 */
 			public int hashCode() {
 				return fDocument.hashCode();
 			}
-			
+
 			/*
 			 * @see IDocumentListener#documentChanged(DocumentEvent)
 			 */
@@ -148,24 +148,24 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				removeUnchangedElementListeners(fElement, this);
 				fireElementDirtyStateChanged(fElement, fCanBeSaved);
 			}
-			
+
 			/*
 			 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 			 */
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 		}
-		
-	
-	/** 
+
+
+	/**
 	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
 	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
 	 * Current value: <code>true</code> since 3.0
 	 * @since 2.0
-	 */ 
+	 */
 	static final protected boolean PR10806_UC5_ENABLED= true;
-	
+
 	/**
 	 * Enables a certain behavior.
 	 * Indicates whether this provider should behave as described in
@@ -175,37 +175,37 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	static final protected boolean PR14469_ENABLED= false;
-	
+
 	/**
 	 * Constant for representing the OK status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.AbstractDocumentProvider_ok, null); 
-	
+	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.AbstractDocumentProvider_ok, null);
+
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 * @since 2.0
 	 */
-	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.AbstractDocumentProvider_error, null); 
-	
-	
+	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.INFO, EditorMessages.AbstractDocumentProvider_error, null);
+
+
 	/** Element information of all connected elements */
 	private Map fElementInfoMap= new HashMap();
 	/** The element state listeners */
 	private List fElementStateListeners= new ArrayList();
-	/** 
+	/**
 	 * The current progress monitor
 	 * @since 2.1
 	 */
 	private IProgressMonitor fProgressMonitor;
 
-	
+
 	/**
 	 * Creates a new document provider.
 	 */
 	protected AbstractDocumentProvider() {
 	}
-	
+
 	/**
 	 * Creates the document for the given element.
 	 * <p>
@@ -216,7 +216,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @exception CoreException if the document could not be created
 	 */
 	protected abstract IDocument createDocument(Object element) throws CoreException;
-	
+
 	/**
 	 * Creates an annotation model for the given element.
 	 * <p>
@@ -227,9 +227,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @exception CoreException if the annotation model could not be created
 	 */
 	protected abstract IAnnotationModel createAnnotationModel(Object element) throws CoreException;
-	
+
 	/**
-	 * Performs the actual work of saving the given document provided for the 
+	 * Performs the actual work of saving the given document provided for the
 	 * given element.
 	 * <p>
 	 * Subclasses must implement this method.</p>
@@ -241,21 +241,21 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @exception CoreException if document could not be stored to the given element
 	 */
 	protected abstract void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException;
-	
+
 	/**
 	 * Returns the runnable context for this document provider.
-	 * 
+	 *
 	 * @param monitor a progress monitor to track the operation
 	 * @return the runnable context for this document provider
 	 * @since 3.0
 	 */
 	protected abstract IRunnableContext getOperationRunner(IProgressMonitor monitor);
-	
+
 	/**
 	 * Returns the scheduling rule required for executing
 	 * <code>synchronize</code> on the given element. This default
 	 * implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the scheduling rule for <code>synchronize</code>
 	 * @since 3.0
@@ -263,12 +263,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ISchedulingRule getSynchronizeRule(Object element) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the scheduling rule required for executing
 	 * <code>validateState</code> on the given element. This default
 	 * implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the scheduling rule for <code>validateState</code>
 	 * @since 3.0
@@ -276,12 +276,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ISchedulingRule getValidateStateRule(Object element) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the scheduling rule required for executing
 	 * <code>save</code> on the given element. This default
 	 * implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the scheduling rule for <code>save</code>
 	 * @since 3.0
@@ -289,12 +289,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ISchedulingRule getSaveRule(Object element) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the scheduling rule required for executing
 	 * <code>reset</code> on the given element. This default
 	 * implementation returns <code>null</code>.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the scheduling rule for <code>reset</code>
 	 * @since 3.0
@@ -302,7 +302,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ISchedulingRule getResetRule(Object element) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the element info object for the given element.
 	 *
@@ -312,15 +312,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ElementInfo getElementInfo(Object element) {
 		return (ElementInfo) fElementInfoMap.get(element);
 	}
-	
+
 	/**
 	 * Creates a new element info object for the given element.
 	 * <p>
 	 * This method is called from <code>connect</code> when an element info needs
-	 * to be created. The <code>AbstractDocumentProvider</code> implementation 
-	 * of this method returns a new element info object whose document and 
-	 * annotation model are the values of <code>createDocument(element)</code> 
-	 * and  <code>createAnnotationModel(element)</code>, respectively. Subclasses 
+	 * to be created. The <code>AbstractDocumentProvider</code> implementation
+	 * of this method returns a new element info object whose document and
+	 * annotation model are the values of <code>createDocument(element)</code>
+	 * and  <code>createAnnotationModel(element)</code>, respectively. Subclasses
 	 * may override.</p>
 	 *
 	 * @param element the element
@@ -330,11 +330,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		return new ElementInfo(createDocument(element), createAnnotationModel(element));
 	}
-	
+
 	/**
 	 * Disposes of the given element info object.
 	 * <p>
-	 * This method is called when an element info is disposed. The 
+	 * This method is called when an element info is disposed. The
 	 * <code>AbstractDocumentProvider</code> implementation of this
 	 * method does nothing. Subclasses may reimplement.</p>
 	 *
@@ -343,15 +343,15 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected void disposeElementInfo(Object element, ElementInfo info) {
 	}
-	
+
 	/**
 	 * Called on initial creation and when the dirty state of the element
-	 * changes to <code>false</code>. Adds all listeners which must be 
+	 * changes to <code>false</code>. Adds all listeners which must be
 	 * active as long as the element is not dirty. This method is called
 	 * before <code>fireElementDirtyStateChanged</code> or <code>
 	 * fireElementContentReplaced</code> is called.
 	 * Subclasses may extend.
-	 * 
+	 *
 	 * @param element the element
 	 * @param info the element info object
 	 */
@@ -359,14 +359,14 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info.fDocument != null)
 			info.fDocument.addDocumentListener(info);
 	}
-	
+
 	/**
 	 * Called when the given element gets dirty. Removes all listeners
-	 * which must be active only when the element is not dirty. This 
+	 * which must be active only when the element is not dirty. This
 	 * method is called before <code>fireElementDirtyStateChanged</code>
 	 * or <code>fireElementContentReplaced</code> is called.
 	 * Subclasses may extend.
-	 * 
+	 *
 	 * @param element the element
 	 * @param info the element info object
 	 */
@@ -374,9 +374,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info.fDocument != null)
 			info.fDocument.removeDocumentListener(info);
 	}
-	
+
 	/**
-	 * Enumerates the elements connected via this document provider.	
+	 * Enumerates the elements connected via this document provider.
 	 *
 	 * @return the list of elements (element type: <code>Object</code>)
 	 */
@@ -387,60 +387,60 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			s.addAll(keys);
 		return s.iterator();
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#connect(Object)
 	 */
 	public final void connect(Object element) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info == null) {
-			
+
 			info= createElementInfo(element);
-			if (info == null) 
+			if (info == null)
 				info= new ElementInfo(null, null);
-								
+
 			info.fElement= element;
-			
+
 			addUnchangedElementListeners(element, info);
-			
+
 			fElementInfoMap.put(element, info);
 			if (fElementInfoMap.size() == 1)
 				connected();
-		}	
-		++ info.fCount;		
+		}
+		++ info.fCount;
 	}
-	
+
 	/**
-	 * This hook method is called when this provider starts managing documents for 
+	 * This hook method is called when this provider starts managing documents for
 	 * elements. I.e. it is called when the first element gets connected to this provider.
 	 * Subclasses may extend.
 	 * @since 2.0
 	 */
 	protected void connected() {
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#disconnect
 	 */
 	public final void disconnect(Object element) {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
-		
+
 		if (info == null)
 			return;
-		
+
 		if (info.fCount == 1) {
-			
+
 			fElementInfoMap.remove(element);
 			removeUnchangedElementListeners(element, info);
 			disposeElementInfo(element, info);
-			
+
 			if (fElementInfoMap.size() == 0)
 				disconnected();
-			
+
 		} else
 		 	-- info.fCount;
 	}
-	
+
 	/**
 	 * This hook method is called when this provider stops managing documents for
 	 * element. I.e. it is called when the last element gets disconnected from this provider.
@@ -449,58 +449,58 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected void disconnected() {
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#getDocument(Object)
 	 */
 	public IDocument getDocument(Object element) {
-		
+
 		if (element == null)
 			return null;
-			
+
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fDocument : null);
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#mustSaveDocument(Object)
 	 */
 	public boolean mustSaveDocument(Object element) {
-		
+
 		if (element == null)
 			return false;
-			
+
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fCount == 1 && info.fCanBeSaved : false);
-	}	
-	
+	}
+
 	/*
 	 * @see IDocumentProvider#getAnnotationModel(Object)
 	 */
 	public IAnnotationModel getAnnotationModel(Object element) {
-		
+
 		if (element == null)
 			return null;
-			
+
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fModel : null);
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#canSaveDocument(Object)
 	 */
 	public boolean canSaveDocument(Object element) {
-		
+
 		if (element == null)
 			return false;
-			
+
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		return (info != null ? info.fCanBeSaved : false);
 	}
-	
+
 	/**
 	 * Executes the actual work of reseting the given elements document.
-	 * 
+	 *
 	 * @param element the element
 	 * @param monitor the progress monitor
 	 * @throws CoreException
@@ -509,18 +509,18 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null) {
-			
+
 			IDocument original= null;
 			IStatus status= null;
-			
+
 			try {
 				original= createDocument(element);
 			} catch (CoreException x) {
 				status= x.getStatus();
 			}
-			
-			info.fStatus= status;			
-			
+
+			info.fStatus= status;
+
 			if (original != null) {
 				fireElementContentAboutToBeReplaced(element);
 				info.fDocument.set(original.get());
@@ -531,12 +531,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				fireElementContentReplaced(element);
 				fireElementDirtyStateChanged(element, false);
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Executes the given operation in the providers runnable context.
-	 * 
+	 *
 	 * @param operation the operation to be executes
 	 * @param monitor the progress monitor
 	 * @exception CoreException the operation's core exception
@@ -560,40 +560,40 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			throw new CoreException(new Status(IStatus.CANCEL, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, x));
 		}
 	}
-		
+
 	/*
 	 * @see IDocumentProvider#resetDocument(Object)
 	 */
 	public final void resetDocument(final Object element) throws CoreException {
-		
+
 		if (element == null)
 			return;
-				
+
 		class ResetOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
-			
+
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				doResetDocument(element, monitor);
 			}
-			
+
 			public ISchedulingRule getSchedulingRule() {
 				return getResetRule(element);
 			}
 		}
-		
-		executeOperation(new ResetOperation(), getProgressMonitor());	
+
+		executeOperation(new ResetOperation(), getProgressMonitor());
 	}
-	
+
 
 	/*
 	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
 	public final void saveDocument(IProgressMonitor monitor, final Object element, final IDocument document, final boolean overwrite) throws CoreException {
-		
+
 		if (element == null)
 			return;
-				
+
 		class SaveOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
-			
+
 			/*
 			 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */
@@ -601,52 +601,52 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info != null) {
 					if (info.fDocument != document) {
-						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.AbstractDocumentProvider_error_save_inuse, null); 
-						throw new CoreException(status);				
+						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.AbstractDocumentProvider_error_save_inuse, null);
+						throw new CoreException(status);
 					}
-					
+
 					doSaveDocument(pm, element, document, overwrite);
-					
+
 					if (pm != null && pm.isCanceled())
 						return;
-					
+
 					info.fCanBeSaved= false;
 					addUnchangedElementListeners(element, info);
 					fireElementDirtyStateChanged(element, false);
-			
+
 				} else {
 					doSaveDocument(pm, element, document, overwrite);
 				}
 			}
-			
+
 			public ISchedulingRule getSchedulingRule() {
 				return getSaveRule(element);
 			}
 		}
-		
+
 		executeOperation(new SaveOperation(), monitor);
 	}
-	
+
 	/**
-	 * The <code>AbstractDocumentProvider</code> implementation of this 
+	 * The <code>AbstractDocumentProvider</code> implementation of this
 	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
 	 * reimplement.
-	 * 
+	 *
 	 * @param element the element
 	 */
 	public void aboutToChange(Object element) {
 	}
-	
+
 	/**
-	 * The <code>AbstractDocumentProvider</code> implementation of this 
+	 * The <code>AbstractDocumentProvider</code> implementation of this
 	 * <code>IDocumentProvider</code> method does nothing. Subclasses may
 	 * reimplement.
-	 * 
+	 *
 	 * @param element the element
 	 */
 	public void changed(Object element) {
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#addElementStateListener(IElementStateListener)
 	 */
@@ -655,7 +655,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (!fElementStateListeners.contains(listener))
 			fElementStateListeners.add(listener);
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#removeElementStateListener(IElementStateListener)
 	 */
@@ -663,7 +663,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
 	}
-		
+
 	/**
 	 * Informs all registered element state listeners about a change in the
 	 * dirty state of the given element.
@@ -679,9 +679,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			l.elementDirtyStateChanged(element, isDirty);
 		}
 	}
-	
+
 	/**
-	 * Informs all registered element state listeners about an impending 
+	 * Informs all registered element state listeners about an impending
 	 * replace of the given element's content.
 	 *
 	 * @param element the element
@@ -694,7 +694,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			l.elementContentAboutToBeReplaced(element);
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about the just-completed
 	 * replace of the given element's content.
@@ -709,7 +709,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			l.elementContentReplaced(element);
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about the deletion
 	 * of the given element.
@@ -724,7 +724,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			l.elementDeleted(element);
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about a move.
 	 *
@@ -739,7 +739,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			l.elementMoved(originalElement, movedElement);
 		}
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#getModificationStamp(Object)
 	 * @since 2.0
@@ -747,7 +747,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public long getModificationStamp(Object element) {
 		return 0;
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#getSynchronizationStamp(Object)
 	 * @since 2.0
@@ -755,7 +755,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public long getSynchronizationStamp(Object element) {
 		return 0;
 	}
-	
+
 	/*
 	 * @see IDocumentProvider#isDeleted(Object)
 	 * @since 2.0
@@ -763,7 +763,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public boolean isDeleted(Object element) {
 		return false;
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#isReadOnly(Object)
 	 * @since 2.0
@@ -771,7 +771,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public boolean isReadOnly(Object element) {
 		return true;
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 * @since 2.0
@@ -779,11 +779,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public boolean isModifiable(Object element) {
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether <code>validateState</code> has been called for the given element
 	 * since the element's state has potentially been invalidated.
-	 * 
+	 *
 	 * @param element the element
 	 * @return whether <code>validateState</code> has been called for the given element
 	 * @since 2.0
@@ -794,11 +794,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			return info.fIsStateValidated;
 		return false;
 	}
-	
+
 	/**
 	 * Hook method for validating the state of the given element. Must not take care of cache updating etc.
 	 * Default implementation is empty.
-	 * 
+	 *
 	 * @param element the element
 	 * @param computationContext the context in which validation happens
 	 * @exception CoreException in case validation fails
@@ -806,7 +806,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected void doValidateState(Object  element, Object computationContext) throws CoreException {
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#validateState(Object, Object)
 	 * @since 2.0
@@ -814,44 +814,44 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public void validateState(final Object element, final Object computationContext) throws CoreException {
 		if (element == null)
 			return;
-		
+
 		class ValidateStateOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
-			
+
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info == null)
 					return;
-				
+
 				doValidateState(element, computationContext);
-				
+
 				doUpdateStateCache(element);
 				info.fIsStateValidated= true;
 				fireElementStateValidationChanged(element, true);
 			}
-			
+
 			public ISchedulingRule getSchedulingRule() {
 				return getValidateStateRule(element);
 			}
 		}
-		
+
 		executeOperation(new ValidateStateOperation(), getProgressMonitor());
 	}
-	
+
 	/**
 	 * Hook method for updating the state of the given element.
 	 * Default implementation is empty.
-	 * 
+	 *
 	 * @param element the element
 	 * @exception CoreException in case state cache updating fails
 	 * @since 2.0
 	 */
 	protected void doUpdateStateCache(Object element) throws CoreException {
 	}
-	
+
 	/**
 	 * Returns whether the state of the element must be invalidated given its
 	 * previous read-only state.
-	 * 
+	 *
 	 * @param element the element
 	 * @param wasReadOnly the previous read-only state
 	 * @return <code>true</code> if the state of the given element must be invalidated
@@ -864,7 +864,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			return readOnlyChanged && !canSaveDocument(element);
 		return readOnlyChanged;
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#updateStateCache(Object)
 	 * @since 2.0
@@ -880,7 +880,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#setCanSaveDocument(Object)
 	 * @since 2.0
@@ -895,7 +895,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about a change in the
 	 * state validation of the given element.
@@ -915,7 +915,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about the current state
 	 * change of the element
@@ -934,7 +934,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs all registered element state listeners about the failed
 	 * state change of the element
@@ -953,7 +953,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IDocumentProviderExtension#getStatus(Object)
 	 * @since 2.0
@@ -965,13 +965,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 				return info.fStatus;
 			return (info.fDocument == null ? STATUS_ERROR : STATUS_OK);
 		}
-		
+
 		return STATUS_ERROR;
 	}
-	
+
 	/**
 	 * Performs the actual work of synchronizing the given element.
-	 * 
+	 *
 	 * @param element the element
 	 * @param monitor the progress monitor
 	 * @exception CoreException in the case that synchronization fails
@@ -979,30 +979,30 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(Object)
 	 * @since 2.0
 	 */
 	public final void synchronize(final Object element) throws CoreException {
-		
+
 		if (element == null)
 			return;
-		
+
 		class SynchronizeOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
-			
+
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				doSynchronize(element, monitor);
 			}
-			
+
 			public ISchedulingRule getSchedulingRule() {
 				return getSynchronizeRule(element);
 			}
 		}
-					
+
 		executeOperation(new SynchronizeOperation(), getProgressMonitor());
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#getProgressMonitor()
 	 * @since 2.1
@@ -1018,7 +1018,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		fProgressMonitor= progressMonitor;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
 	 * @since 3.0
@@ -1026,7 +1026,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public boolean isSynchronized(Object element) {
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
 	 * @since 3.1

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.TextPresentation;
  * <p>
  * The interface can be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public interface IContextInformationPresenter {
@@ -33,9 +33,9 @@ public interface IContextInformationPresenter {
 	 * @param offset the document offset for which the information has been computed
 	 */
 	void install(IContextInformation info, ITextViewer viewer, int offset);
-	
+
 	/**
-	 * Updates the given presentation of the given context information 
+	 * Updates the given presentation of the given context information
 	 * at the given document position. Returns whether update changed the
 	 * presentation.
 	 *

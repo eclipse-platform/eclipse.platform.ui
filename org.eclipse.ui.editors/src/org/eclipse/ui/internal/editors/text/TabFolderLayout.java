@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Layout;
 /**
  * This layout controls the position and size
  * of the children of a tab folder.
- * 
+ *
  * @since 2.1
  */
 class TabFolderLayout extends Layout {
@@ -32,7 +32,7 @@ class TabFolderLayout extends Layout {
 	protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 			return new Point(wHint, hHint);
-			
+
 		Control [] children = composite.getChildren ();
 		int count = children.length;
 		int maxWidth = 0, maxHeight = 0;
@@ -42,14 +42,14 @@ class TabFolderLayout extends Layout {
 			maxWidth = Math.max (maxWidth, pt.x);
 			maxHeight = Math.max (maxHeight, pt.y);
 		}
-		
+
 		if (wHint != SWT.DEFAULT)
 			maxWidth= wHint;
 		if (hHint != SWT.DEFAULT)
 			maxHeight= hHint;
-		
-		return new Point(maxWidth, maxHeight);	
-		
+
+		return new Point(maxWidth, maxHeight);
+
 	}
 
 	/*
@@ -57,7 +57,7 @@ class TabFolderLayout extends Layout {
 	 */
 	protected void layout (Composite composite, boolean flushCache) {
 		Rectangle rect= composite.getClientArea();
-	
+
 		Control[] children = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			children[i].setBounds(rect);

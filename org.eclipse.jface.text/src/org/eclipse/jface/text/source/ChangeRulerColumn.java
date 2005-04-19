@@ -47,25 +47,25 @@ import org.eclipse.jface.text.TextEvent;
  * @since 3.0
  */
 public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn {
-	
+
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
 	class MouseHandler implements MouseListener, MouseMoveListener {
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent event) {
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
-	
+
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
@@ -78,14 +78,14 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		 */
 		public void mouseMove(MouseEvent e) {
 		}
-	
+
 	}
 
 	/**
 	 * Internal listener class.
 	 */
 	class InternalListener implements IViewportListener, ITextListener {
-		
+
 		/*
 		 * @see IViewportListener#viewportChanged(int)
 		 */
@@ -93,21 +93,21 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			if (verticalPosition != fScrollPos)
 				redraw();
 		}
-		
+
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
-			
+
 			if (!event.getViewerRedrawState())
 				return;
-				
+
 			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
 				postRedraw();
 
 		}
 	}
-	
+
 	/**
 	 * Internal listener class that will update the ruler when the underlying model changes.
 	 */
@@ -156,7 +156,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
 	 * Returns the System background color for list widgets.
-	 * 
+	 *
 	 * @param display the display the drawing occurs on
 	 * @return the System background color for list widgets
 	 */
@@ -170,21 +170,21 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
 	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
-		
+
 		fParentRuler= parentRuler;
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
-		
+
 		fCanvas= new Canvas(parentControl, SWT.NONE);
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
-			
+
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
 					doubleBufferPaint(event.gc);
 			}
 		});
-		
+
 		fCanvas.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
@@ -192,55 +192,55 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 				fCachedTextWidget= null;
 			}
 		});
-		
+
 		MouseHandler mouseHandler= new MouseHandler();
-		
+
 		fCanvas.addMouseListener(mouseHandler);
-		
+
 		fCanvas.addMouseMoveListener(mouseHandler);
-		
+
 		if (fCachedTextViewer != null) {
-			
+
 			fCachedTextViewer.addViewportListener(fInternalListener);
 			fCachedTextViewer.addTextListener(fInternalListener);
 		}
-		
+
 		return fCanvas;
 	}
-	
+
 	/**
 	 * Disposes the column's resources.
 	 */
 	protected void handleDispose() {
-		
+
 		if (fAnnotationModel != null) {
 			fAnnotationModel.removeAnnotationModelListener(fAnnotationListener);
 			fAnnotationModel= null;
 		}
-		
+
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.removeViewportListener(fInternalListener);
 			fCachedTextViewer.removeTextListener(fInternalListener);
 		}
-		
+
 		if (fBuffer != null) {
 			fBuffer.dispose();
 			fBuffer= null;
 		}
 	}
-	
+
 	/**
 	 * Double buffer drawing.
-	 * 
+	 *
 	 * @param dest the GC to draw into
 	 */
 	private void doubleBufferPaint(GC dest) {
-		
+
 		Point size= fCanvas.getSize();
-		
+
 		if (size.x <= 0 || size.y <= 0)
 			return;
-		
+
 		if (fBuffer != null) {
 			Rectangle r= fBuffer.getBounds();
 			if (r.width != size.x || r.height != size.y) {
@@ -250,26 +250,26 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		}
 		if (fBuffer == null)
 			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-			
+
 		GC gc= new GC(fBuffer);
 		gc.setFont(fCanvas.getFont());
-		
+
 		try {
 			gc.setBackground(getBackground(fCanvas.getDisplay()));
 			gc.fillRectangle(0, 0, size.x, size.y);
-			
+
 			if (fCachedTextViewer instanceof ITextViewerExtension5)
 				doPaint1(gc);
 			else
 				doPaint(gc);
-				
+
 		} finally {
 			gc.dispose();
 		}
-		
+
 		dest.drawImage(fBuffer, 0, 0);
 	}
-	
+
 	/**
 	 * Returns the view port height in lines.
 	 *
@@ -281,66 +281,66 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			return clArea.height / fCachedTextWidget.getLineHeight();
 		return -1;
 	}
-	
+
 	/**
 	 * Draws the ruler column.
-	 * 
+	 *
 	 * @param gc the GC to draw into
 	 */
 	private void doPaint(GC gc) {
-		
+
 		if (fCachedTextViewer == null)
 			return;
-			
+
 		if (fCachedTextWidget == null)
 			return;
-			
-		
+
+
 		int firstLine= 0;
-			
+
 		int topLine= fCachedTextViewer.getTopIndex() -1;
 		int bottomLine= fCachedTextViewer.getBottomIndex() + 1;
-		
+
 		try {
-			
+
 			IRegion region= fCachedTextViewer.getVisibleRegion();
 			IDocument doc= fCachedTextViewer.getDocument();
-			
+
 			if (doc == null)
 				return;
-			
+
 			firstLine= doc.getLineOfOffset(region.getOffset());
 			if (firstLine > topLine)
 				topLine= firstLine;
-					
+
 			int lastLine= doc.getLineOfOffset(region.getOffset() + region.getLength());
 			if (lastLine < bottomLine)
 				bottomLine= lastLine;
-				
+
 		} catch (BadLocationException x) {
 			return;
 		}
-		
+
 		fSensitiveToTextChanges= bottomLine - topLine < getVisibleLinesInViewport();
-		
+
 		int lineheight= fCachedTextWidget.getLineHeight();
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int canvasheight= fCanvas.getSize().y;
 
 		int y= ((topLine - firstLine) * lineheight) - fScrollPos;
 		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
-			
+
 			if (y >= canvasheight)
 				break;
-			
+
 			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
 		}
 	}
-	
+
 	/**
 	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
-	 * 
+	 *
 	 * @param gc the GC to draw into
 	 */
 	private void doPaint1(GC gc) {
@@ -366,7 +366,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 			IRegion region= extension.getModelCoverage();
 			IDocument doc= fCachedTextViewer.getDocument();
-			
+
 			if (doc == null)
 				 return;
 
@@ -399,32 +399,32 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 				continue;
 
 			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
-			
+
 			y+= lineheight;
 		}
 	}
-	
+
 	/*
 	 * @see IVerticalRulerColumn#redraw()
 	 */
 	public void redraw() {
-		
+
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
 			gc.dispose();
 		}
 	}
-	
+
 	/*
 	 * @see IVerticalRulerColumn#setFont(Font)
 	 */
 	public void setFont(Font font) {
 	}
-	
+
 	/**
 	 * Returns the parent (composite) ruler of this ruler column.
-	 * 
+	 *
 	 * @return the parent ruler
 	 * @since 3.0
 	 */
@@ -468,7 +468,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
 	 * Returns whether the line background differs from the default.
-	 * 
+	 *
 	 * @param info the info being queried
 	 * @return <code>true</code> if <code>info</code> describes either a changed or an added line.
 	 */
@@ -479,7 +479,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Retrieves the <code>ILineDiffInfo</code> for <code>line</code> from the model.
 	 * There are optimizations for direct access and sequential access patterns.
-	 * 
+	 *
 	 * @param line the line we want the info for.
 	 * @return the <code>ILineDiffInfo</code> for <code>line</code>, or <code>null</code>.
 	 */
@@ -492,13 +492,13 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			ILineDiffer differ= (ILineDiffer)fAnnotationModel;
 			return differ.getLineInfo(line);
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Returns the color for deleted lines.
-	 * 
+	 *
 	 * @param display the display
 	 * @return the color to be used for the deletion indicator
 	 */
@@ -508,7 +508,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 	/**
 	 * Returns the color for the given line diff info.
-	 * 
+	 *
 	 * @param info the <code>ILineDiffInfo</code> being queried
 	 * @param display the display that the drawing occurs on
 	 * @return the correct background color for the line type being described by <code>info</code>
@@ -581,11 +581,11 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setBackground(org.eclipse.swt.graphics.Color)
 	 */
 	public void setBackground(Color background) {
-		fBackground= background;			
+		fBackground= background;
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setAddedColor(org.eclipse.swt.graphics.Color)
 	 */
@@ -627,7 +627,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	public int getWidth() {
 		return fWidth;
 	}
-	
+
 	/**
 	 * Triggers a redraw in the display thread.
 	 */
@@ -650,7 +650,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
 	 */

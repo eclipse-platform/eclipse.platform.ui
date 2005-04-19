@@ -16,17 +16,17 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal}
  * with the following functions:
  * <ul>
  *	<li>handling of trigger characters with modifiers</li>
  *	<li>visual indication for selection of a proposal</li>
  * </ul>
- * 
+ *
  * @since 2.1
  */
 public interface ICompletionProposalExtension2 {
-	
+
 	/**
 	 * Applies the proposed completion to the given document. The insertion
 	 * has been triggered by entering the given character with a modifier at the given offset.
@@ -42,7 +42,7 @@ public interface ICompletionProposalExtension2 {
 
 	/**
 	 * Called when the proposal is selected.
-	 * 
+	 *
 	 * @param viewer the text viewer.
 	 * @param smartToggle the smart toggle key was pressed
 	 */
@@ -50,23 +50,23 @@ public interface ICompletionProposalExtension2 {
 
 	/**
 	 * Called when the proposal is unselected.
-	 * 
+	 *
 	 * @param viewer the text viewer.
 	 */
 	void unselected(ITextViewer viewer);
-	
+
 	/**
 	 * Requests the proposal to be validated with respect to the document event.
 	 * If the proposal cannot be validated, the methods returns <code>false</code>.
 	 * If the document event was <code>null</code>, only the caret offset was changed, but not the document.
 	 *
 	 * This method replaces {@link ICompletionProposalExtension#isValidFor(IDocument, int)}
-	 * 
+	 *
 	 * @param document the document
 	 * @param offset the caret offset
 	 * @param event the document event, may be <code>null</code>
 	 * @return boolean
 	 */
 	boolean validate(IDocument document, int offset, DocumentEvent event);
-	
+
 }

@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class to get NLSed messages.
- * 
+ *
  * @since 3.0
  */
 final class FileBuffersMessages extends NLS {

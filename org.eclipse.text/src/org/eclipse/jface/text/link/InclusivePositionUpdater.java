@@ -22,7 +22,7 @@ import org.eclipse.jface.text.Position;
  * <p>
  * Internal class. Do not use. Public for testing purposes only.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class InclusivePositionUpdater implements IPositionUpdater {
@@ -32,7 +32,7 @@ public class InclusivePositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Creates a new updater for the given <code>category</code>.
-	 * 
+	 *
 	 * @param category the new category.
 	 */
 	public InclusivePositionUpdater(String category) {
@@ -63,11 +63,11 @@ public class InclusivePositionUpdater implements IPositionUpdater {
 				int length= position.getLength();
 				int end= offset + length;
 
-				if (offset > eventOffset + eventOldLength) 
+				if (offset > eventOffset + eventOldLength)
 					// position comes way
 					// after change - shift
 					position.setOffset(offset + deltaLength);
-				else if (end < eventOffset) { 
+				else if (end < eventOffset) {
 					// position comes way before change -
 					// leave alone
 				} else if (offset <= eventOffset && end >= eventOffset + eventOldLength) {
@@ -97,7 +97,7 @@ public class InclusivePositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Returns the position category.
-	 * 
+	 *
 	 * @return the position category
 	 */
 	public String getCategory() {

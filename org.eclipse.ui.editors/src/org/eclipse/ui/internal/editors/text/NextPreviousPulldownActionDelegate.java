@@ -31,14 +31,14 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * The abstract class for next and previous pulldown action delegates.
- * 
+ *
  * @since 3.0
  */
 public abstract class NextPreviousPulldownActionDelegate extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 
 	/** The cached menu. */
 	private Menu fMenu;
-	
+
 	/** The preference store */
 	private IPreferenceStore fStore;
 
@@ -47,17 +47,17 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 		/** The preference store. */
 		private IPreferenceStore fStore;
-		
+
 		/** The preference key for the value in the store. */
 		private String fKey;
 
 		/**
 		 * Creates a named navigation enablement action.
-		 * 
+		 *
 		 * @param name the name of this action
 		 * @param store the preference store
 		 * @param key the preference key
-		 */ 
+		 */
 		public NavigationEnablementAction(String name, IPreferenceStore store, String key) {
 			super(name, IAction.AS_CHECK_BOX);
 			fStore= store;
@@ -67,7 +67,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 		/*
 		 * @see IAction#run()
-		 */		
+		 */
 		public void run() {
 			fStore.setValue(fKey, isChecked());
 		}
@@ -76,7 +76,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	/**
 	 * Returns the preference key to be used in the
 	 * <code>NavigationEnablementAction</code>.
-	 * 
+	 *
 	 * @param annotationPreference the annotation preference
 	 * @return the preference key or <code>null</code> if the key is not defined in XML
 	 */
@@ -88,7 +88,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	public Menu getMenu(Control parent) {
 		if (fMenu != null)
 			fMenu.dispose();
-			
+
 		fMenu= new Menu(parent);
 		fillMenu(fMenu);
 
@@ -109,7 +109,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		if (fMenu == null) {
 			fMenu= new Menu(parent);
 			fillMenu(fMenu);
-		}			
+		}
 
 		return fMenu;
 	}
@@ -127,7 +127,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	/**
 	 * Fills the given menu using marker
 	 * annotation preferences.
-	 * 
+	 *
 	 * @param menu the menu to fill
 	 */
 	private void fillMenu(Menu menu) {
@@ -135,7 +135,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 		for (int i= 0; i < actions.length; i++) {
 			ActionContributionItem item= new ActionContributionItem(actions[i]);
-			item.fill(menu, -1);				
+			item.fill(menu, -1);
 		}
 	}
 
@@ -148,14 +148,14 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	private IAction[] getActionsFromDescriptors() {
 		MarkerAnnotationPreferences fMarkerAnnotationPreferences= new MarkerAnnotationPreferences();
 		ArrayList containers= new ArrayList();
-				
+
 		Iterator iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (iter.hasNext()) {
 			AnnotationPreference preference= (AnnotationPreference)iter.next();
 			String key= preference.getShowInNextPrevDropdownToolbarActionKey();
 			if (key != null && fStore.getBoolean(key)) {
 				String preferenceKey= getPreferenceKey(preference);
-				
+
 				/*
 				 * Fixes bug 41689
 				 * This code can be simplified if we decide that
@@ -163,7 +163,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 				 * previous and go to next annotation.
 				 */
 				preferenceKey= preference.getIsGoToNextNavigationTargetKey();
-				
+
 				if (preferenceKey != null)
 					containers.add(new NavigationEnablementAction(preference.getPreferenceLabel(), fStore, preferenceKey));
 			}

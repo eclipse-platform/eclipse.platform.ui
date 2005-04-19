@@ -13,12 +13,12 @@ package org.eclipse.ui.internal.editors.text;
 /**
  * A file buffer operation action that changes the line delimiters to a MacOS9
  * line delimiter.
- * 
+ *
  * @since 3.1
  */
 public class ConvertLineDelimitersToMacOS9 extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToMacOS9(){
-		super("\r", TextEditorMessages.ConvertLineDelimitersToMacOS9_label); 
+		super("\r", TextEditorMessages.ConvertLineDelimitersToMacOS9_label);
 	}
 }

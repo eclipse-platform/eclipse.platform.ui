@@ -28,7 +28,7 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
  * step has reconciled the {@linkplain org.eclipse.jface.text.reconciler.IReconcileResult reconcile result}
  * array gets returned to the previous step. Each step in the chain adapts the result to its
  * input model and returns it to its previous step.
- * </p> 
+ * </p>
  * <p>
  * Example: Assume a strategy consists of steps A, B and C. And the main model is M.
  * The strategy will set M to be A's input model. What will happen is:
@@ -49,7 +49,7 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
  * </ol>
  * </p>
  * <p>
- * This interface must be implemented by clients. 
+ * This interface must be implemented by clients.
  * </p>
  * @since 3.0
  */
@@ -57,14 +57,14 @@ public interface IReconcileStep {
 
 	/**
 	 * Returns whether this is the last reconcile step or not.
-	 * 
+	 *
 	 * @return <code>true</code> iff this is the last reconcile step
 	 */
 	boolean isLastStep();
 
 	/**
 	 * Returns whether this is the first reconcile step or not.
-	 * 
+	 *
 	 * @return <code>true</code> iff this is the first reconcile step
 	 */
 	boolean isFirstStep();
@@ -74,7 +74,7 @@ public interface IReconcileStep {
 	 * <p>
 	 * Note: This method must be called at most once per reconcile step.
 	 * </p>
-	 * 
+	 *
 	 * @param step the previous step
 	 * @throws RuntimeException if called more than once
 	 */
@@ -83,13 +83,13 @@ public interface IReconcileStep {
 	/**
 	 * Activates incremental reconciling of the specified dirty region.
 	 * As a dirty region might span multiple content types, the segment of the
-	 * dirty region which should be investigated is also provided to this 
+	 * dirty region which should be investigated is also provided to this
 	 * reconciling strategy. The given regions refer to the document passed into
 	 * the most recent call of {@link IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)}.
 	 *
 	 * @param dirtyRegion the document region which has been changed
 	 * @param subRegion the sub region in the dirty region which should be reconciled
-	 * @return an array with reconcile results 
+	 * @return an array with reconcile results
 	 */
 	IReconcileResult[] reconcile(DirtyRegion dirtyRegion, IRegion subRegion);
 
@@ -99,13 +99,13 @@ public interface IReconcileStep {
 	 * document most recently passed into {@link IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)}.
 	 *
 	 * @param partition the document partition to be reconciled
-	 * @return an array with reconcile results 
+	 * @return an array with reconcile results
 	 */
 	IReconcileResult[] reconcile(IRegion partition);
 
 	/**
 	 * Sets the progress monitor for this reconcile step.
-	 * 
+	 *
 	 * @param monitor the progress monitor to be used
 	 */
 	void setProgressMonitor(IProgressMonitor monitor);
@@ -119,9 +119,9 @@ public interface IReconcileStep {
 
 	/**
 	 * Tells this reconcile step on which model it will
-	 * work. This method will be called before any other method 
+	 * work. This method will be called before any other method
 	 * and can be called multiple times. The regions passed to the
-	 * other methods always refer to the most recent model 
+	 * other methods always refer to the most recent model
 	 * passed into this method.
 	 *
 	 * @param inputModel the model on which this step will work

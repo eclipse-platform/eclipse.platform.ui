@@ -39,9 +39,9 @@ public class BadPartitioningException extends Exception {
 
 	/**
 	 * Creates a new bad partitioning exception.
-	 * 
+	 *
 	 * @param message message describing the exception
-	 */	
+	 */
 	public BadPartitioningException(String message) {
 		super(message);
 	}

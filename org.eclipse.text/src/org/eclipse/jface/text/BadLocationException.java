@@ -20,7 +20,7 @@ package org.eclipse.jface.text;
  * </p>
  */
 public class BadLocationException extends Exception {
-	
+
 	/**
 	 * Serial version UID for this class.
 	 * <p>
@@ -36,7 +36,7 @@ public class BadLocationException extends Exception {
 	public BadLocationException() {
 		super();
 	}
-	
+
 	/**
 	 * Creates a new bad location exception.
 	 *

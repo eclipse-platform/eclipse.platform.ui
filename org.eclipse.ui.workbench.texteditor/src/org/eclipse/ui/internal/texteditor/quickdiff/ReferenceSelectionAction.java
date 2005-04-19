@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * this class is created for every extension to the extension point <code>quickdiff.referenceprovider</code>, and for
  * every editor. It acts as a proxy; its <code>run</code> method installs the reference provider
  * specified by the extension with the quick diff differ on the current document.
- * 
+ *
  * @since 3.0
  */
 public class ReferenceSelectionAction extends Action implements IUpdate {
@@ -46,7 +46,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 
 	/**
 	 * Creates a new instance that will lazily create the implementation provided by the extension.
-	 * 
+	 *
 	 * @param descriptor describes the extension.
 	 * @param editor the editor for which this action is created.
 	 */
@@ -62,8 +62,8 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 
 	/**
 	 * Creates an instance of the implementation provided by the extension, if none has been created
-	 * before. Otherwise, the cached implementation is returned. 
-	 * @return The <code>IQuickDiffProviderImplementation</code> instance provided by the extension. 
+	 * before. Otherwise, the cached implementation is returned.
+	 * @return The <code>IQuickDiffProviderImplementation</code> instance provided by the extension.
 	 */
 	private IQuickDiffReferenceProvider getProvider() {
 		if (fProvider == null) {
@@ -76,11 +76,11 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		
+
 		DocumentLineDiffer differ= getDiffer(true); // create if needed, so the user does not have to toggle display when he selects a reference
 		if (differ == null)
 			return;
-			
+
 		if (fEditor instanceof ITextEditorExtension3) {
 			ITextEditorExtension3 extension= (ITextEditorExtension3) fEditor;
 			IQuickDiffReferenceProvider provider= getProvider();
@@ -104,7 +104,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		 * 1: checked state setting - if a provider is already installed, and its id matches
 		 * our id, we are in checked state.
 		 * 2: enablement - if the extending plugin has been loaded, we check the provider for
-		 * enablement and take it as our own. 
+		 * enablement and take it as our own.
 		 */
 		setText(fDescriptor.getLabel());
 		DocumentLineDiffer differ= getDiffer(false); // don't create it if we're not showing
@@ -134,7 +134,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 * Fetches the differ installed with the current editor's document's annotation model. If none
 	 * is installed yet, and <code>createIfNeeded</code> is true, one is created and attached to the
 	 * model.
-	 * 
+	 *
 	 * @param createIfNeeded when set to <code>true</code>, a new differ will be created if needed.
 	 * @return the differ installed with the annotation model, or <code>null</code>.
 	 */
@@ -142,12 +142,12 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		// get annotation model
 		if (fEditor == null)
 			return null;
-			
+
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		IEditorInput editorInput= fEditor.getEditorInput();
 		if (provider == null || editorInput == null)
 			return null;
-			
+
 		IAnnotationModel m= provider.getAnnotationModel(editorInput);
 		IAnnotationModelExtension model= null;
 		if (m instanceof IAnnotationModelExtension) {
@@ -164,7 +164,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 			differ= new DocumentLineDiffer();
 			model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 		}
-		
+
 		return differ;
 	}
 }

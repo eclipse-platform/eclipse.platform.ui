@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.texteditor.AnnotationExpansionControl.AnnotationH
 /**
  * @since 3.0
  */
-public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {	
+public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHoverExtension {
 
 	private class InformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension {
 
@@ -77,7 +77,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 			return creator == this;
 		}
 	}
-	
+
 	private class VerticalRulerListener implements IVerticalRulerListener {
 
 		/*
@@ -102,16 +102,16 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		}
 	}
 
-	
+
 	private final IInformationControlCreator fgCreator= new InformationControlCreator();
 	protected final IVerticalRulerListener fgListener= new VerticalRulerListener();
 	protected CompositeRuler fCompositeRuler;
 	protected IDoubleClickListener fDblClickListener;
 	protected IAnnotationAccess fAnnotationAccess;
-	
+
 	/**
 	 * Creates a new hover instance.
-	 * 
+	 *
 	 * @param ruler
 	 * @param access
 	 * @param doubleClickListener
@@ -129,40 +129,40 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		// we don't have any sensible return value as text
 		return null;
 	}
-	
+
 	protected Object getHoverInfoForLine(ISourceViewer viewer, int line) {
 		IAnnotationModel model= viewer.getAnnotationModel();
 		IDocument document= viewer.getDocument();
-		
+
 		if (model == null)
 			return null;
-		
+
 		List exact= new ArrayList();
 		HashMap messagesAtPosition= new HashMap();
-		
+
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation= (Annotation) e.next();
 			Position position= model.getPosition(annotation);
 			if (position == null)
 				continue;
-			
+
 			if (compareRulerLine(position, document, line) == 1) {
 				if (isDuplicateMessage(messagesAtPosition, position, annotation.getText()))
 					continue;
-			
+
 				exact.add(annotation);
 			}
 		}
-		
+
 		if (exact.size() < 1)
 			return null;
-		
+
 		sort(exact, model);
-		
+
 		if (exact.size() > 0)
 			setLastRulerMouseLocation(viewer, line);
-		
+
 		AnnotationHoverInput input= new AnnotationHoverInput();
 		input.fAnnotations= (Annotation[]) exact.toArray(new Annotation[0]);
 		input.fViewer= viewer;
@@ -170,7 +170,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 		input.fAnnotationListener= fgListener;
 		input.fDoubleClickListener= fDblClickListener;
 		input.model= model;
-		
+
 		return input;
 	}
 
@@ -183,23 +183,23 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 			public int compare(Object o1, Object o2) {
 				Annotation a1= (Annotation) o1;
 				Annotation a2= (Annotation) o2;
-				
+
 				Position p1= model.getPosition(a1);
 				Position p2= model.getPosition(a2);
-				
+
 				// annotation order:
 				// primary order: by position in line
-				// secondary: annotation importance 
+				// secondary: annotation importance
 				if (p1.offset == p2.offset)
 					return getOrder(a2) - getOrder(a1);
 				return p1.offset - p2.offset;
 			}
 		}
-		
+
 		Collections.sort(exact, new AnnotationComparator());
-		
+
 	}
-	
+
 	protected int getOrder(Annotation annotation) {
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
@@ -229,7 +229,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 			messagesAtPosition.put(position, message);
 		return false;
 	}
-	
+
 	protected void setLastRulerMouseLocation(ISourceViewer viewer, int line) {
 		// set last mouse activity in order to get the correct context menu
 		if (fCompositeRuler != null) {
@@ -251,14 +251,14 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 
 	/**
 	 * Returns the distance to the ruler line.
-	 *  
+	 *
 	 * @param position the position
 	 * @param document the document
 	 * @param line the line number
 	 * @return the distance to the ruler line
 	 */
 	protected int compareRulerLine(Position position, IDocument document, int line) {
-		
+
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
 				int firstLine= document.getLineOfOffset(position.getOffset());
@@ -269,10 +269,10 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 			} catch (BadLocationException x) {
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 	 */

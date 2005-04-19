@@ -47,7 +47,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * A content assistant handler which handles the key binding and
  * the cue for a {@link org.eclipse.jface.text.contentassist.ContentAssistant}
  * and its subject adapter.
- * 
+ *
  * @since 3.0
  */
 public class ContentAssistHandler {
@@ -72,12 +72,12 @@ public class ContentAssistHandler {
 	 * The currently installed HandlerSubmission, or <code>null</code> iff none installed.
 	 */
 	private HandlerSubmission fHandlerSubmission;
-	
+
 	/**
 	 * Creates a new {@link ContentAssistHandler} for the given {@link Combo}.
 	 * Only a single {@link ContentAssistHandler} may be installed on a {@link Combo} instance.
 	 * Content Assist is enabled by default.
-	 * 
+	 *
 	 * @param combo target combo
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
@@ -85,12 +85,12 @@ public class ContentAssistHandler {
 	public static ContentAssistHandler createHandlerForCombo(Combo combo, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(combo, new ComboContentAssistSubjectAdapter(combo), contentAssistant);
 	}
-	
+
 	/**
 	 * Creates a new {@link ContentAssistHandler} for the given {@link Text}.
 	 * Only a single {@link ContentAssistHandler} may be installed on a {@link Text} instance.
 	 * Content Assist is enabled by default.
-	 * 
+	 *
 	 * @param text target text
 	 * @param contentAssistant a configured content assistant
 	 * @return a new {@link ContentAssistHandler}
@@ -98,10 +98,10 @@ public class ContentAssistHandler {
 	public static ContentAssistHandler createHandlerForText(Text text, SubjectControlContentAssistant contentAssistant) {
 		return new ContentAssistHandler(text, new TextContentAssistSubjectAdapter(text), contentAssistant);
 	}
-	
+
 	/**
 	 * Internal constructor.
-	 * 
+	 *
 	 * @param control target control
 	 * @param subjectAdapter content assist subject adapter
 	 * @param contentAssistant content assistant
@@ -120,31 +120,31 @@ public class ContentAssistHandler {
 			}
 		});
 	}
-	
+
 	/**
 	 * @return <code>true</code> iff content assist is enabled
 	 */
 	public boolean isEnabled() {
 		return fFocusListener != null;
 	}
-	
+
 	/**
 	 * Controls enablement of content assist.
 	 * When enabled, a cue is shown next to the focused field
 	 * and the affordance hover shows the shortcut.
-	 * 
+	 *
 	 * @param enable enable content assist iff true
 	 */
 	public void setEnabled(boolean enable) {
 		if (enable == isEnabled())
 			return;
-		
+
 		if (enable)
 			enable();
 		else
 			disable();
 	}
-	
+
 	/**
 	 * Enable content assist.
 	 */
@@ -157,7 +157,7 @@ public class ContentAssistHandler {
 				activateHandler();
 		}
 	}
-	
+
 	/**
 	 * Disable content assist.
 	 */
@@ -171,7 +171,7 @@ public class ContentAssistHandler {
 				deactivateHandler();
 		}
 	}
-	
+
 	/**
 	 * Create and install the {@link LabelProvider} for fContentAssistSubjectAdapter.
 	 */
@@ -185,10 +185,10 @@ public class ContentAssistHandler {
 				ICommand command= commandManager.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				List bindings= command.getKeySequenceBindings();
 				if (bindings.size() == 0)
-					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable; 
+					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable;
 				IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
 				Object[] args= { ksb.getKeySequence().format() };
-				return MessageFormat.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, args); 
+				return MessageFormat.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, args);
 			}
 		};
 		fContentAssistSubjectAdapter.setContentAssistCueProvider(labelProvider);
@@ -209,7 +209,7 @@ public class ContentAssistHandler {
 		};
 		fControl.addFocusListener(fFocusListener);
 	}
-	
+
 	/**
 	 * Create and register fHandlerSubmission.
 	 */
@@ -226,7 +226,7 @@ public class ContentAssistHandler {
 		IWorkbenchCommandSupport commandSupport= PlatformUI.getWorkbench().getCommandSupport();
 		commandSupport.addHandlerSubmission(fHandlerSubmission);
 	}
-	
+
 	/**
 	 * Unregister the {@link HandlerSubmission} from the shell.
 	 */

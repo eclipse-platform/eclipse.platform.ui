@@ -18,7 +18,7 @@ package org.eclipse.jface.text;
  * does not provide information no hover popup is shown. Any implementer of this
  * interface must be capable of operating in a non-UI thread.
  * <p>
- * 
+ *
  * In order to provide backward compatibility for clients of
  * <code>ITextHover</code>, extension interfaces are used as a means of
  * evolution. The following extension interfaces exist:
@@ -29,32 +29,32 @@ package org.eclipse.jface.text;
  *     be displayed in the best possible form.</li>
  * </ul>
  * <p>
- * 
+ *
  * Clients may implement this interface.
- * 
+ *
  * @see org.eclipse.jface.text.ITextHoverExtension
  * @see org.eclipse.jface.text.ITextViewer
  */
 public interface ITextHover {
-	
+
 	/**
 	 * Returns the information which should be presented when a hover popup is shown
 	 * for the specified hover region. The hover region has the same semantics
 	 * as the region returned by <code>getHoverRegion</code>. If the returned
 	 * information is <code>null</code> or empty no hover popup will be shown.
-	 * 
+	 *
 	 * @param textViewer the viewer on which the hover popup should be shown
-	 * @param hoverRegion the text range in the viewer which is used to determine 
+	 * @param hoverRegion the text range in the viewer which is used to determine
 	 * 		the hover display information
-	 * @return the hover popup display information	 	  
+	 * @return the hover popup display information
 	 */
 	String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
-		
+
 	/**
-	 * Returns the text region which should serve as the source of information 
+	 * Returns the text region which should serve as the source of information
 	 * to compute the hover popup display information. The popup has been requested
 	 * for the given offset.<p>
-	 * For example, if hover information can be provided on a per method basis in a 
+	 * For example, if hover information can be provided on a per method basis in a
 	 * source viewer, the offset should be used to find the enclosing method and the
 	 * source range of the method should be returned.
 	 *

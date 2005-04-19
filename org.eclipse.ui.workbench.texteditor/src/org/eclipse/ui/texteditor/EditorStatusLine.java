@@ -48,41 +48,41 @@ class EditorStatusLine implements IEditorStatusLine {
 
 	/** The selection provider. */
 	private final ISelectionProvider fSelectionProvider;
-	
+
 	/** The status line clearer, <code>null</code> if not installed. */
 	private StatusLineClearer fStatusLineClearer;
 
 	/**
 	 * Constructor for EditorStatusLine.
-	 * 
+	 *
 	 * @param statusLineManager the status line manager
 	 * @param selectionProvider the selection provider
 	 */
 	public EditorStatusLine(IStatusLineManager statusLineManager, ISelectionProvider selectionProvider) {
 
 		Assert.isNotNull(statusLineManager);
-		Assert.isNotNull(selectionProvider);		
+		Assert.isNotNull(selectionProvider);
 
-		fStatusLineManager= statusLineManager;		
+		fStatusLineManager= statusLineManager;
 		fSelectionProvider= selectionProvider;
 	}
-	
+
 	/**
 	 * Returns the status line manager.
-	 * 
+	 *
 	 * @return the status line manager
 	 */
 	public IStatusLineManager getStatusLineManager() {
-		return fStatusLineManager;	
+		return fStatusLineManager;
 	}
 
 	/**
 	 * Returns the selection provider.
-	 * 
+	 *
 	 * @return the selection provider
-	 */	
+	 */
 	public ISelectionProvider getSelectionProvider() {
-		return fSelectionProvider;	
+		return fSelectionProvider;
 	}
 
 	/*
@@ -100,16 +100,16 @@ class EditorStatusLine implements IEditorStatusLine {
 		}
 
 		if (isMessageEmpty(message))
-			uninstallStatusLineClearer();			
+			uninstallStatusLineClearer();
 		else
 			installStatusLineClearer();
 	}
 
 	/**
 	 * Returns whether this given string is empty.
-	 * 
+	 *
 	 * @param message a string
-	 * @return <code>true</code> if the string is <code>null</code>, has 0 length or only white space characters. 
+	 * @return <code>true</code> if the string is <code>null</code>, has 0 length or only white space characters.
 	 */
 	private static boolean isMessageEmpty(String message) {
 		return message == null || message.trim().length() == 0;
@@ -132,9 +132,9 @@ class EditorStatusLine implements IEditorStatusLine {
 	private void installStatusLineClearer() {
 		if (fStatusLineClearer != null)
 			return;
-			
+
 		StatusLineClearer statusLineClearer= new StatusLineClearer();
 		fSelectionProvider.addSelectionChangedListener(statusLineClearer);
-		fStatusLineClearer= statusLineClearer;		
+		fStatusLineClearer= statusLineClearer;
 	}
 }

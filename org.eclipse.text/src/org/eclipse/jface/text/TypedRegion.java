@@ -17,10 +17,10 @@ package org.eclipse.jface.text;
  * <code>TypedRegion</code> is a value object.
  */
 public class TypedRegion extends Region implements ITypedRegion {
-	
+
 	/** The region's type */
 	private String fType;
-	
+
 	/**
 	 * Creates a typed region based on the given specification.
 	 *
@@ -32,14 +32,14 @@ public class TypedRegion extends Region implements ITypedRegion {
 		super(offset, length);
 		fType= type;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITypedRegion#getType()
 	 */
 	public String getType() {
 		return fType;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -50,12 +50,12 @@ public class TypedRegion extends Region implements ITypedRegion {
 		}
 		return false;
 	}
-	
+
 	 /*
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
-	 }	
+	 }
 }

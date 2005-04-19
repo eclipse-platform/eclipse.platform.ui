@@ -28,11 +28,11 @@ import org.eclipse.jface.text.IDocumentListener;
  * Note that {@link #close()} must be called to release any acquired
  * resources.
  * </p>
- * 
+ *
  * @since 3.1
  */
 class DocumentInputStream extends InputStream {
-	
+
 	/**
 	 * Document based character sequence.
 	 */
@@ -40,17 +40,17 @@ class DocumentInputStream extends InputStream {
 
 		/** Document */
 		private IDocument fDocument;
-		
+
 		/**
 		 * Initialize with the sequence of characters in the given
 		 * document.
-		 * 
+		 *
 		 * @param document the document
 		 */
 		public DocumentCharSequence(IDocument document) {
 			fDocument= document;
 		}
-		
+
 		/*
 		 * @see java.lang.CharSequence#length()
 		 */
@@ -80,7 +80,7 @@ class DocumentInputStream extends InputStream {
 			}
 		}
 	}
-	
+
 	/**
 	 * Internal document listener.
 	 */
@@ -102,23 +102,23 @@ class DocumentInputStream extends InputStream {
 
 	/** The character sequence. */
 	private volatile CharSequence fCharSequence;
-	
+
 	/** Document length. */
 	private int fLength;
-	
+
 	/** The current offset. */
 	private int fOffset= 0;
-	
+
 	/** The document. */
 	private IDocument fDocument;
-	
+
 	/** The document listener. */
 	private IDocumentListener fDocumentListener= new InternalDocumentListener();
-	
+
 	/**
 	 * Creates a new document input stream and initializes
 	 * the stream to read from the given document.
-	 * 
+	 *
 	 * @param document the document
 	 */
 	public DocumentInputStream(IDocument document) {
@@ -136,12 +136,12 @@ class DocumentInputStream extends InputStream {
 		try {
 			return fOffset < fLength ? fCharSequence.charAt(fOffset++) : -1;
 		} catch (NullPointerException x) {
-			throw new IOException(FileBuffersMessages.DocumentInputStream_error_streamClosed); 
+			throw new IOException(FileBuffersMessages.DocumentInputStream_error_streamClosed);
 		} catch (IndexOutOfBoundsException x) {
-			throw new IOException(NLSUtility.format(FileBuffersMessages.DocumentInputStream_error_read, x.getLocalizedMessage())); 
+			throw new IOException(NLSUtility.format(FileBuffersMessages.DocumentInputStream_error_read, x.getLocalizedMessage()));
 		}
 	}
-	
+
 	/*
 	 * @see java.io.InputStream#close()
 	 */

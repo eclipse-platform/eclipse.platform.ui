@@ -18,14 +18,14 @@ package org.eclipse.jface.text.contentassist;
  * 	<li>handle documents with multiple partitions</li>
  * 	<li>insertion of common completion prefixes</li>
  * </ul>
- * 
+ *
  * @since 3.0
  */
 public interface IContentAssistantExtension {
-	
+
 	/**
 	 * Returns the document partitioning this content assistant is using.
-	 * 
+	 *
 	 * @return the document partitioning this content assistant is using
 	 */
 	String getDocumentPartitioning();

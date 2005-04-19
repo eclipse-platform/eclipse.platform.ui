@@ -37,22 +37,22 @@ import org.eclipse.swt.widgets.Shell;
  * Displays textual information in a {@link org.eclipse.swt.custom.StyledText}
  * widget. Before displaying, the information set to this information control is
  * processed by an <code>IInformationPresenter</code>.
- * 
+ *
  * @since 2.0
  */
 public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3,  DisposeListener {
-	
+
 	/**
 	 * An information presenter determines the style presentation
-	 * of information displayed in the default information control. 
+	 * of information displayed in the default information control.
 	 * The interface can be implemented by clients.
 	 */
 	public interface IInformationPresenter {
-		
+
 		/**
 		 * Updates the given presentation of the given information and
 		 * thereby may manipulate the information to be displayed. The manipulation
-		 * could be the extraction of textual encoded style information etc. Returns the 
+		 * could be the extraction of textual encoded style information etc. Returns the
 		 * manipulated information.
 		 *
 		 * @param display the display of the information control
@@ -60,7 +60,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		 * @param presentation the presentation to be updated
 		 * @param maxWidth the maximal width in pixels
 		 * @param maxHeight the maximal height in pixels
-		 * 
+		 *
 		 * @return the manipulated information
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
@@ -68,7 +68,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
-	
+
 	/** The control's shell */
 	private Shell fShell;
 	/** The control's text widget */
@@ -83,7 +83,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	private int fMaxHeight= -1;
 	/**
 	 * The font of the optional status text label.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private Font fStatusTextFont;
@@ -92,7 +92,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
@@ -106,7 +106,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
@@ -125,7 +125,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER; 
+		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
 		layout.marginHeight= border;
 		layout.marginWidth= border;
 		composite.setLayout(layout);
@@ -143,7 +143,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			composite.setLayoutData(gd);
 			composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}		
+		}
 
 		// Text field
 		fText= new StyledText(composite, SWT.MULTI | SWT.READ_ONLY | style);
@@ -152,15 +152,15 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		fText.addKeyListener(new KeyListener() {
-			
+
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
 					fShell.dispose();
 			}
-			
+
 			public void keyReleased(KeyEvent e) {}
 		});
-		
+
 		fPresenter= presenter;
 
 		// Status field
@@ -186,7 +186,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 			statusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
-		
+
 		addDisposeListener(this);
 	}
 
@@ -194,47 +194,47 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param style the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
-	 */	
+	 */
 	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter) {
 		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter);
-	}	
+	}
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param style the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
 	 * @since 3.0
-	 */	
+	 */
 	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter, String statusFieldText) {
 		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter, statusFieldText);
-	}	
-	
+	}
+
 	/**
 	 * Creates a default information control with the given shell as parent.
 	 * No information presenter is used to process the information
 	 * to be displayed. No additional styles are applied to the styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 */
 	public DefaultInformationControl(Shell parent) {
 		this(parent, SWT.NONE, null);
 	}
-	
+
 	/**
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed.
 	 * No additional styles are applied to the styled text widget.
-	 * 
+	 *
 	 * @param parent the parent shell
 	 * @param presenter the presenter to be used
 	 */
@@ -259,14 +259,14 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
 			fShell.setVisible(visible);
 	}
-	
+
 	/*
 	 * @see IInformationControl#dispose()
 	 */
@@ -284,7 +284,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
-		
+
 		fShell= null;
 		fText= null;
 		fStatusTextFont= null;
@@ -296,18 +296,18 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
-		Point textLocation= fText.getLocation();				
-		location.x += trim.x - textLocation.x;		
-		location.y += trim.y - textLocation.y;		
-		fShell.setLocation(location);		
+		Point textLocation= fText.getLocation();
+		location.x += trim.x - textLocation.x;
+		location.y += trim.y - textLocation.y;
+		fShell.setLocation(location);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
@@ -315,7 +315,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		fMaxWidth= maxWidth;
 		fMaxHeight= maxHeight;
 	}
-	
+
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
@@ -330,7 +330,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public Rectangle computeTrim() {
 		return fShell.computeTrim(0, 0, 0, 0);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 * @since 3.0
@@ -338,7 +338,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public Rectangle getBounds() {
 		return fShell.getBounds();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 * @since 3.0
@@ -346,7 +346,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public boolean restoresLocation() {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 * @since 3.0
@@ -354,42 +354,42 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public boolean restoresSize() {
 		return false;
 	}
-	
+
 	/*
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#removeDisposeListener(DisposeListener)
 	 */
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setForegroundColor(Color)
 	 */
 	public void setForegroundColor(Color foreground) {
 		fText.setForeground(foreground);
 	}
-	
+
 	/*
 	 * @see IInformationControl#setBackgroundColor(Color)
 	 */
 	public void setBackgroundColor(Color background) {
 		fText.setBackground(background);
 	}
-	
+
 	/*
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
 		return fText.isFocusControl();
 	}
-	
+
 	/*
 	 * @see IInformationControl#setFocus()
 	 */
@@ -397,21 +397,21 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		fShell.forceFocus();
 		fText.setFocus();
 	}
-	
+
 	/*
 	 * @see IInformationControl#addFocusListener(FocusListener)
 	 */
 	public void addFocusListener(FocusListener listener) {
 		fText.addFocusListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControl#removeFocusListener(FocusListener)
 	 */
 	public void removeFocusListener(FocusListener listener) {
 		fText.removeFocusListener(listener);
 	}
-	
+
 	/*
 	 * @see IInformationControlExtension#hasContents()
 	 */

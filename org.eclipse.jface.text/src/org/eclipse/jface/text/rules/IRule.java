@@ -19,10 +19,10 @@ package org.eclipse.jface.text.rules;
  * @see ICharacterScanner
  */
 public interface IRule {
-	
+
 	/**
-	 * Evaluates the rule by examining the characters available from 
-	 * the provided character scanner. The token returned by this rule 
+	 * Evaluates the rule by examining the characters available from
+	 * the provided character scanner. The token returned by this rule
 	 * returns <code>true</code> when calling <code>isUndefined</code>,
 	 * if the text the rule investigated does not match the rule's requirements.
 	 *

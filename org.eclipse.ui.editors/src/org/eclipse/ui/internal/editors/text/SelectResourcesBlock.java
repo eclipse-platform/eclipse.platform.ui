@@ -54,12 +54,12 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * within this object
  */
 class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
-	
-	
+
+
 	/**
-	 * The IElementFilter is a interface that defines 
-	 * the API for filtering the current selection of 
-	 * a ResourceTreeAndListGroup in order to find a 
+	 * The IElementFilter is a interface that defines
+	 * the API for filtering the current selection of
+	 * a ResourceTreeAndListGroup in order to find a
 	 * subset to update as the result of a type filtering.
 	 * This is meant as an internal class and is used exclusively
 	 * by the import dialog.
@@ -72,8 +72,8 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	    void filterElements(Object[] elements, IProgressMonitor monitor)
 	            throws InterruptedException;
 	}
-	
-	
+
+
 	private Object root;
 
 	private Object currentTreeSelection;
@@ -106,7 +106,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Create an instance of this class. Use this constructor if you wish to
 	 * specify the width and/or height of the combined widget (to only hard code
 	 * one of the sizing dimensions, specify the other dimension's value as -1)
-	 * 
+	 *
 	 * @param parent
 	 * @param rootObject
 	 * @param treeContentProvider
@@ -129,7 +129,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Add the passed listener to self's collection of clients that listen for
 	 * changes to element checked states
-	 * 
+	 *
 	 * @param listener ICheckStateListener
 	 */
 	public void addCheckStateListener(ICheckStateListener listener) {
@@ -139,7 +139,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Iterates over the passed elements which are being realized for the
 	 * first time and check each one in the tree viewer as appropriate.
-	 * 
+	 *
 	 * @param elements the elements
 	 */
 	private void checkNewTreeElements(Object[] elements) {
@@ -154,7 +154,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * An item was checked in one of self's two views. Determine which view this
 	 * occurred in and delegate appropriately
-	 * 
+	 *
 	 * @param event the check state event
 	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
@@ -175,7 +175,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Lay out and initialize self's visual components.
-	 * 
+	 *
 	 * @param parent org.eclipse.swt.widgets.Composite
 	 * @param style the style flags for the new Composite
 	 * @param useHeightHint If true use the preferredHeight.
@@ -200,7 +200,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Creates this block's list viewer.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @param useHeightHint if <code>true</code> use the height hints
 	 */
@@ -218,7 +218,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Create this block's tree viewer.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @param useHeightHint if <code>true</code> use the height hints
 	 */
@@ -244,7 +244,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * should be white-checked, so a specified tree item which should be
 	 * white-checked will result in a <code>true</code> answer from this
 	 * method.
-	 * 
+	 *
 	 * @param treeElement java.lang.Object
 	 * @return boolean
 	 */
@@ -271,7 +271,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Expands an element in a tree viewer.
-	 * 
+	 *
 	 * @param element the element to be expanded
 	 */
 	private void expandTreeElement(final Object element) {
@@ -311,7 +311,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Adds all of the selected children of <code>treeElement</code> to result recursively. This
 	 * does not set any values in the checked state.
-	 * 
+	 *
 	 * @param  treeElement the tree element being queried
 	 * @param parentLabel the parent label
 	 * @param addAll a boolean to indicate if the checked state store needs to be queried
@@ -353,7 +353,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Find all of the white checked children of the treeElement and add them to
 	 * the collection. If the element itself is white select add it. If not then
 	 * add any selected list elements and recurse down to the children.
-	 * 
+	 *
 	 * @param treeElement java.lang.Object
 	 * @param result java.util.Collection
 	 */
@@ -379,7 +379,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Returns a flat list of all of the leaf elements which are checked. Filter
 	 * then based on the supplied ElementFilter. If monitor is canceled then
 	 * return null
-	 * 
+	 *
 	 * @param filter - the filter for the data
 	 * @param monitor IProgressMonitor or null
 	 * @throws InterruptedException in case of interruption
@@ -394,7 +394,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Returns a flat list of all of the leaf elements which are checked.
-	 * 
+	 *
 	 * @return all of the leaf elements which are checked. This API does not
 	 *         return null in order to keep backwards compatibility.
 	 */
@@ -428,7 +428,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Returns a list of all of the items that are white checked. Any folders
 	 * that are white checked are added and then any files from white checked
 	 * folders are added.
-	 * 
+	 *
 	 * @return the list of all of the items that are white checked
 	 */
 	public List getAllWhiteCheckedItems() {
@@ -447,7 +447,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Get the full label of the treeElement (its name and its parent's name).
-	 * 
+	 *
 	 * @param treeElement - the element being exported
 	 * @param parentLabel - the label of the parent, can be null
 	 * @return String
@@ -471,7 +471,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Logically gray-check all ancestors of <code>treeElement</code> by ensuring that they
 	 * appear in the checked table.
-	 * 
+	 *
 	 * @param treeElement the tree element
 	 */
 	private void grayCheckHierarchy(Object treeElement) {
@@ -493,7 +493,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Set the checked state of self and all ancestors appropriately. Do not
 	 * white check anyone - this is only done down a hierarchy.
-	 * 
+	 *
 	 * @param treeElement the tree element
 	 */
 	private void grayUpdateHierarchy(Object treeElement) {
@@ -532,7 +532,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Callback that's invoked when the checked status of an item in the list is
 	 * changed by the user. Do not try and update the hierarchy if we are
 	 * building the initial list.
-	 * 
+	 *
 	 * @param listElement the list element
 	 * @param state the checked state
 	 * @param updatingFromSelection <code>true</code> if we are inside an
@@ -571,7 +571,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Notify all checked state listeners with the given event.
-	 * 
+	 *
 	 * @param event the event
 	 */
 	private void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
@@ -589,7 +589,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Set the contents of the list viewer based upon the specified selected
 	 * tree element. This also includes checking the appropriate list items.
-	 * 
+	 *
 	 * @param treeElement java.lang.Object
 	 */
 	private void populateListViewer(final Object treeElement) {
@@ -622,7 +622,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Logically gray-check all ancestors of <code>item</code> by ensuring
 	 * that they appear in the checked table. Add any elements to the
 	 * <code>selectedNodes</code> so we can track that has been done.
-	 * 
+	 *
 	 * @param item the tree item
 	 * @param selectedNodes the set of selected nodes
 	 */
@@ -646,7 +646,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Remove the passed listener from self's collection of clients that listen
 	 * for changes to element checked states
-	 * 
+	 *
 	 * @param listener ICheckStateListener
 	 */
 	public void removeCheckStateListener(ICheckStateListener listener) {
@@ -655,7 +655,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Handle the selection of an item in the tree viewer
-	 * 
+	 *
 	 * @param event SelectionChangedEvent
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -678,7 +678,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Select or deselect all of the elements in the tree depending on the value
 	 * of <code>selection</code>. Be sure to update the displayed files as
 	 * well.
-	 * 
+	 *
 	 * @param selection <code>true</code> if selection should be set,
 	 *            <code>false</code> if it should be removed
 	 */
@@ -700,7 +700,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * The treeElement has been white selected. Get the list for the element and
 	 * set it in the checked state store.
-	 * 
+	 *
 	 * @param treeElement the element being updated
 	 */
 	private void setListForWhiteSelection(Object treeElement) {
@@ -716,7 +716,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Set the <code>sorter</code> that is to be applied to self's list viewer
-	 * 
+	 *
 	 * @param sorter the sorter to be set
 	 */
 	public void setListSorter(ViewerSorter sorter) {
@@ -727,7 +727,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Set the checked state of the passed <code>treeElement</code>
 	 * appropriately, and do so recursively to all of its child tree elements as
 	 * well.
-	 * 
+	 *
 	 * @param treeElement the root of the subtree
 	 * @param state <code>true</code> if checked, <code>false</code> otherwise
 	 */
@@ -758,7 +758,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Set the sorter that is to be applied to self's tree viewer.
-	 * 
+	 *
 	 * @param sorter the sorter to be set
 	 */
 	public void setTreeSorter(ViewerSorter sorter) {
@@ -768,7 +768,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Adjust the collection of references to white-checked tree elements
 	 * appropriately.
-	 * 
+	 *
 	 * @param treeElement the root of the subtree
 	 * @param isWhiteChecked <code>true</code> if white checked,
 	 *            <code>false</code> otherwise
@@ -783,7 +783,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Handle the collapsing of an element in a tree viewer.
-	 * 
+	 *
 	 * @param event the collapse event
 	 */
 	public void treeCollapsed(TreeExpansionEvent event) {
@@ -792,7 +792,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Handle the expansion of an element in a tree viewer.
-	 * 
+	 *
 	 * @param event the expansion event
 	 */
 	public void treeExpanded(TreeExpansionEvent event) {
@@ -802,7 +802,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Callback that's invoked when the checked status of an item in the tree is
 	 * changed by the user.
-	 * 
+	 *
 	 * @param treeElement the tree element that has been checked/unchecked
 	 * @param state <code>true</code> if checked, <code>false</code> if
 	 *            unchecked
@@ -829,7 +829,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Logically un-gray-check all ancestors of <code>treeElement</code> if
 	 * appropriate.
-	 * 
+	 *
 	 * @param treeElement the root of the subtree
 	 */
 	private void ungrayCheckHierarchy(Object treeElement) {
@@ -844,7 +844,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Update the selections of the tree elements in items to reflect the new
 	 * selections provided.
-	 * 
+	 *
 	 * @param items Map with keys of Object (the tree element) and values of
 	 *            List (the selected list elements). NOTE: This method does not
 	 *            special case keys with no values (i.e., a tree element with an

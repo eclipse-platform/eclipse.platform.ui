@@ -40,30 +40,30 @@ import org.eclipse.jface.text.TypedRegion;
  * @see org.eclipse.jface.text.reconciler.DirtyRegion
  */
 public class Reconciler extends AbstractReconciler implements IReconcilerExtension {
-	
+
 	/** The map of reconciling strategies. */
 	private Map fStrategies;
-	
+
 	/**
 	 * The partitioning this reconciler uses.
 	 *@since 3.0
 	 */
 	private String fPartitioning;
-	
+
 	/**
 	 * Creates a new reconciler with the following configuration: it is
 	 * an incremental reconciler with a standard delay of 500 milli-seconds. There
 	 * are no predefined reconciling strategies. The partitioning it uses
 	 * is the default partitioning {@link IDocumentExtension3#DEFAULT_PARTITIONING}.
-	 */ 
+	 */
 	public Reconciler() {
 		super();
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
-	
+
 	/**
 	 * Sets the document partitioning for this reconciler.
-	 * 
+	 *
 	 * @param partitioning the document partitioning for this reconciler
 	 * @since 3.0
 	 */
@@ -71,7 +71,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		Assert.isNotNull(partitioning);
 		fPartitioning= partitioning;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilerExtension#getDocumentPartitioning()
 	 * @since 3.0
@@ -79,22 +79,22 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
-	
+
 	/**
 	 * Registers a given reconciling strategy for a particular content type.
-	 * If there is already a strategy registered for this type, the new strategy 
+	 * If there is already a strategy registered for this type, the new strategy
 	 * is registered instead of the old one.
 	 *
 	 * @param strategy the reconciling strategy to register, or <code>null</code> to remove an existing one
 	 * @param contentType the content type under which to register
 	 */
 	public void setReconcilingStrategy(IReconcilingStrategy strategy, String contentType) {
-		
+
 		Assert.isNotNull(contentType);
-					
+
 		if (fStrategies == null)
 			fStrategies= new HashMap();
-		
+
 		if (strategy == null)
 			fStrategies.remove(contentType);
 		else {
@@ -105,20 +105,20 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IReconciler#getReconcilingStrategy(String)
 	 */
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
-		
+
 		Assert.isNotNull(contentType);
-		
+
 		if (fStrategies == null)
 			return null;
-						
+
 		return (IReconcilingStrategy) fStrategies.get(contentType);
 	}
-		
+
 	/**
 	 * Processes a dirty region. If the dirty region is <code>null</code> the whole
 	 * document is consider being dirty. The dirty region is partitioned by the
@@ -129,27 +129,27 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	 * @see AbstractReconciler#process(DirtyRegion)
 	 */
 	protected void process(DirtyRegion dirtyRegion) {
-		
+
 		IRegion region= dirtyRegion;
-		
+
 		if (region == null)
 			region= new Region(0, getDocument().getLength());
-			
+
 		ITypedRegion[] regions= computePartitioning(region.getOffset(), region.getLength());
-		
+
 		for (int i= 0; i < regions.length; i++) {
 			ITypedRegion r= regions[i];
 			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
 			if (s == null)
 				continue;
-				
+
 			if(dirtyRegion != null)
 				s.reconcile(dirtyRegion, r);
 			else
 				s.reconcile(r);
 		}
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
 	 * @since 2.0
@@ -163,14 +163,14 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			}
 		}
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
 	 * @since 2.0
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
-		
+
 		if (fStrategies != null) {
 			Iterator e= fStrategies.values().iterator();
 			while (e.hasNext()) {
@@ -182,7 +182,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			}
 		}
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#initialProcess()
 	 * @since 2.0
@@ -202,7 +202,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	/**
 	 * Computes and returns the partitioning for the given region of the input document
 	 * of the reconciler's connected text viewer.
-	 * 
+	 *
 	 * @param offset the region offset
 	 * @param length the region length
 	 * @return the computed partitioning

@@ -13,14 +13,14 @@ package org.eclipse.jface.text.presentation;
 /**
  * Extension interface for {@link IPresentationReconciler}. Adds awareness of
  * documents with multiple partitions.
- * 
+ *
  * @since 3.0
  */
 public interface IPresentationReconcilerExtension {
-	
+
 	/**
 	 * Returns the document partitioning this presentation reconciler is using.
-	 * 
+	 *
 	 * @return the document partitioning this presentation reconciler is using
 	 */
 	String getDocumentPartitioning();

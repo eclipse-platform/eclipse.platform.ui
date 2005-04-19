@@ -26,10 +26,10 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
 
 /**
- * A collection of templates. Clients may instantiate this class. In order to 
+ * A collection of templates. Clients may instantiate this class. In order to
  * load templates contributed using the <code>org.eclipse.ui.editors.templates</code>
  * extension point, use a <code>ContributionTemplateStore</code>.
- * 
+ *
  * @since 3.0
  */
 public class TemplateStore {
@@ -51,7 +51,7 @@ public class TemplateStore {
 
 	/**
 	 * Creates a new template store.
-	 * 
+	 *
 	 * @param store the preference store in which to store custom templates
 	 *        under <code>key</code>
 	 * @param key the key into <code>store</code> where to store custom
@@ -63,12 +63,12 @@ public class TemplateStore {
 		fPreferenceStore= store;
 		fKey= key;
 	}
-	
+
 	/**
 	 * Creates a new template store with a context type registry. Only templates
 	 * that specify a context type contained in the registry will be loaded by
 	 * this store if the registry is not <code>null</code>.
-	 * 
+	 *
 	 * @param registry a context type registry, or <code>null</code> if all
 	 *        templates should be loaded
 	 * @param store the preference store in which to store custom templates
@@ -80,10 +80,10 @@ public class TemplateStore {
 		this(store, key);
 		fRegistry= registry;
 	}
-	
+
 	/**
 	 * Loads the templates from contributions and preferences.
-	 * 
+	 *
 	 * @throws IOException if loading fails.
 	 */
 	public void load() throws IOException {
@@ -91,22 +91,22 @@ public class TemplateStore {
 		loadContributedTemplates();
 		loadCustomTemplates();
 	}
-	
+
 	/**
 	 * Hook method to load contributed templates. Contributed templates are superseded
 	 * by customized versions of user added templates stored in the preferences.
 	 * <p>
 	 * The default implementation does nothing.</p>
-	 * 
+	 *
 	 * @throws IOException if loading fails
 	 */
 	protected void loadContributedTemplates() throws IOException {
 	}
-	
+
 	/**
 	 * Adds a template to the internal store. The added templates must have
 	 * a unique id.
-	 * 
+	 *
 	 * @param data the template data to add
 	 */
 	protected void internalAdd(TemplatePersistenceData data) {
@@ -124,7 +124,7 @@ public class TemplateStore {
 
 	/**
 	 * Saves the templates to the preferences.
-	 * 
+	 *
 	 * @throws IOException if the templates cannot be written
 	 */
 	public void save() throws IOException {
@@ -134,24 +134,24 @@ public class TemplateStore {
 			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
 				custom.add(data);
 		}
-		
+
 		StringWriter output= new StringWriter();
 		TemplateReaderWriter writer= new TemplateReaderWriter();
 		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
-		
+
 		fPreferenceStore.setValue(fKey, output.toString());
 	}
-	
+
 	/**
 	 * Adds a template encapsulated in its persistent form.
-	 *  
+	 *
 	 * @param data the template to add
 	 */
 	public void add(TemplatePersistenceData data) {
-		
+
 		if (!validateTemplate(data.getTemplate()))
 			return;
-		
+
 		if (data.isUserAdded()) {
 			fTemplates.add(data);
 		} else {
@@ -164,7 +164,7 @@ public class TemplateStore {
 					return;
 				}
 			}
-			
+
 			// add an id which is not contributed as add-on
 			if (data.getTemplate() != null) {
 				TemplatePersistenceData newData= new TemplatePersistenceData(data.getTemplate(), data.isEnabled());
@@ -175,7 +175,7 @@ public class TemplateStore {
 
 	/**
 	 * Removes a template from the store.
-	 * 
+	 *
 	 * @param data the template to remove
 	 */
 	public void delete(TemplatePersistenceData data) {
@@ -184,7 +184,7 @@ public class TemplateStore {
 		else
 			data.setDeleted(true);
 	}
-	
+
 	/**
 	 * Restores all contributed templates that have been deleted.
 	 */
@@ -195,7 +195,7 @@ public class TemplateStore {
 				data.setDeleted(false);
 		}
 	}
-	
+
 	/**
 	 * Deletes all user-added templates and reverts all contributed templates.
 	 */
@@ -208,19 +208,19 @@ public class TemplateStore {
 				data.revert();
 		}
 	}
-	
+
 	/**
 	 * Returns all enabled templates.
-	 * 
+	 *
 	 * @return all enabled templates
 	 */
 	public Template[] getTemplates() {
 		return getTemplates(null);
 	}
-	
+
 	/**
 	 * Returns all enabled templates for the given context type.
-	 * 
+	 *
 	 * @param contextTypeId the id of the context type of the requested templates, or <code>null</code> if all templates should be returned
 	 * @return all enabled templates for the given context type
 	 */
@@ -231,45 +231,45 @@ public class TemplateStore {
 			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
 				templates.add(data.getTemplate());
 		}
-		
+
 		return (Template[]) templates.toArray(new Template[templates.size()]);
 	}
-	
+
 	/**
 	 * Returns the first enabled template that matches the name.
-	 *  
+	 *
 	 * @param name the name of the template searched for
 	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
 	 */
 	public Template findTemplate(String name) {
 		return findTemplate(name, null);
 	}
-	
+
 	/**
 	 * Returns the first enabled template that matches both name and context type id.
-	 *  
+	 *
 	 * @param name the name of the template searched for
 	 * @param contextTypeId the context type id to clip unwanted templates, or <code>null</code> if any context type is ok
 	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
 	 */
 	public Template findTemplate(String name, String contextTypeId) {
 		Assert.isNotNull(name);
-		
+
 		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
 			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
 			Template template= data.getTemplate();
-			if (data.isEnabled() && !data.isDeleted() 
+			if (data.isEnabled() && !data.isDeleted()
 					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
 					&& name.equals(template.getName()))
 				return template;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns the first enabled template that matches the given template id.
-	 *  
+	 *
 	 * @param id the id of the template searched for
 	 * @return the first enabled template that matches id, or <code>null</code> if none is found
 	 * @since 3.1
@@ -278,13 +278,13 @@ public class TemplateStore {
 		TemplatePersistenceData data= getTemplateData(id);
 		if (data != null && !data.isDeleted())
 			return data.getTemplate();
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns all template datas.
-	 * 
+	 *
 	 * @param includeDeleted whether to include deleted datas
 	 * @return all template datas, whether enabled or not
 	 */
@@ -295,14 +295,14 @@ public class TemplateStore {
 			if (includeDeleted || !data.isDeleted())
 				datas.add(data);
 		}
-		
+
 		return (TemplatePersistenceData[]) datas.toArray(new TemplatePersistenceData[datas.size()]);
 	}
-	
+
 	/**
 	 * Returns the template data of the template with id <code>id</code> or
 	 * <code>null</code> if no such template can be found.
-	 * 
+	 *
 	 * @param id the id of the template data
 	 * @return the template data of the template with id <code>id</code> or <code>null</code>
 	 */
@@ -313,10 +313,10 @@ public class TemplateStore {
 			if (id.equals(data.getId()))
 				return data;
 		}
-		
+
 		return null;
 	}
-	
+
 	private void loadCustomTemplates() throws IOException {
 		String pref= fPreferenceStore.getString(fKey);
 		if (pref != null && pref.trim().length() > 0) {
@@ -329,12 +329,12 @@ public class TemplateStore {
 			}
 		}
 	}
-	
+
 	/**
 	 * Validates a template against the context type registered in the context
 	 * type registry. Returns always <code>true</code> if no registry is
 	 * present.
-	 * 
+	 *
 	 * @param template the template to validate
 	 * @return <code>true</code> if validation is successful or no context
 	 *         type registry is specified, <code>false</code> if validation
@@ -351,14 +351,14 @@ public class TemplateStore {
 				}
 			return true;
 		}
-		
+
 		return false;
 	}
 
 	/**
 	 * Returns <code>true</code> if a context type id specifies a valid context type
 	 * or if no context type registry is present.
-	 * 
+	 *
 	 * @param contextTypeId the context type id to look for
 	 * @return <code>true</code> if the context type specified by the id
 	 *         is present in the context type registry, or if no registry is
@@ -370,7 +370,7 @@ public class TemplateStore {
 
 	/**
 	 * Returns the registry.
-	 * 
+	 *
 	 * @return Returns the registry
 	 */
 	protected final ContextTypeRegistry getRegistry() {

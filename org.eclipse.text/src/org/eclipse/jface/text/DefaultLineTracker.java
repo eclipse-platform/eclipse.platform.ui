@@ -20,19 +20,19 @@ package org.eclipse.jface.text;
  * This class is not intended to be subclassed.
  */
 public class DefaultLineTracker extends AbstractLineTracker {
-	
+
 	/** The predefined delimiters of this tracker */
 	public final static String[] DELIMITERS= { "\r", "\n", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
 	/** A predefined delimiter information which is always reused as return value */
 	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
-	
-	
+
+
 	/**
 	 * Creates a standard line tracker.
 	 */
 	public DefaultLineTracker() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
@@ -44,14 +44,14 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	 * @see org.eclipse.jface.text.AbstractLineTracker#nextDelimiterInfo(java.lang.String, int)
 	 */
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
-		
+
 		char ch;
 		int length= text.length();
 		for (int i= offset; i < length; i++) {
-			
+
 			ch= text.charAt(i);
 			if (ch == '\r') {
-				
+
 				if (i + 1 < length) {
 					if (text.charAt(i + 1) == '\n') {
 						fDelimiterInfo.delimiter= DELIMITERS[2];
@@ -60,21 +60,21 @@ public class DefaultLineTracker extends AbstractLineTracker {
 						return fDelimiterInfo;
 					}
 				}
-				
+
 				fDelimiterInfo.delimiter= DELIMITERS[0];
 				fDelimiterInfo.delimiterIndex= i;
 				fDelimiterInfo.delimiterLength= 1;
 				return fDelimiterInfo;
-				
+
 			} else if (ch == '\n') {
-				
+
 				fDelimiterInfo.delimiter= DELIMITERS[1];
 				fDelimiterInfo.delimiterIndex= i;
 				fDelimiterInfo.delimiterLength= 1;
 				return fDelimiterInfo;
 			}
 		}
-		
+
 		return null;
 	}
 }

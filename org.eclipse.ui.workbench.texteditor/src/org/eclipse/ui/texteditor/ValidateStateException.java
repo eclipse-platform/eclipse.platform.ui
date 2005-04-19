@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This class is not intended to be serialized.
  * </p>
- * 
+ *
  * @deprecated
  * @since 2.1
  */

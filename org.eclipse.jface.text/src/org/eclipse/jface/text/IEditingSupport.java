@@ -25,7 +25,7 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see IEditingSupportRegistry
  * @since 3.1
  */
@@ -48,19 +48,19 @@ public interface IEditingSupport {
 	 * this example, the subject region is the current typing location, while
 	 * the increment results in a document change further down in the text.
 	 * </p>
-	 * 
+	 *
 	 * @param event the <code>DocumentEvent</code> in question
 	 * @param subjectRegion the region that the caller is interested in
 	 * @return <code>true</code> if <code>event</code> was triggered by the
 	 *         receiver and relates to <code>subjectRegion</code>
 	 */
 	boolean isOriginator(DocumentEvent event, IRegion subjectRegion);
-	
+
 	/**
 	 * Returns <code>true</code> if the receiver is showing a shell which has
 	 * focus, <code>false</code> if it does not have focus or the helper has
 	 * no shell.
-	 * 
+	 *
 	 * @return <code>true</code> if the support's shell has focus,
 	 *         <code>false</code> otherwise
 	 */

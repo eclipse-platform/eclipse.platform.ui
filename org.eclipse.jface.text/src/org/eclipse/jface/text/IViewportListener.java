@@ -18,15 +18,15 @@ package org.eclipse.jface.text;
  * document which is visible in the viewer.
  * <p>
  * Clients may implement this interface.
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  */
 public interface IViewportListener {
-	
+
 	/**
 	 * Informs about view port changes. The given vertical position is the new
 	 * vertical scrolling offset measured in pixels.
-	 * 
+	 *
 	 * @param verticalOffset the vertical offset measured in pixels
 	 */
 	void viewportChanged(int verticalOffset);

@@ -14,11 +14,11 @@ package org.eclipse.jface.text;
  * Extension interface for {@link org.eclipse.jface.text.IDocument}. Adds the
  * concept of rewrite sessions. A rewrite session is a sequence of replace
  * operations that form a semantic unit.
- * 
+ *
  * @since 3.1
  */
 public interface IDocumentExtension4 {
-	
+
 	/**
 	 * Tells the document that it is about to be rewritten. That is, a sequence
 	 * of replace operations that form a semantic unit will be performed on this
@@ -27,7 +27,7 @@ public interface IDocumentExtension4 {
 	 * <p>
 	 * The document is considered being in rewrite mode as long as
 	 * <code>stopRewriteSession</code> has not been called.
-	 * 
+	 *
 	 * @param sessionType the session type
 	 * @return the started rewrite session
 	 * @throws IllegalStateException in case there is already an active rewrite session
@@ -40,18 +40,18 @@ public interface IDocumentExtension4 {
 	 * <p>
 	 * This method does not have any effect if the given session is not the
 	 * active rewrite session.
-	 * 
+	 *
 	 * @param session the session to stop
 	 */
 	void stopRewriteSession(DocumentRewriteSession session);
-	
+
 	/**
 	 * Returns the active rewrite session of this document or <code>null</code>.
-	 * 
+	 *
 	 * @return the active rewrite session or <code>null</code>
 	 */
 	DocumentRewriteSession getActiveRewriteSession();
-	
+
 	/**
 	 * Registers the document rewrite session listener with the document. After
 	 * registration the <code>IDocumentRewriteSessionListener</code> is
@@ -62,11 +62,11 @@ public interface IDocumentExtension4 {
 	 * <p>
 	 * An <code>IRewriteSessionDocumentListener</code> may call back to this
 	 * document when being inside a document notification.
-	 * 
+	 *
 	 * @param listener the listener to be registered
 	 */
 	void addDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener);
-	
+
 	/**
 	 * Removes the listener from the document's list of document rewrite session
 	 * listeners. If the listener is not registered with the document nothing
@@ -74,7 +74,7 @@ public interface IDocumentExtension4 {
 	 * <p>
 	 * An <code>IDocumentRewriteSessionListener</code> may call back to this
 	 * document when being inside a document notification.
-	 * 
+	 *
 	 * @param listener the listener to be removed
 	 */
 	void removeDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener);

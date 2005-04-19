@@ -30,36 +30,36 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * @since 3.0
  */
 public class QuickDiff {
-	
+
 	/**
-	 * Creates a new instance. 
+	 * Creates a new instance.
 	 */
 	public QuickDiff() {
 	}
-	
+
 	/**
 	 * Returns the first descriptor with the <code>default</code> attribute set to <code>true</code>.
 	 * <p>
 	 * Clients should not cache this value because it can change when plug-ins get dynamically added or removed.
 	 * </p>
-	 * 
+	 *
 	 * @return the descriptor of the default reference provider or <code>null</code> if none
 	 */
 	public ReferenceProviderDescriptor getDefaultProvider() {
 		QuickDiffExtensionsRegistry registry= TextEditorPlugin.getDefault().getQuickDiffExtensionRegistry();
-		if (registry != null) 
+		if (registry != null)
 			return registry.getDefaultProvider();
 
 		return null;
 	}
-	
+
 	/**
 	 * Returns a non-modifiable list of <code>ReferenceProviderDescriptor</code> describing all extension
 	 * to the <code>quickDiffReferenceProvider</code> extension point.
 	 * <p>
 	 * Clients should not cache this list because it can change when plug-ins get dynamically added or removed.
 	 * </p>
-	 * 
+	 *
 	 * @return the non-modifiable list of extensions to the <code>quickDiffReferenceProvider</code> extension point.
 	 */
 	public List getReferenceProviderDescriptors() {
@@ -69,7 +69,7 @@ public class QuickDiff {
 
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	/**
 	 * Returns the quick diff reference provider registered under <code>id</code>, or the default
 	 * reference provider. The returned provider gets its editor set to <code>editor</code>. If neither
@@ -78,7 +78,7 @@ public class QuickDiff {
 	 * <p>
 	 * Clients should not cache this value because it can change when plug-ins get dynamically added or removed.
 	 * </p>
-	 * 
+	 *
 	 * @param editor the editor to be installed with the returned provider
 	 * @param id the id as specified in the <code>plugin.xml</code> that installs the reference provider
 	 * @return the reference provider registered under <code>id</code>, or the default reference provider, or <code>null</code>
@@ -86,7 +86,7 @@ public class QuickDiff {
 	public IQuickDiffReferenceProvider getReferenceProviderOrDefault(ITextEditor editor, String id) {
 		Assert.isNotNull(editor);
 		Assert.isNotNull(id);
-		
+
 		List descs= getReferenceProviderDescriptors();
 		IQuickDiffReferenceProvider provider= null;
 		// try to fetch preferred provider; load if needed
@@ -103,7 +103,7 @@ public class QuickDiff {
 				}
 			}
 		}
-		
+
 		// if not found, get default provider as specified by the extension point
 		if (provider == null) {
 			ReferenceProviderDescriptor defaultDescriptor= getDefaultProvider();
@@ -118,14 +118,14 @@ public class QuickDiff {
 				}
 			}
 		}
-		
+
 		return provider;
 	}
-	
+
 	/**
 	 * Creates a new line differ annotation model with its reference provider set to the reference provider
 	 * obtained by calling <code>getReferenceProviderOrDefault(editor, id)</code>.
-	 * 
+	 *
 	 * @param editor the editor to be installed with the returned provider
 	 * @param id the id as specified in the <code>plugin.xml</code> that installs the reference provider
 	 * @return a quick diff annotation model

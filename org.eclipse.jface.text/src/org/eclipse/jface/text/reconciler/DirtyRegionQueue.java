@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * @see org.eclipse.jface.text.reconciler.DirtyRegion
  */
 class DirtyRegionQueue {
-	
+
 	/** The list of dirty regions. */
 	private List fDirtyRegions= new ArrayList();
 
@@ -33,7 +33,7 @@ class DirtyRegionQueue {
 	public DirtyRegionQueue() {
 		super();
 	}
-	
+
 	/**
 	 * Adds a dirty region to the end of the dirty-region queue.
 	 *
@@ -62,7 +62,7 @@ class DirtyRegionQueue {
 			// Don't merge- just add the new one onto the queue.
 			fDirtyRegions.add(dr);
 	}
-	
+
 	/**
 	 * Returns the last dirty region that was added to the queue.
 	 *

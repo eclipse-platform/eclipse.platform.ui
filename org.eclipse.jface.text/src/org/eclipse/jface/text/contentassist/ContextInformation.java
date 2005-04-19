@@ -19,7 +19,7 @@ import org.eclipse.jface.text.Assert;
  * A default implementation of the <code>IContextInformation</code> interface.
  */
 public final class ContextInformation implements IContextInformation {
-	
+
 	/** The name of the context. */
 	private final String fContextDisplayString;
 	/** The information to be displayed. */
@@ -46,9 +46,9 @@ public final class ContextInformation implements IContextInformation {
 	 *		may not be <code>null</code>
 	 */
 	public ContextInformation(Image image, String contextDisplayString, String informationDisplayString) {
-		
+
 		Assert.isNotNull(informationDisplayString);
-		
+
 		fImage= image;
 		fContextDisplayString= contextDisplayString;
 		fInformationDisplayString= informationDisplayString;
@@ -61,13 +61,13 @@ public final class ContextInformation implements IContextInformation {
 		if (object instanceof IContextInformation) {
 			IContextInformation contextInformation= (IContextInformation) object;
 			boolean equals= fInformationDisplayString.equalsIgnoreCase(contextInformation.getInformationDisplayString());
-			if (fContextDisplayString != null) 
+			if (fContextDisplayString != null)
 				equals= equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
 			return equals;
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -75,21 +75,21 @@ public final class ContextInformation implements IContextInformation {
 	 	int low= fContextDisplayString != null ? fContextDisplayString.hashCode() : 0;
 	 	return (fInformationDisplayString.hashCode() << 16) | low;
 	}
-	
+
 	/*
 	 * @see IContextInformation#getInformationDisplayString()
 	 */
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
-	
+
 	/*
 	 * @see IContextInformation#getImage()
 	 */
 	public Image getImage() {
 		return fImage;
 	}
-	
+
 	/*
 	 * @see IContextInformation#getContextDisplayString()
 	 */

@@ -27,14 +27,14 @@ import org.eclipse.swt.graphics.Rectangle;
  * Clients usually instantiate and configure objects of this class.
  * <p>
  * This class is not intended to be subclassed.
- * 
+ *
  * @since 2.1
  */
 public class MarginPainter implements IPainter, PaintListener {
-	
+
 	/** The widget of the text viewer */
 	private StyledText fTextWidget;
-	
+
 	/** The column after which to paint the line, default value <code>80</code> */
 	private int fMarginWidth= 80;
 	/** The color in which to paint the line */
@@ -47,53 +47,53 @@ public class MarginPainter implements IPainter, PaintListener {
 	private int fCachedWidgetX= -1;
 	/** The active state of this painter */
 	private boolean fIsActive= false;
-	
+
 	/**
 	 * Creates a new painter for the given text viewer.
-	 * 
+	 *
 	 * @param textViewer the text viewer
 	 */
 	public MarginPainter(ITextViewer textViewer) {
 		fTextWidget= textViewer.getTextWidget();
 	}
-	
+
 	/**
 	 * Sets the column after which to draw the margin line.
-	 * 
+	 *
 	 * @param width the column
 	 */
 	public void setMarginRulerColumn(int width) {
 		fMarginWidth= width;
 		initialize();
 	}
-	
+
 	/**
 	 * Sets the line style of the margin line.
-	 * 
+	 *
 	 * @param lineStyle a <code>SWT</code> style constant describing the line style
 	 */
 	public void setMarginRulerStyle(int lineStyle) {
 		fLineStyle= lineStyle;
 	}
-	
-	/** 
+
+	/**
 	 * Sets the line width of the margin line.
-	 * 
+	 *
 	 * @param lineWidth the line width
 	 */
 	public void setMarginRulerWidth(int lineWidth) {
 		fLineWidth= lineWidth;
 	}
-	
+
 	/**
 	 * Sets the color of the margin line. Must be called before <code>paint</code> is called the first time.
-	 * 
+	 *
 	 * @param color the color
 	 */
 	public void setMarginRulerColor(Color color) {
 		fColor= color;
 	}
-	
+
 	/**
 	 * Initializes this painter, by flushing and recomputing all caches and causing
 	 * the widget to be redrawn. Must be called explicitly when font of text widget changes.
@@ -102,7 +102,7 @@ public class MarginPainter implements IPainter, PaintListener {
 		computeWidgetX();
 		fTextWidget.redraw();
 	}
-	
+
 	/**
 	 * Computes and remembers the x-offset of the margin column for the
 	 * current widget font.
@@ -111,10 +111,10 @@ public class MarginPainter implements IPainter, PaintListener {
 		GC gc= new GC(fTextWidget);
 		int pixels= gc.getFontMetrics().getAverageCharWidth();
 		gc.dispose();
-		
+
 		fCachedWidgetX= pixels * fMarginWidth;
 	}
-	
+
 	/*
 	 * @see IPainter#deactivate(boolean)
 	 */
@@ -125,7 +125,7 @@ public class MarginPainter implements IPainter, PaintListener {
 			fTextWidget.removePaintListener(this);
 			if (redraw)
 				fTextWidget.redraw();
-		}	
+		}
 	}
 
 	/*
@@ -148,7 +148,7 @@ public class MarginPainter implements IPainter, PaintListener {
 		} else if (CONFIGURATION == reason || INTERNAL == reason)
 			fTextWidget.redraw();
 	}
-	
+
 	/*
 	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 	 */

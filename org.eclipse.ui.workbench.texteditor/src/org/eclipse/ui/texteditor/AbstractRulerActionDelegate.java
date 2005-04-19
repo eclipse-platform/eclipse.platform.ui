@@ -33,7 +33,7 @@ import org.eclipse.ui.IEditorPart;
  * adapter (inner) action on menu and mouse action on the vertical ruler.<p>
  * Extending classes must implement the factory method
  * <code>createAction(ITextEditor editor, IVerticalRulerInfo)</code>.
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {
@@ -44,10 +44,10 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	private IAction fCallerAction;
 	/** The underlying action. */
 	private IAction fAction;
-	
+
 	/**
 	 * The factory method creating the underlying action.
-	 * 
+	 *
 	 * @param editor the editor the action to be created will work on
 	 * @param rulerInfo the vertical ruler the action to be created will work on
 	 * @return the created action
@@ -67,11 +67,11 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 					control.removeMouseListener(this);
 			}
 
-			if (fEditor instanceof ITextEditorExtension)			
+			if (fEditor instanceof ITextEditorExtension)
 				((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
 		}
 
-		fEditor= targetEditor;		
+		fEditor= targetEditor;
 		fCallerAction= callerAction;
 		fAction= null;
 
@@ -83,10 +83,10 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 			if (rulerInfo != null) {
 				fAction= createAction((ITextEditor) fEditor, rulerInfo);
 				update();
-				
+
 				Control control= rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
-					control.addMouseListener(this);				
+					control.addMouseListener(this);
 			}
 		}
 	}
@@ -127,13 +127,13 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/*
-	 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)	
+	 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
 	/*
-	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)	
+	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseDown(MouseEvent e) {
 		update();

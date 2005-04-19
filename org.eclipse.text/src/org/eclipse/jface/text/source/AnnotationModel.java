@@ -35,27 +35,27 @@ import org.eclipse.jface.text.Position;
  * the model's lock object.
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, ISynchronizable {
-	
+
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class MetaIterator implements Iterator {
-		
+
 		/** The iterator over a list of iterators. */
 		private Iterator fSuperIterator;
 		/** The current iterator. */
-		private Iterator fCurrent; 
+		private Iterator fCurrent;
 		/** The current element. */
 		private Object fCurrentElement;
-		
-		
+
+
 		public MetaIterator(Iterator iterator) {
 			fSuperIterator= iterator;
 			fCurrent= (Iterator) fSuperIterator.next(); // there is at least one.
 		}
-		
+
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -63,7 +63,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		public boolean hasNext() {
 			if (fCurrentElement != null)
 				return true;
-			
+
 			if (fCurrent.hasNext()) {
 				fCurrentElement= fCurrent.next();
 				return true;
@@ -77,17 +77,17 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		public Object next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
-			
+
 			Object element= fCurrentElement;
 			fCurrentElement= null;
 			return element;
 		}
 	}
-	
+
 	/**
 	 * Internal annotation model listener for forwarding annotation model changes from the attached models to the
 	 * registered listeners of the outer most annotation model.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class InternalModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
@@ -107,8 +107,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/** 
-	 * The list of managed annotations 
+	/**
+	 * The list of managed annotations
 	 * @deprecated since 3.0 use <code>getAnnotationMap</code> instead
 	 */
 	protected Map fAnnotations;
@@ -122,7 +122,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	private IDocumentListener fDocumentListener;
 	/** The flag indicating whether the document positions might have been changed. */
 	private boolean fDocumentChanged= true;
-	/** 
+	/**
 	 * The model's attachment.
 	 * @since 3.0
 	 */
@@ -142,7 +142,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	private Object fModificationStamp= new Object();
-	
+
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
 	 * manage any annotations and is not connected to any document.
@@ -150,9 +150,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	public AnnotationModel() {
 		fAnnotations= new AnnotationMap(10);
 		fAnnotationModelListeners= new ArrayList(2);
-		
+
 		fDocumentListener= new IDocumentListener() {
-			
+
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 
@@ -161,17 +161,17 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns the annotation map internally used by this annotation model.
-	 * 
+	 *
 	 * @return the annotation map internally used by this annotation model
 	 * @since 3.0
 	 */
 	protected IAnnotationMap getAnnotationMap() {
 		return (IAnnotationMap) fAnnotations;
 	}
-	
+
     /*
      * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
      * @since 3.0
@@ -179,7 +179,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     public Object getLockObject() {
         return getAnnotationMap().getLockObject();
     }
-    
+
     /*
      * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
 	 * @since 3.0
@@ -187,11 +187,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     public void setLockObject(Object lockObject) {
         getAnnotationMap().setLockObject(lockObject);
     }
-    
+
     /**
      * Returns the current annotation model event. This is the event that will be sent out
      * when calling <code>fireModelChanged</code>.
-     * 
+     *
      * @return the current annotation model event
      * @since 3.0
      */
@@ -227,11 +227,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		} catch (BadLocationException x) {
 		}
 	}
-	
+
 	/**
 	 * Replaces the given annotations in this model and if advised fires a
 	 * model change event.
-	 * 
+	 *
 	 * @param annotationsToRemove the annotations to be removed
 	 * @param annotationsToAdd the annotations to be added
 	 * @param fireModelChanged <code>true</code> if a model change event
@@ -241,12 +241,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	protected void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd, boolean fireModelChanged) throws BadLocationException {
-		
+
 		if (annotationsToRemove != null) {
 			for (int i= 0, length= annotationsToRemove.length; i < length; i++)
 				removeAnnotation(annotationsToRemove[i], false);
 		}
-		
+
 		if (annotationsToAdd != null) {
 			Iterator iter= annotationsToAdd.entrySet().iterator();
 			while (iter.hasNext()) {
@@ -256,13 +256,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				addAnnotation(annotation, position, false);
 			}
 		}
-		
+
 		if (fireModelChanged)
 			fireModelChanged();
 	}
-	
+
 	/**
-	 * Adds the given annotation to this model. Associates the 
+	 * Adds the given annotation to this model. Associates the
 	 * annotation with the given position. If requested, all annotation
 	 * model listeners are informed about this model change. If the annotation
 	 * is already managed by this model nothing happens.
@@ -274,7 +274,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 		if (!fAnnotations.containsKey(annotation)) {
-			
+
 			addPosition(fDocument, position);
 			fAnnotations.put(annotation, position);
 			synchronized (getLockObject()) {
@@ -314,14 +314,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (document != null)
 			document.addPosition(position);
 	}
-	
+
 	/**
 	 * Removes the given position from the default position category of the
 	 * given document.
 	 *
 	 * @param document the document to which to add the position
 	 * @param position the position to add
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void removePosition(IDocument document, Position position) {
@@ -334,7 +334,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	public void connect(IDocument document) {
 		Assert.isTrue(fDocument == null || fDocument == document);
-		
+
 		if (fDocument == null) {
 			fDocument= document;
 			Iterator e= getAnnotationMap().valuesIterator();
@@ -345,51 +345,51 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 					// ignore invalid position
 				}
 		}
-		
+
 		++ fOpenConnections;
 		if (fOpenConnections == 1) {
 			fDocument.addDocumentListener(fDocumentListener);
 			connected();
 		}
-		
+
 		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
 			IAnnotationModel model= (IAnnotationModel) fAttachments.get(it.next());
 			model.connect(document);
 		}
 	}
-	
+
 	/**
 	 * Hook method. Is called as soon as this model becomes connected to a document.
 	 * Subclasses may re-implement.
 	 */
 	protected void connected() {
 	}
-	
+
 	/**
 	 * Hook method. Is called as soon as this model becomes disconnected from its document.
 	 * Subclasses may re-implement.
 	 */
 	protected void disconnected() {
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#disconnect(org.eclipse.jface.text.IDocument)
 	 */
 	public void disconnect(IDocument document) {
-		
+
 		Assert.isTrue(fDocument == document);
 
 		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
 			IAnnotationModel model= (IAnnotationModel) fAttachments.get(it.next());
 			model.disconnect(document);
 		}
-		
+
 		-- fOpenConnections;
 		if (fOpenConnections == 0) {
-			
+
 			disconnected();
 			fDocument.removeDocumentListener(fDocumentListener);
-		
+
 			if (fDocument != null) {
 				Iterator e= getAnnotationMap().valuesIterator();
 				while (e.hasNext()) {
@@ -400,50 +400,50 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 		}
 	}
-	
+
 	/**
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
 	protected void fireModelChanged() {
 		AnnotationModelEvent modelEvent= null;
-		
+
 		synchronized(getLockObject()) {
 			if (fModelEvent != null) {
 				modelEvent= fModelEvent;
 				fModelEvent= null;
 			}
 		}
-		
+
 		if (modelEvent != null)
 			fireModelChanged(modelEvent);
 	}
-	
+
 	/**
 	 * Creates and returns a new annotation model event. Subclasses may override.
-	 * 
+	 *
 	 * @return a new and empty annotation model event
 	 * @since 3.0
 	 */
 	protected AnnotationModelEvent createAnnotationModelEvent() {
 		return new AnnotationModelEvent(this);
 	}
-	
+
 	/**
 	 * Informs all annotation model listeners that this model has been changed
 	 * as described in the annotation model event. The event is sent out
 	 * to all listeners implementing <code>IAnnotationModelListenerExtension</code>.
 	 * All other listeners are notified by just calling <code>modelChanged(IAnnotationModel)</code>.
-	 * 
+	 *
 	 * @param event the event to be sent out to the listeners
 	 * @since 2.0
 	 */
 	protected void fireModelChanged(AnnotationModelEvent event) {
-		
+
 		event.markSealed();
-		
+
 		if (event.isEmpty())
 			return;
-			
+
 		ArrayList v= new ArrayList(fAnnotationModelListeners);
 		Iterator e= v.iterator();
 		while (e.hasNext()) {
@@ -454,13 +454,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				l.modelChanged(this);
 		}
 	}
-	
+
 	/**
 	 * Removes the given annotations from this model. If requested all
-	 * annotation model listeners will be informed about this change. 
-	 * <code>modelInitiated</code> indicates whether the deletion has 
+	 * annotation model listeners will be informed about this change.
+	 * <code>modelInitiated</code> indicates whether the deletion has
 	 * been initiated by this model or by one of its clients.
-	 * 
+	 *
 	 * @param annotations the annotations to be removed
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 * @param modelInitiated indicates whether this changes has been initiated by this model
@@ -470,12 +470,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			Iterator e= annotations.iterator();
 			while (e.hasNext())
 				removeAnnotation((Annotation) e.next(), false);
-				
+
 			if (fireModelChanged)
 				fireModelChanged();
 		}
 	}
-	
+
 	/**
 	 * Removes all annotations from the model whose associated positions have been
 	 * deleted. If requested inform all model listeners about the change.
@@ -485,7 +485,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void cleanup(boolean fireModelChanged) {
 		cleanup(fireModelChanged, true);
 	}
-	
+
 	/**
 	 * Removes all annotations from the model whose associated positions have been
 	 * deleted. If requested inform all model listeners about the change. If requested
@@ -498,7 +498,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	private void cleanup(boolean fireModelChanged, boolean forkNotification) {
 		if (fDocumentChanged) {
 			fDocumentChanged= false;
-			
+
 			ArrayList deleted= new ArrayList();
 			Iterator e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
@@ -507,7 +507,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				if (p == null || p.isDeleted())
 					deleted.add(a);
 			}
-			
+
 			if (fireModelChanged && forkNotification) {
 				removeAnnotations(deleted, false, false);
 				synchronized (getLockObject()) {
@@ -522,42 +522,42 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				removeAnnotations(deleted, fireModelChanged, false);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true, true);
 	}
-	
+
 	/**
 	 * Returns all annotations managed by this model. <code>cleanup</code>
-	 * indicates whether all annotations whose associated positions are 
+	 * indicates whether all annotations whose associated positions are
 	 * deleted should previously be removed from the model. <code>recurse</code> indicates
 	 * whether annotations of attached sub-models should also be returned.
-	 * 
+	 *
 	 * @param cleanup indicates whether annotations with deleted associated positions are removed
 	 * @param recurse whether to return annotations managed by sub-models.
 	 * @return all annotations managed by this model
 	 * @since 3.0
 	 */
 	private Iterator getAnnotationIterator(boolean cleanup, boolean recurse) {
-		
+
 		if (!recurse)
 			return getAnnotationIterator(cleanup);
-		
+
 		List iterators= new ArrayList(fAttachments.size() + 1);
 		iterators.add(getAnnotationIterator(cleanup));
 		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
 			iterators.add(((IAnnotationModel) fAttachments.get(it.next())).getAnnotationIterator());
 		}
-		
+
 		return new MetaIterator(iterators.iterator());
 	}
-	
+
 	/**
 	 * Returns all annotations managed by this model. <code>cleanup</code>
-	 * indicates whether all annotations whose associated positions are 
+	 * indicates whether all annotations whose associated positions are
 	 * deleted should previously be removed from the model.
 	 *
 	 * @param cleanup indicates whether annotations with deleted associated positions are removed
@@ -566,10 +566,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected Iterator getAnnotationIterator(boolean cleanup) {
 		if (cleanup)
 			cleanup(true);
-			
+
 		return getAnnotationMap().keySetIterator();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#getPosition(org.eclipse.jface.text.source.Annotation)
 	 */
@@ -577,13 +577,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		Position position= (Position) fAnnotations.get(annotation);
 		if (position != null)
 			return position;
-		
+
 		Iterator it= fAttachments.values().iterator();
 		while (position == null && it.hasNext())
-			position= ((IAnnotationModel) it.next()).getPosition(annotation);	
+			position= ((IAnnotationModel) it.next()).getPosition(annotation);
 		return position;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#removeAllAnnotations()
 	 * @since 3.0
@@ -599,7 +599,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 */
 	protected void removeAllAnnotations(boolean fireModelChanged) {
-		
+
 		if (fDocument != null) {
 			Iterator e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
@@ -612,22 +612,22 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				}
 			}
 		}
-		
+
 		fAnnotations.clear();
-		
+
 		if (fireModelChanged)
 			fireModelChanged();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#removeAnnotation(org.eclipse.jface.text.source.Annotation)
 	 */
 	public void removeAnnotation(Annotation annotation) {
 		removeAnnotation(annotation, true);
 	}
-		
+
 	/**
-	 * Removes the given annotation from the annotation model. 
+	 * Removes the given annotation from the annotation model.
 	 * If requested inform all model change listeners about this change.
 	 *
 	 * @param annotation the annotation to be removed
@@ -635,24 +635,24 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 		if (fAnnotations.containsKey(annotation)) {
-			
+
 			Position p= null;
 			if (fDocument != null) {
 				p= (Position) fAnnotations.get(annotation);
 				removePosition(fDocument, p);
 //				p.delete();
 			}
-				
+
 			fAnnotations.remove(annotation);
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationRemoved(annotation, p);
 			}
-			
+
 			if (fireModelChanged)
 				fireModelChanged();
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#modifyAnnotationPosition(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
 	 * @since 3.0
@@ -660,7 +660,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	public void modifyAnnotationPosition(Annotation annotation, Position position) {
 		modifyAnnotationPosition(annotation, position, true);
 	}
-	
+
 	/**
 	 * Modifies the associated position of the given annotation to the given
 	 * position. If the annotation is not yet managed by this annotation model,
@@ -669,7 +669,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * <p>
 	 * If requested, all annotation model change listeners will be informed
 	 * about the change.
-	 * 
+	 *
 	 * @param annotation the annotation whose associated position should be
 	 *            modified
 	 * @param position the position to whose values the associated position
@@ -683,7 +683,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		} else {
 			Position p= (Position) fAnnotations.get(annotation);
 			if (p != null) {
-				
+
 				if (position.getOffset() != p.getOffset() || position.getLength() != p.getLength()) {
 					p.setOffset(position.getOffset());
 					p.setLength(position.getLength());
@@ -693,7 +693,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				}
 				if (fireModelChanged)
 					fireModelChanged();
-				
+
 			} else {
 				try {
 					addAnnotation(annotation, position, fireModelChanged);
@@ -703,14 +703,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 		}
 	}
-	
+
 	/**
 	 * Modifies the given annotation if the annotation is managed by this
 	 * annotation model.
 	 * <p>
 	 * If requested, all annotation model change listeners will be informed
 	 * about the change.
-	 * 
+	 *
 	 * @param annotation the annotation to be modified
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 * @since 3.0
@@ -724,7 +724,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				fireModelChanged();
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
 	 */
@@ -767,7 +767,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 		return ret;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#getModificationStamp()
 	 * @since 3.0

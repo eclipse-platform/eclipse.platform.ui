@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * Internal implementation of {@link org.eclipse.jface.text.source.IAnnotationMap}.
- * 
+ *
  * @since 3.0
  */
 class AnnotationMap implements IAnnotationMap {
@@ -37,7 +37,7 @@ class AnnotationMap implements IAnnotationMap {
 
     /**
      * Creates a new annotation map with the given capacity.
-     * 
+     *
      * @param capacity the capacity
      */
     public AnnotationMap(int capacity) {
@@ -76,7 +76,7 @@ class AnnotationMap implements IAnnotationMap {
             return new ArrayList(fInternalMap.keySet()).iterator();
         }
     }
-    
+
     /*
      * @see java.util.Map#containsKey(java.lang.Object)
      */
@@ -121,7 +121,7 @@ class AnnotationMap implements IAnnotationMap {
             return fInternalMap.remove(annotation);
         }
     }
-    
+
     /*
      * @see java.util.Map#size()
      */
@@ -130,7 +130,7 @@ class AnnotationMap implements IAnnotationMap {
             return fInternalMap.size();
         }
     }
-    
+
     /*
      * @see java.util.Map#isEmpty()
      */
@@ -139,7 +139,7 @@ class AnnotationMap implements IAnnotationMap {
 			return fInternalMap.isEmpty();
 		}
     }
-    
+
 	/*
 	 * @see java.util.Map#containsValue(java.lang.Object)
 	 */
@@ -148,7 +148,7 @@ class AnnotationMap implements IAnnotationMap {
 			return fInternalMap.containsValue(value);
 		}
 	}
-	
+
 	/*
 	 * @see java.util.Map#putAll(java.util.Map)
 	 */
@@ -157,7 +157,7 @@ class AnnotationMap implements IAnnotationMap {
 			fInternalMap.putAll(map);
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationMap#entrySet()
 	 */
@@ -166,7 +166,7 @@ class AnnotationMap implements IAnnotationMap {
 			return fInternalMap.entrySet();
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationMap#keySet()
 	 */
@@ -175,7 +175,7 @@ class AnnotationMap implements IAnnotationMap {
 			return fInternalMap.keySet();
 		}
 	}
-	
+
 	/*
 	 * @see IAnnotationMap#values()
 	 */

@@ -25,14 +25,14 @@ package org.eclipse.jface.text;
  * An empty text event usually indicates a change of the viewer's redraw state.
  * <p>
  * Clients other than text viewer's don't create instances of this class.
- * 
+ *
  * @see org.eclipse.jface.text.ITextListener
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.DocumentEvent
  */
 public class TextEvent {
-	
-	/** Start offset of the change */ 
+
+	/** Start offset of the change */
 	private int fOffset;
 	/** The length of the change */
 	private int fLength;
@@ -42,15 +42,15 @@ public class TextEvent {
 	private String fReplacedText;
 	/** The original document event, may by null */
 	private DocumentEvent fDocumentEvent;
-	/** 
+	/**
 	 * The redraw state of the viewer issuing this event
 	 * @since 2.0
 	 */
 	private boolean fViewerRedrawState;
-	
+
 	/**
 	 * Creates a new <code>TextEvent</code> based on the specification.
-	 * 
+	 *
 	 * @param offset the offset
 	 * @param length the length
 	 * @param text the inserted text
@@ -66,7 +66,7 @@ public class TextEvent {
 		fDocumentEvent= event;
 		fViewerRedrawState= viewerRedrawState;
 	}
-			
+
 	/**
 	 * Returns the offset of the event.
 	 *
@@ -75,7 +75,7 @@ public class TextEvent {
 	public int getOffset() {
 		return fOffset;
 	}
-		
+
 	/**
 	 * Returns the length of the event.
 	 *
@@ -84,7 +84,7 @@ public class TextEvent {
 	public int getLength() {
 		return fLength;
 	}
-	
+
 	/**
 	 * Returns the text of the event.
 	 *
@@ -93,7 +93,7 @@ public class TextEvent {
 	public String getText() {
 		return fText;
 	}
-	
+
 	/**
 	 * Returns the text replaced by this event.
 	 *
@@ -102,7 +102,7 @@ public class TextEvent {
 	public String getReplacedText() {
 		return fReplacedText;
 	}
-	
+
 	/**
 	 * Returns the corresponding document event that caused the viewer change
 	 *
@@ -111,10 +111,10 @@ public class TextEvent {
 	public DocumentEvent getDocumentEvent() {
 		return fDocumentEvent;
 	}
-	
+
 	/**
 	 * Returns the viewer's redraw state.
-	 * 
+	 *
 	 * @return <code>true</code> if the viewer's redraw state is <code>true</code>
 	 * @since 2.0
 	 */

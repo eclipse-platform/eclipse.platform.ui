@@ -32,7 +32,7 @@ import org.eclipse.swt.events.VerifyEvent;
  * A document command can also represent a list of related changes.
  */
 public class DocumentCommand {
-	
+
 	/**
 	 * A command which is added to document commands.
 	 * @since 2.1
@@ -46,10 +46,10 @@ public class DocumentCommand {
 		private final String fText;
 		/** The listener who owns this command */
 		private final IDocumentListener fOwner;
-		
+
 		/**
 		 * Creates a new command with the given specification.
-		 * 
+		 *
 		 * @param offset the offset of the replace command
 		 * @param length the length of the replace command
 		 * @param text the text to replace with, may be <code>null</code>
@@ -67,7 +67,7 @@ public class DocumentCommand {
 
 		/**
 		 * Returns the length delta for this command.
-		 * 
+		 *
 		 * @return the length delta for this command
 		 */
 		public int getDeltaLength() {
@@ -76,15 +76,15 @@ public class DocumentCommand {
 
 		/**
 		 * Executes the document command on the specified document.
-		 * 
+		 *
 		 * @param document the document on which to execute the command.
 		 * @throws BadLocationException in case this commands cannot be executed
-		 */		
+		 */
 		public void execute(IDocument document) throws BadLocationException {
-			
+
 			if (fLength == 0 && fText == null)
 				return;
-			
+
 			if (fOwner != null)
 				document.removeDocumentListener(fOwner);
 
@@ -124,13 +124,13 @@ public class DocumentCommand {
 	}
 
 	/**
-	 * An iterator, which iterates in reverse over a list. 
-	 */	
+	 * An iterator, which iterates in reverse over a list.
+	 */
 	private static class ReverseListIterator implements Iterator {
-		
+
 		/** The list iterator. */
 		private final ListIterator fListIterator;
-		
+
 		/**
 		 * Creates a reverse list iterator.
 		 * @param listIterator the iterator that this reverse iterator is based upon
@@ -140,7 +140,7 @@ public class DocumentCommand {
 				throw new IllegalArgumentException();
 			fListIterator= listIterator;
 		}
-		
+
 		/*
 		 * @see java.util.Iterator#hasNext()
 		 */
@@ -162,7 +162,7 @@ public class DocumentCommand {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	/**
 	 * A command iterator.
 	 */
@@ -173,13 +173,13 @@ public class DocumentCommand {
 
 		/** The original command. */
 		private Command fCommand;
-		
+
 		/** A flag indicating the direction of iteration. */
 		private boolean fForward;
 
 		/**
 		 * Creates a command iterator.
-		 * 
+		 *
 		 * @param commands an ascending ordered list of commands
 		 * @param command the original command
 		 * @param forward the direction
@@ -191,7 +191,7 @@ public class DocumentCommand {
 			fCommand= command;
 			fForward= forward;
 		}
-			
+
 		/*
 		 * @see java.util.Iterator#hasNext()
 		 */
@@ -250,7 +250,7 @@ public class DocumentCommand {
 	public String text;
 	/**
 	 * The owner of the document command which will not be notified.
-	 * @since 2.1 
+	 * @since 2.1
 	 */
 	public IDocumentListener owner;
 	/**
@@ -258,8 +258,8 @@ public class DocumentCommand {
 	 * @since 2.1
 	 */
 	public int caretOffset;
-	/** 
-	 * Additional document commands. 
+	/**
+	 * Additional document commands.
 	 * @since 2.1
 	 */
 	private final List fCommands= new ArrayList();
@@ -268,14 +268,14 @@ public class DocumentCommand {
 	 * @since 3.0
 	 */
 	public boolean shiftsCaret;
-	
-	
+
+
 	/**
 	 * Creates a new document command.
 	 */
 	protected DocumentCommand() {
 	}
-	
+
 	/**
 	 * Translates a verify event into a document replace command using the given offset.
 	 *
@@ -283,19 +283,19 @@ public class DocumentCommand {
 	 * @param modelRange the event range as model range
 	 */
 	void setEvent(VerifyEvent event, IRegion modelRange) {
-		
+
 		doit= true;
 		text= event.text;
-		
+
 		offset= modelRange.getOffset();
 		length= modelRange.getLength();
-			
+
 		owner= null;
 		caretOffset= -1;
 		shiftsCaret= true;
 		fCommands.clear();
 	}
-	
+
 	/**
 	 * Fills the given verify event with the replace text and the <code>doit</code>
 	 * flag of this document command. Returns whether the document command
@@ -310,7 +310,7 @@ public class DocumentCommand {
 		event.doit= (offset == modelRange.getOffset() && length == modelRange.getLength() && doit && caretOffset == -1);
 		return event.doit;
 	}
-	
+
 	/**
 	 * Adds an additional replace command. The added replace command must not overlap
 	 * with existing ones. If the document command owner is not <code>null</code>, it will not
@@ -327,53 +327,53 @@ public class DocumentCommand {
 		final Command command= new Command(commandOffset, commandLength, commandText, commandOwner);
 
 		if (intersects(command))
-			throw new BadLocationException();		
+			throw new BadLocationException();
 
-		final int index= Collections.binarySearch(fCommands, command);	
+		final int index= Collections.binarySearch(fCommands, command);
 
 		// a command with exactly the same ranges exists already
 		if (index >= 0)
 			throw new BadLocationException();
 
-		// binary search result is defined as (-(insertionIndex) - 1)		
+		// binary search result is defined as (-(insertionIndex) - 1)
 		final int insertionIndex= -(index + 1);
 
 		// overlaps to the right?
 		if (insertionIndex != fCommands.size() && intersects((Command) fCommands.get(insertionIndex), command))
-			throw new BadLocationException();		
+			throw new BadLocationException();
 
 		// overlaps to the left?
 		if (insertionIndex != 0 && intersects((Command) fCommands.get(insertionIndex - 1), command))
-			throw new BadLocationException();		
+			throw new BadLocationException();
 
-		fCommands.add(insertionIndex, command);	
+		fCommands.add(insertionIndex, command);
 	}
 
 	/**
 	 * Returns an iterator over the commands in ascending position order.
 	 * The iterator includes the original document command.
-	 * Commands cannot be removed. 
+	 * Commands cannot be removed.
 	 *
 	 * @return returns the command iterator
 	 */
 	public Iterator getCommandIterator() {
-		Command command= new Command(offset, length, text, owner); 
+		Command command= new Command(offset, length, text, owner);
 		return new CommandIterator(fCommands, command, true);
 	}
-	
+
 	/**
 	 * Returns the number of commands including the original document command.
-	 * 
+	 *
 	 * @return returns the number of commands
 	 * @since 2.1
 	 */
 	public int getCommandCount() {
-		return 1 + fCommands.size();	
+		return 1 + fCommands.size();
 	}
 
 	/**
 	 * Returns whether the two given commands intersect.
-	 * 
+	 *
 	 * @param command0 the first command
 	 * @param command1 the second command
 	 * @return <code>true</code> if the commands intersect
@@ -381,37 +381,37 @@ public class DocumentCommand {
 	 */
 	private boolean intersects(Command command0, Command command1) {
 		// diff middle points if not intersecting
-		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset)		
+		if (command0.fOffset + command0.fLength <= command1.fOffset || command1.fOffset + command1.fLength <= command0.fOffset)
 			return (2 * command0.fOffset + command0.fLength) - (2 * command1.fOffset + command1.fLength) == 0;
-		return true;		
+		return true;
 	}
-	
+
 	/**
 	 * Returns whether the given command intersects with this command.
-	 * 
+	 *
 	 * @param command the command
 	 * @return <code>true</code> if the command intersects with this command
 	 * @since 2.1
 	 */
 	private boolean intersects(Command command) {
 		// diff middle points if not intersecting
-		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset)		
+		if (offset + length <= command.fOffset || command.fOffset + command.fLength <= offset)
 			return (2 * offset + length) - (2 * command.fOffset + command.fLength) == 0;
-		return true;		
+		return true;
 	}
 
 	/**
 	 * Executes the document commands on a document.
-	 * 
+	 *
 	 * @param document the document on which to execute the commands
 	 * @throws BadLocationException in case access to the given document fails
 	 * @since 2.1
-	 */	
+	 */
 	void execute(IDocument document) throws BadLocationException {
-		
+
 		if (length == 0 && text == null && fCommands.size() == 0)
 			return;
-		
+
 		DefaultPositionUpdater updater= new DefaultPositionUpdater(getCategory());
 		Position caretPosition= null;
 		try {
@@ -421,11 +421,11 @@ public class DocumentCommand {
 				caretPosition= new Position(caretOffset);
 				document.addPosition(getCategory(), caretPosition);
 			}
-			
+
 			final Command originalCommand= new Command(offset, length, text, owner);
 			for (final Iterator iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); )
 				((Command) iterator.next()).execute(document);
-		
+
 		} catch (BadLocationException e) {
 			// ignore
 		} catch (BadPositionCategoryException e) {
@@ -445,7 +445,7 @@ public class DocumentCommand {
 
 	/**
 	 * Returns <code>true</code> if the caret offset should be updated, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the caret offset should be updated, <code>false</code> otherwise
 	 * @since 3.0
 	 */
@@ -455,7 +455,7 @@ public class DocumentCommand {
 
 	/**
 	 * Returns the position category for the caret offset position.
-	 * 
+	 *
 	 * @return the position category for the caret offset position
 	 * @since 3.0
 	 */

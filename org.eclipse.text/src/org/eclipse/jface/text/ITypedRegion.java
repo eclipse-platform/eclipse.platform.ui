@@ -22,7 +22,7 @@ package org.eclipse.jface.text;
  * {@link org.eclipse.jface.text.TypedRegion}.
  */
 public interface ITypedRegion extends IRegion {
-	
+
 	/**
 	 * Returns the content type of the region.
 	 *

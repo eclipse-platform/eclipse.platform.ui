@@ -12,17 +12,17 @@ package org.eclipse.jface.text.source;
 
 /**
  * Default implements of {@link LineRange}.<p>
- * 
+ *
  * @since 3.0
  */
 public final class LineRange implements ILineRange {
-	
+
 	private int fStartLine;
 	private int fNumberOfLines;
-	
+
 	/**
 	 * Creates a new line range with the given specification.
-	 * 
+	 *
 	 * @param startLine the start line
 	 * @param numberOfLines the number of lines
 	 */

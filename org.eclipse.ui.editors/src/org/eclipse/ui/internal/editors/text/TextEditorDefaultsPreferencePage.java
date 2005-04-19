@@ -64,22 +64,22 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * The preference page for setting the editor options.
  * <p>
  * This class is internal and not intended to be used by clients.</p>
- * 
+ *
  * @since 3.1
  */
 public class TextEditorDefaultsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private static abstract class Initializer {
 
 		protected final Preference fPreference;
-		
+
 		protected Initializer(Preference preference) {
 			fPreference= preference;
 		}
-		
+
 		public abstract void initialize();
 	}
-	
+
 
 	public final class InitializerFactory {
 		private class TextInitializer extends Initializer {
@@ -153,17 +153,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public Initializer create(Preference preference, Button control) {
 			return new CheckboxInitializer(preference, control);
 		}
-		
+
 		public Initializer create(Preference preference, Combo control, EnumeratedDomain domain) {
 			return new ComboInitializer(preference, control, domain);
 		}
-		
+
 		public Initializer create(Preference preference, Spinner control, EnumeratedDomain domain) {
 			return new SpinnerInitializer(preference, control, domain);
 		}
 	}
-	
-	
+
+
 	abstract static class Domain {
 		public abstract IStatus validate(Object value);
 		protected int parseInteger(Object val) throws NumberFormatException {
@@ -173,10 +173,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			if (val instanceof String) {
 				return Integer.parseInt((String) val);
 			}
-			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val))); 
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val)));
 		}
 	}
-	
+
 	static class IntegerDomain extends Domain {
 		private final int fMax;
 		private final int fMin;
@@ -189,25 +189,25 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 			try {
 				int integer= parseInteger(value);
 				if (!rangeCheck(integer))
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer))); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer)));
 			} catch (NumberFormatException e) {
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
 			return status;
 		}
-		
+
 		protected boolean rangeCheck(int i) {
 			return (i >= fMin && i <= fMax);
 		}
 
 	}
-	
+
 	static class EnumeratedDomain extends Domain {
 		public final static class EnumValue {
 			private final int fValue;
@@ -235,10 +235,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				return false;
 			}
 		}
-		
+
 		private final java.util.List fItems= new ArrayList();
 		private final Set fValueSet= new HashSet();
-		
+
 		public void addValue(EnumValue val) {
 			if (fValueSet.contains(val))
 				fItems.remove(val);
@@ -251,12 +251,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			for (Iterator it= fItems.iterator(); it.hasNext();) {
 				EnumValue ev= (EnumValue) it.next();
 				if (ev.equals(enumValue))
-					return i; 
+					return i;
 				i++;
 			}
 			return -1;
 		}
-		
+
 		public EnumValue getValueByIndex (int index) {
 			if (index >= 0 && fItems.size() > index)
 				return (EnumValue) fItems.get(index);
@@ -275,7 +275,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public void addValue(int val) {
 			addValue(new EnumValue(val));
 		}
-		
+
 		public void addRange(int from, int to) {
 			while (from <= to)
 				addValue(from++);
@@ -284,20 +284,20 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 			try {
 				EnumValue e= parseEnumValue(value);
 				if (!fValueSet.contains(e))
-					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()})); 
+					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()}));
 			} catch (NumberFormatException e) {
-				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
-			
+
 			return status;
 		}
-		
+
 		private EnumValue parseEnumValue(Object value) {
 			if (value instanceof EnumValue)
 				return (EnumValue) value;
@@ -308,48 +308,48 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public EnumValue getMinimumValue() {
 			return getValueByIndex(0);
 		}
-		
+
 		public EnumValue getMaximumValue() {
 			return getValueByIndex(fItems.size() - 1);
 		}
 	}
-	
+
 	static class BooleanDomain extends Domain {
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
-				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput); 
+				status.setError(TextEditorMessages.TextEditorPreferencePage_emptyInput);
 				return status;
 			}
 			try {
 				parseBoolean(value);
 			} catch (NumberFormatException e) {
-				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
-			
+
 			return status;
 		}
 
 		private boolean parseBoolean(Object value) throws NumberFormatException {
 			if (value instanceof Boolean)
 				return ((Boolean) value).booleanValue();
-			
+
 			if (value instanceof String) {
 				if (Boolean.TRUE.toString().equalsIgnoreCase((String) value))
 					return true;
 				if (Boolean.FALSE.toString().equalsIgnoreCase((String) value))
 					return false;
 			}
-			
-			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value))); 
+
+			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 		}
 	}
-	
+
 	private static class Preference {
 		private String fKey;
 		private String fName;
 		private String fDescription; // for tooltips
-		
+
 		public Preference(String key, String name, String description) {
 			Assert.isNotNull(key);
 			Assert.isNotNull(name);
@@ -367,23 +367,23 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			return fDescription;
 		}
 	}
-	
 
-	private static final String MODIFIER_DELIMITER= TextEditorMessages.HyperlinkKeyModifier_delimiter; 
-	
+
+	private static final String MODIFIER_DELIMITER= TextEditorMessages.HyperlinkKeyModifier_delimiter;
+
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, 
-		{TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, 
-		{TextEditorMessages.TextEditorPreferencePage_printMarginColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, 
-		{TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, 
-		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, 
-		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT}, 
-		{TextEditorMessages.TextEditorPreferencePage_foregroundColor, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT}, 
-		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null}, 
+		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null},
+		{TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null},
+		{TextEditorMessages.TextEditorPreferencePage_printMarginColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null},
+		{TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR},
+		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR},
+		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT},
+		{TextEditorMessages.TextEditorPreferencePage_foregroundColor, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT},
+		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, null},
 	};
-	
+
 	private OverlayPreferenceStore fOverlayStore;
-	
+
 	private List fAppearanceColorList;
 	private ColorEditor fAppearanceColorEditor;
 	private Button fAppearanceColorDefault;
@@ -391,43 +391,43 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private Text fHyperlinkKeyModifierText;
 	private Button fHyperlinksEnabledCheckBox;
 	private StatusInfo fHyperlinkKeyModifierStatus;
-	
+
 	/**
 	 * Tells whether the fields are initialized.
 	 */
 	private boolean fFieldsInitialized= false;
-	
+
 	private ArrayList fMasterSlaveListeners= new ArrayList();
-	
+
 	private java.util.List fInitializers= new ArrayList();
-	
+
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
 
-	
+
 	public TextEditorDefaultsPreferencePage() {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
-		
+
 		fOverlayStore= createOverlayStore();
 	}
-	
+
 	private OverlayPreferenceStore createOverlayStore() {
-		
+
 		ArrayList overlayKeys= new ArrayList();
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
@@ -442,17 +442,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK));
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
-	
+
 	/*
 	 * @see IWorkbenchPreferencePage#init()
-	 */	
+	 */
 	public void init(IWorkbench workbench) {
 	}
 
@@ -464,14 +464,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
-	private void handleAppearanceColorListSelection() {	
+	private void handleAppearanceColorListSelection() {
 		int i= fAppearanceColorList.getSelectionIndex();
 		if (i == -1)
 			return;
 
 		String key= fAppearanceColorListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
-		fAppearanceColorEditor.setColorValue(rgb);		
+		fAppearanceColorEditor.setColorValue(rgb);
 		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
 	}
 
@@ -487,43 +487,43 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
 		}
 	}
-	
+
 	private Control createAppearancePage(Composite parent) {
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth; 
+		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
 		tabWidthDomain.addRange(1, 16);
 		addSpinner(appearanceComposite, tabWidth, tabWidthDomain, 0);
 
-		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize; 
+		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
 		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
 		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 5, 0);
-		
-		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine; 
+
+		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine;
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
 		addCheckBox(appearanceComposite, highlightCurrentLine, new BooleanDomain(), 0);
-				
-		label= TextEditorMessages.TextEditorPreferencePage_showPrintMargin; 
+
+		label= TextEditorMessages.TextEditorPreferencePage_showPrintMargin;
 		Preference showPrintMargin= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, label, null);
 		Button showPrintMarginButton= addCheckBox(appearanceComposite, showPrintMargin, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.TextEditorPreferencePage_printMarginColumn; 
+		label= TextEditorMessages.TextEditorPreferencePage_printMarginColumn;
 		Preference printMarginColumn= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, label, null);
 		IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
 		Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 3, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
-		
-		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers; 
+
+		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers;
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
 
-		label= TextEditorMessages.HyperlinksEnabled_label; 
+		label= TextEditorMessages.HyperlinksEnabled_label;
 		Preference hyperlinksEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, label, null);
 		fHyperlinksEnabledCheckBox= addCheckBox(appearanceComposite, hyperlinksEnabled, new BooleanDomain(), 0);
 		fHyperlinksEnabledCheckBox.addSelectionListener(new SelectionListener() {
@@ -535,18 +535,18 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		// Text field for modifier string
-		label= TextEditorMessages.HyperlinkKeyModifier_label; 
+		label= TextEditorMessages.HyperlinkKeyModifier_label;
 		Preference hyperlinkModifier= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, label, null);
 		fHyperlinkKeyModifierText= (Text)addTextField(appearanceComposite, hyperlinkModifier, null, 20, 20)[1];
-		
+
 		fHyperlinkKeyModifierText.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
 			public void keyPressed(KeyEvent e) {
 				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
 			}
-		
+
 			public void keyReleased(KeyEvent e) {
 				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
 					String modifierString= fHyperlinkKeyModifierText.getText();
@@ -566,11 +566,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					String insertString;
 
 					if (needsPrefixDelimiter && needsPostfixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)});
 					else if (needsPrefixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, new String[] {Action.findModifierString(e.stateMask)}); 
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, new String[] {Action.findModifierString(e.stateMask)});
 					else if (needsPostfixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)}); 
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)});
 					else
 						insertString= Action.findModifierString(e.stateMask);
 
@@ -584,19 +584,19 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				handleHyperlinkKeyModifierModified();
 			}
 		});
-		
-		label= TextEditorMessages.TextEditorPreferencePage_overwriteMode; 
+
+		label= TextEditorMessages.TextEditorPreferencePage_overwriteMode;
 		Preference disableOverwrite= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE, label, null);
 		addCheckBox(appearanceComposite, disableOverwrite, new BooleanDomain(), 0);
-		
+
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
 		l.setLayoutData(gd);
-		
+
 		l= new Label(appearanceComposite, SWT.LEFT);
-		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions); 
+		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		l.setLayoutData(gd);
@@ -609,13 +609,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		editorComposite.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 
 		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		gd.heightHint= convertHeightInCharsToPixels(8);
 		fAppearanceColorList.setLayoutData(gd);
-						
+
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -623,9 +623,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		l= new Label(stylesComposite, SWT.LEFT);
-		l.setText(TextEditorMessages.TextEditorPreferencePage_color); 
+		l.setText(TextEditorMessages.TextEditorPreferencePage_color);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		l.setLayoutData(gd);
@@ -640,7 +640,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			public void widgetSelected(SelectionEvent e) {
 				boolean systemDefault= fAppearanceColorDefault.getSelection();
 				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-				
+
 				int i= fAppearanceColorList.getSelectionIndex();
 				if (i == -1)
 					return;
@@ -651,16 +651,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
-		
+
 		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(TextEditorMessages.TextEditorPreferencePage_systemDefault); 
+		fAppearanceColorDefault.setText(TextEditorMessages.TextEditorPreferencePage_systemDefault);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fAppearanceColorDefault.setLayoutData(gd);
 		fAppearanceColorDefault.setVisible(false);
 		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-		
+
 		fAppearanceColorList.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -677,37 +677,37 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				int i= fAppearanceColorList.getSelectionIndex();
 				if (i == -1)
 					return;
-				
+
 				String key= fAppearanceColorListModel[i][1];
 				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
 			}
 		});
-		
+
 		appearanceComposite.layout();
 		return appearanceComposite;
 	}
-	
+
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		
+
 		initializeDefaultColors();
 
 		fOverlayStore.load();
 		fOverlayStore.start();
-		
+
 		Control control= createAppearancePage(parent);
 
 		initialize();
 		Dialog.applyDialogFont(control);
 		return control;
 	}
-	
+
 	private void initialize() {
-		
+
 		initializeFields();
-		
+
 		for (int i= 0; i < fAppearanceColorListModel.length; i++)
 			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
 		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
@@ -719,13 +719,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 		});
 	}
-	
+
 	private void initializeFields() {
 		for (Iterator it= fInitializers.iterator(); it.hasNext();) {
 			Initializer initializer= (Initializer) it.next();
 			initializer.initialize();
 		}
-		
+
 		if (computeStateMask(fOverlayStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER)) == -1) {
 			// Fix possible illegal modifier string
 			int stateMask= fOverlayStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK);
@@ -734,21 +734,21 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			else
 				fHyperlinkKeyModifierText.setText(getModifierString(stateMask));
 		}
-		
+
 		fFieldsInitialized= true;
 		updateStatus(new StatusInfo()); //$NON-NLS-1$
-		
+
         // Update slaves
         Iterator iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {
             SelectionListener listener= (SelectionListener)iter.next();
             listener.widgetSelected(null);
         }
-        
+
 		fHyperlinkKeyModifierText.setEnabled(fHyperlinksEnabledCheckBox.getSelection());
 	}
-	
-	private void initializeDefaultColors() {	
+
+	private void initializeDefaultColors() {
 		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR)) {
 			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
 			PreferenceConverter.setDefault(fOverlayStore, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
@@ -770,7 +770,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
 		}
 	}
-	
+
 	/*
 	 * @see PreferencePage#performOk()
 	 */
@@ -780,39 +780,39 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		EditorsPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
-	
+
 	/*
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 
 		fOverlayStore.loadDefaults();
-		
+
 		initializeFields();
 
 		handleAppearanceColorListSelection();
 
 		super.performDefaults();
 	}
-	
+
 	/*
 	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
-		
+
 		if (fOverlayStore != null) {
 			fOverlayStore.stop();
 			fOverlayStore= null;
 		}
-		
+
 		super.dispose();
 	}
-	
-	Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
+
+	Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {
 		final Button checkBox= new Button(composite, SWT.CHECK);
 		checkBox.setText(preference.getName());
 		checkBox.setToolTipText(preference.getDescription());
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
@@ -826,13 +826,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				updateStatus(status);
 			}
 		});
-		
+
 		fInitializers.add(fInitializerFactory.create(preference, checkBox));
-		
+
 		return checkBox;
 	}
-	
-	Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
+
+	Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(preference.getName());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -847,7 +847,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			EnumValue value= (EnumValue) it.next();
 			combo.add(value.getLabel());
 		}
-		
+
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index= combo.getSelectionIndex();
@@ -858,9 +858,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				updateStatus(status);
 			}
 		});
-		
+
 		fInitializers.add(fInitializerFactory.create(preference, combo, domain));
-		
+
 		return new Control[] {labelControl, combo};
 	}
 
@@ -869,7 +869,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	 * <code>EnumeratedDomain</code> contains only numeric values in a
 	 * continuous range, no custom entries (use <code>addCombo</code> in that
 	 * case).
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param preference the preference
 	 * @param domain its domain
@@ -892,7 +892,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		spinner.setMaximum(domain.getMaximumValue().getIntValue());
 		spinner.setIncrement(1);
 		spinner.setPageIncrement(4);
-		
+
 		spinner.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index= spinner.getSelection();
@@ -903,26 +903,26 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				updateStatus(status);
 			}
 		});
-		
+
 		fInitializers.add(fInitializerFactory.create(preference, spinner, domain));
-		
+
 		return new Control[] {labelControl, spinner};
 	}
-	
+
 	private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(preference.getName());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		labelControl.setLayoutData(gd);
-		
-		final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+
+		final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 		textControl.setToolTipText(preference.getDescription());
-		
+
 		if (domain != null) {
 			textControl.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -934,20 +934,20 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				}
 			});
 		}
-		
+
 		fInitializers.add(fInitializerFactory.create(preference, textControl));
-		
+
 		return new Control[] {labelControl, textControl};
 	}
 
 	private void createDependency(final Button master, Preference preference, final Control[] slaves) {
 		indent(slaves[0]);
-		
+
 		boolean masterState= fOverlayStore.getBoolean(preference.getKey());
 		for (int i= 0; i < slaves.length; i++) {
 			slaves[i].setEnabled(masterState);
 		}
-		
+
 		SelectionListener listener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
@@ -961,13 +961,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		master.addSelectionListener(listener);
 		fMasterSlaveListeners.add(listener);
 	}
-	
+
 	private static void indent(Control control) {
 		GridData gridData= new GridData();
 		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
+		control.setLayoutData(gridData);
 	}
-	
+
 	void updateStatus(IStatus status) {
 		if (!fFieldsInitialized)
 			return;
@@ -978,7 +978,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	/**
 	 * Applies the status to the status line of a dialog page.
-	 * 
+	 *
 	 * @param page the dialog page
 	 * @param status the status
 	 */
@@ -992,32 +992,32 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			case IStatus.WARNING:
 				page.setMessage(message, IMessageProvider.WARNING);
 				page.setErrorMessage(null);
-				break;				
+				break;
 			case IStatus.INFO:
 				page.setMessage(message, IMessageProvider.INFORMATION);
 				page.setErrorMessage(null);
-				break;			
+				break;
 			default:
 				if (message.length() == 0) {
 					message= null;
 				}
 				page.setMessage(null);
 				page.setErrorMessage(message);
-				break;		
+				break;
 		}
 	}
-	
+
 	private void handleHyperlinkKeyModifierModified() {
 		String modifiers= fHyperlinkKeyModifierText.getText();
 		fOverlayStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, modifiers);
-		
+
 		int stateMask= computeStateMask(modifiers);
 
 		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
 			if (stateMask == -1)
-				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers)); 
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers));
 			else
-				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled); 
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled);
 			setValid(false);
 			StatusUtil.applyToStatusLine(this, fHyperlinkKeyModifierStatus);
 		} else {
@@ -1025,7 +1025,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			updateStatus(fHyperlinkKeyModifierStatus);
 		}
 	}
-	
+
 	private IStatus getHyperlinkKeyModifierStatus() {
 		if (fHyperlinkKeyModifierStatus == null)
 		fHyperlinkKeyModifierStatus= new StatusInfo();
@@ -1034,14 +1034,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	/**
 	 * Computes the state mask for the given modifier string.
-	 * 
+	 *
 	 * @param modifiers	the string with the modifiers, separated by '+', '-', ';', ',' or '.'
 	 * @return the state mask or -1 if the input is invalid
 	 */
 	private static final int computeStateMask(String modifiers) {
 		if (modifiers == null)
 			return -1;
-		
+
 		if (modifiers.length() == 0)
 			return SWT.NONE;
 
@@ -1055,18 +1055,18 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 		return stateMask;
 	}
-	
+
 	/**
 	 * Maps the localized modifier name to a code in the same
 	 * manner as #findModifier.
-	 * 
+	 *
 	 * @param modifierName the modifier name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
 	 */
 	private static final int findLocalizedModifier(String modifierName) {
 		if (modifierName == null)
 			return 0;
-		
+
 		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
 			return SWT.CTRL;
 		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
@@ -1082,7 +1082,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	/**
 	 * Returns the modifier string for the given SWT modifier
 	 * modifier bits.
-	 * 
+	 *
 	 * @param stateMask	the SWT modifier bits
 	 * @return the modifier string
 	 */
@@ -1096,14 +1096,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			modifierString= appendModifierString(modifierString, SWT.SHIFT);
 		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
 			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
-		
+
 		return modifierString;
 	}
-	
+
 	/**
 	 * Appends to modifier string of the given SWT modifier bit
 	 * to the given modifierString.
-	 * 
+	 *
 	 * @param modifierString	the modifier string
 	 * @param modifier			an int with SWT modifier bit
 	 * @return the concatenated modifier string
@@ -1114,6 +1114,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		String newModifierString= Action.findModifierString(modifier);
 		if (modifierString.length() == 0)
 			return newModifierString;
-		return NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_concatModifierStrings, new String[] {modifierString, newModifierString}); 
+		return NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_concatModifierStrings, new String[] {modifierString, newModifierString});
 	}
 }

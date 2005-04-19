@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IDocument;
 
 /**
  * Adapts a {@link org.eclipse.swt.widgets.Text} to an {@link org.eclipse.jface.contentassist.IContentAssistSubjectControl}.
- * 
+ *
  * @see org.eclipse.swt.widgets.Text
  * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
@@ -42,12 +42,12 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	 * The document backing this adapter's text widget.
 	 */
 	private class InternalDocument extends Document {
-	
+
 		/**
 		 * Updates this document with changes in this adapter's text widget.
 		 */
 		private ModifyListener fModifyListener;
-		
+
 		private InternalDocument() {
 			super(fText.getText());
 			fModifyListener= new ModifyListener() {
@@ -60,7 +60,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 			};
 			fText.addModifyListener(fModifyListener);
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.text.AbstractDocument#replace(int, int, java.lang.String)
 		 */
@@ -76,10 +76,10 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	private Text fText;
 	/** The modify listeners. */
 	private HashMap fModifyListeners= new HashMap();
-	
+
 	/**
 	 * Creates a content assist subject control adapter for the given text widget.
-	 * 
+	 *
 	 * @param text the text widget to adapt
 	 */
 	public TextContentAssistSubjectAdapter(Text text) {
@@ -145,7 +145,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		}
 		return document;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
 	 */
@@ -172,10 +172,10 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 			 */
 			public void handleEvent(Event e) {
 				selectionListener.widgetSelected(new SelectionEvent(e));
-	
+
 			}
 		};
-		fText.addListener(SWT.Modify, listener); 
+		fText.addListener(SWT.Modify, listener);
 		fModifyListeners.put(selectionListener, listener);
 		return true;
 	}

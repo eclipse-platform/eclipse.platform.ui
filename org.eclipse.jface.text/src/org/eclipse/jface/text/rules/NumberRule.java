@@ -18,7 +18,7 @@ import org.eclipse.jface.text.Assert;
  * An implementation of <code>IRule</code> detecting a numerical value.
  */
 public class NumberRule implements IRule {
-	
+
 	/** Internal setting for the uninitialized column constraint */
 	protected static final int UNDEFINED= -1;
 	/** The token to be returned when this rule is successful */
@@ -39,7 +39,7 @@ public class NumberRule implements IRule {
 
 	/**
 	 * Sets a column constraint for this rule. If set, the rule's token
-	 * will only be returned if the pattern is detected starting at the 
+	 * will only be returned if the pattern is detected starting at the
 	 * specified column. If the column is smaller then 0, the column
 	 * constraint is considered removed.
 	 *
@@ -65,7 +65,7 @@ public class NumberRule implements IRule {
 				return fToken;
 			}
 		}
-		
+
 		scanner.unread();
 		return Token.UNDEFINED;
 	}

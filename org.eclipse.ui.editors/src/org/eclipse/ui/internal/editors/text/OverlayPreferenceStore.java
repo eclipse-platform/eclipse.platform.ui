@@ -19,35 +19,35 @@ import org.eclipse.jface.text.Assert;
 
 /**
  * An overlaying preference store.
- * 
+ *
  * @since 2.1
  */
 class OverlayPreferenceStore  implements IPreferenceStore {
-	
+
 
 	/**
 	 * Descriptor used to denote data types.
-	 */	
+	 */
 	public static final class TypeDescriptor {
 		private TypeDescriptor() {
 		}
 	}
-	
+
 	public static final TypeDescriptor BOOLEAN= new TypeDescriptor();
 	public static final TypeDescriptor DOUBLE= new TypeDescriptor();
 	public static final TypeDescriptor FLOAT= new TypeDescriptor();
 	public static final TypeDescriptor INT= new TypeDescriptor();
 	public static final TypeDescriptor LONG= new TypeDescriptor();
 	public static final TypeDescriptor STRING= new TypeDescriptor();
-	
+
 	/**
 	 * Data structure for the overlay key.
 	 */
 	public static class OverlayKey {
-		
+
 		TypeDescriptor fDescriptor;
 		String fKey;
-		
+
 		public OverlayKey(TypeDescriptor descriptor, String key) {
 			fDescriptor= descriptor;
 			fKey= key;
@@ -56,20 +56,20 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 
 	/*
 	 * @see IPropertyChangeListener
-	 */	
+	 */
 	private class PropertyListener implements IPropertyChangeListener {
-				
+
 		/*
 		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			OverlayKey key= findOverlayKey(event.getProperty());
 			if (key != null)
-				propagateProperty(fParent, key, fStore); 
+				propagateProperty(fParent, key, fStore);
 		}
 	}
-	
-	
+
+
 	/** The parent preference store. */
 	private IPreferenceStore fParent;
 	/** This store. */
@@ -79,23 +79,23 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	/** The property listener. */
 	private PropertyListener fPropertyListener;
 	private boolean fLoaded;
-	
+
 
 	/**
 	 * Creates and returns a new overlay preference store.
-	 * 
+	 *
 	 * @param parent the parent preference store
 	 * @param overlayKeys the overlay keys
-	 */	
+	 */
 	public OverlayPreferenceStore(IPreferenceStore parent, OverlayKey[] overlayKeys) {
 		fParent= parent;
 		fOverlayKeys= overlayKeys;
 		fStore= new PreferenceStore();
 	}
-	
+
 	/**
 	 * Tries to find and return the overlay key for the given preference key string.
-	 * 
+	 *
 	 * @param key the preference key string
 	 * @return the overlay key or <code>null</code> if none can be found
 	 */
@@ -106,11 +106,11 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Tells whether the given preference key string is
 	 * covered by this overlay store.
-	 * 
+	 *
 	 * @param key the preference key string
 	 * @return <code>true</code> if this overlay store covers the given key
 	 */
@@ -120,41 +120,41 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 
 	/**
 	 * Propagates the given overlay key from the orgin to the target preference store.
-	 * 
+	 *
 	 * @param orgin the source preference store
 	 * @param key the overlay key
 	 * @param target the preference store to which the key is propagated
-	 */	
+	 */
 	private void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
-		
+
 		if (orgin.isDefault(key.fKey)) {
 			if (!target.isDefault(key.fKey))
 				target.setToDefault(key.fKey);
 			return;
 		}
-		
+
 		TypeDescriptor d= key.fDescriptor;
 		if (BOOLEAN == d) {
-			
+
 			boolean originValue= orgin.getBoolean(key.fKey);
 			boolean targetValue= target.getBoolean(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-				
+
 		} else if (DOUBLE == d) {
-			
+
 			double originValue= orgin.getDouble(key.fKey);
 			double targetValue= target.getDouble(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-		
+
 		} else if (FLOAT == d) {
-			
+
 			float originValue= orgin.getFloat(key.fKey);
 			float targetValue= target.getFloat(key.fKey);
 			if (targetValue != originValue)
 				target.setValue(key.fKey, originValue);
-				
+
 		} else if (INT == d) {
 
 			int originValue= orgin.getInt(key.fKey);
@@ -181,15 +181,15 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 
 	/**
 	 * Propagates all overlay keys from this store to the parent store.
-	 */	
+	 */
 	public void propagate() {
 		for (int i= 0; i < fOverlayKeys.length; i++)
 			propagateProperty(fStore, fOverlayKeys[i], fParent);
 	}
-	
+
 	/**
 	 * Loads the given key from the orgin into the target.
-	 * 
+	 *
 	 * @param orgin the source preference store
 	 * @param key the overlay key
 	 * @param target the preference store to which the key is propagated
@@ -198,60 +198,60 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target, boolean forceInitialization) {
 		TypeDescriptor d= key.fDescriptor;
 		if (BOOLEAN == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, true);
 			target.setValue(key.fKey, orgin.getBoolean(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultBoolean(key.fKey));
-			
+
 		} else if (DOUBLE == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1.0D);
 			target.setValue(key.fKey, orgin.getDouble(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultDouble(key.fKey));
-			
+
 		} else if (FLOAT == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1.0F);
 			target.setValue(key.fKey, orgin.getFloat(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultFloat(key.fKey));
-			
+
 		} else if (INT == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1);
 			target.setValue(key.fKey, orgin.getInt(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultInt(key.fKey));
-			
+
 		} else if (LONG == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, 1L);
 			target.setValue(key.fKey, orgin.getLong(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultLong(key.fKey));
-			
+
 		} else if (STRING == d) {
-			
+
 			if (forceInitialization)
 				target.setValue(key.fKey, "1"); //$NON-NLS-1$
 			target.setValue(key.fKey, orgin.getString(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultString(key.fKey));
-			
+
 		}
 	}
 
 	/**
 	 * Loads the values from the parent into this store.
-	 */	
+	 */
 	public void load() {
 		for (int i= 0; i < fOverlayKeys.length; i++)
 			loadProperty(fParent, fOverlayKeys[i], fStore, true);
-		
+
 		fLoaded= true;
 	}
-	
+
 	/**
 	 * Loads the default values.
 	 */
@@ -262,14 +262,14 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 
 	/**
 	 * Starts to listen for changes.
-	 */	
+	 */
 	public void start() {
 		if (fPropertyListener == null) {
 			fPropertyListener= new PropertyListener();
 			fParent.addPropertyChangeListener(fPropertyListener);
 		}
 	}
-	
+
 	/**
 	 * Stops to listen for changes.
 	 */
@@ -279,21 +279,21 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 			fPropertyListener= null;
 		}
 	}
-	
+
 	/*
 	 * @see IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.addPropertyChangeListener(listener);
 	}
-	
+
 	/*
 	 * @see IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fStore.removePropertyChangeListener(listener);
 	}
-	
+
 	/*
 	 * @see IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
@@ -307,7 +307,7 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 	public boolean contains(String name) {
 		return fStore.contains(name);
 	}
-	
+
 	/*
 	 * @see IPreferenceStore#getBoolean(java.lang.String)
 	 */
@@ -516,31 +516,31 @@ class OverlayPreferenceStore  implements IPreferenceStore {
 		if (covers(name))
 			fStore.setValue(name, value);
 	}
-	
+
 	/**
 	 * The keys to add to the list of overlay keys.
 	 * <p>
-	 * Note: This method must be called before {@link #load()} is called. 
+	 * Note: This method must be called before {@link #load()} is called.
 	 * </p>
-	 * 
+	 *
 	 * @param keys
 	 * @since 3.0
 	 */
 	public void addKeys(OverlayKey[] keys) {
 		Assert.isTrue(!fLoaded);
 		Assert.isNotNull(keys);
-		
+
 		int overlayKeysLength= fOverlayKeys.length;
 		OverlayKey[] result= new OverlayKey[keys.length + overlayKeysLength];
 
 		for (int i= 0, length= overlayKeysLength; i < length; i++)
 			result[i]= fOverlayKeys[i];
-		
+
 		for (int i= 0, length= keys.length; i < length; i++)
 			result[overlayKeysLength + i]= keys[i];
-		
+
 		fOverlayKeys= result;
-		
+
 		if (fLoaded)
 			load();
 	}

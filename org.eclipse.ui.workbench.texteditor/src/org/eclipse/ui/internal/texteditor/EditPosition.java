@@ -17,7 +17,7 @@ import org.eclipse.ui.IEditorInput;
 
 /**
  * Data structure representing an edit position.
- * 
+ *
  * @since 2.1
  */
 public final class EditPosition {
@@ -28,7 +28,7 @@ public final class EditPosition {
 	private final String fEditorId;
 	/** The position */
 	private final Position fPosition;
-	
+
 	/**
 	 * Creates a new edit position.
 	 * @param editorInput the editor input
@@ -63,7 +63,7 @@ public final class EditPosition {
 
 	/**
 	 * Returns the the position.
-	 * 
+	 *
 	 * @return the position
 	 */
 	Position getPosition() {

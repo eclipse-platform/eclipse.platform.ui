@@ -24,17 +24,17 @@ import org.eclipse.jface.text.Region;
 
 /**
  * URL hyperlink detector.
- * 
+ *
  * @since 3.1
  */
 public class URLHyperlinkDetector implements IHyperlinkDetector {
 
 	private ITextViewer fTextViewer;
 
-	
+
 	/**
 	 * Creates a new URL hyperlink detector.
-	 *  
+	 *
 	 * @param textViewer the text viewer in which to detect the hyperlink
 	 */
 	public URLHyperlinkDetector(ITextViewer textViewer) {
@@ -52,11 +52,11 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		IDocument document= fTextViewer.getDocument();
 
 		int offset= region.getOffset();
-		
+
 		String urlString= null;
 		if (document == null)
 			return null;
-		
+
 		IRegion lineInfo;
 		String line;
 		try {
@@ -65,15 +65,15 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		} catch (BadLocationException ex) {
 			return null;
 		}
-		
+
 		int offsetInLine= offset - lineInfo.getOffset();
-		
+
 		int urlSeparatorOffset= line.indexOf("://"); //$NON-NLS-1$
 		if (urlSeparatorOffset < 0)
 			return null;
-		
+
 		boolean startDoubleQuote= false;
-		
+
 		// URL protocol (left to "://")
 		int urlOffsetInLine= urlSeparatorOffset;
 		char ch;
@@ -85,16 +85,16 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 			startDoubleQuote= ch == '"';
 		} while (!Character.isWhitespace(ch) && !startDoubleQuote);
 		urlOffsetInLine++;
-		
+
 		// Right to "://"
 		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3));
 		if (!tokenizer.hasMoreTokens())
 			return null;
-		
+
 		int urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
 		if (offsetInLine < urlOffsetInLine || offsetInLine > urlOffsetInLine + urlLength)
 			return null;
-		
+
 		if (startDoubleQuote) {
 			int endOffset= -1;
 			int nextDoubleQuote= line.indexOf('"', urlOffsetInLine);
@@ -108,7 +108,7 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 			if (endOffset != -1)
 				urlLength= endOffset - urlOffsetInLine;
 		}
-		
+
 		// Set and validate URL string
 		try {
 			urlString= line.substring(urlOffsetInLine, urlOffsetInLine + urlLength);
@@ -117,7 +117,7 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 			urlString= null;
 			return null;
 		}
-		
+
 		IRegion urlRegion= new Region(lineInfo.getOffset() + urlOffsetInLine, urlLength);
 		return new IHyperlink[] {new URLHyperlink(urlRegion, urlString)};
 	}

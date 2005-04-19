@@ -32,28 +32,28 @@ import org.eclipse.jface.text.Region;
  * @since 2.0
  */
 public class MonoReconciler extends AbstractReconciler {
-	
-	
+
+
 	/** The reconciling strategy. */
 	private IReconcilingStrategy fStrategy;
-	
-	
+
+
 	/**
 	 * Creates a new reconciler that uses the same reconciling strategy to
 	 * reconcile its document independent of the type of the document's contents.
-	 * 
+	 *
 	 * @param strategy the reconciling strategy to be used
 	 * @param isIncremental the indication whether strategy is incremental or not
-	 */ 
+	 */
 	public MonoReconciler(IReconcilingStrategy strategy, boolean isIncremental) {
 		super();
-		
+
 		Assert.isNotNull(strategy);
-		
+
 		fStrategy= strategy;
 		setIsIncrementalReconciler(isIncremental);
 	}
-		
+
 	/*
 	 * @see IReconciler#getReconcilingStrategy(String)
 	 */
@@ -61,28 +61,28 @@ public class MonoReconciler extends AbstractReconciler {
 		Assert.isNotNull(contentType);
 		return fStrategy;
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#process(DirtyRegion)
 	 */
 	protected void process(DirtyRegion dirtyRegion) {
-		
+
 		if(dirtyRegion != null)
 			fStrategy.reconcile(dirtyRegion, dirtyRegion);
 		else {
 			IDocument document= getDocument();
-			if (document != null)	
+			if (document != null)
 				fStrategy.reconcile(new Region(0, document.getLength()));
 		}
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
 	 */
 	protected void reconcilerDocumentChanged(IDocument document) {
 		fStrategy.setDocument(document);
-	}	
-	
+	}
+
 	/*
 	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
 	 */
@@ -93,7 +93,7 @@ public class MonoReconciler extends AbstractReconciler {
 			extension.setProgressMonitor(monitor);
 		}
 	}
-	
+
 	/*
 	 * @see AbstractReconciler#initialProcess()
 	 */

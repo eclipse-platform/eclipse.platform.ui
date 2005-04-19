@@ -51,24 +51,24 @@ import org.eclipse.ui.commands.ExecutionException;
  * Operation handler for a file buffer.
  * <p>
  * This class may be instantiated or be subclassed.</p>
- * 
+ *
  * @since 3.1
  */
 public class FileBufferOperationHandler extends AbstractHandler {
-	
+
 	private IFileBufferOperation fFileBufferOperation;
 	private IWorkbenchWindow fWindow;
 	private IResource[] fResources;
 	private IPath fLocation;
-	
+
 	public FileBufferOperationHandler(IFileBufferOperation fileBufferOperation) {
 		fFileBufferOperation= fileBufferOperation;
 	}
-	
+
 	/**
 	 * Initializes this file buffer operation handler with the given resources and the given location. The array of resources
 	 * is adopted by this handler and may not be modified by clients after that method has been called.
-	 * 
+	 *
 	 * @param resources the resources to be adopted
 	 * @param location the location
 	 */
@@ -88,33 +88,33 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	public Object execute(Map parameterValuesByName) throws ExecutionException {
 		computeSelectedResources();
 		try {
-			
+
 			if (fResources != null && fResources.length > 0) {
 				IFile[] files= collectFiles(fResources);
 				if (files != null && files.length > 0)
 					doRun(files, null, fFileBufferOperation);
 			} else if (fLocation != null)
 				doRun(null, fLocation, fFileBufferOperation);
-			
+
 			// Standard return value. DO NOT CHANGE.
 			return null;
-			
+
 		} finally {
 			fResources= null;
 			fLocation= null;
 		}
 	}
-	
+
 	protected final void computeSelectedResources() {
-		
+
 		if (fResources != null || fLocation != null)
 			return;
-		
-		ISelection selection= getSelection();	
+
+		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
 			ArrayList resources= new ArrayList(structuredSelection.size());
-			
+
 			Iterator e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
@@ -127,10 +127,10 @@ public class FileBufferOperationHandler extends AbstractHandler {
 						resources.add(adapter);
 				}
 			}
-			
+
 			if (!resources.isEmpty())
 				fResources= (IResource[]) resources.toArray(new IResource[resources.size()]);
-			
+
 		} else if (selection instanceof ITextSelection) {
 			IWorkbenchWindow window= getWorkbenchWindow();
 			if (window != null) {
@@ -152,20 +152,20 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			}
 		}
 	}
-	
+
 	protected final ISelection getSelection() {
 		IWorkbenchWindow window= getWorkbenchWindow();
 		if (window != null)
 			return window.getSelectionService().getSelection();
 		return null;
 	}
-	
+
 	protected final IWorkbenchWindow getWorkbenchWindow() {
 		if (fWindow == null)
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return fWindow;
 	}
-	
+
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set files= new HashSet();
 		for (int i= 0; i < resources.length; i++) {
@@ -175,14 +175,14 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		}
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
-	
+
 	protected final void doRun(final IFile[] files, final IPath location, final IFileBufferOperation fileBufferOperation) {
-		Job job= new Job(fileBufferOperation.getOperationName()) { 
+		Job job= new Job(fileBufferOperation.getOperationName()) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
-				
+
 				try {
-					
+
 					int ticks= 100;
 					monitor.beginTask(fFileBufferOperation.getOperationName(), ticks);
 					try {
@@ -192,7 +192,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 							locations= generateLocations(files, new SubProgressMonitor(monitor, 30));
 						} else
 							locations= new IPath[] { location };
-						
+
 						if (locations != null && locations.length > 0) {
 							FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
 							runner.execute(locations, fileBufferOperation, new SubProgressMonitor(monitor, ticks));
@@ -201,7 +201,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 					} finally {
 						monitor.done();
 					}
-					
+
 				} catch (OperationCanceledException e) {
 					status= new Status(IStatus.CANCEL, EditorsUI.PLUGIN_ID, IStatus.CANCEL, "", null); //$NON-NLS-1$
 				} catch (CoreException e) {
@@ -210,18 +210,18 @@ public class FileBufferOperationHandler extends AbstractHandler {
 				return status;
 			}
 		};
-		
+
 		job.setUser(true);
 		job.schedule();
 	}
-	
+
 	protected final Shell getShell() {
 		IWorkbenchWindow window= getWorkbenchWindow();
 		return window == null ? null : window.getShell();
 	}
-	
+
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
-		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);  
+		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);
 		try {
 			Set locations= new HashSet();
 			for (int i= 0; i < files.length; i++) {
@@ -231,12 +231,12 @@ public class FileBufferOperationHandler extends AbstractHandler {
 				progressMonitor.worked(1);
 			}
 			return (IPath[]) locations.toArray(new IPath[locations.size()]);
-			
+
 		} finally {
 			progressMonitor.done();
 		}
 	}
-	
+
 	protected boolean isAcceptableLocation(IPath location) {
 		return true;
 	}

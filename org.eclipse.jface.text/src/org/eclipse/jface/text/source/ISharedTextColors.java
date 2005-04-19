@@ -20,11 +20,11 @@ import org.eclipse.swt.graphics.RGB;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.1
  */
 public interface ISharedTextColors {
-		
+
 	/**
 	 * Returns the color object for the value represented by the given
 	 * <code>RGB</code> object.
@@ -32,8 +32,8 @@ public interface ISharedTextColors {
 	 * @param rgb the RBG color specification
 	 * @return the color object for the given RGB value
 	 */
-	Color getColor(RGB rgb);	
-	
+	Color getColor(RGB rgb);
+
 	/**
 	 * Tells this object to dispose all its managed colors.
 	 */

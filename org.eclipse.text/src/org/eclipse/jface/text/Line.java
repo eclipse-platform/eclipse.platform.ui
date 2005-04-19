@@ -17,14 +17,14 @@ package org.eclipse.jface.text;
  * and being closed with a particular line delimiter.
  */
 class Line implements IRegion {
-	
+
 	/** The offset of the line */
 	public int offset;
 	/** The length of the line */
 	public int length;
 	/** The delimiter of this line */
 	public String delimiter;
-	
+
 	/**
 	 * Creates a new Line.
 	 *
@@ -37,7 +37,7 @@ class Line implements IRegion {
 		this.length= (end - offset) +1;
 		this.delimiter= delimiter;
 	}
-	
+
 	/**
 	 * Creates a new Line.
 	 *
@@ -49,14 +49,14 @@ class Line implements IRegion {
 		this.length= length;
 		this.delimiter= null;
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.IRegion#getOffset()
 	 */
 	public int getOffset() {
 		return offset;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IRegion#getLength()
 	 */
@@ -64,5 +64,5 @@ class Line implements IRegion {
 		return length;
 	}
 }
-	
-	
+
+

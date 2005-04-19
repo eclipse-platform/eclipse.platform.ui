@@ -14,15 +14,15 @@ import org.eclipse.jface.text.Assert;
 
 
 /* package */ class TreeIterationInfo {
-	
+
 	interface Visitor {
 		void visit(TextEdit edit);
 	}
-	
-	private int fMark= -1;		
+
+	private int fMark= -1;
 	private TextEdit[][] fEditStack= new TextEdit[10][];
 	private int[] fIndexStack= new int[10];
-	
+
 	public int getSize() {
 		return fMark + 1;
 	}
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.Assert;
 			fEditStack= t1;
 			int[] t2= new int[fEditStack.length];
 			System.arraycopy(fIndexStack, 0, t2, 0, fIndexStack.length);
-			fIndexStack= t2; 
+			fIndexStack= t2;
 		}
 		fEditStack[fMark]= edits;
 		fIndexStack[fMark]= -1;

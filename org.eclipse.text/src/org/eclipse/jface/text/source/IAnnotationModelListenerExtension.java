@@ -9,18 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
- 
+
 
 /**
  * Extension interface for {@link IAnnotationModelListener}. Introduces a
  * notification mechanism that notifies the user by means of <code>AnnotationModelEvent</code>s.
  * Thus, more detailed information can be sent to the listener. This mechanism replaces the original notification
  * mechanism of <code>IAnnotationModelListener</code>.
- * 
+ *
  * @since 2.0
  */
 public interface IAnnotationModelListenerExtension {
-	
+
 	/**
 	 * Called if a model change occurred on the given model.
 	 *

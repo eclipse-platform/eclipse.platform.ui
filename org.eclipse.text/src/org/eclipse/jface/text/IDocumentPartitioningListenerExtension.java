@@ -11,25 +11,25 @@
 
 package org.eclipse.jface.text;
 
- 
+
 /**
  * Extension interface for
  * {@link org.eclipse.jface.text.IDocumentPartitioningListener}.
  * <p>
  * Replaces the original notification mechanism by telling the listener the
  * minimal region that comprises all partitioning changes.
- * 
+ *
  * @see org.eclipse.jface.text.IDocumentPartitionerExtension
  * @since 2.0
  */
 public interface IDocumentPartitioningListenerExtension {
-		
+
 	/**
 	 * The partitioning of the given document changed in the given region.
 	 * <p>
 	 * In version 3.0, this method has been replaced with
 	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}.
-	 * 
+	 *
 	 * @param document the document whose partitioning changed
 	 * @param region the region in which the partitioning changed
 	 * @see IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)

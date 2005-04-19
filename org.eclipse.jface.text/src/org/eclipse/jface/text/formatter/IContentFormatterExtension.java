@@ -39,7 +39,7 @@ import org.eclipse.jface.text.IDocument;
  * Note that in context based mode the content formatter is fully reentrant, but not
  * thread-safe.
  * <p>
- * 
+ *
  * @see IFormattingContext
  * @see FormattingContextProperties
  * @since 3.0
@@ -66,7 +66,7 @@ public interface IContentFormatterExtension {
 	 * content type and formats the partition with the correct formatting
 	 * strategy.
 	 * </li>
-	 * 
+	 *
 	 * @param document
 	 *                  The document to be formatted
 	 * @param context

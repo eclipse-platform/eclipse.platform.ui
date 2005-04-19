@@ -22,11 +22,11 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * is considered text.
  * <p>
  * Clients are not supposed to implement that interface.
- * 
+ *
  * @since 3.0
  */
 public interface ITextFileBufferManager extends IFileBufferManager {
-	
+
 	/**
 	 * Returns the text file buffer managed for the file at the given location
 	 * or <code>null</code> if either there is no such text file buffer.
@@ -36,20 +36,20 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * not resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location
 	 * @return the text file buffer managed for that location or <code>null</code>
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location);
-	
+
 	/**
 	 * Returns the default encoding that is used to read the contents of text files
 	 * if no other encoding is specified.
-	 * 
+	 *
 	 * @return the default text file encoding
 	 */
 	String getDefaultEncoding();
-	
+
 	/**
 	 * Creates a new empty document. The document is set up in the same way as
 	 * it would be used in a text file buffer for a file at the given location.
@@ -59,12 +59,12 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * not resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location used to set up the newly created document
 	 * @return a new empty document
 	 */
 	IDocument createEmptyDocument(IPath location);
-	
+
 	/**
 	 * Creates a new annotation for the given location.
 	 * <p>
@@ -73,12 +73,12 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location used to create the new annotation model
 	 * @return the newly created annotation model
 	 */
 	IAnnotationModel createAnnotationModel(IPath location);
-	
+
 	/**
 	 * Returns whether a file at the given location is or can be considered a
 	 * text file. If the file exists, the concrete content type of the file is
@@ -93,7 +93,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location to check
 	 * @return <code>true</code> if the location is a text file location
 	 * @since 3.1

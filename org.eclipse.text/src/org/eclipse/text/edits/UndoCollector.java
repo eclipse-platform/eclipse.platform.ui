@@ -22,32 +22,32 @@ import org.eclipse.jface.text.IDocumentListener;
 	protected UndoEdit undo;
 	private int fOffset;
 	private int fLength;
-	
+
 	public UndoCollector(TextEdit root) {
 		fOffset= root.getOffset();
 		fLength= root.getLength();
 	}
-	
+
 	public void connect(IDocument document) {
 		document.addDocumentListener(this);
 		undo= new UndoEdit();
 	}
-	
+
 	public void disconnect(IDocument document) {
 		if (undo != null) {
 			document.removeDocumentListener(this);
 			undo.defineRegion(fOffset, fLength);
 		}
 	}
-	
+
 	public void documentChanged(DocumentEvent event) {
 		fLength+= getDelta(event);
 	}
-	
+
 	private static int getDelta(DocumentEvent event) {
 		String text= event.getText();
 		return text == null ? -event.getLength() : (text.length() - event.getLength());
-	}		
+	}
 
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		int offset= event.getOffset();

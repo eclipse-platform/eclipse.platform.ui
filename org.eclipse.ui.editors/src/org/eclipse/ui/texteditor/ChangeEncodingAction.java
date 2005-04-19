@@ -47,13 +47,13 @@ import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
  * </ul>
  * This class may be instantiated but is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public class ChangeEncodingAction extends TextEditorAction {
 
 	private static final int APPLY_ID= IDialogConstants.OK_ID + IDialogConstants.CANCEL_ID + 1;
-	
+
 	private String fDialogTitle;
 	private static final String ENCODING_PREF_KEY= "encoding"; //$NON-NLS-1$
 
@@ -63,21 +63,21 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
 	public ChangeEncodingAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
-		
+
 		String key= "dialog.title"; //$NON-NLS-1$;
 		if (prefix != null && prefix.length() > 0)
 			key= prefix + key;
 
-		fDialogTitle= getString(bundle, key, null); 
+		fDialogTitle= getString(bundle, key, null);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -86,14 +86,14 @@ public class ChangeEncodingAction extends TextEditorAction {
 		final Shell parentShell= getTextEditor().getSite().getShell();
 		final IEncodingSupport encodingSupport= getEncodingSupport();
 		if (resource == null && encodingSupport == null) {
-			MessageDialog.openInformation(parentShell, fDialogTitle, TextEditorMessages.ChangeEncodingAction_message_noEncodingSupport); 
+			MessageDialog.openInformation(parentShell, fDialogTitle, TextEditorMessages.ChangeEncodingAction_message_noEncodingSupport);
 			return;
 		}
-		
+
 		Dialog dialog= new Dialog(parentShell) {
 			private AbstractEncodingFieldEditor fEncodingEditor;
 			private IPreferenceStore store= null;
-			
+
 			/*
 			 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 			 */
@@ -101,7 +101,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 				super.configureShell(newShell);
 				newShell.setText(fDialogTitle);
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 			 */
@@ -111,18 +111,18 @@ public class ChangeEncodingAction extends TextEditorAction {
 					composite.dispose();
 					composite= new Composite(parent, SWT.NONE);
 				}
-				
+
 				GridLayout layout= new GridLayout();
 				layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 				layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 				layout.verticalSpacing= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 				layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 				parent.setLayout(layout);
-				
+
 				GridData data = new GridData(GridData.FILL_BOTH);
 				composite.setLayoutData(data);
 				composite.setFont(parent.getFont());
-				
+
 				if (resource != null) {
 					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
 				} else {
@@ -134,35 +134,35 @@ public class ChangeEncodingAction extends TextEditorAction {
 					if (encoding != null)
 						store.setValue(ENCODING_PREF_KEY, encoding);
 				}
-				
+
 				DialogPage page= new MessageDialogPage((Composite)composite) {
 					public void setErrorMessage(String newMessage) {
 						super.setErrorMessage(newMessage);
 						setButtonEnabledState(IDialogConstants.OK_ID, newMessage == null);
 						setButtonEnabledState(APPLY_ID, newMessage == null);
 					}
-					
+
 					private void setButtonEnabledState(int id, boolean state) {
 						Button button= getButton(id);
 						if (button != null)
 							button.setEnabled(state);
 					}
 				};
-				
+
 				fEncodingEditor.setPage(page);
 				fEncodingEditor.load();
-				
+
 				return composite;
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 			 */
 			protected void createButtonsForButtonBar(Composite parent) {
-				createButton(parent, APPLY_ID, TextEditorMessages.ChangeEncodingAction_button_apply_label, false); 
+				createButton(parent, APPLY_ID, TextEditorMessages.ChangeEncodingAction_button_apply_label, false);
 				super.createButtonsForButtonBar(parent);
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 			 */
@@ -172,7 +172,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 				else
 					super.buttonPressed(buttonId);
 			}
-			
+
 			/*
 			 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 			 */
@@ -180,10 +180,10 @@ public class ChangeEncodingAction extends TextEditorAction {
 				apply();
 				super.okPressed();
 			}
-			
+
 			private void apply() {
 				fEncodingEditor.store();
-				
+
 				if (resource == null) {
 					String encoding= fEncodingEditor.getPreferenceStore().getString(fEncodingEditor.getPreferenceName());
 					encodingSupport.setEncoding(encoding);
@@ -192,29 +192,29 @@ public class ChangeEncodingAction extends TextEditorAction {
 		};
 		dialog.open();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
 		setEnabled((getResource() != null || getEncodingSupport() != null) && !getTextEditor().isDirty());
 	}
-	
+
 	/**
 	 * Gets the resource which is being edited in the editor.
-	 * 
+	 *
 	 * @return the resource being edited or <code>null</code>s
 	 */
 	private IResource getResource() {
 		if (getTextEditor() != null && getTextEditor().getEditorInput() != null)
 			return (IResource)getTextEditor().getEditorInput().getAdapter(IResource.class);
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets the editor's encoding support.
-	 * 
+	 *
 	 * @return the resource being edited or <code>null</code>s
 	 */
 	private IEncodingSupport getEncodingSupport() {

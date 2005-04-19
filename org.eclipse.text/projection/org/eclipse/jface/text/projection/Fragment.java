@@ -19,19 +19,19 @@ import org.eclipse.jface.text.Position;
  * <p>
  * A fragment is a range of the master document that has an image, the so called
  * segment, in a projection document.
- * 
+ *
  * @since 3.0
  */
 public class Fragment extends Position {
-	
+
 	/**
 	 * The corresponding segment of this fragment.
 	 */
 	public Segment segment;
-	
+
 	/**
 	 * Creates a new fragment covering the given range.
-	 * 
+	 *
 	 * @param offset the offset of the fragment
 	 * @param length the length of the fragment
 	 */

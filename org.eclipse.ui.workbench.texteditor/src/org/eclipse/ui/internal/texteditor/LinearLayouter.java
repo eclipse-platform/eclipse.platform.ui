@@ -16,8 +16,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Layout;
 
 /**
- * 
- * 
+ *
+ *
  * @since 3.0
  */
 public class LinearLayouter {

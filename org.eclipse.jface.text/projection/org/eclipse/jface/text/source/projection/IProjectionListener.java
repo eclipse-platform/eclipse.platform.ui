@@ -15,16 +15,16 @@ package org.eclipse.jface.text.source.projection;
  * {@link org.eclipse.jface.text.source.projection.ProjectionViewer} get
  * informed when the projection mode of the viewer gets enabled and when it gets
  * disabled.
- * 
+ *
  * @since 3.0
  */
 public interface IProjectionListener {
-	
+
 	/**
 	 * Tells this listener that projection has been enabled.
 	 */
 	void projectionEnabled();
-	
+
 	/**
 	 * Tells this listener that projection has been disabled.
 	 */

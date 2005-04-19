@@ -16,7 +16,7 @@ import org.eclipse.jface.text.IRegion;
 
 /**
  * A reconciling strategy is used by an reconciler to reconcile a model
- * based on text of a particular content type. It provides methods for 
+ * based on text of a particular content type. It provides methods for
  * incremental as well as non-incremental reconciling.
  * <p>
  * If a reconcile strategy consists of several steps between which
@@ -27,12 +27,12 @@ import org.eclipse.jface.text.IRegion;
  * In order to provide backward compatibility for clients of <code>IReconcilingStrategy</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension} since version 2.0 introducing 
+ * <li>{@link org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension} since version 2.0 introducing
  *		the following functions:
  *			<ul>
  *				<li>usage of a progress monitor</li>
  *				<li>initial reconciling step: if a reconciler runs as periodic activity in the background, this
- *					methods offers the reconciler a chance for initializing its strategies and achieving a 
+ *					methods offers the reconciler a chance for initializing its strategies and achieving a
  *					reconciled state before the periodic activity starts.</li>
  *			</ul>
  * </li>
@@ -40,32 +40,32 @@ import org.eclipse.jface.text.IRegion;
  * </p>
  * <p>
  * This interface must be implemented by clients. Implementers should be
- * registered with a reconciler in order get involved in the reconciling 
+ * registered with a reconciler in order get involved in the reconciling
  * process.
  * </p>
  */
 public interface IReconcilingStrategy {
-	
+
 	/**
 	 * Tells this reconciling strategy on which document it will
-	 * work. This method will be called before any other method 
+	 * work. This method will be called before any other method
 	 * and can be called multiple times. The regions passed to the
-	 * other methods always refer to the most recent document 
+	 * other methods always refer to the most recent document
 	 * passed into this method.
 	 *
 	 * @param document the document on which this strategy will work
 	 */
 	void setDocument(IDocument document);
-	
+
 	/**
 	 * Activates incremental reconciling of the specified dirty region.
 	 * As a dirty region might span multiple content types, the segment of the
-	 * dirty region which should be investigated is also provided to this 
+	 * dirty region which should be investigated is also provided to this
 	 * reconciling strategy. The given regions refer to the document passed into
 	 * the most recent call of {@link #setDocument(IDocument)}.
 	 *
 	 * @param dirtyRegion the document region which has been changed
-	 * @param subRegion the sub region in the dirty region which should be reconciled 
+	 * @param subRegion the sub region in the dirty region which should be reconciled
 	 */
 	void reconcile(DirtyRegion dirtyRegion, IRegion subRegion);
 

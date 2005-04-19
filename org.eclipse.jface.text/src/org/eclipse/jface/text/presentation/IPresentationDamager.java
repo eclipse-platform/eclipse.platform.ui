@@ -32,21 +32,21 @@ import org.eclipse.jface.text.ITypedRegion;
  * {@link org.eclipse.jface.text.rules.DefaultDamagerRepairer}. Implementers
  * should be registered with a presentation reconciler in order get involved in
  * the reconciling process.
- * 
+ *
  * @see IPresentationReconciler
  * @see IDocument
  * @see DocumentEvent
  * @see IPresentationRepairer
  */
 public interface IPresentationDamager {
-	
+
 	/**
 	 * Tells the presentation damager on which document it will work.
 	 *
 	 * @param document the damager's working document
 	 */
 	void setDocument(IDocument document);
-	
+
 	/**
 	 * Returns the damage in the document's presentation caused by the given document change.
 	 * The damage is restricted to the specified partition for which the presentation damager is

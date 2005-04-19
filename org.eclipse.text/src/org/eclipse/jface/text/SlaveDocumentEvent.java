@@ -16,10 +16,10 @@ package org.eclipse.jface.text;
  * document event. It also carries the master document event.
  */
 public class SlaveDocumentEvent extends DocumentEvent {
-	
+
 	/** The master document event */
 	private DocumentEvent fMasterEvent;
-	
+
 	/**
 	 * Creates a new slave document event.
 	 *
@@ -33,7 +33,7 @@ public class SlaveDocumentEvent extends DocumentEvent {
 		super(doc, offset, length, text);
 		fMasterEvent= masterEvent;
 	}
-	
+
 	/**
 	 * Returns this event's master event.
 	 *

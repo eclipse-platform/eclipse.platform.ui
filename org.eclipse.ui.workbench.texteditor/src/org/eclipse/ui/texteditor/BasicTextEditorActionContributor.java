@@ -36,7 +36,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * the same type of editors.
  * <p>
  * If instantiated and used as-is, this contributor connects to all of the workbench defined
- * global editor actions the corresponding actions of the current editor. It also adds addition 
+ * global editor actions the corresponding actions of the current editor. It also adds addition
  * actions for searching and navigation (go to line) as well as a set of status fields.</p>
  * <p>
  * Subclasses may override the following methods:
@@ -50,11 +50,11 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * @see org.eclipse.ui.texteditor.ITextEditorActionConstants
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {
-	
-	
+
+
 	/** The global actions to be connected with editor actions */
 	private final static String[] ACTIONS= {
-		ITextEditorActionConstants.UNDO, 
+		ITextEditorActionConstants.UNDO,
 		ITextEditorActionConstants.REDO,
 		ITextEditorActionConstants.CUT,
 		ITextEditorActionConstants.COPY,
@@ -66,7 +66,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.PROPERTIES,
 		ITextEditorActionConstants.REVERT
 	};
-	
+
 	/**
 	 * Status field definition.
 	 * @since 3.0
@@ -77,7 +77,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		private String actionId;
 		private boolean visible;
 		private int widthInChars;
-		
+
 		private StatusFieldDef(String category, String actionId, boolean visible, int widthInChars) {
 			Assert.isNotNull(category);
 			this.category= category;
@@ -86,42 +86,42 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			this.widthInChars= widthInChars;
 		}
 	}
-	
-	/** 
+
+	/**
 	 * The status fields to be set to the editor
 	 * @since 3.0
 	 */
 	private final static StatusFieldDef[] STATUS_FIELD_DEFS= {
-		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.Editor_FindIncremental_reverse_name.length() + 15), 
+		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_FIND_FIELD, null, false, EditorMessages.Editor_FindIncremental_reverse_name.length() + 15),
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE, null, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE, ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS),
 		new StatusFieldDef(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION, ITextEditorActionConstants.GOTO_LINE, true, StatusLineContributionItem.DEFAULT_WIDTH_IN_CHARS)
 	};
-	
+
 	/**
 	 * The active editor part.
 	 */
 	private IEditorPart fActiveEditorPart;
-	/** 
+	/**
 	 * The find next action.
 	 * @since 2.0
 	 */
 	private RetargetTextEditorAction fFindNext;
-	/** 
+	/**
 	 * The find previous action.
 	 * @since 2.0
 	 */
-	private RetargetTextEditorAction fFindPrevious;	
-	/** 
+	private RetargetTextEditorAction fFindPrevious;
+	/**
 	 * The incremental find action.
 	 * @since 2.0
 	 */
-	private RetargetTextEditorAction fIncrementalFind;	
+	private RetargetTextEditorAction fIncrementalFind;
 	/**
 	 * The reverse incremental find action.
 	 * @since 2.1
 	 */
-	private RetargetTextEditorAction fIncrementalFindReverse;	
+	private RetargetTextEditorAction fIncrementalFindReverse;
 	/**
 	 * The go to line action.
 	 */
@@ -131,13 +131,13 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @since 3.1
 	 */
 	private RetargetTextEditorAction fHippieCompletion;
-	/** 
+	/**
 	 * The map of status fields.
 	 * @since 2.0
 	 */
 	private Map fStatusFields;
-	
-	
+
+
 	/**
 	 * Creates an empty editor action bar contributor. The action bars are
 	 * furnished later via the <code>init</code> method.
@@ -145,27 +145,27 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
 	 */
 	public BasicTextEditorActionContributor() {
-		
+
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext."); //$NON-NLS-1$
-		fFindNext.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT); 
+		fFindNext.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindPrevious."); //$NON-NLS-1$
-		fFindPrevious.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS); 
+		fFindPrevious.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
 		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncremental."); //$NON-NLS-1$
-		fIncrementalFind.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL); 
+		fIncrementalFind.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL);
 		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
 		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
-		
+
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			StatusFieldDef fieldDef= STATUS_FIELD_DEFS[i];
 			fStatusFields.put(fieldDef, new StatusLineContributionItem(fieldDef.category, fieldDef.visible, fieldDef.widthInChars));
 		}
 	}
-	
+
 	/**
 	 * Returns the active editor part.
 	 *
@@ -174,7 +174,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	protected final IEditorPart getActiveEditorPart() {
 		return fActiveEditorPart;
 	}
-	
+
 	/**
 	 * Returns the action registered with the given text editor.
 	 *
@@ -185,20 +185,20 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	protected final IAction getAction(ITextEditor editor, String actionId) {
 		return (editor == null || actionId == null ? null : editor.getAction(actionId));
 	}
-	
+
 	/**
 	 * The method installs the global action handlers for the given text editor.
 	 * <p>
 	 * This method cannot be overridden by subclasses.</p>
-	 * 
+	 *
 	 * @param part the active editor part
 	 * @since 2.0
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
-		
+
 		if (fActiveEditorPart == part)
 			return;
-			
+
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
 			for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
@@ -207,20 +207,20 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		fActiveEditorPart= part;
 		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
-		
+
 		IActionBars actionBars= getActionBars();
 		if (actionBars != null) {
 			for (int i= 0; i < ACTIONS.length; i++)
 				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		}
-		
+
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
 		fIncrementalFind.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL));
 		fIncrementalFindReverse.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		fHippieCompletion.setAction(getAction(editor, ITextEditorActionConstants.HIPPIE_COMPLETION));
-		
+
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
 				StatusLineContributionItem statusField= (StatusLineContributionItem) fStatusFields.get(STATUS_FIELD_DEFS[i]);
@@ -230,21 +230,21 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			}
 		}
 	}
-	
+
 	/**
-	 * The <code>BasicTextEditorActionContributor</code> implementation of this 
-	 * <code>IEditorActionBarContributor</code> method installs the global 
-	 * action handler for the given text editor by calling a private helper 
+	 * The <code>BasicTextEditorActionContributor</code> implementation of this
+	 * <code>IEditorActionBarContributor</code> method installs the global
+	 * action handler for the given text editor by calling a private helper
 	 * method.
 	 * <p>
 	 * Subclasses may extend.</p>
-	 * 
+	 *
 	 * @param part {@inheritDoc}
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
 	}
-	
+
 	/*
 	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
 	 */
@@ -256,8 +256,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFind);
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
-			
-			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_OPEN));			
+
+			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_OPEN));
 			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_GENERATE));
 			final String GENERATE_END= "group.generate.end"; //$NON-NLS-1$
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new GroupMarker(GENERATE_END));
@@ -265,13 +265,13 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 			editMenu.appendToGroup(GENERATE_END, fHippieCompletion);
 		}
-		
+
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fGotoLine);
 		}
 	}
-	
+
 	/*
 	 * @see EditorActionBarContributor#contributeToStatusLine(org.eclipse.jface.action.IStatusLineManager)
 	 * @since 2.0
@@ -281,7 +281,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
 			statusLineManager.add((IContributionItem)fStatusFields.get(STATUS_FIELD_DEFS[i]));
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 * @since 2.0

@@ -18,12 +18,12 @@ package org.eclipse.jface.text.reconciler;
  * This model is not directly used by a {@linkplain org.eclipse.jface.text.reconciler.IReconciler reconciler}
  * or a {@linkplain org.eclipse.jface.text.reconciler.IReconcilingStrategy reconciling strategy}.
  * </p>
- * 
+ *
  * <p>
  * This interface must be implemented by clients that want to use one of
  * their models as a reconcile step's input model.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.reconciler.IReconcileStep#setInputModel(IReconcilableModel)
  * @since 3.0
  */

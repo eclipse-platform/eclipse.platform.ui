@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  * @since 2.1
   */
 public class TextEditorPreferenceConstants {
-	
+
 	/**
 	 * Prevent initialization.
 	 */
@@ -59,7 +59,7 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 3.0,, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_PRINT_MARGIN= "printMargin"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that holds the color used to render the print margin
 	 * (value <code>"printMarginColor"</code>).
@@ -112,7 +112,7 @@ public class TextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls whether the overview ruler shows unknown indicators
- 	 * (value <code>"othersIndicationInOverviewRuler"</code>). 
+ 	 * (value <code>"othersIndicationInOverviewRuler"</code>).
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
@@ -154,7 +154,7 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
@@ -174,7 +174,7 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
 	public final static String EDITOR_WARNING_INDICATION_COLOR= "warningIndicationColor"; //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
@@ -184,7 +184,7 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
 	public final static String EDITOR_INFO_INDICATION_COLOR= "infoIndicationColor"; //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
@@ -219,7 +219,7 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
 	public final static String EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER= "errorIndicationInOverviewRuler"; //$NON-NLS-1$
-	
+
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
@@ -244,14 +244,14 @@ public class TextEditorPreferenceConstants {
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
 	public final static String EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= "searchResultIndicationInOverviewRuler"; //$NON-NLS-1$
-	
+
 	/**
   	* Initializes the given preference store with the default values.
-	 * 
+	 *
   	* @param store the preference store to be initialized
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		
+
 		// set defaults from AbstractDecoratedTextEditor
 		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);
 

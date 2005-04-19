@@ -14,7 +14,7 @@ package org.eclipse.jface.text;
 
 /**
  * Default implementation of {@link org.eclipse.jface.text.IMarkSelection}.
- * 
+ *
  * @since 2.0
  */
 public class MarkSelection implements IMarkSelection {
@@ -25,10 +25,10 @@ public class MarkSelection implements IMarkSelection {
 	private final int fOffset;
 	/** The length of the mark selection. */
 	private final int fLength;
-	
+
 	/**
 	 * Creates a MarkSelection.
-	 * 
+	 *
 	 * @param document the marked document
 	 * @param offset the offset of the mark
 	 * @param length the length of the mark, may be negative if caret before offset
@@ -43,7 +43,7 @@ public class MarkSelection implements IMarkSelection {
 	 * @see IMarkSelection#getDocument()
 	 */
 	public IDocument getDocument() {
-		return fDocument;	
+		return fDocument;
 	}
 
 	/*

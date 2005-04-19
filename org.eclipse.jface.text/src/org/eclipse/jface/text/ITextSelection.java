@@ -37,48 +37,48 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * Clients may implement this interface or use the default implementation
  * provided by {@link org.eclipse.jface.text.TextSelection}.
- * 
+ *
  * @see org.eclipse.jface.text.TextSelection
  */
 public interface ITextSelection extends ISelection {
-	
+
 	/**
 	 * Returns the offset of the selected text.
 	 *
 	 * @return the offset of the selected text
 	 */
 	int getOffset();
-	
+
 	/**
 	 * Returns the length of the selected text.
 	 *
 	 * @return the length of the selected text
 	 */
 	int getLength();
-	
+
 	/**
 	 * Returns number of the line containing the offset of the selected text.
-	 * If the underlying text has been changed between the creation of this 
+	 * If the underlying text has been changed between the creation of this
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
 	 * @return the start line of this selection or <code>-1</code> if there is no valid line information
 	 */
 	int getStartLine();
-	
+
 	/**
 	 * Returns the number of the line containing the last character of the selected text.
-	 * If the underlying text has been changed between the creation of this 
+	 * If the underlying text has been changed between the creation of this
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *
 	 * @return the end line of this selection or <code>-1</code> if there is no valid line information
 	 */
 	int getEndLine();
-	
+
 	/**
 	 * Returns the selected text.
-	 * If the underlying text has been changed between the creation of this 
+	 * If the underlying text has been changed between the creation of this
 	 * selection object and the call of this method, the value returned might
 	 * differ from what it would have been at the point of creation.
 	 *

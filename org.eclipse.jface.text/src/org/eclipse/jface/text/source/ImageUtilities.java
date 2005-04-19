@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Canvas;
  * @since 3.0
  */
 public class ImageUtilities {
-	
+
 	/**
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *
@@ -36,9 +36,9 @@ public class ImageUtilities {
 	 */
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
 		if (image != null) {
-			
+
 			Rectangle bounds= image.getBounds();
-			
+
 			int x= 0;
 			switch(halign) {
 			case SWT.LEFT:
@@ -50,7 +50,7 @@ public class ImageUtilities {
 				x= r.width - bounds.width;
 				break;
 			}
-			
+
 			int y= 0;
 			switch (valign) {
 			case SWT.TOP: {
@@ -67,11 +67,11 @@ public class ImageUtilities {
 				break;
 			}
 			}
-			
+
 			gc.drawImage(image, r.x+x, r.y+y);
 		}
 	}
-	
+
 	/**
 	 * Draws an image aligned inside the given rectangle on the given canvas.
 	 *

@@ -23,14 +23,14 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * This interface is the expected interface for extensions provided for the
  * <code>"org.eclipse.core.filebuffers.annotationModelCreation"</code>
  * extension point.
- * 
+ *
  * @since 3.0
  */
 public interface IAnnotationModelFactory {
-	
+
 	/**
 	 * Creates and returns a new annotation model.
-	 * 
+	 *
 	 * @param location the normalized location
 	 * @return a new annotation model
 	 */

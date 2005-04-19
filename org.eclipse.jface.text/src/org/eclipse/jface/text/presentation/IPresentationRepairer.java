@@ -32,24 +32,24 @@ import org.eclipse.jface.text.TextPresentation;
  * should be registered with a presentation reconciler in order get involved in
  * the reconciling process.
  * </p>
- * 
+ *
  * @see IPresentationReconciler
  * @see IDocument
  * @see org.eclipse.swt.custom.StyleRange
  * @see TextPresentation
  */
 public interface IPresentationRepairer {
-	
-	
+
+
 	/**
 	 * Tells the presentation repairer on which document it will work.
 	 *
 	 * @param document the damager's working document
 	 */
 	void setDocument(IDocument document);
-	
+
 	/**
-	 * Fills the given presentation with the style ranges which when applied to the 
+	 * Fills the given presentation with the style ranges which when applied to the
 	 * presentation reconciler's text viewer repair the  presentational damage described by
 	 * the given region.
 	 *

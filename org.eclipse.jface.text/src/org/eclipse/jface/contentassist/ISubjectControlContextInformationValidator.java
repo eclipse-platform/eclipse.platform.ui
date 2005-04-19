@@ -18,14 +18,14 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  * Extends {@link org.eclipse.jface.text.contentassist.IContextInformationValidator} to
  * allow to install a content assistant on the given
  * {@linkplain org.eclipse.jface.contentassist.IContentAssistSubjectControl content assist subject control}.
- * 
+ *
  * @since 3.0
  */
 public interface ISubjectControlContextInformationValidator extends IContextInformationValidator {
 
 	/**
 	 * Installs this validator for the given context information.
-	 * 
+	 *
 	 * @param info the context information which this validator should check
 	 * @param contentAssistSubjectControl the content assist subject control
 	 * @param offset the document offset for which the information

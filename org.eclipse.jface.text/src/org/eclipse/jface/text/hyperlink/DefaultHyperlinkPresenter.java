@@ -43,7 +43,7 @@ import org.eclipse.jface.text.TextPresentation;
  * The default hyperlink presenter underlines the
  * link and colors the line and the text with
  * the given color.
- * 
+ *
  * @since 3.1
  */
 public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
@@ -60,7 +60,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	 */
 	public final static String HYPERLINK_COLOR= "hyperlinkColor"; //$NON-NLS-1$
 
-	
+
 	/** The text viewer. */
 	private ITextViewer fTextViewer;
 	/** The hand cursor. */
@@ -82,41 +82,41 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	/**
 	 * Creates a new default hyperlink presenter which uses
 	 * {@link #HYPERLINK_COLOR} to read the color from the given preference store.
-	 * 
+	 *
 	 * @param store the preference store
 	 */
 	public DefaultHyperlinkPresenter(IPreferenceStore store) {
 		fPreferenceStore= store;
 		fDisposeColor= true;
 	}
-	
+
 	/**
 	 * Creates a new default hyperlink presenter.
-	 * 
+	 *
 	 * @param color the hyperlink color, to be disposed by the caller
 	 */
 	public DefaultHyperlinkPresenter(Color color) {
 		fDisposeColor= false;
 		fColor= color;
 	}
-	
+
 	/**
 	 * Creates a new default hyperlink presenter.
-	 * 
+	 *
 	 * @param color the hyperlink color, to be disposed by the caller
 	 */
 	public DefaultHyperlinkPresenter(RGB color) {
 		fRGB= color;
 		fDisposeColor= true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#canShowMultipleHyperlinks()
 	 */
 	public boolean canShowMultipleHyperlinks() {
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#activate(org.eclipse.jdt.internal.ui.javaeditor.IHyperlink[])
 	 */
@@ -125,7 +125,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
 		activateCursor();
 	}
-	
+
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#deactivate()
 	 */
@@ -143,7 +143,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		fTextViewer.addTextInputListener(this);
 		if (fTextViewer instanceof ITextViewerExtension4)
 			((ITextViewerExtension4)fTextViewer).addTextPresentationListener(this);
-		
+
 		StyledText text= fTextViewer.getTextWidget();
 		if (text != null && !text.isDisposed()) {
 			if (fPreferenceStore != null)
@@ -151,7 +151,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			else if (fRGB != null)
 				fColor= new Color(text.getDisplay(), fRGB);
 		}
-		
+
 		if (fPreferenceStore != null)
 			fPreferenceStore.addPropertyChangeListener(this);
 	}
@@ -164,13 +164,13 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		IDocument document= fTextViewer.getDocument();
 		if (document != null)
 			document.removeDocumentListener(this);
-		
+
 		if (fColor != null) {
 			if (fDisposeColor)
 				fColor.dispose();
 			fColor= null;
 		}
-		
+
 		if (fCursor != null) {
 			fCursor.dispose();
 			fCursor= null;
@@ -179,16 +179,16 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		if (fTextViewer instanceof ITextViewerExtension4)
 			((ITextViewerExtension4)fTextViewer).removeTextPresentationListener(this);
 		fTextViewer= null;
-		
+
 		if (fPreferenceStore != null)
 			fPreferenceStore.removePropertyChangeListener(this);
 	}
-	
+
 	public void setColor(Color color) {
 		Assert.isNotNull(fTextViewer);
 		fColor= color;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 	 */
@@ -202,14 +202,14 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			textPresentation.mergeStyleRange(styleRange);
 		}
 	}
-	
+
 	private void highlightRegion(IRegion region) {
 
 		if (region.equals(fActiveRegion))
 			return;
 
 		repairRepresentation();
-		
+
 		StyledText text= fTextViewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return;
@@ -221,7 +221,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		else
 			fTextViewer.invalidateTextPresentation();
 	}
-	
+
 	private void activateCursor() {
 		StyledText text= fTextViewer.getTextWidget();
 		if (text == null || text.isDisposed())
@@ -231,37 +231,37 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			fCursor= new Cursor(display, SWT.CURSOR_HAND);
 		text.setCursor(fCursor);
 	}
-	
+
 	private void resetCursor() {
 		StyledText text= fTextViewer.getTextWidget();
 		if (text != null && !text.isDisposed())
 			text.setCursor(null);
-					
+
 		if (fCursor != null) {
 			fCursor.dispose();
 			fCursor= null;
 		}
 	}
 
-	private void repairRepresentation() {			
+	private void repairRepresentation() {
 
 		if (fActiveRegion == null)
 			return;
-		
+
 		int offset= fActiveRegion.getOffset();
 		int length= fActiveRegion.getLength();
 		fActiveRegion= null;
-			
+
 		resetCursor();
-		
+
 		// Invalidate ==> remove applied text presentation
 		if (fTextViewer instanceof ITextViewerExtension2)
 			((ITextViewerExtension2) fTextViewer).invalidateTextPresentation(offset, length);
 		else
 			fTextViewer.invalidateTextPresentation();
-		
+
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -282,11 +282,11 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	public void documentChanged(DocumentEvent event) {
 		if (fRememberedPosition != null) {
 			if (!fRememberedPosition.isDeleted()) {
-				
+
 				event.getDocument().removePosition(fRememberedPosition);
 				fActiveRegion= new Region(fRememberedPosition.getOffset(), fRememberedPosition.getLength());
 				fRememberedPosition= null;
-				
+
 				   StyledText widget= fTextViewer.getTextWidget();
 				if (widget != null && !widget.isDisposed()) {
 					widget.getDisplay().asyncExec(new Runnable() {
@@ -295,7 +295,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 						}
 					});
 				}
-				
+
 			} else {
 				fActiveRegion= null;
 				fRememberedPosition= null;
@@ -322,30 +322,30 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			return;
 		newInput.addDocumentListener(this);
 	}
-	
+
 	/**
 	 * Creates a color from the information stored in the given preference store.
-	 * 
+	 *
 	 * @param store the preference store
 	 * @param key the key
 	 * @param display the display
-	 * @return the color or <code>null</code> if there is no such information available 
+	 * @return the color or <code>null</code> if there is no such information available
 	 */
 	private Color createColor(IPreferenceStore store, String key, Display display) {
-	
-		RGB rgb= null;		
-		
+
+		RGB rgb= null;
+
 		if (store.contains(key)) {
-			
+
 			if (store.isDefault(key))
 				rgb= PreferenceConverter.getDefaultColor(store, key);
 			else
 				rgb= PreferenceConverter.getColor(store, key);
-		
+
 			if (rgb != null)
 				return new Color(display, rgb);
 		}
-		
+
 		return null;
 	}
 
@@ -355,11 +355,11 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!HYPERLINK_COLOR.equals(event.getProperty()))
 			return;
-		
+
 		if (fDisposeColor && fColor != null && !fColor.isDisposed())
 			fColor.dispose();
 		fColor= null;
-		
+
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed())
 			fColor= createColor(fPreferenceStore, HYPERLINK_COLOR, textWidget.getDisplay());

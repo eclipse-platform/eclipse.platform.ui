@@ -31,11 +31,11 @@ import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A "button" of a certain color determined by the color picker.
- * 
+ *
  * @since 2.1
  */
 class ColorEditor {
-	
+
 	/** The extent. */
 	private Point fExtent;
 	/** The image for the push button. */
@@ -46,23 +46,23 @@ class ColorEditor {
 	private Color fColor;
 	/** The image push button which open the color dialog. */
 	private Button fButton;
-	
+
 	/**
 	 * Creates and returns a new color editor.
-	 * 
+	 *
 	 * @param parent the parent composite of this color editor
 	 */
 	public ColorEditor(Composite parent) {
-		
+
 		fButton= new Button(parent, SWT.PUSH);
 		fExtent= computeImageSize(parent);
 		fImage= new Image(parent.getDisplay(), fExtent.x, fExtent.y);
-		
+
 		GC gc= new GC(fImage);
 		gc.setBackground(fButton.getBackground());
 		gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
 		gc.dispose();
-		
+
 		fButton.setImage(fImage);
 		fButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -75,7 +75,7 @@ class ColorEditor {
 				}
 			}
 		});
-		
+
 		fButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				if (fImage != null)  {
@@ -89,61 +89,61 @@ class ColorEditor {
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns the current RGB color value.
-	 * 
+	 *
 	 * @return an rgb with the current color value
 	 */
 	public RGB getColorValue() {
 		return fColorValue;
 	}
-	
+
 	/**
 	 * Sets the current RGB color value.
-	 * 
+	 *
 	 * @param rgb the new value for the rgb color value
 	 */
 	public void setColorValue(RGB rgb) {
 		fColorValue= rgb;
 		updateColorImage();
 	}
-	
+
 	/**
 	 * Returns the image push button.
-	 * 
+	 *
 	 * @return the button which shows the current color as image
 	 */
 	public Button getButton() {
 		return fButton;
 	}
-	
+
 	/**
 	 * Updates the color of the button image.
 	 */
 	protected void updateColorImage() {
-		
+
 		Display display= fButton.getDisplay();
-		
+
 		GC gc= new GC(fImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 		gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y - 4);
-		
+
 		if (fColor != null)
 			fColor.dispose();
-			
+
 		fColor= new Color(display, fColorValue);
 		gc.setBackground(fColor);
 		gc.fillRectangle(1, 3, fExtent.x - 2, fExtent.y - 5);
 		gc.dispose();
-		
+
 		fButton.setImage(fImage);
 	}
-	
-	
+
+
 	/**
 	 * Computes the size for the image.
-	 * 
+	 *
 	 * @param window the window on which to render the image
 	 * @return the point with the image size
 	 */

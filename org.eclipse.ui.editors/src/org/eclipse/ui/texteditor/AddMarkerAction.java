@@ -39,9 +39,9 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for creating a marker of a specified type for the editor's
- * input element based on the editor's selection. If required, the 
+ * input element based on the editor's selection. If required, the
  * action asks the user to provide a marker label. The action is initially
- * associated with a text editor via the constructor, but that can be 
+ * associated with a text editor via the constructor, but that can be
  * subsequently changed using <code>setEditor</code>.
  * <p>
  * The following keys, prepended by the given option prefix,
@@ -57,7 +57,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class AddMarkerAction extends TextEditorAction {
 
-	
+
 	/** The maximum length of an proposed label. */
 	private static final int MAX_LABEL_LENGTH= 80;
 	/** The type for newly created markers. */
@@ -69,18 +69,18 @@ public class AddMarkerAction extends TextEditorAction {
 	/** The prefix used for resource bundle lookup. */
 	private String fPrefix;
 
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param textEditor the text editor
 	 * @param markerType the type of marker to add
-	 * @param askForLabel <code>true</code> if the user should be asked for 
+	 * @param askForLabel <code>true</code> if the user should be asked for
 	 *   a label for the new marker
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 */
@@ -91,7 +91,7 @@ public class AddMarkerAction extends TextEditorAction {
 		fMarkerType= markerType;
 		fAskForLabel= askForLabel;
 	}
-	
+
 	/**
 	 * Returns this action's resource bundle.
 	 *
@@ -100,7 +100,7 @@ public class AddMarkerAction extends TextEditorAction {
 	protected ResourceBundle getResourceBundle() {
 		return fBundle;
 	}
-	
+
 	/**
 	 * Returns this action's resource key prefix.
 	 *
@@ -109,7 +109,7 @@ public class AddMarkerAction extends TextEditorAction {
 	protected String getResourceKeyPrefix() {
 		return fPrefix;
 	}
-	
+
 	/*
 	 * @see IAction#run()
 	 */
@@ -122,30 +122,30 @@ public class AddMarkerAction extends TextEditorAction {
 			if (!askForLabel(attributes))
 				return;
 		}
-		
+
 		try {
 			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
 		} catch (CoreException x) {
-			
-			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-			ILog log= Platform.getLog(bundle);		
+
+			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+			ILog log= Platform.getLog(bundle);
 			log.log(x.getStatus());
-			
+
 			Shell shell= getTextEditor().getSite().getShell();
 			String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-			
+
 			ErrorDialog.openError(shell, title, msg, x.getStatus());
 		}
 	}
-	
+
 	/*
 	 * @see TextEditorAction#update()
 	 */
 	public void update() {
 		setEnabled(getResource() != null);
 	}
-	
+
 	/**
 	 * Asks the user for a marker label. Returns <code>true</code> if a label
 	 * is entered, <code>false</code> if the user cancels the input dialog.
@@ -156,36 +156,36 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @return <code>true</code> if a label has been entered
 	 */
 	protected boolean askForLabel(Map attributes) {
-		
+
 		Object o= attributes.get("message"); //$NON-NLS-1$
 		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
 		if (proposal == null)
 			proposal= ""; //$NON-NLS-1$
-			
+
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator = new IInputValidator() {
 			public String isValid(String newText) {
 				return  (newText == null || newText.trim().length() == 0) ? " " : null;  //$NON-NLS-1$
 			}
-		};		
+		};
 		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, inputValidator);
-		
+
 		String label= null;
 		if (dialog.open() != Window.CANCEL)
 			label= dialog.getValue();
-			
+
 		if (label == null)
 			return false;
-			
+
 		label= label.trim();
 		if (label.length() == 0)
 			return false;
-			
+
 		attributes.put("message", label); //$NON-NLS-1$
 		return true;
 	}
-	
+
 	/**
 	 * Returns the attributes the new marker will be initialized with.
 	 * <p>
@@ -194,9 +194,9 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @return the attributes the new marker will be initialized with
 	 */
 	protected Map getInitialAttributes() {
-		
+
 		Map attributes= new HashMap(11);
-		
+
 		ITextSelection selection= (ITextSelection) getTextEditor().getSelectionProvider().getSelection();
 		if (!selection.isEmpty()) {
 
@@ -210,7 +210,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 			MarkerUtilities.setCharStart(attributes, start);
 			MarkerUtilities.setCharEnd(attributes, start + length);
-						
+
 			// marker line numbers are 1-based
 			int line= selection.getStartLine();
 			MarkerUtilities.setLineNumber(attributes, line == -1 ? -1 : line + 1);
@@ -219,10 +219,10 @@ public class AddMarkerAction extends TextEditorAction {
 			MarkerUtilities.setMessage(attributes, getLabelProposal(document, start, length));
 
 		}
-		
+
 		return attributes;
 	}
-	
+
 	/**
 	 * Returns the initial label for the marker.
 	 *
@@ -232,11 +232,11 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @return the label proposal
 	 */
 	protected String getLabelProposal(IDocument document, int offset, int length) {
-		
-		
+
+
 		try {
-			
-			
+
+
 			if (length > 0) {
 
 				// find first white char but skip leading white chars
@@ -250,12 +250,12 @@ public class AddMarkerAction extends TextEditorAction {
 						skip= false;
 					i++;
 				}
-				
+
 				String label= document.get(offset, i);
 				return label.trim();
 			}
-				
-			
+
+
 			char ch;
 
 			// Get the first white char before the selection.
@@ -283,7 +283,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 			if (left > limit)
 				return null;
-			
+
 			limit= Math.min(limit, left + MAX_LABEL_LENGTH);
 
 			// Get the next white char.
@@ -307,9 +307,9 @@ public class AddMarkerAction extends TextEditorAction {
 
 		return null;
 	}
-	
-	/** 
-	 * Returns the resource on which to create the marker, 
+
+	/**
+	 * Returns the resource on which to create the marker,
 	 * or <code>null</code> if there is no applicable resource. This
 	 * queries the editor's input using <code>getAdapter(IResource.class)</code>.
 	 * Subclasses may override this method.

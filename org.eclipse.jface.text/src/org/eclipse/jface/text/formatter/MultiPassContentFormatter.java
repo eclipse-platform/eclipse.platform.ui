@@ -40,7 +40,7 @@ import org.eclipse.jface.text.TypedPosition;
  * Regions to be formatted with the master formatting strategy always have
  * an offset aligned to the line start. Regions to be formatted with slave formatting
  * strategies are aligned on partition boundaries.
- * 
+ *
  * @see IFormattingStrategyExtension
  * @since 3.0
  */
@@ -55,7 +55,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 
 		/**
 		 * Creates a new non-deleting position updater.
-		 * 
+		 *
 		 * @param category The position category to update its positions
 		 */
 		public NonDeletingPositionUpdater(final String category) {
@@ -109,7 +109,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 
 	/**
 	 * Creates a new content formatter.
-	 * 
+	 *
 	 * @param partitioning the document partitioning for this formatter
 	 * @param type the default content type
 	 */
@@ -166,7 +166,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * offset of the region to be formatted is aligned on line start boundaries,
 	 * whereas the end index of the region remains the same. For this formatting
 	 * type the document partitioning is not taken into account.
-	 * 
+	 *
 	 * @param context The formatting context to use
 	 * @param document The document to operate on
 	 * @param offset The offset of the region to format
@@ -202,7 +202,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * formatted is aligned on partition boundaries of the underlying content
 	 * type. The exact formatting strategy is determined by the underlying
 	 * content type of the document partitioning.
-	 * 
+	 *
 	 * @param context The formatting context to use
 	 * @param document The document to operate on
 	 * @param offset The offset of the region to format
@@ -231,7 +231,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * that particular region. The region to be formatted is aligned on
 	 * partition boundaries of the underlying content type. If the content type
 	 * is the document's default content type, nothing happens.
-	 * 
+	 *
 	 * @param context The formatting context to use
 	 * @param document The document to operate on
 	 * @param offset The offset of the region to format
@@ -288,7 +288,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * slave strategy. The master strategy is registered for the default content
 	 * type of documents. If a master strategy has already been registered, it
 	 * is overridden by the new one.
-	 * 
+	 *
 	 * @param strategy The master formatting strategy, must implement
 	 * 	{@link IFormattingStrategyExtension}
 	 */
@@ -305,7 +305,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 * will be replaced. However, the same strategy may be registered with
 	 * several content types. Slave strategies cannot be registered for the
 	 * default content type of documents.
-	 * 
+	 *
 	 * @param strategy The slave formatting strategy
 	 * @param type The content type to register this strategy with,
 	 * 	must implement {@link IFormattingStrategyExtension}

@@ -30,13 +30,13 @@ package org.eclipse.jface.text;
  * document and the viewer's visual representation are synchronized. If the
  * <p>
  * Clients may implement this interface.
- * 
+ *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.TextEvent
  * @see org.eclipse.jface.text.DocumentEvent
  */
 public interface ITextListener {
-	
+
 	/**
 	 * The visual representation of a text viewer this listener is registered with
 	 * has been changed.

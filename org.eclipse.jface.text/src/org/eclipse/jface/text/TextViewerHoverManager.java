@@ -24,22 +24,22 @@ import org.eclipse.swt.widgets.Display;
  * control in reaction to mouse hover events issued by the text widget of a
  * text viewer. It overrides <code>computeInformation</code>, so that the
  * computation is performed in a dedicated background thread. This implies
- * that the used <code>ITextHover</code> objects must be capable of 
+ * that the used <code>ITextHover</code> objects must be capable of
  * operating in a non-UI thread.
- * 
+ *
  * @since 2.0
  */
 class TextViewerHoverManager extends AbstractHoverInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
-	
-	
-	/** 
+
+
+	/**
 	 * Priority of the hovers managed by this manager.
 	 * Default value: <code>0</code>;
 	 * @since 3.0
 	 */
 	public final static int WIDGET_PRIORITY= 0;
-	
-	
+
+
 	/** The text viewer */
 	private TextViewer fTextViewer;
 	/** The hover information computation thread */
@@ -52,7 +52,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	private volatile ITextHover fTextHover;
 	/**
 	 * Tells whether the next mouse hover event
-	 * should be processed. 
+	 * should be processed.
 	 * @since 3.0
 	 */
 	private boolean fProcessMouseHoverEvent= true;
@@ -67,7 +67,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	private IViewportListener fViewportListener;
 
-	
+
 	/**
 	 * Creates a new text viewer hover manager specific for the given text viewer.
 	 * The manager uses the given information control creator.
@@ -107,51 +107,51 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		};
 		fTextViewer.getTextWidget().addMouseMoveListener(fMouseMoveListener);
 	}
-	
+
 	/**
 	 * Determines all necessary details and delegates the computation into
 	 * a background thread.
 	 */
 	protected void computeInformation() {
-		
+
 		if (!fProcessMouseHoverEvent) {
 			setInformation(null, null);
 			return;
 		}
-		
+
 		Point location= getHoverEventLocation();
 		int offset= computeOffsetAtLocation(location.x, location.y);
 		if (offset == -1) {
 			setInformation(null, null);
 			return;
 		}
-			
+
 		final ITextHover hover= fTextViewer.getTextHover(offset, getHoverEventStateMask());
 		if (hover == null) {
 			setInformation(null, null);
 			return;
 		}
-			
+
 		final IRegion region= hover.getHoverRegion(fTextViewer, offset);
 		if (region == null) {
 			setInformation(null, null);
 			return;
 		}
-			
+
 		final Rectangle area= computeArea(region);
 		if (area == null || area.isEmpty()) {
 			setInformation(null, null);
 			return;
 		}
-		
+
 		if (fThread != null) {
 			setInformation(null, null);
 			return;
 		}
-		
+
 		fThread= new Thread("Text Viewer Hover Presenter") { //$NON-NLS-1$
 			public void run() {
-				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693			
+				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693
 				boolean hasFinished= false;
 				try {
 					if (fThread != null) {
@@ -166,12 +166,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 							 */
 							information= null;
 						}
-						
+
 						if (hover instanceof ITextHoverExtension)
 							setCustomInformationControlCreator(((ITextHoverExtension) hover).getHoverControlCreator());
 						else
 							setCustomInformationControlCreator(null);
-						
+
 						setInformation(information, area);
 						if (information != null && area != null)
 							fTextHover= hover;
@@ -191,7 +191,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				}
 			}
 		};
-		
+
 		fThread.setDaemon(true);
 		fThread.setPriority(Thread.MIN_PRIORITY);
 		synchronized (fMutex) {
@@ -199,7 +199,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			fThread.start();
 		}
 	}
-	
+
 	/**
 	 * As computation is done in the background, this method is
 	 * also called in the background thread. Delegates the control
@@ -215,7 +215,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			Display display= textWidget.getDisplay();
 			if (display == null)
 				return;
-				
+
 			display.asyncExec(new Runnable() {
 				public void run() {
 					doPresentInformation();
@@ -223,7 +223,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			});
 		}
 	}
-	
+
 	/*
 	 * @see AbstractInformationControlManager#presentInformation()
 	 */
@@ -242,24 +242,24 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @return the document offset corresponding to the given point
 	 */
 	private int computeOffsetAtLocation(int x, int y) {
-		
+
 		try {
-			
+
 			StyledText styledText= fTextViewer.getTextWidget();
 			int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
-			
+
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
-			
+
 			return widgetOffset + fTextViewer._getVisibleRegionOffset();
 
 		} catch (IllegalArgumentException e) {
-			return -1;	
+			return -1;
 		}
 	}
-	
+
 	/**
 	 * Determines graphical area covered by the given text region.
 	 *
@@ -267,44 +267,44 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * @return the graphical extend of the given region
 	 */
 	private Rectangle computeArea(IRegion region) {
-				
+
 		IRegion widgetRegion= modelRange2WidgetRange(region);
 		int start= widgetRegion.getOffset();
 		int end= widgetRegion.getOffset() + widgetRegion.getLength();
-				
+
 		StyledText styledText= fTextViewer.getTextWidget();
 		Point upperLeft= styledText.getLocationAtOffset(start);
 		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
-		
+
 		for (int i= start +1; i < end; i++) {
-			
+
 			Point p= styledText.getLocationAtOffset(i);
-			
+
 			if (upperLeft.x > p.x)
 				upperLeft.x= p.x;
-				
+
 			if (upperLeft.y > p.y)
 				upperLeft.y= p.y;
-				
+
 			if (lowerRight.x  < p.x)
 				lowerRight.x= p.x;
-				
+
 			if (lowerRight.y < p.y)
 				lowerRight.y= p.y;
 		}
 
 		lowerRight.x += fTextViewer.getAverageCharWidth();
 		lowerRight.y += styledText.getLineHeight();
-		
+
 		int width= lowerRight.x - upperLeft.x;
 		int height= lowerRight.y - upperLeft.y;
 		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
 	}
-	
+
 	/**
 	 * Translates a given region of the text viewer's document into
 	 * the corresponding region of the viewer's widget.
-	 * 
+	 *
 	 * @param region the document region
 	 * @return the corresponding widget region
 	 * @since 2.1
@@ -314,16 +314,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 			return extension.modelRange2WidgetRange(region);
 		}
-		
+
 		IRegion visibleRegion= fTextViewer.getVisibleRegion();
 		int start= region.getOffset() - visibleRegion.getOffset();
 		int end= start + region.getLength();
 		if (end > visibleRegion.getLength())
 			end= visibleRegion.getLength();
-			
+
 		return new Region(start, end - start);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
 	 */
@@ -356,16 +356,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				fTextViewer.releaseWidgetToken(this);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		fTextHover= null;
-		super.hideInformationControl();		
+		super.hideInformationControl();
 		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
 	 * @since 3.0
@@ -373,12 +373,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		if (priority > WIDGET_PRIORITY) {
 			fTextHover= null;
-			super.hideInformationControl();		
+			super.hideInformationControl();
 			return true;
 		}
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 * @since 3.0
@@ -386,17 +386,17 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		return false;
 	}
-	
+
 	/**
 	 * Returns the currently shown text hover or <code>null</code> if no text
 	 * hover is shown.
-	 * 
+	 *
 	 * @return the currently shown text hover or <code>null</code>
 	 */
 	protected ITextHover getCurrentTextHover() {
 		return fTextHover;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractHoverInformationControlManager#dispose()
 	 * @since 3.0
@@ -405,7 +405,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		if (fTextViewer != null) {
 			fTextViewer.removeViewportListener(fViewportListener);
 			fViewportListener= null;
-			
+
 			StyledText st= fTextViewer.getTextWidget();
 			if (st != null && !st.isDisposed())
 				st.removeMouseMoveListener(fMouseMoveListener);

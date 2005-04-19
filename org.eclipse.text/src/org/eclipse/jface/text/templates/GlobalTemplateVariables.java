@@ -20,11 +20,11 @@ import java.util.Calendar;
  * <p>
  * Clients may instantiate the classes contained within this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class GlobalTemplateVariables {
-	
+
 	/** The type of the selection variables. */
 	public static final String SELECTION= "selection"; //$NON-NLS-1$
 
@@ -32,10 +32,10 @@ public class GlobalTemplateVariables {
 	 * The cursor variable determines the cursor placement after template edition.
 	 */
 	public static class Cursor extends SimpleTemplateVariableResolver {
-		
+
 		/** Name of the cursor variable, value= {@value} */
 		public static final String NAME= "cursor"; //$NON-NLS-1$
-		
+
 		/**
 		 * Creates a new cursor variable
 		 */
@@ -50,10 +50,10 @@ public class GlobalTemplateVariables {
 	 * lines selection.
 	 */
 	public static class WordSelection extends SimpleTemplateVariableResolver {
-		
+
 		/** Name of the word selection variable, value= {@value} */
 		public static final String NAME= "word_selection"; //$NON-NLS-1$
-		
+
 		/**
 		 * Creates a new word selection variable
 		 */
@@ -65,7 +65,7 @@ public class GlobalTemplateVariables {
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			return selection;
-		}		
+		}
 	}
 
 	/**
@@ -73,10 +73,10 @@ public class GlobalTemplateVariables {
 	 * lines.
 	 */
 	public static class LineSelection extends SimpleTemplateVariableResolver {
-		
+
 		/** Name of the line selection variable, value= {@value} */
 		public static final String NAME= "line_selection"; //$NON-NLS-1$
-		
+
 		/**
 		 * Creates a new line selection variable
 		 */
@@ -88,7 +88,7 @@ public class GlobalTemplateVariables {
 			if (selection == null)
 				return ""; //$NON-NLS-1$
 			return selection;
-		}		
+		}
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class GlobalTemplateVariables {
 		protected String resolve(TemplateContext context) {
 			return DateFormat.getDateInstance().format(new java.util.Date());
 		}
-	}		
+	}
 
 	/**
 	 * The year variable evaluates to the current year.
@@ -133,7 +133,7 @@ public class GlobalTemplateVariables {
 			return Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 		}
 	}
-	
+
 	/**
 	 * The time variable evaluates to the current time.
 	 */
@@ -144,7 +144,7 @@ public class GlobalTemplateVariables {
 		public Time() {
 			super("time", TextTemplateMessages.getString("GlobalVariables.variable.description.time")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -163,12 +163,12 @@ public class GlobalTemplateVariables {
 		public User() {
 			super("user", TextTemplateMessages.getString("GlobalVariables.variable.description.user")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		/**
 		 * {@inheritDoc}
 		 */
 		protected String resolve(TemplateContext context) {
 			return System.getProperty("user.name"); //$NON-NLS-1$
-		}	
+		}
 	}
 }

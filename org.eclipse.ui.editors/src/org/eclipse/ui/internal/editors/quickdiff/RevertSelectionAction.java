@@ -19,9 +19,9 @@ import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Action that will revert the added, deleted and changes lines in the selection on the currently 
+ * Action that will revert the added, deleted and changes lines in the selection on the currently
  * displayed document to the state in the reference document.
- * 
+ *
  * @since 3.1
  */
 public class RevertSelectionAction extends QuickDiffRestoreAction {
@@ -32,7 +32,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */

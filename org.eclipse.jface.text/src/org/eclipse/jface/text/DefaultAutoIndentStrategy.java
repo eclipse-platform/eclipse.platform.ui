@@ -15,14 +15,14 @@ package org.eclipse.jface.text;
  * Default implementation of {@link org.eclipse.jface.text.IAutoIndentStrategy}.
  * This strategy always copies the indentation of the previous line. This class
  * is not intended to be subclassed.
- * 
+ *
  * @deprecated since 3.1 use {@link org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy} instead
  */
 public class DefaultAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoIndentStrategy {
-	
+
 	/**
 	 * Creates a new default auto indent strategy.
 	 */
 	public DefaultAutoIndentStrategy() {
-	}		
+	}
 }

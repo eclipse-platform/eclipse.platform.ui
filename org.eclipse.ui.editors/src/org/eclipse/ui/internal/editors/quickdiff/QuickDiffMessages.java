@@ -18,13 +18,13 @@ import java.util.ResourceBundle;
  * @since 3.0
  */
 class QuickDiffMessages {
-	
+
 	private static final String BUNDLE_NAME= "org.eclipse.ui.internal.editors.quickdiff.QuickDiffMessages";//$NON-NLS-1$
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private QuickDiffMessages() {
 	}
-	
+
 	public static ResourceBundle getResourceBundle() {
 		return RESOURCE_BUNDLE;
 	}
@@ -36,12 +36,12 @@ class QuickDiffMessages {
 			return '!' + key + '!';
 		}
 	}
-	
+
 	public static String getFormattedString(String key, Object arg) {
 		return getFormattedString(key, new Object[] { arg });
 	}
-	
+
 	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);	
-	}	
+		return MessageFormat.format(getString(key), args);
+	}
 }

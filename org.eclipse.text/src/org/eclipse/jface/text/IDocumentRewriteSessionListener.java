@@ -17,17 +17,17 @@ package org.eclipse.jface.text;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4
  * @since 3.1
  */
 public interface IDocumentRewriteSessionListener {
-	
+
 	/**
 	 * Signals a change in a document's rewrite session state.
-	 * 
-	 * @param event the event describing the document rewrite session state change 
+	 *
+	 * @param event the event describing the document rewrite session state change
 	 */
 	void documentRewriteSessionChanged(DocumentRewriteSessionEvent event);
 }

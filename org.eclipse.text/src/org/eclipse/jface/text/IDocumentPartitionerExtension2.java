@@ -10,8 +10,8 @@
  *******************************************************************************/
 
 package org.eclipse.jface.text;
- 
- 
+
+
 /**
  * Extension interface for {@link org.eclipse.jface.text.IDocumentPartitioner}.
  * <p>
@@ -30,23 +30,23 @@ package org.eclipse.jface.text;
  * i.e. there may be a zero-length partition between the document start and a
  * delimited partition starting at offset 0.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IDocumentPartitionerExtension2 {
-		
+
 	/**
 	 * Returns the position categories that this partitioners uses in order to manage
 	 * the partitioning information of the documents. Returns <code>null</code> if
 	 * no position category is used.
-	 * 
+	 *
 	 * @return the position categories used to manage partitioning information or <code>null</code>
 	 */
 	String[] getManagingPositionCategories();
-    
-	
+
+
     /* zero-length partition support */
-    
+
     /**
 	 * Returns the content type of the partition containing the given offset in
 	 * the connected document. There must be a document connected to this
@@ -61,7 +61,7 @@ public interface IDocumentPartitionerExtension2 {
 	 * <code>false</code>, i.e. precedence is always given to the partition
 	 * that does not end at <code>offset</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param offset the offset in the connected document
 	 * @param preferOpenPartitions <code>true</code> if precedence should be
 	 *            given to a open partition ending at <code>offset</code> over
@@ -69,7 +69,7 @@ public interface IDocumentPartitionerExtension2 {
 	 * @return the content type of the offset's partition
 	 */
     String getContentType(int offset, boolean preferOpenPartitions);
-    
+
     /**
 	 * Returns the partition containing the given offset of the connected
 	 * document. There must be a document connected to this partitioner.
@@ -83,7 +83,7 @@ public interface IDocumentPartitionerExtension2 {
 	 * </code>, i.e. precedence is always given to the partition that does not
 	 * end at <code>offset</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param offset the offset for which to determine the partition
 	 * @param preferOpenPartitions <code>true</code> if precedence should be
 	 *            given to a open partition ending at <code>offset</code> over
@@ -91,7 +91,7 @@ public interface IDocumentPartitionerExtension2 {
 	 * @return the partition containing the offset
 	 */
     ITypedRegion getPartition(int offset, boolean preferOpenPartitions);
-    
+
     /**
 	 * Returns the partitioning of the given range of the connected document.
 	 * There must be a document connected to this partitioner.
@@ -107,7 +107,7 @@ public interface IDocumentPartitionerExtension2 {
 	 * like it when <code>includeZeroLengthPartitions</code> is
 	 * <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param offset the offset of the range of interest
 	 * @param length the length of the range of interest
 	 * @param includeZeroLengthPartitions <code>true</code> if zero-length

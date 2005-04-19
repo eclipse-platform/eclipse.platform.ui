@@ -19,7 +19,7 @@ import java.util.Map;
  * set on the formatting context's {@link FormattingContextProperties#CONTEXT_PREFERENCES}
  * property and makes them available to subclasses.
  * <p>
- * 
+ *
  * @since 3.0
  */
 public abstract class ContextBasedFormattingStrategy implements IFormattingStrategy, IFormattingStrategyExtension {
@@ -69,7 +69,7 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 
 	/**
 	 * Returns the preferences used for the current formatting step.
-	 * 
+	 *
 	 * @return The preferences for the current formatting step
 	 */
 	public final Map getPreferences() {

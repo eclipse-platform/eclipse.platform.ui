@@ -51,18 +51,18 @@ import org.eclipse.jface.text.IEventConsumer;
 
 
 /**
- * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
+ * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a
  * {@linkplain org.eclipse.jface.text.contentassist.ContentAssistant content assistant}
  * to a <code>Control</code>.
- * 
+ *
  * A visual feedback can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubjectControl {
 
 	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/ContentAssistSubjectAdapters"));  //$NON-NLS-1$//$NON-NLS-2$
-	
+
 	/**
 	 * VerifyKeyListeners for the control.
 	 */
@@ -84,7 +84,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		fVerifyKeyListeners= new ArrayList(1);
 		fKeyListeners= new HashSet(1);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getControl()
 	 */
@@ -95,10 +95,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#addKeyListener()"); //$NON-NLS-1$
-		
+
 		installControlListener();
 	}
 
@@ -107,13 +107,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
-		
+
 		if (DEBUG) {
 			if (!deleted)
 				System.out.println("removeKeyListener -> wasn't here"); //$NON-NLS-1$
 			System.out.println("AbstractControlContentAssistSubjectAdapter#removeKeyListener() -> " + fKeyListeners.size()); //$NON-NLS-1$
 		}
-		
+
 		uninstallControlListener();
 	}
 
@@ -129,10 +129,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#appendVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
-		
+
 		installControlListener();
 		return true;
 	}
@@ -142,10 +142,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#prependVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
-		
+
 		installControlListener();
 		return true;
 	}
@@ -155,10 +155,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#removeVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
-		
+
 		uninstallControlListener();
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Installs <code>fControlListener</code>, which handles VerifyEvents and KeyEvents by
 	 * passing them to {@link #fVerifyKeyListeners} and {@link #fKeyListeners}.
@@ -185,10 +185,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	private void installControlListener() {
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		if (fControlListener != null)
 			return;
-	
+
 		fControlListener= new Listener() {
 			public void handleEvent(Event e) {
 				if (! getControl().isFocusControl())
@@ -197,10 +197,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				KeyEvent keyEvent= new KeyEvent(e);
 				switch (e.type) {
 					case SWT.Traverse :
-						
+
 						if (DEBUG)
 							dump("before traverse", e, verifyEvent); //$NON-NLS-1$
-						
+
 						verifyEvent.doit= true;
 						for (Iterator iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
 							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
@@ -211,12 +211,12 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 									dump("traverse eaten by verify", e, verifyEvent); //$NON-NLS-1$
 								return;
 							}
-							
+
 							if (DEBUG)
 								dump("traverse OK", e, verifyEvent); //$NON-NLS-1$
 						}
 						break;
-					
+
 					case SWT.KeyDown:
 						for (Iterator iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
 							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
@@ -227,23 +227,23 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 								return;
 							}
 						}
-					
+
 						if (DEBUG)
 							dump("keyDown OK", e, verifyEvent); //$NON-NLS-1$
-						
+
 						for (Iterator iter= fKeyListeners.iterator(); iter.hasNext();) {
 							((KeyListener) iter.next()).keyPressed(keyEvent);
 						}
 						break;
-	
+
 					default :
 						Assert.isTrue(false);
 				}
 			}
-			
+
 			/**
 			 * Dump the given events to "standard" output.
-			 * 
+			 *
 			 * @param who who dump's
 			 * @param e the event
 			 * @param ve the verify event
@@ -265,14 +265,14 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				sb.append("; widget="+e.widget); //$NON-NLS-1$
 				System.out.println(sb);
 			}
-			
+
 			private String hex(int i) {
 				return "[0x" + Integer.toHexString(i) + ']'; //$NON-NLS-1$
 			}
 		};
 		getControl().addListener(SWT.Traverse, fControlListener);
 		getControl().addListener(SWT.KeyDown, fControlListener);
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() - installed"); //$NON-NLS-1$
 	}
@@ -284,25 +284,25 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	private void uninstallControlListener() {
 		if (fControlListener == null || fKeyListeners.size() + fVerifyKeyListeners.size() != 0) {
-			
+
 			if (DEBUG)
 				System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			return;
 		}
 		getControl().removeListener(SWT.Traverse, fControlListener);
 		getControl().removeListener(SWT.KeyDown, fControlListener);
 		fControlListener= null;
-		
+
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() - done"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Sets the visual feedback provider for content assist.
 	 * The given {@link ILabelProvider} methods are called with
 	 * {@link #getControl()} as argument.
-	 * 
+	 *
 	 * <ul>
 	 *   <li><code>getImage(Object)</code> provides the visual cue image.
 	 *     The image can maximally be 5 pixels wide and 8 pixels high.
@@ -318,7 +318,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * i.e. it gets disposed when the adapted {@link Control} is disposed
 	 * or when another {@link ILabelProvider} is set.
 	 * </p>
-	 * 
+	 *
 	 * @param labelProvider a {@link ILabelProvider}, or <code>null</code>
 	 * 	if no visual feedback should be shown
 	 */
@@ -331,7 +331,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * {@link Combo} widgets.
 	 */
 	private static class SmartFieldController {
-			
+
 		/**
 		 * An info Hover to display a message next to a {@link Control}.
 		 */
@@ -360,7 +360,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 * The info hover text.
 			 */
 			String fText= ""; //$NON-NLS-1$
-			
+
 			Hover(Shell parent) {
 				final Display display= parent.getDisplay();
 				fHoverShell= new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP | SWT.NO_FOCUS);
@@ -379,19 +379,19 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					}
 				});
 			}
-			
+
 			int[] getPolygon(boolean border) {
 				Point e= getExtent();
 				if (border)
 					return new int[] { 0,0, e.x-1,0, e.x-1,e.y-1, HD+HW,e.y-1, HD+HW/2,e.y+HH-1, HD,e.y-1, 0,e.y-1, 0,0 };
 				return new int[] { 0,0, e.x,  0, e.x,  e.y,   HD+HW,e.y,   HD+HW/2,e.y+HH,   HD,e.y,   0,e.y,   0,0 };
 			}
-			
+
 			void dispose() {
 				if (!fHoverShell.isDisposed())
 					fHoverShell.dispose();
 			}
-			
+
 			void setVisible(boolean visible) {
 				if (visible) {
 					if (!fHoverShell.isVisible())
@@ -401,7 +401,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						fHoverShell.setVisible(false);
 				}
 			}
-				
+
 			void setText(String t) {
 				if (t == null)
 					t= ""; //$NON-NLS-1$
@@ -414,21 +414,21 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						Region region= new Region();
 						region.add(getPolygon(false));
 						fHoverShell.setRegion(region);
-					}		
+					}
 				}
 			}
 
 			boolean isVisible() {
 				return fHoverShell.isVisible();
 			}
-			
+
 			void setLocation(Control control) {
 				if (control != null) {
 					int h= getExtent().y;
 					fHoverShell.setLocation(control.toDisplay(-HD+HW/2, -h-HH+1));
 				}
 			}
-			
+
 			Point getExtent() {
 				GC gc= new GC(fHoverShell);
 				Point e= gc.textExtent(fText);
@@ -438,7 +438,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				return e;
 			}
 		}
-		
+
 		/**
 		 * A single plain HoverHandler is registered for the content assist control.
 		 * It handles mouse hover events to show/hide the info hover.
@@ -450,7 +450,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			FieldFocusListener fFieldFocusListener;
 			/**
 			 * Create a new HoverHandler.
-			 * 
+			 *
 			 * @param fieldFocusListener the field focus listener
 			 */
 			HoverHandler(FieldFocusListener fieldFocusListener) {
@@ -477,7 +477,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				fFieldFocusListener.doShowHover();
 			}
 		}
-		
+
 		/**
 		 * One CueHandler is registered per ancestor control of the content assist control.
 		 * It paints the visual cue icon and handles mouse hover events to show/hide the info hover.
@@ -485,7 +485,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		class CueHandler extends HoverHandler implements PaintListener  {
 			/**
 			 * Create a new CueHandler.
-			 * 
+			 *
 			 * @param fieldFocusListener the field focus listener
 			 */
 			CueHandler(FieldFocusListener fieldFocusListener) {
@@ -499,14 +499,14 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			}
 			/**
 			 * Updates the hover.
-			 * 
+			 *
 			 * @param event the mouse event
 			 */
 			void handleMouseEvent(MouseEvent event) {
 				fFieldFocusListener.updateHoverOnCue(event);
 			}
 		}
-		
+
 		class FieldFocusListener implements FocusListener {
 			/**
 			 * Put icon relative to this control.
@@ -524,14 +524,14 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			 * The HoverHandler (only when control has focus).
 			 */
 			private HoverHandler fHoverHandler;
-			
+
 			/**
 			 * Create a new FieldFocusListener
 			 * @param control the target control
 			 */
 			FieldFocusListener(Control control) {
 				fControl= control;
-				
+
 				fDx= -5;
 				fDy= 1;
 				if (fgCarbon) {
@@ -547,7 +547,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					}
 				}
 			}
-			
+
 			/**
 			 * Paint the cue image.
 			 * @param e the PaintEvent
@@ -560,7 +560,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				Point local= ((Control) e.widget).toControl(global);
 				e.gc.drawImage(image, local.x, local.y);
 			}
-			
+
 			/**
 			 * Show/hide the hover.
 			 * @param e the MouseEvent
@@ -577,21 +577,21 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				else
 					doHideHover();
 			}
-			
+
 			/**
 			 * Hide hover.
 			 */
 			private void doHideHover() {
 				showHover(fControl, null);
 			}
-			
+
 			/**
 			 * Show hover.
 			 */
 			public void doShowHover() {
 				showHover(fControl, fLabelProvider.getText(fControl));
 			}
-			
+
 			/*
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
 			 */
@@ -611,7 +611,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					fHoverHandler= new HoverHandler(this);
 					fControl.addMouseTrackListener(fHoverHandler);
 				}
-				
+
 				Control c= fControl.getParent();
 				while (c != null) {
 					if (DEBUG)
@@ -627,7 +627,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					c= c.getParent();
 				}
 			}
-			
+
 			/*
 			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 			 */
@@ -646,7 +646,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			public void uninstall() {
 				if (fHoverHandler != null)
 					fControl.removeMouseTrackListener(fHoverHandler);
-				
+
 				Control c= fControl.getParent();
 				while (c != null) {
 					if (DEBUG)
@@ -669,7 +669,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		private static final String SMART_FIELD_CONTROLLER= "org.eclipse.SmartFieldController"; //$NON-NLS-1$
 		private static final String SMART_FOCUS_LISTENER= "org.eclipse.SmartFieldController.smartFocusListener"; //$NON-NLS-1$
 		private static final String ANNOTATION_HANDLER= "org.eclipse.SmartFieldController.annotationHandler"; //$NON-NLS-1$
-		
+
 		private static String fgPlatform= SWT.getPlatform();
 		private static boolean fgCarbon= "carbon".equals(fgPlatform); //$NON-NLS-1$
 		private static boolean fgWin32= "win32".equals(fgPlatform); //$NON-NLS-1$
@@ -679,11 +679,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		private Image fCueImage;
 		private Hover fHover;
 		private Control fHoverControl;
-		
+
 		/**
 		 * Installs or de-installs a visual cue indicating availability of content assist on the given control.
 		 * At most one cue and one hover info is shown at any point in time.
-		 * 
+		 *
 		 * @param control the control on which to install or uninstall the cue
 		 * @param labelProvider the label provider or <code>null</code> to uninstall the cue
 		 */
@@ -692,11 +692,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		}
 
 		//---- private implementation
-		
+
 		private SmartFieldController(Shell shell) {
 			fShell= shell;
 			fShell.setData(SMART_FIELD_CONTROLLER, this);
-			
+
 			Listener l= new Listener() {
 				public void handleEvent(Event event) {
 					switch (event.type) {
@@ -731,7 +731,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			shell.addListener(SWT.Iconify, l);
 			//shell.addListener(SWT.Deiconify, l);
 		}
-		
+
 	 	private void handleDispose() {
 	  		fShell= null;
 			fHoverControl= null;
@@ -748,10 +748,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				fLabelProvider= null;
 			}
 		}
-	 	
+
 		/**
 		 * Gets the smart field controller from the given control's shell.
-		 * 
+		 *
 		 * @param control the control
 		 * @return the smart field controller
 		 */
@@ -762,15 +762,15 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				data= new SmartFieldController(shell);
 			return (SmartFieldController) data;
 		}
-		
+
 		private void internalSetSmartCue(final Control control, ILabelProvider labelProvider) {
 			if (fLabelProvider != null)
 				fLabelProvider.dispose();
-			
+
 			fLabelProvider= labelProvider;
-			
+
 			FieldFocusListener focuslistener= (FieldFocusListener) control.getData(SMART_FOCUS_LISTENER);
-			
+
 			if (labelProvider != null) {
 				// add smart stuff
 				if (focuslistener == null) {
@@ -788,7 +788,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					if (control.isFocusControl())
 						focuslistener.uninstall();
 				}
-				
+
 				if (fCueImage != null) {
 					fCueImage.dispose();
 					fCueImage= null;
@@ -797,7 +797,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		}
 		/**
 		 * Show or hide hover.
-		 * 
+		 *
 		 * @param control the control
 		 * @param text a {@link String} to show in hover, or <code>null</code> to hide
 		 */
@@ -815,19 +815,19 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					fHover.setVisible(false);
 			}
 		}
-		
+
 		private boolean isHoverVisible() {
 			return fHover != null && fHover.isVisible();
 		}
-		
+
 		private Image getCueImage(Control control) {
 			Image image= null;
 			if (fLabelProvider != null)
 				image= fLabelProvider.getImage(control);
-			
+
 			return image != null ? image : getCueImage();
 		}
-		
+
 		private Image getCueImage() {
 			if (fCueImage == null) {
 				ImageDescriptor cueID= ImageDescriptor.createFromFile(SmartFieldController.class, "images/content_assist_cue.gif"); //$NON-NLS-1$

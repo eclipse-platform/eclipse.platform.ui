@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * the differing ranges but for non-differing ranges too.
  * <p>
  * The algorithm used is an objectified version of one described in:
- * <it>A File Comparison Program,</it> by Webb Miller and Eugene W. Myers, 
+ * <it>A File Comparison Program,</it> by Webb Miller and Eugene W. Myers,
  * Software Practice and Experience, Vol. 15, Nov. 1985.
  *
  * @see IRangeComparator
@@ -41,20 +41,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.0
  */
 public final class RangeDifferencer {
-	
+
 	private static final RangeDifference[] EMPTY_RESULT= new RangeDifference[0];
-	
+
 	/* (non Javadoc)
 	 * Non instantiateable!
 	 */
-	private RangeDifferencer() { 
+	private RangeDifferencer() {
 	}
-	
+
 	/**
 	 * Finds the differences between two <code>IRangeComparator</code>s.
 	 * The differences are returned as an array of <code>RangeDifference</code>s.
 	 * If no differences are detected an empty array is returned.
-	 * 
+	 *
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences, or an empty array if no differences were found
@@ -62,12 +62,12 @@ public final class RangeDifferencer {
 	public static RangeDifference[] findDifferences(IRangeComparator left, IRangeComparator right) {
 		return findDifferences((IProgressMonitor)null, left, right);
 	}
-	
+
 	/**
 	 * Finds the differences between two <code>IRangeComparator</code>s.
 	 * The differences are returned as an array of <code>RangeDifference</code>s.
 	 * If no differences are detected an empty array is returned.
-	 * 
+	 *
 	 * @param pm if not <code>null</code> used to report progress
 	 * @param left the left range comparator
 	 * @param right the right range comparator
@@ -81,12 +81,12 @@ public final class RangeDifferencer {
 			return Levenstein.findDifferences(pm, left, right);
 		}
 	}
-	
+
 	/**
 	 * Finds the differences between two <code>IRangeComparator</code>s.
 	 * The differences are returned as an array of <code>RangeDifference</code>s.
 	 * If no differences are detected an empty array is returned.
-	 * 
+	 *
 	 * @param pm if not <code>null</code> used to report progress
 	 * @param left the left range comparator
 	 * @param right the right range comparator
@@ -103,7 +103,7 @@ public final class RangeDifferencer {
 		int leftSize= left.getRangeCount();
 		//
 		// Differences matrix:
-		// only the last d of each diagonal is stored, i.e., lastDiagonal[k] = row of d    
+		// only the last d of each diagonal is stored, i.e., lastDiagonal[k] = row of d
 		//
 		int diagLen= 2 * Math.max(rightSize, leftSize); // bound on the size of edit script
 		int maxDiagonal= diagLen;
@@ -112,7 +112,7 @@ public final class RangeDifferencer {
 		// on diagonal k (lastDiagonal[k] = row)
 		int origin= diagLen / 2; // origin of diagonal 0
 
-		// script corresponding to d[k] 
+		// script corresponding to d[k]
 		LinkedRangeDifference script[]= new LinkedRangeDifference[diagLen + 1];
 		int row, col;
 
@@ -128,13 +128,13 @@ public final class RangeDifferencer {
 
 		if (lower > upper)
 			return EMPTY_RESULT;
-			
+
 		//System.out.println("findDifferences: " + maxDiagonal + " " + lower + " " + upper);
 		LinkedRangeFactory factory= new LinkedRangeFactory();
-		
+
 		// for each value of the edit distance
 		for (int d= 1; d <= maxDiagonal; ++d) { // d is the current edit distance
-			
+
 			if (pm != null)
 				pm.worked(1);
 
@@ -167,7 +167,7 @@ public final class RangeDifferencer {
 				Assert.isTrue(k >= 0 && k <= maxDiagonal);
 				script[k]= edit;
 
-				// slide down the diagonal as far as possible 
+				// slide down the diagonal as far as possible
 				while (row < rightSize && col < leftSize && rangesEqual(right, row, left, col) == true) {
 					++row;
 					++col;
@@ -197,7 +197,7 @@ public final class RangeDifferencer {
 	 * Finds the differences among two <code>IRangeComparator</code>s.
 	 * In contrast to <code>findDifferences</code>, the result
 	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
-	 * 
+	 *
 	 * @param left the left range comparator
 	 * @param right the right range comparator
 	 * @return an array of range differences
@@ -205,12 +205,12 @@ public final class RangeDifferencer {
 	public static List findRanges(IRangeComparator left, IRangeComparator right) {
 		return findRanges((IProgressMonitor)null, left, right);
 	}
-	
+
 	/**
 	 * Finds the differences among two <code>IRangeComparator</code>s.
 	 * In contrast to <code>findDifferences</code>, the result
 	 * contains <code>RangeDifference</code> elements for non-differing ranges too.
-	 * 
+	 *
 	 * @param pm if not <code>null</code> used to report progress
 	 * @param left the left range comparator
 	 * @param right the right range comparator
@@ -252,7 +252,7 @@ public final class RangeDifferencer {
 	 * <code>LinkedRangeDifference</code>. It coalesces adjacent changes. In
 	 * addition, indices are changed such that the ranges are 1) open, i.e, the
 	 * end of the range is not included, and 2) are zero based.
-	 * 
+	 *
 	 * @param start the start difference
 	 * @return the created array of difference ranges
 	 */
@@ -316,7 +316,7 @@ public final class RangeDifferencer {
 
 	/**
 	 * Tests whether two ranges at the given indices are equal.
-	 * 
+	 *
 	 * @param a the first comparator
 	 * @param ai the index of the first range
 	 * @param b the second comparator
@@ -330,7 +330,7 @@ public final class RangeDifferencer {
 	/**
 	 * Reverses the list of range differences thus that the given start difference becomes the
 	 * end of the list.
-	 * 
+	 *
 	 * @param start the start of the list
 	 * @return the reverted list
 	 */

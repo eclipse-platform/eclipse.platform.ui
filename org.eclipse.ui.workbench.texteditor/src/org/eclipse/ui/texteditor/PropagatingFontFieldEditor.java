@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Composite;
  * @deprecated no longer supported
  */
 public final class PropagatingFontFieldEditor extends WorkbenchChainedTextFontFieldEditor {
-	
+
 	/**
 	 * Creates a new propagating font field editor with the given parameters.
-	 * 
+	 *
 	 * @param name the name
 	 * @param labelText the label
 	 * @param parent the parent control

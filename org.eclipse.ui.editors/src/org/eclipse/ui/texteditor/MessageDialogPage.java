@@ -21,18 +21,18 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 
 /**
  * Dialog page used to show text or error message.
- * 
+ *
  * @since 3.1
  */
 class MessageDialogPage extends DialogPage {
-	
+
 	MessageRegion fMessageRegion;
-	
-	
+
+
 	public MessageDialogPage(Composite parent) {
 		createControl(parent);
 	}
-	
+
 	public void createControl(Composite parent) {
 		Composite composite1= new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -45,12 +45,12 @@ class MessageDialogPage extends DialogPage {
 		fMessageRegion.setMessageLayoutData(messageData);
 		setControl(composite1);
 	}
-	
+
 	public void setMessage(String newMessage,int newType) {
 		super.setMessage(newMessage, newType);
 		fMessageRegion.updateText(newMessage, newType);
 	}
-	
+
 	public void setErrorMessage(String newMessage) {
 		super.setErrorMessage(newMessage);
 		fMessageRegion.updateText(newMessage, IMessageProvider.ERROR);

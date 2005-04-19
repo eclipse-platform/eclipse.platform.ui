@@ -22,13 +22,13 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * Describes an extension to the <code>quickdiff.referenceprovider</code> extension point.
- * 
+ *
  * @see org.eclipse.ui.internal.texteditor.quickdiff.ReferenceSelectionAction
  * @see QuickDiff
  * @since 3.0
  */
 public class ReferenceProviderDescriptor {
-	
+
 	/** Name of the <code>label</code> attribute. */
 	private static final String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
 	/** Name of the <code>class</code> attribute. */
@@ -54,7 +54,7 @@ public class ReferenceProviderDescriptor {
 	 * <p>
 	 * This method is for internal use only.
 	 * </p>
-	 * 
+	 *
 	 * @param element the extension point element to be described.
 	 */
 	public ReferenceProviderDescriptor(IConfigurationElement element) {
@@ -64,7 +64,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the label of this extension.
-	 * 
+	 *
 	 * @return the label for this extension.
 	 */
 	public String getLabel() {
@@ -77,7 +77,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the id of this extension.
-	 * 
+	 *
 	 * @return the id for this extension.
 	 */
 	public String getId() {
@@ -104,7 +104,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * States whether the plugin declaring this extension has been loaded already.
-	 * 
+	 *
 	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
@@ -115,7 +115,7 @@ public class ReferenceProviderDescriptor {
 
 	/**
 	 * Reads (if needed) and returns the default attribute value of this extension.
-	 * 
+	 *
 	 * @return the default attribute value for this extension.
 	 */
 	public boolean getDefault() {

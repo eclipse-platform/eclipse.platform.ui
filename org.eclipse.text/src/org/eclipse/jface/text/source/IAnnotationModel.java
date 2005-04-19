@@ -19,7 +19,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * This interface defines the model for managing annotations attached to a document.
- * The model maintains a set of annotations for a given document and notifies registered annotation 
+ * The model maintains a set of annotations for a given document and notifies registered annotation
  * model listeners about annotation model changes. It also provides methods
  * for querying the current position of an annotation managed
  * by this model.
@@ -33,7 +33,7 @@ import org.eclipse.jface.text.Position;
  * </li>
  * </ul>
  * </p>
- * 
+ *
  * Clients may implement this interface or use the default implementation provided
  * by <code>AnnotationModel</code>.
  *
@@ -42,7 +42,7 @@ import org.eclipse.jface.text.Position;
  * @see org.eclipse.jface.text.source.IAnnotationModelListener
  */
 public interface IAnnotationModel {
-	
+
 	/**
 	 * Registers the annotation model listener with this annotation model.
 	 * After registration listener is informed about each change of this model.
@@ -51,7 +51,7 @@ public interface IAnnotationModel {
 	 * @param listener the listener to be registered, may not be <code>null</code>
 	 */
 	void addAnnotationModelListener(IAnnotationModelListener listener);
-	
+
 	/**
 	 * Removes the listener from the model's list of annotation model listeners.
 	 * If the listener is not registered with the model nothing happens.
@@ -59,14 +59,14 @@ public interface IAnnotationModel {
 	 * @param listener the listener to be removed, may not be <code>null</code>
 	 */
 	void removeAnnotationModelListener(IAnnotationModelListener listener);
-	
+
 	/**
-	 * Connects the annotation model to a document. The annotations managed 
-	 * by this model must subsequently update according to the changes applied 
+	 * Connects the annotation model to a document. The annotations managed
+	 * by this model must subsequently update according to the changes applied
 	 * to the document. Once an annotation model is connected to a document,
-	 * all further <code>connect</code> calls must mention the document the 
-	 * model is already connected to. An annotation model primarily uses 
-	 * <code>connect</code> and <code>disconnect</code> for reference counting 
+	 * all further <code>connect</code> calls must mention the document the
+	 * model is already connected to. An annotation model primarily uses
+	 * <code>connect</code> and <code>disconnect</code> for reference counting
 	 * the document. Reference counting frees the clients from keeping tracker
 	 * whether a model has already been connected to a document.
 	 *
@@ -76,7 +76,7 @@ public interface IAnnotationModel {
 	 * @see #disconnect(IDocument)
 	 */
 	void connect(IDocument document);
-	 
+
 	/**
 	 * Disconnects this model from a document. After that, document changes no longer matter.
 	 * An annotation model may only be disconnected from a document to which it has been
@@ -90,10 +90,10 @@ public interface IAnnotationModel {
 	 * @see #connect(IDocument) for further specification details
 	 */
 	void disconnect(IDocument document);
-	
+
 	/**
 	 * Adds a annotation to this annotation model. The annotation is associated with
-	 * with the given position which describes the range covered by the annotation. 
+	 * with the given position which describes the range covered by the annotation.
 	 * All registered annotation model listeners are informed about the change.
 	 * If the model is connected to a document, the position is automatically
 	 * updated on document changes. If the annotation is already managed by
@@ -101,12 +101,12 @@ public interface IAnnotationModel {
 	 *
 	 * @param annotation the annotation to add, may not be <code>null</code>
 	 * @param position the position describing the range covered by this annotation,
-	 *		may not be <code>null</code>	 
+	 *		may not be <code>null</code>
 	 */
 	void addAnnotation(Annotation annotation, Position position);
-	
+
 	/**
-	 * Removes the given annotation from the model. I.e. the annotation is no 
+	 * Removes the given annotation from the model. I.e. the annotation is no
 	 * longer managed by this model. The position associated with the annotation
 	 * is no longer updated on document changes. If the annotation is not
 	 * managed by this model, nothing happens.
@@ -115,14 +115,14 @@ public interface IAnnotationModel {
 	 *		may not be <code>null</code>
 	 */
 	void removeAnnotation(Annotation annotation);
-			
+
 	/**
 	 * Returns all annotations managed by this model.
 	 *
 	 * @return all annotations managed by this model
 	 */
 	Iterator getAnnotationIterator();
-		
+
 	/**
 	 * Returns the position associated with the given annotation.
 	 *
@@ -131,5 +131,5 @@ public interface IAnnotationModel {
 	 *		associated annotation exists
 	 */
 	Position getPosition(Annotation annotation);
-}	 
+}
 

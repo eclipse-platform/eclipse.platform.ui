@@ -18,14 +18,14 @@ import org.eclipse.swt.dnd.Transfer;
  * <code>AbstractTextEditor</code>.
  * <p>
  * This interface is not part of the official API.
- * 
+ *
  * @since 3.0
  */
 public interface ITextEditorDropTargetListener extends DropTargetListener {
-	
+
 	/**
 	 * Returns the list of <code>Transfer</code> agents that are supported by this listener.
-	 * 
+	 *
 	 * @return the list of transfer agents supported by this listener
 	 */
 	Transfer[] getTransfers();

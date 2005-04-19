@@ -14,11 +14,11 @@ package org.eclipse.jface.text.rules;
 
 /**
  * A specific configuration of a single line rule
- * whereby the pattern begins with a specific sequence but 
+ * whereby the pattern begins with a specific sequence but
  * is only ended by a line delimiter.
  */
 public class EndOfLineRule extends SingleLineRule {
-	
+
 	/**
 	 * Creates a rule for the given starting sequence
 	 * which, if detected, will return the specified token.
@@ -55,9 +55,9 @@ public class EndOfLineRule extends SingleLineRule {
 	 * @param startSequence the pattern's start sequence
 	 * @param token the token to be returned on success
 	 * @param escapeCharacter the escape character
-	 * @param escapeContinuesLine indicates whether the specified escape 
+	 * @param escapeContinuesLine indicates whether the specified escape
 	 *        character is used for line continuation, so that an end of
-	 *        line immediately after the escape character does not 
+	 *        line immediately after the escape character does not
 	 *        terminate the line, even if <code>breakOnEOL</code> is true
 	 * @since 3.0
 	 */

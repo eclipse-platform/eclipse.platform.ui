@@ -59,8 +59,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 /**
  * @since 3.0
  */
-public class TextFileBufferManager implements ITextFileBufferManager {	
-	
+public class TextFileBufferManager implements ITextFileBufferManager {
+
 	private static abstract class SafeNotifier implements ISafeRunnable {
 		public void handleException(Throwable ex) {
 			IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "TextFileBufferManager failed to notify an ITextFileBufferListener", ex);  //$NON-NLS-1$
@@ -84,19 +84,19 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer == null)  {
-			
+
 			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null)); 
-			
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+
 			fileBuffer.create(location, monitor);
 			fileBuffer.connect();
 			fFilesBuffers.put(location, fileBuffer);
 			fireBufferCreated(fileBuffer);
-			
+
 		} else {
 			fileBuffer.connect();
 		}
@@ -108,7 +108,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null) {
 			fileBuffer.disconnect();
@@ -119,20 +119,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isTextFileLocation(IPath location) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IContentType text= manager.getContentType(IContentTypeManager.CT_TEXT);
-		
+
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file != null) {
-			
+
 			try {
 				IContentDescription description= file.getContentDescription();
 				if (description != null) {
@@ -142,11 +142,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				}
 			} catch (CoreException x) {
 			}
-			
+
 			return true;
-			
+
 		}
-			
+
 		File externalFile= FileBuffers.getSystemFileAtLocation(location);
 		if (externalFile != null) {
 			if (externalFile.exists()) {
@@ -170,11 +170,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 						}
 					}
 				}
-				
+
 				return true;
-				
-			} 
-			
+
+			}
+
 			IContentType[] contentTypes= manager.findContentTypesFor(externalFile.getName());
 			if (contentTypes != null && contentTypes.length > 0) {
 				for (int i= 0; i < contentTypes.length; i++)
@@ -183,10 +183,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-		
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
@@ -194,7 +194,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		location= FileBuffers.normalizeLocation(location);
 		return (IFileBuffer) fFilesBuffers.get(location);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
@@ -216,7 +216,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IDocument createEmptyDocument(IPath location) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		final IDocument[] runnableResult= new IDocument[1];
 		final IDocumentFactory factory= fRegistry.getDocumentFactory(location);
 		if (factory != null) {
@@ -225,7 +225,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					runnableResult[0]= factory.createDocument();
 				}
 				public void handleException(Throwable t) {
-					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t); 
+					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
 					FileBuffersPlugin.getDefault().getLog().log(status);
 					if (t instanceof VirtualMachineError)
 						throw (VirtualMachineError)t;
@@ -238,7 +238,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			document= runnableResult[0];
 		else
 			document= new Document();
-			
+
 		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
 		if (participants != null) {
 			for (int i= 0; i < participants.length; i++) {
@@ -248,7 +248,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 						participant.setup(document);
 					}
 					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t); 
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
 						if (t instanceof VirtualMachineError)
 							throw (VirtualMachineError)t;
@@ -257,10 +257,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				Platform.run(runnable);
 			}
 		}
-		
+
 		return document;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath)
 	 */
@@ -272,7 +272,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			return factory.createAnnotationModel(location);
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#addFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
 	 */
@@ -281,7 +281,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		if (!fFileBufferListeners.contains(listener))
 			fFileBufferListeners.add(listener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#removeFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
 	 */
@@ -289,7 +289,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(listener);
 		fFileBufferListeners.remove(listener);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(org.eclipse.core.filebuffers.ISynchronizationContext)
 	 */
@@ -303,7 +303,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void requestSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.requestSynchronizationContext();
@@ -315,17 +315,17 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void releaseSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
-		
+
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.releaseSynchronizationContext();
 	}
-	
+
 	/**
 	 * Executes the given runnable in the synchronization context of this file buffer manager.
 	 * If there is no synchronization context connected with this manager, the runnable is
 	 * directly executed.
-	 * 
+	 *
 	 * @param runnable the runnable to be executed
 	 * @param requestSynchronizationContext <code>true</code> if the synchronization context is requested for the execution
 	 */
@@ -335,33 +335,33 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		else
 			runnable.run();
 	}
-	
+
 	private AbstractFileBuffer createFileBuffer(IPath location) {
 		if (isTextFileLocation(location)) {
 			if (FileBuffers.getWorkspaceFileAtLocation(location) != null)
 				return new ResourceTextFileBuffer(this);
 			return new JavaTextFileBuffer(this);
-		}	
+		}
 		return null;
 	}
-	
+
 	protected void fireDirtyStateChanged(final IFileBuffer buffer, final boolean isDirty) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.dirtyStateChanged(buffer, isDirty);
 				}
 			});
 		}
 	}
-	
+
 	protected void fireBufferContentAboutToBeReplaced(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.bufferContentAboutToBeReplaced(buffer);
 				}
@@ -373,7 +373,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.bufferContentReplaced(buffer);
 				}
@@ -385,7 +385,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.underlyingFileMoved(buffer, target);
 				}
@@ -397,7 +397,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.underlyingFileDeleted(buffer);
 				}
@@ -409,7 +409,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.stateValidationChanged(buffer, isStateValidated);
 				}
@@ -421,7 +421,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.stateChanging(buffer);
 				}
@@ -433,38 +433,38 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.stateChangeFailed(buffer);
 				}
 			});
 		}
 	}
-	
+
 	protected void fireBufferCreated(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.bufferCreated(buffer);
 				}
 			});
 		}
 	}
-	
+
 	protected void fireBufferDisposed(final IFileBuffer buffer) {
 		Iterator e= new ArrayList(fFileBufferListeners).iterator();
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
-			Platform.run(new SafeNotifier() { 
+			Platform.run(new SafeNotifier() {
 				public void run() {
 					l.bufferDisposed(buffer);
 				}
 			});
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#validateState(org.eclipse.core.filebuffers.IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
 	 * @since 3.1
@@ -484,7 +484,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, computeValidateStateRule(fileBuffers), IWorkspace.AVOID_UPDATE, monitor);
 	}
-	
+
 	private IFileBuffer[] findFileBuffersToValidate(IFileBuffer[] fileBuffers) {
 		ArrayList list= new ArrayList();
 		for (int i= 0; i < fileBuffers.length; i++) {
@@ -493,7 +493,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
 	}
-	
+
 	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (fileBuffers[i] instanceof IStateValidationSupport) {
@@ -502,7 +502,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 	}
-		
+
 	private void validationStateChanged(IFileBuffer[] fileBuffers, boolean validationState, IStatus status) {
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (fileBuffers[i] instanceof IStateValidationSupport) {
@@ -511,7 +511,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 	}
-		
+
 	private void validationStateChangedFailed(IFileBuffer[] fileBuffers) {
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (fileBuffers[i] instanceof IStateValidationSupport) {
@@ -520,7 +520,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 	}
-	
+
 	private IStatus validateEdit(IFileBuffer[] fileBuffers, Object computationContext) {
 		ArrayList list= new ArrayList();
 		for (int i= 0; i < fileBuffers.length; i++) {
@@ -532,7 +532,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		list.toArray(files);
 		return ResourcesPlugin.getWorkspace().validateEdit(files, computationContext);
 	}
-	
+
 	private ISchedulingRule computeValidateStateRule(IFileBuffer[] fileBuffers) {
 		ArrayList list= new ArrayList();
 		for (int i= 0; i < fileBuffers.length; i++) {
@@ -541,11 +541,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				list.add(resource);
 		}
 		IResource[] resources= new IResource[list.size()];
-		list.toArray(resources);		
+		list.toArray(resources);
 		IResourceRuleFactory factory= ResourcesPlugin.getWorkspace().getRuleFactory();
 		return factory.validateEditRule(resources);
 	}
-	
+
 	private IFile getWorkspaceFile(IFileBuffer fileBuffer) {
 		return FileBuffers.getWorkspaceFileAtLocation(fileBuffer.getLocation());
 	}

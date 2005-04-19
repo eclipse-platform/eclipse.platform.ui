@@ -24,11 +24,11 @@ import org.eclipse.jface.text.source.LineChangeHover;
 
 /**
  * Change hover for text editors. Respects tab settings and text editor font.
- * 
+ *
  * @since 3.0
  */
 public class TextChangeHover extends LineChangeHover {
-	
+
 	/** The last created information control. */
 	private int fLastScrollIndex= 0;
 
@@ -38,8 +38,8 @@ public class TextChangeHover extends LineChangeHover {
 	protected String getTabReplacement() {
 		return Character.toString('\t');
 	}
-	
-	
+
+
 	/*
 	 * @see org.eclipse.jface.text.source.LineChangeHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
 	 */
@@ -47,7 +47,7 @@ public class TextChangeHover extends LineChangeHover {
 		fLastScrollIndex= sourceViewer.getTextWidget().getHorizontalPixel();
 		return super.getHoverInfo(sourceViewer, lineRange, visibleLines);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 	 */

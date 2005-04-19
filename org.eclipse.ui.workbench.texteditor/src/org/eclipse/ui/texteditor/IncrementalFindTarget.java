@@ -49,27 +49,27 @@ import org.eclipse.jface.text.TextEvent;
 class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ISelectionChangedListener, ITextListener {
 
 	/** The string representing rendered tab */
-	private final static String TAB= EditorMessages.Editor_FindIncremental_render_tab; 
+	private final static String TAB= EditorMessages.Editor_FindIncremental_render_tab;
 	/**
 	 * The string representing "Reverse Incremental Find"
 	 * @since 3.0
 	 */
-	private final static String FIELD_NAME= EditorMessages.Editor_FindIncremental_name; 
+	private final static String FIELD_NAME= EditorMessages.Editor_FindIncremental_name;
 	/**
 	 * The string representing "Incremental Find"
 	 * @since 3.0
 	 */
-	private final static String REVERSE_FIELD_NAME= EditorMessages.Editor_FindIncremental_reverse_name; 
+	private final static String REVERSE_FIELD_NAME= EditorMessages.Editor_FindIncremental_reverse_name;
 	/**
 	 * The string representing reverse
 	 * @since 2.1
 	 */
-	private final static String REVERSE= EditorMessages.Editor_FindIncremental_reverse; 
+	private final static String REVERSE= EditorMessages.Editor_FindIncremental_reverse;
 	/**
 	 * The string representing wrapped
 	 * @since 2.1
 	 */
-	private final static String WRAPPED= EditorMessages.Editor_FindIncremental_wrapped; 
+	private final static String WRAPPED= EditorMessages.Editor_FindIncremental_wrapped;
 	/** The text viewer to operate on */
 	private final ITextViewer fTextViewer;
 	/** The status line manager for output */
@@ -86,9 +86,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private int fWrapPosition;
 	/** The position of the last successful find */
-	private int fCurrentIndex;	
+	private int fCurrentIndex;
 	/** A flag indicating if last find was successful */
-	private boolean fFound;	
+	private boolean fFound;
 	/**
 	 * A flag indicating if the last search was forward
 	 * @since 2.1
@@ -122,7 +122,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	/**
 	 * Tells whether the status field implements
 	 * <code>IStatusFieldExtension</code>.
-	 * @see IStatusFieldExtension 
+	 * @see IStatusFieldExtension
 	 * @since 3.0
 	 */
 	private boolean fIsStatusFieldExtension;
@@ -160,7 +160,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/**
 	 * Restores the search result.
-	 *  
+	 *
 	 * @since 2.1
 	 */
 	private void restoreState() {
@@ -276,7 +276,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		fFindString.setLength(0);
 		fSessionStack= new Stack();
-		fCasePosition= -1;		
+		fCasePosition= -1;
 		fWrapPosition= -1;
 		fFound= true;
 
@@ -288,7 +288,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		} else {
 			fCurrentIndex= 0;
 		}
-		
+
 		install();
 
 		// Set the mark
@@ -296,10 +296,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			((ITextViewerExtension) fTextViewer).setMark(fCurrentIndex);
 
 		updateStatus();
-		
+
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).beginSession();
-			
+
 		fSearching= false;
 	}
 
@@ -331,13 +331,13 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	public void setScope(IRegion scope) {
 	}
-	
+
 	/*
 	 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
 	 */
 	public void setReplaceAllMode(boolean replaceAll) {
 	}
-	
+
 	/**
 	 * Installs this target. I.e. adds all required listeners.
 	 */
@@ -349,7 +349,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		StyledText text= fTextViewer.getTextWidget();
 		if (text == null)
 			return;
-		
+
 		text.addMouseListener(this);
 		text.addFocusListener(this);
 		fTextViewer.addTextListener(this);
@@ -362,10 +362,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			((ITextViewerExtension) fTextViewer).prependVerifyKeyListener(this);
 		else
 			text.addVerifyKeyListener(this);
-		
+
 		fInstalled= true;
 	}
-	
+
 	/**
 	 * Uninstalls itself. I.e. removes all listeners installed in <code>install</code>.
 	 */
@@ -382,7 +382,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			text.removeMouseListener(this);
 			text.removeFocusListener(this);
 		}
-				
+
 		if (fTextViewer instanceof ITextViewerExtension) {
 			((ITextViewerExtension) fTextViewer).removeVerifyKeyListener(this);
 
@@ -390,7 +390,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			if (text != null)
 				text.removeVerifyKeyListener(this);
 		}
-		
+
 		fInstalled= false;
 	}
 
@@ -408,7 +408,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		String reversePrefix= fForward ? "" : REVERSE; //$NON-NLS-1$
 
 		if (!fFound) {
-			String pattern= EditorMessages.Editor_FindIncremental_not_found_pattern; 
+			String pattern= EditorMessages.Editor_FindIncremental_not_found_pattern;
 			statusError(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
 		} else if (string.length() == 0) {
@@ -417,7 +417,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			else
 				statusMessage(REVERSE_FIELD_NAME);
 		} else if (!fForward || fWrapPosition > -1) {
-			String pattern= EditorMessages.Editor_FindIncremental_found_pattern; 
+			String pattern= EditorMessages.Editor_FindIncremental_found_pattern;
 			statusMessage(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 		} else {
 			statusMessage(string);
@@ -434,10 +434,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		fSearching= true;
 		if (event.character == 0) {
-	
+
 			switch (event.keyCode) {
-			
-			// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave	
+
+			// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave
 			case SWT.ARROW_LEFT:
 			case SWT.ARROW_RIGHT:
 			case SWT.HOME:
@@ -451,44 +451,44 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				saveState();
 				setDirection(true);
 				repeatSearch(fForward);
-				event.doit= false;				
+				event.doit= false;
 				break;
 
 			case SWT.ARROW_UP:
 				saveState();
 				setDirection(false);
 				repeatSearch(fForward);
-				event.doit= false;				
-				break;			
+				event.doit= false;
+				break;
 			}
-	
+
 		// event.character != 0
 		} else {
-			
+
 			switch (event.character) {
-			
+
 			// ESC, CR = quit
 			case 0x1B:
 			case 0x0D:
 				leave();
 				event.doit= false;
 				break;
-				
+
 			// backspace	and delete
 			case 0x08:
 			case 0x7F:
 				restoreState();
 				event.doit= false;
-				break;		
-			
+				break;
+
 			default:
-				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT || event.stateMask == (SWT.ALT | SWT.CTRL)) { // SWT.ALT | SWT.CTRL covers AltGr (see bug 43049)  
+				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT || event.stateMask == (SWT.ALT | SWT.CTRL)) { // SWT.ALT | SWT.CTRL covers AltGr (see bug 43049)
 					saveState();
 					addCharSearch(event.character);
 					event.doit= false;
 				}
 				break;
-			}		
+			}
 		}
 		updateStatus();
 		fSearching= false;
@@ -496,7 +496,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/**
 	 * Repeats the last search while possibly changing the direction.
-	 * 
+	 *
 	 * @param forward <code>true</code> iff the next search should be forward
 	 * @return if the search was successful
 	 * @since 2.1
@@ -557,7 +557,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/**
 	 * Adds the given character to the search string and repeats the search with the last parameters.
-	 * 
+	 *
 	 * @param c the character to append to the search pattern
 	 * @return <code>true</code> the search found a match
 	 * @since 2.1
@@ -597,12 +597,12 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * Leaves this incremental search session.
 	 */
 	private void leave() {
-		if (fFindString.length() != 0) { 
+		if (fFindString.length() != 0) {
 			fPrevFindString= fFindString.toString();
 			fPrevCasePosition= fCasePosition;
 		}
 		statusClear();
-		uninstall();				
+		uninstall();
 		fSessionStack = null;
 	}
 
@@ -618,7 +618,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 * @see MouseListener##mouseDoubleClick(MouseEvent)
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
-		leave();		
+		leave();
 	}
 
 	/*
@@ -663,7 +663,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			} else {
 				fStatusLine.setErrorMessage(null);
 				fStatusField.setText(escapeTabs(string));
-			} 
+			}
 		} else {
 			fStatusLine.setErrorMessage(null);
 			fStatusLine.setMessage(escapeTabs(string));
@@ -684,7 +684,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			} else {
 				fStatusLine.setErrorMessage(escapeTabs(string));
 				fStatusField.setText(""); //$NON-NLS-1$
-			} 
+			}
 		} else {
 			fStatusLine.setErrorMessage(escapeTabs(string));
 			fStatusLine.setMessage(null);
@@ -704,13 +704,13 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			} else {
 				fStatusField.setText(""); //$NON-NLS-1$
 				fStatusLine.setErrorMessage(null);
-			} 
+			}
 		} else {
 			fStatusLine.setErrorMessage(null);
 			fStatusLine.setMessage(null);
 		}
 	}
-	
+
 	/**
 	 * Translates all tab characters into a proper status line presentation.
 	 * @param string the string in which to translate the tabs
@@ -721,7 +721,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		int begin= 0;
 		int end= string.indexOf('\t', begin);
-		
+
 		while (end >= 0) {
 			buffer.append(string.substring(begin, end));
 			buffer.append(TAB);
@@ -729,17 +729,17 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			end= string.indexOf('\t', begin);
 		}
 		buffer.append(string.substring(begin));
-		
+
 		return buffer.toString();
 	}
-	
+
 	/*
 	 * @see IFindReplaceTargetExtension#getLineSelection()
 	 */
 	public Point getLineSelection() {
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			return ((IFindReplaceTargetExtension) fTarget).getLineSelection();
-		
+
 		return null; // XXX should not return null
 	}
 
@@ -763,10 +763,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	public void selectionChanged(SelectionChangedEvent e) {
 		boolean ignore= false;
-		ISelection selection= e.getSelection(); 
+		ISelection selection= e.getSelection();
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
-			Point range= getSelection(); 
+			Point range= getSelection();
 			ignore= textSelection.getOffset() + textSelection.getLength() == range.x + range.y;
 		}
 		if (!fSearching && !ignore)
@@ -775,7 +775,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	/**
 	 * Sets the find status field for this incremental find target.
-	 * 
+	 *
 	 * @param statusField the status field
 	 * @since 3.0
 	 */

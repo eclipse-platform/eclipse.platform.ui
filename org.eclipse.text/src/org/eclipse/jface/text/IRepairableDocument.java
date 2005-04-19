@@ -14,12 +14,12 @@ package org.eclipse.jface.text;
  * Tagging interface to be implemented by
  * {@link org.eclipse.jface.text.IDocument}implementers that offer a line
  * repair method on the documents.
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  * @since 3.0
  */
 public interface IRepairableDocument {
-	
+
 	/**
 	 * Repairs the line information of the document implementing this interface.
 	 */

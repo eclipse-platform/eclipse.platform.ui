@@ -46,19 +46,19 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  * The editor's ruler context menu has id <code>#TextRulerContext</code>.
  * </p>
  * <p>
- * The workbench will automatically instantiate this class when the default 
+ * The workbench will automatically instantiate this class when the default
  * editor is needed for a workbench window.
  * </p>
  */
 public class TextEditor extends AbstractDecoratedTextEditor {
-		
-	/** 
+
+	/**
 	 * The encoding support for the editor.
 	 * @since 2.0
 	 */
 	protected DefaultEncodingSupport fEncodingSupport;
-	
-	
+
+
 	/**
 	 * Creates a new text editor.
 	 */
@@ -70,10 +70,10 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		}
 
 	}
-	
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * This method configures the editor but does not define a
 	 * <code>SourceViewerConfiguration</code>. When only interested in
 	 * providing a custom source viewer configuration, subclasses may extend
@@ -100,10 +100,10 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 
 		super.dispose();
 	}
-	
+
 	/**
 	 * Installs the encoding support on the given text editor.
-	 * <p> 
+	 * <p>
  	 * Subclasses may override to install their own encoding
  	 * support or to disable the default encoding support.
  	 * </p>
@@ -115,65 +115,65 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	}
 
 	/**
-	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code> 
+	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code>
 	 * method asks the user for the workspace path of a file resource and saves the document there.
-	 * 
+	 *
 	 * @param progressMonitor the progress monitor to be used
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
 		Shell shell= getSite().getShell();
 		IEditorInput input= getEditorInput();
-		
+
 		SaveAsDialog dialog= new SaveAsDialog(shell);
-		
+
 		IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
 		if (original != null)
 			dialog.setOriginalFile(original);
-		
+
 		dialog.create();
-			
+
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider == null) {
 			// editor has programmatically been  closed while the dialog was open
 			return;
 		}
-		
+
 		if (provider.isDeleted(input) && original != null) {
-			String message= MessageFormat.format(TextEditorMessages.Editor_warning_save_delete, new Object[] { original.getName() }); 
+			String message= MessageFormat.format(TextEditorMessages.Editor_warning_save_delete, new Object[] { original.getName() });
 			dialog.setErrorMessage(null);
 			dialog.setMessage(message, IMessageProvider.WARNING);
 		}
-		
+
 		if (dialog.open() == Window.CANCEL) {
 			if (progressMonitor != null)
 				progressMonitor.setCanceled(true);
 			return;
 		}
-			
+
 		IPath filePath= dialog.getResult();
 		if (filePath == null) {
 			if (progressMonitor != null)
 				progressMonitor.setCanceled(true);
 			return;
 		}
-			
+
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IFile file= workspace.getRoot().getFile(filePath);
 		final IEditorInput newInput= new FileEditorInput(file);
-				
+
 		boolean success= false;
 		try {
-			
+
 			provider.aboutToChange(newInput);
-			provider.saveDocument(progressMonitor, newInput, provider.getDocument(input), true);			
+			provider.saveDocument(progressMonitor, newInput, provider.getDocument(input), true);
 			success= true;
-			
+
 		} catch (CoreException x) {
 			IStatus status= x.getStatus();
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
-				String title= TextEditorMessages.Editor_error_save_title; 
-				String msg= MessageFormat.format(TextEditorMessages.Editor_error_save_message, new Object[] { x.getMessage() }); 
-				
+				String title= TextEditorMessages.Editor_error_save_title;
+				String msg= MessageFormat.format(TextEditorMessages.Editor_error_save_message, new Object[] { x.getMessage() });
+
 				if (status != null) {
 					switch (status.getSeverity()) {
 						case IStatus.INFO:
@@ -194,18 +194,18 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			if (success)
 				setInput(newInput);
 		}
-		
+
 		if (progressMonitor != null)
 			progressMonitor.setCanceled(!success);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#createActions()
 	 * @since 2.0
@@ -214,7 +214,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		installEncodingSupport();
 		super.createActions();
 	}
-	
+
 	/*
 	 * @see StatusTextEditor#getStatusHeader(IStatus)
 	 * @since 2.0
@@ -227,7 +227,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		}
 		return super.getStatusHeader(status);
 	}
-	
+
 	/*
 	 * @see StatusTextEditor#getStatusBanner(IStatus)
 	 * @since 2.0
@@ -240,7 +240,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		}
 		return super.getStatusBanner(status);
 	}
-	
+
 	/*
 	 * @see StatusTextEditor#getStatusMessage(IStatus)
 	 * @since 2.0
@@ -253,7 +253,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		}
 		return super.getStatusMessage(status);
 	}
-	
+
 	/*
 	 * @see AbstractTextEditor#doSetInput(IEditorInput)
 	 * @since 2.0
@@ -263,7 +263,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
-	
+
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 * @since 2.0
@@ -273,7 +273,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			return fEncodingSupport;
 		return super.getAdapter(adapter);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updatePropertyDependentActions()
 	 * @since 2.0
@@ -283,7 +283,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.0

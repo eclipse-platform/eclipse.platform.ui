@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.editors.text;
 
 /**
  * Defines plug-in-specific status codes.
- * 
+ *
  * @see org.eclipse.core.runtime.IStatus#getCode()
  * @see org.eclipse.core.runtime.Status#Status(int, java.lang.String, int, java.lang.String, java.lang.Throwable)
  * @since 2.1
@@ -24,5 +24,5 @@ interface IEditorsStatusConstants {
 	 * Value: <code>1001</code>
 	 */
 	public static final int INTERNAL_ERROR= 10001;
-	
+
  }

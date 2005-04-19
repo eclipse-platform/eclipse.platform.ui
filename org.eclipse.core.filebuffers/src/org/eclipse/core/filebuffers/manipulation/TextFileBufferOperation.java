@@ -39,15 +39,15 @@ import org.eclipse.jface.text.TextUtilities;
  * Subclasses have to override the <code>computeTextEdits</code> method in
  * order to provide a sequence of {@link org.eclipse.text.edits.TextEdit}
  * objects.
- * 
+ *
  * @since 3.1
  */
-public abstract class TextFileBufferOperation implements IFileBufferOperation {	
-	
-	
+public abstract class TextFileBufferOperation implements IFileBufferOperation {
+
+
 	/**
 	 * Computes and returns a text edit. Subclasses have to provide that method.
-	 * 
+	 *
 	 * @param textFileBuffer the text file buffer to manipulate
 	 * @param progressMonitor the progress monitor
 	 * @return the text edits describing the content manipulation
@@ -55,27 +55,27 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	 * @throws OperationCanceledException in case the progress monitor has been set to canceled
 	 */
 	protected abstract MultiTextEditWithProgress computeTextEdit(ITextFileBuffer textFileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException;
-	
+
 	/**
 	 * Returns the rewrite session type that corresponds to the text edit sequence.
-	 * 
+	 *
 	 * @return the rewrite session type
 	 */
 	protected abstract DocumentRewriteSessionType getDocumentRewriteSessionType();
-	
-	
+
+
 	private String fOperationName;
 	private DocumentRewriteSession fDocumentRewriteSession;
-	
+
 	/**
 	 * Creates a new operation with the given name.
-	 * 
+	 *
 	 * @param operationName the name of the operation
 	 */
 	protected TextFileBufferOperation(String operationName) {
 		fOperationName= operationName;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.IFileBufferOperation#getOperationName()
 	 */
@@ -87,7 +87,7 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.IFileBufferOperation#run(org.eclipse.core.filebuffers.IFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
-		
+
 		if (fileBuffer instanceof ITextFileBuffer) {
 			ITextFileBuffer textFileBuffer= (ITextFileBuffer) fileBuffer;
 			IPath path= textFileBuffer.getLocation();
@@ -113,20 +113,20 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 			}
 		}
 	}
-		
+
 	private Object startRewriteSession(ITextFileBuffer fileBuffer) {
 		Object stateData= null;
-		
+
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
 			IDocumentExtension4 extension= (IDocumentExtension4) document;
 			fDocumentRewriteSession= extension.startRewriteSession(getDocumentRewriteSessionType());
 		} else
 			stateData= TextUtilities.removeDocumentPartitioners(document);
-		
+
 		return stateData;
 	}
-	
+
 	private void stopRewriteSession(ITextFileBuffer fileBuffer, Object stateData) {
 		IDocument document= fileBuffer.getDocument();
 		if (document instanceof IDocumentExtension4) {
@@ -134,9 +134,9 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 			extension.stopRewriteSession(fDocumentRewriteSession);
 			fDocumentRewriteSession= null;
 		} else if (stateData instanceof Map)
-			TextUtilities.addDocumentPartitioners(document, (Map) stateData);		
+			TextUtilities.addDocumentPartitioners(document, (Map) stateData);
 	}
-	
+
 	private void applyTextEdit(ITextFileBuffer fileBuffer, MultiTextEditWithProgress textEdit, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
 		try {
 			textEdit.apply(fileBuffer.getDocument(), TextEdit.NONE, progressMonitor);

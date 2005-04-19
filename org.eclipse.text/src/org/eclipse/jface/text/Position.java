@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
- 
+
 /**
  * Positions describe text ranges of a document. Positions are adapted to
  * changes applied to that document. The text range is specified by an offset
@@ -29,18 +29,18 @@ package org.eclipse.jface.text;
  * <code>equals</code> and <code>hashCode</code> as they would be value
  * objects.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  */
 public class Position {
-	
+
 	/** The offset of the position */
 	public int offset;
 	/** The length of the position */
 	public int length;
 	/** Indicates whether the position has been deleted */
 	public boolean isDeleted;
-	
+
 	/**
 	 * Creates a new position with the given offset and length 0.
 	 *
@@ -49,7 +49,7 @@ public class Position {
 	public Position(int offset) {
 		this(offset, 0);
 	}
-	
+
 	/**
 	 * Creates a new position with the given offset and length.
 	 *
@@ -62,13 +62,13 @@ public class Position {
 		this.offset= offset;
 		this.length= length;
 	}
-	
+
 	/**
 	 * Creates a new, not initialized position.
 	 */
 	protected Position() {
 	}
-	
+
 	 /*
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -76,23 +76,23 @@ public class Position {
 	 	int deleted= isDeleted ? 0 : 1;
 	 	return (offset << 24) | (length << 16) | deleted;
 	 }
-	
+
 	/**
 	 * Marks this position as deleted.
 	 */
 	public void delete() {
 		isDeleted= true;
 	}
-	
+
 	/**
 	 * Marks this position as not deleted.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public void undelete() {
 		isDeleted= false;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -103,7 +103,7 @@ public class Position {
 		}
 		return super.equals(other);
 	}
-		
+
 	/**
 	 * Returns the length of this position.
 	 *
@@ -112,7 +112,7 @@ public class Position {
 	public int getLength() {
 		return length;
 	}
-	
+
 	/**
 	 * Returns the offset of this position.
 	 *
@@ -121,22 +121,22 @@ public class Position {
 	public int getOffset() {
 		return offset;
 	}
-	
+
 	/**
 	 * Checks whether the given index is inside
 	 * of this position's text range.
 	 *
 	 * @param index the index to check
-	 * @return <code>true</code> if <code>index</code> is inside of this position 
+	 * @return <code>true</code> if <code>index</code> is inside of this position
 	 */
 	public boolean includes(int index) {
-		
+
 		if (isDeleted)
 			return false;
-		
+
 		return (this.offset <= index) && (index < this.offset + length);
 	}
-	
+
 	/**
 	 * Checks whether the intersection of the given text range
 	 * and the text range represented by this position is empty
@@ -147,24 +147,24 @@ public class Position {
 	 * @return <code>true</code> if intersection is not empty
 	 */
 	public boolean overlapsWith(int rangeOffset, int rangeLength) {
-		
+
 		if (isDeleted)
 			return false;
-			
+
 		int end= rangeOffset + rangeLength;
 		int thisEnd= this.offset + this.length;
-		
+
 		if (rangeLength > 0) {
 			if (this.length > 0)
 				return this.offset < end && rangeOffset < thisEnd;
 			return  rangeOffset <= this.offset && this.offset < end;
 		}
-		
+
 		if (this.length > 0)
 			return this.offset <= rangeOffset && rangeOffset < thisEnd;
 		return this.offset == rangeOffset;
 	}
-	
+
 	/**
 	 * Returns whether this position has been deleted or not.
 	 *
@@ -173,7 +173,7 @@ public class Position {
 	public boolean isDeleted() {
 		return isDeleted;
 	}
-	
+
 	/**
 	 * Changes the length of this position to the given length.
 	 *
@@ -183,7 +183,7 @@ public class Position {
 		Assert.isTrue(length >= 0);
 		this.length= length;
 	}
-	
+
 	/**
 	 * Changes the offset of this position to the given offset.
 	 *

@@ -46,60 +46,60 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  * @since 2.0
  */
 public class DefaultEncodingSupport implements IEncodingSupport {
-	
+
 	/** Internal property change listener. */
 	private Preferences.IPropertyChangeListener fPropertyChangeListener;
 	/** The editor this support is associated with. */
 	private StatusTextEditor fTextEditor;
-	
+
 	/**
 	 * Creates a new encoding support.
 	 */
 	public DefaultEncodingSupport() {
 		super();
 	}
-	
+
 	/**
 	 * Associates this encoding support to the given text editor and initializes this encoding.
-	 * 
+	 *
 	 * @param textEditor the editor
 	 */
 	public void initialize(StatusTextEditor textEditor) {
-		
+
 		fTextEditor= textEditor;
-		
+
 		fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent e) {
 				if (ResourcesPlugin.PREF_ENCODING.equals(e.getProperty()))
 					setEncoding(null, false); // null means: use default
 			}
 		};
-		
+
 		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
 		p.addPropertyChangeListener(fPropertyChangeListener);
 	}
-	
+
 	/**
 	 * Disposes this encoding support.
 	 */
 	public void dispose() {
 		Preferences p= ResourcesPlugin.getPlugin().getPluginPreferences();
 		p.removePropertyChangeListener(fPropertyChangeListener);
-		
+
 		fTextEditor= null;
 	}
-	
+
 	/**
-	 * Resets this encoding support. Should be called if, e.g., the input element of the 
+	 * Resets this encoding support. Should be called if, e.g., the input element of the
 	 * associated editor changed.
 	 */
 	public void reset() {
 	}
-	
+
 	/**
 	 * Sets the encoding of the editor's input to the given value. If <code>overwrite</code> is
 	 * <code>true</code> the value is set even if the encoding is already set.
-	 * 
+	 *
 	 * @param encoding the new encoding
 	 * @param overwrite <code>true</code> if current encoding should be overwritten
 	 */
@@ -129,14 +129,14 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 			}
 		}
 	}
-	
+
 	/*
 	 * @see IEncodingSupport#setEncoding(String)
 	 */
 	public void setEncoding(String encoding) {
 		setEncoding(encoding, true);
 	}
-	
+
 	/*
 	 * @see IEncodingSupport#getEncoding()
 	 */
@@ -148,7 +148,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * @see IEncodingSupport#getDefaultEncoding()
 	 */
@@ -160,78 +160,78 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a status header for the given status.
-	 * 
+	 *
 	 * @param status the status
 	 * @return a status header for the given status.
 	 */
 	public String getStatusHeader(IStatus status) {
 		Throwable t= status.getException();
-		
+
 		if (t instanceof CharConversionException)
-			return TextEditorMessages.Editor_error_unreadable_encoding_header; 
-		
+			return TextEditorMessages.Editor_error_unreadable_encoding_header;
+
 		if (t instanceof UnsupportedEncodingException)
-			return TextEditorMessages.Editor_error_unsupported_encoding_header; 
-		
+			return TextEditorMessages.Editor_error_unsupported_encoding_header;
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns a banner for the given status.
-	 * 
+	 *
 	 * @param status the status
 	 * @return a banner for the given status.
 	 */
 	public String getStatusBanner(IStatus status) {
 		Throwable t= status.getException();
-		
+
 		if (t instanceof CharConversionException)
-			return TextEditorMessages.Editor_error_unreadable_encoding_banner; 
-		
+			return TextEditorMessages.Editor_error_unreadable_encoding_banner;
+
 		if (t instanceof UnsupportedEncodingException)
-			return TextEditorMessages.Editor_error_unsupported_encoding_banner; 
-		
+			return TextEditorMessages.Editor_error_unsupported_encoding_banner;
+
 		return null;
 
 	}
-	
+
 	/**
 	 * Returns a status message if any.
-	 * 
+	 *
 	 * @param status the status
 	 * @return a status message indicating encoding problems or <code>null</code> otherwise
 	 */
 	public String getStatusMessage(IStatus status) {
 		Throwable t= status.getException();
 		if (t instanceof CharConversionException || t instanceof UnsupportedEncodingException) {
-			
+
 			String encoding= getEncoding();
 			if (encoding == null)
 				encoding= getDefaultEncoding();
-			
+
 			if (t instanceof CharConversionException) {
 				if (encoding != null)
-					return MessageFormat.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, new Object[] { encoding }); 
-				return TextEditorMessages.Editor_error_unreadable_encoding_message; 
+					return MessageFormat.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, new Object[] { encoding });
+				return TextEditorMessages.Editor_error_unreadable_encoding_message;
 			}
-			
+
 			if (t instanceof UnsupportedEncodingException) {
 				if (encoding != null)
-					return NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding); 
-				return TextEditorMessages.Editor_error_unsupported_encoding_message; 
+					return NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding);
+				return TextEditorMessages.Editor_error_unsupported_encoding_message;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the given status is an
 	 * encoding error.
-	 * 
+	 *
 	 * @param status the status to check
 	 * @return <code>true</code> if the given status is an encoding error
 	 * @since 3.1
@@ -239,16 +239,16 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	public boolean isEncodingError(IStatus status) {
 		if (status == null || status.getSeverity() != IStatus.ERROR)
 			return false;
-		
+
 		Throwable t= status.getException();
 		return t instanceof CharConversionException || t instanceof UnsupportedEncodingException;
 	}
-	
+
 	/**
 	 * Creates the control which allows to change the encoding.
 	 * In case of encoding errors this control will be placed below
 	 * the status of the status editor.
-	 * 
+	 *
 	 * @param parent the parent control
 	 * @param status the status
 	 * @since 3.1
@@ -275,7 +275,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 				action.run();
 			}
 		});
-		
+
 		Label filler= new Label(parent, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_BOTH));
 		filler.setBackground(bgColor);

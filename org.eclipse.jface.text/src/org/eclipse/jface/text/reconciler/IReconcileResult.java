@@ -18,7 +18,7 @@ package org.eclipse.jface.text.reconciler;
  * This interface must be implemented by clients that want to
  * let one of their model elements be part of a reconcile step result.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.text.reconciler.IReconcileStep
  * @since 3.0
  */

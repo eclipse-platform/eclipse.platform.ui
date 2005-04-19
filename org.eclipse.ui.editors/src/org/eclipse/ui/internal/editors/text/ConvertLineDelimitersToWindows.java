@@ -14,12 +14,12 @@ package org.eclipse.ui.internal.editors.text;
 /**
  * A file buffer operation action that changes the line delimiters to a Windows
  * line delimiter.
- * 
+ *
  * @since 3.1
  */
 public class ConvertLineDelimitersToWindows extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToWindows(){
-		super("\r\n", TextEditorMessages.ConvertLineDelimitersToWindows_label); 
+		super("\r\n", TextEditorMessages.ConvertLineDelimitersToWindows_label);
 	}
 }

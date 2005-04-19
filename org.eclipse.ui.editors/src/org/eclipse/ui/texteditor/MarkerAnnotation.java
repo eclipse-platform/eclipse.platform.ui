@@ -43,22 +43,22 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class MarkerAnnotation extends SimpleMarkerAnnotation {
 
-	/** 
+	/**
 	 * The layer in which markers representing problem are located.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated As of 3.0, replaced by {@link IAnnotationAccessExtension}
 
 	 */
 	public final static int PROBLEM_LAYER= 5;
-	
+
 	/** Internal image registry. */
 	private static Map fgImageRegistry;
-	
+
 	/**
 	 * Returns an image for the given display as specified by the given image
 	 * descriptor.
-	 * 
+	 *
 	 * @param display the display
 	 * @param descriptor the image descriptor
 	 * @return an image for the display as specified by the descriptor
@@ -75,11 +75,11 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Returns an image registry for the given display. If no such registry
 	 * exists the registry is created.
-	 * 
+	 *
 	 * @param display the display
 	 * @return the image registry for the given display
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
@@ -105,16 +105,16 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 			});
 		}
 		return fgImageRegistry;
-	}		
-		
-		
+	}
+
+
 	/** The image, i.e., visual presentation of this annotation. */
 	private Image fImage;
 	/** The image name. */
 	private String fImageName;
 	/** The presentation layer. */
 	private int fPresentationLayer= -1;
-	
+
 	/**
 	 * Creates a new annotation for the given marker.
 	 *
@@ -123,10 +123,10 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	public MarkerAnnotation(IMarker marker) {
 		super(marker);
 	}
-	
+
 	/**
 	 * Creates a new annotation of the given type for the given marker.
-	 * 
+	 *
 	 * @param annotationType the annotation type
 	 * @param marker the marker
 	 * @since 3.0
@@ -135,10 +135,10 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		super(annotationType, marker);
 		initialize();
 	}
-	
+
 	/**
 	 * Sets the marker image to the given image.
-	 * 
+	 *
 	 * @param image the new marker image
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
@@ -147,11 +147,11 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	protected void setImage(Image image) {
 		fImage= image;
 	}
-	
+
 	/**
 	 * Initializes the annotation's icon representation and its drawing layer
 	 * based upon the properties of the underlying marker.
-	 * 
+	 *
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
@@ -159,7 +159,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	protected void initialize() {
 		IMarker marker= getMarker();
 		String name= getUnknownImageName(marker);
-		
+
 		if (MarkerUtilities.isMarkerType(marker, IMarker.TASK)) {
 			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
 		} else if (MarkerUtilities.isMarkerType(marker, IMarker.BOOKMARK)) {
@@ -177,11 +177,11 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 					break;
 			}
 		}
-		
+
 		fImage= null;
 		fImageName= name;
 	}
-	
+
 	/**
 	 * Returns the annotations drawing layer.
 	 * <p>
@@ -195,13 +195,13 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		if (fPresentationLayer != -1)
 			// Backward compatibility
 			return fPresentationLayer;
-		
+
 		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
 		if (preference != null)
 			return preference.getPresentationLayer();
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
-	
+
 	/**
 	 * Sets the layer of this annotation.
 	 * <p>
@@ -210,13 +210,13 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * @param layer the layer of this annotation
 	 * @deprecated As of 3.0, annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void setLayer(int layer) {
 		fPresentationLayer= layer;
 	}
-	
+
 	/**
 	 * Implement this method to draw a graphical representation of this
 	 * annotation within the given bounds. This default implementation does
@@ -235,7 +235,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		if (image != null)
 			ImageUtilities.drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
 	}
-	
+
 	/**
 	 * Informs this annotation about changes applied to its underlying marker
 	 * and adapts to those changes.
@@ -244,12 +244,12 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		super.update();
 		initialize();
 	}
-		
+
 	/**
 	 * Returns the name of an image used to visually represent markers of
 	 * unknown type. This implementation returns <code>null</code>.
 	 * Subclasses may replace this method.
-	 * 
+	 *
 	 * @param marker the marker of unknown type
 	 * @return the name of an image for markers of unknown type.
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
@@ -259,29 +259,29 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	protected String getUnknownImageName(IMarker marker) {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the image of the given name. Subclasses may extend this method.
 	 * If so, subclasses must assume responsibility for disposing the images
 	 * they create.
-	 * 
+	 *
 	 * @param name the name of the requested image
 	 * @return the image or <code>null</code> if there is no such image
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
-	protected Image getImage(String name) {			
+	protected Image getImage(String name) {
 		if (name != null)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(name);
 		return null;
 	}
-	
+
 	/**
 	 * Returns an image for this annotation. It first consults the workbench
 	 * adapter for this annotation's marker. If none is defined, it tries to
 	 * find an image for the image name of this annotation.
-	 * 
+	 *
 	 * @param display the display for which the image is requested
 	 * @return the image for this annotation
 	 * @deprecated As of 3.0, visual presentation is no longer supported,
@@ -290,7 +290,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 */
 	protected Image getImage(Display display) {
 		if (fImage == null) {
-			
+
 			IMarker marker= getMarker();
 			if (marker.exists()) {
 				IWorkbenchAdapter adapter= (IWorkbenchAdapter) marker.getAdapter(IWorkbenchAdapter.class);
@@ -300,10 +300,10 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 						fImage= getImage(display, descriptor);
 				}
 			}
-			
+
 			if (fImage == null)
 				fImage= getImage(fImageName);
-				
+
 		}
 		return fImage;
 	}

@@ -24,7 +24,7 @@ final class TextEditorMessages extends NLS {
 
 	/**
 	 * Returns the message bundle which contains constructed keys.
-	 * 
+	 *
 	 * @since 3.1
 	 * @return the message bundle
 	 */

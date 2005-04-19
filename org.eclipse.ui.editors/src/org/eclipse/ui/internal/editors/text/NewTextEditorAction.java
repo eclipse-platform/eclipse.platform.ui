@@ -28,8 +28,8 @@ import org.eclipse.ui.editors.text.EditorsUI;
 /**
  * @since 3.1
  */
-public class NewTextEditorAction extends Action implements IWorkbenchWindowActionDelegate {	
-	
+public class NewTextEditorAction extends Action implements IWorkbenchWindowActionDelegate {
+
 	private IWorkbenchWindow fWindow;
 
 	public NewTextEditorAction() {
@@ -95,6 +95,6 @@ public class NewTextEditorAction extends Action implements IWorkbenchWindowActio
 	}
 
 	private IEditorInput createEditorInput(File file) {
-		return new NonExistingFileEditorInput(file, TextEditorMessages.NewTextEditorAction_namePrefix); 
+		return new NonExistingFileEditorInput(file, TextEditorMessages.NewTextEditorAction_namePrefix);
 	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  * <p>
  * Note: Must be public since it is referenced from plugin.xml
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class AnnotationsPreferencePage extends AbstractConfigurationBlockPreferencePage {
@@ -38,17 +38,17 @@ public class AnnotationsPreferencePage extends AbstractConfigurationBlockPrefere
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.AnnotationsConfigurationBlock_description; 
+		String description= TextEditorMessages.AnnotationsConfigurationBlock_description;
 		setDescription(description);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Label createDescriptionLabel(Composite parent) {
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */

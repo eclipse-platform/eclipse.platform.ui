@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Point;
  * <li>a replacement for auto indent strategies</li>
  * <li>support for custom painters</li>
  * </ul>
- * 
+ *
  * It extends the means for text presentation invalidation by allowing a
  * specific region of the presentation to get invalidated. It replaces
  * {@link org.eclipse.jface.text.ITextViewer#setTextHover(ITextHover, String)}
@@ -39,11 +39,11 @@ import org.eclipse.swt.graphics.Point;
  * decorations on the viewer's text widget. Viewer's can have an open number of
  * painters. Painters are informed about changes to the viewer content and state
  * and can take the necessary action in responds to the notification.
- * 
+ *
  * @since 2.1
  */
 public interface ITextViewerExtension2 {
-	 
+
 	 /**
 	  * The state mask of the default hover (value <code>0xff</code>).
 	  */
@@ -51,7 +51,7 @@ public interface ITextViewerExtension2 {
 
 	/**
 	 * Invalidates the viewer's text presentation for the given range.
-	 * 
+	 *
 	 * @param offset the offset of the first character to be redrawn
 	 * @param length the length of the range to be redrawn
 	 */
@@ -78,18 +78,18 @@ public interface ITextViewerExtension2 {
 	 * @param contentType the type for which all text hovers are to be unregistered
 	 */
 	void removeTextHovers(String contentType);
-	
+
 	/**
 	 * Returns the currently displayed text hover if any, <code>null</code> otherwise.
-	 * 
+	 *
 	 * @return the currently displayed text hover or <code>null</code>
 	 */
 	ITextHover getCurrentTextHover();
-	
+
 	/**
 	 * Returns the location at which the most recent mouse hover event
 	 * has occurred.
-	 * 
+	 *
 	 * @return the location of the most recent mouse hover event
 	 */
 	Point getHoverEventLocation();
@@ -98,32 +98,32 @@ public interface ITextViewerExtension2 {
 	 * Prepends the given auto edit strategy to the existing list of strategies
 	 * for the specified content type. The strategies are called in the order in
 	 * which they appear in the list of strategies.
-	 * 
+	 *
 	 * @param strategy the auto edit strategy
 	 * @param contentType the content type
 	 */
-	void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType);	
+	void prependAutoEditStrategy(IAutoEditStrategy strategy, String contentType);
 
 	/**
 	 * Removes the first occurrence of the given auto edit strategy in the list of strategies
 	 * registered under the specified content type.
-	 * 
+	 *
 	 * @param strategy the auto edit strategy
 	 * @param contentType the content type
 	 */
 	void removeAutoEditStrategy(IAutoEditStrategy strategy, String contentType);
-	
+
 	/**
 	 * Adds the given painter to this viewer.
-	 * 
+	 *
 	 * @param painter the painter to be added
 	 */
 	void addPainter(IPainter painter);
-	
+
 	/**
 	 * Removes the given painter from this viewer. If the painter has not been
 	 * added to this viewer, this call is without effect.
-	 * 
+	 *
 	 * @param painter the painter to be removed
 	 */
 	void removePainter(IPainter painter);

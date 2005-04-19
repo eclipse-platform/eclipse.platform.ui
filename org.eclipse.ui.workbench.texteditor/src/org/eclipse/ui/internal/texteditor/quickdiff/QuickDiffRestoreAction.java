@@ -29,19 +29,19 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Abstract superclass of actions that restore / revert parts of a document displayed in the action's
- * editor to the state described by the {@link ILineDiffer ILineDiffer} associated with the document's 
+ * editor to the state described by the {@link ILineDiffer ILineDiffer} associated with the document's
  * {@link IAnnotationModel IAnnotationModel}.
- * 
+ *
  * @since 3.0
  */
 public abstract class QuickDiffRestoreAction extends TextEditorAction {
-	
+
 	private int fLastLine= -1;
 	private final boolean fIsRulerAction;
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 * @param editor the editor this action belongs to
 	 * @param isRulerAction <code>true</code> if this is a ruler action
@@ -50,7 +50,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		super(QuickDiffMessages.getBundleForConstructedKeys(), prefix, editor);
 		fIsRulerAction= isRulerAction;
 	}
-	
+
 	/**
 	 * Called by this action's run method inside a pair of calls to <code>IRewriteTarget.beginCompoundChange</code>
 	 * and <code>IRewriteTarget.endCompoundChange</code>().
@@ -58,7 +58,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	 * @see IRewriteTarget
 	 */
 	protected abstract void runCompoundChange();
-	
+
 	/*
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
@@ -70,21 +70,21 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		if (target != null)
 			target.beginCompoundChange();
 		runCompoundChange();
-		if (target != null) 
+		if (target != null)
 			target.endCompoundChange();
-		
+
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.IAction#isEnabled()
 	 */
 	public boolean isEnabled() {
 		if (!fIsRulerAction)
 			setEnabled(computeEnablement());
-		
+
 		return super.isEnabled();
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
@@ -94,13 +94,13 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		 * (see AbstractDecoratedTextEditor.rulerContextMenuAboutToShow).
 		 */
 		super.update();
-		
+
 		setEnabled(computeEnablement());
 	}
-	
+
 	/**
 	 * Computes, caches and returns the internal state, including enablement.
-	 * 
+	 *
 	 * @return <code>true</code> if the action is enabled, <code>false</code>
 	 *         if it is not
 	 */
@@ -110,14 +110,14 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 
 		if (!canModifyEditor())
 			return false;
-		
+
 		fLastLine= computeLine(fIsRulerAction);
 		return true;
 	}
 
 	/**
 	 * Returns the selection of the editor this action belongs to.
-	 * 
+	 *
 	 * @return the editor's selection, or <code>null</code>
 	 */
 	protected ITextSelection getSelection() {
@@ -131,20 +131,20 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 			return (ITextSelection)s;
 		return null;
 	}
-	
+
 	/**
 	 * Returns the current line of activity
-	 * 
+	 *
 	 * @return the currently active line
 	 * @since 3.1
 	 */
 	protected int getLastLine() {
 		return fLastLine;
 	}
-	
+
 	/**
 	 * Returns the active line
-	 * 
+	 *
 	 * @param useRulerInfo
 	 * @return the line of interest.
 	 * @since 3.1
@@ -170,7 +170,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	/**
 	 * Returns the annotation model of the document displayed in this action's editor, if it
 	 * implements the {@link IAnnotationModelExtension IAnnotationModelExtension} interface.
-	 * 
+	 *
 	 * @return the displayed document's annotation model if it is an <code>IAnnotationModelExtension</code>, or <code>null</code>
 	 */
 	private IAnnotationModelExtension getModel() {
@@ -187,7 +187,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	/**
 	 * Returns the diff model associated with the annotation model of the document currently displayed
 	 * in this action's editor, if any.
-	 * 
+	 *
 	 * @return the diff model associated with the displayed document, or <code>null</code>
 	 */
 	protected ILineDiffer getDiffer() {
@@ -199,7 +199,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 
 	/**
 	 * Returns a <code>IVerticalRulerInfo</code> if this action's editor adapts to one.
-	 * 
+	 *
 	 * @return the <code>IVerticalRulerInfo</code> for the editor's vertical ruler, or <code>null</code>
 	 */
 	protected IVerticalRulerInfo getRuler() {
@@ -210,7 +210,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 
 	/**
 	 * Sets the status line error message to <code>string</code>.
-	 * 
+	 *
 	 * @param string the message to be displayed as error.
 	 */
 	protected void setStatus(String string) {

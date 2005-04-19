@@ -13,28 +13,28 @@ package org.eclipse.ui.editors.text;
 
 /**
  * Interface to be implemented by objects supporting character encodings.
- * 
+ *
  * @since 2.0
  */
 public interface IEncodingSupport{
-	
+
 	/**
 	 * Sets the character encoding.
-	 * 
+	 *
 	 * @param encoding the character encoding
 	 */
 	void setEncoding(String encoding);
-	
+
 	/**
 	 * Returns the character encoding.
-	 * 
+	 *
 	 * @return the character encoding
 	 */
 	String getEncoding();
-	
+
 	/**
 	 * Returns the default character encoding.
-	 * 
+	 *
 	 * @return the default character encoding
 	 */
 	String getDefaultEncoding();

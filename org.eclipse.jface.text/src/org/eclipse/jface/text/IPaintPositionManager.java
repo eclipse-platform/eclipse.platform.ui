@@ -15,24 +15,24 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Manages and updates positions used by {@link IPainter}s.
- * 
+ *
  * @see org.eclipse.jface.text.IPainter
  * @since 2.1
  */
 public interface IPaintPositionManager {
-	
+
 	/**
 	 * Starts managing the given position until <code>unmanagePosition</code> is called.
-	 * 
+	 *
 	 * @param position the position to manage
 	 * @see #unmanagePosition(Position)
 	 */
 	void managePosition(Position position);
-	
+
 	/**
-	 * Stops managing the given position. If the position is not managed 
+	 * Stops managing the given position. If the position is not managed
 	 * by this managed, this call has no effect.
-	 * 
+	 *
 	 * @param position the position that should no longer be managed
 	 */
 	void unmanagePosition(Position position);

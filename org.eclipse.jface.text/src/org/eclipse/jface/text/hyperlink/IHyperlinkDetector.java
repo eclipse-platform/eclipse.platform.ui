@@ -20,11 +20,11 @@ import org.eclipse.jface.text.ITextViewer;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IHyperlinkDetector {
-	
+
 	/**
 	 * Tries to detect hyperlinks for the given region in
 	 * the given text viewer and returns them.
@@ -38,7 +38,7 @@ public interface IHyperlinkDetector {
 	 * 						If <code>true</code> {@link IHyperlink#open()} should directly open
 	 * 							the link and not show any additional UI to select from a list.
 	 * 						If <code>false</code> this method should only return one hyperlink
-	 * 							which upon {@link IHyperlink#open()} may allow to select from a list. 
+	 * 							which upon {@link IHyperlink#open()} may allow to select from a list.
 	 * @return the hyperlinks or <code>null</code> if no hyperlink was detected
 	 */
 	IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks);

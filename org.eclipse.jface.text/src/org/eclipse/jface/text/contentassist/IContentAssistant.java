@@ -11,9 +11,9 @@
 package org.eclipse.jface.text.contentassist;
 
 import org.eclipse.jface.text.ITextViewer;
- 
- 
-/** 
+
+
+/**
  * An <code>IContentAssistant</code> provides support on interactive content completion.
  * The content assistant is a {@link org.eclipse.jface.text.ITextViewer} add-on. Its
  * purpose is to propose, display, and insert completions of the content
@@ -26,14 +26,14 @@ import org.eclipse.jface.text.ITextViewer;
  * <p>
  * A content assistant has a list of {@link org.eclipse.jface.text.contentassist.IContentAssistProcessor}
  * objects each of which is registered for a  particular document content
- * type. The content assistant uses the processors to react on the request 
+ * type. The content assistant uses the processors to react on the request
  * of completing documents or presenting context information.
  * </p>
  * <p>
  * In order to provide backward compatibility for clients of <code>IContentAssistant</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension} since version 3.0 introducing 
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension} since version 3.0 introducing
  *		the following functions:
  *			<ul>
  *				<li>handle documents with multiple partitions</li>
@@ -46,13 +46,13 @@ import org.eclipse.jface.text.ITextViewer;
  * The interface can be implemented by clients. By default, clients use
  * {@link org.eclipse.jface.text.contentassist.ContentAssistant} as the standard
  * implementer of this interface.
- * </p> 
+ * </p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor
  */
  public interface IContentAssistant {
-	
+
 	//------ proposal popup orientation styles ------------
 	/** The context info list will overlay the list of completion proposals. */
 	public final static int PROPOSAL_OVERLAY= 10;
@@ -60,41 +60,41 @@ import org.eclipse.jface.text.ITextViewer;
 	public final static int PROPOSAL_REMOVE=  11;
 	/** The context info list will be presented without hiding or overlapping the completion proposal list. */
 	public final static int PROPOSAL_STACKED= 12;
-	
+
 	//------ context info box orientation styles ----------
 	/** Context info will be shown above the location it has been requested for without hiding the location. */
 	public final static int CONTEXT_INFO_ABOVE= 20;
 	/** Context info will be shown below the location it has been requested for without hiding the location. */
 	public final static int CONTEXT_INFO_BELOW= 21;
-	
-	
+
+
 	/**
 	 * Installs content assist support on the given text viewer.
 	 *
 	 * @param textViewer the text viewer on which content assist will work
 	 */
 	void install(ITextViewer textViewer);
-	
+
 	/**
-	 * Uninstalls content assist support from the text viewer it has 
+	 * Uninstalls content assist support from the text viewer it has
 	 * previously be installed on.
 	 */
 	void uninstall();
-	
+
 	/**
 	 * Shows all possible completions of the content at the viewer's cursor position.
 	 *
 	 * @return an optional error message if no proposals can be computed
 	 */
 	String showPossibleCompletions();
-	
+
 	/**
 	 * Shows context information for the content at the viewer's cursor position.
 	 *
 	 * @return an optional error message if no context information can be computed
 	 */
-	String showContextInformation();	
-	
+	String showContextInformation();
+
 	/**
 	 * Returns the content assist processor to be used for the given content type.
 	 *

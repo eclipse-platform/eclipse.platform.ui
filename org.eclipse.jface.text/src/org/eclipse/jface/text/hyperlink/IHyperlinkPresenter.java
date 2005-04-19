@@ -20,7 +20,7 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface. A default implementation is provided
  * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter}.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IHyperlinkPresenter {
@@ -28,21 +28,21 @@ public interface IHyperlinkPresenter {
 	/**
 	 * Tells whether this presenter is able to handle
 	 * more than one hyperlink.
-	 * 
+	 *
 	 * @return <code>true</code> if this presenter can handle more than one hyperlink
 	 */
 	boolean canShowMultipleHyperlinks();
-	
+
 	/**
 	 * Tells this hyperlink presenter to show the given
 	 * hyperlinks on the installed text viewer.
-	 * 
+	 *
 	 * @param hyperlinks the hyperlinks to show
 	 * @throws IllegalArgumentException if
 	 * 			<ul>
 	 * 				<li><code>hyperlinks</code> is empty</li>
 	 * 				<li>{@link #canShowMultipleHyperlinks()} returns <code>false</code> and <code>hyperlinks</code> contains more than one element</li>
-	 * 			</ul>  
+	 * 			</ul>
 	 */
 	void showHyperlinks(IHyperlink[] hyperlinks) throws IllegalArgumentException;
 
@@ -54,7 +54,7 @@ public interface IHyperlinkPresenter {
 
 	/**
 	 * Installs this hyperlink presenter on the given text viewer.
-	 * 
+	 *
 	 * @param textViewer the text viewer
 	 */
 	void install(ITextViewer textViewer);

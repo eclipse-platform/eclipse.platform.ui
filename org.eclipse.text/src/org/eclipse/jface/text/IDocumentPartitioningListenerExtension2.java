@@ -14,10 +14,10 @@ package org.eclipse.jface.text;
  * Extension interface to
  * {@link org.eclipse.jface.text.IDocumentPartitioningListener}.
  * <p>
- * 
+ *
  * Replaces the previous notification mechanisms by introducing an explicit
  * document partitioning changed event.
- * 
+ *
  * @see org.eclipse.jface.text.DocumentPartitioningChangedEvent
  * @since 3.0
  */
@@ -30,7 +30,7 @@ public interface IDocumentPartitioningListenerExtension2 {
 	 * {@link IDocumentPartitioningListener#documentPartitioningChanged(IDocument)}
 	 * and
 	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}.
-	 * 
+	 *
 	 * @param event the event describing the change
 	 * @see IDocument#addDocumentPartitioningListener(IDocumentPartitioningListener)
 	 */

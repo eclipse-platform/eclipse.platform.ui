@@ -23,37 +23,37 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * Clients are not supposed to implement that interface. Instances of this type
  * are obtained from a {@link org.eclipse.core.filebuffers.ITextFileBufferManager}.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface ITextFileBuffer extends IFileBuffer {
-	
+
 	/**
 	 * Returns the document of this text file buffer.
-	 * 
+	 *
 	 * @return the document of this text file buffer
 	 */
 	IDocument getDocument();
-	
+
 	/**
 	 * Returns the character encoding to be used for reading and writing the
 	 * buffer's underlying file.
-	 * 
+	 *
 	 * @return the character encoding
 	 */
 	String getEncoding();
-	
+
 	/**
 	 * Sets the character encoding to be used for reading and writing the buffer's
 	 * underlying file.
-	 * 
+	 *
 	 * @param encoding the encoding
 	 */
 	void setEncoding(String encoding);
-	
+
 	/**
 	 * Returns the annotation model of this text file buffer.
-	 * 
+	 *
 	 * @return the annotation model of this text file buffer
 	 */
 	IAnnotationModel getAnnotationModel();

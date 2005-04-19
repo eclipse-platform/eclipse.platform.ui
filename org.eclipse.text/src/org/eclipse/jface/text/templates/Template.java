@@ -36,24 +36,24 @@ public class Template {
 	public Template() {
 		this("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
-	
+
 	/**
 	 * Creates a copy of a template.
-	 * 
+	 *
 	 * @param template the template to copy
 	 */
 	public Template(Template template) {
-		this(template.getName(), template.getDescription(), template.getContextTypeId(), template.getPattern());	
+		this(template.getName(), template.getDescription(), template.getContextTypeId(), template.getPattern());
 	}
 
 	/**
 	 * Creates a template.
-	 * 
+	 *
 	 * @param name the name of the template
 	 * @param description the description of the template
 	 * @param contextTypeId the id of the context type in which the template can be applied
 	 * @param pattern the template pattern
-	 */		
+	 */
 	public Template(String name, String description, String contextTypeId, String pattern) {
 		Assert.isNotNull(description);
 		fDescription= description;
@@ -62,7 +62,7 @@ public class Template {
 		fContextTypeId= contextTypeId;
 		fPattern= pattern;
 	}
-	
+
 	/*
 	 * @see Object#hashCode()
 	 */
@@ -72,7 +72,7 @@ public class Template {
 
 	/**
 	 * Sets the description of the template.
-	 * 
+	 *
 	 * @param description the new description
 	 * @deprecated Templates should never be modified
 	 */
@@ -80,19 +80,19 @@ public class Template {
 		Assert.isNotNull(description);
 		fDescription= description;
 	}
-	
+
 	/**
 	 * Returns the description of the template.
-	 * 
+	 *
 	 * @return the description of the template
 	 */
 	public String getDescription() {
 		return fDescription;
 	}
-	
+
 	/**
 	 * Sets the name of the context type in which the template can be applied.
-	 * 
+	 *
 	 * @param contextTypeId the new context type name
 	 * @deprecated Templates should never be modified
 	 */
@@ -100,10 +100,10 @@ public class Template {
 		Assert.isNotNull(contextTypeId);
 		fContextTypeId= contextTypeId;
 	}
-	
+
 	/**
 	 * Returns the id of the context type in which the template can be applied.
-	 * 
+	 *
 	 * @return the id of the context type in which the template can be applied
 	 */
 	public String getContextTypeId() {
@@ -112,17 +112,17 @@ public class Template {
 
 	/**
 	 * Sets the name of the template.
-	 * 
+	 *
 	 * @param name the name of the template
 	 * @deprecated Templates should never be modified
 	 */
 	public void setName(String name) {
 		fName= name;
 	}
-			
+
 	/**
 	 * Returns the name of the template.
-	 * 
+	 *
 	 * @return the name of the template
 	 */
 	public String getName() {
@@ -131,27 +131,27 @@ public class Template {
 
 	/**
 	 * Sets the pattern of the template.
-	 * 
+	 *
 	 * @param pattern the new pattern of the template
 	 * @deprecated Templates should never be modified
 	 */
 	public void setPattern(String pattern) {
 		fPattern= pattern;
 	}
-		
+
 	/**
 	 * Returns the template pattern.
-	 * 
+	 *
 	 * @return the template pattern
 	 */
 	public String getPattern() {
 		return fPattern;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if template is enabled and matches the context,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param prefix the prefix (e.g. inside a document) to match
 	 * @param contextTypeName the context type name to match
 	 * @return <code>true</code> if template is enabled and matches the context,
@@ -167,15 +167,15 @@ public class Template {
 	public boolean equals(Object o) {
 		if (!(o instanceof Template))
 			return false;
-			
+
 		Template t= (Template) o;
 		if (t == this)
-			return true;		
+			return true;
 
 		return t.fName.equals(fName)
 				&& t.fPattern.equals(fPattern)
-				&& t.fContextTypeId.equals(fContextTypeId) 
+				&& t.fContextTypeId.equals(fContextTypeId)
 				&& t.fDescription.equals(fDescription);
 	}
-	
+
 }

@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * This manager controls the layout, content, and visibility of an information
  * control in reaction to mouse hover events issued by the overview ruler of a
  * source viewer.
- * 
+ *
  * @since 2.1
  */
 class OverviewRulerHoverManager extends AnnotationBarHoverManager {
@@ -40,7 +40,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 		super(ruler, sourceViewer, annotationHover, creator);
 		setAnchor(ANCHOR_LEFT);
 	}
-	
+
 	/*
 	 * @see AbstractHoverInformationControlManager#computeInformation()
 	 */
@@ -71,7 +71,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 			hasAnnotation= overviewRuler.hasAnnotation(hover_y);
 		}
 		hover_y++;
-			
+
 		return new Rectangle(0, hover_y, hover_width, hover_height);
 	}
 }

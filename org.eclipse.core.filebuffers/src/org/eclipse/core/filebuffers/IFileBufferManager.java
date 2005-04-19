@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * Clients are not supposed to implement that interface.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IFileBufferManager {
@@ -43,7 +43,7 @@ public interface IFileBufferManager {
 	 * not resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location of the file to be connected
 	 * @param monitor the progress monitor
 	 * @throws CoreException if the file could not successfully be connected
@@ -60,7 +60,7 @@ public interface IFileBufferManager {
 	 * not resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location of the file to be disconnected
 	 * @param monitor the progress monitor
 	 * @throws CoreException if the file could not successfully be disconnected
@@ -76,7 +76,7 @@ public interface IFileBufferManager {
 	 * not resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location
 	 * @return the file buffer managed for that location or <code>null</code>
 	 */
@@ -85,7 +85,7 @@ public interface IFileBufferManager {
 	/**
 	 * Sets the synchronization context for this file buffer manager, i.e., for
 	 * all file buffers this manager manages.
-	 * 
+	 *
 	 * @param context the synchronization context managed by this file buffer manager
 	 */
 	void setSynchronizationContext(ISynchronizationContext context);
@@ -100,7 +100,7 @@ public interface IFileBufferManager {
 	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location
 	 * @deprecated as of 3.1, use {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
@@ -116,7 +116,7 @@ public interface IFileBufferManager {
 	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * 
+	 *
 	 * @param location the location
 	 * @deprecated as of 3.1, use {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
@@ -127,7 +127,7 @@ public interface IFileBufferManager {
 	 * call the listener is informed about changes related to this file
 	 * buffer manager. If the listener is already registered with the file buffer, this
 	 * call has no effect.
-	 * 
+	 *
 	 * @param listener the listener to be added
 	 */
 	void addFileBufferListener(IFileBufferListener listener);
@@ -136,11 +136,11 @@ public interface IFileBufferManager {
 	 * Removes the given listener from the list of file buffer listeners. If
 	 * the listener is not registered with this file buffer, this call has no
 	 * effect.
-	 * 
+	 *
 	 * @param listener the listener to be removed
 	 */
 	void removeFileBufferListener(IFileBufferListener listener);
-	
+
 	/**
 	 * Validates the state of the given file buffers and tries to bring the
 	 * buffer's underlying file into a state in which it can be modified. File
@@ -148,7 +148,7 @@ public interface IFileBufferManager {
 	 * <p>
 	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)} should be used.
 	 * </p>
-	 * 
+	 *
 	 * @param fileBuffers the file buffers to validate
 	 * @param monitor the progress monitor
 	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell

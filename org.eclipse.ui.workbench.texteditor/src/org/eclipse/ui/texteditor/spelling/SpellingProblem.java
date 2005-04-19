@@ -20,37 +20,37 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  * <p>
  * This class is intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @see SpellingService
  * @see ISpellingProblemCollector
  * @since 3.1
  */
 public abstract class SpellingProblem {
-	
+
 	/**
 	 * Returns the offset of the incorrectly spelled region.
-	 * 
+	 *
 	 * @return the offset of the incorrectly spelled region
 	 */
 	public abstract int getOffset();
-	
+
 	/**
 	 * Returns the length of the incorrectly spelled region.
-	 * 
+	 *
 	 * @return the length of the incorrectly spelled region
 	 */
 	public abstract int getLength();
-	
+
 	/**
 	 * Returns a localized, human-readable message string which describes the spelling problem.
-	 * 
+	 *
 	 * @return a localized, human-readable message string which describes the spelling problem
 	 */
 	public abstract String getMessage();
-	
+
 	/**
 	 * Returns the proposals for the incorrectly spelled region.
-	 * 
+	 *
 	 * @return the proposals for the incorrectly spelled region
 	 */
 	public abstract ICompletionProposal[] getProposals();

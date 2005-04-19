@@ -17,14 +17,14 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
  * Extends {@link org.eclipse.jface.text.contentassist.IContentAssistant} to
  * allow to install a content assistant on the given
  * {@linkplain org.eclipse.jface.contentassist.IContentAssistSubjectControl content assist subject control}.
- * 
+ *
  * @since 3.0
  */
 public interface ISubjectControlContentAssistant extends IContentAssistant {
-	
+
 	/**
 	 * Installs content assist support on the given subject.
-	 * 
+	 *
 	 * @param contentAssistSubjectControl the one who requests content assist
 	 */
 	void install(IContentAssistSubjectControl contentAssistSubjectControl);

@@ -18,14 +18,14 @@ import org.eclipse.jface.text.ITextViewer;
  * computes context information for a particular content type.
  * A content assist processor is a {@link org.eclipse.jface.text.contentassist.IContentAssistant}
  * plug-in.
- * <p> 
+ * <p>
  * This interface must be implemented by clients. Implementers should be
- * registered with a content assistant in order to get involved in the 
+ * registered with a content assistant in order to get involved in the
  * assisting process.
  * </p>
 */
 public interface IContentAssistProcessor {
-	
+
 	/**
 	 * Returns a list of completion proposals based on the
 	 * specified location within the document that corresponds
@@ -78,7 +78,7 @@ public interface IContentAssistProcessor {
 	 * Returns a validator used to determine when displayed context information
 	 * should be dismissed. May only return <code>null</code> if the processor is
 	 * incapable of computing context information. <p>
-	 *  
+	 *
 	 * @return a context information validator, or <code>null</code> if the processor
 	 * 			is incapable of computing context information
 	 */

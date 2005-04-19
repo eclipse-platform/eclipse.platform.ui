@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
  * clients with the mapping and interaction aspect of the vertical ruler. This
  * covers the mapping between coordinates of the ruler's control and line
  * numbers based on the connected text viewer's document.
- * 
+ *
  * In order to provide backward compatibility for clients of
  * <code>IVerticalRulerInfo</code>, extension interfaces are used as a means
  * of evolution. The following extension interfaces exist:
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
  * version 3.0 allowing custom annotation hovers and specific annotation models.
  * </li>
  * </ul>
- * 
+ *
  * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension
  * @since 2.0
  */
@@ -51,7 +51,7 @@ public interface IVerticalRulerInfo {
 	 * @return the line number of the last mouse button activity
 	 */
 	int getLineOfLastMouseButtonActivity();
-	
+
 	/**
 	 * Translates a y-coordinate of the ruler's SWT control into
 	 * the according line number of the document of the connected text viewer.
@@ -61,7 +61,7 @@ public interface IVerticalRulerInfo {
 	 * 			coordinate does not correspond to a valid document line
 	 */
 	int toDocumentLineNumber(int y_coordinate);
-	
+
 	/**
 	 * Returns the width of this ruler's control.
 	 *

@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * An interface to use the status line of an editor.
- * 
+ *
  * @since 2.1
  */
 public interface IEditorStatusLine {
@@ -31,5 +31,5 @@ public interface IEditorStatusLine {
 	 * @param image the image to set (may be <code>null</code> to clear the image)
 	 */
 	void setMessage(boolean error, String message, Image image);
-	
+
 }

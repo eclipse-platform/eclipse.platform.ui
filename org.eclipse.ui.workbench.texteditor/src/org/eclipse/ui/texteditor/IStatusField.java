@@ -27,22 +27,22 @@ import org.eclipse.swt.graphics.Image;
  * version 3.0 introducing error text, tooltips and visibility control.</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.eclipse.ui.texteditor.IStatusFieldExtension
  * @since 2.0
  */
 public interface IStatusField {
-	
+
 	/**
 	 * Sets the text of this status field.
-	 * 
+	 *
 	 * @param text the text shown in the status field
 	 */
 	void setText(String text);
-	
+
 	/**
 	 * Sets the image of this status field.
-	 * 
+	 *
 	 * @param image the image shown in the status field
 	 */
 	void setImage(Image image);

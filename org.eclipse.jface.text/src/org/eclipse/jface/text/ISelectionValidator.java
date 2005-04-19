@@ -23,11 +23,11 @@ import org.eclipse.jface.viewers.ISelection;
  * to be invalid.
  * </p>
  * Clients may implement and use this interface.
- * 
+ *
  * @since 3.0
  */
 public interface ISelectionValidator {
-	
+
 	/**
 	 * Tests whether the given post selection is still valid.
 	 *

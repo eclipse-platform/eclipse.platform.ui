@@ -26,12 +26,12 @@ import org.eclipse.ui.texteditor.spelling.SpellingEngineDescriptor;
  * A spelling engine registry used to access the
  * {@link SpellingEngineDescriptor}s that describe the spelling engine
  * extensions.
- * 
+ *
  * @see SpellingEngineDescriptor
  * @since 3.1
  */
 public class SpellingEngineRegistry {
-	
+
 	/**
 	 * Extension id of spelling engine extension point.
 	 * (value <code>"spellingEngine"</code>).
@@ -40,7 +40,7 @@ public class SpellingEngineRegistry {
 
 	/** Ids mapped to descriptors */
 	private Map fDescriptorsMap;
-	
+
 	/** Default descriptor or <code>null</code> */
 	private SpellingEngineDescriptor fDefaultDescriptor;
 
@@ -53,7 +53,7 @@ public class SpellingEngineRegistry {
 	/**
 	 * Returns the descriptor with the given id or <code>null</code> if
 	 * none could be found.
-	 * 
+	 *
 	 * @param id the id
 	 * @return the descriptor with the given id or <code>null</code>
 	 */
@@ -64,7 +64,7 @@ public class SpellingEngineRegistry {
 
 	/**
 	 * Returns the default descriptor.
-	 * 
+	 *
 	 * @return the default descriptor
 	 */
 	public SpellingEngineDescriptor getDefaultDescriptor() {
@@ -74,14 +74,14 @@ public class SpellingEngineRegistry {
 
 	/**
 	 * Returns all descriptors.
-	 * 
+	 *
 	 * @return all descriptors
 	 */
 	public SpellingEngineDescriptor[] getDescriptors() {
 		ensureExtensionsLoaded();
 		return fDescriptors;
 	}
-	
+
 	/**
 	 * Reads all extensions.
 	 * <p>

@@ -14,7 +14,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 
 /**
- * 
+ *
  */
 public interface IProposalListener {
 

@@ -17,11 +17,11 @@ package org.eclipse.jface.text;
  * replace commands, i.e. specifying a document range whose text gets replaced
  * with different text. In addition to this information, the event also contains
  * the changed document.
- * 
+ *
  * @see org.eclipse.jface.text.IDocument
  */
 public class DocumentEvent {
-	
+
 	/** The changed document */
 	public IDocument fDocument;
 	/** The document offset */
@@ -30,7 +30,7 @@ public class DocumentEvent {
 	public int fLength;
 	/** Text inserted into the document */
 	public String fText;
-	
+
 	/**
 	 * Creates a new document event.
 	 *
@@ -40,23 +40,23 @@ public class DocumentEvent {
 	 * @param text the substitution text
 	 */
 	public DocumentEvent(IDocument doc, int offset, int length, String text) {
-		
+
 		Assert.isNotNull(doc);
 		Assert.isTrue(offset >= 0);
 		Assert.isTrue(length >= 0);
-		
+
 		fDocument= doc;
 		fOffset= offset;
 		fLength= length;
 		fText= text;
 	}
-	
+
 	/**
 	 * Creates a new, not initialized document event.
 	 */
 	public DocumentEvent() {
 	}
-	
+
 	/**
 	 * Returns the changed document.
 	 *
@@ -65,10 +65,10 @@ public class DocumentEvent {
 	public IDocument getDocument() {
 		return fDocument;
 	}
-	
+
 	/**
 	 * Returns the offset of the change.
-	 * 
+	 *
 	 * @return the offset of the change
 	 */
 	public int getOffset() {
@@ -83,7 +83,7 @@ public class DocumentEvent {
 	public int getLength() {
 		return fLength;
 	}
-			
+
 	/**
 	 * Returns the text that has been inserted.
 	 *

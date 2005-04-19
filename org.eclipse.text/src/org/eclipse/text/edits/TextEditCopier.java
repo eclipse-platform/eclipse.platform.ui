@@ -22,11 +22,11 @@ import org.eclipse.jface.text.Assert;
  * Copies a tree of text edits. A text edit copier keeps a map
  * between original and new text edits. It can be used to map
  * a copy back to its original edit.
- * 
+ *
  * @since 3.0
  */
 public final class TextEditCopier {
-	
+
 	private TextEdit fEdit;
 	private Map fCopies;
 
@@ -34,9 +34,9 @@ public final class TextEditCopier {
 	 * Constructs a new <code>TextEditCopier</code> for the
 	 * given edit. The actual copy is done by calling <code>
 	 * perform</code>.
-	 * 
+	 *
 	 * @param edit the edit to copy
-	 * 
+	 *
 	 * @see #perform()
 	 */
 	public TextEditCopier(TextEdit edit) {
@@ -48,7 +48,7 @@ public final class TextEditCopier {
 
 	/**
 	 * Performs the actual copying.
-	 * 
+	 *
 	 * @return the copy
 	 */
 	public TextEdit perform() {
@@ -61,10 +61,10 @@ public final class TextEditCopier {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the copy for the original text edit.
-	 * 
+	 *
 	 * @param original the original for which the copy
 	 *  is requested
 	 * @return the copy of the original edit or <code>null</code>
@@ -74,9 +74,9 @@ public final class TextEditCopier {
 		Assert.isNotNull(original);
 		return (TextEdit)fCopies.get(original);
 	}
-	
+
 	//---- helper methods --------------------------------------------
-		
+
 	private TextEdit doCopy(TextEdit edit) {
 		TextEdit result= edit.doCopy();
 		List children= edit.internalGetChildren();
@@ -92,8 +92,8 @@ public final class TextEditCopier {
 		addCopy(edit, result);
 		return result;
 	}
-	
+
 	private void addCopy(TextEdit original, TextEdit copy) {
 		fCopies.put(original, copy);
-	}	
+	}
 }

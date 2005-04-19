@@ -32,11 +32,11 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
  * Source viewer configuration for the text editor.
- * 
+ *
  * @since 3.0
  */
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
-	
+
 	/**
 	 * The preference store used to initialize this configuration.
 	 * <p>
@@ -58,23 +58,23 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		}
 	}
 
-	
+
 	/**
 	 * Creates a text source viewer configuration.
 	 */
 	public TextSourceViewerConfiguration() {
 	}
-	
+
 	/**
 	 * Creates a text source viewer configuration and
 	 * initializes it with the given preference store.
-	 * 
+	 *
 	 * @param preferenceStore	the preference store used to initialize this configuration
 	 */
 	public TextSourceViewerConfiguration(IPreferenceStore preferenceStore) {
 		fPreferenceStore= preferenceStore;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
@@ -90,7 +90,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			return super.getTabWidth(sourceViewer);
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
@@ -98,15 +98,15 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		if (sourceViewer == null || fPreferenceStore == null)
 			return super.getHyperlinkDetectors(sourceViewer);
-		
+
 		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
-		
+
 		return new IHyperlinkDetector[] {
 				new URLHyperlinkDetector(sourceViewer),
 		};
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkStateMask(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
@@ -123,7 +123,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		}
 		return modifierMask;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkPresenter(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
@@ -131,14 +131,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
 			return super.getHyperlinkPresenter(sourceViewer);
-		
+
 		return new DefaultHyperlinkPresenter(fPreferenceStore);
 	}
-	
+
 	/**
 	 * Maps the localized modifier name to a code in the same
 	 * manner as #findModifier.
-	 * 
+	 *
 	 * @param modifierName the modifier name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
 	 * @since 3.1
@@ -146,7 +146,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected static final int findLocalizedModifier(String modifierName) {
 		if (modifierName == null)
 			return 0;
-		
+
 		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
 			return SWT.CTRL;
 		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
@@ -158,10 +158,10 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		return 0;
 	}
-	
+
 	/**
 	 * Computes the state mask out of the given modifiers string.
-	 * 
+	 *
 	 * @param modifiers a string containing modifiers
 	 * @return the state mask
 	 * @since 3.1
@@ -169,7 +169,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected static final int computeStateMask(String modifiers) {
 		if (modifiers == null)
 			return -1;
-	
+
 		if (modifiers.length() == 0)
 			return SWT.NONE;
 
@@ -183,7 +183,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		}
 		return stateMask;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getUndoManager(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
@@ -191,7 +191,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
 			return super.getUndoManager(sourceViewer);
-		
+
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
 		return new DefaultUndoManager(undoHistorySize);
 	}

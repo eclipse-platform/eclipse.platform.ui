@@ -17,16 +17,16 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see ISpellingPreferenceBlock#initialize(IPreferenceStatusMonitor)
  * @since 3.1
  */
 public interface IPreferenceStatusMonitor {
-	
+
 	/**
 	 * Notifies this monitor that the preference page's status has changed
 	 * the given status.
-	 * 
+	 *
 	 * @param status the new status
 	 */
 	void statusChanged(IStatus status);

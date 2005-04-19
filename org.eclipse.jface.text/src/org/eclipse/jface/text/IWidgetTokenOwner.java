@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.text;
 
- 
+
 /**
  * In order to display information in a temporary window, a widget token must be
  * acquired. The intent behind this concept is that only one temporary window
@@ -27,12 +27,12 @@ package org.eclipse.jface.text;
  * 3.0 introducing priorities when requesting a widget token and thus replacing
  * the unprioritized scheme.</li>
  * </ul>
- * 
+ *
  * @see org.eclipse.jface.text.IWidgetTokenOwnerExtension
  * @since 2.0
- */ 
+ */
 public interface IWidgetTokenOwner {
-	
+
 	/**
 	 * Requests the widget token from this token owner. Returns
 	 * <code>true</code> if the token has been acquired or is already owned by
@@ -40,19 +40,19 @@ public interface IWidgetTokenOwner {
 	 * <p>
 	 * Replaced by
 	 * {@link IWidgetTokenOwnerExtension#requestWidgetToken(IWidgetTokenKeeper, int)}.
-	 * 
+	 *
 	 * @param requester the token requester
 	 * @return <code>true</code> if requester acquires the token,
 	 *         <code>false</code> otherwise
 	 */
 	boolean requestWidgetToken(IWidgetTokenKeeper requester);
-	
+
 	/**
 	 * The given token keeper releases the token to this
 	 * token owner. If the token has previously not been held
 	 * by the given token keeper, nothing happens. This
 	 * method is non-blocking.
-	 * 
+	 *
 	 * @param tokenKeeper the token keeper
 	 */
 	void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper);

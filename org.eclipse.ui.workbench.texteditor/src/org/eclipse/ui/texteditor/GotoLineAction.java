@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 
 /**
- * Action for jumping to a particular line if the editor's text viewer. 
+ * Action for jumping to a particular line if the editor's text viewer.
  * The user is requested to enter the line number into an input dialog.
  * The action is initially associated with a text editor via the constructor,
  * but that can be subsequently changed using <code>setEditor</code>.
@@ -49,32 +49,32 @@ public class GotoLineAction extends TextEditorAction {
 
 	/**
 	 * Validates whether the text found in the input field of the
-	 * dialog forms a valid line number. A number is valid if it is 
+	 * dialog forms a valid line number. A number is valid if it is
 	 * one to which can be jumped.
 	 */
 	class NumberValidator implements IInputValidator {
-		
+
 		/*
 		 * @see IInputValidator#isValid(String)
 		 */
 		public String isValid(String input) {
-			
+
 			if (input == null || input.length() == 0)
 				return " "; //$NON-NLS-1$
-						
+
 			try {
 				int i= Integer.parseInt(input);
 				if (i <= 0 || fLastLine < i)
 					return fBundle.getString(fPrefix + "dialog.invalid_range"); //$NON-NLS-1$
-					
+
 			} catch (NumberFormatException x) {
 				return fBundle.getString(fPrefix + "dialog.invalid_input"); //$NON-NLS-1$
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Standard input dialog which additionally sets the focus to the
 	 * text input field. Workaround for <code>InputDialog</code> issue.
@@ -82,14 +82,14 @@ public class GotoLineAction extends TextEditorAction {
 	 * @since 2.0
 	 */
 	static class GotoLineDialog extends InputDialog {
-		
+
 		/*
 		 * @see InputDialog#InputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)
 		 */
 		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
 			super(parent, title, message, initialValue, validator);
 		}
-		
+
 		/*
 		 * @see InputDialog#createDialogArea(Composite)
 		 */
@@ -100,21 +100,21 @@ public class GotoLineAction extends TextEditorAction {
 			return result;
 		}
 	}
-	
+
 	/** The biggest valid line number of the presented document */
 	private int fLastLine;
 	/** This action's resource bundle */
 	private ResourceBundle fBundle;
 	/** This action's prefix used for accessing the resource bundle */
 	private String fPrefix;
-	
+
 	/**
 	 * Creates a new action for the given text editor. The action configures its
 	 * visual representation from the given resource bundle.
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
@@ -124,55 +124,55 @@ public class GotoLineAction extends TextEditorAction {
 		fBundle= bundle;
 		fPrefix= prefix;
 	}
-	
+
 	/**
 	 * Jumps to the given line.
 	 *
 	 * @param line the line to jump to
 	 */
 	private void gotoLine(int line) {
-		
+
 		ITextEditor editor= getTextEditor();
-		
+
 		IDocumentProvider provider= editor.getDocumentProvider();
 		IDocument document= provider.getDocument(editor.getEditorInput());
 		try {
-			
+
 			int start= document.getLineOffset(line);
 			editor.selectAndReveal(start, 0);
-			
+
 			IWorkbenchPage page= editor.getSite().getPage();
 			page.activate(editor);
-			
+
 		} catch (BadLocationException x) {
 			// ignore
 		}
 	}
-	
+
 	/*
 	 * @see Action#run()
 	 */
 	public void run() {
 		try {
-			
+
 			ITextEditor editor= getTextEditor();
-			
+
 			if (editor == null)
 				return;
-			
+
 			IDocumentProvider docProvider= editor.getDocumentProvider();
 			if (docProvider == null)
 				return;
-			
+
 			IDocument document= docProvider.getDocument(editor.getEditorInput());
 			if (document == null)
 				return;
-			
+
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
-			
+
 			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
 			String message= MessageFormat.format(fBundle.getString(fPrefix + "dialog.message"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
-			
+
 			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, "", new NumberValidator()); //$NON-NLS-1$
 			if (d.open() == Window.OK) {
 				try {
@@ -181,7 +181,7 @@ public class GotoLineAction extends TextEditorAction {
 				} catch (NumberFormatException x) {
 				}
 			}
-			
+
 		} catch (BadLocationException x) {
 		}
 	}

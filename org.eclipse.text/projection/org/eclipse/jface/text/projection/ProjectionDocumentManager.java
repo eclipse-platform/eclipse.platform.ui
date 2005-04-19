@@ -41,17 +41,17 @@ import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
  * <p>
  * Clients can instantiate this class. This class is not intended to be
  * subclassed.
- * 
+ *
  * @since 3.0
  */
-public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {	
-	
+public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {
+
 	/** Registry for master documents and their projection documents. */
 	private Map fProjectionRegistry= new HashMap();
-	
+
 	/**
 	 * Registers the given projection document for the given master document.
-	 * 
+	 *
 	 * @param master the master document
 	 * @param projection the projection document
 	 */
@@ -63,10 +63,10 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		}
 		list.add(projection);
 	}
-	
+
 	/**
 	 * Unregisters the given projection document from its master.
-	 * 
+	 *
 	 * @param master the master document
 	 * @param projection the projection document
 	 */
@@ -78,21 +78,21 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 				fProjectionRegistry.remove(master);
 		}
 	}
-	
+
 	/**
 	 * Returns whether the given document is a master document.
-	 * 
+	 *
 	 * @param master the document
 	 * @return <code>true</code> if the given document is a master document known to this manager
 	 */
 	private boolean hasProjection(IDocument master) {
 		return (fProjectionRegistry.get(master) instanceof List);
 	}
-	
+
 	/**
 	 * Returns an iterator enumerating all projection documents registered for the given document or
 	 * <code>null</code> if the document is not a known master document.
-	 * 
+	 *
 	 * @param master the document
 	 * @return an iterator for all registered projection documents or <code>null</code>
 	 */
@@ -102,7 +102,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 			return list.iterator();
 		return null;
 	}
-		
+
 	/**
 	 * Informs all projection documents of the master document that issued the given document event.
 	 *
@@ -114,7 +114,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		Iterator e= getProjectionsIterator(master);
 		if (e == null)
 			return;
-		
+
 		while (e.hasNext()) {
 			ProjectionDocument document= (ProjectionDocument) e.next();
 			if (about)
@@ -123,7 +123,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 				document.masterDocumentChanged(masterEvent);
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
@@ -137,7 +137,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		fireDocumentEvent(true, event);
 	}
-		
+
 	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createMasterSlaveMapping(org.eclipse.jface.text.IDocument)
 	 */
@@ -159,10 +159,10 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		add(master, slave);
 		return slave;
 	}
-	
+
 	/**
-	 * Factory method for projection documents. 
-	 * 
+	 * Factory method for projection documents.
+	 *
 	 * @param master the master document
 	 * @return the newly created projection document
 	 */
@@ -192,7 +192,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 			return ((ProjectionDocument) slave).getMasterDocument();
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#isSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */

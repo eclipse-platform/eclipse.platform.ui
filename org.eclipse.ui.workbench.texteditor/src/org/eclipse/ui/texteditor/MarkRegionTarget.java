@@ -24,32 +24,32 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 /**
  * Default implementation of <code>IMarkRegionTarget</code> using <code>ITextViewer</code>
  * and <code>IStatusLineManager</code>.
- * 
+ *
  * @since 2.0
  */
 public class MarkRegionTarget implements IMarkRegionTarget {
-	
+
 	/** The text viewer. */
-	private final ITextViewer fViewer;	
+	private final ITextViewer fViewer;
 	/** The status line. */
 	private final IStatusLineManager fStatusLine;
-	
+
 	/**
 	 * Creates a MarkRegionTaret.
-	 * 
+	 *
 	 * @param viewer the text viewer
 	 * @param manager the status line manager
 	 */
 	public MarkRegionTarget(ITextViewer viewer, IStatusLineManager manager) {
 		fViewer= viewer;
-		fStatusLine= manager;		
+		fStatusLine= manager;
 	}
-	
+
 	/*
 	 * @see IMarkregion#setMarkAtCursor(boolean)
 	 */
 	public void setMarkAtCursor(boolean set) {
-		
+
 		if (!(fViewer instanceof ITextViewerExtension))
 			return;
 
@@ -58,15 +58,15 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		if (set) {
 			Point selection= fViewer.getSelectedRange();
 			viewerExtension.setMark(selection.x);
-		
+
 			fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_set); 
-	
+			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_set);
+
 		} else {
 			viewerExtension.setMark(-1);
 
 			fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_cleared); 
+			fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_cleared);
 		}
 	}
 
@@ -80,36 +80,36 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 
 		ITextViewerExtension viewerExtension= ((ITextViewerExtension) fViewer);
 
-		int markPosition= viewerExtension.getMark();		
+		int markPosition= viewerExtension.getMark();
 		if (markPosition == -1) {
-			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotSet); 
-			fStatusLine.setMessage(""); //$NON-NLS-1$			
+			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotSet);
+			fStatusLine.setMessage(""); //$NON-NLS-1$
 			return;
 		}
 
 		if (!isVisible(fViewer, markPosition)) {
-			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotVisible); 
+			fStatusLine.setErrorMessage(EditorMessages.MarkRegionTarget_markNotVisible);
 			fStatusLine.setMessage(""); //$NON-NLS-1$
 			return;
-		}		
-		
-		Point selection= fViewer.getSelectedRange();		
+		}
+
+		Point selection= fViewer.getSelectedRange();
 		viewerExtension.setMark(selection.x);
 
 		fViewer.setSelectedRange(markPosition, 0);
 		fViewer.revealRange(markPosition, 0);
 
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-		fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_swapped); 
+		fStatusLine.setMessage(EditorMessages.Editor_mark_status_message_mark_swapped);
 	}
-	
+
 	/**
 	 * Tells whether the given offset is visible in the given text viewer.
-	 * 
+	 *
 	 * @param viewer the text viewer
 	 * @param offset the offset to check
 	 * @return <code>true</code> if the given offset is visible in the given text viewer
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ITextViewer viewer, int offset) {

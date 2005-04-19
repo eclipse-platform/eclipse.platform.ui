@@ -20,22 +20,22 @@ import org.eclipse.swt.widgets.Canvas;
  * @since 3.0
  */
 public interface IAnnotationPresentation {
-	
+
 	/**
 	 * The default annotation layer.
 	 */
 	static final int DEFAULT_LAYER= 0;
 
-	
+
 	/**
 	 * Returns the annotations drawing layer.
 	 *
 	 * @return the annotations drawing layer
 	 */
 	int getLayer();
-	
+
 	/**
-	 * Implement this method to draw a graphical representation 
+	 * Implement this method to draw a graphical representation
 	 * of this annotation within the given bounds.
 	 *
 	 * @param gc the drawing GC

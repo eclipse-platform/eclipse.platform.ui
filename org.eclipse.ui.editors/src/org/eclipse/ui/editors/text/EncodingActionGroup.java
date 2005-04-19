@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.editors.text; 
+package org.eclipse.ui.editors.text;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -47,27 +47,27 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  * @deprecated As of 3.1, encoding needs to be changed via properties dialog
  */
 public class EncodingActionGroup extends ActionGroup {
-	
-	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContentEncodingFormat; 
-	private static final String FILE_CONTAINER_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContainerEncodingFormat; 
 
-	
+	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContentEncodingFormat;
+	private static final String FILE_CONTAINER_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContainerEncodingFormat;
+
+
 	/**
-	 * Action for setting the encoding of the editor to the value this action has 
+	 * Action for setting the encoding of the editor to the value this action has
 	 * been initialized with.
 	 */
 	static class PredefinedEncodingAction extends TextEditorAction {
-		
+
 		/** The target encoding of this action. */
 		private String fEncoding;
 		/** The action label. */
 		private String fLabel;
 		/** Indicates whether the target encoding is the default encoding. */
 		private boolean fIsDefault;
-		
+
 		/**
 		 * Creates a new action for the given specification.
-		 * 
+		 *
 		 * @param bundle the resource bundle
 		 * @param prefix the prefix for lookups from the resource bundle
 		 * @param encoding the target encoding
@@ -80,10 +80,10 @@ public class EncodingActionGroup extends ActionGroup {
 				setText(encoding);
 			fLabel= getText();
 		}
-		
+
 		/**
 		 * Creates a new action for the given specification.
-		 * 
+		 *
 		 * @param bundle the resource bundle
 		 * @param encoding the target encoding
 		 * @param editor the target editor
@@ -94,10 +94,10 @@ public class EncodingActionGroup extends ActionGroup {
 			setText(encoding);
 			fLabel= getText();
 		}
-		
+
 		/**
 		 * Returns the encoding support of the action's editor.
-		 * 
+		 *
 		 * @return the encoding support of the action's editor or <code>null</code> if none
 		 */
 		private IEncodingSupport getEncodingSupport() {
@@ -106,7 +106,7 @@ public class EncodingActionGroup extends ActionGroup {
 				return (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
 			return null;
 		}
-		
+
 		/*
 		 * @see IAction#run()
 		 */
@@ -115,15 +115,15 @@ public class EncodingActionGroup extends ActionGroup {
 			if (s != null)
 				s.setEncoding(fIsDefault ? null : fEncoding);
 		}
-		
+
 		/**
 		 * Returns the encoding currently used in the given editor.
-		 * 
+		 *
 		 * @param editor the editor
 		 * @return the encoding currently used in the given editor or <code>null</code> if no encoding support is installed
-		 */		
+		 */
 		private String getEncoding(ITextEditor editor) {
-			
+
 			IEditorInput input= (editor.getEditorInput());
 			if (input instanceof IFileEditorInput) {
 				IFile file= ((IFileEditorInput)input).getFile();
@@ -136,37 +136,37 @@ public class EncodingActionGroup extends ActionGroup {
 					// continue - assume file is not using default encoding
 				}
 			}
-			
+
 			IEncodingSupport s= getEncodingSupport();
 			if (s != null)
 				return s.getEncoding();
 
 			return null;
 		}
-		
+
 		/*
 		 * @see IUpdate#update()
 		 */
 		public void update() {
-			
+
 			if (fEncoding == null) {
 				setEnabled(false);
 				return;
 			}
-			
+
 			ITextEditor editor= getTextEditor();
 			if (editor == null) {
 				setEnabled(false);
 				return;
 			}
-			
+
 			// update label
 			fIsDefault= IEncodingActionsConstants.DEFAULT.equals(fEncoding);
 			if (fIsDefault)
 				setText(getDefaultEncodingText(editor, fLabel));
 			else
 				setText(fLabel);
-			
+
 			// update enable state
 			if (editor.isDirty())
 				setEnabled(false);
@@ -180,7 +180,7 @@ public class EncodingActionGroup extends ActionGroup {
 			else
 				setChecked(fEncoding.equals(current));
 		}
-		
+
 	}
 
 	/*
@@ -190,9 +190,9 @@ public class EncodingActionGroup extends ActionGroup {
 		IEditorInput input= (editor.getEditorInput());
 		if (!(input instanceof IFileEditorInput))
 			return defaultText;
-			
+
 		IFile file= ((IFileEditorInput)input).getFile();
-		
+
 		String format= format= FILE_CONTENT_ENCODING_FORMAT;
 		String encoding;
 		try {
@@ -204,7 +204,7 @@ public class EncodingActionGroup extends ActionGroup {
 		} catch (CoreException ex) {
 			return defaultText;
 		}
-		
+
 		return MessageFormat.format(format, new String[] { encoding });
 	}
 
@@ -218,29 +218,29 @@ public class EncodingActionGroup extends ActionGroup {
 			if (bom == null)
 				return (String)description.getProperty(IContentDescription.CHARSET);
 			if (bom == IContentDescription.BOM_UTF_8)
-				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_8; 
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_8;
 			if (bom == IContentDescription.BOM_UTF_16BE)
-				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16BE; 
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16BE;
 			if (bom == IContentDescription.BOM_UTF_16LE)
-				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16LE; 
+				return TextEditorMessages.WorkbenchPreference_encoding_BOM_UTF_16LE;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Sets the encoding of an  editor to the value that has interactively been defined.
 	 */
 	static class CustomEncodingAction extends TextEditorAction {
-		
-		
+
+
 		/*
 		 * @see org.eclipse.ui.texteditor.TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 		 */
 		protected CustomEncodingAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 			super(bundle, prefix, editor);
 		}
-		
+
 		/*
 		 * @see IUpdate#update()
 		 */
@@ -253,19 +253,19 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @see IAction#run()
 		 */
 		public void run() {
-			
+
 			ITextEditor editor= getTextEditor();
 			if (editor == null)
 				return;
-			
+
 			IEncodingSupport encodingSupport= (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
 			if (encodingSupport == null)
 				return;
-			
-			String title= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_title; 
-			String message= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_message;  
+
+			String title= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_title;
+			String message= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_message;
 			IInputValidator inputValidator = new IInputValidator() {
-				public String isValid(String newText) { 
+				public String isValid(String newText) {
 					return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
 				}
 			};
@@ -275,25 +275,25 @@ public class EncodingActionGroup extends ActionGroup {
 				initialValue= encodingSupport.getDefaultEncoding();
 			if (initialValue == null)
 				initialValue= ""; //$NON-NLS-1$
-			
+
 			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, initialValue, inputValidator); //$NON-NLS-1$
 			if (d.open() == Window.OK)
 				encodingSupport.setEncoding(d.getValue());
 		}
 	}
-	
-		
+
+
 	/** List of predefined encodings. */
 	private static final String[][] ENCODINGS;
-	
+
 	/** The default encoding. */
 	private static final String SYSTEM_ENCODING;
-	
+
 	/**
 	 * Initializer: computes the set of predefined encoding actions.
 	 */
 	static {
-		
+
 		String[][] encodings= {
 			{ IEncodingActionsConstants.DEFAULT, IEncodingActionsHelpContextIds.DEFAULT, IEncodingActionsDefinitionIds.DEFAULT },
 			{ IEncodingActionsConstants.US_ASCII, IEncodingActionsHelpContextIds.US_ASCII, IEncodingActionsDefinitionIds.US_ASCII },
@@ -302,17 +302,17 @@ public class EncodingActionGroup extends ActionGroup {
 			{ IEncodingActionsConstants.UTF_16BE, IEncodingActionsHelpContextIds.UTF_16BE, IEncodingActionsDefinitionIds.UTF_16BE },
 			{ IEncodingActionsConstants.UTF_16LE, IEncodingActionsHelpContextIds.UTF_16LE, IEncodingActionsDefinitionIds.UTF_16LE },
 			{ IEncodingActionsConstants.UTF_16, IEncodingActionsHelpContextIds.UTF_16, IEncodingActionsDefinitionIds.UTF_16 }
-		};	
-			
+		};
+
 		String system= System.getProperty("file.encoding"); //$NON-NLS-1$
-		if (system != null) { 
-			
+		if (system != null) {
+
 			int i;
 			for (i= 0; i < encodings.length; i++) {
 				if (encodings[i][0].equals(system))
 					break;
 			}
-			
+
 			if (i != encodings.length) {
 				// bring system encoding in second position - first is default encoding
 				String[] s= encodings[i];
@@ -322,40 +322,40 @@ public class EncodingActionGroup extends ActionGroup {
 				system= null;
 			}
 		}
-		
+
 		SYSTEM_ENCODING= system;
 		ENCODINGS= encodings;
 	}
-	
-	
-	
+
+
+
 	/** List of encoding actions of this group. */
 	private List fRetargetActions= new ArrayList();
-	
+
 	/**
 	 * Creates a new encoding action group for an action bar contributor.
 	 */
 	public EncodingActionGroup() {
-		
+
 		fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[0][0] + ".", ENCODINGS[0][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		if (SYSTEM_ENCODING != null)
 			fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
-		
+
 		for (int i= 1; i < ENCODINGS.length; i++)
 			fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * @see ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-		IMenuManager menuManager= actionBars.getMenuManager(); 
+		IMenuManager menuManager= actionBars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null && fRetargetActions.size() > 0) {
-			MenuManager subMenu= new MenuManager(TextEditorMessages.Editor_ConvertEncoding_submenu_label);  
+			MenuManager subMenu= new MenuManager(TextEditorMessages.Editor_ConvertEncoding_submenu_label);
 			subMenu.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
 					update();
@@ -367,14 +367,14 @@ public class EncodingActionGroup extends ActionGroup {
 			subMenu.add(new Separator());
 			while (e.hasNext())
 				subMenu.add((IAction) e.next());
-				
+
 			editMenu.add(subMenu);
 		}
 	}
-	
+
 	/**
 	 * Retargets this action group to the given editor.
-	 * 
+	 *
 	 * @param editor the text editor to which the group should be retargeted
 	 */
 	public void retarget(ITextEditor editor) {
@@ -385,31 +385,31 @@ public class EncodingActionGroup extends ActionGroup {
 			a.setAction(editor == null ? null : editor.getAction(a.getId()));
 		}
 	}
-	
-	
+
+
 	//------------------------------------------------------------------------------------------
-		
-	
+
+
 	/** Text editor this group is associated with. */
 	private ITextEditor fTextEditor;
-	
+
 	/**
 	 * Creates a new encoding action group for the given editor.
-	 * 
+	 *
 	 * @param editor the text editor
 	 */
 	public EncodingActionGroup(ITextEditor editor) {
-		
+
 		fTextEditor= editor;
-		
-		ResourceAction a; 
+
+		ResourceAction a;
 		if (SYSTEM_ENCODING != null) {
 			a= new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), SYSTEM_ENCODING, editor);
 			a.setHelpContextId(IEncodingActionsHelpContextIds.SYSTEM);
 			a.setActionDefinitionId(IEncodingActionsDefinitionIds.SYSTEM);
 			editor.setAction(IEncodingActionsConstants.SYSTEM, a);
 		}
-		
+
 		for (int i= 0; i < ENCODINGS.length; i++) {
 			a= new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
 			a.setHelpContextId( ENCODINGS[i][1]);
@@ -422,39 +422,39 @@ public class EncodingActionGroup extends ActionGroup {
 		a.setActionDefinitionId(IEncodingActionsDefinitionIds.CUSTOM);
 		editor.setAction(IEncodingActionsConstants.CUSTOM, a);
 	}
-		
+
 	/**
 	 * Updates all actions of this action group.
 	 */
 	public void update() {
 		if (fTextEditor == null)
 			return;
-		
+
 		IAction a= fTextEditor.getAction(IEncodingActionsConstants.SYSTEM);
 		if (a instanceof IUpdate)
 			((IUpdate) a).update();
-			
+
 		for (int i= 0; i < ENCODINGS.length; i++) {
 			a= fTextEditor.getAction(ENCODINGS[i][0]);
 			if (a instanceof IUpdate)
 				((IUpdate) a).update();
 		}
-		
+
 		a= fTextEditor.getAction(IEncodingActionsConstants.CUSTOM);
 		if (a instanceof IUpdate)
 			((IUpdate) a).update();
 	}
-	
+
 	/*
 	 * @see ActionGroup#dispose()
 	 */
-	public void dispose() {		
+	public void dispose() {
 		if (fTextEditor != null) {
 			fTextEditor.setAction(IEncodingActionsConstants.SYSTEM, null);
 			for (int i= 0; i < ENCODINGS.length; i++)
 				fTextEditor.setAction(ENCODINGS[i][0], null);
 			fTextEditor.setAction(IEncodingActionsConstants.CUSTOM, null);
-			
+
 			fTextEditor= null;
 		}
 	}

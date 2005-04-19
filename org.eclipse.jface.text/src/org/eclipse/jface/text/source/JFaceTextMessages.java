@@ -24,19 +24,19 @@ class JFaceTextMessages {
 
 	/** The resource bundle name. */
 	private static final String RESOURCE_BUNDLE= "org.eclipse.jface.text.JFaceTextMessages";//$NON-NLS-1$
-	
+
 	/** The resource bundle. */
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-	
+
 	/**
 	 * Prohibits the creation of accessor objects.
 	 */
 	private JFaceTextMessages() {
 	}
-	
+
 	/**
 	 * Returns the string found in the resource bundle under the given key or a place holder string.
-	 * 
+	 *
 	 * @param key the look up key
 	 * @return the value found under the given key
 	 */
@@ -47,10 +47,10 @@ class JFaceTextMessages {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 * @param args arguments used when formatting the string
 	 * @return the formatted string
