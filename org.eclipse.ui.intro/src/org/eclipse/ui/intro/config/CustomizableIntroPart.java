@@ -90,7 +90,6 @@ public final class CustomizableIntroPart extends IntroPart implements
     // the set to false when the standby part is first created.
     private boolean restoreStandby;
 
-    private CustomizableIntroPartListener test;
     private boolean isClosing = false;
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
@@ -119,12 +118,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             CustomizableIntroPart.class);
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
-
-        // add part listener
-        test = new CustomizableIntroPartListener();
-         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
-         .addPartListener(test);
-
 
         // if we are logging performance, start the UI creation start time.
         // Clock stops at the end of the standbyStateChanged event.
@@ -363,10 +356,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             CustomizableIntroPart.class);
         if (model != null && model.hasValidConfig())
             Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-
-        // remove part listener
-       PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
-            .removePartListener(test);
 
     }
 
