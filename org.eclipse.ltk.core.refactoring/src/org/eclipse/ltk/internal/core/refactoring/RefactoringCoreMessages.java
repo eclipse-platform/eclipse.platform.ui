@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class RefactoringCoreMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages";//$NON-NLS-1$
 
 	private RefactoringCoreMessages() {
 		// Do not instantiate
