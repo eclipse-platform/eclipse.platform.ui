@@ -121,9 +121,9 @@ public final class CustomizableIntroPart extends IntroPart implements
         // is still not loaded here.
 
         // add part listener
-        // test = new CustomizableIntroPartListener();
-        // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
-        // .addPartListener(test);
+        test = new CustomizableIntroPartListener();
+         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
+         .addPartListener(test);
 
 
         // if we are logging performance, start the UI creation start time.
@@ -365,7 +365,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 
         // remove part listener
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
+       PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
             .removePartListener(test);
 
     }
@@ -422,7 +422,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      */
 
     private IMemento getMemento(IMemento memento, String key) {
-        if (memento == null)
+        if (memento == null)   
             return null;
         return memento.getChild(key);
     }
