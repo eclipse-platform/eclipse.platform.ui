@@ -180,10 +180,7 @@ import org.eclipse.ui.part.EditorPart;
  * <code>DEFAULT_RULER_CONTEXT_MENU_ID</code>.</p>
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, INavigationLocationProvider {
-
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
+	
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
 	 * Current value: <code>editorContribution</code>
@@ -4099,7 +4096,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			setAction(entry.getActionId(), action);
 		}
 		
-		action= new ToggleOverwriteModeAction(fgResourceBundle, "Editor.ToggleOverwriteMode."); //$NON-NLS-1$
+		action= new ToggleOverwriteModeAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleOverwriteMode."); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
 		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, action);
 		textWidget.setKeyBinding(SWT.INSERT, SWT.NULL);
@@ -4186,12 +4183,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} else {
 			ResourceAction action;
 			
-			action= new TextOperationAction(fgResourceBundle, "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
+			action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
 			action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 			setAction(ITextEditorActionConstants.UNDO, action);
 			
-			action= new TextOperationAction(fgResourceBundle, "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
+			action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
 			action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			setAction(ITextEditorActionConstants.REDO, action);
@@ -4208,124 +4205,124 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
         ResourceAction action;
         				
-		action= new TextOperationAction(fgResourceBundle, "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 		
-		action= new TextOperationAction(fgResourceBundle, "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 		
-		action= new TextOperationAction(fgResourceBundle, "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 		
-		action= new TextOperationAction(fgResourceBundle, "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE);
 		setAction(ITextEditorActionConstants.DELETE_LINE, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLine.", this, DeleteLineAction.WHOLE, true); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.CutLine.", this, DeleteLineAction.WHOLE, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE);
 		setAction(ITextEditorActionConstants.CUT_LINE, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, false); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.DeleteLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_BEGINNING_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_BEGINNING);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, true); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.CutLineToBeginning.", this, DeleteLineAction.TO_BEGINNING, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_BEGINNING_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_BEGINNING);
 		setAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END, false); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.DeleteLineToEnd.", this, DeleteLineAction.TO_END, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE_LINE_TO_END);
 		setAction(ITextEditorActionConstants.DELETE_LINE_TO_END, action);
 
-		action= new DeleteLineAction(fgResourceBundle, "Editor.CutLineToEnd.", this, DeleteLineAction.TO_END, true); //$NON-NLS-1$
+		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.CutLineToEnd.", this, DeleteLineAction.TO_END, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_END);
 		setAction(ITextEditorActionConstants.CUT_LINE_TO_END, action);
 		
-		action= new MarkAction(fgResourceBundle, "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
+		action= new MarkAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SET_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SET_MARK);
 		setAction(ITextEditorActionConstants.SET_MARK, action);
 
-		action= new MarkAction(fgResourceBundle, "Editor.ClearMark.", this, MarkAction.CLEAR_MARK); //$NON-NLS-1$
+		action= new MarkAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ClearMark.", this, MarkAction.CLEAR_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CLEAR_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CLEAR_MARK);
 		setAction(ITextEditorActionConstants.CLEAR_MARK, action);
 
-		action= new MarkAction(fgResourceBundle, "Editor.SwapMark.", this, MarkAction.SWAP_MARK); //$NON-NLS-1$
+		action= new MarkAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SwapMark.", this, MarkAction.SWAP_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SWAP_MARK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SWAP_MARK);
 		setAction(ITextEditorActionConstants.SWAP_MARK, action);
 
-		action= new TextOperationAction(fgResourceBundle, "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
-		action= new ShiftAction(fgResourceBundle, "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
-		action= new ShiftAction(fgResourceBundle, "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT) { //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT) { //$NON-NLS-1$
 			public void update() {
 				updateForTab();
 			}
 		};
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT_TAB, action);
 		
-		action= new ShiftAction(fgResourceBundle, "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
 		
-		action= new TextOperationAction(fgResourceBundle, "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 		
-		action= new FindReplaceAction(fgResourceBundle, "Editor.FindReplace.", this); //$NON-NLS-1$
+		action= new FindReplaceAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
-		action= new FindNextAction(fgResourceBundle, "Editor.FindNext.", this, true); //$NON-NLS-1$
+		action= new FindNextAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
 		setAction(ITextEditorActionConstants.FIND_NEXT, action);
 
-		action= new FindNextAction(fgResourceBundle, "Editor.FindPrevious.", this, false); //$NON-NLS-1$
+		action= new FindNextAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 
-		action= new IncrementalFindAction(fgResourceBundle, "Editor.FindIncremental.", this, true); //$NON-NLS-1$
+		action= new IncrementalFindAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncremental.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
 		
-		action= new IncrementalFindAction(fgResourceBundle, "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
+		action= new IncrementalFindAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 				
-		action= new SaveAction(fgResourceBundle, "Editor.Save.", this); //$NON-NLS-1$
+		action= new SaveAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
 		/*
 		 * if the line below is uncommented then the key binding does not work any more
@@ -4334,62 +4331,62 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 //		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
-		action= new RevertToSavedAction(fgResourceBundle, "Editor.Revert.", this); //$NON-NLS-1$
+		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT_TO_SAVED);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 		
-		action= new GotoLineAction(fgResourceBundle, "Editor.GotoLine.", this); //$NON-NLS-1$
+		action= new GotoLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		action= new MoveLinesAction(fgResourceBundle, "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getBundleForConstructedKeys(), "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
 		
-		action= new MoveLinesAction(fgResourceBundle, "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getBundleForConstructedKeys(), "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
 		
-		action= new MoveLinesAction(fgResourceBundle, "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getBundleForConstructedKeys(), "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_UP);
 		setAction(ITextEditorActionConstants.COPY_LINE_UP, action);
 		
-		action= new MoveLinesAction(fgResourceBundle, "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getBundleForConstructedKeys(), "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_DOWN);
 		setAction(ITextEditorActionConstants.COPY_LINE_DOWN, action);
 		
-		action= new CaseAction(fgResourceBundle, "Editor.UpperCase.", this, true); //$NON-NLS-1$
+		action= new CaseAction(EditorMessages.getBundleForConstructedKeys(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UPPER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UPPER_CASE);
 		setAction(ITextEditorActionConstants.UPPER_CASE, action);
 		
-		action= new CaseAction(fgResourceBundle, "Editor.LowerCase.", this, false); //$NON-NLS-1$
+		action= new CaseAction(EditorMessages.getBundleForConstructedKeys(), "Editor.LowerCase.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.LOWER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LOWER_CASE);
 		setAction(ITextEditorActionConstants.LOWER_CASE, action);
 		
-		action= new InsertLineAction(fgResourceBundle, "Editor.SmartEnter.", this, false); //$NON-NLS-1$
+		action= new InsertLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
 		setAction(ITextEditorActionConstants.SMART_ENTER, action);
 		
-		action= new InsertLineAction(fgResourceBundle, "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
+		action= new InsertLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
 		
-		action= new ToggleInsertModeAction(fgResourceBundle, "Editor.ToggleInsertMode."); //$NON-NLS-1$
+		action= new ToggleInsertModeAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleInsertMode."); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.TOGGLE_INSERT_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 		setAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE, action);
 
-		action= new HippieCompleteAction(fgResourceBundle, "Editor.HippieCompletion.", this); //$NON-NLS-1$
+		action= new HippieCompleteAction(EditorMessages.getBundleForConstructedKeys(), "Editor.HippieCompletion.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);

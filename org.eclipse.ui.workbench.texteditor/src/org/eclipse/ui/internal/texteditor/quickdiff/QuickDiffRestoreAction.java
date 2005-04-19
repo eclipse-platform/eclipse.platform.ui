@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
@@ -41,9 +39,6 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	private int fLastLine= -1;
 	private final boolean fIsRulerAction;
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.texteditor.quickdiff.ConstructedQuickDiffMessages"; //$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-	
 	/**
 	 * Creates a new instance.
 	 * 
@@ -52,7 +47,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
 	QuickDiffRestoreAction(String prefix, ITextEditor editor, boolean isRulerAction) {
-		super(fgResourceBundle, prefix, editor);
+		super(QuickDiffMessages.getBundleForConstructedKeys(), prefix, editor);
 		fIsRulerAction= isRulerAction;
 	}
 	

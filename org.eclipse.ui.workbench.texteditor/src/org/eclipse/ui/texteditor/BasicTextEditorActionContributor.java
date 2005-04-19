@@ -14,7 +14,6 @@ package org.eclipse.ui.texteditor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -52,9 +51,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {
 	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
 	
 	/** The global actions to be connected with editor actions */
 	private final static String[] ACTIONS= {
@@ -150,17 +146,17 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public BasicTextEditorActionContributor() {
 		
-		fFindNext= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindNext."); //$NON-NLS-1$
+		fFindNext= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext."); //$NON-NLS-1$
 		fFindNext.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT); 
-		fFindPrevious= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindPrevious."); //$NON-NLS-1$
+		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindPrevious."); //$NON-NLS-1$
 		fFindPrevious.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS); 
-		fIncrementalFind= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindIncremental."); //$NON-NLS-1$
+		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncremental."); //$NON-NLS-1$
 		fIncrementalFind.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL); 
-		fIncrementalFindReverse= new RetargetTextEditorAction(fgResourceBundle, "Editor.FindIncrementalReverse."); //$NON-NLS-1$
+		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
 		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
-		fGotoLine= new RetargetTextEditorAction(fgResourceBundle, "Editor.GotoLine."); //$NON-NLS-1$
+		fGotoLine= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
-		fHippieCompletion= new RetargetTextEditorAction(fgResourceBundle, "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
+		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		
 		fStatusFields= new HashMap(3);

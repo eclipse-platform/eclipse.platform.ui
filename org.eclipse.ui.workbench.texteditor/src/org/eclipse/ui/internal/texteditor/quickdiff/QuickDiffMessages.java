@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -19,6 +21,19 @@ import org.eclipse.osgi.util.NLS;
  * @since 3.0
  */
 public final class QuickDiffMessages extends NLS {
+
+	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS= "org.eclipse.ui.internal.texteditor.quickdiff.ConstructedQuickDiffMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgBundleForConstructedKeys= ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
+
+	/**
+	 * Returns the message bundle which contains constructed keys.
+	 * 
+	 * @since 3.1
+	 * @return the message bundle
+	 */
+	public static ResourceBundle getBundleForConstructedKeys() {
+		return fgBundleForConstructedKeys;
+	}
 
 	private static final String BUNDLE_NAME= QuickDiffMessages.class.getName();
 

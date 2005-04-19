@@ -42,8 +42,6 @@ import org.eclipse.jface.text.TextUtilities;
  */
 public class ConvertLineDelimitersAction extends TextEditorAction {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 	
 	/** The target line delimiter. */
 	private final String fLineDelimiter;
@@ -55,7 +53,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 * @param lineDelimiter the target line delimiter to convert the editor's document to
 	 */
 	public ConvertLineDelimitersAction(ITextEditor editor, String lineDelimiter) {
-		this(fgResourceBundle, "dummy", editor, lineDelimiter); //$NON-NLS-1$
+		this(EditorMessages.getBundleForConstructedKeys(), "dummy", editor, lineDelimiter); //$NON-NLS-1$
 	}
 
 	/**
@@ -261,7 +259,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	
 	private static String getString(String key) {
 		try {
-			return fgResourceBundle.getString(key);
+			return EditorMessages.getBundleForConstructedKeys().getString(key);
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
