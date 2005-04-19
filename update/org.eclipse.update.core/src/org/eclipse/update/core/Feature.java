@@ -863,16 +863,19 @@ public class Feature extends FeatureModel implements IFeature {
 			}
 		}
 
-		// instanciate by mapping it based on the site.xml
-		// in future we may ask for a factory to create the feature ref
-		IncludedFeatureReference newRef = new IncludedFeatureReference(include);
-		newRef.setSite(getSite());
-		IFeatureReference parentRef = getSite().getFeatureReference(this);
-		if (parentRef instanceof FeatureReference) {
-			newRef.setType(((FeatureReference) parentRef).getType());
-		}
-		String featureID =
-			Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar"; //$NON-NLS-1$
+        // instantiate by mapping it based on the site.xml
+        // in future we may ask for a factory to create the feature ref
+        IncludedFeatureReference newRef = new UpdateSiteIncludedFeatureReference(include);
+        newRef.setSite(getSite());
+        IFeatureReference parentRef = getSite().getFeatureReference(this);
+        if (parentRef instanceof FeatureReference) {
+         newRef.setType(((FeatureReference) parentRef).getType());
+        }
+        String featureID = Site.DEFAULT_FEATURE_PATH + identifier.toString();
+        if(this instanceof TargetFeature)
+         featureID = featureID + "/"; //$NON-NLS-1$
+        else
+         featureID = featureID + ".jar"; //$NON-NLS-1$
 		URL featureURL =
 			getSite().getSiteContentProvider().getArchiveReference(featureID);
 		newRef.setURL(featureURL);

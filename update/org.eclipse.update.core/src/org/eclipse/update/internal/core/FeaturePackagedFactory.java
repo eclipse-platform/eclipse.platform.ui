@@ -74,5 +74,8 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 		}
 		return feature;
 	}
-
+    
+    public IncludedFeatureReferenceModel createIncludedFeatureReferenceModel() {
+     return new UpdateSiteIncludedFeatureReference();
+    }
 }
