@@ -236,13 +236,13 @@ public class ChangesSection extends Composite {
 			if (candidateMode != currentMode) {
 				long numChanges = getChangesInMode(participantSet, candidateMode);
 				if (numChanges > 0) {
-					StringBuffer text = new StringBuffer();
-					text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHides, new String[] { Utils.modeToString(configuration.getMode()) })); //$NON-NLS-1$
+					String message;
 					if(numChanges > 1) {
-						text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHidesPlural, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) })); //$NON-NLS-1$
+                        message = NLS.bind(TeamUIMessages.ChangesSection_filterHidesPlural, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) });
 					} else {
-						text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHidesSingular, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) })); //$NON-NLS-1$
+                        message = NLS.bind(TeamUIMessages.ChangesSection_filterHidesSingular, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) });
 					}
+					message = NLS.bind(TeamUIMessages.ChangesSection_filterHides, new String[] { Utils.modeToString(configuration.getMode()), message });
 					
 					Label warning = new Label(composite, SWT.NONE);
 					warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
@@ -254,7 +254,7 @@ public class ChangesSection extends Composite {
 						}
 					});
 					forms.getHyperlinkGroup().add(link);
-					createDescriptionLabel(composite, text.toString());
+					createDescriptionLabel(composite, message);
 					return composite;
 				}
 			}
