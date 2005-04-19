@@ -87,6 +87,13 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 		if (resourceClass != null) {
 			contributors.addAll(getResourceContributors(resourceClass));
 		}
+		if (commonClasses != null && ! commonClasses.isEmpty()) {
+			for (int i = 0; i < commonClasses.size(); i++) {
+				List results = getObjectContributors((Class) commonClasses.get(i));
+				if (results != null)
+					contributors.addAll(results);
+			}
+		}
         // Add the resource mappings explicitly to avoid possible duplication
         if (resourceMappingClass == null) {
             // Still show the menus if the object is not adaptable but the adapter manager
@@ -102,13 +109,6 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			for (Iterator it = commonAdapters.iterator(); it.hasNext();) {
 				String adapter = (String) it.next();
 				contributors.addAll(getAdaptableContributors(adapter));
-			}
-		}
-		if (commonClasses != null && ! commonClasses.isEmpty()) {
-			for (int i = 0; i < commonClasses.size(); i++) {
-				List results = getObjectContributors((Class) commonClasses.get(i));
-				if (results != null)
-					contributors.addAll(results);
 			}
 		}
        
