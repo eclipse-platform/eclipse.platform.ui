@@ -13,11 +13,10 @@ package org.eclipse.ui.internal;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -44,25 +43,30 @@ public class ShellPool {
     
     private boolean isDisposed = false;
     
-    private Listener closeListener = new Listener() {
-        public void handleEvent(Event e) {
+    private ShellListener closeListener = new ShellAdapter() {
+        
+        public void shellClosed(ShellEvent e) {
                 if (isDisposed) {
                     return;
                 }
-            
+                
                 if (e.doit) {
                     Shell s = (Shell)e.widget;
                     ShellListener l = (ShellListener)s.getData(CLOSE_LISTENER);
-                    s.removeShellListener(l);
-                    s.removeListener(SWT.Close, this);
-                    Control[] children = s.getChildren();
-                    for (int i = 0; i < children.length; i++) {
-                        Control control = children[i];
-                      
-                        control.dispose();
+                    
+                    if (l != null) {
+                        s.setData(CLOSE_LISTENER, null);
+                        l.shellClosed(e);
+                        
+                        Control[] children = s.getChildren();
+                        for (int i = 0; i < children.length; i++) {
+                            Control control = children[i];
+                          
+                            control.dispose();
+                        }
+                        availableShells.add(s);
+                        s.setVisible(false);
                     }
-                    availableShells.add(s);
-                    s.setVisible(false);
                 }
                 e.doit = false;
          }
@@ -92,11 +96,10 @@ public class ShellPool {
             result = (Shell)availableShells.removeFirst();
         } else {
             result = new Shell(parentShell, flags);
+            result.addShellListener(this.closeListener);
         }
         
-        result.addShellListener(closeListener);
         result.setData(CLOSE_LISTENER, closeListener);
-        result.addListener(SWT.Close, this.closeListener);
         return result;
     }
     

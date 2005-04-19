@@ -1166,7 +1166,7 @@ public class PerspectiveHelper {
                         placeholder.setRealContainer(container);
                         parentContainer.replace(cPart, placeholder);
                         
-                    } else if (!wasDocked) {
+                    } else {
                         DetachedPlaceHolder placeholder = new DetachedPlaceHolder(
                                 "", oldShell.getBounds()); //$NON-NLS-1$
                         for (int i = 0, length = children.length; i < length; i++) {

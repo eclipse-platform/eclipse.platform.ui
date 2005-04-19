@@ -311,7 +311,7 @@ public class DetachedWindow {
 			create(); 
 		 
 		Rectangle bounds = getShell().getBounds(); 
-        getShell().open();
+        getShell().setVisible(true);
 		 
 		if (!bounds.equals(getShell().getBounds())) { 
 			getShell().setBounds(bounds); 
