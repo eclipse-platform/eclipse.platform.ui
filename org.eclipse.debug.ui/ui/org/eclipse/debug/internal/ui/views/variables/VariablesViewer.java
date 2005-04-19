@@ -14,12 +14,17 @@ package org.eclipse.debug.internal.ui.views.variables;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Variables viewer. As the user steps through code, this
@@ -28,7 +33,24 @@ import org.eclipse.swt.widgets.Widget;
 public class VariablesViewer extends RemoteTreeViewer {
     
     private ArrayList fUpdateListeners = new ArrayList();
-	
+    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); //$NON-NLS-1$
+    
+    
+    private class StateRestorationJob extends UIJob {
+        public StateRestorationJob(String name) {
+            super(name);
+            setSystem(true);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            restoreExpansionState();
+            return Status.OK_STATUS;
+        }   
+    }
+    
 	/**
 	 * Constructor for VariablesViewer.
 	 * @param parent
@@ -76,6 +98,14 @@ public class VariablesViewer extends RemoteTreeViewer {
 	}
 	
 	/* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.RemoteTreeViewer#runDeferredUpdates()
+     */
+    protected void runDeferredUpdates() {
+        super.runDeferredUpdates();
+        fStateRestorationJob.schedule();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#collapseAll()
 	 */
 	public void collapseAll() {

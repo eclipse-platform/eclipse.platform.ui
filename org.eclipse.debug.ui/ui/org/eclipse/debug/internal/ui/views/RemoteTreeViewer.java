@@ -46,7 +46,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
     private ExpansionJob fExpansionJob = null;
     private SelectionJob fSelectionJob = null;
-    private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); //$NON-NLS-1$
+    
 
     class ExpansionJob extends UIJob {
         
@@ -181,21 +181,7 @@ public class RemoteTreeViewer extends TreeViewer {
         }
     }
     
-    private class StateRestorationJob extends UIJob {
-        public StateRestorationJob(String name) {
-            super(name);
-            setSystem(true);
-        }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        public IStatus runInUIThread(IProgressMonitor monitor) {
-            restoreExpansionState();
-            return Status.OK_STATUS;
-        }
-        
-    }
     /**
      * Constructs a remote tree viewer parented by the given composite.
      *   
@@ -248,8 +234,7 @@ public class RemoteTreeViewer extends TreeViewer {
         }
         if (fSelectionJob != null) {
             fSelectionJob.schedule();
-        }
-        fStateRestorationJob.schedule();
+        }        
     }
     
     /**
@@ -444,9 +429,6 @@ public class RemoteTreeViewer extends TreeViewer {
                 runDeferredUpdates();
             }
         });
-    }
-
-    protected synchronized void restoreExpansionState() {
     }
 
 	protected void doUpdateItem(Item item, Object element) {
