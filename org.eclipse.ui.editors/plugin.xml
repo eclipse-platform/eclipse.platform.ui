@@ -114,14 +114,6 @@
    </extension>
    
    <extension
-         point="org.eclipse.ui.handlers">
-         <handler
-      		commandId="org.eclipse.ui.edit.text.removeTrailingWhitespace"
-      		class="org.eclipse.ui.internal.editors.text.RemoveTrailingWhitespaceHandler">
-      </handler>
-   </extension>
-      
-   <extension
          point="org.eclipse.ui.bindings">
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
