@@ -31,10 +31,10 @@ public class IntroPlugin extends AbstractUIPlugin {
     // close it if intro is opened from the menu.
     private IntroLaunchBar launchBar;
 
-
     // used for performance logging. Time when the constructor of
     // CustomizableIntroPart is called.
     private long uiCreationStartTime;
+
 
 
     /**
@@ -139,6 +139,7 @@ public class IntroPlugin extends AbstractUIPlugin {
         inst = this;
         if (Log.logInfo)
             Log.info("IntroPlugin - calling start on Intro bundle"); //$NON-NLS-1$
+        
     }
 
     /*
@@ -156,7 +157,6 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     public void setUICreationStartTime(long uiCreationStartTime) {
         this.uiCreationStartTime = uiCreationStartTime;
-        ;
     }
 
 

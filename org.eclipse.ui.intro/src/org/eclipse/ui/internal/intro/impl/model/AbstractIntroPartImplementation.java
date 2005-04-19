@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +29,8 @@ import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelLabelProvider;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 
@@ -47,6 +50,11 @@ public abstract class AbstractIntroPartImplementation {
     private IMemento memento;
     private Vector history = new Vector();
     private int navigationLocation = 0;
+
+    // flag used to enable logging of perf data for full UI creation only once.
+    // Since standbyStateChanged is called several times, flag is used in method
+    // to filter out all subsequent calls.
+    boolean logUIcreationTime = true;
 
     // Global actions
     protected Action backAction = new Action() {
@@ -295,14 +303,84 @@ public abstract class AbstractIntroPartImplementation {
     }
 
     /**
-     * Called when the Intro changes state. By default, this method does
-     * nothing. Subclasses may override.
+     * Called when the Intro changes state. This method should not be
+     * subclassed. It adds performance logging calls. Subclasses must implement
+     * doStandbyStateChanged instead.
      * 
      * @param standby
      */
     public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
-        // do nothing.
+        PerformanceStats setStandbyStateStats = null;
+        long start = 0;
+        if (Log.logPerformance) {
+            if (logUIcreationTime && PerformanceStats.ENABLED) {
+                PerformanceStats stats = PerformanceStats.getStats(
+                    IIntroConstants.PERF_UI_ZOOM, IIntroConstants.INTRO);
+                stats.endRun();
+                Util
+                    .logPerformanceMessage(
+                        "(perf stats) time spent in UI code before content is displayed (standbyStateChanged event is fired) ",
+                        stats.getRunningTime());
+                stats.reset();
+            }
+
+            // standby time.
+            setStandbyStateStats = PerformanceStats.getStats(
+                IIntroConstants.PERF_SET_STANDBY_STATE, IIntroConstants.INTRO);
+            setStandbyStateStats.startRun();
+            start = System.currentTimeMillis();
+        }
+
+
+        doStandbyStateChanged(standby, isStandbyPartNeeded);
+
+        // now log performance
+        if (Log.logPerformance) {
+            if (PerformanceStats.ENABLED) {
+                setStandbyStateStats.endRun();
+                Util
+                    .logPerformanceMessage(
+                        "(perf stats) setting standby state (zooming, displaying content) took:",
+                        +setStandbyStateStats.getRunningTime());
+                setStandbyStateStats.reset();
+            } else
+                Util
+                    .logPerformanceTime(
+                        "setting standby state (zooming, displaying content) took:",
+                        +start);
+
+            if (logUIcreationTime) {
+                if (PerformanceStats.ENABLED) {
+                    PerformanceStats stats = PerformanceStats.getStats(
+                        IIntroConstants.PERF_VIEW_CREATION_TIME,
+                        IIntroConstants.INTRO);
+                    stats.endRun();
+                    Util
+                        .logPerformanceMessage(
+                            "END - (perf stats): creating CustomizableIntroPart view took:",
+                            +stats.getRunningTime());
+                    stats.reset();
+                } else
+                    Util.logPerformanceTime(
+                        "END: creating CustomizableIntroPart view took:",
+                        +IntroPlugin.getDefault().gettUICreationStartTime());
+
+
+                // prevent further logging of UI creation time.
+                logUIcreationTime = false;
+            }
+
+        }
     }
+
+
+
+
+    /*
+     * Subclasses must implement the actual logic for the method.
+     */
+    protected abstract void doStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded);
 
     /**
      * Save the current state of the intro. Currently, we only store information

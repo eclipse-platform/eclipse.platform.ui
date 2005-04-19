@@ -258,7 +258,8 @@ public class FormIntroPartImplementation extends
 
 
 
-    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
+    protected void doStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded) {
         if (getModel().isDynamic())
             dynamicStandbyStateChanged(standby, isStandbyPartNeeded);
         else

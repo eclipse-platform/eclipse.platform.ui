@@ -28,6 +28,11 @@ public class TextIntroPartImplementation extends
         AbstractIntroPartImplementation {
 
 
+    public void doStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded) {
+
+    }
+
     public void createPartControl(Composite container) {
         Text text = new Text(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
         IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();

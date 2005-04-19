@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
+
 public interface IIntroConstants {
 
     // all attributes here are by default public static final.
@@ -45,5 +46,16 @@ public interface IIntroConstants {
 
     // key to retrive page sub-title from PageContentForm
     String PAGE_SUBTITLE = "PageSubtitle"; //$NON-NLS-1$
+
+    // Performance keys
+    // -----------------------
+    String INTRO = "intro";
+    String PERF_VIEW_CREATION_TIME = PLUGIN_ID + "/perf/createView";
+    String PERF_SET_STANDBY_STATE = PLUGIN_ID + "/perf/setStandbyState";
+    // not exposed in .option. Used because framework is convenient.
+    String PERF_UI_ZOOM = PLUGIN_ID + "/perf/uiZoom";
+
+
+
 
 }

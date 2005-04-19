@@ -14,6 +14,7 @@ package org.eclipse.ui.intro.config;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -21,7 +22,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -86,6 +90,9 @@ public final class CustomizableIntroPart extends IntroPart implements
     // the set to false when the standby part is first created.
     private boolean restoreStandby;
 
+    private CustomizableIntroPartListener test;
+    private boolean isClosing = false;
+
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
 
@@ -113,15 +120,26 @@ public final class CustomizableIntroPart extends IntroPart implements
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
 
-        // if we are logging performance, set UI creation start time.
-        // ps: perf data is stored in Intro plugin because we do not want create
-        // apis here. The full creation time of the UI is calculated by each
-        // implementation class and not here. This is because we relay on
-        // workbench to display content in UI, so we have to wait until last
-        // possible time to stop the perf clock.
-        if (Log.logPerformance)
-            IntroPlugin.getDefault().setUICreationStartTime(
-                System.currentTimeMillis());
+        // add part listener
+        // test = new CustomizableIntroPartListener();
+        // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
+        // .addPartListener(test);
+
+
+        // if we are logging performance, start the UI creation start time.
+        // Clock stops at the end of the standbyStateChanged event.
+        if (Log.logPerformance) {
+            if (PerformanceStats.ENABLED)
+                PerformanceStats.getStats(
+                    IIntroConstants.PERF_VIEW_CREATION_TIME,
+                    IIntroConstants.INTRO).startRun();
+            else
+                // capture start time to be used when only Intro performance
+                // trace
+                // is turned on.
+                IntroPlugin.getDefault().setUICreationStartTime(
+                    System.currentTimeMillis());
+        }
     }
 
     /*
@@ -186,6 +204,12 @@ public final class CustomizableIntroPart extends IntroPart implements
             // do not create the standby part here for performance.
         }
 
+        if (Log.logPerformance) {
+            PerformanceStats stats = PerformanceStats.getStats(
+                IIntroConstants.PERF_UI_ZOOM, IIntroConstants.INTRO);
+            stats.startRun();
+        }
+
     }
 
 
@@ -224,6 +248,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * @see org.eclipse.ui.IIntroPart#standbyStateChanged(boolean)
      */
     public void standbyStateChanged(boolean standby) {
+
         // do this only if there is a valid config.
         if (model == null || !model.hasValidConfig())
             return;
@@ -244,7 +269,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         setTopControl(isStandbyPartNeeded ? getStandbyControl()
                 : getPresentationControl());
         // triger state change in presentation to enable/disable toobar
-        // actions. For this, we need to diable actions as long as we are in
+        // actions. For this, we need to disable actions as long as we are in
         // standby, or we need to show standby part.
         presentation.standbyStateChanged(standby, isStandbyPartNeeded);
 
@@ -338,6 +363,11 @@ public final class CustomizableIntroPart extends IntroPart implements
             CustomizableIntroPart.class);
         if (model != null && model.hasValidConfig())
             Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+
+        // remove part listener
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
+            .removePartListener(test);
+
     }
 
     /**
@@ -428,4 +458,30 @@ public final class CustomizableIntroPart extends IntroPart implements
         });
 
     }
+
+    class CustomizableIntroPartListener implements IPartListener {
+
+        public void partActivated(IWorkbenchPart part) {
+        }
+
+        public void partBroughtToTop(IWorkbenchPart part) {
+        }
+
+        public void partClosed(IWorkbenchPart part) {
+            if (part.getSite().getId().equals(
+                "org.eclipse.ui.internal.introview"))
+                CustomizableIntroPart.this.isClosing = true;
+        }
+
+        public void partDeactivated(IWorkbenchPart part) {
+            CustomizableIntroPart.this.isClosing = true;
+        }
+
+        public void partOpened(IWorkbenchPart part) {
+        }
+    }
+
+
+
+
 }

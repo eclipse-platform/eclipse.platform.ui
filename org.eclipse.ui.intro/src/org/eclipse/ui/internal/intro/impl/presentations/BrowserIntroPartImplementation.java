@@ -81,9 +81,9 @@ public class BrowserIntroPartImplementation extends
      * create the browser and set it's contents
      */
     public void createPartControl(Composite parent) {
-        long newBrowserStartTime = 0;
+        long start = 0;
         if (Log.logPerformance)
-            newBrowserStartTime = System.currentTimeMillis();
+            start = System.currentTimeMillis();
 
         browser = new Browser(parent, SWT.NONE);
 
@@ -121,10 +121,7 @@ public class BrowserIntroPartImplementation extends
         // if we are logging performance, log actual UI creation time for
         // browser.
         if (Log.logPerformance)
-            Util.logPerformanceTime(
-                "IntroPlugin Performance- creating a new Browser() took: ",
-                newBrowserStartTime);
-
+            Util.logPerformanceTime("creating a new Browser() took:", start);
 
         addToolBarActions();
 
@@ -187,10 +184,6 @@ public class BrowserIntroPartImplementation extends
      *            the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
-        long contentDisplayStartTime = 0;
-        if (Log.logPerformance)
-            contentDisplayStartTime = System.currentTimeMillis();
-
         String content = null;
 
         if (page.isXHTMLPage())
@@ -212,25 +205,17 @@ public class BrowserIntroPartImplementation extends
         // set the browser's HTML.
         boolean success = false;
         if (browser != null) {
+            long start = 0;
+            if (Log.logPerformance)
+                start = System.currentTimeMillis();
             success = browser.setText(content);
+            if (Log.logPerformance)
+                Util
+                    .logPerformanceTime("setText() on the browser took:", start);
+
             if (!success)
                 Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
-
-
-        // now log performance
-        if (Log.logPerformance)
-            Util
-                .logPerformanceTime(
-                    "IntroPlugin Performance- displaying model in Browser (HTML generation of XSLT) took: ",
-                    contentDisplayStartTime);
-
-        // if we are logging performance, log actual UI creation time.
-        if (Log.logPerformance)
-            Util
-                .logPerformanceTime(
-                    "IntroPlugin Performance- TOTAL TIME: creating CustomizableIntroPart view took: ",
-                    IntroPlugin.getDefault().gettUICreationStartTime());
 
 
         // print the HTML if we are in debug mode and have tracing turned on
@@ -540,7 +525,8 @@ public class BrowserIntroPartImplementation extends
     }
 
 
-    public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
+    protected void doStandbyStateChanged(boolean standby,
+            boolean isStandbyPartNeeded) {
         // if we have a standby part, regardless if standby state, disable
         // actions. Same behavior for static html.
         if (isStandbyPartNeeded | standby) {

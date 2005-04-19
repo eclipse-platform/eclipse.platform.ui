@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.internal.intro.impl.model.IntroStandbyContentPart;
 import org.eclipse.ui.internal.intro.impl.model.IntroURLAction;
+import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 
 /**
  * Class for handling all shared Intro Config Extensions. These are StandbyPart
@@ -48,8 +50,19 @@ public class SharedConfigExtensionsManager {
     protected void loadSharedConfigExtensions() {
         // simply create model classes for all standbyPart elements under a
         // configExtension.
+
+        long start = 0;
+        // if we need to log performance, capture time.
+        if (Log.logPerformance)
+            start = System.currentTimeMillis();
+
         IConfigurationElement[] configExtensionElements = registry
             .getConfigurationElementsFor(BaseExtensionPointManager.CONFIG_EXTENSION);
+
+        if (Log.logPerformance)
+            Util.logPerformanceTime(
+                "quering registry for configExtensions took: ", start);
+
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];
             if (!ModelLoaderUtil.isValidElementName(element,

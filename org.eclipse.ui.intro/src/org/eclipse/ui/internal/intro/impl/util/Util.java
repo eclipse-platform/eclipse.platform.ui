@@ -191,11 +191,14 @@ public class Util {
         }
     }
 
-
     public static void logPerformanceTime(String message, long startTime) {
         long endTime = System.currentTimeMillis();
-        Log.forcedInfo(message + (endTime - startTime) + "ms");
+        Log.forcedInfo("Intro Performance - " + message + (endTime - startTime)
+                + "ms");
     }
 
+    public static void logPerformanceMessage(String message, long time) {
+        Log.forcedInfo("Intro Performance - " + message + " " + time + "ms");
+    }
 
 }

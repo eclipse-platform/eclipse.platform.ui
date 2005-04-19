@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -57,10 +58,11 @@ public class BaseExtensionPointManager {
 
     protected IntroModelRoot loadModel(String attributeName,
             String attributeValue) {
-        long startTime = 0;
-        // if we need to log performance, capture time.
+
+        PerformanceStats loadModelStats = null;
+        long start = 0;
         if (Log.logPerformance)
-            startTime = System.currentTimeMillis();
+            start = System.currentTimeMillis();
 
         // get all Config extension point contributions. There could be more
         // than one config contribution, but there should only be one that maps
@@ -83,6 +85,11 @@ public class BaseExtensionPointManager {
                 introConfigExtensions = getIntroConfigExtensions(
                     ATT_CONFIG_EXTENSION_CONFIG_ID, configId);
 
+            if (Log.logPerformance)
+                Util.logPerformanceTime(
+                    "BEGIN:  quering registry for configs took: ", start);
+
+
             IntroModelRoot model = new IntroModelRoot(introConfig,
                 introConfigExtensions);
             model.loadModel();
@@ -98,8 +105,8 @@ public class BaseExtensionPointManager {
             if (Log.logPerformance)
                 Util
                     .logPerformanceTime(
-                        "IntroPlugin Performance- loading Intro Model (quering registry/creating model/resolving model) took: ",
-                        startTime);
+                        "loading Intro Model (quering registry/creating & resolving model) took: ",
+                        start);
 
             return model;
         }
