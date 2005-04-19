@@ -11,7 +11,6 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.Iterator;
-import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -90,9 +89,6 @@ import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
  * @since 3.0
  */
 public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
-	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedTextEditorMessages"; //$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 	
 	/**
 	 * Preference key for showing the line number ruler.
@@ -1117,23 +1113,23 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected void createActions() {
 		super.createActions();
 		
-		ResourceAction action= new AddMarkerAction(fgResourceBundle, "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
+		ResourceAction action= new AddMarkerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
 		setAction(IDEActionFactory.BOOKMARK.getId(), action);
 
-		action= new AddTaskAction(fgResourceBundle, "Editor.AddTask.", this); //$NON-NLS-1$
+		action= new AddTaskAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
 		setAction(IDEActionFactory.ADD_TASK.getId(), action);
 		
-		action= new ChangeEncodingAction(fgResourceBundle, "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
+		action= new ChangeEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.CHANGE_ENCODING);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CHANGE_ENCODING);
 		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);
 		markAsPropertyDependentAction(ITextEditorActionConstants.CHANGE_ENCODING, true);
 		
-		action= new ResourceAction(fgResourceBundle, "Editor.ToggleLineNumbersAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleLineNumbersAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				toggleLineNumberRuler();
 			}
@@ -1141,7 +1137,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
 		setAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE, action);
 		
-		action= new ResourceAction(fgResourceBundle, "Editor.ToggleQuickDiffAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleQuickDiffAction.", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				toggleQuickDiffRuler();
 			}
@@ -1175,7 +1171,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			shell= getSourceViewer().getTextWidget().getShell();
 		else
 			shell= null;
-		action= new ResourceAction(fgResourceBundle, "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
 			public void run() {
 				String[] preferencePages= collectRulerMenuPreferencePages();
 				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
@@ -1185,7 +1181,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		setAction(ITextEditorActionConstants.RULER_PREFERENCES, action);
 		
-		action= new ResourceAction(fgResourceBundle, "Editor.ContextPreferencesAction.") { //$NON-NLS-1$
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ContextPreferencesAction.") { //$NON-NLS-1$
 			public void run() {
 				String[] preferencePages= collectContextMenuPreferencePages();
 				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))

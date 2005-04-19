@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.util.ResourceBundle;
-
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.action.IAction;
+
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 
@@ -24,13 +24,10 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  */
 public class BookmarkRulerAction extends AbstractRulerActionDelegate {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedTextEditorMessages"; //$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
 	/*
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new MarkerRulerAction(fgResourceBundle, "Editor.ManageBookmarks.", editor, rulerInfo, IMarker.BOOKMARK, true); //$NON-NLS-1$
+		return new MarkerRulerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ManageBookmarks.", editor, rulerInfo, IMarker.BOOKMARK, true); //$NON-NLS-1$
 	}
 }

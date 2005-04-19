@@ -48,9 +48,6 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class EncodingActionGroup extends ActionGroup {
 	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.ConstructedTextEditorMessages";//$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-	
 	private static final String FILE_CONTENT_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContentEncodingFormat; 
 	private static final String FILE_CONTAINER_ENCODING_FORMAT= TextEditorMessages.ResourceInfo_fileContainerEncodingFormat; 
 
@@ -340,15 +337,15 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public EncodingActionGroup() {
 		
-		fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[0][0] + ".", ENCODINGS[0][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
+		fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[0][0] + ".", ENCODINGS[0][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (SYSTEM_ENCODING != null)
-			fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
+			fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
 		
 		for (int i= 1; i < ENCODINGS.length; i++)
-			fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
+			fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fRetargetActions.add(new RetargetTextEditorAction(fgResourceBundle, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
+		fRetargetActions.add(new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
 	}
 	
 	/*
@@ -407,20 +404,20 @@ public class EncodingActionGroup extends ActionGroup {
 		
 		ResourceAction a; 
 		if (SYSTEM_ENCODING != null) {
-			a= new PredefinedEncodingAction(fgResourceBundle, SYSTEM_ENCODING, editor);
+			a= new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), SYSTEM_ENCODING, editor);
 			a.setHelpContextId(IEncodingActionsHelpContextIds.SYSTEM);
 			a.setActionDefinitionId(IEncodingActionsDefinitionIds.SYSTEM);
 			editor.setAction(IEncodingActionsConstants.SYSTEM, a);
 		}
 		
 		for (int i= 0; i < ENCODINGS.length; i++) {
-			a= new PredefinedEncodingAction(fgResourceBundle, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
+			a= new PredefinedEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], editor); //$NON-NLS-1$ //$NON-NLS-2$
 			a.setHelpContextId( ENCODINGS[i][1]);
 			a.setActionDefinitionId( ENCODINGS[i][2]);
 			editor.setAction(ENCODINGS[i][0], a);
 		}
 
-		a= new CustomEncodingAction(fgResourceBundle, "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
+		a= new CustomEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
 		a.setHelpContextId(IEncodingActionsHelpContextIds.CUSTOM);
 		a.setActionDefinitionId(IEncodingActionsDefinitionIds.CUSTOM);
 		editor.setAction(IEncodingActionsConstants.CUSTOM, a);

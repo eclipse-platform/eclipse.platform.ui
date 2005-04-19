@@ -32,9 +32,6 @@ import org.eclipse.ui.views.tasklist.TaskPropertiesDialog;
  */
 public class TaskRulerAction extends AbstractRulerActionDelegate {
 	
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.texteditor.ConstructedTextEditorMessages"; //$NON-NLS-1$
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-	
 	/**
 	 * Adds a task marker over the ruler context menu. Uses the Workbench's Task properties dialog.
 	 */
@@ -75,6 +72,6 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new TaskMarkerRulerAction(fgResourceBundle, "Editor.ManageTasks.", editor, rulerInfo); //$NON-NLS-1$
+		return new TaskMarkerRulerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ManageTasks.", editor, rulerInfo); //$NON-NLS-1$
 	}
 }
