@@ -604,7 +604,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		}
 	}
 	
-    protected void firePageChanged(final PageChangedEvent event) {
+    private void firePageChanged(final PageChangedEvent event) {
         Object[] listeners = pageListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final IPageChangedListener l = (IPageChangedListener) listeners[i];
