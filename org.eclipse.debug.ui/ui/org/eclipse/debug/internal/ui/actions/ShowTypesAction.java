@@ -66,14 +66,6 @@ public class ShowTypesAction extends Action {
 			});
 		}
 	}
-
-	/**
-	 * @see Action#setChecked(boolean)
-	 */
-	public void setChecked(boolean value) {
-		super.setChecked(value);
-		valueChanged(value);
-	}
 	
 	protected IDebugView getView() {
 		return fView;
