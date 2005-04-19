@@ -103,6 +103,7 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
@@ -139,6 +140,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private AddToFavoritesAction fAddToFavoritesAction = null;
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
+	
+	/**
+	 * Progress service or <code>null</code>
+	 */
+	private IWorkbenchSiteProgressService fProgressService = null;
 
 	/**
 	 * Context manager which automatically opens and closes views
@@ -463,15 +469,20 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		return null;
 	}
+
+	private void commonInit(IViewSite site) {
+		site.getPage().addPartListener((IPartListener2) this);
+		site.getWorkbenchWindow().addPageListener(this);
+		site.getWorkbenchWindow().addPerspectiveListener(this);
+		fProgressService = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		site.getPage().addPartListener((IPartListener2) this);
-		site.getWorkbenchWindow().addPageListener(this);
-		site.getWorkbenchWindow().addPerspectiveListener(this);
+		commonInit(site);
 	}
 
 	/* (non-Javadoc)
@@ -479,12 +490,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		site.getPage().addPartListener((IPartListener2) this);
-		site.getWorkbenchWindow().addPageListener(this);
-		site.getWorkbenchWindow().addPerspectiveListener(this);
-		if (memento == null) {
-			return;
-		}
+		commonInit(site);
 	}
 		
 	/* (non-Javadoc)
@@ -719,7 +725,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			fSourceLookupJob = new SourceLookupJob();
 		}
 		setSourceLookupResult(null);
-		fSourceLookupJob.schedule();
+		schedule(fSourceLookupJob);
 	}
 	
 	/**
@@ -729,8 +735,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (fSourceDisplayJob == null) {
 			fSourceDisplayJob = new SourceDisplayJob();
 		}
-		fSourceDisplayJob.schedule();
+		schedule(fSourceDisplayJob);
 	}	
+	
+	/**
+	 * Schedules a job with this part's progress service, if available.
+	 * 
+	 * @param job job to schedule
+	 */
+	private void schedule(Job job) {
+		if (fProgressService == null) {
+			job.schedule();
+		} else {
+			fProgressService.schedule(job);
+		}
+	}
 
 	private IEditorInput getEditorInput() {
 		if (fResult != null) {
