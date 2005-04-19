@@ -627,15 +627,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fProposalTable.setRedraw(true);
 				}
 			}
-			if (USE_VIRTUAL && newLen == 1/* && Platform.WS_GTK.equals(Platform.getWS())*/) {
-				// TODO workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=90258
-				// and perhaps https://bugs.eclipse.org/bugs/show_bug.cgi?id=90763
-				TableItem first= fProposalTable.getItem(0);
-				ICompletionProposal current= proposals[0];
-				first.setText(current.getDisplayString());
-				first.setImage(current.getImage());
-				first.setData(current);
-			}
 
 			fFilteredProposals= proposals;
 			Point currentLocation= fProposalShell.getLocation();
