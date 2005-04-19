@@ -217,6 +217,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				}
 			};
 			Thread background = new Thread(r);
+            background.setDaemon(true);
 			background.start();
 			monitor.worked(1);
 			//refresh resources after process finishes
