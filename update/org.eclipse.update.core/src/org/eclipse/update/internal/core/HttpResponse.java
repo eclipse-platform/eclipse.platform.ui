@@ -17,25 +17,25 @@ import org.eclipse.core.runtime.*;
 
 public class HttpResponse implements Response {
 	private static final long POLLING_INTERVAL = 200;
-    private static final String ECLIPSE_DOWNLOADS = "http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse";
-    private static final String ECLIPSE_UPDATES="http://update.eclipse.org";
+//    private static final String ECLIPSE_DOWNLOADS = "http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse";
+//    private static final String ECLIPSE_UPDATES="http://update.eclipse.org";
 	protected URL url;
-    protected URL originalURL;
+//    protected URL originalURL;
 	protected InputStream in;
 	protected URLConnection connection;
 	protected long lastModified;
 	protected long offset;
 
 	public HttpResponse(URL url) {
-        this.originalURL = url;
+//        this.originalURL = url;
         this.url = url;
-        String urlstring = url.toExternalForm();
-        if (urlstring.startsWith(ECLIPSE_UPDATES))
-            try {
-                this.url = new URL(ECLIPSE_DOWNLOADS + urlstring.substring(ECLIPSE_UPDATES.length()));
-            } catch (MalformedURLException e) {
-               this.url = url;
-            }
+//        String urlstring = url.toExternalForm();
+//        if (urlstring.startsWith(ECLIPSE_UPDATES))
+//            try {
+//                this.url = new URL(ECLIPSE_DOWNLOADS + urlstring.substring(ECLIPSE_UPDATES.length()));
+//            } catch (MalformedURLException e) {
+//               this.url = url;
+//            }
 	}
 
 	public InputStream getInputStream() throws IOException {
