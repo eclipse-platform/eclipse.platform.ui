@@ -29,6 +29,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -139,7 +140,17 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.CHANGE :
-				    IStackFrame lastFrame= getLaunchView().getStackFrame();
+                    Object element = null;
+                    IStructuredSelection selection = getLaunchViewer().getDeferredSelection();
+                    if (selection == null) {
+                        selection = (IStructuredSelection) getLaunchViewer().getSelection();
+                    } 
+                    
+                    element = selection.getFirstElement();
+                    IStackFrame lastFrame = null;
+                    if (source instanceof IStackFrame) {
+                        lastFrame = (IStackFrame) element;
+                    }
 					if (source instanceof IStackFrame) {
 						if (source.equals(lastFrame)) {
 							getLaunchView().setStackFrame(null);

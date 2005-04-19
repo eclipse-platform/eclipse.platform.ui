@@ -332,6 +332,13 @@ public class RemoteTreeViewer extends TreeViewer {
         fSelectionJob.setDeferredSelection(selection);
         fSelectionJob.schedule();        
     }    
+    
+    public IStructuredSelection getDeferredSelection() {
+        if (fSelectionJob != null) {
+            return fSelectionJob.selection;
+        }
+        return null;
+    }
 
     private void cancel(Job job) {
         if (job != null) {
