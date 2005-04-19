@@ -37,6 +37,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
@@ -76,6 +78,7 @@ public class IntroLaunchBar implements IWindowTrim {
 	private CloseButton closeButton;
 
 	private Image handleImage;
+	//private CoolBar coolBar;
 
 	private ToolBarManager toolBarManager;
 
@@ -214,6 +217,7 @@ public class IntroLaunchBar implements IWindowTrim {
 						changed);
 			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
 					SWT.DEFAULT, changed);
+			//Point tsize = coolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 
 			if (vertical) {
 				width = tsize.x;
@@ -252,6 +256,7 @@ public class IntroLaunchBar implements IWindowTrim {
 						changed);
 			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT,
 					SWT.DEFAULT, changed);
+			//Point tsize = coolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			Rectangle carea = composite.getClientArea();
 			int x = carea.x + marginWidth;
 			int y = carea.y + marginHeight;
@@ -268,6 +273,7 @@ public class IntroLaunchBar implements IWindowTrim {
 					y += ibounds.height;
 				}
 				toolBarManager.getControl().setBounds(x, y,
+				//coolBar.setBounds(x, y,
 						carea.width - marginWidth - marginWidth, tsize.y);
 			} else {
 				if (csize != null) {
@@ -281,6 +287,7 @@ public class IntroLaunchBar implements IWindowTrim {
 					x += ibounds.width;
 				}
 				toolBarManager.getControl().setBounds(x, y, tsize.x,
+				//coolBar.setBounds(x, y, tsize.x,
 						carea.height - marginHeight - marginHeight);
 			}
 		}
@@ -371,10 +378,23 @@ public class IntroLaunchBar implements IWindowTrim {
 			closeButton.addListener(SWT.DragDetect, dragListener);
 		}
 		fillToolBar();
+		//coolBar = new CoolBar(container, SWT.NULL);
+		//CoolItem coolItem = new CoolItem(coolBar, SWT.NULL);
+		//toolBarManager.createControl(coolBar);		
 		toolBarManager.createControl(container);
 		ToolBar toolBar = toolBarManager.getControl();
-		if (bg != null)
+		//coolItem.setControl(toolBar);
+        //Point toolBarSize = toolBar.computeSize(SWT.DEFAULT,
+         //       SWT.DEFAULT);
+        // Set the preffered size to the size of the toolbar plus trim
+        //Point preferredSize = coolItem.computeSize(toolBarSize.x,
+         //       toolBarSize.y);
+        //coolItem.setPreferredSize(preferredSize);
+        
+		if (bg != null) {
 			toolBar.setBackground(bg);
+			//coolBar.setBackground(bg);
+		}
 		container.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				onPaint(e);
