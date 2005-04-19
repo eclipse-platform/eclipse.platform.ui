@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class ExpressionMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.core.internal.expressions.ExpressionMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.core.internal.expressions.ExpressionMessages";//$NON-NLS-1$
 
 	private ExpressionMessages() {
 		// Do not instantiate
