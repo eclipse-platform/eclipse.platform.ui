@@ -8,23 +8,32 @@
 
 <!-- **************** PREFERENCES ******************* -->
    <extension
+   		point="org.eclipse.ui.keywords">
+    <keyword
+            label="%PreferenceKeywords.Team"
+            id="org.eclipse.team.ui.team"/>
+   </extension>   
+   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             name="%TeamPreferencePage.name"
             class="org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage"
             id="org.eclipse.team.ui.TeamPreferences">
+            <keywordReference id="org.eclipse.team.ui.team"/>
       </page>
       <page
             name="%TextPreferencePage.name"
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.preferences.TextPreferencePage"
             id="org.eclipse.team.ui.TextPreferences">
+            <keywordReference id="org.eclipse.team.ui.team"/>
       </page>
       <page
             name="%IgnorePreferencePage.name"
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.preferences.IgnorePreferencePage"
             id="org.eclipse.team.ui.IgnorePreferences">
+            <keywordReference id="org.eclipse.team.ui.team"/>
       </page>
    </extension>
 <!-- ****************** POPUP ACTIONS *************** -->
