@@ -94,7 +94,11 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		    for (int i = 0; i < fElements.length; i++) {
 				Object element= fElements[i];
 				try {
-					doAction(element);
+					// Action's enablement could have been changed since
+					// it was last enabled.  Check that the action is still
+					// enabled before running the action.
+					if (isEnabledFor(element))
+						doAction(element);
 				} catch (DebugException e) {
 					status.merge(e.getStatus());
 				}
@@ -181,7 +185,11 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 				while (selectionIter.hasNext()) {
 					Object element= selectionIter.next();
 					try {
-						doAction(element);
+						// Action's enablement could have been changed since
+						// it was last enabled.  Check that the action is still
+						// enabled before running the action.
+						if (isEnabledFor(element))
+							doAction(element);
 					} catch (DebugException e) {
 						status.merge(e.getStatus());
 					}
