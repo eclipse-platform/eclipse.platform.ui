@@ -2810,6 +2810,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 PartPane pane = ref.getPane();
                 if (pres.isPartVisible(ref)) {
                     pane.setVisible(true);
+                    activationList.bringToTop(ref);
                 }
 
                 pane.setInLayout(true);
@@ -2826,21 +2827,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (pres == null || !pres.isPartVisible(ref)) {
                 pane.setVisible(false);
             }
-        }            
-    }
-
-    private void activateOldPart(Perspective newPersp) {
-        if (window.isClosing())
-            return;
-        if (newPersp != null) {
-            IWorkbenchPartReference oldPartRef = newPersp.getOldPartRef();
-            IWorkbenchPart prevOldPart = null;
-            if (oldPartRef != null)
-                prevOldPart = oldPartRef.getPart(false);
-            if (prevOldPart != null)
-                activate(prevOldPart);
-            else if (isEditorAreaVisible())
-                activate(getActiveEditor());
         }
     }
 
