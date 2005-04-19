@@ -29,7 +29,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -597,8 +596,7 @@ public class IntroURL implements IIntroURL {
 
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
-        WorkbenchWindow wwindow = (WorkbenchWindow) window;
-        LaunchBarElement launchBarElement = modelRoot.getPresentation()
+         LaunchBarElement launchBarElement = modelRoot.getPresentation()
             .getLaunchBar();
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement);
