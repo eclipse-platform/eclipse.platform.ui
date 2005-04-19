@@ -88,8 +88,7 @@ public class BuildHelpIndex extends Task {
 		IPath path = new Path(fileName);
 		if (path.isAbsolute())
 			return new File(fileName);
-		String rootName = getOwningTarget().getLocation().getFileName();
-		File root = new File(rootName);
+		File root = getProject().getBaseDir();
 		if (fileName.equals(".") || fileName.equals("./"))
 			return root;
 		if (fileName.equals("..") || fileName.equals("../"))
