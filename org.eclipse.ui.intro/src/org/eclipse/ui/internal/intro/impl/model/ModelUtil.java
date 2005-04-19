@@ -102,6 +102,7 @@ public class ModelUtil {
 
 
 
+
     /*
      * 
      * ******** XHTML DOM util methods *********************************
@@ -112,11 +113,20 @@ public class ModelUtil {
      * file. It is assumed that the path is a local url representing a content
      * file.
      */
-    public static String getFolderPath(String contentFilePath) {
-        IPath path = new Path(contentFilePath);
-        path = path.removeLastSegments(1).addTrailingSeparator();
+    public static String getParentFolderPath(String contentFilePath) {
+        IPath path = getParentFolder(contentFilePath);
         return path.toOSString();
     }
+
+    /**
+     * Returns the parent folder of the given path.
+     */
+    public static IPath getParentFolder(String contentFilePath) {
+        IPath path = new Path(contentFilePath);
+        path = path.removeLastSegments(1).addTrailingSeparator();
+        return path;
+    }
+
 
 
 
@@ -203,7 +213,7 @@ public class ModelUtil {
      */
     public static void updateResourceAttributes(Element element,
             String localContentFilePath) {
-        String folderLocalPath = getFolderPath(localContentFilePath);
+        String folderLocalPath = getParentFolderPath(localContentFilePath);
         doUpdateResourceAttributes(element, folderLocalPath);
         NodeList children = element.getElementsByTagName("*"); //$NON-NLS-1$
         for (int i = 0; i < children.getLength(); i++) {

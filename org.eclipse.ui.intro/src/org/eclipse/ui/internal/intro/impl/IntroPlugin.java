@@ -33,7 +33,7 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     // used for performance logging. Time when the constructor of
     // CustomizableIntroPart is called.
-    private long uiCreationStartTime;
+    private long uiCreationStartTime;    
 
 
 
@@ -156,7 +156,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     }
 
     public void setUICreationStartTime(long uiCreationStartTime) {
-        this.uiCreationStartTime = uiCreationStartTime;
+        this.uiCreationStartTime = uiCreationStartTime;    
     }
 
 

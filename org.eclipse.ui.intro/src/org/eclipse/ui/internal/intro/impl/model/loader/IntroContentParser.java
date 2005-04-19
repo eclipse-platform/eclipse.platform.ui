@@ -150,7 +150,7 @@ public class IntroContentParser {
             buffer.append(spe.getLineNumber());
             buffer.append(", uri "); //$NON-NLS-1$
             buffer.append(spe.getSystemId());
-            buffer.append("\n"); //$NON-NLS-1$
+            buffer.append("\n"); //$NON-NLS-1$   
             buffer.append(spe.getMessage());
 
             // Use the contained exception.

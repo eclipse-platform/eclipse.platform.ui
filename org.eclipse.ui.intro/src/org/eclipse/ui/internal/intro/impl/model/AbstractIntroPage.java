@@ -185,8 +185,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * will resolve this page. might be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
-     *               array if page is not expandable or does not have inherited
-     *               styles.
+     *         array if page is not expandable or does not have inherited
+     *         styles.
      */
     public String[] getStyles() {
         // call get children first to resolve includes and populate styles
@@ -206,8 +206,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
-     *               hashtable if page is not expandable, does not have any includes,
-     *               or has includes that do not merge styles.
+     *         hashtable if page is not expandable, does not have any includes,
+     *         or has includes that do not merge styles.
      */
     public Hashtable getAltStyles() {
         // call get children first to resolve includes and populate hashtable.
@@ -548,7 +548,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     protected void resolvePage() {
         // insert base meta-tag, and resolve includes.
-        ModelUtil.insertBase(dom, ModelUtil.getFolderPath(content));
+        ModelUtil.insertBase(dom, ModelUtil.getParentFolderPath(content));
         resolveIncludes();
         // now remove all anchors from this page.
         ModelUtil.removeElement(dom, IntroAnchor.TAG_ANCHOR);
@@ -630,13 +630,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * model.
      * 
      * @param model
-     *                   model containing target path.
+     *            model containing target path.
      * @param path
-     *                   the path to look for
+     *            the path to look for
      * @param results
-     *                   two object array that will return the target intro page as the
-     *                   first result, and the actual target DOM Element as the second
-     *                   result. It is gauranteed to not be null. Content may be null.
+     *            two object array that will return the target intro page as the
+     *            first result, and the actual target DOM Element as the second
+     *            result. It is gauranteed to not be null. Content may be null.
      * @return target DOM element
      */
     public Object[] findDOMTarget(IntroModelRoot model, String path) {
