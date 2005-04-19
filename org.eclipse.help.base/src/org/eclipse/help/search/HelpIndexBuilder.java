@@ -124,10 +124,12 @@ public class HelpIndexBuilder {
 
 	class LocaleDir {
 		String locale;
+		String relativePath;
 		ArrayList dirs = new ArrayList();
 
-		public LocaleDir(String locale) {
+		public LocaleDir(String locale, String relativePath) {
 			this.locale = locale;
+			this.relativePath = relativePath;
 		}
 		
 		public File findFile(String file) {
@@ -335,16 +337,21 @@ public class HelpIndexBuilder {
 	}
 
 	/*
-	 * Computes the all nl/country/ and nl/country/variant/ locale
-	 * dirs that contain files. We will produce an index for
-	 * each one.
+	 * Computes the all os/*, ws/*, nl/country/ and 
+	 * nl/country/variant/ locale dirs that contain files. We will 
+	 * produce an index for each one.
 	 */
 	private void computeLocaleDirs(boolean fragment) {
 		if (!fragment) {
-			LocaleDir dir = new LocaleDir(null);
+			LocaleDir dir = new LocaleDir(null, "/");
 			dir.addDirectory(destination);
 			localeDirs.add(dir);
 		}
+		File ws = new File(destination, "ws");
+		computeSystem(ws, Platform.knownWSValues());
+		File os = new File(destination, "os");
+		computeSystem(os, Platform.knownOSValues());
+		
 		File nl = new File(destination, "nl");
 		if (!nl.exists() || !nl.isDirectory())
 			return;
@@ -363,13 +370,42 @@ public class HelpIndexBuilder {
 				else
 					locale = country.getName();
 				if (isValidLocale(locale) && !locales.contains(locale)) {
-					LocaleDir dir = new LocaleDir(locale);
+					String relativePath;
+					if (variant.isDirectory())
+						relativePath = "/nl/"+country.getName()+"/"+variant.getName();
+					else
+						relativePath = "/nl/"+country.getName();
+					LocaleDir dir = new LocaleDir(locale, relativePath);
 					if (variant.isDirectory())
 						dir.addDirectory(variant);
 					dir.addDirectory(country);
 					dir.addDirectory(destination);
 					localeDirs.add(dir);
 					locales.add(locale);
+				}
+			}
+		}
+	}
+	
+	private void computeSystem(File systemRoot, String [] values) {
+		if (systemRoot.exists() && systemRoot.isDirectory()) {
+			// check
+			File [] files = systemRoot.listFiles();
+			for (int i=0; i<files.length; i++) {
+				File sdir = files[i];
+				if (!sdir.isDirectory())
+					continue;
+				String sname = sdir.getName();
+				for (int j=0; j<values.length; j++) {
+					if (values[j].equals(sname)) {
+						// valid
+						String relativePath="/"+systemRoot.getName()+"/"+sname;
+						LocaleDir dir = new LocaleDir(sname, relativePath);
+						dir.addDirectory(sdir);
+						dir.addDirectory(destination);
+						localeDirs.add(dir);
+						break;
+					}
 				}
 			}
 		}
@@ -403,7 +439,7 @@ public class HelpIndexBuilder {
 		prepareDirectory(indexDirectory);
 		String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
 		SearchIndex index = new SearchIndex(indexDirectory, locale,
-				new AnalyzerDescriptor(locale), null);
+				new AnalyzerDescriptor(locale), null, localeDir.relativePath);
 		IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
 				fid, indexDirectory);
 		index.setDocPlugins(docPlugins);

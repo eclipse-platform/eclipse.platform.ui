@@ -39,6 +39,8 @@ public class SearchIndex {
 	private File indexDir;
 
 	private String locale;
+	
+	private String relativePath;
 
 	private TocManager tocManager;
 
@@ -88,7 +90,7 @@ public class SearchIndex {
 	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc,
 			TocManager tocManager) {
 		this(new File(HelpBasePlugin.getConfigurationDirectory(), "index/" + locale), //$NON-NLS-1$
-				locale, analyzerDesc, tocManager);
+				locale, analyzerDesc, tocManager, null);
 	}
 	
 	/**
@@ -101,11 +103,13 @@ public class SearchIndex {
 	 */
 	
 	public SearchIndex(File indexDir, String locale, AnalyzerDescriptor analyzerDesc,
-			TocManager tocManager) {
+			TocManager tocManager, String relativePath) {
 		this.locale = locale;
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
 		this.indexDir = indexDir;
+		this.relativePath = relativePath;
+		//System.out.println("Index for a relative path: "+relativePath);
 		inconsistencyFile = new File(indexDir.getParentFile(), locale
 				+ ".inconsistent"); //$NON-NLS-1$
 		parser = new HTMLDocParser();
@@ -145,6 +149,8 @@ public class SearchIndex {
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name)); //$NON-NLS-1$
+			if (relativePath!=null)
+				doc.add(Field.Keyword("index_path", relativePath)); //$NON-NLS-1$
 			try {
 				try {
 					parser.openDocument(url);
