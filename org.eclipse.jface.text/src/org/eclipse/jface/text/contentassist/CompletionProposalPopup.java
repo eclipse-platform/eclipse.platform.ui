@@ -13,8 +13,6 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlEvent;
@@ -617,26 +615,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 					fProposalTable.clearAll();
 				} else {
 					fProposalTable.setRedraw(false);
-					if (Platform.WS_CARBON.equals(Platform.getWS())) {
-						// TODO remove once bug 91464 gets fixed
-						fProposalTable.removeAll();
-						for (int i= 0; i < proposals.length; i++) {
-							ICompletionProposal proposal= proposals[i];
-							TableItem item= new TableItem(fProposalTable, SWT.NONE);
-							item.setText(proposal.getDisplayString());
-							item.setImage(proposal.getImage());
-							item.setData(proposal);
-						}
-					} else {
-						fProposalTable.setItemCount(newLen);
-						TableItem[] items= fProposalTable.getItems();
-						for (int i= 0; i < items.length; i++) {
-							TableItem item= items[i];
-							ICompletionProposal proposal= proposals[i];
-							item.setText(proposal.getDisplayString());
-							item.setImage(proposal.getImage());
-							item.setData(proposal);
-						}
+					fProposalTable.setItemCount(newLen);
+					TableItem[] items= fProposalTable.getItems();
+					for (int i= 0; i < items.length; i++) {
+						TableItem item= items[i];
+						ICompletionProposal proposal= proposals[i];
+						item.setText(proposal.getDisplayString());
+						item.setImage(proposal.getImage());
+						item.setData(proposal);
 					}
 					fProposalTable.setRedraw(true);
 				}
