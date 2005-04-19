@@ -602,10 +602,7 @@ public class IntroURL implements IIntroURL {
             .getLaunchBar();
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement);
-        launchBar.createControl(window.getShell());
-        wwindow.addToTrim(launchBar.getControl(), launchBarElement
-            .getLocation());
-        window.getShell().layout();
+        launchBar.createInActiveWindow();
         Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
             .getParent(), launchBar.getControl().getBounds());
 

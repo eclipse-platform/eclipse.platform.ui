@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.intro.impl.model.viewer;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer;
