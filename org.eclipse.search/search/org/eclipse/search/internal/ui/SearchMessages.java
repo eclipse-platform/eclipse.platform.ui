@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class SearchMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.search.internal.ui.SearchMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.search.internal.ui.SearchMessages";//$NON-NLS-1$
 
 	private SearchMessages() {
 		// Do not instantiate

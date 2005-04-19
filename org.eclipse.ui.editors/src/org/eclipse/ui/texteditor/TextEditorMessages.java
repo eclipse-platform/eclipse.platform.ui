@@ -32,7 +32,7 @@ final class TextEditorMessages extends NLS {
 		return fgBundleForConstructedKeys;
 	}
 
-	private static final String BUNDLE_NAME = TextEditorMessages.class.getName();
+	private static final String BUNDLE_NAME= TextEditorMessages.class.getName();
 
 	private TextEditorMessages() {
 		// Do not instantiate
