@@ -72,6 +72,7 @@ public class NullStreamsProxy implements IStreamsProxy2 {
                     }
                 }
             }, DebugCoreMessages.NullStreamsProxy_0); //$NON-NLS-1$
+            thread.setDaemon(true);
             thread.start();
             
         }

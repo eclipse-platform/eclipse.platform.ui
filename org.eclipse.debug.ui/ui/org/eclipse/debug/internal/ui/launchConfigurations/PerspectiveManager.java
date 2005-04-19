@@ -257,6 +257,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					});
 				}
 			});
+            thread.setDaemon(true);
 			thread.start();
 			return;
 		}
