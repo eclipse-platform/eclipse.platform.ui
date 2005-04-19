@@ -472,8 +472,7 @@ public final class Workbench implements IWorkbench {
 			return false;
 		}
 
-		IPreferenceStore store = getPreferenceStore();
-		boolean closeEditors = store
+		boolean closeEditors = PrefUtil.getAPIPreferenceStore()
 				.getBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
