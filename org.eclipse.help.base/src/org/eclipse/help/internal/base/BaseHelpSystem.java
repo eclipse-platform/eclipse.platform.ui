@@ -284,6 +284,16 @@ public final class BaseHelpSystem {
 			return href.substring(dbase.length());
 		return href;
 	}
+	
+	public static String unresolve(String href) {
+		String base = getBase(false);
+		String dbase = getBase(true);
+		if (href.startsWith(base))
+			return href.substring(base.length());
+		if (href.startsWith(dbase))
+			return href.substring(dbase.length());
+		return href;
+	}
 
 	private static String getBase(boolean documentOnly) {
 		String servlet = documentOnly ? "/help/nftopic" : "/help/topic";//$NON-NLS-1$

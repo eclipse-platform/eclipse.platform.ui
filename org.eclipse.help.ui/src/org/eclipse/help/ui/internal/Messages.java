@@ -138,6 +138,7 @@ public final class Messages extends NLS {
 	public static String BrowsersPreferencePage_winfopop;
 	public static String BrowsersPreferencePage_dinfopop;
 	public static String BrowserPart_bookmarkTooltip;
+	public static String BrowserPart_syncTocTooltip;	
 	public static String BrowsersPreferencePage_wgroup;
 	public static String BrowsersPreferencePage_view;
 	public static String BrowsersPreferencePage_dgroup;

@@ -53,6 +53,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String url;
 
 	private Action showExternalAction;
+	private Action syncTocAction;
 	private Action bookmarkAction;
 	private Action printAction;
 	private String statusURL;
@@ -72,6 +73,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				String url = event.location;
 				BrowserPart.this.parent.browserChanged(url);
 				BrowserPart.this.url = url;
+				updateSyncTocAction();
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
@@ -167,6 +169,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		showExternalAction.setToolTipText(Messages.BrowserPart_showExternalTooltip); 
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
+		syncTocAction = new Action () {
+			public void run() {
+				doSyncToc();
+			}
+		};
+		syncTocAction.setToolTipText(Messages.BrowserPart_syncTocTooltip);
+		syncTocAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SYNC_TOC));
+		syncTocAction.setEnabled(false);		
 		bookmarkAction = new Action() {
 			public void run() {
 				BaseHelpSystem.getBookmarkManager().addBookmark(url, title);
@@ -175,6 +185,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip); 
 		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
+		tbm.insertBefore("back", syncTocAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 		printAction = new Action(ActionFactory.PRINT.getId()) {
@@ -242,6 +253,24 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	
 	private void doPrint() {
 		browser.execute("window.print();"); //$NON-NLS-1$
+	}
+	
+	private void doSyncToc() {
+		String href = BaseHelpSystem.unresolve(this.url);
+		int ix = href.indexOf("?resultof="); //$NON-NLS-1$
+		if (ix >= 0) {
+			href = href.substring(0, ix);
+		}
+		parent.showPage(IHelpUIConstants.HV_ALL_TOPICS_PAGE);
+		AllTopicsPart part = (AllTopicsPart)parent.findPart(IHelpUIConstants.HV_TOPIC_TREE);
+		if (part!=null) {
+			part.selectReveal(href);
+		}
+	}
+	
+	private void updateSyncTocAction() {
+		String href = BaseHelpSystem.unresolve(this.url);
+		syncTocAction.setEnabled(parent.isHelpResource(href));
 	}
 
 	private boolean redirectLink(final String url) {

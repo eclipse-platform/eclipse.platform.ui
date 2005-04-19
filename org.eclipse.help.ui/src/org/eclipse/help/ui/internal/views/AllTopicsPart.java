@@ -10,12 +10,24 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.*;
-import org.eclipse.help.ui.internal.*;
+import java.util.ArrayList;
+
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.util.OverlayIcon;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -43,6 +55,9 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
 		public Object getParent(Object element) {
+			if (element instanceof IToc) {
+				return AllTopicsPart.this;
+			}
 			return null;
 		}
 
@@ -181,6 +196,48 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 
 	protected String getHref(IHelpResource res) {
 		return (res instanceof ITopic) ? res.getHref() : null;
+	}
+
+	public void selectReveal(String href) {
+		IToc[] tocs = HelpSystem.getTocs();
+		for (int i=0; i<tocs.length; i++) {
+			IToc toc = tocs[i];
+			ITopic topic = toc.getTopic(href);
+			if (topic!=null) {
+				ArrayList path = getPath(toc, topic);
+				for (int j=0; j<path.size(); j++) {
+					Object obj = path.get(j);
+					treeViewer.expandToLevel(obj, 1);
+				}
+				treeViewer.setSelection(new StructuredSelection(topic), true);
+				return;
+			}
+		}
+	}
+
+	private ArrayList getPath(IToc toc, ITopic topic) {
+		ArrayList path = new ArrayList();
+		findPath(toc.getTopics(), topic, path);
+		path.add(0, toc);
+		return path;
+	}
+
+	private boolean findPath(ITopic[] siblings, ITopic topic, ArrayList path) {
+		for (int i=0; i<siblings.length; i++) {
+			ITopic sibling = siblings[i];
+			if (sibling.equals(topic)) {
+				return true;
+			}
+			ITopic [] subtopics = sibling.getSubtopics();
+			if (subtopics.length>0) {
+				boolean result = findPath(subtopics, topic, path);
+				if (result) {
+					path.add(0, sibling);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	protected boolean canAddBookmarks() {
