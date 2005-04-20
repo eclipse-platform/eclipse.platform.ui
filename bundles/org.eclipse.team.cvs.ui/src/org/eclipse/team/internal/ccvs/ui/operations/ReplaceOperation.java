@@ -13,10 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -51,41 +51,60 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.SingleCommandOperation#executeCommand(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.resources.IResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus executeCommand(
-		Session session,
-		CVSTeamProvider provider,
-		ICVSResource[] resources,
-		boolean recurse, IProgressMonitor monitor)
+		final Session session,
+		final CVSTeamProvider provider,
+		final ICVSResource[] resources,
+		final boolean recurse, IProgressMonitor monitor)
 		throws CVSException, InterruptedException {
-			
-			monitor.beginTask(null, 100);
-			ICVSResource[] managedResources = getResourcesToUpdate(resources);
-			try {
-				// Purge any unmanaged or added files
-				new PrepareForReplaceVisitor().visitResources(
-					provider.getProject(), 
-					resources, 
-					CVSUIMessages.ReplaceOperation_1, //$NON-NLS-1$
-					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
-					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
-				
-				// Only perform the remote command if some of the resources being replaced were managed
-				IStatus status = OK;
-				if (managedResources.length > 0) {
-					// Perform an update, ignoring any local file modifications
-					status = super.executeCommand(session, provider, managedResources, recurse, Policy.subMonitorFor(monitor, 70));
-				}
-				
-				// Prune any empty folders left after the resources were purged.
-				// This is done to prune any empty folders that contained only unmanaged resources
-				if (status.isOK() && CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-					new PruneFolderVisitor().visit(session, resources);
-				}
-				
-				return status;
-			} finally {
-				monitor.done();
-			}
+		
+        final IStatus[] status = new IStatus[] { Status.OK_STATUS };
+        try {
+            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+                public void run(IProgressMonitor monitor) throws CoreException {
+                    try {
+                        status[0] = internalExecuteCommand(session, provider, resources, recurse, monitor);
+                    } catch (InterruptedException e) {
+                        throw new OperationCanceledException();
+                    }
+                }
+            
+            }, null, IWorkspace.AVOID_UPDATE, monitor);
+        } catch (CoreException e) {
+            throw CVSException.wrapException(e);
+        }
+		return status[0];
 	}
+
+    private IStatus internalExecuteCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
+        monitor.beginTask(null, 100);
+        ICVSResource[] managedResources = getResourcesToUpdate(resources);
+        try {
+        	// Purge any unmanaged or added files
+        	new PrepareForReplaceVisitor().visitResources(
+        		provider.getProject(), 
+        		resources, 
+        		CVSUIMessages.ReplaceOperation_1, //$NON-NLS-1$
+        		recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
+        		Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
+        	
+        	// Only perform the remote command if some of the resources being replaced were managed
+        	IStatus status = OK;
+        	if (managedResources.length > 0) {
+        		// Perform an update, ignoring any local file modifications
+        		status = super.executeCommand(session, provider, managedResources, recurse, Policy.subMonitorFor(monitor, 70));
+        	}
+        	
+        	// Prune any empty folders left after the resources were purged.
+        	// This is done to prune any empty folders that contained only unmanaged resources
+        	if (status.isOK() && CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+        		new PruneFolderVisitor().visit(session, resources);
+        	}
+        	
+        	return status;
+        } finally {
+        	monitor.done();
+        }
+    }
 
 	/**
 	 * Return the resources that need to be updated from the server.
