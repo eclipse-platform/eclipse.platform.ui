@@ -508,8 +508,12 @@ public class Main {
             else // this is a "normal" RFC 101 framework extension bundle just put the base path on the classpath
                 extensionProperties = new Properties();
             String[] entries = extensionClassPath == null || extensionClassPath.length() == 0 ? new String[] {""} : getArrayFromList(extensionClassPath); //$NON-NLS-1$
-            String qualifiedPath = ""; //$NON-NLS-1$
-            for (int j = 0; j < entries.length; j++) 
+            String qualifiedPath;
+			if (System.getProperty(PROP_CLASSPATH)==null)
+				qualifiedPath = "."; //$NON-NLS-1$
+			else
+				qualifiedPath = ""; //$NON-NLS-1$
+            for (int j = 0; j < entries.length; j++)
                 qualifiedPath += ", " + FILE_SCHEME + path + entries[j]; //$NON-NLS-1$
             extensionProperties.put(PROP_CLASSPATH, qualifiedPath);
             mergeProperties(System.getProperties(), extensionProperties);
@@ -563,6 +567,10 @@ public class Main {
                 // if the string is a file: URL then *carefully* construct the
                 // URL. Otherwisejust try to build a URL. In either case, if we fail, use
                 // string as something to tack on the end of the base.
+                
+                if (string.equals(".")) { //$NON-NLS-1$
+                    addEntry(base, result);
+                }
                 URL url = null;
                 if (string.startsWith(FILE_SCHEME)) //$NON-NLS-1$
                     url = new File(string.substring(5)).toURL();
