@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.content;
 
-import java.io.InputStream;
+import java.io.*;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.ITextContentDescriber;
 
 /**
  * A content describer that always rejects its input.
@@ -21,9 +21,13 @@ import org.eclipse.core.runtime.content.IContentDescription;
  * for name-based content type matching should not interfere with tests
  * that do content-based content type matching.
  */
-public class NaySayerContentDescriber implements IContentDescriber {
+public class NaySayerContentDescriber implements ITextContentDescriber {
 
 	public int describe(InputStream contents, IContentDescription description) {
+		return INVALID;
+	}
+
+	public int describe(Reader contents, IContentDescription description) {
 		return INVALID;
 	}
 
