@@ -11,13 +11,11 @@
 
 package org.eclipse.ui.tests.operations;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -70,30 +68,6 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	protected void doTearDown() throws Exception {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, true);
-	}
-
-	public void testWorkbenchOperationApproval() throws ExecutionException {
-		// Enforcing of linear undo should be in effect for the workbench
-		// context.
-		// The first undo in c1 should be fine
-		IStatus status = history.undo(contextA, null, null);
-		assertTrue(status.isOK());
-
-		// the second undo in c1 causes a linear violation on the workbench
-		// context
-		assertTrue(history.canUndo(contextA));
-		status = history.undo(contextA, null, null);
-		assertFalse(status.isOK());
-
-		// undo the newer context items
-		status = history.undo(context, null, null);
-		assertTrue(status.isOK());
-		status = history.undo(context, null, null);
-		assertTrue(status.isOK());
-
-		// now we should be ok to undo c1
-		status = history.undo(contextA, null, null);
-		assertTrue(status.isOK());
 	}
 	
 	public void testWorkspaceAdapter() {
