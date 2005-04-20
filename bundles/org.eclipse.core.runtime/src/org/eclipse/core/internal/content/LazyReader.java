@@ -146,7 +146,7 @@ public class LazyReader extends Reader implements ILazySource {
 		mark = 0;
 		offset = 0;
 	}
-	
+
 	public long skip(long toSkip) throws IOException {
 		if (toSkip <= 0)
 			return 0;
