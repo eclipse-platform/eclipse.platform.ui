@@ -38,6 +38,7 @@ import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
@@ -45,7 +46,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.0
  */
 public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextFileBuffer {
-
 
 	private class DocumentListener implements IDocumentListener {
 
@@ -59,9 +59,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent event) {
-			fCanBeSaved= true;
-			removeFileBufferContentListeners();
-			fManager.fireDirtyStateChanged(ResourceTextFileBuffer.this, fCanBeSaved);
+			if (fCanBeSaved && fSynchronizationStamp == event.getModificationStamp()) {
+				fCanBeSaved= false;
+				fManager.fireDirtyStateChanged(ResourceTextFileBuffer.this, fCanBeSaved);
+			} else if (!fCanBeSaved) {
+				fCanBeSaved= true;
+				fManager.fireDirtyStateChanged(ResourceTextFileBuffer.this, fCanBeSaved);
+			}
 		}
 	}
 
@@ -314,7 +318,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				// we are already inside an operation, so the delta is sent AFTER we have added the listener
 				fFile.setContents(stream, overwrite, true, monitor);
 				// set synchronization stamp to know whether the file synchronizer must become active
-				fSynchronizationStamp= fFile.getModificationStamp();
+				
+				if (fDocument instanceof IDocumentExtension4) {
+					fSynchronizationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
+					fFile.revertModificationStamp(fSynchronizationStamp);
+				} else
+					fSynchronizationStamp= fFile.getModificationStamp();
 
 				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
 					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
@@ -427,10 +436,14 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fManager.fireBufferContentAboutToBeReplaced(this);
 
 		removeFileBufferContentListeners();
-		if (replaceContent)
-			fDocument.set(newContent);
-		fCanBeSaved= false;
 		fSynchronizationStamp= fFile.getModificationStamp();
+		if (replaceContent) {
+			if (fDocument instanceof IDocumentExtension4)
+				((IDocumentExtension4)fDocument).set(newContent, fSynchronizationStamp);
+			else
+				fDocument.set(newContent);
+		}
+		fCanBeSaved= false;
 		fStatus= status;
 		addFileBufferContentListeners();
 
@@ -492,7 +505,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				n= in.read(readBuffer);
 			}
 
-			document.set(buffer.toString());
+			if (document instanceof IDocumentExtension4)
+				((IDocumentExtension4)document).set(buffer.toString(), fFile.getModificationStamp());
+			else
+				document.set(buffer.toString());
 
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$

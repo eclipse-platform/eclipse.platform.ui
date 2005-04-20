@@ -189,7 +189,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	protected IStatus fStatus;
 	/** The file synchronizer. */
 	protected FileSynchronizer fFileSynchronizer;
-	/** The time stamp at which this buffer synchronized with the underlying file. */
+	/** The modification stamp at which this buffer synchronized with the underlying file. */
 	protected long fSynchronizationStamp= IResource.NULL_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
@@ -324,7 +324,6 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			}
 
 			fCanBeSaved= false;
-			addFileBufferContentListeners();
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);
 		}
 	}
