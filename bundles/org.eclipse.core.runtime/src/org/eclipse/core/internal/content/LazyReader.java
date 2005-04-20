@@ -13,7 +13,7 @@ package org.eclipse.core.internal.content;
 import java.io.IOException;
 import java.io.Reader;
 
-public class LazyReader extends Reader {
+public class LazyReader extends Reader implements ILazySource {
 	private int blockCapacity;
 	char[][] blocks = {};
 	private int bufferSize;
@@ -26,12 +26,15 @@ public class LazyReader extends Reader {
 		this.blockCapacity = blockCapacity;
 	}
 
-	public boolean ready() throws IOException {
-		try {
-			return (bufferSize - offset) > 0 || in.ready();
-		} catch (IOException ioe) {
-			throw new LowLevelIOException(ioe);
-		}
+	public void close() {
+		// we don't close the underlying stream
+	}
+
+	private int computeBlockSize(int blockIndex) {
+		if (blockIndex < blocks.length - 1)
+			return blockCapacity;
+		int blockSize = bufferSize % blockCapacity;
+		return blockSize == 0 ? blockCapacity : blockSize;
 	}
 
 	private int copyFromBuffer(char[] userBuffer, int userOffset, int needed) {
@@ -67,13 +70,6 @@ public class LazyReader extends Reader {
 		return blocks.length;
 	}
 
-	private int computeBlockSize(int blockIndex) {
-		if (blockIndex < blocks.length - 1)
-			return blockCapacity;
-		int blockSize = bufferSize % blockCapacity;
-		return blockSize == 0 ? blockCapacity : blockSize;
-	}
-
 	// for testing purposes
 	protected int getBufferSize() {
 		return bufferSize;
@@ -87,6 +83,10 @@ public class LazyReader extends Reader {
 	// for testing purposes
 	protected int getOffset() {
 		return offset;
+	}
+
+	public boolean isText() {
+		return true;
 	}
 
 	private int loadBlock() throws IOException {
@@ -130,10 +130,23 @@ public class LazyReader extends Reader {
 		return copied == 0 ? -1 : copied;
 	}
 
+	public boolean ready() throws IOException {
+		try {
+			return (bufferSize - offset) > 0 || in.ready();
+		} catch (IOException ioe) {
+			throw new LowLevelIOException(ioe);
+		}
+	}
+
 	public void reset() {
 		offset = mark;
 	}
 
+	public void rewind() {
+		mark = 0;
+		offset = 0;
+	}
+	
 	public long skip(long toSkip) throws IOException {
 		if (toSkip <= 0)
 			return 0;
@@ -141,14 +154,5 @@ public class LazyReader extends Reader {
 		long skipped = Math.min(toSkip, bufferSize - offset);
 		offset += skipped;
 		return skipped;
-	}
-
-	public void close() {
-		// we don't close the underlying stream
-	}
-
-	public void rewind() {
-		mark = 0;
-		offset = 0;
 	}
 }

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.content;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LazyInputStream extends InputStream {
+public class LazyInputStream extends InputStream implements ILazySource {
 	private int blockCapacity;
 	byte[][] blocks = {};
 	private int bufferSize;
@@ -32,6 +32,13 @@ public class LazyInputStream extends InputStream {
 		} catch (IOException ioe) {
 			throw new LowLevelIOException(ioe);
 		}
+	}
+
+	private int computeBlockSize(int blockIndex) {
+		if (blockIndex < blocks.length - 1)
+			return blockCapacity;
+		int blockSize = bufferSize % blockCapacity;
+		return blockSize == 0 ? blockCapacity : blockSize;
 	}
 
 	private int copyFromBuffer(byte[] userBuffer, int userOffset, int needed) {
@@ -67,13 +74,6 @@ public class LazyInputStream extends InputStream {
 		return blocks.length;
 	}
 
-	private int computeBlockSize(int blockIndex) {
-		if (blockIndex < blocks.length - 1)
-			return blockCapacity;
-		int blockSize = bufferSize % blockCapacity;
-		return blockSize == 0 ? blockCapacity : blockSize;
-	}
-
 	// for testing purposes
 	protected int getBufferSize() {
 		return bufferSize;
@@ -87,6 +87,10 @@ public class LazyInputStream extends InputStream {
 	// for testing purposes
 	protected int getOffset() {
 		return offset;
+	}
+
+	public boolean isText() {
+		return false;
 	}
 
 	private int loadBlock() throws IOException {
@@ -134,6 +138,11 @@ public class LazyInputStream extends InputStream {
 		offset = mark;
 	}
 
+	public void rewind() {
+		mark = 0;
+		offset = 0;
+	}
+	
 	public long skip(long toSkip) throws IOException {
 		if (toSkip <= 0)
 			return 0;
@@ -141,10 +150,5 @@ public class LazyInputStream extends InputStream {
 		long skipped = Math.min(toSkip, bufferSize - offset);
 		offset += skipped;
 		return skipped;
-	}
-
-	public void rewind() {
-		mark = 0;
-		offset = 0;
 	}
 }
