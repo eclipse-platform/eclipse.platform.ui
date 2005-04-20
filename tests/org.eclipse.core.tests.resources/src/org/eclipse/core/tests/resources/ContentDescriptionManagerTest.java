@@ -66,7 +66,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 			fail("1.1", e);
 		}
 		assertNotNull("1.2", description);
-		assertSame("1.3", derivedType, description.getContentType());
+		assertSame("1.3", baseType, description.getContentType());
 
 		// change project description to include one of the natures		
 		try {
@@ -111,7 +111,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 			fail("4.1", e);
 		}
 		assertNotNull("4.2", description);
-		assertSame("4.3", derivedType, description.getContentType());
+		assertSame("4.3", baseType, description.getContentType());
 
 		// back to no natures
 		try {
@@ -126,7 +126,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 			fail("5.1", e);
 		}
 		assertNotNull("5.2", description);
-		assertSame("5.3", derivedType, description.getContentType());
+		assertSame("5.3", baseType, description.getContentType());
 
 	}
 
