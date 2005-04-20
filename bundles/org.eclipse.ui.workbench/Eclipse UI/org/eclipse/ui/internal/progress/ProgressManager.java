@@ -912,7 +912,7 @@ public class ProgressManager extends ProgressProvider implements
              */
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 setUserInterfaceActive(true);
-                if (ProgressManagerUtil.safeToOpen(dialog))
+                if (ProgressManagerUtil.safeToOpen(dialog,null))
                     dialog.open();
                 return Status.OK_STATUS;
             }
@@ -1047,7 +1047,7 @@ public class ProgressManager extends ProgressProvider implements
 
         final ProgressMonitorFocusJobDialog dialog = new ProgressMonitorFocusJobDialog(
                 shell);
-        dialog.show(job);
+        dialog.show(job,shell);
     }
 
     /*

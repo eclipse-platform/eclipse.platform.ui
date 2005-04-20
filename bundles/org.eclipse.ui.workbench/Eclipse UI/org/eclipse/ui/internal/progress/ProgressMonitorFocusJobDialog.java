@@ -363,8 +363,10 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 * Opens this dialog for the duration that the given job is running.
 	 * 
 	 * @param jobToWatch
+	 * @param originatingShell The shell this request was
+	 * created from. Do not block on this shell.
 	 */
-	public void show(Job jobToWatch) {
+	public void show(Job jobToWatch,final Shell originatingShell) {
 		job = jobToWatch;
 		//after the dialog is opened we can get access to its monitor
 		job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.TRUE);
@@ -405,7 +407,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 				//now open the progress dialog if nothing else is
 				if (!ProgressManagerUtil
-						.safeToOpen(ProgressMonitorFocusJobDialog.this))
+						.safeToOpen(ProgressMonitorFocusJobDialog.this,originatingShell))
 					return Status.CANCEL_STATUS;
 
 				//Do not bother if the parent is disposed

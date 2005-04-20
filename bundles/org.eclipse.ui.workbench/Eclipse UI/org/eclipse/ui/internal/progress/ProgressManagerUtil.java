@@ -205,7 +205,7 @@ public class ProgressManagerUtil {
      * @return boolean. true if the job was rescheduled due to modal dialogs.
      */
     public static boolean rescheduleIfModalShellOpen(Job openJob) {
-        Shell modal = getModalShell();
+        Shell modal = getModalShellExcluding(null);
         if (modal == null)
             return false;
 
@@ -221,11 +221,12 @@ public class ProgressManagerUtil {
      * has had ProgressManager#longOperationTime worth of ticks.
      * 
      * @param dialog ProgressMonitorJobsDialog that will be opening
+     * @param excludedShell The shell
      * @return boolean. <code>true</code> if it can open. Otherwise return
      * false and set the dialog to tick.
      */
-    public static boolean safeToOpen(ProgressMonitorJobsDialog dialog) {
-        Shell modal = getModalShell();
+    public static boolean safeToOpen(ProgressMonitorJobsDialog dialog, Shell excludedShell) {
+        Shell modal = getModalShellExcluding(excludedShell);
         if (modal == null)
             return true;
 
@@ -235,16 +236,20 @@ public class ProgressManagerUtil {
 
     /**
      * Return the modal shell that is currently open. If there isn't one then
-     * return null
+     * return null.
+     * @param shell A shell to exclude from the search. May be
+     * 	<code>null</code>.
      * 
      * @return Shell or <code>null</code>.
      */
-    public static Shell getModalShell() {
+    public static Shell getModalShellExcluding(Shell shell) {
         IWorkbench workbench = PlatformUI.getWorkbench();
         Shell[] shells = workbench.getDisplay().getShells();
         int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
                 | SWT.PRIMARY_MODAL;
         for (int i = 0; i < shells.length; i++) {
+        	if(shells[i].equals(shell))
+        		break;
             //Do not worry about shells that will not block the user.
             if (shells[i].isVisible()) {
                 int style = shells[i].getStyle();
@@ -265,7 +270,7 @@ public class ProgressManagerUtil {
      * @return Shell or <code>null</code>
      */
     public static Shell getDefaultParent() {
-        Shell modal = getModalShell();
+        Shell modal = getModalShellExcluding(null);
         if (modal != null)
             return modal;
 

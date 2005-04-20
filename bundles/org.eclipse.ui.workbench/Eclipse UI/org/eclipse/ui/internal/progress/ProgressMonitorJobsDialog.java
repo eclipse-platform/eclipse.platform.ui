@@ -330,7 +330,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                      */
                     public void run() {
 						//Reset the watch if it is not safe to open
-						 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this)){
+						 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this,null)){
 							  watchTicks();
 							  return;
 						 }
