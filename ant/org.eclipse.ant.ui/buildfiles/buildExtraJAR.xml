@@ -37,7 +37,7 @@
 					${basedir}/../org.eclipse.swt${version.suffix}/bin;
 			 		${swt.jar};
 					${basedir}/../org.eclipse.text/bin;
-					${eclipse.home}/plugins/org.eclipse.text${version.suffix}/text.jar;
+					${eclipse.home}/plugins/org.eclipse.text${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.ant.core/bin;
 			 		${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.debug.core/bin;
