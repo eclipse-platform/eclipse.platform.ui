@@ -1381,8 +1381,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 //firePartClosed(refs[i]);
                 Platform.run(new SafeRunnable() {
                     public void run() {
-                        WorkbenchPlugin.log(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, 
-                                Status.OK, "WorkbenchPage leaked a refcount for view " + ref.getId(), null));  //$NON-NLS-1$//$NON-NLS-2$
+//                        WorkbenchPlugin.log(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, 
+//                                Status.OK, "WorkbenchPage leaked a refcount for view " + ref.getId(), null));  //$NON-NLS-1$//$NON-NLS-2$
                         
                         ref.dispose();
                     }
