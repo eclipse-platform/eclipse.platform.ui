@@ -53,9 +53,9 @@ public interface IActivity extends Comparable {
     void addActivityListener(IActivityListener activityListener);
 
     /**
-     * Returns the set of activity activity bindings for this instance.
+     * Returns the set of activity requirement bindings for this instance.
      * <p>
-     * This method will return all activity activity bindings for this
+     * This method will return all activity requirement bindings for this
      * instance, whether or not this instance is defined.
      * </p>
      * <p>
@@ -63,7 +63,7 @@ public interface IActivity extends Comparable {
      * changes.
      * </p>
      * 
-     * @return the set of activity activity bindings. This set may be empty,
+     * @return the set of activity requirement bindings. This set may be empty,
      *         but is guaranteed not to be <code>null</code>. If this set is
      *         not empty, it is guaranteed to only contain instances of 
      * 		   <code>IActivityRequirementBinding</code>.
