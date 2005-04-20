@@ -45,8 +45,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public abstract class ProcessorBasedRefactoring extends Refactoring {
 
-	private static final String PERF_CHECK_CONDITIONS= "org.eclipse.ltk.core/perf/participants/checkConditions"; //$NON-NLS-1$
-	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core/perf/participants/createChanges"; //$NON-NLS-1$
+	private static final String PERF_CHECK_CONDITIONS= "org.eclipse.ltk.core.refactoring/perf/participants/checkConditions"; //$NON-NLS-1$
+	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core.refactoring/perf/participants/createChanges"; //$NON-NLS-1$
 
 	private RefactoringParticipant[] fParticipants;
 	private SharableParticipants fSharedParticipants= new SharableParticipants();
