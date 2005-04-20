@@ -22,7 +22,6 @@ import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
-import org.osgi.framework.BundleException;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -143,7 +142,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	/**
 	 * This test shows how we deal with aliases.
 	 */
-	public void testAlias() throws IOException, BundleException {
+	public void testAlias() throws IOException {
 		final IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
 		assertNotNull("0.7", alias);
@@ -158,8 +157,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertEquals("1.3", derived, selected[1]);
 		selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
 		assertEquals("1.4", 2, selected.length);
-		assertEquals("1.5", derived, selected[0]);
-		assertEquals("1.6", alias, selected[1]);
+		assertEquals("1.5", alias, selected[0]);
+		assertEquals("1.6", derived, selected[1]);
 
 		//test late addition of content type 
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
@@ -182,8 +181,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 					fail("2.2.4", e);
 				}
 				assertEquals("2.2.5", 2, selected.length);
-				assertEquals("2.2.6", derived, selected[0]);
-				assertEquals("2.2.7", target, selected[1]);
+				assertEquals("2.2.6", target, selected[0]);
+				assertEquals("2.2.7", derived, selected[1]);
 			}
 		}, RuntimeTestsPlugin.getContext(), new String[] {RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle02"}, listener);
 	}
@@ -657,8 +656,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		try {
 			selectedConflict2 = manager.findContentTypesFor(getRandomContents(), "test.conflict2");
 			assertEquals("2.2", 2, selectedConflict2.length);
-			assertEquals("2.3", selectedConflict2[0], conflict2sub);
-			assertEquals("2.4", selectedConflict2[1], conflict2base);
+			assertEquals("2.3", selectedConflict2[0], conflict2base);
+			assertEquals("2.4", selectedConflict2[1], conflict2sub);
 		} catch (IOException e) {
 			fail("2.5", e);
 		}
@@ -671,14 +670,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNotNull("3.0.3", conflict3unrelated);
 
 		// Two unrelated types (sub_conflict3 and unrelated conflict3) are in conflict. 
-		// Order will be arbitrary (lexicographically).
+		// Order will be based on depth (more general first since they don't have describers)
 
 		IContentType[] selectedConflict3;
 		try {
 			selectedConflict3 = manager.findContentTypesFor(getRandomContents(), "test.conflict3");
 			assertEquals("4.0", 2, selectedConflict3.length);
-			assertEquals("4.1", selectedConflict3[0], conflict3sub);
-			assertEquals("4.2", selectedConflict3[1], conflict3unrelated);
+			assertEquals("4.1", selectedConflict3[0], conflict3unrelated);
+			assertEquals("4.2", selectedConflict3[1], conflict3sub);
 		} catch (IOException e) {
 			fail("4.3", e);
 		}

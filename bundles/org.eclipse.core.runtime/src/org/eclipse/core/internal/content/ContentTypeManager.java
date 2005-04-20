@@ -82,11 +82,11 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		return (dotPosition == -1 || dotPosition == fileName.length() - 1) ? "" : fileName.substring(dotPosition + 1); //$NON-NLS-1$
 	}
 
-	protected static LazyInputStream readBuffer(InputStream contents) {
+	protected static ILazySource readBuffer(InputStream contents) {
 		return new LazyInputStream(contents, BLOCK_SIZE);
 	}
 
-	protected static LazyReader readBuffer(Reader contents) {
+	protected static ILazySource readBuffer(Reader contents) {
 		return new LazyReader(contents, BLOCK_SIZE);
 	}
 
@@ -132,6 +132,13 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	IEclipsePreferences getPreferences() {
 		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
+	}
+	
+	/**
+	 * For testing purposes only.
+	 */
+	public boolean isLoaded() {
+		return catalog != null;
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {

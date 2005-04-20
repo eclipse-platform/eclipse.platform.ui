@@ -16,11 +16,24 @@ import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 
-public class ContentTypeCatalog {
+public final class ContentTypeCatalog {
+	private static final IContentType[] NO_CONTENT_TYPES = new IContentType[0];
 	private Map aliases = new HashMap();
-	private Map allChildren = new HashMap();
 
-	private Comparator constantGeneralIsBetter = new Comparator() {
+	private Map allChildren = new HashMap();
+	private Map contentTypes = new HashMap();
+
+	private Map fileExtensions = new HashMap();
+
+	private Map fileNames = new HashMap();
+
+	private ContentTypeManager manager;
+
+	/**
+	 * A sorting policy where the more generic content type wins. Lexicographical comparison is done
+	 * as a last resort when all other criteria fail.  
+	 */
+	private Comparator policyConstantGeneralIsBetter = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
@@ -36,7 +49,12 @@ public class ContentTypeCatalog {
 			return type1.getId().compareTo(type2.getId());
 		}
 	};
-	private Comparator constantSpecificIsBetter = new Comparator() {
+
+	/**
+	 * A sorting policy where the more specific content type wins. Lexicographical comparison is done
+	 * as a last resort when all other criteria fail.  
+	 */
+	private Comparator policyConstantSpecificIsBetter = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
@@ -53,30 +71,39 @@ public class ContentTypeCatalog {
 		}
 	};
 
-	private Map contentTypes = new HashMap();
-
-	private Map fileExtensions = new HashMap();
-
-	private Map fileNames = new HashMap();
+	/**
+	 * A sorting policy where the more general content type wins.  
+	 */
+	private Comparator policyGeneralIsBetter = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			ContentType type1 = (ContentType) o1;
+			ContentType type2 = (ContentType) o2;
+			// first criteria: depth - the lower, the better
+			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			if (depthCriteria != 0)
+				return depthCriteria;
+			// second criteria: priority - the higher, the better
+			int priorityCriteria = type1.getPriority() - type2.getPriority();
+			if (priorityCriteria != 0)
+				return -priorityCriteria;
+			return 0;
+		}
+	};
 
 	/**
 	 * A sorting policy where content types are sorted by id.
 	 */
-	private Comparator lexicographical = new Comparator() {
+	private Comparator policyLexicographical = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
 			return type1.getId().compareTo(type2.getId());
 		}
 	};
-
-	private ContentTypeManager manager;
-
 	/**
-	 * A sorting policy where the more specific content type wins (if they are related), 
-	 *   
+	 * A sorting policy where the more specific content type wins.  
 	 */
-	private Comparator specificIsBetter = new Comparator() {
+	private Comparator policySpecificIsBetter = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
@@ -91,6 +118,17 @@ public class ContentTypeCatalog {
 			return 0;
 		}
 	};
+
+	private static IContentType[] concat(IContentType[][] types) {
+		if (types[0].length == 0)
+			return types[1];
+		if (types[1].length == 0)
+			return types[0];
+		IContentType[] result = new IContentType[types[0].length + types[1].length];
+		System.arraycopy(types[0], 0, result, 0, types[0].length);
+		System.arraycopy(types[1], 0, result, types[0].length, types[1].length);
+		return result;
+	}
 
 	public ContentTypeCatalog(ContentTypeManager manager) {
 		this.manager = manager;
@@ -135,6 +173,24 @@ public class ContentTypeCatalog {
 		if (existing == null)
 			fileSpecMap.put(mappingKey, existing = new HashSet());
 		existing.add(contentType);
+	}
+
+	private int collectMatchingByContents(int valid, IContentType[] subset, List destination, ILazySource contents) throws IOException {
+		for (int i = 0; i < subset.length; i++) {
+			ContentType current = (ContentType) subset[i];
+			IContentDescriber describer = current.getDescriber(this);
+			int status = IContentDescriber.INDETERMINATE;
+			if (describer != null) {
+				status = current.describe(describer, contents, null);
+				if (status == IContentDescriber.INVALID)
+					continue;
+			}
+			if (status == IContentDescriber.VALID)
+				destination.add(valid++, current);
+			else
+				destination.add(current);
+		}
+		return valid;
 	}
 
 	/**
@@ -223,17 +279,17 @@ public class ContentTypeCatalog {
 		return true;
 	}
 
-	protected IContentType[] findContentTypesFor(InputStream contents, String fileName, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		InputStream buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(buffer, false, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
+	IContentType[] findContentTypesFor(InputStream contents, String fileName, IContentTypeManager.ISelectionPolicy policy) throws IOException {
+		final ILazySource buffer = ContentTypeManager.readBuffer(contents);
+		IContentType[] selected = internalFindContentTypesFor(buffer, fileName);
 		// give the policy a chance to change the results
 		if (policy != null)
 			selected = applyPolicy(policy, selected, fileName != null, true);
 		return selected;
 	}
 
-	public IContentType[] findContentTypesFor(final String fileName, IContentTypeManager.ISelectionPolicy policy) {
-		IContentType[] selected = internalFindContentTypesFor(fileName, constantGeneralIsBetter);
+	IContentType[] findContentTypesFor(final String fileName, IContentTypeManager.ISelectionPolicy policy) {
+		IContentType[] selected = concat(internalFindContentTypesFor(fileName, policyConstantGeneralIsBetter));
 		// give the policy a chance to change the results
 		if (policy != null)
 			selected = applyPolicy(policy, selected, true, false);
@@ -274,9 +330,8 @@ public class ContentTypeCatalog {
 		return (type != null && type.isValid() && !type.isAlias(this)) ? type : null;
 	}
 
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		InputStream buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(buffer, false, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
+	private IContentDescription getDescriptionFor(ILazySource contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
+		IContentType[] selected = internalFindContentTypesFor(contents, fileName);
 		if (selected.length == 0)
 			return null;
 		// give the policy a chance to change the results
@@ -285,29 +340,19 @@ public class ContentTypeCatalog {
 			if (selected.length == 0)
 				return null;
 		}
-		return ((ContentType) selected[0]).internalGetDescriptionFor(this, buffer, options);
+		return ((ContentType) selected[0]).internalGetDescriptionFor(this, contents, options);
+	}
+
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
+		return getDescriptionFor(ContentTypeManager.readBuffer(contents), fileName, options, policy);
 	}
 
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		Reader buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(buffer, true, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
-		if (selected.length == 0)
-			return null;
-		// give the policy a chance to change the results
-		if (policy != null) {
-			selected = applyPolicy(policy, selected, fileName != null, true);
-			if (selected.length == 0)
-				return null;
-		}
-		return ((ContentType) selected[0]).internalGetDescriptionFor(this, buffer, options);
+		return getDescriptionFor(ContentTypeManager.readBuffer(contents), fileName, options, policy);
 	}
 
 	public ContentTypeManager getManager() {
 		return manager;
-	}
-
-	private IContentType[] getSubset(String fileName) {
-		return fileName == null ? getAllContentTypes() : internalFindContentTypesFor(fileName, lexicographical);
 	}
 
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
@@ -333,29 +378,39 @@ public class ContentTypeCatalog {
 		return true;
 	}
 
-	public IContentType[] internalFindContentTypesFor(Object buffer, boolean text, IContentType[] subset, Comparator sortingPolicy) throws IOException {
-		List appropriate = new ArrayList();
-		int valid = 0;
-		for (int i = 0; i < subset.length; i++) {
-			ContentType current = (ContentType) subset[i];
-			IContentDescriber describer = current.getDescriber(this);
-			int status = IContentDescriber.INDETERMINATE;
-			if (describer != null) {
-				status = current.describe(describer, text, buffer, null);
-				if (status == IContentDescriber.INVALID)
-					continue;
-			}
-			if (status == IContentDescriber.VALID)
-				appropriate.add(valid++, current);
-			else
-				appropriate.add(current);
-		}
+	public IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator validPolicy, Comparator indeterminatePolicy) throws IOException {
+		final List appropriate = new ArrayList(5);
+		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer);
+		final int appropriateFullName = appropriate.size();
+		final int validExtension = collectMatchingByContents(validFullName, subset[1], appropriate, buffer) - validFullName;
+		final int appropriateExtension = appropriate.size() - appropriateFullName;
 		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
-		if (valid > 1)
-			Arrays.sort(result, 0, valid, sortingPolicy);
-		if (result.length - valid > 1)
-			Arrays.sort(result, valid, result.length, sortingPolicy);
+		if (validFullName > 1)
+			Arrays.sort(result, 0, validFullName, validPolicy);
+		if (validExtension > 1)
+			Arrays.sort(result, validFullName, validFullName + validExtension, validPolicy);
+		if (appropriateFullName - validFullName > 1)
+			Arrays.sort(result, validFullName + validExtension, appropriateFullName + validExtension, indeterminatePolicy);
+		if (appropriateExtension - validExtension > 1)
+			Arrays.sort(result, appropriateFullName + validExtension, appropriate.size(), indeterminatePolicy);
 		return result;
+	}
+
+	private IContentType[] internalFindContentTypesFor(ILazySource buffer, String fileName) throws IOException {
+		final IContentType[][] subset;
+		final Comparator validPolicy;
+		Comparator indeterminatePolicy;
+		if (fileName == null) {
+			// we only have a single array, by need to provide a two-dimensional, 2-element array 
+			subset = new IContentType[][] {getAllContentTypes(), NO_CONTENT_TYPES};
+			indeterminatePolicy = policyConstantGeneralIsBetter;
+			validPolicy = policyConstantSpecificIsBetter;
+		} else {
+			subset = internalFindContentTypesFor(fileName, policyLexicographical);
+			indeterminatePolicy = policyGeneralIsBetter;
+			validPolicy = policySpecificIsBetter;
+		}
+		return internalFindContentTypesFor(buffer, subset, validPolicy, indeterminatePolicy);
 	}
 
 	/**
@@ -364,24 +419,25 @@ public class ContentTypeCatalog {
 	 * @return all matching content types in the preferred order 
 	 * @see IContentTypeManager#findContentTypesFor(String)
 	 */
-	public IContentType[] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
-		final List selected = new ArrayList(5);
-		// files associated by name should appear before those associated by extension		
-		Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
-		collectMatchingByName(allByFileName, selected, fileName, IContentType.FILE_NAME_SPEC);
-		int boundary = selected.size();
+	public IContentType[][] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
+		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
+		final Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
+		List collected = new ArrayList(5);
+		collectMatchingByName(allByFileName, collected, fileName, IContentType.FILE_NAME_SPEC);
+		result[0] = (IContentType[]) collected.toArray(new IContentType[collected.size()]);
+		int byName = collected.size();
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
-			Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
-			collectMatchingByName(allByFileExtension, selected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+			final Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
+			collectMatchingByName(allByFileExtension, collected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+			int byExtension = collected.size() - byName;
+			if (byExtension > 0)
+				result[1] = (IContentType[]) collected.subList(byName, byName + byExtension).toArray(new IContentType[byExtension]);
 		}
-		IContentType[] result = (IContentType[]) selected.toArray(new IContentType[selected.size()]);
-		if (sortingPolicy == null)
-			return result;
-		if (boundary > 1)
-			Arrays.sort(result, 0, boundary, sortingPolicy);
-		if (boundary < result.length - 1)
-			Arrays.sort(result, boundary, result.length, sortingPolicy);
+		if (result[0].length > 1)
+			Arrays.sort(result[0], sortingPolicy);
+		if (result[1].length > 1)
+			Arrays.sort(result[1], sortingPolicy);
 		return result;
 	}
 

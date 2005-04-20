@@ -163,11 +163,12 @@ public final class ContentType implements IContentType {
 		manager.fireContentTypeChangeEvent(this);
 	}
 
-	int describe(IContentDescriber selectedDescriber, boolean text, Object contents, ContentDescription description) throws IOException {
+	int describe(IContentDescriber selectedDescriber, ILazySource contents, ContentDescription description) throws IOException {
+		final boolean isText = contents.isText();
+		if (isText && !(selectedDescriber instanceof ITextContentDescriber))
+			throw new UnsupportedOperationException();
 		try {
-			if (!text)
-				return selectedDescriber.describe((InputStream) contents, description);
-			return ((ITextContentDescriber) selectedDescriber).describe((Reader) contents, description);
+			return isText ? ((ITextContentDescriber) selectedDescriber).describe((Reader) contents, description) : selectedDescriber.describe((InputStream) contents, description);
 		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)
 			invalidateDescriber(re);
@@ -185,10 +186,7 @@ public final class ContentType implements IContentType {
 				ContentType.log(message, ioe);
 			}
 		} finally {
-			if (!text)
-				((LazyInputStream) contents).rewind();
-			else
-				((LazyReader) contents).rewind();
+			contents.rewind();
 		}
 		return IContentDescriber.INVALID;
 	}
@@ -287,9 +285,10 @@ public final class ContentType implements IContentType {
 				}
 				return (NO_DESCRIBER == tmpDescriber) ? null : (IContentDescriber) tmpDescriber;
 			}
-			if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
+			final String describerValue = contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT); 
+			if (describerValue != null || contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0)
 				try {
-					if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) { //$NON-NLS-1$
+					if ("".equals(describerValue)) { //$NON-NLS-1$
 						describer = NO_DESCRIBER;
 						return null;
 					}
@@ -329,10 +328,7 @@ public final class ContentType implements IContentType {
 	}
 
 	private IContentDescription getDescriptionFor(ContentTypeCatalog catalog, InputStream contents, QualifiedName[] options) throws IOException {
-		InputStream buffer = ContentTypeManager.readBuffer(contents);
-		if (buffer == null)
-			return defaultDescription;
-		return internalGetDescriptionFor(catalog, buffer, options);
+		return internalGetDescriptionFor(catalog, ContentTypeManager.readBuffer(contents), options);
 	}
 
 	/**
@@ -343,10 +339,7 @@ public final class ContentType implements IContentType {
 	}
 
 	private IContentDescription getDescriptionFor(ContentTypeCatalog catalog, Reader contents, QualifiedName[] options) throws IOException {
-		Reader buffer = ContentTypeManager.readBuffer(contents);
-		if (buffer == null)
-			return defaultDescription;
-		return internalGetDescriptionFor(catalog, buffer, options);
+		return internalGetDescriptionFor(catalog, ContentTypeManager.readBuffer(contents), options);
 	}
 
 	/**
@@ -466,7 +459,7 @@ public final class ContentType implements IContentType {
 		return baseType == null ? null : baseType.internalGetDefaultProperty(catalog, key);
 	}
 
-	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, InputStream buffer, QualifiedName[] options) throws IOException {
+	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, ILazySource buffer, QualifiedName[] options) throws IOException {
 		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
 			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
@@ -478,30 +471,7 @@ public final class ContentType implements IContentType {
 		if (tmpDescriber == null)
 			return defaultDescription;
 		ContentDescription description = new ContentDescription(options, this);
-		describe(tmpDescriber, false, buffer, description);
-		// the describer didn't add any details, return default description
-		if (!description.isSet())
-			return defaultDescription;
-		// description cannot be changed afterwards
-		description.markImmutable();
-		return description;
-	}
-
-	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, Reader buffer, QualifiedName[] options) throws IOException {
-		ContentType aliasTarget = getTarget(catalog, false);
-		if (aliasTarget != null)
-			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
-		if (buffer == null)
-			return defaultDescription;
-		// use temporary local var to avoid sync'ing			
-		IContentDescriber tmpDescriber = this.getDescriber(catalog);
-		// no describer - return default description
-		if (tmpDescriber == null)
-			return defaultDescription;
-		ContentDescription description = new ContentDescription(options, this);
-		if (!(tmpDescriber instanceof ITextContentDescriber))
-			throw new UnsupportedOperationException();
-		describe(tmpDescriber, true, buffer, description);
+		describe(tmpDescriber, buffer, description);
 		// the describer didn't add any details, return default description
 		if (!description.isSet())
 			return defaultDescription;

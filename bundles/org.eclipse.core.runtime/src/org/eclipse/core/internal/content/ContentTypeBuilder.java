@@ -122,7 +122,7 @@ public class ContentTypeBuilder {
 	 * @throws CoreException if mandatory attributes are missing in the markup
 	 */
 	private ContentType createContentType(IConfigurationElement contentTypeCE) throws CoreException {
-		String namespace = contentTypeCE.getDeclaringExtension().getNamespace();
+		String namespace = contentTypeCE.getNamespace();
 		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
 		String uniqueId = namespace + '.' + simpleId;
