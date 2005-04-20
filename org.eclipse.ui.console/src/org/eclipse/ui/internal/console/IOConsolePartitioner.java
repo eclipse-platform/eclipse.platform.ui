@@ -307,7 +307,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	public void clearBuffer() {
 	    synchronized (overflowLock) {
 	        trimJob.setOffset(-1);
-	        trimJob.setRule(console.getSchedulingRule());
 		    trimJob.schedule();
         }
 	}
