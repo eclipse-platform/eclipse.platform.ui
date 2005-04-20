@@ -148,6 +148,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String DebugModePromptStatusHandler_0;
 	public static String DebugModePromptStatusHandler_1;
 
+    public static String CommonTab_No_Encoding_Selected;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, LaunchConfigurationsMessages.class);

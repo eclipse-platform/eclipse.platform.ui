@@ -339,7 +339,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    
 	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
 	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fEncodingCombo.setItems((String[]) allEncodings.toArray(new String[0]));
+        String[] encodingArray = (String[]) allEncodings.toArray(new String[0]);
+	    fEncodingCombo.setItems(encodingArray);
+        if (encodingArray.length > 0) {
+            fEncodingCombo.select(0); 
+        }
 	    
 	    SelectionListener listener = new SelectionAdapter() {
 	        public void widgetSelected(SelectionEvent e) {
@@ -651,9 +655,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setMessage(null);
 		setErrorMessage(null);
 		
-		return validateLocalShared() && validateRedirectFile();
+		return validateLocalShared() && validateRedirectFile() && validateEncoding();
 	}
 	
+    private boolean validateEncoding() {
+        if (fAltEncodingButton.getSelection()) {
+            if (fEncodingCombo.getSelectionIndex() == -1) {
+                setErrorMessage(LaunchConfigurationsMessages.CommonTab_No_Encoding_Selected);
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean validateRedirectFile() {
         if(fFileOutput.getSelection()) {
             int len = fFileText.getText().trim().length();
