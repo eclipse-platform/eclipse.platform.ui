@@ -83,6 +83,11 @@ public class MainPreferencePage
 		historySizeLabel.setText(UpdateUIMessages.MainPreferencePage_historySize); 
 		historySizeText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
 		historySizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		historySizeText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				historySizeChanged();
+			}
+		});
 
 		checkSignatureCheckbox =
 			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
@@ -224,6 +229,24 @@ public class MainPreferencePage
 		}
 		return UpdateCore.getPlugin().getPluginPreferences().getDefaultInt(
 			UpdateCore.P_HISTORY_SIZE);
+	}
+	
+	private void historySizeChanged() {
+		
+		try {
+			int historySize = Integer.parseInt(historySizeText.getText());
+			if (historySize < 0) {
+				setValid(false);
+				setErrorMessage(UpdateUIMessages.MainPreferencePage_invalidHistorySize); 
+				return;
+			}
+		} catch (NumberFormatException e) {
+			setValid(false);
+			setErrorMessage(UpdateUIMessages.MainPreferencePage_invalidHistorySize); 
+			return;
+		}
+		setValid(true);
+		setErrorMessage(null);	
 	}
 
 	public boolean performOk() {
