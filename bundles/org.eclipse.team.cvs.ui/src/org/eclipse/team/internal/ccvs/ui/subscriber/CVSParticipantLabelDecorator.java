@@ -45,7 +45,6 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 					// Prepare the decoration but substitute revision and hide dirty indicator
 					CVSDecoration decoration = getDecoration(resource);
 					decoration.setRevision(getRevisionNumber((ISynchronizeModelElement) element));
-					decoration.setDirty(false);
 					decoration.compute();
 					// Update label
 					StringBuffer output = new StringBuffer(25);
@@ -68,7 +67,7 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
      * @return
      */
     protected CVSDecoration getDecoration(IResource resource) throws CVSException {
-        return CVSLightweightDecorator.decorate(resource);
+        return CVSLightweightDecorator.decorate(resource, false /* do not include dirty check */);
     }
 
     public Image decorateImage(Image base, Object element) {

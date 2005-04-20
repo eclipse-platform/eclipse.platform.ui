@@ -68,12 +68,12 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * Returns the folder sync info for the container; null if none.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container MUST ALREADY BE CACHED.
-	 *
 	 * @param container the container
+	 *
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
-	FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+	FolderSyncInfo getCachedFolderSync(IContainer container, boolean threadSafeAccess) throws CVSException {
 		byte[] bytes = internalGetCachedSyncBytes(container);
 		if (bytes == null) return null;
 		return FolderSyncInfo.getFolderSyncInfo(bytes);
@@ -118,9 +118,9 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	}
 
 	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource, boolean)
 	 */
-	byte[] getCachedSyncBytes(IResource resource) throws CVSException {
+	byte[] getCachedSyncBytes(IResource resource, boolean threadSafeAccess) throws CVSException {
 		try {
 			byte[] bytes;
 			if (pendingCacheWrites.containsKey(resource)) {
@@ -151,7 +151,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException {
-		byte[] oldBytes = getCachedSyncBytes(resource);
+		byte[] oldBytes = getCachedSyncBytes(resource, true);
 		try {
 			if (syncBytes == null) {
 				if (oldBytes != null) {
@@ -206,10 +206,10 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
 	 */
-	String getDirtyIndicator(IResource resource) throws CVSException {		
+	String getDirtyIndicator(IResource resource, boolean threadSafeAccess) throws CVSException {		
 		if (resource.getType() == IResource.FILE) {
 			// a phantom file is dirty if it was managed before it was deleted			 
-			return getCachedSyncBytes(resource) != null ? 
+			return getCachedSyncBytes(resource, threadSafeAccess) != null ? 
 							IS_DIRTY_INDICATOR : 
 							NOT_DIRTY_INDICATOR;
 		} else {
@@ -269,7 +269,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	private String calculateDirtyCountForPhantomFolder(IContainer parent) throws CVSException {
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		if(getCachedFolderSync(parent) == null) {
+		if(getCachedFolderSync(parent, true) == null) {
 			return NOT_DIRTY_INDICATOR;
 		}
 		

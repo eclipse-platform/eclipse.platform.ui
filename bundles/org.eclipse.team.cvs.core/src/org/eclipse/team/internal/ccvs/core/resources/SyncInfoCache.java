@@ -50,13 +50,14 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	 * the given resource. A value of <code>true</code> indicates that the client
 	 * holds a scheduling rule that encompasses the resource and the workspace is
 	 * open for modification.
-	 *
 	 * @param container the container
+     * @param threadSafeAccess if false, the return value can only be used if not null
 	 * @param canModifyWorkspace indicates if it is OK to modify the ISycnrhonizer
+	 *
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
-	/*package*/ abstract FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException;
+	/*package*/ abstract FolderSyncInfo getCachedFolderSync(IContainer container, boolean threadSafeAccess) throws CVSException;
 
 	/**
 	 * Sets the folder sync info for the container; if null, deletes it.
@@ -77,12 +78,13 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/**
 	 * Returns the resource sync info for the given resource. The resource sync
 	 * info for the resource MUST ALREADY BE CACHED.
-	 *
 	 * @param resource the resource
+	 * @param threadSafeAccess if false, the return value can only be used if not null
+	 *
 	 * @return the bytes containing the resource's sync info
 	 * @see #cacheResourceSyncForChildren
 	 */
-	/*package*/ abstract byte[] getCachedSyncBytes(IResource resource) throws CVSException;
+	/*package*/ abstract byte[] getCachedSyncBytes(IResource resource, boolean threadSafeAccess) throws CVSException;
 
 	/**
 	 * Sets the resource sync info for the resource; if null, deletes it. Parent
@@ -100,7 +102,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	 */
 	/*package*/ abstract void setCachedSyncBytes(IResource resource, byte[] syncBytes, boolean canModifyWorkspace) throws CVSException;
 	
-	/*package*/ abstract String getDirtyIndicator(IResource resource) throws CVSException;
+	/*package*/ abstract String getDirtyIndicator(IResource resource, boolean threadSafeAccess) throws CVSException;
 	
 	/*package*/ abstract void setDirtyIndicator(IResource resource, String indicator) throws CVSException;
 	

@@ -62,10 +62,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @param container the container
 	 * @return the folder ignore patterns, or an empty array if none
 	 */
-	/*package*/ FileNameMatcher cacheFolderIgnores(IContainer container) throws CVSException {
+	/*package*/ FileNameMatcher getFolderIgnores(IContainer container, boolean threadSafeAccess) throws CVSException {
 		// don't try to load if the information is already cached
 		FileNameMatcher matcher = (FileNameMatcher)safeGetSessionProperty(container, IGNORE_SYNC_KEY);
-		if (matcher == null) {
+		if (threadSafeAccess && matcher == null) {
 			// read folder ignores and remember it
 			String[] ignores = SyncFileWriter.readCVSIgnoreEntries(container);
 			if (ignores == null) {
@@ -86,7 +86,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		Object info = safeGetSessionProperty(container, FOLDER_SYNC_KEY);
 		if (info == null){
 			// Defer to the synchronizer in case the folder was recreated
-			info = synchronizerCache.getCachedFolderSync(container);
+			info = synchronizerCache.getCachedFolderSync(container, true);
 		}
 		return info != null;
 	}
@@ -103,16 +103,19 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * Returns the folder sync info for the container; null if none.
 	 * Folder must exist and must not be the workspace root.
 	 * The folder sync info for the container MUST ALREADY BE CACHED.
-	 *
 	 * @param container the container
+	 * @param threadSafeAccess if false, the return value can only be used if not null
 	 * @return the folder sync info for the folder, or null if none.
 	 * @see #cacheFolderSync
 	 */
-	FolderSyncInfo getCachedFolderSync(IContainer container) throws CVSException {
+	FolderSyncInfo getCachedFolderSync(IContainer container, boolean threadSafeAccess) throws CVSException {
 		FolderSyncInfo info = (FolderSyncInfo)safeGetSessionProperty(container, FOLDER_SYNC_KEY);
+        // If we are not thread safe, just return whatever was found in the session property
+        if (!threadSafeAccess)
+            return info == NULL_FOLDER_SYNC_INFO ? null : info;
 		if (info == null) {
 			// Defer to the synchronizer in case the folder was recreated
-			info = synchronizerCache.getCachedFolderSync(container);
+			info = synchronizerCache.getCachedFolderSync(container, true);
 			if (info != null) {
 				safeSetSessionProperty(container, FOLDER_SYNC_KEY, info);
 			}
@@ -189,7 +192,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		} 
 		safeSetSessionProperty(container, FOLDER_SYNC_KEY, info);
 		// Ensure the synchronizer is clear for exiting resources
-		if (canModifyWorkspace && synchronizerCache.getCachedFolderSync(container) != null) {
+		if (canModifyWorkspace && synchronizerCache.getCachedFolderSync(container, true) != null) {
 			synchronizerCache.setCachedFolderSync(container, null, true);
 		}
 	}
@@ -201,11 +204,11 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			internalSetDirtyIndicator((IContainer)resource, indicator);
 		}
 	}
-	/*package*/ String getDirtyIndicator(IResource resource) throws CVSException {
+	/*package*/ String getDirtyIndicator(IResource resource, boolean threadSafeAccess) throws CVSException {
 		if (resource.getType() == IResource.FILE) {
-			return internalGetDirtyIndicator((IFile)resource);
+			return internalGetDirtyIndicator((IFile)resource, threadSafeAccess);
 		} else {
-			return internalGetDirtyIndicator((IContainer)resource);
+			return internalGetDirtyIndicator((IContainer)resource, threadSafeAccess);
 		}
 	}
 	
@@ -213,7 +216,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		safeSetSessionProperty(file, IS_DIRTY, indicator);
 	}
 	
-	private String internalGetDirtyIndicator(IFile file) throws CVSException {
+	private String internalGetDirtyIndicator(IFile file, boolean threadSafeAccess) throws CVSException {
 		String di = (String)safeGetSessionProperty(file, IS_DIRTY);
 		if(di == null) {
 			di = RECOMPUTE_INDICATOR;
@@ -225,7 +228,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		safeSetSessionProperty(container, IS_DIRTY, indicator);
 	}
 	
-	private String internalGetDirtyIndicator(IContainer container) throws CVSException {
+	private String internalGetDirtyIndicator(IContainer container, boolean threadSafeAccess) throws CVSException {
 		try {
 			String di = (String)safeGetSessionProperty(container, IS_DIRTY);
 			
@@ -246,7 +249,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				} else {
 					di = RECOMPUTE_INDICATOR;
 				}
-				setDirtyIndicator(container, di);
+                // Only set the session property if we are thread safe
+                if (threadSafeAccess) {
+                    setDirtyIndicator(container, di);
+                }
 			}
 			return di;
 		} catch (CoreException e) {
@@ -289,13 +295,16 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	}
 	
 	/**
-	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getCachedSyncBytes(org.eclipse.core.resources.IResource, boolean)
 	 */
-	byte[] getCachedSyncBytes(IResource resource) throws CVSException {
+	byte[] getCachedSyncBytes(IResource resource, boolean threadSafeAccess) throws CVSException {
 		byte[] bytes = (byte[])safeGetSessionProperty(resource, RESOURCE_SYNC_KEY);
+		// If we are not thread safe, just return whatever was found in the session property
+        if (!threadSafeAccess)
+            return bytes;
 		if (bytes == null) {
 			// Defer to the synchronizer in case the file was recreated
-			bytes = synchronizerCache.getCachedSyncBytes(resource);
+			bytes = synchronizerCache.getCachedSyncBytes(resource, true);
 			if (bytes != null) {
 				boolean genderChange = false;
 				if (resource.getType() == IResource.FILE) {
@@ -365,7 +374,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		// Put the sync bytes into the cache
 		safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, syncBytes);
 		// Ensure the synchronizer is clear
-		if (canModifyWorkspace && synchronizerCache.getCachedSyncBytes(resource) != null) {
+		if (canModifyWorkspace && synchronizerCache.getCachedSyncBytes(resource, true) != null) {
 			synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
 		}
 	}
@@ -425,7 +434,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 							if(resource.getType() != IResource.FILE) {
 								String di = null;
 								try {
-									di = getDirtyIndicator(resource);
+									di = getDirtyIndicator(resource, true);
 								} catch (CVSException e) {
 									// continue traversal
 									CVSProviderPlugin.log(e);

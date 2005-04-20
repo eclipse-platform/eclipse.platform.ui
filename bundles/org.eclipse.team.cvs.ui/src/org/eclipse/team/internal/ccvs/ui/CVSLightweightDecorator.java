@@ -163,7 +163,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			return;	
 		
 		try {
-			CVSDecoration cvsDecoration = decorate(resource);
+			CVSDecoration cvsDecoration = decorate(resource, true /* include dirty check */);
 			cvsDecoration.setWatchEditEnabled(cvsProvider.isWatchEditEnabled());	
 			cvsDecoration.apply(decoration);
 		} catch(CVSException e) {
@@ -178,7 +178,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		}
 	}
 
-	public static CVSDecoration decorate(IResource resource) throws CVSException {
+	public static CVSDecoration decorate(IResource resource, boolean includeDirtyCheck) throws CVSException {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		CVSDecoration cvsDecoration = new CVSDecoration(resource.getName());
@@ -189,11 +189,13 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		}
 		if (!cvsDecoration.isIgnored()) {
 			// Dirty
-			boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
-			int type = resource.getType();
-			if (type == IResource.FILE || computeDeepDirtyCheck) {
-				cvsDecoration.setDirty(CVSLightweightDecorator.isDirty(resource));
-			}
+            if (includeDirtyCheck) {
+    			boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
+    			int type = resource.getType();
+    			if (type == IResource.FILE || computeDeepDirtyCheck) {
+    				cvsDecoration.setDirty(CVSLightweightDecorator.isDirty(resource));
+    			}
+            }
 			// Tag
 			CVSTag tag = getTagToShow(resource);
 			if (tag != null) {

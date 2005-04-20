@@ -144,10 +144,14 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	public FolderSyncInfo getFolderSync(IContainer folder) throws CVSException {
 		if (folder.getType() == IResource.ROOT || !isValid(folder)) return null;
+        // Do a check outside the lock for any folder sync info
+        FolderSyncInfo info = getSyncInfoCacheFor(folder).getCachedFolderSync(folder, false /* not thread safe */);
+        if (info != null)
+            return info;
 		try {
 			beginOperation();
 			cacheFolderSync(folder);
-			return getSyncInfoCacheFor(folder).getCachedFolderSync(folder);
+			return getSyncInfoCacheFor(folder).getCachedFolderSync(folder, true /* thread safe */);
 		} finally {
 			endOperation();
 		}
@@ -253,6 +257,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public byte[] getSyncBytes(IResource resource) throws CVSException {
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) return null;
+        // Do a quick check outside the lock to see if there are sync butes for the resource.
+        byte[] info = getSyncInfoCacheFor(resource).getCachedSyncBytes(resource, false /* not thread safe */);
+        if (info != null)
+            return info;
 		try {
 			beginOperation();
 			// cache resource sync for siblings, then return for self
@@ -357,14 +365,18 @@ public class EclipseSynchronizer implements IFlushOperation {
 		    resource.getType() == IResource.PROJECT || 
 		    ! resource.exists()) {
 			return false;
-		} 
-		try {
-			beginOperation();
-			FileNameMatcher matcher = cacheFolderIgnores(resource.getParent());
-			return matcher.match(resource.getName());
-		} finally {
-			endOperation();
 		}
+		IContainer parent = resource.getParent();
+        FileNameMatcher matcher = sessionPropertyCache.getFolderIgnores(parent, false /* not thread safe */);
+        if (matcher == null) {
+    		try {
+    			beginOperation();
+                matcher = cacheFolderIgnores(parent);
+    		} finally {
+    			endOperation();
+    		}
+        }
+		return matcher.match(resource.getName());
 	}
 	
 	/**
@@ -945,7 +957,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					try {
                         beginOperation();
-						FolderSyncInfo info = sessionPropertyCache.getCachedFolderSync(folder);
+						FolderSyncInfo info = sessionPropertyCache.getCachedFolderSync(folder, true);
 						// Do not write the folder sync for linked resources
 						if (info == null) {
 							// deleted folder sync info since we loaded it
@@ -1059,7 +1071,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @see #cacheResourceSyncForChildren
 	 */
 	private byte[] getCachedSyncBytes(IResource resource) throws CVSException {
-		return getSyncInfoCacheFor(resource).getCachedSyncBytes(resource);
+		return getSyncInfoCacheFor(resource).getCachedSyncBytes(resource, true);
 	}
 
 	/**
@@ -1100,7 +1112,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @return the folder ignore patterns, or an empty array if none
 	 */
 	private FileNameMatcher cacheFolderIgnores(IContainer container) throws CVSException {
-		return sessionPropertyCache.cacheFolderIgnores(container);
+		return sessionPropertyCache.getFolderIgnores(container, true);
 	}
 	
 	/**
@@ -1486,9 +1498,13 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 
 	protected String getDirtyIndicator(IResource resource) throws CVSException {
+        // Do a check outside the lock for the dirty indicator
+        String indicator = getSyncInfoCacheFor(resource).getDirtyIndicator(resource, false /* not thread safe */);
+        if (indicator != null)
+            return indicator;
 		try {
 			beginOperation();
-			return getSyncInfoCacheFor(resource).getDirtyIndicator(resource);
+			return getSyncInfoCacheFor(resource).getDirtyIndicator(resource, true);
 		} finally {
 			endOperation();
 		}
@@ -1738,7 +1754,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public boolean wasPhantom(IResource resource) {
 		if (resource.exists()) {
 			try {
-				return (synchronizerCache.getCachedSyncBytes(resource) != null 
+				return (synchronizerCache.getCachedSyncBytes(resource, true) != null 
 					|| (resource.getType() == IResource.FOLDER
 							&& synchronizerCache.hasCachedFolderSync((IContainer)resource)));
 			} catch (CVSException e) {
@@ -1811,7 +1827,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		try {
 			// set the dirty count using what was cached in the phantom it
 			beginOperation();
-			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder);
+			FolderSyncInfo folderInfo = synchronizerCache.getCachedFolderSync(folder, true);
 			if (folderInfo != null) {
 				// There is folder sync info to restore
 				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
@@ -1869,7 +1885,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	private void restoreResourceSync(IResource resource) throws CVSException {
 		try {
 			beginOperation();
-			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(resource);
+			byte[] syncBytes = synchronizerCache.getCachedSyncBytes(resource, true);
 			if (syncBytes != null) {
 				if (!ResourceSyncInfo.isFolder(syncBytes)) {
 					syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
