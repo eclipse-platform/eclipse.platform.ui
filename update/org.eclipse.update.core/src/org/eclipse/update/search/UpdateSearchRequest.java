@@ -361,7 +361,7 @@ public class UpdateSearchRequest {
 			return status;
 		}
 
-		text = Messages.UpdateSearchRequest_checking + siteAdapter.getLabel() + "..."; 
+		text = Messages.UpdateSearchRequest_checking + " " + siteAdapter.getLabel() + "...";  //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		query.run(

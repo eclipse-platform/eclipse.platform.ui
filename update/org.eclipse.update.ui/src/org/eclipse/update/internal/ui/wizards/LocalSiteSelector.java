@@ -150,10 +150,10 @@ public class LocalSiteSelector {
 			URL url = file.toURL();
 			String parent = file.getParent();
 			if(parent == null)
-				parent = "";
+				parent = ""; //$NON-NLS-1$
 			else
 				parent = new File(parent).getName();
-			String siteName = parent + "/" + file.getName();
+			String siteName = parent + "/" + file.getName(); //$NON-NLS-1$
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setLocal(true);
 			return site;

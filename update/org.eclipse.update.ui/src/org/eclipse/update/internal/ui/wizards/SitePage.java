@@ -265,7 +265,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 
 		descLabel = new ScrolledFormText(client, true);
-		descLabel.setText("");
+		descLabel.setText(""); //$NON-NLS-1$
 		descLabel.setBackground(parent.getBackground());
 		HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
 		descLabel.getFormText().setHyperlinkSettings(settings);

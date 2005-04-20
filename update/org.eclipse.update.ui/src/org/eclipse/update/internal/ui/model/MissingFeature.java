@@ -25,7 +25,7 @@ public class MissingFeature implements IFeature {
 	private IFeatureReference reference;
 	private IFeature parent;
 	private IURLEntry desc;
-	private VersionedIdentifier id = new VersionedIdentifier(UpdateUIMessages.MissingFeature_id, "0.0.0"); 
+	private VersionedIdentifier id = new VersionedIdentifier(UpdateUIMessages.MissingFeature_id, "0.0.0");  //$NON-NLS-1$
 	public MissingFeature(ISite site, URL url) {
 		this.site = site;
 		this.url = url;

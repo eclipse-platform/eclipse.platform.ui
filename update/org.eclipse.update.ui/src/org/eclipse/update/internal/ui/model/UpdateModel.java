@@ -36,7 +36,7 @@ public class UpdateModel implements IAdaptable {
 	
 	private String getBookmarksFileName() {
 		URL platformXML = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation();
-		if (!"file".equals(platformXML.getProtocol())) {
+		if (!"file".equals(platformXML.getProtocol())) { //$NON-NLS-1$
 			IPath path = UpdateUI.getDefault().getStateLocation();
 			path = path.append(BOOKMARK_FILE);
 			return path.toOSString();

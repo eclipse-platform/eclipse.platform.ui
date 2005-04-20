@@ -35,7 +35,7 @@ public class SitesImportExport {
 		dialog.setText(
 			UpdateUIMessages.LocalSiteSelector_dialogMessageImport); 
 
-		dialog.setFilterExtensions(new String[] { "*.xml", "*" }); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] { "*.xml", "*" }); //$NON-NLS-1$ //$NON-NLS-2$
 
 		SiteBookmark[] siteBookmarks = null;
 

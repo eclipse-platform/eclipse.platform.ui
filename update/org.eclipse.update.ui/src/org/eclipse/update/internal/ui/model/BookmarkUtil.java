@@ -156,7 +156,7 @@ public class BookmarkUtil {
 	}
 
 	private static String createDescription(Node child) {
-		String description = "";
+		String description = ""; //$NON-NLS-1$
 		NodeList children = child.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);

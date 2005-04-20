@@ -63,9 +63,9 @@ public class InstallationHistoryAction extends Action {
 		    // throws FileNotFoundException, IOException
 		    InputStream is = new FileInputStream(path.toOSString());
 		    // throws UnsupportedEncodingException
-		    InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+		    InputStreamReader isr = new InputStreamReader(is,"UTF-8"); //$NON-NLS-1$
 		    buffRead = new BufferedReader(isr);
-			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()), "UTF-8")));
+			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()), "UTF-8"))); //$NON-NLS-1$
 		} catch (Exception e) {
 			throwCoreException(e);
 		}
@@ -93,7 +93,7 @@ public class InstallationHistoryAction extends Action {
 
 			htmlLog.println("<html>"); //$NON-NLS-1$
 			htmlLog.println("<head>"); //$NON-NLS-1$
-			htmlLog.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
+			htmlLog.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">"); //$NON-NLS-1$
 			htmlLog.println("<title>Install-Log</title>"); //$NON-NLS-1$
 			addCSS();
 			htmlLog.println("</head>"); //$NON-NLS-1$

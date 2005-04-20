@@ -139,7 +139,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 						return text;
 					else {
 						String link = " <a href=\"" + url //$NON-NLS-1$
-								+ "\">"+UpdateUIMessages.MoreInfoGenerator_moreInfo+"</a>"; 
+								+ "\">"+UpdateUIMessages.MoreInfoGenerator_moreInfo+"</a>";   //$NON-NLS-1$//$NON-NLS-2$
 						String fullText = "<form><p>" + text + link //$NON-NLS-1$
 								+ "</p></form>"; //$NON-NLS-1$ //$NON-NLS-2$
 						return fullText;
