@@ -254,9 +254,9 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
      * @return the new provider
      */
 	protected ISynchronizeModelProvider createModelProvider(ISynchronizeModelElement parent, String id, SyncInfoTree syncInfoTree) {
-        if (id.endsWith(FlatModelProvider.FlatModelProviderDescriptor.ID)) {
+        if (id != null && id.endsWith(FlatModelProvider.FlatModelProviderDescriptor.ID)) {
 		    return new FlatModelProvider(this, parent, getConfiguration(), syncInfoTree);
-		} else if(id.endsWith(CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID)) {
+		} else if (id != null && id.endsWith(CompressedFoldersModelProvider.CompressedFolderModelProviderDescriptor.ID)) {
 			return new CompressedFoldersModelProvider(this, parent, getConfiguration(), syncInfoTree);
 		} else {
 			return new HierarchicalModelProvider(this, parent, getConfiguration(), syncInfoTree);
