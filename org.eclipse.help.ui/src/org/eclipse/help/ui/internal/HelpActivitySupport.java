@@ -81,6 +81,13 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		if (!isFilteringEnabled()) {
 			return true;
 		}
+		return isRoleEnabled(href);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isRoleEnabled(java.lang.String)
+	 */
+	public boolean isRoleEnabled(String href) {
 		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
 		}

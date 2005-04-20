@@ -34,7 +34,9 @@ public class FramesetFilter implements IFilter {
 			return out;
 		}
 
-		if ("/nftopic".equals(req.getServletPath()) || UrlUtil.isBot(req)) { //$NON-NLS-1$
+		if ("/nftopic".equals(req.getServletPath()) || 
+			"/ntopic".equals(req.getServletPath()) || 
+			UrlUtil.isBot(req)) { //$NON-NLS-1$
 			return out;
 		}
 

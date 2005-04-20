@@ -1008,7 +1008,8 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart != null) {
-				bpart.showURL(BaseHelpSystem.resolve(url, true).toString());
+				boolean enabled = HelpBasePlugin.getActivitySupport().isEnabled(url);
+				bpart.showURL(BaseHelpSystem.resolve(url, "/help/ntopic").toString()); //$NON-NLS-1$
 				return;
 			}
 		}
