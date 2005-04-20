@@ -527,7 +527,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.findConfiguredSite(urlToCheck);
 			if (siteEntry == null) {
                 //TODO need to NL this message
-				UpdateCore.warn(NLS.bind("Unable to find site {0} in platform configuration {1}.", (new String[] { urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() })));
+				UpdateCore.warn(NLS.bind("Unable to find site {0} in platform configuration {1}.", (new String[] { urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() }))); //$NON-NLS-1$
 			}
 		}
 	}
