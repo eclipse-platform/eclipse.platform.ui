@@ -22,13 +22,18 @@ import org.eclipse.help.internal.model.*;
  */
 public class TocManager {
 	public static final String TOC_XP_NAME = "toc"; //$NON-NLS-1$
+	public static final String TOC_ELEMENT_NAME = "toc"; //$NON-NLS-1$
+	public static final String INDEX_ELEMENT_NAME = "index"; //$NON-NLS-1$
 
 	/**
 	 * Map of ITocNavNode[] by String
 	 */
 	private Map tocsByLang;
 
-	private Collection contributingPlugins;
+	/**
+	 * Map of plugin ID (String) to index path (String)
+	 */
+	private Map contributingPlugins2IndexPaths;
 
 	/**
 	 * HelpNavigationManager constructor.
@@ -87,10 +92,21 @@ public class TocManager {
 	 * Returns the list of contributing Bundle IDs
 	 */
 	public Collection getContributingPlugins() {
-		if (contributingPlugins == null) {
+		if (contributingPlugins2IndexPaths == null) {
 			getContributedTocFiles(Locale.getDefault().toString());
 		}
-		return contributingPlugins;
+		return contributingPlugins2IndexPaths.keySet();
+	}
+
+	/**
+	 * Returns the index path for a given plugin ID
+	 * @return String or null
+	 */
+	public String getIndexPath(String pluginId) {
+		if (contributingPlugins2IndexPaths == null) {
+			getContributedTocFiles(Locale.getDefault().toString());
+		}
+		return (String) contributingPlugins2IndexPaths.get(pluginId);
 	}
 
 	/**
@@ -205,7 +221,7 @@ public class TocManager {
 	 * Returns a collection of TocFile that were not processed.
 	 */
 	protected Collection getContributedTocFiles(String locale) {
-		contributingPlugins = new HashSet();
+		contributingPlugins2IndexPaths = new HashMap();
 		Collection contributedTocFiles = new ArrayList();
 		Collection ignored = getIgnoredTocs();
 		// find extension point
@@ -216,13 +232,14 @@ public class TocManager {
 		// get all extensions
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			contributingPlugins.add(extensions[i].getNamespace());
-			// add to TopicFiles declared in this extension
+			String pluginId = extensions[i].getNamespace();
+			if(!contributingPlugins2IndexPaths.containsKey(pluginId))
+				contributingPlugins2IndexPaths.put(pluginId, null);
 			IConfigurationElement[] configElements = extensions[i]
 					.getConfigurationElements();
-			for (int j = 0; j < configElements.length; j++)
-				if (configElements[j].getName().equals(TOC_XP_NAME)) {
-					String pluginId = configElements[j].getNamespace();
+			for (int j = 0; j < configElements.length; j++){
+				if (configElements[j].getName().equals(TOC_ELEMENT_NAME)) {
+					// add to TocFiles declared in this extension
 					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
 					if (href == null
 							|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -234,7 +251,17 @@ public class TocManager {
 							.getAttribute("extradir"); //$NON-NLS-1$
 					contributedTocFiles.add(new TocFile(pluginId, href,
 							isPrimary, locale, extraDir));
-				}
+				} else 	if (configElements[j].getName().equals(INDEX_ELEMENT_NAME)) {
+					// add to index paths declared in this extension
+					String path = configElements[j].getAttribute("path"); //$NON-NLS-1$
+					if (path == null
+							|| path.length()==0) {
+						continue;
+					}
+					// override entry map entry with new one, only one index path per plugin allowed
+					contributingPlugins2IndexPaths.put(pluginId, path);
+				} 
+			}
 		}
 		return contributedTocFiles;
 	}

@@ -233,7 +233,7 @@ public class ResourceLocator {
 				cache.put(pluginID + '/' + pathPrefix.get(i) + zip, cached);
 			} 
 
-			if (cached == ZIP_NOT_FOUND || cached.toString().startsWith("jar:"))
+			if (cached == ZIP_NOT_FOUND || cached.toString().startsWith("jar:")) //$NON-NLS-1$
 				continue;
 			
 			// cached should be a zip file that is actually on the filesystem
@@ -313,7 +313,7 @@ public class ResourceLocator {
 	 * @return an ArrayList that has path prefixes that need to be search. The
 	 *         returned ArrayList will have an entry for the root of the plugin.
 	 */
-	private static ArrayList getPathPrefix(String locale) {
+	public static ArrayList getPathPrefix(String locale) {
 		ArrayList pathPrefix = new ArrayList(5); 
 		// TODO add override for ws and os similar to how it's done with locale now
 		String ws = Platform.getWS();
@@ -322,19 +322,19 @@ public class ResourceLocator {
 			locale = Platform.getNL();
 		
 		if (ws != null) 
-			pathPrefix.add("ws/" + ws + '/');
+			pathPrefix.add("ws/" + ws + '/'); //$NON-NLS-1$
 		
-		if (os != null && !os.equals("OS_UNKNOWN"))
-			pathPrefix.add("os/" + os + '/');
+		if (os != null && !os.equals("OS_UNKNOWN")) //$NON-NLS-1$
+			pathPrefix.add("os/" + os + '/'); //$NON-NLS-1$
 		
 		if (locale != null && locale.length() >= 5) 
-			pathPrefix.add("nl/" + locale.substring(0, 2) + '/' + locale.substring(3, 5) + '/');
+			pathPrefix.add("nl/" + locale.substring(0, 2) + '/' + locale.substring(3, 5) + '/'); //$NON-NLS-1$
 		
 		if (locale != null && locale.length() >= 2)
-			pathPrefix.add("nl/" + locale.substring(0, 2) + '/');
+			pathPrefix.add("nl/" + locale.substring(0, 2) + '/'); //$NON-NLS-1$
 		
 		// the plugin root
-		pathPrefix.add("");	
+		pathPrefix.add("");	 //$NON-NLS-1$
 		
 		return pathPrefix;
 	}
@@ -370,18 +370,18 @@ public class ResourceLocator {
 	 */
 	private static void findTopicPaths(Bundle pluginDesc, String directory,
 			String locale, Set paths) {
-		if (directory.endsWith("/"))
+		if (directory.endsWith("/")) //$NON-NLS-1$
 			directory = directory.substring(0, directory.length() - 1);
 		ArrayList pathPrefix = getPathPrefix(locale);
 		for (int i = 0; i < pathPrefix.size(); i++) {
 			String path = pathPrefix.get(i) + directory;
 			if (path.length() == 0)
-				path = "/";
+				path = "/"; //$NON-NLS-1$
 			Enumeration entries = pluginDesc.getEntryPaths(path);
 			if (entries != null) {
 				while (entries.hasMoreElements()) {
 					String topicPath = (String) entries.nextElement();
-					if (topicPath.endsWith("/")) {
+					if (topicPath.endsWith("/")) { //$NON-NLS-1$
 						findTopicPaths(pluginDesc, topicPath, locale, paths);
 					} else {
 						paths.add(topicPath);
