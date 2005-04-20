@@ -619,53 +619,55 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void ignoreFilesChanged(IContainer[] roots) throws CVSException {
 		for (int i = 0; i < roots.length; i++) {
 			IContainer container = roots[i];
-			ISchedulingRule rule = null;
-			try {
-				Set changed = new HashSet();
-				rule = beginBatching(container, null);
-				try {
-					beginOperation();
-                    
-                    // Record the previous ignore pattterns
-                    FileNameMatcher oldIgnores = null;
-                    if (sessionPropertyCache.isFolderSyncInfoCached(container)) {
-                        oldIgnores = cacheFolderIgnores(container);
-                    }
-                    
-                    // Purge the cached state for direct children of the container
-					changed.addAll(Arrays.asList(
-						sessionPropertyCache.purgeCache(container, oldIgnores == null /*flush deeply if the old patterns are not known*/)));
-                    
-                    // Purge the state for any children of previously ignored containers
-                    if (oldIgnores != null) {
-                        FileNameMatcher newIgnores = cacheFolderIgnores(container);
-                        try {
-                            IResource[] members = container.members();
-                            for (int j = 0; j < members.length; j++) {
-                                IResource resource = members[j];
-                                if (resource.getType() == IResource.FOLDER) {
-                                    String name = resource.getName();
-                                    if (oldIgnores.match(name) && !newIgnores.match(name)) {
-                                        changed.addAll(Arrays.asList(
-                                                sessionPropertyCache.purgeCache((IContainer)resource, true /*flush deeply*/)));
+            if (container.exists()) {
+    			ISchedulingRule rule = null;
+    			try {
+    				Set changed = new HashSet();
+    				rule = beginBatching(container, null);
+    				try {
+    					beginOperation();
+                        
+                        // Record the previous ignore pattterns
+                        FileNameMatcher oldIgnores = null;
+                        if (sessionPropertyCache.isFolderSyncInfoCached(container)) {
+                            oldIgnores = cacheFolderIgnores(container);
+                        }
+                        
+                        // Purge the cached state for direct children of the container
+    					changed.addAll(Arrays.asList(
+    						sessionPropertyCache.purgeCache(container, oldIgnores == null /*flush deeply if the old patterns are not known*/)));
+                        
+                        // Purge the state for any children of previously ignored containers
+                        if (oldIgnores != null) {
+                            FileNameMatcher newIgnores = cacheFolderIgnores(container);
+                            try {
+                                IResource[] members = container.members();
+                                for (int j = 0; j < members.length; j++) {
+                                    IResource resource = members[j];
+                                    if (resource.getType() == IResource.FOLDER) {
+                                        String name = resource.getName();
+                                        if (oldIgnores.match(name) && !newIgnores.match(name)) {
+                                            changed.addAll(Arrays.asList(
+                                                    sessionPropertyCache.purgeCache((IContainer)resource, true /*flush deeply*/)));
+                                        }
                                     }
                                 }
+                            } catch (CoreException e) {
+                                // Just log and continue
+                                CVSProviderPlugin.log(e);
                             }
-                        } catch (CoreException e) {
-                            // Just log and continue
-                            CVSProviderPlugin.log(e);
                         }
-                    }
-				} finally {
-					endOperation();
-				}
-				if (!changed.isEmpty()) {
-					ResourceStateChangeListeners.getListener().resourceSyncInfoChanged(
-						(IResource[]) changed.toArray(new IResource[changed.size()]));
-				}
-			} finally {
-				if (rule != null) endBatching(rule, null);
-			}
+    				} finally {
+    					endOperation();
+    				}
+    				if (!changed.isEmpty()) {
+    					ResourceStateChangeListeners.getListener().resourceSyncInfoChanged(
+    						(IResource[]) changed.toArray(new IResource[changed.size()]));
+    				}
+    			} finally {
+    				if (rule != null) endBatching(rule, null);
+    			}
+            }
 		}
 	}
 	

@@ -74,10 +74,15 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
 	 */
-	protected boolean doDispatchEvents(IProgressMonitor monitor) throws TeamException {
+	protected boolean doDispatchEvents(IProgressMonitor monitor) {
 		// Handle ignore file changes
 		boolean workDone = !changedIgnoreFiles.isEmpty() || !recreatedResources.isEmpty();
-		EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
+		try {
+            EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
+        } catch (CVSException e) {
+            // Log and continue
+            CVSProviderPlugin.log(e);
+        }
 		changedIgnoreFiles.clear();
 		// Handle recreations by project to reduce locking granularity
 		Map recreations = getResourcesByProject((IResource[]) recreatedResources.toArray(new IResource[recreatedResources.size()]));
