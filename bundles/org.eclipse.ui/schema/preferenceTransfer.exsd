@@ -199,8 +199,12 @@ of the transfer engine functionality.
             name=&quot;Export many preferences&quot;
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;&gt;
-                &lt;entry node=&quot;org.eclipse.ui&quot; keys=&quot;showIntro,DOCK_PERSPECTIVE_BAR&quot;/&gt;
-                &lt;entry node=&quot;org.eclipse.ui.workbench&quot; keys=&quot;bogus,RUN_IN_BACKGROUND&quot;/&gt;
+                &lt;entry node=&quot;org.eclipse.ui&quot;&gt;
+                   &lt;key name=&quot;showIntro,DOCK_PERSPECTIVE_BAR&quot;/&gt;
+                &lt;/node&gt;
+                &lt;entry node=&quot;org.eclipse.ui.workbench&quot;&gt;
+                   &lt;key name=&quot;bogus,RUN_IN_BACKGROUND&quot;/&gt;
+                &lt;/node&gt;   
                 &lt;entry node=&quot;org.eclipse.ui.ide&quot;/&gt;
                 &lt;entry node=&quot;org.eclipse.core.resources&quot;/&gt;
             &lt;/mapping&gt;
