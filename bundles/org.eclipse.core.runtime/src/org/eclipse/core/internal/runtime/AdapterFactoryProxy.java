@@ -94,7 +94,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		synchronized (this) {
 			if (factory != null || factoryLoaded)
 				return factory;
-			String bundleId = element.getDeclaringExtension().getNamespace();
+			String bundleId = element.getNamespace();
 			if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
 				return null;
 			//set to true to prevent repeated attempts to load a broken factory
@@ -112,7 +112,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 * The factory extension was malformed. Log an appropriate exception
 	 */
 	private void logError() {
-		String msg = NLS.bind(Messages.adapters_badAdapterFactory, element.getDeclaringExtension().getNamespace()); 
+		String msg = NLS.bind(Messages.adapters_badAdapterFactory, element.getNamespace()); 
 		InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 	}
 }
