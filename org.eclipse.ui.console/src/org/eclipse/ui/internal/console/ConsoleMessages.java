@@ -42,18 +42,6 @@ public class ConsoleMessages extends NLS {
 	public static String TextViewerGotoLineAction_Line_number_out_of_range_1;
 	public static String TextViewerGotoLineAction_Not_a_number_2;
 
-	public static String IOConsolePage_0;
-	public static String IOConsolePage_1;
-	public static String IOConsolePage_10;
-	public static String IOConsolePage_11;
-	public static String IOConsolePage_2;
-	public static String IOConsolePage_3;
-	public static String IOConsolePage_4;
-	public static String IOConsolePage_5;
-	public static String IOConsolePage_6;
-	public static String IOConsolePage_7;
-	public static String IOConsolePage_8;
-	public static String IOConsolePage_9;
 	public static String ScrollLockAction_0;
 	public static String ScrollLockAction_1;
 	public static String FollowHyperlinkAction_0;
@@ -63,6 +51,15 @@ public class ConsoleMessages extends NLS {
 	public static String CloseConsoleAction_0;
 	public static String CloseConsoleAction_1;
 
+    public static String TextConsolePage_SelectAllDescrip;
+    public static String TextConsolePage_SelectAllText;
+    public static String TextConsolePage_CutText;
+    public static String TextConsolePage_CutDescrip;
+    public static String TextConsolePage_CopyText;
+    public static String TextConsolePage_CopyDescrip;
+    public static String TextConsolePage_PasteText;
+    public static String TextConsolePage_PasteDescrip;
+    
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

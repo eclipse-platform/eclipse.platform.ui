@@ -252,23 +252,23 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected void createActions() {
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
-		action.configureAction("Select &All@Ctrl+A", "Select All", "Select All");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip); 
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.CUT);
-		action.configureAction("Cut", "Cut", "Cut");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction(ConsoleMessages.TextConsolePage_CutText, ConsoleMessages.TextConsolePage_CutDescrip, ConsoleMessages.TextConsolePage_CutDescrip);  
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.COPY);
-		action.configureAction("Copy", "Copy", "Copy"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction(ConsoleMessages.TextConsolePage_CopyText, ConsoleMessages.TextConsolePage_CopyDescrip, ConsoleMessages.TextConsolePage_CopyDescrip);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.PASTE);
-		action.configureAction("Paste", ConsoleMessages.IOConsolePage_10, ConsoleMessages.IOConsolePage_11); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		action.configureAction(ConsoleMessages.TextConsolePage_PasteText, ConsoleMessages.TextConsolePage_PasteDescrip, ConsoleMessages.TextConsolePage_PasteDescrip); 
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
