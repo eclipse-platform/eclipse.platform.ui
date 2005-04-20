@@ -17,13 +17,23 @@ package org.eclipse.help.internal.base;
 public interface IHelpActivitySupport {
 
 	/**
+	 * Checks if href matches an enabled activity. If it does not match any
+	 * defined activites, it is assumed to be enabled. If Help role filtering
+	 * is disabled, this method always returns <code>true</code>.
+	 * 
+	 * @param href 
+	 * @return
+	 */
+	public boolean isEnabled(String href);
+	
+	/**
 	 * Checks if href is matches an enabled activity. If it does not match any
 	 * defined activites, it is assumed to be enabled.
 	 * 
 	 * @param href
 	 * @return
 	 */
-	public boolean isEnabled(String href);
+	public boolean isRoleEnabled(String href);
 	/**
 	 * Checks whether topic belongs to a TOC that mathes enabled activity.
 	 * Enabled children TOCs are searched if linked by also enabled TOCs.

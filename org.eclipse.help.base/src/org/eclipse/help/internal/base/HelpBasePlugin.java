@@ -36,6 +36,9 @@ public class HelpBasePlugin extends Plugin {
 		public boolean isEnabled(String href) {
 			return true;
 		}
+		public boolean isRoleEnabled(String href) {
+			return true;
+		}
 		public boolean isEnabledTopic(String href, String locale) {
 			return true;
 		}
