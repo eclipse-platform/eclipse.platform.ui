@@ -1001,25 +1001,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPartReference newActivePart = null;
         IEditorReference newActiveEditor = null;
         
-        // If an editor is active, try to keep an editor active
-        if (oldActivePart == oldActiveEditor) {
-            newActiveEditor = (IEditorReference)activationList.getActiveReference(true);
-            newActivePart = newActiveEditor;
-            if (newActivePart == null) {
-                // Only activate a non-editor if there's no editors left
-                newActivePart = activationList.getActiveReference(false);
-            }
-        } else {
-            // If a non-editor is active, activate whatever was activated most recently
-            newActivePart = activationList.getActiveReference(false);
-            
-            if (newActivePart instanceof IEditorReference) {
-                // If that happens to be an editor, make it the active editor as well
-                newActiveEditor = (IEditorReference)newActivePart;
-            } else {
-                // Otherwise, select whatever editor was most recently active
+        if (!window.isClosing()) {
+            // If an editor is active, try to keep an editor active
+            if (oldActivePart == oldActiveEditor) {
                 newActiveEditor = (IEditorReference)activationList.getActiveReference(true);
-            }   
+                newActivePart = newActiveEditor;
+                if (newActivePart == null) {
+                    // Only activate a non-editor if there's no editors left
+                    newActivePart = activationList.getActiveReference(false);
+                }
+            } else {
+                // If a non-editor is active, activate whatever was activated most recently
+                newActivePart = activationList.getActiveReference(false);
+                
+                if (newActivePart instanceof IEditorReference) {
+                    // If that happens to be an editor, make it the active editor as well
+                    newActiveEditor = (IEditorReference)newActivePart;
+                } else {
+                    // Otherwise, select whatever editor was most recently active
+                    newActiveEditor = (IEditorReference)activationList.getActiveReference(true);
+                }   
+            }
         }
 
         if (newActiveEditor != oldActiveEditor) {
