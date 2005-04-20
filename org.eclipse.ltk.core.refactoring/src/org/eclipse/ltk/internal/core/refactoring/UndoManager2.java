@@ -172,14 +172,15 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
-		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext()));
-		if (op == null) 
+		IUndoableOperation undo= fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext());
+		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(undo);
+		if (changeOperation == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
 		if (query == null)
 			query= new NullQuery();
 		try {
-			fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
+			fOperationHistroy.undoOperation(undo, pm, new QueryAdapter(query));
 		} catch (ExecutionException e) {
 			handleException(e);
 		}
@@ -197,14 +198,15 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
-		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext()));
-		if (op == null) 
+		IUndoableOperation redo= fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext());
+		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(redo);
+		if (changeOperation == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null)); 
 		if (query == null)
 			query= new NullQuery();
 		try {
-			fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
+			fOperationHistroy.redoOperation(redo, pm, new QueryAdapter(query));
 		} catch (ExecutionException e) {
 			handleException(e);
 		}
@@ -315,4 +317,14 @@ public class UndoManager2 implements IUndoManager {
 			});
 		}
 	}
+	
+	//---- testing methods ---------------------------------------------
+	
+	public boolean testHasNumberOfUndos(int number) {
+		return fOperationHistroy.getUndoHistory(RefactoringCorePlugin.getUndoContext()).length == number;
+	}
+	
+	public boolean testHasNumberOfRedos(int number) {
+		return fOperationHistroy.getRedoHistory(RefactoringCorePlugin.getUndoContext()).length == number;
+	}	
 }

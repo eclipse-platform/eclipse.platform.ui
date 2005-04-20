@@ -42,7 +42,7 @@ public class UndoManager implements IUndoManager {
 
 	private ListenerList fListeners;
 	// Maximum numbers of undos on the refactoring undo stack.
-	private static final int MAX_UNDO_REDOS= 6;
+	private static final int MAX_UNDO_REDOS= 5;
 	
 	private static class NullQuery implements IValidationCheckResultQuery {
 		public boolean proceed(RefactoringStatus status) {
