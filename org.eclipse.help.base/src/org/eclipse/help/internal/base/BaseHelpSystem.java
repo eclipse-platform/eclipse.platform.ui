@@ -48,7 +48,7 @@ public final class BaseHelpSystem {
 	protected SearchManager searchManager;
 
 	protected WorkingSetManager workingSetManager;
-	
+
 	protected BookmarkManager bookmarkManager;
 
 	private int mode = MODE_WORKBENCH;
@@ -64,7 +64,7 @@ public final class BaseHelpSystem {
 	private HelpDisplay helpDisplay = null;
 
 	private boolean webappRunning = false;
-	
+
 	private boolean rtl = false;
 
 	/**
@@ -106,7 +106,7 @@ public final class BaseHelpSystem {
 		}
 		return getInstance().workingSetManager;
 	}
-	
+
 	/**
 	 * Used to obtain Bookmark Manager
 	 * 
@@ -120,11 +120,12 @@ public final class BaseHelpSystem {
 	}
 
 	/**
-	 * Allows Help UI to plug-in a soft adapter that delegates
-	 * all the work to the workbench browser support.
+	 * Allows Help UI to plug-in a soft adapter that delegates all the work to
+	 * the workbench browser support.
+	 * 
 	 * @since 3.1
-	 * @param browser the instance to use when external
-	 * browser is needed
+	 * @param browser
+	 *            the instance to use when external browser is needed
 	 */
 
 	public synchronized void setBrowserInstance(IBrowser browser) {
@@ -132,7 +133,8 @@ public final class BaseHelpSystem {
 	}
 
 	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
-		if (!forceExternal && !BrowserManager.getInstance().isAlwaysUseExternal()) {
+		if (!forceExternal
+				&& !BrowserManager.getInstance().isAlwaysUseExternal()) {
 			if (getInstance().internalBrowser == null)
 				getInstance().internalBrowser = BrowserManager.getInstance()
 						.createBrowser(false);
@@ -169,15 +171,15 @@ public final class BaseHelpSystem {
 		}
 		// close any browsers created
 		// BrowserManager.getInstance().closeAll();
-		
-		if (getInstance().bookmarkManager!=null) {
+
+		if (getInstance().bookmarkManager != null) {
 			getInstance().bookmarkManager.close();
-			getInstance().bookmarkManager=null;
+			getInstance().bookmarkManager = null;
 		}
 
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
-			getInstance().searchManager=null;
+			getInstance().searchManager = null;
 		}
 		if (getInstance().webappStarted) {
 			// stop the web apps
@@ -245,7 +247,7 @@ public final class BaseHelpSystem {
 						.logError(
 								"The embedded application server could not run help web application.", e); //$NON-NLS-1$
 				BaseHelpSystem.getDefaultErrorUtil().displayError(
-						HelpBaseResources.HelpWebappNotStarted); 
+						HelpBaseResources.HelpWebappNotStarted);
 				return false;
 			}
 			getInstance().webappRunning = true;
@@ -253,7 +255,7 @@ public final class BaseHelpSystem {
 		}
 		return getInstance().webappRunning;
 	}
-	
+
 	public static URL resolve(String href, boolean documentOnly) {
 		String url = null;
 		if (href == null || href.indexOf("://") != -1) //$NON-NLS-1$
@@ -268,35 +270,51 @@ public final class BaseHelpSystem {
 		}
 		try {
 			return new URL(url);
+		} catch (MalformedURLException e) {
+			return null;
 		}
-		catch (MalformedURLException e) {
+	}
+
+	public static URL resolve(String href, String servlet) {
+		String url = null;
+		if (href == null || href.indexOf("://") != -1) //$NON-NLS-1$
+			url = href;
+		else {
+			BaseHelpSystem.ensureWebappRunning();
+			String base = getBase(servlet);
+			if (href.startsWith("/")) //$NON-NLS-1$
+				url = base + href;
+			else
+				url = base + "/" + href; //$NON-NLS-1$
+		}
+		try {
+			return new URL(url);
+		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
 
 	public static String unresolve(URL url) {
-		String base = getBase(false);
-		String dbase = getBase(true);
-		String href = url.toString();
-		if (href.startsWith(base))
-			return href.substring(base.length());
-		if (href.startsWith(dbase))
-			return href.substring(dbase.length());
-		return href;
+		return unresolve(url.toString());
 	}
-	
+
 	public static String unresolve(String href) {
-		String base = getBase(false);
-		String dbase = getBase(true);
-		if (href.startsWith(base))
-			return href.substring(base.length());
-		if (href.startsWith(dbase))
-			return href.substring(dbase.length());
+		String[] baseVariants = { getBase("/help/topic"),
+				getBase("/help/nftopic"), 
+				getBase("/help/ntopic") };
+		for (int i = 0; i < baseVariants.length; i++) {
+			if (href.startsWith(baseVariants[i]))
+				return href.substring(baseVariants[i].length());
+		}
 		return href;
 	}
 
 	private static String getBase(boolean documentOnly) {
 		String servlet = documentOnly ? "/help/nftopic" : "/help/topic";//$NON-NLS-1$ //$NON-NLS-2$
+		return getBase(servlet);
+	}
+
+	private static String getBase(String servlet) {
 		return "http://" //$NON-NLS-1$
 				+ WebappManager.getHost() + ":" //$NON-NLS-1$
 				+ WebappManager.getPort() + servlet;
@@ -384,6 +402,7 @@ public final class BaseHelpSystem {
 		String name = product.getName();
 		return name == null ? "" : name; //$NON-NLS-1$
 	}
+
 	private static boolean initializeRTL() {
 		// from property
 		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
@@ -404,19 +423,19 @@ public final class BaseHelpSystem {
 				}
 			}
 		}
-		
-		//Check if the user property is set. If not do not
-		//rely on the vm.
-		if(System.getProperty("osgi.nl.user") == null) //$NON-NLS-1$
+
+		// Check if the user property is set. If not do not
+		// rely on the vm.
+		if (System.getProperty("osgi.nl.user") == null) //$NON-NLS-1$
 			return false;
-		
+
 		// guess from default locale
 		String locale = Platform.getNL();
 		if (locale == null) {
 			locale = Locale.getDefault().toString();
 		}
-		if (locale.startsWith("ar") || locale.startsWith("fa")  //$NON-NLS-1$//$NON-NLS-2$
-				|| locale.startsWith("he") || locale.startsWith("iw")  //$NON-NLS-1$//$NON-NLS-2$
+		if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$//$NON-NLS-2$
+				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$//$NON-NLS-2$
 				|| locale.startsWith("ur")) { //$NON-NLS-1$
 			return true;
 		} else {

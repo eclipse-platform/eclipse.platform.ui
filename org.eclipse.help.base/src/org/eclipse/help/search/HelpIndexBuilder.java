@@ -337,8 +337,8 @@ public class HelpIndexBuilder {
 	}
 
 	/*
-	 * Computes the all os/*, ws/*, nl/country/ and 
-	 * nl/country/variant/ locale dirs that contain files. We will 
+	 * Computes the all os/*, ws/*, nl/language/ and 
+	 * nl/language/country/ locale dirs that contain files. We will 
 	 * produce an index for each one.
 	 */
 	private void computeLocaleDirs(boolean fragment) {
@@ -355,30 +355,30 @@ public class HelpIndexBuilder {
 		File nl = new File(destination, "nl");
 		if (!nl.exists() || !nl.isDirectory())
 			return;
-		File [] countries = nl.listFiles();
+		File [] languages = nl.listFiles();
 		HashSet locales = new HashSet();
-		for (int i=0; i<countries.length; i++) {
-			File country = countries[i];
-			if (!country.isDirectory())
+		for (int i=0; i<languages.length; i++) {
+			File language = languages[i];
+			if (!language.isDirectory())
 				continue;
-			File [] variants = country.listFiles();
-			for (int j=0; j<variants.length; j++) {
-				File variant = variants[j];
+			File [] countries = language.listFiles();
+			for (int j=0; j<countries.length; j++) {
+				File country = countries[j];
 				String locale;
-				if (variant.isDirectory())
-					locale = country.getName()+"_"+variant.getName();
+				if (country.isDirectory())
+					locale = language.getName()+"_"+country.getName();
 				else
-					locale = country.getName();
+					locale = language.getName();
 				if (isValidLocale(locale) && !locales.contains(locale)) {
 					String relativePath;
-					if (variant.isDirectory())
-						relativePath = "/nl/"+country.getName()+"/"+variant.getName();
+					if (country.isDirectory())
+						relativePath = "/nl/"+language.getName()+"/"+country.getName();
 					else
-						relativePath = "/nl/"+country.getName();
+						relativePath = "/nl/"+language.getName();
 					LocaleDir dir = new LocaleDir(locale, relativePath);
-					if (variant.isDirectory())
-						dir.addDirectory(variant);
-					dir.addDirectory(country);
+					if (country.isDirectory())
+						dir.addDirectory(country);
+					dir.addDirectory(language);
 					dir.addDirectory(destination);
 					localeDirs.add(dir);
 					locales.add(locale);
