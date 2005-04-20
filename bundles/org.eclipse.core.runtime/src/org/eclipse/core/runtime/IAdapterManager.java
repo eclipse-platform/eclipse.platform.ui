@@ -23,7 +23,8 @@ package org.eclipse.core.runtime;
  * Adapter factories can be registered programatically using the <code>registerAdapters</code>
  * method.  Alternatively, they can be registered declaratively using the 
  * <code>org.eclipse.core.runtime.adapters</code> extension point.  Factories registered
- * with this extension point will not 
+ * with this extension point will not be able to provide adapters until their
+ * corresponding plugin has been activated.
  * <p>
  * The following code snippet shows how one might register an adapter of type
  * <code>com.example.acme.Sticky</code> on resources in the workspace.
