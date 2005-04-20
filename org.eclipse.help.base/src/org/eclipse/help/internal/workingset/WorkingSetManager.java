@@ -388,7 +388,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 
 	public void tocsChanged() {
 		saveState();
-		List oldWorkingSets = new ArrayList(workingSets);
 		root = null;
 		workingSets = new TreeSet(new WorkingSetComparator());
 		restoreState();

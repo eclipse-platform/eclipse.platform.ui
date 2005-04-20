@@ -106,7 +106,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (label == null || "".equals(label)) { //$NON-NLS-1$
 				label = href;
 			}
-			String summary = doc.get("summary");			
+			String summary = doc.get("summary");			 //$NON-NLS-1$
 			
 			j++;
 			

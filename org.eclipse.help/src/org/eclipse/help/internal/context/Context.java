@@ -77,7 +77,7 @@ public class Context extends ContextsNode implements IContext2 {
 				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		*/
-		return stripStyle(stripStyle(text,"<@#$b>"),"</@#$b>");
+		return stripStyle(stripStyle(text,"<@#$b>"),"</@#$b>");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	/**
 	 * @return styled text with <@#$b>and </@#$b> to mark bold range

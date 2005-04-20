@@ -462,7 +462,6 @@ public class HelpIndexBuilder {
 		HashSet docs = new HashSet();
 		for (int i = 0; i < tocFiles.size(); i++) {
 			TocFile tocFile = (TocFile) tocFiles.get(i);
-			long startTime = System.currentTimeMillis();
 			collectDocs(docs, getTocFile(localeDir, tocFile.href));
 			if (tocFile.extraDir!=null) {
 				//TODO also include all the indexable documents

@@ -29,7 +29,7 @@ public class HelpPlugin extends Plugin
 	public static boolean DEBUG_CONTEXT = false;
 	public static boolean DEBUG_PROTOCOLS = false;
 	protected static HelpPlugin plugin;
-	private static BundleContext bundleContext;
+//	private static BundleContext bundleContext;
 	private List tocsChangedListeners = new Vector();
 
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class HelpPlugin extends Plugin
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		context.removeBundleListener(this);
 		plugin = null;
-		bundleContext = null;
+//		bundleContext = null;
 		super.stop(context);
 	}
 
@@ -101,7 +101,7 @@ public class HelpPlugin extends Plugin
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		bundleContext = context;
+//		bundleContext = context;
 		context.addBundleListener(this);
 		Platform.getExtensionRegistry().addRegistryChangeListener(this,
 				HelpPlugin.PLUGIN_ID);

@@ -22,7 +22,7 @@ import org.osgi.framework.*;
  */
 public class HelpURLConnection extends URLConnection {
 	private final static String LANG = "lang"; //$NON-NLS-1$
-	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN";
+	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {

@@ -22,10 +22,9 @@ public class AppserverPlugin extends Plugin {
 	private static final String APP_SERVER_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 	// singleton object
 	private static AppserverPlugin plugin;
-	private static BundleContext bundleContext;
+//	private static BundleContext bundleContext;
 	private IWebappServer appServer;
 	private String contributingServerPlugin;
-	private boolean initialized = false;
 	private String hostAddress;
 	private int port;
 	/**
@@ -53,7 +52,7 @@ public class AppserverPlugin extends Plugin {
 			appServer.stop();
 		}
 		plugin = null;
-		bundleContext = null;
+//		bundleContext = null;
 		super.stop(context);
 	}
 	/*
@@ -64,7 +63,7 @@ public class AppserverPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		bundleContext = context;
+//		bundleContext = context;
 	}
 	/**
 	 * Returns the plugin ID that contributes the server implementation
@@ -75,7 +74,6 @@ public class AppserverPlugin extends Plugin {
 		return contributingServerPlugin;
 	}
 	private void createWebappServer() throws CoreException {
-		initialized = true;
 		// Initializes the app server by getting an instance via
 		// app-server the extension point
 		// get the app server extension from the system plugin registry

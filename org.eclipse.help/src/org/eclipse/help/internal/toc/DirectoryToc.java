@@ -103,7 +103,7 @@ public class DirectoryToc {
 		Set paths = ResourceLocator.findTopicPaths(pluginDesc, directory,
 				locale);
 		for (Iterator it = paths.iterator(); it.hasNext();) {
-			String href = "/" + pluginID + "/" + (String) it.next();
+			String href = "/" + pluginID + "/" + (String) it.next();  //$NON-NLS-1$//$NON-NLS-2$
 			ret.put(href, new ExtraTopic(href));
 		}
 		return ret;
@@ -121,7 +121,7 @@ public class DirectoryToc {
 		URL realZipURL;
 		try {
 			realZipURL = Platform.asLocalURL(Platform.resolve(url));
-			if (realZipURL.toExternalForm().startsWith("jar:")) {
+			if (realZipURL.toExternalForm().startsWith("jar:")) { //$NON-NLS-1$
 				// doc.zip not allowed in jarred plug-ins.
 				return ret;
 			}

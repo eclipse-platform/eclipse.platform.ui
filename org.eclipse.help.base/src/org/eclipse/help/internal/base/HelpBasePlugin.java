@@ -28,7 +28,7 @@ public class HelpBasePlugin extends Plugin {
 	public static boolean DEBUG_SEARCH = false;
 
 	protected static HelpBasePlugin plugin;
-	private static BundleContext bundleContext;
+//	private static BundleContext bundleContext;
 
 	private File configurationDirectory;
 
@@ -92,7 +92,7 @@ public class HelpBasePlugin extends Plugin {
 		plugin.savePluginPreferences();
 		BaseHelpSystem.shutdown();
 		plugin = null;
-		bundleContext = null;
+//		bundleContext = null;
 		super.stop(context);
 	}
 	/*
@@ -103,7 +103,7 @@ public class HelpBasePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		bundleContext = context;
+//		bundleContext = context;
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {

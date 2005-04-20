@@ -67,11 +67,11 @@ public class QueryBuilder {
 
 		int fromIndex = -1;
 		searchWords = searchWords.trim();
-		while((fromIndex = searchWords.indexOf("\"", fromIndex+1))!= -1){
+		while((fromIndex = searchWords.indexOf("\"", fromIndex+1))!= -1){ //$NON-NLS-1$
 			withinQuotation = !withinQuotation;
 		}
 		if( withinQuotation ) {
-			searchWords = searchWords + "\"";
+			searchWords = searchWords + "\""; //$NON-NLS-1$
 			withinQuotation = !withinQuotation;
 		}
 		

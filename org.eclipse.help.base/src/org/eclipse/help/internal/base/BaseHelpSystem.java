@@ -261,10 +261,10 @@ public final class BaseHelpSystem {
 		else {
 			BaseHelpSystem.ensureWebappRunning();
 			String base = getBase(documentOnly);
-			if (href.startsWith("/"))
+			if (href.startsWith("/")) //$NON-NLS-1$
 				url = base + href;
 			else
-				url = base + "/" + href;
+				url = base + "/" + href; //$NON-NLS-1$
 		}
 		try {
 			return new URL(url);
@@ -296,7 +296,7 @@ public final class BaseHelpSystem {
 	}
 
 	private static String getBase(boolean documentOnly) {
-		String servlet = documentOnly ? "/help/nftopic" : "/help/topic";//$NON-NLS-1$
+		String servlet = documentOnly ? "/help/nftopic" : "/help/topic";//$NON-NLS-1$ //$NON-NLS-2$
 		return "http://" //$NON-NLS-1$
 				+ WebappManager.getHost() + ":" //$NON-NLS-1$
 				+ WebappManager.getPort() + servlet;
@@ -386,10 +386,10 @@ public final class BaseHelpSystem {
 	}
 	private static boolean initializeRTL() {
 		// from property
-		String orientation = System.getProperty("eclipse.orientation");
-		if ("rtl".equals(orientation)) {
+		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
+		if ("rtl".equals(orientation)) { //$NON-NLS-1$
 			return true;
-		} else if ("ltr".equals(orientation)) {
+		} else if ("ltr".equals(orientation)) { //$NON-NLS-1$
 			return false;
 		}
 		// from command line
@@ -407,7 +407,7 @@ public final class BaseHelpSystem {
 		
 		//Check if the user property is set. If not do not
 		//rely on the vm.
-		if(System.getProperty("osgi.nl.user") == null)
+		if(System.getProperty("osgi.nl.user") == null) //$NON-NLS-1$
 			return false;
 		
 		// guess from default locale
@@ -415,9 +415,9 @@ public final class BaseHelpSystem {
 		if (locale == null) {
 			locale = Locale.getDefault().toString();
 		}
-		if (locale.startsWith("ar") || locale.startsWith("fa")
-				|| locale.startsWith("he") || locale.startsWith("iw")
-				|| locale.startsWith("ur")) {
+		if (locale.startsWith("ar") || locale.startsWith("fa")  //$NON-NLS-1$//$NON-NLS-2$
+				|| locale.startsWith("he") || locale.startsWith("iw")  //$NON-NLS-1$//$NON-NLS-2$
+				|| locale.startsWith("ur")) { //$NON-NLS-1$
 			return true;
 		} else {
 			return false;

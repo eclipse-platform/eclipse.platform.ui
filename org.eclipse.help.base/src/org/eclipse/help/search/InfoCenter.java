@@ -13,7 +13,6 @@ package org.eclipse.help.search;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.ArrayList;
 
 import javax.xml.parsers.*;
 
@@ -218,7 +217,6 @@ public final class InfoCenter implements ISearchEngine {
 
 	private void load(String baseURL, Document doc, Element root,
 			ISearchEngineResultCollector collector, IProgressMonitor monitor) {
-		ArrayList list = new ArrayList();
 		NodeList topics = root.getElementsByTagName("topic"); //$NON-NLS-1$
 		ISearchEngineResult[] results = new ISearchEngineResult[topics
 				.getLength()];

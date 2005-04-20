@@ -23,7 +23,6 @@ import org.apache.lucene.analysis.*;
 public final class WordTokenStream extends TokenStream {
 	private static final int BUF_LEN = 4096;
 	private static final int TOKENS_LEN = 512;
-	private final String fieldName;
 	private final Reader reader;
 	private final BreakIterator boundary;
 	private final ArrayList tokens;
@@ -34,7 +33,6 @@ public final class WordTokenStream extends TokenStream {
 	 * Constructor
 	 */
 	public WordTokenStream(String fieldName, Reader reader, Locale locale) {
-		this.fieldName = fieldName;
 		this.reader = reader;
 		boundary = BreakIterator.getWordInstance(locale);
 		cbuf = new char[BUF_LEN];
