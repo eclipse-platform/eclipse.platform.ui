@@ -359,17 +359,21 @@ public class Feature extends FeatureModel implements IFeature {
 			
 			handler.pluginsDownloaded(pluginsToInstall);
 
-			// Download non-plugin archives. Verification handled by optional install handler
-			for (int i = 0; i < nonPluginsToInstall.length; i++) {
-				references =
-					provider.getNonPluginEntryArchiveReferences(
-						nonPluginsToInstall[i],
-						monitor);
-				monitorWork(monitor, 1);
-			}
-			handler.nonPluginDataDownloaded(
-				nonPluginsToInstall,
-				verificationListener);
+			Vector filteredPlugins = new Vector();
+            // Download non-plugin archives. Verification handled by optional
+            // install handler
+            for (int i = 0; i < nonPluginsToInstall.length; i++) {
+                if (handler.acceptNonPluginData(nonPluginsToInstall[i])) {
+                    references = provider.getNonPluginEntryArchiveReferences(
+                            nonPluginsToInstall[i], monitor);
+                    monitorWork(monitor, 1);
+                    filteredPlugins.add(nonPluginsToInstall[i]);
+                }
+            }
+            nonPluginsToInstall = (INonPluginEntry[]) filteredPlugins
+                    .toArray(new INonPluginEntry[0]);
+            handler.nonPluginDataDownloaded(nonPluginsToInstall,
+                    verificationListener);
 
 			// All archives are downloaded and verified. Get ready to install
 			consumer = targetFeature.getFeatureContentConsumer();

@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
@@ -18,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.osgi.framework.*;
 
-public class InstallHandlerProxy implements IInstallHandler {
+public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 
 	private IFeature feature = null;
 	private int type;
@@ -29,6 +30,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 	private static final String EXT_PLUGIN = "org.eclipse.update.core"; //$NON-NLS-1$
 	private static final String UI_PLUGIN = "org.eclipse.ui"; //$NON-NLS-1$
 	private static final String EXT_POINT = "installHandlers"; //$NON-NLS-1$
+	private Method nonPluginDataAcceptor = null;
 
 	/**
 	 * A class loader that combines a the org.eclipse.update.core plugin class loader with the
@@ -550,5 +552,36 @@ public class InstallHandlerProxy implements IInstallHandler {
 	private void debug(String s) {
 		String pfx = (feature==null) ? "" : feature.getVersionedIdentifier().toString(); //$NON-NLS-1$
 		System.out.println("InstallHandler["+pfx+"]: " + s); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean acceptNonPluginData(INonPluginEntry data) {
+		Boolean result = new Boolean(true);
+		if (handler != null){
+			if (DEBUG)
+				debug("calling acceptNonPluginData()"); //$NON-NLS-1$
+			if(handler instanceof IInstallHandlerWithFilter)
+				return ((IInstallHandlerWithFilter)handler).acceptNonPluginData(data);
+			else{ //support upgrade from legacy versions
+				if(getNonPluginDataAcceptor() != null){
+					try{
+						Object[] param = {data};
+						result = (Boolean)getNonPluginDataAcceptor().invoke(handler,param);
+					}catch(Exception e){
+						//todo
+					}
+				}
+			}
+		}
+		return result.booleanValue();
+	}
+	private Method getNonPluginDataAcceptor(){
+		if(nonPluginDataAcceptor == null){
+			try{
+				Class[] types = {INonPluginEntry.class};
+				nonPluginDataAcceptor = handler.getClass().getMethod("acceptNonPluginData",types);
+			}catch(NoSuchMethodException nsme){
+			}
+		}
+		return nonPluginDataAcceptor;
 	}
 }
