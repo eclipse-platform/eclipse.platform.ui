@@ -49,7 +49,7 @@ public class Product implements IProduct {
 			if (key != null && value != null)
 				properties.put(key, value);
 		}
-		definingBundle = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+		definingBundle = Platform.getBundle(element.getNamespace());
 	}
 
 	public Bundle getDefiningBundle() {

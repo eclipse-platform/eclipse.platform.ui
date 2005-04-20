@@ -192,7 +192,7 @@ public class ContentTypeBuilder {
 	 */
 	private void registerFileAssociation(IConfigurationElement fileAssociationElement) {
 		//TODO: need to ensure the config. element is valid		
-		String contentTypeId = getUniqueId(fileAssociationElement.getDeclaringExtension().getNamespace(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
+		String contentTypeId = getUniqueId(fileAssociationElement.getNamespace(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
 		ContentType target = catalog.internalGetContentType(contentTypeId);
 		if (target == null)
 			return;
