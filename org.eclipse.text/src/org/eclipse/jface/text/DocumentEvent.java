@@ -30,6 +30,11 @@ public class DocumentEvent {
 	public int fLength;
 	/** Text inserted into the document */
 	public String fText;
+	/**
+	 * The modification stamp of the document when firing this event.
+	 * @since 3.1
+	 */
+	protected long fModificationStamp;
 
 	/**
 	 * Creates a new document event.
@@ -49,6 +54,11 @@ public class DocumentEvent {
 		fOffset= offset;
 		fLength= length;
 		fText= text;
+
+		if (fDocument instanceof IDocumentExtension4)
+			fModificationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
+		else
+			fModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	}
 
 	/**
@@ -91,5 +101,16 @@ public class DocumentEvent {
 	 */
 	public String getText() {
 		return fText;
+	}
+
+	/**
+	 * Returns the document's modification stamp at the
+	 * time when this event was sent.
+	 *
+	 * @return the modification stamp or {@link IDocumentExtension4#UNKNOWN_MODIFICATION_STAMP}.
+	 * @since 3.1
+	 */
+	public long getModificationStamp() {
+		return fModificationStamp;
 	}
 }

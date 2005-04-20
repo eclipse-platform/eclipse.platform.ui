@@ -150,7 +150,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.1
 	 */
 	private List fDocumentRewriteSessionListeners;
-
+	/**
+	 * The current modification stamp.
+	 * @since 3.1
+	 */
+	private long fModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 
 
 	/**
@@ -1014,10 +1018,26 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		}
 	}
 
+	private long getNextModificationStamp() {
+		if (fModificationStamp == Long.MAX_VALUE || fModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
+			return 0;
+
+		return fModificationStamp + 1;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#getModificationStamp()
+	 * @since 3.1
+	 */
+	public long getModificationStamp() {
+		return fModificationStamp;
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
+	 * @since 3.1
 	 */
-	public void replace(int pos, int length, String text) throws BadLocationException {
+	public void replace(int pos, int length, String text, long modificationStamp) throws BadLocationException {
 		if ((0 > pos) || (0 > length) || (pos + length > getLength()))
 			throw new BadLocationException();
 
@@ -1027,19 +1047,40 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		getStore().replace(pos, length, text);
 		getTracker().replace(pos, length, text);
 
+		fModificationStamp= modificationStamp;
+		e.fModificationStamp= fModificationStamp;
+
 		fireDocumentChanged(e);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
+	 */
+	public void replace(int pos, int length, String text) throws BadLocationException {
+		replace(pos, length, text, getNextModificationStamp());
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
 	 */
 	public void set(String text) {
+		set(text, getNextModificationStamp());
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String, long)
+	 */
+	public void set(String text, long modificationStamp) {
 		int length= getStore().getLength();
+
 		DocumentEvent e= new DocumentEvent(this, 0, length, text);
 		fireDocumentAboutToBeChanged(e);
 
 		getStore().set(text);
 		getTracker().set(text);
+
+		fModificationStamp= modificationStamp;
+		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
 	}

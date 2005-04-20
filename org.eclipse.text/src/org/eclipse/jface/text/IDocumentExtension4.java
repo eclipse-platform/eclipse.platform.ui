@@ -12,8 +12,8 @@ package org.eclipse.jface.text;
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.IDocument}. Adds the
- * concept of rewrite sessions. A rewrite session is a sequence of replace
- * operations that form a semantic unit.
+ * concept of rewrite sessions introduces a modification stamp on the document.
+ * A rewrite session is a sequence of replace operations that form a semantic unit.
  *
  * @since 3.1
  */
@@ -78,4 +78,51 @@ public interface IDocumentExtension4 {
 	 * @param listener the listener to be removed
 	 */
 	void removeDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener);
+
+	/**
+	 * Substitutes the given text for the specified document range.
+	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
+	 *
+	 * @param offset the document offset
+	 * @param length the length of the specified range
+	 * @param text the substitution text
+	 * @param modificationStamp of the document after replacing
+	 * @exception BadLocationException if the offset is invalid in this document
+	 *
+	 * @see DocumentEvent
+	 * @see IDocumentListener
+	 */
+	void replace(int offset, int length, String text, long modificationStamp) throws BadLocationException;
+
+	/**
+	 * Replaces the content of the document with the given text.
+	 * Sends a <code>DocumentEvent</code> to all registered <code>IDocumentListener</code>.
+	 * This method is a convenience method for <code>replace(0, getLength(), text)</code>.
+	 *
+	 * @param text the new content of the document
+	 * @param modificationStamp of the document after setting the content
+	 *
+	 * @see DocumentEvent
+	 * @see IDocumentListener
+	 */
+	void set(String text, long modificationStamp);
+
+	/**
+	 * The unknown modification stamp.
+	 */
+	long UNKNOWN_MODIFICATION_STAMP= -1;
+
+	/**
+	 * Returns the modification stamp of this document. The modification stamp
+	 * is updated each time the document content changes. If two modification stamps
+	 * of for the same document are identical then the document content is too,
+	 * however, same content does not imply same modification stamp.
+	 * <p>
+	 * The magnitude or sign of the numerical difference between two modification stamps
+	 * is not significant.
+	 * </p>
+	 *
+	 * @return the modification stamp of this document or <code>UNKNOWN_MODIFICATION_STAMP</code>
+	 */
+	long getModificationStamp();
 }
