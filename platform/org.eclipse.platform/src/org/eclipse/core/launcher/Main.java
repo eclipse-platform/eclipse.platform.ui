@@ -290,9 +290,18 @@ public class Main {
                     System.setProperty("java.security.manager", eclipseSecurity); // let the framework try to load it later. //$NON-NLS-1$
                 }
             }
+            
+            ProtectionDomain domain = Main.class.getProtectionDomain();
+            CodeSource source = null; 
+            if (domain != null)
+            	source = Main.class.getProtectionDomain().getCodeSource();
+			if (domain == null || source == null) {
+				log("Can not automatically set the security manager. Please use a policy file.");
+				return;
+			}
             // get the list of codesource URLs to grant AllPermission to
             URL[] rootURLs = new URL[bootPath.length + 1];
-            rootURLs[0] = Main.class.getProtectionDomain().getCodeSource().getLocation();
+			rootURLs[0] = source.getLocation();
             System.arraycopy(bootPath, 0, rootURLs, 1, bootPath.length);
             // replace the security policy
             Policy eclispePolicy = new EclipsePolicy(Policy.getPolicy(), rootURLs);
@@ -1301,7 +1310,23 @@ public class Main {
             return installLocation;
         }
 
-        URL result = Main.class.getProtectionDomain().getCodeSource().getLocation();
+        ProtectionDomain domain = Main.class.getProtectionDomain();
+        CodeSource source = null;
+		URL result = null;
+        if (domain != null)
+        	source = domain.getCodeSource();
+        if (source == null || domain == null)
+			if (debug)
+				System.out.println("CodeSource location is null. Defaulting the install location to file:startup.jar"); //$NON-NLS-1$
+			try {
+				result = new URL("file:startup.jar");
+			} catch (MalformedURLException e2) {
+				//Ignore
+			}
+			
+		if (source != null)
+			result = source.getLocation();
+		
         String path = decode(result.getFile());
         // normalize to not have leading / so we can check the form
         File file = new File(path);
