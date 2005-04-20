@@ -54,6 +54,9 @@ An accelerator set is registered with an accelerator configuration (see the Acce
          <appInfo>
             <meta.element deprecated="true"/>
          </appInfo>
+         <documentation>
+            @deprecated Please use the &quot;org.eclipse.ui.bindings&quot; extension point instead.  Use the &lt;code&gt;key&lt;/code&gt; element.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -70,6 +73,7 @@ An accelerator set is registered with an accelerator configuration (see the Acce
             <annotation>
                <documentation>
                   a unique name that identifies the accelerator scope for which this accelerator set is applicable.
+@deprecated When migrating to the new bindings extension point, it is recommended that you change any occurrences of &quot;org.eclipse.ui.globalScope&quot; to &quot;org.eclipse.ui.contexts.window&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -81,6 +85,9 @@ An accelerator set is registered with an accelerator configuration (see the Acce
          <appInfo>
             <meta.element deprecated="true"/>
          </appInfo>
+         <documentation>
+            @deprecated Please use the &quot;org.eclipse.ui.bindings&quot; extension point instead.  Use the &lt;code&gt;key&lt;/code&gt; element.
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string">

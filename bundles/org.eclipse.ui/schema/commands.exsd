@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and contexts which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;context&lt;/code&gt; elements.
+The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. A command is an abstract representation of some semantic behaviour, but not it&apos;s actual implementation.  This allows different developers to contribute specific behaviour for their individual parts.  For example, there might be a &quot;paste&quot; command with one implementation in an editor and a different implementation in an explorer widget.  These implementations are called handlers.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -179,7 +179,7 @@ This element has been replaced with a preference.  If your application needs to 
          <attribute name="defaultHandler" type="string">
             <annotation>
                <documentation>
-                  The default handler for this command.  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; element instead.
+                  The default handler for this command (see the &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;org.eclipse.ui.bindings&lt;/a&gt; extension point).  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; element instead.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
@@ -195,7 +195,7 @@ This element has been replaced with a preference.  If your application needs to 
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            This element allows one to assign key sequences to commands.  Please use the &quot;org.eclipse.ui.bindings&quot; extension point instead.
+            This element allows one to assign key sequences to commands.  Please use the &lt;code&gt;key&lt;/code&gt; element in the &quot;org.eclipse.ui.bindings&quot; extension point instead.
          </documentation>
       </annotation>
       <complexType>
@@ -257,7 +257,7 @@ This element has been replaced with a preference.  If your application needs to 
             <annotation>
                <documentation>
                   The unique id of the context of this key binding.
-@deprecated Please use &quot;contextId&quot; instead.
+@deprecated Please use &quot;contextId&quot; instead.  The old default scope, &quot;org.eclipse.ui.globalScope&quot;, has been changed to &quot;org.eclipse.ui.contexts.window&quot;.  The old name is still supported, but it is deprecated.
                </documentation>
                <appInfo>
                   <meta.attribute deprecated="true"/>
@@ -268,6 +268,7 @@ This element has been replaced with a preference.  If your application needs to 
             <annotation>
                <documentation>
                   The unique id of the key configuration of this key binding.
+@deprecated Please use the &lt;code&gt;schemeId&lt;/code&gt; attribute on the &lt;code&gt;key&lt;/code&gt; element in the new &quot;org.eclipse.ui.bindings&quot; extension point.
                </documentation>
             </annotation>
          </attribute>
@@ -354,7 +355,7 @@ This element has been replaced with a preference.  If your application needs to 
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            This element is used to define contexts. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+            This element is used to define contexts. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.  Please use the &lt;a href=&quot;org_eclipse_ui_contexts.html&quot;&gt;org.eclipse.ui.contexts&lt;/a&gt; extension point instead.
          </documentation>
       </annotation>
       <complexType>
@@ -416,7 +417,7 @@ This element has been replaced with a preference.  If your application needs to 
 This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
 &lt;/p&gt;
 &lt;p&gt;
-Please use the &quot;org.eclipse.ui.handlers&quot; extension point instead.  Or, alternatively, the &lt;code&gt;defaultHandler&lt;/code&gt; attribute on the &lt;code&gt;command&lt;/code&gt; element.
+Please use the &quot;org.eclipse.ui.handlers&quot; extension point instead.  Or, alternatively, the &lt;code&gt;defaultHandler&lt;/code&gt; attribute on the &lt;code&gt;command&lt;/code&gt; element.  Note that this element takes an instance of &lt;code&gt;org.eclipse.ui.commands.IHandler&lt;/code&gt;.  The new extension point and the &lt;code&gt;defaultHandler&lt;/code&gt; attribute take an instance of &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;.
 &lt;/p&gt;
          </documentation>
       </annotation>
