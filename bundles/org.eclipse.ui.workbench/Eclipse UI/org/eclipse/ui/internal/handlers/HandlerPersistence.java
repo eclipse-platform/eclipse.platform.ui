@@ -434,7 +434,7 @@ final class HandlerPersistence {
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
 							.toArray(new IStatus[warningsToLog.size()]),
 					message, null);
-			WorkbenchPlugin.log(message, status);
+			WorkbenchPlugin.log(status);
 		}
 	}
 
@@ -491,7 +491,7 @@ final class HandlerPersistence {
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
 							.toArray(new IStatus[warningsToLog.size()]),
 					message, null);
-			WorkbenchPlugin.log(message, status);
+			WorkbenchPlugin.log(status);
 		}
 	}
 }
