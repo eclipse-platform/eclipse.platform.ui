@@ -25,7 +25,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -411,7 +410,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      */
 
     private IMemento getMemento(IMemento memento, String key) {
-        if (memento == null)   
+        if (memento == null)
             return null;
         return memento.getChild(key);
     }
