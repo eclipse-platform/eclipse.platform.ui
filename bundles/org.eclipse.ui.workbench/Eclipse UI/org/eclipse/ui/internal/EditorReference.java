@@ -28,9 +28,11 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
@@ -54,6 +56,21 @@ public class EditorReference extends WorkbenchPartReference implements
 
     private IMemento editorMemento;
 
+    /**
+     * Flag that lets us detect malfunctioning editors that don't fire PROP_INPUT events.
+     * It is never needed for a correctly-functioning 
+     */
+    private boolean expectingInputChange = false;
+    
+    /**
+     * Flag that determines whether we've already reported that this editor is malfunctioning.
+     * This prevents us from spamming the event log if we repeatedly detect the same error in
+     * a particular editor. If we ever detect an editor is violating its public contract in
+     * a way we can recover from (such as a missing property change event), we report the error
+     * once and then silently ignore errors from the same editor.
+     */
+    private boolean reportedMalfunctioningEditor = false;
+    
     /**
      * User-readable name of the editor's input
      */
@@ -396,6 +413,95 @@ public class EditorReference extends WorkbenchPartReference implements
         }
         
         return result;
+    }
+    
+    protected void partPropertyChanged(Object source, int propId) {
+        
+        // Detect badly behaved editors that don't fire PROP_INPUT events
+        // when they're supposed to. This branch is only needed to handle
+        // malfunctioning editors.
+        if (propId == IWorkbenchPartConstants.PROP_INPUT) {
+            expectingInputChange = false;
+        }
+        
+        super.partPropertyChanged(source, propId);
+    }
+    
+    /**
+     * Attempts to set the input of the editor to the given input. Note that the input
+     * can't always be changed for an editor. Editors that don't implement IReusableEditor
+     * can't have their input changed once they've been materialized.
+     * 
+     * @since 3.1 
+     *
+     * @param input new input
+     * @return true iff the input was actually changed
+     */
+    public boolean setInput(IEditorInput input) {
+        if (part != null) {
+            if (part instanceof IReusableEditor) {
+                IReusableEditor editor = (IReusableEditor) part;
+       
+                expectingInputChange = true;
+                
+                editor.setInput(input);
+                
+                // If the editor never fired a PROP_INPUT event, log the fact that we've discovered
+                // a buggy editor and fire the event for free. Firing the event for free isn't required
+                // and cannot be relied on (it only works if the input change was triggered by this 
+                // method, and there are definitely other cases where events will still be lost),
+                // but older versions of the workbench did this so we fire it here in the spirit
+                // of playing nice. 
+                if (expectingInputChange) {
+
+                    // Log the fact that this editor is broken
+                    reportMalfunction("Editor is not firing a PROP_INPUT event in response to IReusableEditor.setInput(...)"); //$NON-NLS-1$
+                    
+                    // Fire the property for free (can't be relied on since there are other ways the input
+                    // can change, but we do it here to be consistent with older versions of the workbench)
+                    firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
+                }
+                
+                return editor.getEditorInput() == input;
+
+            } else {
+                // Can't change the input if the editor already exists and isn't an IReusableEditor
+                return false;
+            }
+        } else {
+            // Changing the input is trivial and always succeeds if the editor doesn't exist yet
+            if (input != restoredInput) {
+                restoredInput = input;
+                
+                firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Reports a recoverable malfunction in the system log. A recoverable malfunction would be
+     * something like failure to fire an expected property change. Only the first malfunction is
+     * recorded to avoid spamming the system log with repeated failures in the same editor.
+     *  
+     * @since 3.1 
+     *
+     * @param string
+     */
+    private void reportMalfunction(String string) {
+        if (!reportedMalfunctioningEditor) {
+            reportedMalfunctioningEditor = true;
+            
+            String errorMessage = "Problem detected with part " + getId(); //$NON-NLS-1$
+            if (part != null) {
+                errorMessage += " (class = " + part.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            
+            errorMessage += ": " + string; //$NON-NLS-1$
+            
+            WorkbenchPlugin.log(StatusUtil.newStatus(getDescriptor().getPluginId(), errorMessage, null));
+        }
     }
 
     private IEditorPart createPartHelper() throws PartInitException {

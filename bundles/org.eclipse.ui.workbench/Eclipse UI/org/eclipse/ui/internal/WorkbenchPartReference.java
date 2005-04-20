@@ -455,7 +455,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         getPane().setVisible(isVisible);
     }
     
-    private void firePropertyChange(int id) {
+    protected void firePropertyChange(int id) {
 
         if (queueEvents) {
             queuedEvents.set(id);

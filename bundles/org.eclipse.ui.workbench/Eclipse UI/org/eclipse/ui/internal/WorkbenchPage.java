@@ -2058,7 +2058,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public void reuseEditor(IReusableEditor editor, IEditorInput input) {
-        editor.setInput(input);
+        
+        // Rather than calling editor.setInput on the editor directly, we do it through the part reference.
+        // This case lets us detect badly behaved editors that are not firing a PROP_INPUT event in response
+        // to the input change... but if all editors obeyed their API contract, the "else" branch would be
+        // sufficient.
+        WorkbenchPartReference ref = getReference(editor);
+        if (ref instanceof EditorReference) {
+            EditorReference editorRef = (EditorReference) ref;
+            
+            editorRef.setInput(input);
+        } else {
+            editor.setInput(input);
+        }
     }
 
     /**
