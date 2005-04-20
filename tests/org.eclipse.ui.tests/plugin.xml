@@ -2176,7 +2176,7 @@
    <extension
        point="org.eclipse.ui.preferenceTransfer">
        <transfer
-            icon="XYZ.gif"
+            icon="anything.gif"
             name="Export All Transfer Test"
             id="org.eclipse.ui.tests.all">
             <mapping scope="instance">
@@ -2202,14 +2202,16 @@
    <extension
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
-            icon="XYZ.gif"
+            icon="binary_co.gif"
             name="Export many preferences"
             id="org.eclipse.ui.tests.many">
             <mapping scope="instance">
-                <entry node="org.eclipse.ui" keys="showIntro,DOCK_PERSPECTIVE_BAR"/>
-                <entry node="org.eclipse.ui.workbench" keys="bogus,RUN_IN_BACKGROUND"/>
+                <entry node="org.eclipse.ui">
+                 <key name="showIntro"/>
+                 <key name="RUN_IN_BACKGROUND"/>
+                 <key name="bogus name"/>
+                </entry>
                 <entry node="org.eclipse.ui.ide"/>
-                <entry node="org.eclipse.core.resources"/>
             </mapping>
             <mapping scope="configuration">
             </mapping>

@@ -117,6 +117,9 @@ of the transfer engine functionality.
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="key" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="node" type="string">
             <annotation>
                <documentation>
@@ -124,7 +127,12 @@ of the transfer engine functionality.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="keys" type="string">
+      </complexType>
+   </element>
+
+   <element name="key">
+      <complexType>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   an attribute specifing a comma separated list of preference keys within the given node to be transferred, specifying the key attribute without specifying a matching node will result in a runtime error.

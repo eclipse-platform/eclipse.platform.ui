@@ -730,8 +730,12 @@
             icon="\icons\full\etool16\exportdir_wiz.gif"
             name="%KeysPreference.Name">
             <mapping scope="instance">
-            	<entry node="org.eclipse.ui.workbench" keys="org.eclipse.ui.commands"/>
-            	<entry node="org.eclipse.ui" keys="KEY_CONFIGURATION_ID"/>
+            	<entry node="org.eclipse.ui.workbench">
+            	   <key name="org.eclipse.ui.commands"/>
+            	</entry>
+            	<entry node="org.eclipse.ui">
+            	   <key name="KEY_CONFIGURATION_ID"/>
+            	</entry>
             </mapping>
 			<description>
             	%KeysPreference.Description

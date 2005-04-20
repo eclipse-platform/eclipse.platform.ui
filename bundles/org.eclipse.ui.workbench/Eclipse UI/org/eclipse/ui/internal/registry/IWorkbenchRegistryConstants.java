@@ -462,7 +462,7 @@ public interface IWorkbenchRegistryConstants {
     /**
      * Keys attribute.  Value <code>keys</code>.
      */
-    public static final String ATT_KEYS = "keys"; //$NON-NLS-1$
+    public static final String ATT_KEY = "key"; //$NON-NLS-1$
     
 /* ***** org.eclipse.ui.themes constants ***** */    
 

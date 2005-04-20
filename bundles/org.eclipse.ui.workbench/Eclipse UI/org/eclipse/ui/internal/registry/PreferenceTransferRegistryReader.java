@@ -18,11 +18,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.preferences.PreferenceTransferElement;
 
@@ -156,21 +156,18 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
         Map map = new HashMap(entries.length);
         for (int i = 0; i < entries.length; i++) {
             IConfigurationElement entry = entries[i];
-            map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE), convertToStringArray(entry.getAttribute(IWorkbenchRegistryConstants.ATT_KEYS)));            
+            IConfigurationElement[] keys = entry.getChildren(IWorkbenchRegistryConstants.ATT_KEY);
+            PreferenceFilterEntry[] prefFilters = null;
+            if (keys.length > 0) {
+                prefFilters = new PreferenceFilterEntry[keys.length];
+                for (int j = 0; j < keys.length; j++) {
+					IConfigurationElement keyElement = keys[j];
+					prefFilters[j] = new PreferenceFilterEntry(keyElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+				}
+            }
+            map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE), prefFilters);            
         }
         return map;
-    }
-
-    private static String[] convertToStringArray(String commaSepString) {
-        if (commaSepString == null)
-            return null;
-        StringTokenizer tokens = new StringTokenizer(commaSepString,","); //$NON-NLS-1$
-        String[] strings = new String[tokens.countTokens()];
-        int i = 0;
-        while (tokens.hasMoreTokens()) {
-            strings[i++] = tokens.nextToken();
-        }
-        return strings;
     }
 
 }
