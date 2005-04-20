@@ -226,11 +226,57 @@ public class JobsView extends ViewPart {
 		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
 		wake.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		wake.addSelectionListener(new SelectionAdapter() {
+			
 			public void widgetSelected(SelectionEvent e) {
 				doWakeUp();
 			}
 		});
+		
+		//show in dialog
+		Button showInDialog = new Button(group, SWT.PUSH);
+		showInDialog.setText("showInDialog"); //$NON-NLS-1$
+		showInDialog.setToolTipText("Uses IProgressService.showInDialog"); //$NON-NLS-1$
+		showInDialog.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		showInDialog.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				showInDialog();
+			}
+		});
+		
 	}
+	
+	/**
+	 * Test the showInDialog API
+	 *
+	 */
+	protected void showInDialog() {
+		
+		Job showJob = 
+			new Job("Show In Dialog"){//$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask("Run in dialog",100);//$NON-NLS-1$
+				
+				for (int i = 0; i < 100; i++) {
+					if (monitor.isCanceled())
+						return Status.CANCEL_STATUS;
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						return Status.CANCEL_STATUS;
+					}
+					monitor.worked(1);
+
+				}
+				return Status.OK_STATUS;
+			
+		}};
+		showJob.schedule();
+		PlatformUI.getWorkbench().getProgressService().
+			showInDialog(
+					getSite().getShell(),showJob);
+		
+	}
+
 	/**
 	 * Wakes up all sleeping test jobs.
 	 */
