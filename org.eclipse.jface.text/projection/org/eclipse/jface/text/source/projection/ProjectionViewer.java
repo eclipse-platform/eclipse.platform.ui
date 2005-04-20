@@ -926,8 +926,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				fCommandQueue= null;
 
 				if (commandQueue.passedRedrawCostsThreshold()) {
-					if (isRedrawing)
-						setRedraw(false);
+					setRedraw(false);
 					try {
 
 						try {
@@ -938,7 +937,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 					} finally {
 						if (isRedrawing)
-							setRedraw(true, topIndex);
+							restoreSelection();
+						setRedraw(true, topIndex);
 					}
 
 				} else {

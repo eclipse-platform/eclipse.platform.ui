@@ -693,7 +693,10 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	}
 
 	private final int inclusiveEnd(IRegion region) {
-		return exclusiveEnd(region) - 1;
+		int length= region.getLength();
+		if (length == 0)
+			return region.getOffset();
+		return region.getOffset() + length - 1;
 	}
 
 
