@@ -186,7 +186,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
 				if (ELEMENT_INITIALIZER.equals(elements[j].getName())) {
-					if (name().equals(elements[j].getDeclaringExtension().getNamespace())) {
+					if (name().equals(elements[j].getNamespace())) {
 						if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 							Policy.debug("Running default preference customization as defined by: " + elements[j].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
 						runInitializer(elements[j]);

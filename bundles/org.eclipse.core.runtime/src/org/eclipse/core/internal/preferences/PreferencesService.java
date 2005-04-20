@@ -864,8 +864,26 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				// get the child node
 				String childPath = nodeFullPath.substring(treePath.length());
 				childPath = EclipsePreferences.makeRelative(childPath);
-				if (tree.nodeExists(childPath))
-					copyFromTo(tree.node(childPath), result.node(childPath), (String[]) mapping.get(nodePath), 0);
+				if (tree.nodeExists(childPath)) {
+					PreferenceFilterEntry[] entries;
+					// protect against wrong classes since this is passed in by the user
+					try {
+						entries = (PreferenceFilterEntry[]) mapping.get(nodePath);
+					} catch (ClassCastException e) {
+						log(createStatusError(Messages.preferences_classCastFilterEntry, e));
+						continue;
+					}
+					String[] keys = null;
+					if (entries != null) {
+						ArrayList list = new ArrayList();
+						for (int j=0; j<entries.length; j++) {
+							if (entries[j] != null)
+								list.add(entries[j].getKey());
+						}
+						keys = (String[]) list.toArray(new String[list.size()]);
+					}
+					copyFromTo(tree.node(childPath), result.node(childPath), keys, 0);
+				}
 			}
 		}
 		return result;
@@ -1004,16 +1022,23 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				String childPath = nodeFullPath.substring(treePath.length());
 				childPath = EclipsePreferences.makeRelative(childPath);
 				if (tree.nodeExists(childPath)) {
-					String[] keys = (String[]) mapping.get(nodePath);
-					// if there are no defined keys then we return false even if we
+					PreferenceFilterEntry[] entries;
+					// protect against wrong classes since this is user-code
+					try {
+						entries = (PreferenceFilterEntry[]) mapping.get(nodePath);
+					} catch (ClassCastException e) {
+						log(createStatusError(Messages.preferences_classCastFilterEntry, e));
+						continue;
+					}
+					// if there are no entries defined then we return false even if we
 					// are supposed to match on the node as a whole (bug 88820)
 					// on the existance of the node as a whole
 					Preferences child = tree.node(childPath);
-					if (keys == null)
+					if (entries == null)
 						return child.keys().length != 0;
 					// otherwise check to see if we have any applicable keys
-					for (int j = 0; j < keys.length; j++) {
-						if (child.get(keys[j], null) != null)
+					for (int j = 0; j < entries.length; j++) {
+						if (entries[j] != null && child.get(entries[j].getKey(), null) != null)
 							return true;
 					}
 				}

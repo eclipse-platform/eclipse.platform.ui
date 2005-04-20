@@ -140,6 +140,7 @@ public class Messages extends NLS {
 	public static String preferences_applyProblems;
 	public static String preferences_classCastScope;
 	public static String preferences_classCastListener;
+	public static String preferences_classCastFilterEntry;
 	public static String preferences_errorWriting;
 	public static String preferences_exportProblems;
 	public static String preferences_failedDelete;

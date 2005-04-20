@@ -51,22 +51,26 @@ public interface IPreferenceFilter {
 	 * </p>
 	 * <p>
 	 * The keys in the table are Strings and describe the node path. The values are 
-	 * an optional String array describing the list of applicable keys in that node. 
-	 * If the value is null then the whole node is considered applicable.
+	 * an optional array of {@link PreferenceFilterEntry} objects describing the list of 
+	 * applicable keys in that node. If the value is null then the whole node is 
+	 * considered applicable.
 	 * </p>
 	 * <p>
 	 * key: <code>String</code> (node)<br>
-	 * value: <code>String[]</code> or <code>null</code> (preference keys)<br>
+	 * value: <code>PreferenceFilterEntry[]</code> or <code>null</code> (preference keys)<br>
 	 * </p>
 	 * <p>
 	 * For example:
 	 * <pre>
 	 * "org.eclipse.core.resources" -> null
-	 * "org.eclipse.ui" -> ["DEFAULT_PERSPECTIVE_LOCATION", "SHOW_INTRO_ON_STARTUP"]
+	 * "org.eclipse.ui" -> new PreferenceFilterEntry[] {
+	 * 		new PreferenceFilterEntry("DEFAULT_PERSPECTIVE_LOCATION"), 
+	 * 		new PreferenceFilterEntry("SHOW_INTRO_ON_STARTUP")}
 	 * </pre>
 	 * </p>
 	 * 
 	 * @return the mapping table
+	 * @see PreferenceFilterEntry
 	 */
 	public Map getMapping(String scope);
 
