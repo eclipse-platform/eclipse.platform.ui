@@ -41,8 +41,10 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -71,6 +73,26 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
     private IDEWorkbenchAdvisor wbAdvisor;
     private boolean editorsAndIntrosOpened = false;
+    private IEditorPart lastActiveEditor = null;
+    private IPerspectiveDescriptor lastPerspective = null;
+
+    private IWorkbenchPage lastActivePage;
+    private String lastEditorTitle = ""; //$NON-NLS-1$
+    
+    private IPropertyListener editorPropertyListener = new IPropertyListener() {
+        public void propertyChanged(Object source, int propId) {
+            if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+                if (lastActiveEditor != null) {
+                    String newTitle = lastActiveEditor.getTitle();
+                    if (!lastEditorTitle.equals(newTitle)) {
+                        recomputeTitle();
+                    }
+                }
+            }
+        }
+    };
+
+    private IAdaptable lastInput;
 
     /**
      * Crates a new IDE workbench window advisor.
@@ -180,7 +202,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         // hook up the listeners to update the window title
         configurer.getWindow().addPageListener(new IPageListener() {
             public void pageActivated(IWorkbenchPage page) {
-                // do nothing
+                updateTitle();
             }
 
             public void pageClosed(IWorkbenchPage page) {
@@ -200,19 +222,20 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					public void perspectiveSavedAs(IWorkbenchPage page,IPerspectiveDescriptor oldPerspective,IPerspectiveDescriptor newPerspective){
 						updateTitle();
 					}
+                    public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+                        updateTitle();
+                    }
                 });
         configurer.getWindow().getPartService().addPartListener(
                 new IPartListener2() {
                     public void partActivated(IWorkbenchPartReference ref) {
-                        if (ref instanceof IEditorReference
-                                || ref.getPage().getActiveEditor() == null) {
+                        if (ref instanceof IEditorReference) {
                             updateTitle();
                         }
                     }
 
                     public void partBroughtToTop(IWorkbenchPartReference ref) {
-                        if (ref instanceof IEditorReference
-                                || ref.getPage().getActiveEditor() == null) {
+                        if (ref instanceof IEditorReference) {
                             updateTitle();
                         }
                     }
@@ -241,15 +264,15 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                         // do nothing
                     }
                 });
-    }
+    } 
 
-    /**
-     * Updates the window title. Format will be:
-     * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
-     */
-    private void updateTitle() {
+    private String computeTitle() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-        IWorkbenchWindow window = configurer.getWindow();
+        IWorkbenchPage currentPage = configurer.getWindow().getActivePage();
+        IEditorPart activeEditor = null;
+        if (currentPage != null) {
+            activeEditor = currentPage.getActiveEditor();
+        }
         
         String title = null;
         IProduct product = Platform.getProduct();
@@ -265,12 +288,10 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, workspaceLocation, title);
         }
 
-        IWorkbenchPage currentPage = window.getActivePage();
         if (currentPage != null) {
-            IEditorPart editor = currentPage.getActiveEditor();
-            if (editor != null) {
-                String editorTitle = editor.getTitle();
-                title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, editorTitle, title);
+            if (activeEditor != null) {
+                lastEditorTitle = activeEditor.getTitle();
+                title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, lastEditorTitle, title);
             }
             IPerspectiveDescriptor persp = currentPage.getPerspective();
             String label = ""; //$NON-NLS-1$
@@ -284,7 +305,57 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                 title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label, title);
             }
         }
-        configurer.setTitle(title);
+        
+        return title;        
+    }
+    
+    private void recomputeTitle() {
+        IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+        String oldTitle = configurer.getTitle();
+        String newTitle = computeTitle();
+        if (!newTitle.equals(oldTitle)) {
+            configurer.setTitle(newTitle);
+        }
+    }
+        
+    /**
+     * Updates the window title. Format will be:
+     * [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
+     */
+    private void updateTitle() {
+        IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+        IWorkbenchWindow window = configurer.getWindow();
+        IEditorPart activeEditor = null;
+        IWorkbenchPage currentPage = window.getActivePage();
+        IPerspectiveDescriptor persp = null;
+        IAdaptable input = null;
+        
+        if (currentPage != null) {
+            activeEditor = currentPage.getActiveEditor();
+            persp = currentPage.getPerspective();
+            input = currentPage.getInput();
+        }
+        
+        // Nothing to do if the editor hasn't changed
+        if (activeEditor == lastActiveEditor && currentPage == lastActivePage 
+                && persp == lastPerspective && input == lastInput) {
+            return;
+        }
+        
+        if (lastActiveEditor != null) {
+            lastActiveEditor.removePropertyListener(editorPropertyListener );
+        }
+        
+        lastActiveEditor = activeEditor;
+        lastActivePage = currentPage;
+        lastPerspective = persp;
+        lastInput = input;
+        
+        if (activeEditor != null) {
+            activeEditor.addPropertyListener(editorPropertyListener);
+        }
+
+        recomputeTitle();
     }
 
     
