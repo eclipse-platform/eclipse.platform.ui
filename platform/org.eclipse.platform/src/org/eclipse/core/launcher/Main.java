@@ -1815,7 +1815,7 @@ public class Main {
             log.write(String.valueOf(0));
             log.write(' ');
             try {
-                DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS"); //$NON-NLS-1$
                 log.write(formatter.format(new Date()));
             } catch (Exception e) {
                 // continue if we can't write out the date
