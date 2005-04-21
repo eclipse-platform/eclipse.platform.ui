@@ -18,6 +18,39 @@
             file-names=" myContent.mc1 , myContent.mc2 "
             file-extensions=" myContent1, myContent2 "
             describer="org.eclipse.core.tests.runtime.content.MyContentDescriber"/>
+      <!-- content types for content/name matching tests -->
+      <content-type
+            name="BinaryBase"
+            id="binary_base"
+            file-extensions="mybinary">
+         <describer
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
+            <parameter name="signature" value="0A, 0B"/>
+            <parameter name="required" value="false"/>            
+         </describer>
+      </content-type>
+      <content-type                  
+            name="BinaryDerived1"
+            id="binary_derived1"
+            file-names="foo.mybinary"
+            file-extensions="mybinary"
+            base-type="binary_base">            
+         <describer
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
+            <parameter name="signature" value="0A, 0B, 0C"/>
+            <parameter name="required" value="false"/>
+         </describer>
+      </content-type>
+      <content-type                  
+            name="BinaryDerived2"
+            id="binary_derived2"
+            base-type="binary_base">
+         <describer
+            class="org.eclipse.core.runtime.content.BinarySignatureDescriber">
+            <parameter name="signature" value="0A, 0B, 0D"/>
+            <parameter name="required" value="false"/>
+         </describer>
+      </content-type>            
       <!-- A base type and a sub-type are in conflict. Sub type should be picked. --> 
       <content-type      
             file-extensions="conflict1"

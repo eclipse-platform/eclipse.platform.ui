@@ -27,7 +27,7 @@ import org.osgi.service.prefs.Preferences;
 
 public class IContentTypeManagerTest extends RuntimeTest {
 
-	class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
+	private static class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
 		private Set changed = new HashSet();
 
 		public void contentTypeChanged(ContentTypeChangeEvent event) {
@@ -332,6 +332,61 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 	}
 
+	/**
+	 * See bug 90218.
+	 */
+	public void testContentAndNameMatching() throws IOException /* not really */{
+		IContentTypeManager manager = Platform.getContentTypeManager();
+
+		byte[][] contents0 = {{0x0A, 0x0B, 0x0E, 0x10}};
+		byte[][] contents1 = {{0x0A, 0x0B, 0x0C, 0x10}};
+		byte[][] contents2 = {{0x0A, 0x0B, 0x0D, 0x10}};
+		byte[][] invalidContents = {{0, 0, 0, 0}};
+
+		// base matches *.mybinary files starting with 0x0a 0x0b
+		IContentType base = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".binary_base");
+		// derived1 matches *.mybinary and specifically foo.mybinary files starting with 0x0a 0x0b 0xc		
+		IContentType derived1 = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".binary_derived1");
+		// derived2 matches *.mybinary (inherits filespec from base) files starting with 0x0a 0x0b 0xd		
+		IContentType derived2 = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".binary_derived2");
+
+		IContentType[] selected;
+
+		selected = manager.findContentTypesFor(getInputStream(contents0), "anything.mybinary");
+		assertEquals("1.0", 3, selected.length);
+		// all we know is the first one is the base type (only one with a VALID match)
+		assertEquals("1.1", base, selected[0]);
+
+		selected = manager.findContentTypesFor(getInputStream(contents0), "foo.mybinary");
+		// we know also that the second one will be derived1, because it has a full name matching		
+		assertEquals("2.0", 3, selected.length);
+		assertEquals("2.1", base, selected[0]);
+		assertEquals("2.2", derived1, selected[1]);
+
+		selected = manager.findContentTypesFor(getInputStream(contents1), "foo.mybinary");
+		// derived1 will be first because both base and derived1 have a strong content matching, so more specific wins 
+		assertEquals("3.0", 3, selected.length);
+		assertEquals("3.1", derived1, selected[0]);
+		assertEquals("3.2", base, selected[1]);
+
+		selected = manager.findContentTypesFor(getInputStream(contents2), "foo.mybinary");
+		// same as 3.* - derived1 is last because content matching is weak, althoug name matching is strong
+		assertEquals("4.0", 3, selected.length);
+		assertEquals("4.1", derived2, selected[0]);
+		assertEquals("4.2", base, selected[1]);
+
+		selected = manager.findContentTypesFor(getInputStream(invalidContents), "foo.mybinary");
+		// all types have weak content matching only - derived1 has strong name matching
+		assertEquals("5.0", 3, selected.length);
+		assertEquals("5.1", derived1, selected[0]);
+		assertEquals("5.2", base, selected[1]);
+
+		selected = manager.findContentTypesFor(getInputStream(invalidContents), "anything.mybinary");
+		// all types have weak content/name matching only - most general wins
+		assertEquals("6.0", 3, selected.length);
+		assertEquals("6.1", base, selected[0]);
+	}
+
 	/*
 	 * Tests both text and byte stream-based getDescriptionFor methods.
 	 */
@@ -432,7 +487,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	/**
-	 * @see IContentTypeManager#findContentTypeFor
+	 * @see IContentTypeMatcher#findContentTypeFor
 	 */
 	public void testContentDetection() throws IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
