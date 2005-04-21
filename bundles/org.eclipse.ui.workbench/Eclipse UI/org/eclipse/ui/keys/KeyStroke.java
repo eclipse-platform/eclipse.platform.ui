@@ -277,10 +277,13 @@ public final class KeyStroke implements Comparable {
             return false;
 
         KeyStroke castedObject = (KeyStroke) object;
-        boolean equals = true;
-        equals &= modifierKeys.equals(castedObject.modifierKeys);
-        equals &= Util.equals(naturalKey, castedObject.naturalKey);
-        return equals;
+        
+        if (!modifierKeys.equals(castedObject.modifierKeys))
+        	return false;
+        if (!Util.equals(naturalKey, castedObject.naturalKey))
+        	return false;
+        
+        return true;
     }
 
     /**

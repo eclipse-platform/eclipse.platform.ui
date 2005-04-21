@@ -110,13 +110,17 @@ public final class Category extends NamedHandleObject {
 			return false;
 
 		final Category castedObject = (Category) object;
-		boolean equals = true;
-		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
+		
+		if (!Util.equals(defined, castedObject.defined))
+			return false;
+		if (!Util.equals(description, castedObject.description))
+			return false;
+		if (!Util.equals(id, castedObject.id))
+			return false;
+		if (!Util.equals(name, castedObject.name))
+			return false;
 
-		return equals;
+		return true;
 	}
 
 	/**
