@@ -125,7 +125,8 @@ public class FilteredTree extends Composite {
              * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
              */
             public void keyReleased(KeyEvent e) {
-            	if(e.keyCode == SWT.ARROW_DOWN)
+            	// on a CR we want to transfer focus to the list
+            	if(e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.CR)
             		treeViewer.getTree().setFocus();
             	else
             		textChanged();
