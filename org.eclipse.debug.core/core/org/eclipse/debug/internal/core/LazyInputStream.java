@@ -19,6 +19,7 @@ public class LazyInputStream extends FilterInputStream {
     
     private static int TIMEOUT = 100;
     private boolean eofReceived = false;
+    private int fWait = 0;
 
     public LazyInputStream(InputStream in) {
         super(in);
@@ -35,15 +36,27 @@ public class LazyInputStream extends FilterInputStream {
         }
         
         long start = System.currentTimeMillis();
-        int read = super.read(b, off, len);
+        int read = 0;
         while (read != -1 && read < (len-off) && len-off-read > 0 && System.currentTimeMillis()-start < TIMEOUT) {
+            if (fWait > 0) {
+                try {
+                    wait(fWait);
+                } catch (InterruptedException e) {
+                }
+                if (in.available() == 0) {
+                    continue; //check TIMEOUT
+                }
+            }
             int bytesRead = super.read(b, off+read, len-read);
             if (bytesRead == -1) {
                 eofReceived = true;
                 break;
             } 
             read += bytesRead;
+            fWait = 10;
         }
+        
+        fWait = 0;
         return read;
     }
 
