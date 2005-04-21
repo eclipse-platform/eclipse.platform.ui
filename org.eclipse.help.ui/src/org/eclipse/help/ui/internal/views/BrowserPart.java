@@ -53,6 +53,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private final static int CLOSE_QUOTE = 4;
 
 	private final static int CLOSE_BRACKET = 5;
+	
+	private final static String QUERY = "BrowserPartQuery:";
 
 	private ReusableHelpPart parent;
 
@@ -75,8 +77,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String statusURL;
 
 	private String title;
-
-	private boolean query = false;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
@@ -127,22 +127,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 					monitor.done();
 				}
 				lastProgress = -1;
-				query = true;
-				boolean status = browser
-						.execute("window.status=document.title;");
-				if (status) {
-					BrowserPart.this.title = (String) browser.getData("query");
-				}
-				query = false;
+				String value = executeQuery("document.title");
+				BrowserPart.this.title = value!=null?value:"N/A";
 			}
 		});
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
-				if (query) {
-					browser.setData("query", event.text);
-					query = false;
+				if (processQuery(event.text))
 					return;
-				}
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
 				if (statusLine != null)
@@ -170,6 +162,23 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			}
 		});
 		contributeToToolBar(tbm);
+	}
+
+	private String executeQuery(String domValue) {
+		String query = "window.status=\""+QUERY+"\"+"+domValue+";";
+		boolean status = browser.execute(query);
+		if (status) {
+			return (String)browser.getData("query");
+		}
+		return null;
+	}
+
+	private boolean processQuery(String text) {
+		if (text.startsWith(QUERY)) {
+			browser.setData("query", text.substring(QUERY.length()));
+			return true;
+		}
+		return false;
 	}
 
 	private void contributeToToolBar(IToolBarManager tbm) {
