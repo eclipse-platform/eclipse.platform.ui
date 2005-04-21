@@ -90,7 +90,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 	private String prettyPluginStats(PerformanceStats stats) {
 		String retString = ""; //$NON-NLS-1$
 		retString += stats.getEvent() + "\t\t"; //$NON-NLS-1$
-		retString += stats.getBlame() + "\t\t"; //$NON-NLS-1$
+		retString += stats.getBlameString() + "\t\t"; //$NON-NLS-1$
 		retString += stats.getContext() + "\t\t"; //$NON-NLS-1$
 		retString += stats.getRunCount() + "\t"; //$NON-NLS-1$
 		retString += stats.getRunningTime() + "\t"; //$NON-NLS-1$

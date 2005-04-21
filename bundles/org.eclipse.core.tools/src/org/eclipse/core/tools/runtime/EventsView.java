@@ -156,7 +156,7 @@ public class EventsView extends TableWithTotalView {
 		public void eventFailed(final PerformanceStats event, final long duration) {
 			asyncExec(new Runnable() {
 				public void run() {
-					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlame() + " context: " + event.getContext()+ " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlameString() + " context: " + event.getContext()+ " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					getViewSite().getActionBars().getStatusLineManager().setErrorMessage(msg);
 //					MessageDialog.openError(getSite().getShell(), "Performance failure", msg);
 				}
