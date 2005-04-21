@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 
 public class DiffListener extends CommandOutputListener {
 	PrintStream patchStream;
@@ -32,9 +33,11 @@ public class DiffListener extends CommandOutputListener {
 			ICVSFolder commandRoot,
 			IProgressMonitor monitor) {
 		
-		// Ensure that the line doesn't end with a CR.
-		// This can happen if the remote file has CR/LF in it.
-		if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
+		// Special handling to avoid getting duplicate CRs when generating a patch on windows.  
+		// If the remote file has CR/LF in it, then the line will have a CR at the end.
+        // We need to remove it so we don't end up with two CRs (since the printStream will also add one).
+        // On *nix, we want to include the CR since it will not be added by the printStream (see bug 92162).
+		if (Session.IS_CRLF_PLATFORM && line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
 			line = line.substring(0, line.length() - 1);
 		}
 		patchStream.println(line);

@@ -58,7 +58,7 @@ public class Session {
 	//   no incremental progress shown for files smaller than this size
 	private static final int TRANSFER_PROGRESS_INCREMENT = 32768;
 
-	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
+	public static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 	
 	private CVSRepositoryLocation location;
