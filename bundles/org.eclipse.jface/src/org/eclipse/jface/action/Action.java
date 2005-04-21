@@ -1195,7 +1195,8 @@ public abstract class Action implements IAction {
      * @since 3.0
      */
     public final void notifyResult(boolean success) {
-        firePropertyChange(RESULT, null, Boolean.valueOf(success));
+    	// avoid Boolean.valueOf(boolean) to allow compilation against JCL Foundation (bug 80059)
+        firePropertyChange(RESULT, null, success ? Boolean.TRUE : Boolean.FALSE);
     }
 
 }

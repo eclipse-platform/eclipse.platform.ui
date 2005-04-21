@@ -16,6 +16,8 @@ package org.eclipse.jface.resource;
  */
 public class DeviceResourceException extends Exception {
     
+	private Throwable cause;
+
 	/**
 	 * All serializable objects should have a stable serialVersionUID
 	 */
@@ -29,7 +31,9 @@ public class DeviceResourceException extends Exception {
      * @param cause cause of the exception (or null if none)
 	 */
     public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
-        super("Unable to create resource " + missingResource.toString(), cause); //$NON-NLS-1$
+        super("Unable to create resource " + missingResource.toString()); //$NON-NLS-1$
+        // don't pass the cause to super, to allow compilation against JCL Foundation (bug 80059)
+        this.cause = cause;
     }
     
     /**
@@ -41,4 +45,15 @@ public class DeviceResourceException extends Exception {
     public DeviceResourceException(DeviceResourceDescriptor missingResource) {
         this(missingResource, null);
     }
+    
+    /**
+     * Returns the cause of this throwable or <code>null</code> if the
+     * cause is nonexistent or unknown. 
+     * 
+     * @return the cause or <code>null</code>
+     */
+    public Throwable getCause() {
+        return cause;
+    }
+    
 }

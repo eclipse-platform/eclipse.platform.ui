@@ -51,7 +51,7 @@ public final class KeyStroke extends Trigger implements Comparable {
 	 * in the formal key stroke grammar. This is not to be displayed to the
 	 * user. It is only intended as an internal representation.
 	 */
-	public static final String KEY_DELIMITER = Character.toString('\u002B');
+	public static final String KEY_DELIMITER = "\u002B"; //$NON-NLS-1$
 
 	/**
 	 * The set of delimiters for <code>Key</code> objects allowed during

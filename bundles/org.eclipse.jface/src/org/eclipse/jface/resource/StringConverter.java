@@ -72,7 +72,7 @@ public class StringConverter {
      * Internal constant for the seperator character used in font list
      * specifications.
      */
-    private static final String FONT_SEPERATOR = ";"; //$NON-NLS-1$
+    private static final String FONT_SEPARATOR = ";"; //$NON-NLS-1$
 
     /* (non-Javadoc)
      * Declare a private constructor to block instantiation.
@@ -288,6 +288,25 @@ public class StringConverter {
         return new FontData(name, height, style);
     }
 
+	/**
+	 * Returns the result of converting a list of comma-separated tokens into an array
+	 * 
+	 * @return the array of string tokens
+	 * @param prop the initial comma-separated string
+	 */
+	private static String[] getArrayFromList(String prop, String separator) {
+		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
+			return new String[0];
+		ArrayList list = new ArrayList();
+		StringTokenizer tokens = new StringTokenizer(prop, separator); 
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken().trim();
+			if (!token.equals("")) //$NON-NLS-1$
+				list.add(token);
+		}
+		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[list.size()]);
+	}
+
     /**
      * Convert the given value into an array of SWT font data objects.
      * 
@@ -296,7 +315,7 @@ public class StringConverter {
      * @since 3.0
      */
     public static FontData[] asFontDataArray(String value) {
-        String[] strings = value.split(FONT_SEPERATOR);
+        String[] strings = getArrayFromList(value, FONT_SEPARATOR);
         ArrayList data = new ArrayList(strings.length);
         for (int i = 0; i < strings.length; i++) {
             try {
@@ -528,16 +547,11 @@ public class StringConverter {
                 gval = Integer.parseInt(green);
                 bval = Integer.parseInt(blue);
             } catch (NumberFormatException e) {
-                DataFormatException dfe = new DataFormatException(e
-                        .getMessage());
-                dfe.initCause(e);
-                throw dfe;
+                throw new DataFormatException(e.getMessage());
             }
             return new RGB(rval, gval, bval);
         } catch (NoSuchElementException e) {
-            DataFormatException dfe = new DataFormatException(e.getMessage());
-            dfe.initCause(e);
-            throw dfe;
+            throw new DataFormatException(e.getMessage());
         }
     }
 
@@ -675,7 +689,7 @@ public class StringConverter {
         for (int i = 0; i < value.length; i++) {
             buffer.append(asString(value[i]));
             if (i != value.length - 1)
-                buffer.append(FONT_SEPERATOR);
+                buffer.append(FONT_SEPARATOR);
         }
         return buffer.toString();
     }

@@ -15,11 +15,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,15 +33,6 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -363,25 +359,7 @@ public class DialogSettings implements IDialogSettings {
      * Method declared on IDialogSettings.
      */
     public void save(Writer writer) throws IOException {
-        try {
-            Document document = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder().newDocument();
-            save(document, document);
-            Result result = new StreamResult(writer);
-            Source source = new DOMSource(document);
-
-            Transformer transformer = TransformerFactory.newInstance()
-                    .newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$            
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-            transformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-            throw (IOException) (new IOException().initCause(e));
-        } catch (TransformerException e) {
-            throw (IOException) (new IOException().initCause(e));
-        } catch (ParserConfigurationException e) {
-            throw (IOException) (new IOException().initCause(e));
-        }
+    	save(new XMLWriter(writer));
     }
 
     /* (non-Javadoc)
@@ -389,7 +367,7 @@ public class DialogSettings implements IDialogSettings {
      */
     public void save(String fileName) throws IOException {
         FileOutputStream stream = new FileOutputStream(fileName);
-        OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");//$NON-NLS-1$
+        XMLWriter writer = new XMLWriter(stream);
         save(writer);
         writer.close();
     }
@@ -397,37 +375,151 @@ public class DialogSettings implements IDialogSettings {
     /* (non-Javadoc)
      * Save the settings in the <code>document</code>.
      */
-    private void save(Document document, Node parent) {
-        Element root = document.createElement(TAG_SECTION);
-        parent.appendChild(root);
-        root.setAttribute(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
+    private void save(XMLWriter out) {
+    	HashMap attributes = new HashMap(2);
+    	attributes.put(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
+        out.startTag(TAG_SECTION, attributes);
+        attributes.clear();
 
         for (Iterator i = items.keySet().iterator(); i.hasNext();) {
             String key = (String) i.next();
-            Element child = document.createElement(TAG_ITEM);
-            root.appendChild(child);
-            child.setAttribute(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
+            attributes.put(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
             String string = (String) items.get(key);
-            child.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
+            attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
+            out.printTag(TAG_ITEM, attributes);
         }
 
+        attributes.clear();
         for (Iterator i = arrayItems.keySet().iterator(); i.hasNext();) {
             String key = (String) i.next();
-            Element child = document.createElement(TAG_LIST);
-            root.appendChild(child);
-            child.setAttribute(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
+            attributes.put(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
+            out.startTag(TAG_LIST, attributes);
             String[] value = (String[]) arrayItems.get(key);
+            attributes.clear();
             if (value != null) {
                 for (int index = 0; index < value.length; index++) {
-                    Element c = document.createElement(TAG_ITEM);
-                    child.appendChild(c);
                     String string = value[index];
-                    c.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
+                    attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
+                    out.printTag(TAG_ITEM, attributes);
                 }
             }
+            out.endTag(TAG_LIST);
         }
         for (Iterator i = sections.values().iterator(); i.hasNext();) {
-            ((DialogSettings) i.next()).save(document, root);
+            ((DialogSettings) i.next()).save(out);
         }
+        out.endTag(TAG_NAME);
+    }
+    
+    /**
+     * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
+     * compilation against JCL Foundation (bug 80059). 
+     */
+    private static class XMLWriter extends PrintWriter {
+    	protected int tab;
+
+    	/* constants */
+    	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
+
+    	public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
+    		super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
+    		tab = 0;
+    		println(XML_VERSION);
+    	}
+
+    	public XMLWriter(Writer output) {
+    		super(output);
+    		tab = 0;
+    		println(XML_VERSION);
+    	}
+
+    	public void endTag(String name) {
+    		tab--;
+    		printTag('/' + name, null);
+    	}
+
+    	public void printSimpleTag(String name, Object value) {
+    		if (value != null) {
+    			printTag(name, null, true, false);
+    			print(getEscaped(String.valueOf(value)));
+    			printTag('/' + name, null, false, true);
+    		}
+    	}
+
+    	public void printTabulation() {
+    		for (int i = 0; i < tab; i++)
+    			super.print('\t');
+    	}
+
+    	public void printTag(String name, HashMap parameters) {
+    		printTag(name, parameters, true, true);
+    	}
+
+    	public void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine) {
+    		StringBuffer sb = new StringBuffer();
+    		sb.append("<"); //$NON-NLS-1$
+    		sb.append(name);
+    		if (parameters != null)
+    			for (Enumeration e = Collections.enumeration(parameters.keySet()); e.hasMoreElements();) {
+    				sb.append(" "); //$NON-NLS-1$
+    				String key = (String) e.nextElement();
+    				sb.append(key);
+    				sb.append("=\""); //$NON-NLS-1$
+    				sb.append(getEscaped(String.valueOf(parameters.get(key))));
+    				sb.append("\""); //$NON-NLS-1$
+    			}
+    		sb.append(">"); //$NON-NLS-1$
+    		if (shouldTab)
+    			printTabulation();
+    		if (newLine)
+    			println(sb.toString());
+    		else
+    			print(sb.toString());
+    	}
+
+    	public void startTag(String name, HashMap parameters) {
+    		startTag(name, parameters, true);
+    	}
+
+    	public void startTag(String name, HashMap parameters, boolean newLine) {
+    		printTag(name, parameters, true, newLine);
+    		tab++;
+    	}
+
+    	private static void appendEscapedChar(StringBuffer buffer, char c) {
+    		String replacement = getReplacement(c);
+    		if (replacement != null) {
+    			buffer.append('&');
+    			buffer.append(replacement);
+    			buffer.append(';');
+    		} else {
+    			buffer.append(c);
+    		}
+    	}
+
+    	public static String getEscaped(String s) {
+    		StringBuffer result = new StringBuffer(s.length() + 10);
+    		for (int i = 0; i < s.length(); ++i)
+    			appendEscapedChar(result, s.charAt(i));
+    		return result.toString();
+    	}
+
+    	private static String getReplacement(char c) {
+    		// Encode special XML characters into the equivalent character references.
+    		// These five are defined by default for all XML documents.
+    		switch (c) {
+    			case '<' :
+    				return "lt"; //$NON-NLS-1$
+    			case '>' :
+    				return "gt"; //$NON-NLS-1$
+    			case '"' :
+    				return "quot"; //$NON-NLS-1$
+    			case '\'' :
+    				return "apos"; //$NON-NLS-1$
+    			case '&' :
+    				return "amp"; //$NON-NLS-1$
+    		}
+    		return null;
+    	}
     }
 }

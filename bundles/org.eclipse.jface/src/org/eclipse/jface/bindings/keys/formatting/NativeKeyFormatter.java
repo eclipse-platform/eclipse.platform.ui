@@ -59,42 +59,28 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 		RESOURCE_BUNDLE = ResourceBundle.getBundle(NativeKeyFormatter.class
 				.getName());
 
-		final String carbonBackspace = Character.toString('\u232B');
+		final String carbonBackspace = "\u232B"; //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.BS_NAME, carbonBackspace);
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.BACKSPACE_NAME, carbonBackspace);
 		CARBON_KEY_LOOK_UP
-				.put(IKeyLookup.CR_NAME, Character.toString('\u21A9'));
-		final String carbonDelete = Character.toString('\u2326');
+				.put(IKeyLookup.CR_NAME, "\u21A9"); //$NON-NLS-1$
+		final String carbonDelete = "\u2326"; //$NON-NLS-1$
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.DEL_NAME, carbonDelete);
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.DELETE_NAME, carbonDelete);
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.SPACE_NAME, Character
-				.toString('\u2423'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.ALT_NAME, Character
-				.toString('\u2325'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.COMMAND_NAME, Character
-				.toString('\u2318'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.CTRL_NAME, Character
-				.toString('\u2303'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.SHIFT_NAME, Character
-				.toString('\u21E7'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_DOWN_NAME, Character
-				.toString('\u2193'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_LEFT_NAME, Character
-				.toString('\u2190'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_RIGHT_NAME, Character
-				.toString('\u2192'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_UP_NAME, Character
-				.toString('\u2191'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.END_NAME, Character
-				.toString('\u2198'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.NUMPAD_ENTER_NAME, Character
-				.toString('\u2324'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.HOME_NAME, Character
-				.toString('\u2196'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.PAGE_DOWN_NAME, Character
-				.toString('\u21DF'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.PAGE_UP_NAME, Character
-				.toString('\u21DE'));
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.SPACE_NAME, "\u2423"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.ALT_NAME, "\u2325"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.COMMAND_NAME, "\u2318"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.CTRL_NAME, "\u2303"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.SHIFT_NAME, "\u21E7"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_DOWN_NAME, "\u2193"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_LEFT_NAME, "\u2190"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_RIGHT_NAME, "\u2192"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.ARROW_UP_NAME, "\u2191"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.END_NAME, "\u2198"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.NUMPAD_ENTER_NAME, "\u2324"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.HOME_NAME, "\u2196"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.PAGE_DOWN_NAME, "\u21DF"); //$NON-NLS-1$
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.PAGE_UP_NAME, "\u21DE"); //$NON-NLS-1$
 	}
 
 	/**
