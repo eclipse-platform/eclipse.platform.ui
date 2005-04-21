@@ -108,6 +108,7 @@ public class DocumentEvent {
 	 * time when this event was sent.
 	 *
 	 * @return the modification stamp or {@link IDocumentExtension4#UNKNOWN_MODIFICATION_STAMP}.
+	 * @see IDocumentExtension4#getModificationStamp()
 	 * @since 3.1
 	 */
 	public long getModificationStamp() {
