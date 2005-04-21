@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 
-import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import javax.swing.FocusManager;
-import javax.swing.SwingUtilities;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -56,45 +52,82 @@ public class WidgetMethodHandler extends AbstractHandler implements
 				final Control focusControl = Display.getCurrent()
 						.getFocusControl();
 				if ((focusControl instanceof Composite)
-						&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
-					final FocusManager focusManager = FocusManager
-							.getCurrentManager();
-					final Component focusComponent = focusManager
-							.getFocusOwner();
-					if (focusComponent != null) {
-						Runnable methodRunnable = new Runnable() {
-							public void run() {
-								try {
-									methodToExecute
-											.invoke(focusComponent, null);
-								} catch (final IllegalAccessException e) {
-									// The method is protected, so do nothing.
-								} catch (final InvocationTargetException e) {
-									/*
-									 * I would like to log this exception -- and
-									 * possibly show a dialog to the user -- but
-									 * I have to go back to the SWT event loop
-									 * to do this. So, back we go....
-									 */
-									focusControl.getDisplay().asyncExec(
-											new Runnable() {
-												public void run() {
-													ExceptionHandler
-															.getInstance()
-															.handleException(
-																	new ExecutionException(
-																			"An exception occurred while executing " //$NON-NLS-1$
-																					+ methodToExecute
-																							.getName(),
-																			e
-																					.getTargetException()));
-												}
-											});
-								}
-							}
-						};
-						SwingUtilities.invokeLater(methodRunnable);
-					}
+                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+                    /*
+                     * Okay. Have a seat. Relax a while. This is going to be a
+                     * bumpy ride. If it is an embedded widget, then it *might*
+                     * be a Swing widget. At the point where this handler is
+                     * executing, the key event is already bound to be
+                     * swallowed. If I don't do something, then the key will be
+                     * gone for good. So, I will try to forward the event to the
+                     * Swing widget. Unfortunately, we can't even count on the
+                     * Swing libraries existing, so I need to use reflection
+                     * everywhere. And, to top it off, I need to dispatch the
+                     * event on the Swing event queue, which means that it will
+                     * be carried out asynchronously to the SWT event queue.
+                     */
+                    try {
+                        final Class focusManagerClass = Class
+                                .forName("javax.swing.FocusManager"); //$NON-NLS-1$
+                        final Method focusManagerGetCurrentManagerMethod = focusManagerClass
+                                .getMethod("getCurrentManager", null); //$NON-NLS-1$
+                        final Object focusManager = focusManagerGetCurrentManagerMethod
+                                .invoke(focusManagerClass, null);
+                        final Method focusManagerGetFocusOwner = focusManagerClass
+                                .getMethod("getFocusOwner", null); //$NON-NLS-1$
+                        final Object focusComponent = focusManagerGetFocusOwner
+                                .invoke(focusManager, null);
+                        if (focusComponent != null) {
+                            Runnable methodRunnable = new Runnable() {
+                                public void run() {
+                                    try {
+                                        methodToExecute.invoke(focusComponent,
+                                                null);
+                                    } catch (final IllegalAccessException e) {
+                                        // The method is protected, so do
+                                        // nothing.
+                                    } catch (final InvocationTargetException e) {
+                                        /*
+                                         * I would like to log this exception --
+                                         * and possibly show a dialog to the
+                                         * user -- but I have to go back to the
+                                         * SWT event loop to do this. So, back
+                                         * we go....
+                                         */
+                                        focusControl.getDisplay().asyncExec(
+                                                new Runnable() {
+                                                    public void run() {
+                                                        ExceptionHandler
+                                                                .getInstance()
+                                                                .handleException(
+                                                                        new ExecutionException(
+                                                                                "An exception occurred while executing " //$NON-NLS-1$
+                                                                                        + methodToExecute
+                                                                                                .getName(),
+                                                                                e
+                                                                                        .getTargetException()));
+                                                    }
+                                                });
+                                    }
+                                }
+                            };
+
+                            final Class swingUtilitiesClass = Class
+                                    .forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
+                            final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass
+                                    .getMethod("invokeLater", //$NON-NLS-1$
+                                            new Class[] { Runnable.class });
+                            swingUtilitiesInvokeLaterMethod.invoke(
+                                    swingUtilitiesClass,
+                                    new Object[] { methodRunnable });
+                        }
+                    } catch (final ClassNotFoundException e) {
+                        // There is no Swing support, so do nothing.
+
+                    } catch (final NoSuchMethodException e) {
+                        // The API has changed, which seems amazingly unlikely.
+                        throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+                    }
 
 				} else {
 
@@ -149,16 +182,38 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			 * through to the underlying Swing component hierarchy. Insha'allah,
 			 * this will work.
 			 */
-			final FocusManager focusManager = FocusManager.getCurrentManager();
-			final Component focusComponent = focusManager.getFocusOwner();
-			final Class clazz = focusComponent.getClass();
+            try {
+                final Class focusManagerClass = Class
+                        .forName("javax.swing.FocusManager"); //$NON-NLS-1$
+                final Method focusManagerGetCurrentManagerMethod = focusManagerClass
+                        .getMethod("getCurrentManager", null); //$NON-NLS-1$
+                final Object focusManager = focusManagerGetCurrentManagerMethod
+                        .invoke(focusManagerClass, null);
+                final Method focusManagerGetFocusOwner = focusManagerClass
+                        .getMethod("getFocusOwner", null); //$NON-NLS-1$
+                final Object focusComponent = focusManagerGetFocusOwner.invoke(
+                        focusManager, null);
+                final Class clazz = focusComponent.getClass();
 
-			try {
-				method = clazz.getMethod(methodName, NO_PARAMETERS);
-			} catch (NoSuchMethodException e) {
-				// Do nothing.
-			}
-		}
+                try {
+                    method = clazz.getMethod(methodName, NO_PARAMETERS);
+                } catch (NoSuchMethodException e) {
+                    // Do nothing.
+                }
+            } catch (final ClassNotFoundException e) {
+                // There is no Swing support, so do nothing.
+
+            } catch (final NoSuchMethodException e) {
+                // The API has changed, which seems amazingly unlikely.
+                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+            } catch (IllegalAccessException e) {
+                // The API has changed, which seems amazingly unlikely.
+                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+            } catch (InvocationTargetException e) {
+                // The API has changed, which seems amazingly unlikely.
+                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+            }
+        }
 
 		return method;
 	}
