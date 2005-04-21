@@ -18,6 +18,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * The FilteredComboTree is a filtered tree that uses an 
@@ -51,6 +53,14 @@ public class FilteredComboTree extends FilteredTree {
 	 */
 	protected void createFilterControl(Composite parent) {
 		filterCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
+		
+		// do not allow the dialog to be closed when enter is pressed
+		filterCombo.addListener(SWT.Traverse, new Listener() {
+			public void handleEvent(Event e) {
+				if (e.detail == SWT.TRAVERSE_RETURN)
+					e.doit = false;
+			}
+		});
 		filterCombo.addFocusListener(new FocusAdapter(){
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
