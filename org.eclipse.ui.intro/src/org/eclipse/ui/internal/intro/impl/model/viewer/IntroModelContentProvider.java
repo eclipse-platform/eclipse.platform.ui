@@ -43,6 +43,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
         return null;
     }
 
+
     public boolean hasChildren(Object element) {
         AbstractIntroElement introElement = null;
         if (element instanceof AbstractIntroElement)
@@ -55,9 +56,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
         return false;
     }
 
-    /**
-     * @see IStructuredContentProvider#getElements(Object)
-     */
+
     public Object[] getElements(Object element) {
         return getChildren(element);
     }

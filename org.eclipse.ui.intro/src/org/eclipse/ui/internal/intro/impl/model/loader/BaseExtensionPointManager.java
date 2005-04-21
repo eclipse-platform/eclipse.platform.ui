@@ -87,7 +87,7 @@ public class BaseExtensionPointManager {
 
             if (Log.logPerformance)
                 Util.logPerformanceTime(
-                    "BEGIN:  quering registry for configs took: ", start);
+                    "BEGIN:  quering registry for configs took: ", start); //$NON-NLS-1$
 
 
             IntroModelRoot model = new IntroModelRoot(introConfig,
@@ -105,7 +105,7 @@ public class BaseExtensionPointManager {
             if (Log.logPerformance)
                 Util
                     .logPerformanceTime(
-                        "loading Intro Model (quering registry/creating & resolving model) took: ",
+                        "loading Intro Model (quering registry/creating & resolving model) took: ", //$NON-NLS-1$
                         start);
 
             return model;

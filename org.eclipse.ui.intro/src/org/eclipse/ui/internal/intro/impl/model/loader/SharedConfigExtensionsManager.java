@@ -61,7 +61,7 @@ public class SharedConfigExtensionsManager {
 
         if (Log.logPerformance)
             Util.logPerformanceTime(
-                "quering registry for configExtensions took: ", start);
+                "quering registry for configExtensions took: ", start); //$NON-NLS-1$
 
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];

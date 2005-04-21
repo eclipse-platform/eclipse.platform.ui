@@ -193,12 +193,12 @@ public class Util {
 
     public static void logPerformanceTime(String message, long startTime) {
         long endTime = System.currentTimeMillis();
-        Log.forcedInfo("Intro Performance - " + message + (endTime - startTime)
-                + "ms");
+        Log.forcedInfo("Intro Performance - " + message + (endTime - startTime) //$NON-NLS-1$
+                + "ms"); //$NON-NLS-1$
     }
 
     public static void logPerformanceMessage(String message, long time) {
-        Log.forcedInfo("Intro Performance - " + message + " " + time + "ms");
+        Log.forcedInfo("Intro Performance - " + message + " " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
 }

@@ -117,7 +117,7 @@ public class ModelUtil {
             URL url = Platform.asLocalURL(parentFolderURL);
         } catch (Exception e) {
             if (contentFile != null)
-                Log.error("Failed to extract Intro content folder for: "
+                Log.error("Failed to extract Intro content folder for: " //$NON-NLS-1$
                         + contentFile, e);
         }
     }

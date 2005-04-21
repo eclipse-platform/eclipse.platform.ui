@@ -258,9 +258,10 @@ public class StandbyPart implements IIntroConstants {
 
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
-            standbyContent.init(introPart, getMemento(memento,
-                MEMENTO_STANDBY_CONTENT_PART_TAG));
+           
             try {
+                standbyContent.init(introPart, getMemento(memento,
+                    MEMENTO_STANDBY_CONTENT_PART_TAG));
                 standbyContent.createPartControl(content, toolkit);
             } catch (Exception e) {
                 Log.error(
