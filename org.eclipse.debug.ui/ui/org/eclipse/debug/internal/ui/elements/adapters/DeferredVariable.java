@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
@@ -22,7 +23,9 @@ import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
+import org.eclipse.debug.internal.ui.views.variables.RemoteVariableContentManager;
 import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
@@ -46,6 +49,31 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
         }
         return EMPTY;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
+	    Object[] children = getChildren(object);
+	    if (children.length > 0) {
+	    	if (collector instanceof RemoteVariableContentManager.VariableCollector) {
+	    		RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
+			    for (int i = 0; i < children.length; i++) {
+					IVariable child = (IVariable) children[i];
+					try {
+						IValue value = child.getValue();
+						remoteCollector.setHasChildren(child, value.hasVariables());
+					} catch (DebugException e) {
+					}
+				}	    	
+	    	}	    	
+	        collector.add(children, monitor);
+	    }
+	    collector.done();
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)

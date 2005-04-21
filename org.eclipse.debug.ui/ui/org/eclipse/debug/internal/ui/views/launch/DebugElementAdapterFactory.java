@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.DeferredExpression;
+import org.eclipse.debug.internal.ui.elements.adapters.DeferredExpressionManager;
 import org.eclipse.debug.internal.ui.elements.adapters.DeferredLaunch;
 import org.eclipse.debug.internal.ui.elements.adapters.DeferredLaunchManager;
 import org.eclipse.debug.internal.ui.elements.adapters.DeferredProcess;
@@ -47,6 +49,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IDeferredWorkbenchAdapter fgRegisterGroupAdapter = new DeferredRegisterGroup();
     private static IDeferredWorkbenchAdapter fgVariableAdapter = new DeferredVariable();
     private static IDeferredWorkbenchAdapter fgExpressionAdapter = new DeferredExpression();
+    private static IDeferredWorkbenchAdapter fgExpressionManagerAdapter = new DeferredExpressionManager();
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
@@ -82,6 +85,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         	if (adaptableObject instanceof IRegisterGroup) {
         		return fgRegisterGroupAdapter;
+        	}
+        	if (adaptableObject instanceof IExpressionManager) {
+        		return fgExpressionManagerAdapter;
         	}
         }
         return null;

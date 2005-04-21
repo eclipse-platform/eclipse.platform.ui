@@ -40,6 +40,47 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
     private IWorkbenchSiteProgressService progressService;
     
     /**
+     * Element collector
+     */
+    public class Collector implements IElementCollector {            
+        // number of children added to the tree
+        int offset = 0;
+        Object fParent;
+        
+        public Collector(Object parent) {
+        	fParent = parent;
+        }
+        /*
+         *  (non-Javadoc)
+         * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public void add(Object element, IProgressMonitor monitor) {
+            add(new Object[] { element }, monitor);
+        }
+
+        /*
+         *  (non-Javadoc)
+         * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public void add(Object[] elements, IProgressMonitor monitor) {
+            Object[] filtered = fViewer.filter(elements);
+            if (filtered.length > 0) {
+                replaceChildren(fParent, filtered, offset, monitor);
+                offset = offset + filtered.length;
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.progress.IElementCollector#done()
+         */
+        public void done() {
+            prune(fParent, offset);
+        }
+    }
+    
+    /**
      * Contructs a new content manager.
      * 
      * @param provider content provider
@@ -64,40 +105,8 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
      *            pending, possibly <code>null</code>
      * @return IElementCollector
      */
-    protected IElementCollector createElementCollector(final Object parent, final PendingUpdateAdapter placeholder) {
-        return new IElementCollector() {            
-            // number of children added to the tree
-            int offset = 0;
-            
-            /*
-             *  (non-Javadoc)
-             * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
-             */
-            public void add(Object element, IProgressMonitor monitor) {
-                add(new Object[] { element }, monitor);
-            }
-
-            /*
-             *  (non-Javadoc)
-             * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor)
-             */
-            public void add(Object[] elements, IProgressMonitor monitor) {
-                Object[] filtered = fViewer.filter(elements);
-                if (filtered.length > 0) {
-                    replaceChildren(parent, filtered, offset, monitor);
-                    offset = offset + filtered.length;
-                }
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.jface.progress.IElementCollector#done()
-             */
-            public void done() {
-                prune(parent, offset);
-            }
-        };
+    protected IElementCollector createElementCollector(Object parent, PendingUpdateAdapter placeholder) {
+        return new Collector(parent);
     }
     
     /**

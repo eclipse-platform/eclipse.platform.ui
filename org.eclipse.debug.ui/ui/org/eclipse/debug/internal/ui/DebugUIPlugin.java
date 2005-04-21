@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -406,6 +407,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(propertiesFactory, IVariable.class);
 		manager.registerAdapters(propertiesFactory, IRegister.class);
 		manager.registerAdapters(propertiesFactory, IExpression.class);
+		manager.registerAdapters(propertiesFactory, IExpressionManager.class);
         manager.registerAdapters(propertiesFactory, OtherBreakpointCategory.class);
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);

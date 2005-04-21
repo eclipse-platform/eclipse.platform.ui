@@ -16,11 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 /**
  * Provide the contents for a variables viewer.
@@ -49,17 +49,17 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	/**
 	 * Remote content manager to retrieve content in the background.
 	 */
-	private DeferredTreeContentManager fManager;
+	private RemoteVariableContentManager fManager;
 	
 	/**
 	 * Constructs a new provider
 	 */
 	public RemoteVariablesContentProvider(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
-	    fManager = createContentManager(viewer, site, view); 
+	    fManager = (RemoteVariableContentManager)createContentManager(viewer, site, view); 
 		fParentCache = new HashMap(10);		
 	}
 	
-	protected DeferredTreeContentManager createContentManager(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
+	protected RemoteTreeContentManager createContentManager(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
 		return new RemoteVariableContentManager(this, viewer, site, view);
 	}
 
@@ -144,6 +144,7 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
+        fManager.clearHasChildrenCache();
 	}
 	
 	/**

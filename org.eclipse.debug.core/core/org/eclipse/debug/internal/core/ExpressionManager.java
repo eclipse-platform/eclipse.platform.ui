@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -52,7 +53,7 @@ import org.w3c.dom.NodeList;
  *
  * @see IExpressionManager
  */
-public class ExpressionManager implements IExpressionManager, IDebugEventSetListener {
+public class ExpressionManager extends PlatformObject implements IExpressionManager, IDebugEventSetListener {
 	
 	/**
 	 * Collection of registered expressions.
