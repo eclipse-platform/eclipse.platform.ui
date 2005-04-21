@@ -56,8 +56,8 @@ public class IViewPartTest extends IWorkbenchPartTest {
         closePart(fPage, part);
         
         CallHistory history = part.getCallHistory();
-        assertTrue(history.verifyOrder(new String[] { "init",
-                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "dispose" }));
+        assertTrue(history.verifyOrder(new String[] { "setInitializationData", "init",
+                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "widgetDisposed", "dispose" }));
         assertFalse(history.contains("doSave"));
     }
 

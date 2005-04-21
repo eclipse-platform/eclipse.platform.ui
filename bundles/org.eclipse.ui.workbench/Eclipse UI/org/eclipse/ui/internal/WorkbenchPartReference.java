@@ -518,7 +518,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         return pane;
     }
 
-    public void dispose() {        
+    public void dispose() {
+    	// Disposing the pane disposes the part's widgets. The part's widgets need to be disposed before the part itself.
+        if (pane != null) {
+            pane.dispose();
+        }
         if (part != null) {
             fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);
             // Don't let exceptions in client code bring us down. Log them and continue.
@@ -529,9 +533,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
                 WorkbenchPlugin.log(e);
             }
             part = null;
-        }
-        if (pane != null) {
-            pane.dispose();
         }
         propChangeListeners.clear();
         internalPropChangeListeners.clear();

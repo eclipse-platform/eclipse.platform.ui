@@ -44,13 +44,13 @@ public abstract class IWorkbenchPartTest extends UITestCase {
         MockPart part = openPart(fPage);
         assertTrue(part.isSiteInitialized());
         CallHistory history = part.getCallHistory();
-        assertTrue(history.verifyOrder(new String[] { "init",
+        assertTrue(history.verifyOrder(new String[] { "setInitializationData", "init",
                 "createPartControl", "setFocus" }));
 
         // Close the part.
         closePart(fPage, part);
-        assertTrue(history.verifyOrder(new String[] { "init",
-                "createPartControl", "setFocus", "dispose" }));
+        assertTrue(history.verifyOrder(new String[] { "setInitializationData", "init",
+                "createPartControl", "setFocus", "widgetDisposed", "dispose" }));
     }
 
     /**

@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
@@ -52,6 +54,15 @@ public class MockPart implements IExecutableExtension {
 
     private ListenerList propertyListeners = new ListenerList();
 
+    private DisposeListener disposeListener = new DisposeListener() {
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+    	 */
+    	public void widgetDisposed(DisposeEvent e) {
+    		MockPart.this.widgetDisposed();
+    	}
+    };
+    
     public CallHistory getCallHistory() {
         return callTrace;
     }
@@ -62,6 +73,9 @@ public class MockPart implements IExecutableExtension {
 
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
+    	
+    	callTrace.add("setInitializationData");
+    	
         this.config = config;
         this.data = data;
 
@@ -89,6 +103,12 @@ public class MockPart implements IExecutableExtension {
         return data;
     }
 
+    // This isn't actually part of the part API, but we call this method from a dispose listener
+    // in order to mark the point in time at which the widgets are disposed
+    public void widgetDisposed() {
+    	callTrace.add("widgetDisposed");
+    }
+    
     /**
      * @see IWorkbenchPart#addPropertyListener(IPropertyListener)
      */
@@ -101,6 +121,8 @@ public class MockPart implements IExecutableExtension {
      */
     public void createPartControl(Composite parent) {
         callTrace.add("createPartControl");
+        
+        parent.addDisposeListener(disposeListener);
     }
 
     /**
