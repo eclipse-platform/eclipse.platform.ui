@@ -410,7 +410,11 @@ public class RemoteTreeViewer extends TreeViewer {
                             if (!child.equals(data)) {
                                 // no need to cancel pending updates here, the child may have shifted up/down
                                 internalRefresh(item, child, true, true);
-                            }   
+                            } else {
+                            	// If it's the same child, the label/content may still have changed
+                                doUpdateItem(item, child);
+                            	updatePlus(item, child);
+                            }
                         } else {
                             // add
                         	int numLeft = children.length - i;
