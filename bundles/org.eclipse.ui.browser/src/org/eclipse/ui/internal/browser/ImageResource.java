@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.HashMap;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 /**
@@ -33,7 +35,7 @@ public class ImageResource {
 	static {
 		try {
 			String pathSuffix = "icons/"; //$NON-NLS-1$
-			ICON_BASE_URL = WebBrowserUIPlugin.getInstance().getBundle().getEntry(pathSuffix);
+			ICON_BASE_URL = Platform.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(pathSuffix));
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e); //$NON-NLS-1$
 		}
@@ -158,7 +160,7 @@ public class ImageResource {
 		// busy images
 		busyImages = new Image[13];
 		for (int i = 0; i < 13; i++) {
-			registerImage("busy" + i, URL_OBJ + "frames" + java.io.File.separator + "frame" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			registerImage("busy" + i, URL_OBJ + "frames/frame" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			busyImages[i] = getImage("busy" + i); //$NON-NLS-1$
 		}
 	}
