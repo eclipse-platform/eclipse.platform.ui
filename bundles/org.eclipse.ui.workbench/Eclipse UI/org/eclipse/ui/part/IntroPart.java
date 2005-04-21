@@ -262,7 +262,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
             return;
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                configElement.getDeclaringExtension().getNamespace(), strIcon);
+                configElement.getNamespace(), strIcon);
 
         if (imageDescriptor == null)
             return;

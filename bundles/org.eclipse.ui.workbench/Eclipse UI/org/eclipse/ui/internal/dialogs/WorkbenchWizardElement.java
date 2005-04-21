@@ -245,7 +245,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public String getPluginId() {
         return (configurationElement != null) ? configurationElement
-                .getDeclaringExtension().getNamespace() : null;
+                .getNamespace() : null;
     }
 
     /* (non-Javadoc)

@@ -83,7 +83,7 @@ public class WorkingSetDescriptor {
      * @return the name space declaring this working set
      */
     public String getDeclaringNamespace() {
-    	return configElement.getDeclaringExtension().getNamespace();
+    	return configElement.getNamespace();
     }
 
     /**
@@ -181,7 +181,7 @@ public class WorkingSetDescriptor {
     }
     
     public boolean isDeclaringPluginActive() {
-    	Bundle bundle= Platform.getBundle(configElement.getDeclaringExtension().getNamespace());
+    	Bundle bundle= Platform.getBundle(configElement.getNamespace());
     	return bundle.getState() == Bundle.ACTIVE;
     }
     

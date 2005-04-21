@@ -92,7 +92,7 @@ public abstract class PluginAction extends Action implements
                 .getAttribute(IWorkbenchRegistryConstants.ATT_DEFINITION_ID);
         setActionDefinitionId(defId);
 
-        pluginId = configElement.getDeclaringExtension().getNamespace();
+        pluginId = configElement.getNamespace();
 
         // Read enablement declaration.
         if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR) != null) {
@@ -185,7 +185,7 @@ public abstract class PluginAction extends Action implements
      */
     protected boolean isOkToCreateDelegate() {
         // test if the plugin has loaded
-        String bundleId = configElement.getDeclaringExtension().getNamespace();
+        String bundleId = configElement.getNamespace();
         return BundleUtility.isActive(bundleId);
     }
 

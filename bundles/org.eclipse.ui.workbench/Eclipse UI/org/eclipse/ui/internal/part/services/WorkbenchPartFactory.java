@@ -72,7 +72,7 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
 		
 		final ViewDescriptor descriptor = (ViewDescriptor)viewRegistry.find(viewId);
         
-        Bundle bundle = Platform.getBundle(descriptor.getConfigurationElement().getDeclaringExtension().getNamespace());
+        Bundle bundle = Platform.getBundle(descriptor.getConfigurationElement().getNamespace());
         
         FactoryMap context = new FactoryMap()
             .mapInstance(IPartDescriptor.class, descriptor.getPartDescriptor())
@@ -131,7 +131,7 @@ public class WorkbenchPartFactory implements IWorkbenchPartFactory {
 		
 		final EditorDescriptor descriptor = (EditorDescriptor)editorRegistry.findEditor(editorId);
         
-        Bundle bundle = Platform.getBundle(descriptor.getConfigurationElement().getDeclaringExtension().getNamespace());
+        Bundle bundle = Platform.getBundle(descriptor.getConfigurationElement().getNamespace());
         
         FactoryMap context = new FactoryMap()
             .mapInstance(IPartDescriptor.class, descriptor.getPartDescriptor())

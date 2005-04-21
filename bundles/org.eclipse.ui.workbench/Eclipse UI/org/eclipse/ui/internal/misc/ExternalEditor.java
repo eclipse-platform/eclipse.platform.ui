@@ -83,7 +83,7 @@ public class ExternalEditor {
         if (configurationElement != null) {
             try {
                 Bundle bundle = Platform.getBundle(configurationElement
-                        .getDeclaringExtension().getNamespace());
+                        .getNamespace());
                 // See if the program file is in the plugin directory
                 URL entry = bundle.getEntry(descriptor.getFileName());
                 if (entry != null) {

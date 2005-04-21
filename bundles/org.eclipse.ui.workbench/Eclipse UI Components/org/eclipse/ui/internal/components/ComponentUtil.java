@@ -164,7 +164,7 @@ public class ComponentUtil {
     public static String getAttribute(IConfigurationElement element, String attributeId) throws CoreException {
         String result = element.getAttribute(attributeId);
         if (result == null) {
-            throw new CoreException(new Status(IStatus.ERROR, element.getDeclaringExtension().getNamespace(),
+            throw new CoreException(new Status(IStatus.ERROR, element.getNamespace(),
                     IStatus.OK, NLS.bind(ComponentMessages.ComponentUtil_missing_attribute, 
                             new Object[] {element.getName(), attributeId, 
                             element.getDeclaringExtension().getExtensionPointUniqueIdentifier()}), null

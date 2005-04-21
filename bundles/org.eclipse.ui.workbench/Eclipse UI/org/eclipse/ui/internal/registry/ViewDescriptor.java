@@ -193,7 +193,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
                 || (RegistryReader.getClassValue(configElement,
                         IWorkbenchRegistryConstants.ATT_CLASS) == null)) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
-                    .getDeclaringExtension().getNamespace(), 0,
+                    .getNamespace(), 0,
                     "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
                     null));
         }

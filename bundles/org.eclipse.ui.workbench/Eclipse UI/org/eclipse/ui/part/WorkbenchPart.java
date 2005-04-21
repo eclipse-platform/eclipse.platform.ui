@@ -246,7 +246,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
             return;
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                configElement.getDeclaringExtension().getNamespace(), strIcon);
+                configElement.getNamespace(), strIcon);
 
         if (imageDescriptor == null)
             return;

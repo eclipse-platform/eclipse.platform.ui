@@ -294,7 +294,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
         extensionID = configElement.getAttribute("id"); //$NON-NLS-1$
 
         // Get plugin ID.
-        pluginID = configElement.getDeclaringExtension().getNamespace();
+        pluginID = configElement.getNamespace();
 
         // Get extension name.
         String name = configElement.getAttribute("name"); //$NON-NLS-1$
