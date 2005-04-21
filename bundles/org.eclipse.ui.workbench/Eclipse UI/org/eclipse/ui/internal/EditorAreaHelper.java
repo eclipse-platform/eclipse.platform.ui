@@ -15,20 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.ISources;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.MultiEditor;
 
 /**
@@ -40,8 +31,6 @@ public class EditorAreaHelper {
 
     private EditorSashContainer editorArea;
 
-    private IHandlerActivation openEditorDropDownHandlerActivation;
-
     /**
      * Creates a new EditorAreaHelper.
      */
@@ -50,20 +39,6 @@ public class EditorAreaHelper {
                 page);
 
         this.editorArea.createControl(page.getClientComposite());
-
-        final Shell shell = page.getWorkbenchWindow().getShell();
-        final IHandler openEditorDropDownHandler = new AbstractHandler() {
-			public final Object execute(final ExecutionEvent event) {
-				displayEditorList();
-				return null;
-			}
-		};
-		final IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getAdapter(IHandlerService.class);
-		openEditorDropDownHandlerActivation = handlerService.activateHandler(
-				"org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-				openEditorDropDownHandler, new ActiveShellExpression(shell),
-				ActiveShellExpression.SOURCES| ISources.LEGACY_MEDIUM);
     }
 
     /**
@@ -142,10 +117,6 @@ public class EditorAreaHelper {
      * Dispose of the editor presentation. 
      */
     public void dispose() {
-		final IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getAdapter(IHandlerService.class);
-		handlerService.deactivateHandler(openEditorDropDownHandlerActivation);
-
         if (editorArea != null) {
             editorArea.dispose();
         }
