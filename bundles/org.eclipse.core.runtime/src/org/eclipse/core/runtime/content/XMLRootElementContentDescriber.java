@@ -74,10 +74,10 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
 		try {
 			if (!xmlHandler.parseContents(contents))
-				return INVALID;
+				return INDETERMINATE;
 		} catch (SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
-			return INVALID;
+			return INDETERMINATE;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
 			String message = Messages.content_parserConfiguration;
@@ -86,9 +86,9 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 		}
 		// Check to see if we matched our criteria.
 		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
-			return INVALID;
+			return INDETERMINATE;
 		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
-			return INVALID;
+			return INDETERMINATE;
 		// We must be okay then.		
 		return VALID;
 	}

@@ -806,7 +806,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			fail("1.0", ioe);
 		}
 		assertTrue("1.1", contains(selected, xml));
-		assertTrue("1.2", !contains(selected, rootElement));
+		assertTrue("1.2", contains(selected, rootElement));
 
 		// induce regular IOExceptions... these should be thrown to clients
 		class FakeIOException extends IOException {
