@@ -113,4 +113,10 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	protected void doAction(Object element) {
 		//not used
 	}
+
+	protected boolean isEnabledFor(Object element) {
+		if (element instanceof BreakpointContainer)
+			return ((BreakpointContainer)element).getChildren().length > 0;
+		return super.isEnabledFor(element);
+	}
 }
