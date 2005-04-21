@@ -206,11 +206,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * @param input the editor input
      */
     protected void setInput(IEditorInput input) {
-        if (input != editorInput) {
-            editorInput = input;
-            
-            firePropertyChange(PROP_INPUT);
-        }
+        editorInput = input;
     }
 
     /* (non-Javadoc)
