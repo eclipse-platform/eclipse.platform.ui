@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
@@ -231,7 +232,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Notify the workbook page that the part pane has
      * been activated by the user.
      */
-    protected void requestActivation() {
+    public void requestActivation() {
         IWorkbenchPart part = partReference.getPart(true);
         // Cannot activate the outer bit of a MultiEditor. In previous versions of the 
         // workbench, MultiEditors had their own implementation of EditorPane for the purpose
@@ -274,7 +275,35 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Sets focus to this part.
      */
     public void setFocus() {
-        requestActivation();
+        IWorkbenchPart part = partReference.getPart(true);
+        if (part != null) {
+            Control control = getControl();
+            // If the control already has focus, nothing to do
+            if (!SwtUtil.isFocusAncestor(control)) {
+                // First try to call part.setFocus
+                part.setFocus();
+                
+                // If that failed...
+                if (!SwtUtil.isFocusAncestor(control)) {
+                    // Try to give the widget focus directly 
+                    if (!control.setFocus()) {
+                        // If that failed, give focus to the toolbar
+                        Control toolbar = getToolBar();
+                        if (toolbar == null || !toolbar.setFocus()) {
+                            // If the toolbar can't take focus, give focus to the presentation
+                            PartStack stack = getStack();
+                            if (stack != null) {
+                                Control presentation = stack.getControl();
+                                if (presentation != null && !presentation.isDisposed()) {
+                                    // Try to give focus to the presentation
+                                    presentation.setFocus();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }        
     }
 
     /**

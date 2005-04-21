@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dnd;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -56,6 +57,15 @@ public class SwtUtil {
         }
 
         return isChild(potentialParent, childToTest.getParent());
+    }
+    
+    public static boolean isFocusAncestor(Control potentialParent) {
+        Assert.isNotNull(potentialParent);
+        Control focusControl = Display.getCurrent().getFocusControl();
+        if (focusControl == null) {
+            return false;
+        }
+        return isChild(potentialParent, focusControl);
     }
 
     /**

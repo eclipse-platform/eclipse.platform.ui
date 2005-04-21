@@ -531,9 +531,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         Platform.run(new SafeRunnable(WorkbenchMessages.WorkbenchPage_ErrorActivatingView) { 
                     public void run() {
                         if (part != null) {
-                            part.setFocus();
+                            //part.setFocus();
+                            PartPane pane = getPane(part);
+                            pane.setFocus();
                             PartSite site = (PartSite) part.getSite();
-                            site.getPane().showFocus(true);
+                            pane.showFocus(true);
                             updateTabList(part);
                             SubActionBars bars = (SubActionBars) site
                                     .getActionBars();

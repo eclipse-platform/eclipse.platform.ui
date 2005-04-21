@@ -79,7 +79,7 @@ public class EditorPane extends PartPane {
      * Notify the workbook page that the part pane has
      * been activated by the user.
      */
-    protected void requestActivation() {
+    public void requestActivation() {
         // By clearing the active workbook if its not the one
         // associated with the editor, we reduce draw flicker
         if (!workbook.isActiveWorkbook())
