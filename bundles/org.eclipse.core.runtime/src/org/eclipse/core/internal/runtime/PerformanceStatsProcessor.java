@@ -44,6 +44,7 @@ public class PerformanceStatsProcessor extends Job {
 	 * Event listeners.
 	 */
 	private final ListenerList listeners = new ListenerList();
+	
 	private PlatformLogWriter log;
 
 	/*
@@ -69,14 +70,16 @@ public class PerformanceStatsProcessor extends Job {
 	 * Records the fact that an event failed.
 	 * 
 	 * @param stats The event that occurred
+	 * @param pluginId The id of the plugin that declared the blame object, or
+	 * <code>null</code>
 	 * @param elapsed The elapsed time for this failure
 	 */
-	public static void failed(PerformanceStats stats, long elapsed) {
+	public static void failed(PerformanceStats stats, String pluginId, long elapsed) {
 		synchronized (instance) {
 			instance.failures.put(stats, new Long(elapsed));
 		}
 		instance.schedule(SCHEDULE_DELAY);
-		instance.logFailure(stats, elapsed);
+		instance.logFailure(stats, pluginId, elapsed);
 	}
 
 	/*
@@ -99,7 +102,7 @@ public class PerformanceStatsProcessor extends Job {
 			out.print("Event: "); //$NON-NLS-1$
 			out.print(stats.getEvent());
 			out.print(" Blame: "); //$NON-NLS-1$
-			out.print(stats.getBlame());
+			out.print(stats.getBlameString());
 			if (stats.getContext() != null) {
 				out.print(" Context: "); //$NON-NLS-1$
 				out.print(stats.getContext());
@@ -168,13 +171,11 @@ public class PerformanceStatsProcessor extends Job {
 	/**
 	 * Logs performance event failures to the platform's performance log
 	 */
-	private void logFailure(PerformanceStats stats, long elapsed) {
+	private void logFailure(PerformanceStats stats, String pluginId, long elapsed) {
 		//may have failed to get the performance log service
 		if (log == null)
 			return;
-		final InternalPlatform platform = InternalPlatform.getDefault();
-		String pluginId = platform.getBundleId(stats.getBlame());
-		if (pluginId == null)
+		if (pluginId == null) 
 			pluginId = Platform.PI_RUNTIME;
 		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		log.logging(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()), pluginId);

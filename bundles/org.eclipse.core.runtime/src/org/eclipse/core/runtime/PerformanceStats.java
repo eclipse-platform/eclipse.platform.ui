@@ -113,13 +113,19 @@ public class PerformanceStats {
 	 * Whether non-failure statistics should be retained.
 	 */
 	private static final boolean TRACE_SUCCESS;
-	
+
 	/**
 	 * An identifier that can be used to figure out who caused the event. This is 
-	 * typically the object whose code was running when the event occurred or
-	 * a <code>String</code> describing the event should be supplied
+	 * typically a string representation of the object whose code was running when 
+	 * the event occurred or a <code>String</code> describing the event.
 	 */
-	private Object blame;
+	private String blame;
+
+	/**
+	 * The id of the plugin that defined the blame object for this event, or
+	 * <code>null</code> if it could not be determined.
+	 */
+	private String blamePluginId;
 
 	/**
 	 * An optional context for the event (may be <code>null</code>).
@@ -296,9 +302,10 @@ public class PerformanceStats {
 	/** 
 	 * Creates a new PerformanceStats object.  Private to prevent client instantiation.
 	 */
-	private PerformanceStats(String event, Object blame, String context) {
+	private PerformanceStats(String event, Object blameObject, String context) {
 		this.event = event;
-		this.blame = blame;
+		this.blame = blameObject instanceof String ? (String) blameObject : blameObject.getClass().getName();
+		this.blamePluginId = InternalPlatform.getDefault().getBundleId(blameObject);
 		this.context = context;
 	}
 
@@ -318,7 +325,7 @@ public class PerformanceStats {
 		runCount++;
 		runningTime += elapsed;
 		if (elapsed > getThreshold(event))
-			PerformanceStatsProcessor.failed(createFailureStats(contextName, elapsed), elapsed);
+			PerformanceStatsProcessor.failed(createFailureStats(contextName, elapsed), blamePluginId, elapsed);
 		if (TRACE_SUCCESS)
 			PerformanceStatsProcessor.changed(this);
 	}
@@ -392,10 +399,7 @@ public class PerformanceStats {
 	 * @return A string describing the blame.
 	 */
 	public String getBlameString() {
-		if (blame instanceof String)
-			return (String) blame;
-		//use class name rather than toString to ensure accurate reporting
-		return blame.getClass().getName();
+		return blame;
 	}
 
 	/**
