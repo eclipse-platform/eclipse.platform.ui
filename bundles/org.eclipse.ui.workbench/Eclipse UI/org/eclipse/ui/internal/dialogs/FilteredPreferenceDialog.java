@@ -111,14 +111,20 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 				IPreferenceNode node = (IPreferenceNode) element;
 				Object[] children = contentProvider.getChildren(node);
 				
-				String[] words = node.getLabelText().split("\\W"); //$NON-NLS-1$
+				String labelText = node.getLabelText();
+				String[] words = labelText.split("\\W"); //$NON-NLS-1$
+				
+				//Some vms cannot break up DBCS characters so at least support one word
+				if(words.length == 0 && labelText.length() > 0)
+					words = new String[]{labelText};
+				
 				for (int i = 0;  i < words.length; i++){
 					if( match(words[i]))
 						return true;
 				}	
 				// if the text contained spaces, we already tried matching on each individual
 				// word but now try and match on the whole phrase.
-				if (words.length > 1 && match(node.getLabelText())) 
+				if (words.length > 1 && match(labelText)) 
 					return true;
 				
 				if (filter(viewer, element, children).length > 0)
