@@ -114,14 +114,6 @@
       </test>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="Empty Perspective"
-            class="org.eclipse.team.tests.ccvs.ui.EmptyPerspective"
-            id="org.eclipse.team.tests.ccvs.ui.EmptyPerspective">
-      </perspective>
-   </extension>
-   <extension
          id="harness"
          point="org.eclipse.core.runtime.applications">
       <application>
