@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.0
  */
 public final class ColorUtils {
-    
-    static long totalTimeSoFar = 0L;
 
     /**
      * @param value the SWT constant <code>String</code>.
@@ -33,7 +31,6 @@ public final class ColorUtils {
      * not be determined.
      */
     private static RGB process(String value) {
-        long startTime = System.currentTimeMillis();
         try {
             Class clazz = SWT.class; //$NON-NLS-1$
             Field[] fields = clazz.getDeclaredFields();
@@ -44,12 +41,7 @@ public final class ColorUtils {
                         && Modifier.isPublic(field.getModifiers())
                         && Modifier.isFinal(field.getModifiers())) {
                     if (value.equals(field.getName())) {
-                        RGB rgb =  getSystemColor(field.getInt(null));
-                        long delta = (System.currentTimeMillis() - startTime);
-                        totalTimeSoFar += delta;
-                        System.out.println(totalTimeSoFar + " delta " + delta); //$NON-NLS-1$
-
-                        return rgb;
+                        return getSystemColor(field.getInt(null));
                     }
                 }
             }
@@ -58,10 +50,7 @@ public final class ColorUtils {
         } catch (IllegalAccessException e) {
             // no op - shouldnt happen.  We check for public before calling getInt(null)
         }
-        RGB rgb =  getSystemColor(SWT.COLOR_BLACK);
-        totalTimeSoFar += (System.currentTimeMillis() - startTime);
-        System.out.println(totalTimeSoFar);
-        return rgb;
+        return getSystemColor(SWT.COLOR_BLACK);
     }
 
     /**
