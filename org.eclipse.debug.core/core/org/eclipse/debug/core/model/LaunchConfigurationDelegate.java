@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -134,7 +135,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); //$NON-NLS-1$
 		List errors = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
-			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_7 + projects[i].getName()); //$NON-NLS-1$
+			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); //$NON-NLS-1$
 			if (existsProblems(projects[i])) {
 				errors.add(projects[i]);
 			}	
