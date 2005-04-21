@@ -237,8 +237,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						
 						for (int i=0; i<items.length; i++)
 						{	
-							if (items[i].getData() instanceof IMemoryViewTab)
-								disposeViewTab((IMemoryViewTab)items[i].getData(), items[i]);
+							disposeTab(items[i]);
 						}
 						
 						// dispose the tab folder
@@ -517,7 +516,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				MemoryViewTab viewTab = (MemoryViewTab)item.getData();
 				if (viewTab.getRendering() instanceof CreateRendering)
 				{
-					disposeViewTab(viewTab, item);
+					disposeTab(item);
 				}
 			}
 		}
@@ -571,7 +570,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						if (viewTab.getRendering() == rendering)
 						{
 							foundTab = true;
-							disposeViewTab(viewTab, tabs[i]);
+							disposeTab(tabs[i]);
 							break;
 						}
 						
@@ -597,7 +596,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 								if (viewTab.getRendering() == rendering)
 								{
 									foundTab = true;
-									disposeViewTab(viewTab, tabs[i]);
+									disposeTab(tabs[i]);
 									break;
 								}
 							}

@@ -242,13 +242,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		return null;
 	}
 	
-	protected void disposeViewTab(IMemoryViewTab viewTab, TabItem tabItem)
+	protected void disposeTab(TabItem tabItem)
 	{
-		if (viewTab == null)
-			return;
-		
-		viewTab.dispose();
-
 		if (tabItem == null)
 			return;
 		
@@ -314,10 +309,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 					
 					for (int i=0; i<tabs.length; i++)
 					{
-						IMemoryViewTab viewTab = (IMemoryViewTab)tabs[i].getData();
-						
-						if (!tabs[i].isDisposed())
-							disposeViewTab(viewTab, tabs[i]);
+						disposeTab(tabs[i]);
 					}
 					
 					tabFolder.dispose();

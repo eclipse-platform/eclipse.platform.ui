@@ -119,6 +119,10 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#dispose()
 	 */
 	public void dispose() {
+		
+		if (fIsDisposed)
+			return;
+		
 		fIsDisposed = true;
 		
 		fRendering.removePropertyChangeListener(this);
