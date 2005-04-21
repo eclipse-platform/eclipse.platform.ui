@@ -106,6 +106,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public void init(ReusableHelpPart parent, String id) {
 		this.parent = parent;
 		this.id = id;
+		parent.hookFormText(text);
 	}
 
 	public String getId() {

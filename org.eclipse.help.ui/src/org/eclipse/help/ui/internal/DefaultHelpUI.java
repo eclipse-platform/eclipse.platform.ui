@@ -19,6 +19,7 @@ import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
@@ -53,6 +54,7 @@ import org.eclipse.ui.intro.IIntroPart;
 public class DefaultHelpUI extends AbstractHelpUI {
 	private ContextHelpDialog f1Dialog = null;
 	private ContextHelpWindow f1Window = null;
+	private static DefaultHelpUI instance;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
 	
@@ -103,9 +105,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 */
 	public DefaultHelpUI() {
 		super();
+		instance = this;
 		// register external browser. This will cause the help system
 		// to use workbench external browser instead of its own.
 		BaseHelpSystem.getInstance().setBrowserInstance(new ExternalWorkbenchBrowser());
+	}
+	
+	static DefaultHelpUI getInstance() {
+		return instance;
 	}
 
 	/**
@@ -147,6 +154,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				} catch (PartInitException e) {
 				}
 			}
+			else {
+				warnNoOpenPerspective(window);
+			}
 		}
 	}
 	
@@ -174,8 +184,16 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				} catch (PartInitException e) {
 				}
 			}
+			else {
+				warnNoOpenPerspective(window);
+			}
 		}
 	}	
+
+	private void warnNoOpenPerspective(IWorkbenchWindow window) {
+		MessageDialog.openInformation(window.getShell(), Messages.DefaultHelpUI_wtitle, 
+				Messages.DefaultHelpUI_noPerspMessage);
+	}
 
 	/**
 	 * Displays a help resource specified as a url.
@@ -205,6 +223,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 *            int positioning information
 	 */
 	public void displayContext(IContext context, int x, int y) {
+		displayContext(context, x, y, false);
+	}
+	
+	void displayContext(IContext context, int x, int y, boolean noInfopop) {
 		if (context == null)
 			return;
 		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
@@ -217,7 +239,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (window != null && isActiveShell(activeShell, window)) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				if (winfopop) {
+				if (!noInfopop && winfopop) {
 					displayContextAsInfopop(context, x, y);
 					return;
 				}
@@ -240,7 +262,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		// check the dialog
 		if (activeShell!=null) {
 			Object data = activeShell.getData();
-			if (data instanceof Window && !dinfopop) {
+			if (data instanceof Window && (!dinfopop || noInfopop)) {
 				displayContextAsHelpPane(activeShell, context);
 				return;
 			}
@@ -266,12 +288,12 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
 	 */
-	private Shell getActiveShell() {
+	private static Shell getActiveShell() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		return display.getActiveShell();
 	}
 
-	private boolean isActiveShell(Shell activeShell, IWorkbenchWindow window) {
+	private static boolean isActiveShell(Shell activeShell, IWorkbenchWindow window) {
 		// Test if the active shell belongs to this window
 		return activeShell != null && activeShell.equals(window.getShell());
 	}
@@ -300,7 +322,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		f1Window = new ContextHelpWindow(activeShell);
 		f1Window.create();
 		Shell helpShell = f1Window.getShell();
-		helpShell.setText("Help");
+		helpShell.setText(Messages.DefaultHelpUI_wtitle);
 		helpShell.setSize(300, pbounds.height);
 		f1Window.update(context, c);
 		f1Window.dock(true);

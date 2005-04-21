@@ -13,6 +13,7 @@ package org.eclipse.help.internal.base;
 import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.ILiveHelpAction;
 import org.osgi.framework.*;
 
 /**
@@ -46,5 +47,27 @@ public class DisplayUtils {
 		} catch (Exception e) {
 		}
 	}
+	
+	public static void runLiveHelp(String pluginID, String className, String arg) {	
+		Bundle bundle = Platform.getBundle(pluginID);
+		if (bundle == null) {
+			return;
+		}
 
+		try {
+			Class c = bundle.loadClass(className);
+			Object o = c.newInstance();
+			if (o != null && o instanceof ILiveHelpAction) {
+				ILiveHelpAction helpExt = (ILiveHelpAction) o;
+				if (arg != null)
+					helpExt.setInitializationString(arg);
+				Thread runnableLiveHelp = new Thread(helpExt);
+				runnableLiveHelp.setDaemon(true);
+				runnableLiveHelp.start();
+			}
+		} catch (ThreadDeath td) {
+			throw td;
+		} catch (Exception e) {
+		}
+	}
 }

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.IOException;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.webapp.data.*;
-import org.osgi.framework.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.DisplayUtils;
+import org.eclipse.help.internal.webapp.data.WebappPreferences;
 
 /**
  * Servlet to handle live help action requests
@@ -54,26 +54,7 @@ public class LiveHelpServlet extends HttpServlet {
 		if (className == null)
 			return;
 		String arg = req.getParameter("arg"); //$NON-NLS-1$
-		Bundle bundle = Platform.getBundle(pluginID);
-		if (bundle == null) {
-			return;
-		}
-
-		try {
-			Class c = bundle.loadClass(className);
-			Object o = c.newInstance();
-			if (o != null && o instanceof ILiveHelpAction) {
-				ILiveHelpAction helpExt = (ILiveHelpAction) o;
-				if (arg != null)
-					helpExt.setInitializationString(arg);
-				Thread runnableLiveHelp = new Thread(helpExt);
-				runnableLiveHelp.setDaemon(true);
-				runnableLiveHelp.start();
-			}
-		} catch (ThreadDeath td) {
-			throw td;
-		} catch (Exception e) {
-		}
+		DisplayUtils.runLiveHelp(pluginID, className, arg);
 	}
 	/**
 	 * 

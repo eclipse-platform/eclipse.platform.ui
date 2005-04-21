@@ -160,6 +160,10 @@ public final class Messages extends NLS {
 	public static String AskShowAll_dialogTitle;
 	public static String AskShowAll_message;
 	public static String AskShowAll_toggleMessage;
+	
+	public static String DefaultHelpUI_wtitle;
+	public static String DefaultHelpUI_noPerspMessage;
+	public static String ContextHelpDialog_showInDynamicHelp;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

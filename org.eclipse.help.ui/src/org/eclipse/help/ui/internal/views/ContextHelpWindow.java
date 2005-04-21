@@ -317,10 +317,12 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 			Rectangle pbounds = getShell().getParent().getBounds();
 			if (bounds.height != savedBounds.height) {
 				Shell parent = (Shell)getShell().getParent();
-				parentResizeBlocked=true;
-				parent.setBounds(pbounds.x, bounds.y, 
+				if ((parent.getStyle() & SWT.RESIZE)!=0) {
+					parentResizeBlocked=true;
+					parent.setBounds(pbounds.x, bounds.y, 
 						pbounds.width, bounds.height);
-				parentResizeBlocked=false;
+					parentResizeBlocked=false;
+				}
 			}
 		}
 		savedBounds = getShell().getBounds();

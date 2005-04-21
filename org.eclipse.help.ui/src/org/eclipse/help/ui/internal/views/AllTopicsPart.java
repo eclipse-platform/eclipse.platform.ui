@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -126,6 +127,37 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		}
 	}
 
+	class EmptyContainerFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (element instanceof IToc) {
+				return isNotEmpty((IToc) element);
+			} else if (element instanceof ITopic) {
+				return isNotEmpty((ITopic) element);
+			}
+			return false;
+		}
+
+		private boolean isNotEmpty(IToc toc) {
+			ITopic[] topics = toc.getTopics();
+			return isNotEmpty(topics);
+		}
+
+		private boolean isNotEmpty(ITopic topic) {
+			String href = topic.getHref();
+			ITopic[] topics = topic.getSubtopics();
+			return href != null || isNotEmpty(topics);
+		}
+
+		private boolean isNotEmpty(ITopic[] topics) {
+			for (int i = 0; i < topics.length; i++) {
+				if (isNotEmpty(topics[i]))
+					return true;
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * @param parent
 	 * @param toolkit
@@ -157,11 +189,12 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 			}
 		});
 	}
-	
+
 	public void init(ReusableHelpPart parent, String id) {
 		super.init(parent, id);
 		if (parent.isFilteredByRoles())
 			treeViewer.addFilter(parent.getRoleFilter());
+		treeViewer.addFilter(new EmptyContainerFilter());
 	}
 
 	private void initializeImages() {
@@ -200,12 +233,12 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 
 	public void selectReveal(String href) {
 		IToc[] tocs = HelpSystem.getTocs();
-		for (int i=0; i<tocs.length; i++) {
+		for (int i = 0; i < tocs.length; i++) {
 			IToc toc = tocs[i];
 			ITopic topic = toc.getTopic(href);
-			if (topic!=null) {
+			if (topic != null) {
 				ArrayList path = getPath(toc, topic);
-				for (int j=0; j<path.size(); j++) {
+				for (int j = 0; j < path.size(); j++) {
 					Object obj = path.get(j);
 					treeViewer.expandToLevel(obj, 1);
 				}
@@ -223,13 +256,13 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 	}
 
 	private boolean findPath(ITopic[] siblings, ITopic topic, ArrayList path) {
-		for (int i=0; i<siblings.length; i++) {
+		for (int i = 0; i < siblings.length; i++) {
 			ITopic sibling = siblings[i];
 			if (sibling.equals(topic)) {
 				return true;
 			}
-			ITopic [] subtopics = sibling.getSubtopics();
-			if (subtopics.length>0) {
+			ITopic[] subtopics = sibling.getSubtopics();
+			if (subtopics.length > 0) {
 				boolean result = findPath(subtopics, topic, path);
 				if (result) {
 					path.add(0, sibling);
@@ -250,6 +283,7 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		else
 			treeViewer.removeFilter(parent.getRoleFilter());
 	}
+
 	public void refilter() {
 		treeViewer.refresh();
 	}

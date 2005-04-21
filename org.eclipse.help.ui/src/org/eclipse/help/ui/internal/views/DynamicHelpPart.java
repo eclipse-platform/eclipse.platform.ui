@@ -176,6 +176,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	public void init(ReusableHelpPart parent, String id) {
 		this.parent = parent;
 		this.id = id;
+		parent.hookFormText(searchResults);
 	}
 
 	public String getId() {

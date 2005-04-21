@@ -80,7 +80,7 @@
             </parameter>
             <parameter
                   name="os"
-                  value="Linux, AIX, HP, SunOS">
+                  value="Linux,AIX,HP,SunOS">
             </parameter>
          </factoryclass>
       </browser>
@@ -99,7 +99,7 @@
             </parameter>
             <parameter
                   name="os"
-                  value="Linux, AIX, HP, SunOS">
+                  value="Linux,AIX,HP,SunOS">
             </parameter>
          </factoryclass>
       </browser>
@@ -118,7 +118,7 @@
             </parameter>
             <parameter
                   name="os"
-                  value="Linux, AIX, HP, SunOS">
+                  value="Linux,AIX,HP,SunOS">
             </parameter>
          </factoryclass>
       </browser>

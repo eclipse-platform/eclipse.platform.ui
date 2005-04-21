@@ -508,6 +508,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	public void init(ReusableHelpPart parent, String id) {
 		this.parent = parent;
 		this.id = id;
+		parent.hookFormText(searchWordText);
 	}
 
 	public String getId() {

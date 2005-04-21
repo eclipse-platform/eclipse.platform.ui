@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -304,7 +305,41 @@ public class ContextHelpDialog {
 		for (int i = 0; i < relatedTopics.length; i++) {
 			createLink(composite, relatedTopics[i]);
 		}
+		// Create separator.
+		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setBackground(backgroundColour);
+		label.setForeground(foregroundColour);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		// create link to the dynamic help
+		createDynamicHelpLink(composite);
+		
 		return composite;
+	}
+
+	private Control createDynamicHelpLink(Composite parent) {
+		Label image = new Label(parent, SWT.NONE);
+		Image img = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP);
+		image.setImage(img);
+		image.setBackground(backgroundColour);
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
+		//data.horizontalIndent = 4;
+		image.setLayoutData(data);
+		HyperlinkLabel link = new HyperlinkLabel(parent, SWT.NONE);
+		link.setText(Messages.ContextHelpDialog_showInDynamicHelp);
+		link.setBackground(backgroundColour);
+		link.setForeground(linkColour);
+		link.setFont(parent.getFont());
+		linkManager.registerHyperlink(link, new HyperlinkAdapter() {
+			public void linkActivated(Control label) {
+				openDynamicHelp();
+			}
+		});
+		return link;
 	}
 
 	/**
@@ -322,6 +357,15 @@ public class ContextHelpDialog {
 				DefaultHelpUI.isDisplayModal(parentShell)
 						&& !Constants.OS_WIN32.equalsIgnoreCase(Platform
 								.getOS()));
+	}
+	
+	private void openDynamicHelp() {
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			public void run() {
+				close();				
+				DefaultHelpUI.getInstance().displayContext(context, 0, 0, true);
+			}
+		});
 	}
 
 	public synchronized void open() {

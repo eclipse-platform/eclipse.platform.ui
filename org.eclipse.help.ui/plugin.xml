@@ -112,6 +112,7 @@
             label="%LocalHelp.label">
       </engine>
     </extension>
+<!--
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -137,4 +138,5 @@
                tooltip="%dynamicHelpAction.tooltip"/>
       </actionSet>
    </extension>
+-->
 </plugin>

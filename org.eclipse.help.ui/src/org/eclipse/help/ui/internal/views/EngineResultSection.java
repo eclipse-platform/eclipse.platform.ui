@@ -155,6 +155,7 @@ public class EngineResultSection {
             }
         });
         initializeText();
+        part.parent.hookFormText(searchResults);
         needsUpdating = true;
     }
 
@@ -518,6 +519,7 @@ public class EngineResultSection {
     }
 
     public void dispose() {
+        part.parent.unhookFormText(searchResults);
         if (!section.isDisposed()) {
             recursiveSetMenu(section, null);
             section.dispose();

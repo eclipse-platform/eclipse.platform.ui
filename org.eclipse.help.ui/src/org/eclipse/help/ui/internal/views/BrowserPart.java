@@ -12,9 +12,11 @@ package org.eclipse.help.ui.internal.views;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.DisplayUtils;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -42,6 +44,16 @@ import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class BrowserPart extends AbstractFormPart implements IHelpPart {
+	private final static int START = 1;
+
+	private final static int OPEN_BRACKET = 2;
+
+	private final static int OPEN_QUOTE = 3;
+
+	private final static int CLOSE_QUOTE = 4;
+
+	private final static int CLOSE_BRACKET = 5;
+
 	private ReusableHelpPart parent;
 
 	private Browser browser;
@@ -53,12 +65,18 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String url;
 
 	private Action showExternalAction;
+
 	private Action syncTocAction;
+
 	private Action bookmarkAction;
+
 	private Action printAction;
+
 	private String statusURL;
+
 	private String title;
-	private boolean query=false;
+
+	private boolean query = false;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
@@ -81,68 +99,71 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				if (e.current == e.total)
 					return;
 				IStatusLineManager slm = BrowserPart.this.parent
-				.getStatusLineManager();
-				IProgressMonitor monitor = slm!=null?slm.getProgressMonitor():null; 
+						.getStatusLineManager();
+				IProgressMonitor monitor = slm != null ? slm
+						.getProgressMonitor() : null;
 				if (lastProgress == -1) {
 					lastProgress = 0;
-					if (monitor!=null) {
+					if (monitor != null) {
 						monitor.beginTask("", e.total); //$NON-NLS-1$
 						slm.setCancelEnabled(true);
 					}
-				}
-				else if (monitor!=null && monitor.isCanceled()) {
+				} else if (monitor != null && monitor.isCanceled()) {
 					browser.stop();
 					return;
 				}
-				if (monitor!=null)
+				if (monitor != null)
 					monitor.worked(e.current - lastProgress);
 				lastProgress = e.current;
 			}
 
 			public void completed(ProgressEvent e) {
 				IStatusLineManager slm = BrowserPart.this.parent
-				.getStatusLineManager();
-				IProgressMonitor monitor = slm!=null?slm.getProgressMonitor():null;
-				if (monitor!=null) {
-					slm.setCancelEnabled(false);				
+						.getStatusLineManager();
+				IProgressMonitor monitor = slm != null ? slm
+						.getProgressMonitor() : null;
+				if (monitor != null) {
+					slm.setCancelEnabled(false);
 					monitor.done();
 				}
 				lastProgress = -1;
-				query=true;
-				boolean status = browser.execute("window.status=document.title;");
+				query = true;
+				boolean status = browser
+						.execute("window.status=document.title;");
 				if (status) {
-					BrowserPart.this.title = (String)browser.getData("query");
+					BrowserPart.this.title = (String) browser.getData("query");
 				}
-				query=false;
+				query = false;
 			}
 		});
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
 				if (query) {
 					browser.setData("query", event.text);
-					query=false;
+					query = false;
 					return;
 				}
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
-				if (statusLine!=null)
+				if (statusLine != null)
 					statusLine.setMessage(event.text);
-				if (event.text.indexOf("://")!= -1) //$NON-NLS-1$
+				if (event.text.indexOf("://") != -1) //$NON-NLS-1$
 					statusURL = event.text;
 			}
 		});
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
-				if (statusURL!=null) {
+				if (statusURL != null) {
 					try {
-					String relativeURL = BaseHelpSystem.unresolve(new URL(statusURL));
-					if (BrowserPart.this.parent.isHelpResource(relativeURL)){
-						BrowserPart.this.parent.showExternalURL(relativeURL);
-						event.required = true;
-					}
-					
-					}
-					catch (MalformedURLException e) {
+						String relativeURL = BaseHelpSystem.unresolve(new URL(
+								statusURL));
+						if (BrowserPart.this.parent.isHelpResource(relativeURL)) {
+							BrowserPart.this.parent
+									.showExternalURL(relativeURL);
+							event.required = true;
+						}
+
+					} catch (MalformedURLException e) {
 						// TODO report this
 					}
 				}
@@ -157,33 +178,36 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
 					public void run() {
 						try {
-							parent.showExternalURL(BaseHelpSystem.unresolve(new URL(url)));
-						}
-						catch (MalformedURLException e) {
+							parent.showExternalURL(BaseHelpSystem
+									.unresolve(new URL(url)));
+						} catch (MalformedURLException e) {
 							// TODO report this
 						}
 					}
 				});
 			}
 		};
-		showExternalAction.setToolTipText(Messages.BrowserPart_showExternalTooltip); 
+		showExternalAction
+				.setToolTipText(Messages.BrowserPart_showExternalTooltip);
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
-		syncTocAction = new Action () {
+		syncTocAction = new Action() {
 			public void run() {
 				doSyncToc();
 			}
 		};
 		syncTocAction.setToolTipText(Messages.BrowserPart_syncTocTooltip);
-		syncTocAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_SYNC_TOC));
-		syncTocAction.setEnabled(false);		
+		syncTocAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_SYNC_TOC));
+		syncTocAction.setEnabled(false);
 		bookmarkAction = new Action() {
 			public void run() {
 				BaseHelpSystem.getBookmarkManager().addBookmark(url, title);
 			}
 		};
-		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip); 
-		bookmarkAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
+		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip);
+		bookmarkAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
 		tbm.insertBefore("back", syncTocAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
@@ -244,17 +268,17 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			browser.setUrl(url);
 		}
 	}
-	
+
 	public void stop() {
-		if (browser!=null && !browser.isDisposed())
+		if (browser != null && !browser.isDisposed())
 			browser.stop();
-		
+
 	}
-	
+
 	private void doPrint() {
 		browser.execute("window.print();"); //$NON-NLS-1$
 	}
-	
+
 	private void doSyncToc() {
 		String href = BaseHelpSystem.unresolve(this.url);
 		int ix = href.indexOf("?resultof="); //$NON-NLS-1$
@@ -262,12 +286,13 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			href = href.substring(0, ix);
 		}
 		parent.showPage(IHelpUIConstants.HV_ALL_TOPICS_PAGE);
-		AllTopicsPart part = (AllTopicsPart)parent.findPart(IHelpUIConstants.HV_TOPIC_TREE);
-		if (part!=null) {
+		AllTopicsPart part = (AllTopicsPart) parent
+				.findPart(IHelpUIConstants.HV_TOPIC_TREE);
+		if (part != null) {
 			part.selectReveal(href);
 		}
 	}
-	
+
 	private void updateSyncTocAction() {
 		String href = BaseHelpSystem.unresolve(this.url);
 		syncTocAction.setEnabled(parent.isHelpResource(href));
@@ -280,14 +305,65 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
+		} else if (url.startsWith("javascript:liveAction(")) {
+			return processLiveAction(url);
 		}
 		return false;
 	}
+
+	private boolean processLiveAction(String url) {
+		int size = "javascript:liveAction".length();
+		String args = url.substring(size);
+		ArrayList arglist = new ArrayList();
+		StringBuffer buff = new StringBuffer();
+		int state = START;
+		for (int i = 0; i < args.length(); i++) {
+			char c = args.charAt(i);
+			switch (state) {
+			case START:
+				if (c == '(')
+					state = OPEN_BRACKET;
+				break;
+			case OPEN_BRACKET:
+				if (c == '\"')
+					state = OPEN_QUOTE;
+				break;
+			case OPEN_QUOTE:
+				if (c == '\"') {
+					state = CLOSE_QUOTE;
+					arglist.add(buff.toString());
+					buff.delete(0, buff.length());
+				} else
+					buff.append(c);
+				break;
+			case CLOSE_QUOTE:
+				if (c == ',') {
+					state = OPEN_BRACKET;
+				} else if (c == ')') {
+					state = CLOSE_BRACKET;
+				}
+				break;
+			}
+			if (state == CLOSE_BRACKET)
+				break;
+		}
+		if (arglist.size() < 2)
+			return false;
+		String pluginId = (String) arglist.get(0);
+		String className = (String) arglist.get(1);
+		String arg = null;
+		if (arglist.size() == 3)
+			arg = (String) arglist.get(2);
+		DisplayUtils.runLiveHelp(pluginId, className, arg);
+		return true;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
