@@ -88,6 +88,11 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * The defaultQualifier is the string used to look up the default node.
 	 */
 	String defaultQualifier;
+	
+	/**
+	 * Boolean value indicating whether or not this store has changes to be saved.
+	 */
+	private boolean dirty;
 
 	/**
 	 * Create a new instance of the receiver. Store the values in context in the
@@ -514,10 +519,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
 	 */
 	public boolean needsSaving() {
-		//Always return true as there is no API on the IEclipsePreferences
-		//to check this. The internal implementation will not save if there
-		//is a nothing to save.
-		return true;
+		return dirty;
 	}
 
 	/*
@@ -531,8 +533,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			//Do not notify listeners
 			silentRunning = true;
 			getStorePreferences().put(name, value);
-		} finally {//Be sure that an exception does not stop property updates
+		} finally {
+			//Be sure that an exception does not stop property updates
 			silentRunning = false;
+			dirty = true;
 		}
 	}
 
@@ -611,9 +615,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
 	 */
 	public void setToDefault(String name) {
-		// removing a non-existant preference is a no-op so call the Core API
+		// removing a non-existing preference is a no-op so call the Core API
 		// directly
 		getStorePreferences().remove(name);
+		dirty = true;
 	}
 
 	/*
@@ -630,9 +635,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putDouble(name, value);
-			if (oldValue != value)
-				firePropertyChangeEvent(name, new Double(oldValue), new Double(
-						value));
+			if (oldValue != value) {
+				dirty = true;
+				firePropertyChangeEvent(name, new Double(oldValue), new Double(value));
+			}
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -652,9 +658,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putFloat(name, value);
-			if (oldValue != value)
-				firePropertyChangeEvent(name, new Float(oldValue), new Float(
-						value));
+			if (oldValue != value) {
+				dirty = true;
+				firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+			}
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -674,9 +681,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putInt(name, value);
-			if (oldValue != value)
-				firePropertyChangeEvent(name, new Integer(oldValue),
-						new Integer(value));
+			if (oldValue != value) {
+				dirty = true;
+				firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value));
+			}
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -696,9 +704,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putLong(name, value);
-			if (oldValue != value)
-				firePropertyChangeEvent(name, new Long(oldValue), new Long(
-						value));
+			if (oldValue != value) {
+				dirty = true;
+				firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
+			}
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -716,6 +725,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().put(name, value);
+		dirty = true;
 	}
 
 	/*
@@ -732,9 +742,10 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putBoolean(name, value);
-			if (oldValue != value)
-				firePropertyChangeEvent(name, new Boolean(oldValue),
-						new Boolean(value));
+			if (oldValue != value) {
+				dirty = true;
+				firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
+			}
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -748,6 +759,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	public void save() throws IOException {
 		try {
 			getStorePreferences().flush();
+			dirty = false;
 		} catch (BackingStoreException e) {
 			throw new IOException(e.getMessage());
 		}
