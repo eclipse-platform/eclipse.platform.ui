@@ -75,9 +75,7 @@ public final class ActivityDefinition implements Comparable {
         return map;
     }
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String id;
 
@@ -140,12 +138,12 @@ public final class ActivityDefinition implements Comparable {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;

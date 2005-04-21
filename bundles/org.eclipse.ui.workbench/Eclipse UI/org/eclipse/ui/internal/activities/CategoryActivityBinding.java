@@ -24,9 +24,7 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
 
     private String categoryId;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private transient String string;
 
@@ -69,11 +67,11 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL){
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;

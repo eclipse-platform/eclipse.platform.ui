@@ -24,9 +24,7 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
     private String activityId;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private Pattern pattern;
 
@@ -72,11 +70,12 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
+        if (hashCode == HASH_INITIAL) {
             hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;

@@ -63,9 +63,7 @@ public final class CategoryActivityBindingDefinition {
 
     private String categoryId;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String sourceId;
 
@@ -121,12 +119,12 @@ public final class CategoryActivityBindingDefinition {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;

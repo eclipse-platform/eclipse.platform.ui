@@ -35,9 +35,7 @@ final class Identifier implements IIdentifier {
 
     private boolean enabled;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String id;
 
@@ -115,12 +113,12 @@ final class Identifier implements IIdentifier {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;
@@ -148,8 +146,7 @@ final class Identifier implements IIdentifier {
             this.activityIds = activityIds;
             this.activityIdsAsArray = (String[]) this.activityIds
                     .toArray(new String[this.activityIds.size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -160,8 +157,7 @@ final class Identifier implements IIdentifier {
     boolean setEnabled(boolean enabled) {
         if (enabled != this.enabled) {
             this.enabled = enabled;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }

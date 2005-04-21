@@ -46,9 +46,7 @@ final class Activity implements IActivity {
 
     private boolean enabled;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String id;
 
@@ -172,8 +170,7 @@ final class Activity implements IActivity {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activityRequirementBindings);
             hashCode = hashCode * HASH_FACTOR
@@ -182,7 +179,8 @@ final class Activity implements IActivity {
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;
@@ -232,8 +230,7 @@ final class Activity implements IActivity {
             this.activityRequirementBindingsAsArray = (IActivityRequirementBinding[]) this.activityRequirementBindings
                     .toArray(new IActivityRequirementBinding[this.activityRequirementBindings
                             .size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -250,8 +247,7 @@ final class Activity implements IActivity {
             this.activityPatternBindingsAsArray = (IActivityPatternBinding[]) this.activityPatternBindings
                     .toArray(new IActivityPatternBinding[this.activityPatternBindings
                             .size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -262,8 +258,7 @@ final class Activity implements IActivity {
     boolean setDefined(boolean defined) {
         if (defined != this.defined) {
             this.defined = defined;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -274,8 +269,7 @@ final class Activity implements IActivity {
     boolean setEnabled(boolean enabled) {
         if (enabled != this.enabled) {
             this.enabled = enabled;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -286,8 +280,7 @@ final class Activity implements IActivity {
     boolean setName(String name) {
         if (!Util.equals(name, this.name)) {
             this.name = name;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -298,8 +291,7 @@ final class Activity implements IActivity {
     boolean setDescription(String description) {
         if (!Util.equals(description, this.description)) {
             this.description = description;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -349,8 +341,7 @@ final class Activity implements IActivity {
     boolean setDefaultEnabled(boolean defaultEnabled) {
         if (!Util.equals(defaultEnabled, this.defaultEnabled)) {
             this.defaultEnabled = defaultEnabled;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }

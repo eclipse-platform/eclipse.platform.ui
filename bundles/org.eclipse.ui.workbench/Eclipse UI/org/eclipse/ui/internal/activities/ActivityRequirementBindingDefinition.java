@@ -61,9 +61,7 @@ public final class ActivityRequirementBindingDefinition {
 
     private String requiredActivityId;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String activityId;
 
@@ -123,13 +121,13 @@ public final class ActivityRequirementBindingDefinition {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(requiredActivityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;

@@ -38,9 +38,7 @@ final class Category implements ICategory {
 
     private boolean defined;
 
-    private transient int hashCode;
-
-    private transient boolean hashCodeComputed;
+    private transient int hashCode = HASH_INITIAL;
 
     private String id;
 
@@ -137,14 +135,14 @@ final class Category implements ICategory {
     }
 
     public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
+        if (hashCode == HASH_INITIAL) {
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(categoryActivityBindings);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            hashCodeComputed = true;
+            if (hashCode == HASH_INITIAL)
+                hashCode++;
         }
 
         return hashCode;
@@ -175,8 +173,7 @@ final class Category implements ICategory {
             this.categoryActivityBindingsAsArray = (ICategoryActivityBinding[]) this.categoryActivityBindings
                     .toArray(new ICategoryActivityBinding[this.categoryActivityBindings
                             .size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -187,8 +184,7 @@ final class Category implements ICategory {
     boolean setDefined(boolean defined) {
         if (defined != this.defined) {
             this.defined = defined;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -199,8 +195,7 @@ final class Category implements ICategory {
     boolean setName(String name) {
         if (!Util.equals(name, this.name)) {
             this.name = name;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
@@ -239,8 +234,7 @@ final class Category implements ICategory {
     public boolean setDescription(String description) {
         if (!Util.equals(description, this.description)) {
             this.description = description;
-            hashCodeComputed = false;
-            hashCode = 0;
+            hashCode = HASH_INITIAL;
             string = null;
             return true;
         }
