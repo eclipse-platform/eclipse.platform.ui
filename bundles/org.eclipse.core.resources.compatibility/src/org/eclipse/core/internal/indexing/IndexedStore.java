@@ -327,6 +327,8 @@ public class IndexedStore {
 		try {
 			objectStore = new ObjectStore(new IndexedStoreObjectPolicy());
 			objectStore.open(name);
+			// setting the name signals the indexed store as open
+			this.name = name;			
 			checkMetadata();
 			contextAddress = ContextAddress10;
 			IndexedStoreContext context = acquireContext(contextAddress);
@@ -344,7 +346,6 @@ public class IndexedStore {
 			indexDirectoryCursor = indexDirectory.open();
 			objectDirectory = new Index(this, objectDirectoryAddress);
 			objectDirectoryCursor = objectDirectory.open();
-			this.name = name;
 			registry.put(name, this);
 		} catch (IndexedStoreException e) {
 			throw e;
