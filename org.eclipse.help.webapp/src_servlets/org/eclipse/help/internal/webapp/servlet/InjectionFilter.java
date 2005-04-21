@@ -26,13 +26,13 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  * dynamic help view.
  */
 public class InjectionFilter implements IFilter {
-	private static final String narrowBook1 = "<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
+	private static final String narrowBook1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 
-	private static final String narrowBook2 = "narrow_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">\n"; //$NON-NLS-1$
+	private static final String narrowBook2 = "narrow_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$
 
-	private static final String disabledBook1 = "<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
+	private static final String disabledBook1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 
-	private static final String disabledBook2 = "disabled_book.css\" charset=\"ISO-8859-1\" type=\"text/css\"\n>"; //$NON-NLS-1$	
+	private static final String disabledBook2 = "disabled_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$	
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)

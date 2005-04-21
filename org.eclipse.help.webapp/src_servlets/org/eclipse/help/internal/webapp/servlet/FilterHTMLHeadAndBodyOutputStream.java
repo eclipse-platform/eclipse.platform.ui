@@ -11,7 +11,10 @@
 
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Filters output stream and inserts specified bytes before the end of HEAD
@@ -23,7 +26,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private static final int STATE_LT = 1;
 
 	private static final int STATE_LT_SLASH = 2;
-	
+
 	private static final int STATE_LT_SLASH_H = 3;
 
 	private static final int STATE_LT_SLASH_HE = 4;
@@ -31,9 +34,9 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private static final int STATE_LT_SLASH_HEA = 5;
 
 	private static final int STATE_LT_SLASH_HEAD = 6;
-	
+
 	private static final int STATE_AFTER_HEAD = 7;
-	
+
 	private static final int STATE_LT_B = 8;
 
 	private static final int STATE_LT_BO = 9;
@@ -41,7 +44,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private static final int STATE_LT_BOD = 10;
 
 	private static final int STATE_LT_BODY = 11;
-	
+
 	private static final int STATE_IN_BODY = 12;
 
 	private static final int STATE_LT_SLASH_B = 13;
@@ -54,10 +57,14 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 
 	private static final int STATE_DONE = 17;
 
+	private int areaState = STATE_START;
+
 	private int state = STATE_START;
 
 	private byte[] toHead;
+
 	private byte[] toInsert;
+
 	private byte[] toAppend;
 
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(7);
@@ -68,13 +75,17 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	 * @param out
 	 *            sink output stream
 	 * @param bytesForHead
-	 * 			  bytes to insert at the end of head of HTML or <code>null</code>
+	 *            bytes to insert at the end of head of HTML or
+	 *            <code>null</code>
 	 * @param bytesToInsert
-	 *            bytes to insert at the begining of body of HTML or <code>null</code>
+	 *            bytes to insert at the begining of body of HTML or
+	 *            <code>null</code>
 	 * @param bytesToAppend
-	 * 			  bytes to append at the end of body of HTML or <code>null</code>
+	 *            bytes to append at the end of body of HTML or
+	 *            <code>null</code>
 	 */
-	public FilterHTMLHeadAndBodyOutputStream(OutputStream out, byte[] bytesForHead, byte[] bytesToInsert, byte[] bytesToAppend) {
+	public FilterHTMLHeadAndBodyOutputStream(OutputStream out,
+			byte[] bytesForHead, byte[] bytesToInsert, byte[] bytesToAppend) {
 		super(out);
 		toHead = bytesForHead;
 		toInsert = bytesToInsert;
@@ -110,11 +121,9 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 			buffer.write(b);
 			if (b == '/') {
 				state = STATE_LT_SLASH;
-			}
-			else if (b=='b'|| b=='B') {
+			} else if (b == 'b' || b == 'B') {
 				state = STATE_LT_B;
-			}
-			else {
+			} else {
 				reset();
 			}
 			break;
@@ -145,22 +154,22 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 		case STATE_LT_BODY:
 			buffer.write(b);
 			if (b == '>') {
-				if (toInsert!=null) {
+				out.write(buffer.toByteArray());
+				buffer.reset();
+				if (toInsert != null) {
 					out.write('\n');
 					out.write(toInsert);
 					out.write('\n');
 				}
+				areaState = STATE_IN_BODY;
 				state = STATE_IN_BODY;
-			} else {
-				reset();
 			}
 			break;
 		case STATE_LT_SLASH:
 			buffer.write(b);
 			if (b == 'h' || b == 'H') {
 				state = STATE_LT_SLASH_H;
-			}
-			else if (b == 'b' || b == 'B') {
+			} else if (b == 'b' || b == 'B') {
 				state = STATE_LT_SLASH_B;
 			} else {
 				reset();
@@ -193,11 +202,14 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 		case STATE_LT_SLASH_HEAD:
 			buffer.write(b);
 			if (b == '>') {
-				if (toHead!=null) {
+				if (toHead != null) {
 					out.write(toHead);
 					out.write('\n');
 				}
+				areaState = STATE_AFTER_HEAD;
 				state = STATE_AFTER_HEAD;
+				out.write(buffer.toByteArray());
+				buffer.reset();
 			} else {
 				reset();
 			}
@@ -229,11 +241,12 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 		case STATE_LT_SLASH_BODY:
 			buffer.write(b);
 			if (b == '>') {
-				if (toAppend!=null) {
+				if (toAppend != null) {
 					out.write(toAppend);
 					out.write('\n');
 				}
 				reset();
+				areaState = STATE_DONE;
 				state = STATE_DONE;
 			} else {
 				reset();
@@ -248,7 +261,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private void reset() throws IOException {
 		out.write(buffer.toByteArray());
 		buffer.reset();
-		state = STATE_START;
+		state = areaState;
 	}
 
 	public void write(byte b[], int off, int len) throws IOException {
