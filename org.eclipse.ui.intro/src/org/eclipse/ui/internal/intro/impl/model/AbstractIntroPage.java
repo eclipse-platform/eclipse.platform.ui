@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -38,7 +40,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
-    private static final String INVALID_CONTENT = "invalidPage.xhtml"; //$NON-NLS-1$
+    private static final String INVALID_CONTENT = "invalidPage/invalidPage.xhtml"; //$NON-NLS-1$
 
     private String style;
     private String altStyle;
@@ -361,7 +363,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         Document dom = parser.getDocument();
         if (dom == null) {
             // bad xml. This could be bad XHTML or bad intro XML. Parser would
-            // have logged fact. Load dom for invalid page.
+            // have logged fact. Load dom for invalid page, and make sure to
+            // force an extract on parent folder to enabling jarring.
+            Bundle introBundle = Platform.getBundle(IIntroConstants.PLUGIN_ID);
+            ModelUtil.extractParentFolder(introBundle, INVALID_CONTENT);
+
             String invalidContentFilePath = BundleUtil
                 .getResolvedResourceLocation(INVALID_CONTENT, IntroPlugin
                     .getDefault().getBundle());

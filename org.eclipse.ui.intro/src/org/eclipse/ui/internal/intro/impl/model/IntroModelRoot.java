@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -716,16 +714,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // To support jarring, extract parent folder of where the intro content
         // file is. It is expected that all intro content is in that one parent
-        // folder.
-        try {
-            IPath parentFolder = ModelUtil.getParentFolder(content);
-            Bundle domBundle = BundleUtil
-                .getBundleFromConfigurationElement(cfgElement);
-            URL parentFolderURL = Platform.find(domBundle, parentFolder);
-            URL url = Platform.asLocalURL(parentFolderURL);
-        } catch (Exception e) {
-            Log.error("Failed to extract Intro content folder", e);
-        }
+        // folder. THis works for both content files and configExtension content
+        // files.
+        Bundle domBundle = BundleUtil
+            .getBundleFromConfigurationElement(cfgElement);
+        ModelUtil.extractParentFolder(domBundle, content);
 
         // Resolve.
         content = BundleUtil.getResourceLocation(content, cfgElement);

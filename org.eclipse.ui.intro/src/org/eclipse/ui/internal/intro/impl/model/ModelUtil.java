@@ -11,12 +11,14 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,6 +100,26 @@ public class ModelUtil {
         else
             // make plugin relative url. Only now we need the bundle.
             return BundleUtil.getResolvedResourceLocation(url, bundle);
+    }
+
+
+
+    /**
+     * Util method to support jarring. Used to extract parent folder of intro
+     * xml content files. And to extract parent folder of invalidPage.xhtml
+     * 
+     * @param resource
+     */
+    protected static void extractParentFolder(Bundle bundle, String contentFile) {
+        try {
+            IPath parentFolder = ModelUtil.getParentFolder(contentFile);
+            URL parentFolderURL = Platform.find(bundle, parentFolder);
+            URL url = Platform.asLocalURL(parentFolderURL);
+        } catch (Exception e) {
+            if (contentFile != null)
+                Log.error("Failed to extract Intro content folder for: "
+                        + contentFile, e);
+        }
     }
 
 
