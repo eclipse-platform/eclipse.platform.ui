@@ -284,10 +284,7 @@ public final class KeySequence implements Comparable {
         if (!(object instanceof KeySequence))
             return false;
 
-        if (!keyStrokes.equals(((KeySequence) object).keyStrokes))
-        	return false;
-        
-        return true;
+        return keyStrokes.equals(((KeySequence) object).keyStrokes);
     }
 
     /**

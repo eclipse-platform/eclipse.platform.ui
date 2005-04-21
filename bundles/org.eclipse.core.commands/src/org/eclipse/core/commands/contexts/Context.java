@@ -181,10 +181,7 @@ public final class Context extends NamedHandleObject implements Comparable {
 			return false;
         if (!Util.equals(name, castedObject.name))
         	return false;
-        if (!Util.equals(parentId, castedObject.parentId))
-        	return false;
-
-        return true;
+        return Util.equals(parentId, castedObject.parentId);
     }
 
     /**

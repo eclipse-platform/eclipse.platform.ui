@@ -117,10 +117,7 @@ public final class Category extends NamedHandleObject {
 			return false;
 		if (!Util.equals(id, castedObject.id))
 			return false;
-		if (!Util.equals(name, castedObject.name))
-			return false;
-
-		return true;
+		return Util.equals(name, castedObject.name);
 	}
 
 	/**

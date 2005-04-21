@@ -213,10 +213,7 @@ final class CachedBindingSet {
 			return false;
 		if (!Util.equals(platforms, other.platforms))
 			return false;
-		if (!Util.equals(schemeIds, other.schemeIds))
-			return false;
-
-		return true;
+		return Util.equals(schemeIds, other.schemeIds);
 	}
 
 	/**
