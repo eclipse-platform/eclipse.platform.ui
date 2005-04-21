@@ -30,12 +30,12 @@
       <config
             introId="org.eclipse.platform.intro"
             id="org.eclipse.platform.introConfig"
-            content="$nl$/introContent.xml">
+            content="$nl$/intro/introContent.xml">
          <presentation
                home-page-id="root" standby-page-id="standby">
             <implementation
                   ws="win32"
-                  style="css/shared.css"
+                  style="intro/css/shared.css"
                   kind="html"
                   os="win32">
             </implementation>
@@ -51,22 +51,22 @@
             	>
                <handle
                      close="true"
-                     image="css/graphics/contentpage/handle.gif"/>
+                     image="intro/css/graphics/contentpage/handle.gif"/>
                <shortcut
-                     icon="css/graphics/icons/etool/overview.gif"
+                     icon="intro/css/graphics/icons/etool/overview.gif"
                      tooltip="%shortcut.overview.tooltip"
                      url="http://org.eclipse.ui.intro/showPage?id=overview"/>
                <shortcut
                      tooltip="%shortcut.tutorials.tooltip"
-                     icon="css/graphics/icons/etool/tutorials.gif"
+                     icon="intro/css/graphics/icons/etool/tutorials.gif"
                      url="http://org.eclipse.ui.intro/showPage?id=tutorials"/>
                <shortcut
                      tooltip="%shortcut.samples.tooltip"
-                     icon="css/graphics/icons/etool/samples.gif"
+                     icon="intro/css/graphics/icons/etool/samples.gif"
                      url="http://org.eclipse.ui.intro/showPage?id=samples"/>
                <shortcut
                      tooltip="%shortcut.whatsnew.tooltip"
-                     icon="css/graphics/icons/etool/whatsnew.gif"
+                     icon="intro/css/graphics/icons/etool/whatsnew.gif"
                      url="http://org.eclipse.ui.intro/showPage?id=news"/>                                             
             </launchBar>
          </presentation>
