@@ -20,15 +20,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.WorkbenchMessages;
-
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -47,27 +45,6 @@ public class DecorationScheduler {
 
 	// Objects that are awaiting a label update.
 	Set pendingUpdate = new HashSet();
-
-	ISchedulingRule updateRule = new ISchedulingRule() {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this; // ALways conflict with this.
-		}
-	};
 
 	Map awaitingDecorationValues = new HashMap();
 
@@ -99,14 +76,14 @@ public class DecorationScheduler {
 	 * @return String
 	 * @param text
 	 * @param element
-	 * @param adaptedElement.
+	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
 	 */
 
 	public String decorateWithText(String text, Object element,
 			Object adaptedElement) {
 
-		DecorationResult decoration = getResult(element, adaptedElement, text);
+		DecorationResult decoration = getResult(element, adaptedElement);
 
 		if (decoration == null)
 			return text;
@@ -119,9 +96,9 @@ public class DecorationScheduler {
 	 * Queue the element and its adapted value if it has not been already.
 	 * 
 	 * @param element
-	 * @param adaptedElement.
+	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
-	 * @param forceUpdate.
+	 * @param forceUpdate
 	 *            If true then a labelProviderChanged is fired whether
 	 *            decoration occured or not.
 	 * @param undecoratedText
@@ -159,14 +136,14 @@ public class DecorationScheduler {
 	 * @return Image
 	 * @param image
 	 * @param element
-	 * @param adaptedElement.
+	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
 	 * 
 	 */
 	public Image decorateWithOverlays(Image image, Object element,
 			Object adaptedElement) {
 
-		DecorationResult decoration = getResult(element, adaptedElement, null);
+		DecorationResult decoration = getResult(element, adaptedElement);
 
 		if (decoration == null)
 			return image;
@@ -183,12 +160,9 @@ public class DecorationScheduler {
 	 *            return <code>null</code>.
 	 * @param adaptedElement
 	 *            It's adapted value.
-	 * @param text
-	 *            The inital String or <code>null</code>
 	 * @return DecorationResult or <code>null</code>
 	 */
-	private DecorationResult getResult(Object element, Object adaptedElement,
-			String text) {
+	private DecorationResult getResult(Object element, Object adaptedElement) {
 
 		// We do not support decoration of null
 		if (element == null)
@@ -261,6 +235,17 @@ public class DecorationScheduler {
 
 				if (shutdown)// Cancelled on shutdown
 					return Status.CANCEL_STATUS;
+				
+				while(updatesPending()){
+					
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						//Cancel and try again if there was an error
+						schedule();
+						return Status.CANCEL_STATUS;
+					}
+				}
 
 				monitor.beginTask(
 						WorkbenchMessages.DecorationScheduler_CalculatingTask,
@@ -382,10 +367,22 @@ public class DecorationScheduler {
 			}
 		};
 
-		decorationJob.setRule(updateRule);
 		decorationJob.setSystem(true);
 		decorationJob.setPriority(Job.DECORATE);
 		decorationJob.schedule();
+	}
+
+	/**
+	 * Return whether or not we are waiting on updated
+	 * @return <code>true</code> if there are updates waiting
+	 * to be served
+	 */
+	protected boolean updatesPending() {
+		if(updateJob != null && updateJob.getState() != Job.NONE)
+			return true;
+		if(clearJob != null && clearJob.getState() != Job.NONE)
+			return true;
+		return false;
 	}
 
 	/**
@@ -423,7 +420,6 @@ public class DecorationScheduler {
 
 			};
 		clear.setSystem(true);
-		clear.setRule(updateRule);
 		
 		return clear;
 	}
@@ -480,7 +476,6 @@ public class DecorationScheduler {
 			}
 		};
 
-		job.setRule(updateRule);
 		job.setSystem(true);
 		return job;
 	}
@@ -506,7 +501,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getBackgroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, null);
+		DecorationResult decoration = getResult(element, adaptedElement);
 
 		if (decoration == null)
 			return null;
@@ -524,7 +519,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Font getFont(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, null);
+		DecorationResult decoration = getResult(element, adaptedElement);
 
 		if (decoration == null)
 			return null;
@@ -542,7 +537,7 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getForegroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, null);
+		DecorationResult decoration = getResult(element, adaptedElement);
 
 		if (decoration == null)
 			return null;
