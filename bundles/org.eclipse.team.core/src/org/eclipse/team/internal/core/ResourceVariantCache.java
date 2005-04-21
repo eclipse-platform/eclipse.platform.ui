@@ -11,12 +11,7 @@
 package org.eclipse.team.internal.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -98,8 +93,9 @@ public class ResourceVariantCache {
 	}
 	
 	public static synchronized void shutdown() {
-		for (Iterator iter = caches.keySet().iterator(); iter.hasNext();) {
-			String id = (String) iter.next();
+		String[] keys = (String[])caches.keySet().toArray(new String[caches.size()]);
+        for (int i = 0; i < keys.length; i++) {
+            String id = keys[i];
 			disableCache(id);
 		}
 	}
