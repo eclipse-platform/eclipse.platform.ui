@@ -22,6 +22,8 @@ package org.eclipse.ui.commands;
  */
 public abstract class CommandException extends Exception {
 
+	private Throwable cause;
+
     /**
      * Creates a new instance of this class with the specified detail message.
      * 
@@ -42,6 +44,18 @@ public abstract class CommandException extends Exception {
      *            the cause.
      */
     public CommandException(String message, Throwable cause) {
-        super(message, cause);
+        super(message);
+        // don't pass the cause to super, to allow compilation against JCL Foundation
+        this.cause = cause;
+    }
+
+    /**
+     * Returns the cause of this throwable or <code>null</code> if the
+     * cause is nonexistent or unknown. 
+     *
+     * @return the cause or <code>null</code>
+     */
+    public Throwable getCause() {
+        return cause;
     }
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,6 +34,23 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public class WorkbenchEncoding {
 
+	/**
+	 * The method for java.nio.charset.Charset.isSupported(String), or <code>null</code>
+	 * if not present.  Reflection is used here to allow compilation against JCL Foundation (bug 80053).
+	 */
+	private static Method CharsetIsSupportedMethod = null; 
+	
+	static {
+		try {
+			Class charsetClass = Class.forName("java.nio.charset.Charset"); //$NON-NLS-1$
+			CharsetIsSupportedMethod = charsetClass.getMethod("isSupported", new Class[] { String.class }); //$NON-NLS-1$
+		}
+		catch (Exception e) {
+			// ignore
+		}
+			
+	}
+	
 	private static class EncodingsRegistryReader extends RegistryReader {
 		
 		private List encodings;
@@ -87,16 +104,8 @@ public class WorkbenchEncoding {
 		List invalid = new ArrayList();
 		definedEncodings.toArray(encodings);
 		for (int i = 0; i < encodings.length; i++) {
-			String string = encodings[i];
-			
-			boolean isSupported;
-			try {
-				isSupported = Charset.isSupported(string);
-			} catch (IllegalCharsetNameException e) {
-				isSupported = false;
-			}
-			if (!isSupported)
-				invalid.add(string);
+			if (!isSupported(encodings[i]))
+				invalid.add(encodings[i]);
 		}
 
 		Iterator invalidIterator = invalid.iterator();
@@ -108,5 +117,29 @@ public class WorkbenchEncoding {
 		}
 
 		return definedEncodings;
+	}
+
+	/**
+	 * Returns whether the given encoding is supported in the current runtime.
+	 * 
+	 * @param encoding the encoding to test
+	 * @return <code>true</code> if supported or if its support could not be determined, 
+	 *   <code>false</code> if not supported
+	 */
+	private static boolean isSupported(String encoding) {
+		if (CharsetIsSupportedMethod == null) {
+			return true;
+		}
+		try {
+			Object o = CharsetIsSupportedMethod.invoke(null, new Object[] { encoding });
+			return Boolean.TRUE.equals(o);
+		} catch (IllegalArgumentException e) {
+			// fall through
+		} catch (IllegalAccessException e) {
+			// fall through
+		} catch (InvocationTargetException e) {
+			// fall through
+		}
+		return true;
 	}
 }

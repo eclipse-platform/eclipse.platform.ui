@@ -12,22 +12,15 @@
 package org.eclipse.ui;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -65,7 +58,7 @@ public final class XMLMemento implements IMemento {
      * 
      * @param reader the <code>Reader</code> used to create the memento's document
      * @return a memento on the first <code>Element</code> for reading the document
-     * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
+     * @throws WorkbenchException if IO problems, invalid format, or no element.
      */
     public static XMLMemento createReadRoot(Reader reader)
             throws WorkbenchException {
@@ -84,7 +77,7 @@ public final class XMLMemento implements IMemento {
      * 		must be valid for the platform. Can be <code>null</code> if not
      * 		needed.
      * @return a memento on the first <code>Element</code> for reading the document
-     * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
+     * @throws WorkbenchException if IO problems, invalid format, or no element.
      */
     public static XMLMemento createReadRoot(Reader reader, String baseDir)
             throws WorkbenchException {
@@ -140,7 +133,8 @@ public final class XMLMemento implements IMemento {
             document.appendChild(element);
             return new XMLMemento(document, element);
         } catch (ParserConfigurationException e) {
-            throw new Error(e);
+//            throw new Error(e);
+            throw new Error(e.getMessage());
         }
     }
 
@@ -305,9 +299,8 @@ public final class XMLMemento implements IMemento {
         Text textNode = getTextNode();
         if (textNode != null) {
             return textNode.getData();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -406,18 +399,116 @@ public final class XMLMemento implements IMemento {
      * @throws IOException if there is a problem serializing the document to the stream.
      */
     public void save(Writer writer) throws IOException {
-        Result result = new StreamResult(writer);
-        Source source = new DOMSource(factory);
+    	DOMWriter out = new DOMWriter(writer);
         try {
-            Transformer transformer = TransformerFactory.newInstance()
-                    .newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-            transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-            transformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-            throw (IOException) (new IOException().initCause(e));
-        } catch (TransformerException e) {
-            throw (IOException) (new IOException().initCause(e));
-        }
+    		save(element, out);
+    	} finally {
+    		out.close();
+    	}
+	}
+
+    private void save(Element element, DOMWriter out) {
+    	out.startTag(element);
+    	NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) 
+			save ((Element)children.item(i), out);
+		out.endTag(element);
+	}
+
+	/**
+     * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
+     * compilation against JCL Foundation (bug 80053). 
+     */
+    private static class DOMWriter extends PrintWriter {
+    	protected int tab;
+
+    	/* constants */
+    	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
+
+    	public DOMWriter(Writer output) throws UnsupportedEncodingException {
+    		super(output);
+    		tab = 0;
+    		println(XML_VERSION);
+    	}
+
+    	public void endTag(Element element) {
+    		tab--;
+    		if (!element.hasChildNodes())
+    			return;
+    		StringBuffer sb = new StringBuffer();
+    		sb.append("</"); //$NON-NLS-1$
+    		sb.append(element.getNodeName());
+    		sb.append(">"); //$NON-NLS-1$
+   			printTabulation();
+   			println(sb.toString());
+    	}
+    	
+    	public void printTabulation() {
+    		for (int i = 0; i < tab; i++)
+    			super.print("  "); //$NON-NLS-1$
+    	}
+
+    	public void printTag(Element element, boolean shouldTab, boolean newLine) {
+    		StringBuffer sb = new StringBuffer();
+    		sb.append("<"); //$NON-NLS-1$
+    		sb.append(element.getTagName());
+    		NamedNodeMap attributes = element.getAttributes();
+   			for (int i = 0;  i < attributes.getLength(); i++) {
+   				Attr attribute = (Attr)attributes.item(i);
+				sb.append(" "); //$NON-NLS-1$
+				sb.append(attribute.getName());
+				sb.append("=\""); //$NON-NLS-1$
+				sb.append(getEscaped(String.valueOf(attribute.getValue())));
+				sb.append("\""); //$NON-NLS-1$
+   			}
+   			sb.append(element.hasChildNodes() ? ">" : "/>"); //$NON-NLS-1$ //$NON-NLS-2$
+    		if (shouldTab)
+    			printTabulation();
+    		if (newLine)
+    			println(sb.toString());
+    		else
+    			print(sb.toString());
+    	}
+
+    	public void startTag(Element element) {
+    		printTag(element, true, true);
+    		tab++;
+    	}
+
+    	private static void appendEscapedChar(StringBuffer buffer, char c) {
+    		String replacement = getReplacement(c);
+    		if (replacement != null) {
+    			buffer.append('&');
+    			buffer.append(replacement);
+    			buffer.append(';');
+    		} else {
+    			buffer.append(c);
+    		}
+    	}
+
+    	public static String getEscaped(String s) {
+    		StringBuffer result = new StringBuffer(s.length() + 10);
+    		for (int i = 0; i < s.length(); ++i)
+    			appendEscapedChar(result, s.charAt(i));
+    		return result.toString();
+    	}
+
+    	private static String getReplacement(char c) {
+    		// Encode special XML characters into the equivalent character references.
+    		// These five are defined by default for all XML documents.
+    		switch (c) {
+    			case '<' :
+    				return "lt"; //$NON-NLS-1$
+    			case '>' :
+    				return "gt"; //$NON-NLS-1$
+    			case '"' :
+    				return "quot"; //$NON-NLS-1$
+    			case '\'' :
+    				return "apos"; //$NON-NLS-1$
+    			case '&' :
+    				return "amp"; //$NON-NLS-1$
+    		}
+    		return null;
+    	}
     }
 }

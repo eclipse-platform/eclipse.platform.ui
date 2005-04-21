@@ -144,13 +144,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         queueEvents = shouldQueue;
 
         if (queueEvents == false) {
-            for (int eventIdx = queuedEvents.nextSetBit(0); eventIdx >= 0; eventIdx = queuedEvents
-                    .nextSetBit(eventIdx + 1)) {
-
-                firePropertyChange(eventIdx);
+        	// do not use nextSetBit, to allow compilation against JCL Foundation (bug 80053)
+        	for (int i = 0, n = queuedEvents.size(); i < n; ++i) {
+        		if (queuedEvents.get(i)) {
+        			firePropertyChange(i);
+        			queuedEvents.clear(i);
+        		}
             }
-
-            queuedEvents.clear();
         }
     }
     
