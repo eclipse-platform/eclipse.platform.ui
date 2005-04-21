@@ -3740,12 +3740,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (refStack == null)
             return null;
 
-        IViewPart[] stack = new IViewPart[refStack.length];
+        List result = new ArrayList();
+       
         for (int i = 0; i < refStack.length; i++) {
-            stack[i] = refStack[i].getView(true);
+            IViewPart next = refStack[i].getView(false);
+            if (next != null) {
+                result.add(next);
+            }
         }
 
-        return stack;
+        return (IViewPart[]) result.toArray(new IViewPart[result.size()]);
     }
 
     /**
