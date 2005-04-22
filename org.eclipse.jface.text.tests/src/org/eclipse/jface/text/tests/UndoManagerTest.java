@@ -41,6 +41,8 @@ public class UndoManagerTest extends TestCase {
 	/** The undo manager. */
 	private IUndoManager fUndoManager;
 
+	private static final int LOOP_COUNT= 20;
+
 	public static Test suite() {
 		return new TestSuite(UndoManagerTest.class);
 	}
@@ -62,7 +64,7 @@ public class UndoManagerTest extends TestCase {
 		fTextViewer.setUndoManager(fUndoManager);
 		fUndoManager.connect(fTextViewer);
 	}
-
+	
 	/**
 	 * Test for line delimiter conversion.
 	 */	
@@ -125,6 +127,51 @@ public class UndoManagerTest extends TestCase {
 		}
 	}
 	
+	public void testLoopRandomAccessAsCompound() {
+		int i= 0;
+		while (i < LOOP_COUNT) {
+			fUndoManager.reset();
+			testRandomAccessAsCompound();
+			i++;
+		}
+	}
+	
+	public void testLoopRandomAccess() {
+		int i= 0;
+		while (i < LOOP_COUNT) {
+			fUndoManager.reset();
+			testRandomAccess();
+			i++;
+		}
+	}
+	
+	public void testLoopRandomAccessAsUnclosedCompound() {
+		int i= 0;
+		while (i < LOOP_COUNT) {
+			fUndoManager.reset();
+			testRandomAccessAsUnclosedCompound();
+			i++;
+		}
+	}
+	
+	public void testLoopConvertLineDelimiters() {
+		int i= 0;
+		while (i < LOOP_COUNT) {
+			fUndoManager.reset();
+			testConvertLineDelimiters();
+			i++;
+		}
+	}
+	
+	public void testLoopRandomAccessWithMixedCompound() {
+		int i= 0;
+		while (i < LOOP_COUNT) {
+			fUndoManager.reset();
+			testRandomAccessWithMixedCompound();
+			i++;
+		}
+	}
+	
 	public void testRandomAccessAsCompound() {
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 100;
@@ -154,7 +201,7 @@ public class UndoManagerTest extends TestCase {
 	 * Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
 	 */
 	public void testRandomAccessAsUnclosedCompound() {
-
+		
 		final int RANDOM_STRING_LENGTH= 50;
 		final int RANDOM_REPLACE_COUNT= 100;
 		
