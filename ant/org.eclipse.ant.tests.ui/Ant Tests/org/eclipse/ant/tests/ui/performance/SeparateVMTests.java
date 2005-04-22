@@ -38,6 +38,9 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
 	public void testBuild() throws CoreException {
     	tagAsSummary("Separate JRE Build", Dimension.ELAPSED_PROCESS);
     	ILaunchConfiguration config= getLaunchConfiguration("echoingSepVM");
+    	//possible first time hit of the SWT pieces getting written from the JAR to the 
+    	//metadata area
+    	launchAndTerminate(config, 20000);
     	for (int i = 0; i < 10; i++) {
     		launch(config, 10);
 		}
@@ -55,13 +58,12 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
 		copy.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
-    	for (int i = 0; i < 10; i++) {
-    	    startMeasuring();
-    		for (int j = 0; j < i; j++) {
-    		    launchAndTerminate(copy, 20000);
-    		}
-    		stopMeasuring();
-		}
+		//possible first time hit of the SWT pieces getting written from the JAR to the 
+    	//metadata area
+		launchAndTerminate(copy, 20000);
+		for (int i = 0; i < 10; i++) {
+    		launch(copy, 10);
+        }
     	commitMeasurements();
 		assertPerformance(); 	
     }
@@ -75,6 +77,9 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
 		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, "-debug");
+		//possible first time hit of the SWT pieces getting written from the JAR to the 
+    	//metadata area
+		launchAndTerminate(copy, 20000);
     	for (int i = 0; i < 10; i++) {
     		launch(copy, 10);
         }
