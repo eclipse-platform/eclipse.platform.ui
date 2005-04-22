@@ -480,7 +480,7 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private ImageDescriptor getImageDescriptor(String iconPath, IConfigurationElement element) {
-		String pluginId= element.getDeclaringExtension().getNamespace();
+		String pluginId= element.getNamespace();
 		Bundle bundle= Platform.getBundle(pluginId);
 		if (bundle == null)
 			return null;

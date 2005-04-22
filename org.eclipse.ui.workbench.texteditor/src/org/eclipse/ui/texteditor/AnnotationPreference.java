@@ -968,7 +968,7 @@ public class AnnotationPreference {
 	public IAnnotationImageProvider getAnnotationImageProvider() {
 		if (fAnnotationImageProvider == null) {
 			if (fConfigurationElement != null && fAnnotationImageProviderAttribute != null) {
-				Bundle bundle= Platform.getBundle( fConfigurationElement.getDeclaringExtension().getNamespace());
+				Bundle bundle= Platform.getBundle( fConfigurationElement.getNamespace());
 				if (bundle != null && bundle.getState() == Bundle.ACTIVE) {
 					try {
 						fAnnotationImageProvider= (IAnnotationImageProvider) fConfigurationElement.createExecutableExtension(fAnnotationImageProviderAttribute);

@@ -140,7 +140,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
 		if (imageName == null)
 			return null;
-		Bundle bundle = Platform.getBundle(fElement.getDeclaringExtension().getNamespace());
+		Bundle bundle = Platform.getBundle(getPluginId());
 		URL iconURL = bundle.getEntry("/"); //$NON-NLS-1$
 		try {
 			iconURL = new URL(iconURL, imageName);

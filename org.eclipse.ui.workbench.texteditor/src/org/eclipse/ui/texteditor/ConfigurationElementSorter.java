@@ -132,8 +132,8 @@ public abstract class ConfigurationElementSorter {
 			Set fBundleSet= new HashSet(length);
 
 			for (int i= 0; i < length; i++) {
-			    IExtension extension = getConfigurationElement(elements[i]).getDeclaringExtension();
-				Bundle bundle = Platform.getBundle(extension.getNamespace());
+			    IConfigurationElement configElement= getConfigurationElement(elements[i]);
+				Bundle bundle= Platform.getBundle(configElement.getNamespace());
 				fDescriptorMapping.put(elements[i], bundle.getSymbolicName());
 				fBundleSet.add(bundle);
 			}

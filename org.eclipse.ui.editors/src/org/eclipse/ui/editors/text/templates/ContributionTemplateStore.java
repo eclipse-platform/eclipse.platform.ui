@@ -119,7 +119,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	private void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
 		String file= element.getAttributeAsIs(FILE);
 		if (file != null) {
-			Bundle plugin = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+			Bundle plugin = Platform.getBundle(element.getNamespace());
 			URL url= Platform.find(plugin, Path.fromOSString(file));
 			if (url != null) {
 				ResourceBundle bundle= null;
