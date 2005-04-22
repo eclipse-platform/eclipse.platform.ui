@@ -151,7 +151,8 @@ public final class Util {
         else if (left == right)
             return 0;
         else
-            return left.toString().compareTo(right.toString());
+            return compare(System.identityHashCode(left), System
+                    .identityHashCode(right));
     }
 
     /**
