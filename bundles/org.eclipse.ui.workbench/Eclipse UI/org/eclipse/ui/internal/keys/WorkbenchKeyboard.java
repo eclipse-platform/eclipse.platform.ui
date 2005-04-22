@@ -657,7 +657,7 @@ public final class WorkbenchKeyboard {
 				"ExecutionError.Title"); //$NON-NLS-1$
 		String exceptionMessage = exception.getMessage();
 		if (exceptionMessage == null) {
-			exceptionMessage = message;
+			exceptionMessage = exception.getClass().getName();
 		}
 		IStatus status = new Status(IStatus.ERROR,
 				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
