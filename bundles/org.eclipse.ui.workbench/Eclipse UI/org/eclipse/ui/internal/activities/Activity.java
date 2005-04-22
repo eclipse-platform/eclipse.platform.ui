@@ -198,11 +198,10 @@ final class Activity implements IActivity {
         if (isDefined())
             for (Iterator iterator = activityPatternBindings.iterator(); iterator
                     .hasNext();) {
-                IActivityPatternBinding activityPatternBinding = (IActivityPatternBinding) iterator
+                ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iterator
                         .next();
 
-                if (activityPatternBinding.getPattern().matcher(string)
-                        .matches())
+                if (activityPatternBinding.isMatch(string))
                     return true;
             }
 

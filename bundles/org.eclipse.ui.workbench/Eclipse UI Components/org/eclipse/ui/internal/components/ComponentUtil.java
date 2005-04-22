@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.components.registry.ComponentScope;
 import org.eclipse.ui.internal.components.registry.ExtensionPointManager;
 import org.eclipse.ui.internal.components.registry.IComponentScope;
 import org.eclipse.ui.internal.components.registry.ServiceExtensionPoint;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.osgi.framework.Bundle;
 
 
@@ -78,23 +79,7 @@ public class ComponentUtil {
 	}
 	
 	public static Throwable getCause(Throwable toQuery) {
-	    if (toQuery == null) {
-	        return null;
-	    }
-	    
-	    if (toQuery instanceof CoreException) {
-	    	Throwable cause = ((CoreException)toQuery).getStatus().getException();
-	    	if (cause != null) {
-	    		return cause;
-	    	}
-	    }
-	    
-	    Throwable cause = toQuery.getCause();
-	    if (cause == null) {
-	        cause = toQuery;
-	    }
-	    
-	    return cause;
+		return StatusUtil.getCause(toQuery);
 	}
 	
     public static Class loadClass(ClassIdentifier type) throws ComponentException {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -124,7 +126,23 @@ public class StatusUtil {
                 CoreException ce = (CoreException)exception;
                 cause = ce.getStatus().getException();
             } else {
-                cause = exception.getCause();
+            	// use reflect instead of a direct call to getCause(), to allow compilation against JCL Foundation (bug 80053)
+            	try {
+            		Method causeMethod = exception.getClass().getMethod("getCause", new Class[0]); //$NON-NLS-1$
+            		Object o = causeMethod.invoke(exception, new Object[0]);
+            		if (o instanceof Throwable) { 
+            			cause = (Throwable) o;
+            		}
+            	}
+            	catch (NoSuchMethodException e) {
+            		// ignore
+            	} catch (IllegalArgumentException e) {
+            		// ignore
+				} catch (IllegalAccessException e) {
+            		// ignore
+				} catch (InvocationTargetException e) {
+            		// ignore
+				}
             }
             
             if (cause == null) {

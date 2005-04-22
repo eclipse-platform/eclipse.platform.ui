@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.activities.ActivityEvent;
@@ -235,6 +234,9 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     private void readRegistry(boolean setDefaults) {
+    	if (!isRegexpSupported()) {
+    		return;
+    	}
         Collection activityDefinitions = new ArrayList();
         activityDefinitions.addAll(activityRegistry.getActivityDefinitions());
         Map activityDefinitionsById = new HashMap(ActivityDefinition
@@ -332,7 +334,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
                         if (pattern != null && pattern.length() != 0) {
                             IActivityPatternBinding activityPatternBinding = new ActivityPatternBinding(
-                                    activityId, Pattern.compile(pattern));
+                                    activityId, pattern);
                             Set activityPatternBindings = (Set) activityPatternBindingsByActivityId
                                     .get(activityId);
 
@@ -456,7 +458,25 @@ public final class MutableActivityManager extends AbstractActivityManager
         }
     }
 
-    public void setEnabledActivityIds(Set enabledActivityIds) {
+    /**
+     * Returns whether the Java 1.4 regular expression support is available.
+     * Regexp support will not be available when running against JCL Foundation (see bug 80053).
+     * 
+	 * @return <code>true</code> if regexps are supported, <code>false</code> otherwise.
+	 * 
+	 * @since 3.1
+	 */
+	private boolean isRegexpSupported() {
+		try {
+			Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
+	public void setEnabledActivityIds(Set enabledActivityIds) {
         enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
         Set requiredActivityIds = new HashSet(enabledActivityIds);
         getRequiredActivityIds(enabledActivityIds, requiredActivityIds);

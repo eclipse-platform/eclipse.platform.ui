@@ -66,40 +66,23 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
         RESOURCE_BUNDLE = ResourceBundle.getBundle(NativeKeyFormatter.class
                 .getName());
 
-        CARBON_KEY_LOOK_UP.put(CharacterKey.BS.toString(), Character
-                .toString('\u232B'));
-        CARBON_KEY_LOOK_UP.put(CharacterKey.CR.toString(), Character
-                .toString('\u21A9'));
-        CARBON_KEY_LOOK_UP.put(CharacterKey.DEL.toString(), Character
-                .toString('\u2326'));
-        CARBON_KEY_LOOK_UP.put(CharacterKey.SPACE.toString(), Character
-                .toString('\u2423'));
-        CARBON_KEY_LOOK_UP.put(ModifierKey.ALT.toString(), Character
-                .toString('\u2325'));
-        CARBON_KEY_LOOK_UP.put(ModifierKey.COMMAND.toString(), Character
-                .toString('\u2318'));
-        CARBON_KEY_LOOK_UP.put(ModifierKey.CTRL.toString(), Character
-                .toString('\u2303'));
-        CARBON_KEY_LOOK_UP.put(ModifierKey.SHIFT.toString(), Character
-                .toString('\u21E7'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_DOWN.toString(), Character
-                .toString('\u2193'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_LEFT.toString(), Character
-                .toString('\u2190'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_RIGHT.toString(), Character
-                .toString('\u2192'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_UP.toString(), Character
-                .toString('\u2191'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.END.toString(), Character
-                .toString('\u2198'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.NUMPAD_ENTER.toString(), Character
-                .toString('\u2324'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.HOME.toString(), Character
-                .toString('\u2196'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_DOWN.toString(), Character
-                .toString('\u21DF'));
-        CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_UP.toString(), Character
-                .toString('\u21DE'));
+        CARBON_KEY_LOOK_UP.put(CharacterKey.BS.toString(), "\u232B");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(CharacterKey.CR.toString(), "\u21A9");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(CharacterKey.DEL.toString(), "\u2326");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(CharacterKey.SPACE.toString(), "\u2423");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(ModifierKey.ALT.toString(), "\u2325");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(ModifierKey.COMMAND.toString(), "\u2318");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(ModifierKey.CTRL.toString(), "\u2303");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(ModifierKey.SHIFT.toString(), "\u21E7");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_DOWN.toString(), "\u2193");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_LEFT.toString(), "\u2190");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_RIGHT.toString(), "\u2192");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.ARROW_UP.toString(), "\u2191");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.END.toString(), "\u2198");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.NUMPAD_ENTER.toString(), "\u2324");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.HOME.toString(), "\u2196");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_DOWN.toString(), "\u21DF");  //$NON-NLS-1$
+        CARBON_KEY_LOOK_UP.put(SpecialKey.PAGE_UP.toString(), "\u21DE");  //$NON-NLS-1$
     }
 
     /**

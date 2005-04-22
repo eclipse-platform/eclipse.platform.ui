@@ -57,38 +57,26 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
 
     static {
         KEY_LOOKUP
-                .put(CharacterKey.BS.toString(), Character.toString('\u232B'));
+                .put(CharacterKey.BS.toString(), "\u232B");  //$NON-NLS-1$
         KEY_LOOKUP
-                .put(CharacterKey.CR.toString(), Character.toString('\u21A9'));
-        KEY_LOOKUP.put(CharacterKey.DEL.toString(), Character
-                .toString('\u2326'));
-        KEY_LOOKUP.put(CharacterKey.SPACE.toString(), Character
-                .toString('\u2423'));
+                .put(CharacterKey.CR.toString(), "\u21A9");  //$NON-NLS-1$
+        KEY_LOOKUP.put(CharacterKey.DEL.toString(), "\u2326");  //$NON-NLS-1$
+        KEY_LOOKUP.put(CharacterKey.SPACE.toString(), "\u2423");  //$NON-NLS-1$
         KEY_LOOKUP
-                .put(ModifierKey.ALT.toString(), Character.toString('\u2325'));
-        KEY_LOOKUP.put(ModifierKey.COMMAND.toString(), Character
-                .toString('\u2318'));
-        KEY_LOOKUP.put(ModifierKey.CTRL.toString(), Character
-                .toString('\u2303'));
-        KEY_LOOKUP.put(ModifierKey.SHIFT.toString(), Character
-                .toString('\u21E7'));
-        KEY_LOOKUP.put(SpecialKey.ARROW_DOWN.toString(), Character
-                .toString('\u2193'));
-        KEY_LOOKUP.put(SpecialKey.ARROW_LEFT.toString(), Character
-                .toString('\u2190'));
-        KEY_LOOKUP.put(SpecialKey.ARROW_RIGHT.toString(), Character
-                .toString('\u2192'));
-        KEY_LOOKUP.put(SpecialKey.ARROW_UP.toString(), Character
-                .toString('\u2191'));
-        KEY_LOOKUP.put(SpecialKey.END.toString(), Character.toString('\u2198'));
-        KEY_LOOKUP.put(SpecialKey.NUMPAD_ENTER.toString(), Character
-                .toString('\u2324'));
+                .put(ModifierKey.ALT.toString(), "\u2325");  //$NON-NLS-1$
+        KEY_LOOKUP.put(ModifierKey.COMMAND.toString(), "\u2318");  //$NON-NLS-1$
+        KEY_LOOKUP.put(ModifierKey.CTRL.toString(), "\u2303");  //$NON-NLS-1$
+        KEY_LOOKUP.put(ModifierKey.SHIFT.toString(), "\u21E7");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.ARROW_DOWN.toString(), "\u2193");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.ARROW_LEFT.toString(), "\u2190");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.ARROW_RIGHT.toString(), "\u2192");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.ARROW_UP.toString(), "\u2191");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.END.toString(), "\u2198");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.NUMPAD_ENTER.toString(), "\u2324");  //$NON-NLS-1$
         KEY_LOOKUP
-                .put(SpecialKey.HOME.toString(), Character.toString('\u2196'));
-        KEY_LOOKUP.put(SpecialKey.PAGE_DOWN.toString(), Character
-                .toString('\u21DF'));
-        KEY_LOOKUP.put(SpecialKey.PAGE_UP.toString(), Character
-                .toString('\u21DE'));
+                .put(SpecialKey.HOME.toString(), "\u2196");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.PAGE_DOWN.toString(), "\u21DF");  //$NON-NLS-1$
+        KEY_LOOKUP.put(SpecialKey.PAGE_UP.toString(), "\u21DE");  //$NON-NLS-1$
     }
 
     public String format(Key key) {

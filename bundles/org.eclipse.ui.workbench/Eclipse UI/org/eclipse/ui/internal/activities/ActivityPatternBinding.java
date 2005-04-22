@@ -30,6 +30,10 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
     private transient String string;
 
+    public ActivityPatternBinding(String activityId, String pattern) {
+    	this(activityId, Pattern.compile(pattern));
+    }
+
     public ActivityPatternBinding(String activityId, Pattern pattern) {
         if (pattern == null)
             throw new NullPointerException();
@@ -93,4 +97,15 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
         return string;
     }
+
+	/**
+	 * Returns whether this binding's pattern matches the given string
+	 * 
+	 * @param toMatch the string to match
+	 * @return <code>true</code> if it matches, <code>false</code> if not
+     * @since 3.1
+	 */
+	public boolean isMatch(String toMatch) {
+		return pattern.matcher(toMatch).matches();
+	}
 }

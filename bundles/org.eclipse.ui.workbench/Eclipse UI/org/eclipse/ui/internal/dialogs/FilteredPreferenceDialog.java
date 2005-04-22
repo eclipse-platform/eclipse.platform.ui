@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -99,7 +100,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			/**
 			 * TODO: this cache is needed because
 			 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive.
-			 * When it tracks keyword changes effectivly than this cache can be
+			 * When it tracks keyword changes effectively then this cache can be
 			 * removed.
 			 */
 			private Map keywordCache = new HashMap();
@@ -110,22 +111,26 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 				IPreferenceNode node = (IPreferenceNode) element;
 				Object[] children = contentProvider.getChildren(node);
+				String text = node.getLabelText();
 				
-				String labelText = node.getLabelText();
-				String[] words = labelText.split("\\W"); //$NON-NLS-1$
-				
-				//Some vms cannot break up DBCS characters so at least support one word
-				if(words.length == 0 && labelText.length() > 0)
-					words = new String[]{labelText};
-				
-				for (int i = 0;  i < words.length; i++){
-					if( match(words[i]))
-						return true;
-				}	
-				// if the text contained spaces, we already tried matching on each individual
-				// word but now try and match on the whole phrase.
-				if (words.length > 1 && match(labelText)) 
-					return true;
+				// Break the label up into words, separating based on whitespace and common punctuation.
+				// Previously used String.split(..., "\\W"), where "\W" is a regular expression (see the Javadoc for class Pattern).
+				// Need to avoid both String.split and regular expressions, in order to compile against JCL Foundation (bug 80053).
+				// Also need to do this in an NL-sensitive way.  The use of BreakIterator was suggested in bug 90579.  
+				BreakIterator iter = BreakIterator.getWordInstance();
+				iter.setText(text);
+				int i = iter.first(); 
+				while (i != java.text.BreakIterator.DONE && i < text.length()) {
+					int j = iter.following(i);
+					if (j == java.text.BreakIterator.DONE)
+						j = text.length();
+					if (Character.isLetterOrDigit(text.charAt(i))) {
+						String word = text.substring(i, j);
+						if (match(word))
+							return true;
+					}
+					i = j;
+				}				
 				
 				if (filter(viewer, element, children).length > 0)
 					return true;

@@ -1434,7 +1434,7 @@ public class Perspective {
                     layoutMemento.putString(IWorkbenchConstants.TAG_STANDALONE,
                             IWorkbenchConstants.TRUE);
                     layoutMemento.putString(IWorkbenchConstants.TAG_SHOW_TITLE,
-                            Boolean.toString(rec.showTitle));
+                            String.valueOf(rec.showTitle));
                 }
             }
         }

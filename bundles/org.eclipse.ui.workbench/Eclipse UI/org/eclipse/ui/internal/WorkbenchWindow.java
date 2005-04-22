@@ -2193,12 +2193,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 && activePage.findView(IIntroConstants.INTRO_VIEW_ID) != null) {
             IMemento introMem = memento
                     .createChild(IWorkbenchConstants.TAG_INTRO);
-            introMem.putString(IWorkbenchConstants.TAG_STANDBY, Boolean
-                    .valueOf(
-                            getWorkbench().getIntroManager()
-                                    .isIntroStandby(
-                                            getWorkbench().getIntroManager()
-                                                    .getIntro())).toString());
+            boolean isStandby = getWorkbench()
+					.getIntroManager()
+					.isIntroStandby(getWorkbench().getIntroManager().getIntro());
+            introMem.putString(IWorkbenchConstants.TAG_STANDBY, String
+					.valueOf(isStandby));
         }
 
         // save the width of the perspective bar

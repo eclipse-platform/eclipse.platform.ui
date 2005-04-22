@@ -34,6 +34,8 @@ public class ComponentException extends Exception {
     
     private String componentName;
     
+	private Throwable cause;
+    
     /**
      * Creates an exception indicating failure to create a particular component. 
      * 
@@ -54,7 +56,9 @@ public class ComponentException extends Exception {
      * @param reason exception that caused the error
      */
     public ComponentException(Object componentKey, String message, Throwable reason) {
-        super(message, ComponentUtil.getMostSpecificCause(reason));
+        super(message);
+        // don't pass the cause to super, to allow compilation against JCL Foundation
+        this.cause = ComponentUtil.getMostSpecificCause(reason);
         
         this.componentName = getShortName(componentKey);
     }
@@ -137,4 +141,16 @@ public class ComponentException extends Exception {
     public IStatus getStatus() {
         return WorkbenchPlugin.getStatus(getMessage(), ComponentUtil.getCause(this));
     }
+    
+    /**
+     * Returns the cause of this throwable or <code>null</code> if the
+     * cause is nonexistent or unknown. 
+     *
+     * @return the cause or <code>null</code>
+     * @since 3.1
+     */
+    public Throwable getCause() {
+        return cause;
+    }
+    
 }

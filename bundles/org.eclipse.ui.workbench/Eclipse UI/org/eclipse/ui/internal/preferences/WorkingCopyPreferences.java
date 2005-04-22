@@ -290,7 +290,7 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 			oldValue = (String) temporarySettings.get(key);
 		else
 			oldValue = getOriginal().get(key, null);
-		String newValue = Boolean.toString(value);
+		String newValue = String.valueOf(value);
 		temporarySettings.put(key, newValue);
 		if (!newValue.equalsIgnoreCase(oldValue))
 			firePropertyChangeEvent(key, oldValue, newValue);

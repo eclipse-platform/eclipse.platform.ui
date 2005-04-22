@@ -53,8 +53,7 @@ public final class KeySequence implements Comparable {
      * expressed in the formal key stroke grammar. This is not to be displayed
      * to the user. It is only intended as an internal representation.
      */
-    public final static String KEY_STROKE_DELIMITER = Character
-            .toString('\u0020'); //$NON-NLS-1$
+    public final static String KEY_STROKE_DELIMITER = "\u0020"; //$NON-NLS-1$
 
     /**
      * An empty key sequence instance for use by everyone.

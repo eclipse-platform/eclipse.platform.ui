@@ -77,6 +77,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.FilteredTree;
 import org.eclipse.ui.internal.dialogs.PatternFilter;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
@@ -1827,8 +1828,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		if (expandedElementsString == null)
 			return;
 
-		String[] expandedElementIDs = expandedElementsString
-				.split(EXPANDED_ELEMENTS_TOKEN);
+		String[] expandedElementIDs = Util.getArrayFromList(expandedElementsString, EXPANDED_ELEMENTS_TOKEN);
 		if (expandedElementIDs.length == 0)
 			return;
 

@@ -124,8 +124,7 @@ public final class ColorUtils {
      * in RGB form. 
      */
     private static boolean isDirectValue(String rawValue) {
-        return rawValue == null ? true : rawValue
-                .matches("\\d{1,3},\\d{1,3},\\d{1,3}"); //$NON-NLS-1$
+    	return rawValue.indexOf(',') >= 0;
     }
 
     /**

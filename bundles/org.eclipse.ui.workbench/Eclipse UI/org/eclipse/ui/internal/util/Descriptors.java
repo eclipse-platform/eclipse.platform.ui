@@ -126,8 +126,8 @@ public final class Descriptors {
                 WorkbenchPlugin.log(e);
                 return;
             } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException)e.getCause();
+                if (e.getTargetException() instanceof RuntimeException) {
+                    throw (RuntimeException)e.getTargetException();
                 }
                 WorkbenchPlugin.log(e);
                 return;

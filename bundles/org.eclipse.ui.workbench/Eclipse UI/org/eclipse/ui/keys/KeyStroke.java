@@ -57,7 +57,7 @@ public final class KeyStroke implements Comparable {
      * in the formal key stroke grammar. This is not to be displayed to the
      * user. It is only intended as an internal representation.
      */
-    public final static String KEY_DELIMITER = Character.toString('\u002B');
+    public final static String KEY_DELIMITER = "\u002B"; //$NON-NLS-1$
 
     /**
      * An internal constant used only in this object's hash code algorithm.

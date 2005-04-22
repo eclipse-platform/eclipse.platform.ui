@@ -113,10 +113,9 @@ final class CommandWrapper implements ICommand {
 	 */
 	public final Map getAttributeValuesByName() {
 		final Map attributeValues = new HashMap();
-		attributeValues.put(ILegacyAttributeNames.ENABLED, Boolean
-				.valueOf(command.isEnabled())); //$NON-NLS-1$
-		attributeValues.put(ILegacyAttributeNames.HANDLED, Boolean
-				.valueOf(command.isHandled())); //$NON-NLS-1$
+		// avoid using Boolean.valueOf to allow compilation against JCL Foundation (bug 80053)
+		attributeValues.put(ILegacyAttributeNames.ENABLED, command.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
+		attributeValues.put(ILegacyAttributeNames.HANDLED, command.isHandled() ? Boolean.TRUE : Boolean.FALSE); 
 		return attributeValues;
 	}
 

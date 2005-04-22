@@ -683,7 +683,8 @@ final class KeyAssistDialog extends Dialog {
 				try {
 					return commandA.getName().compareTo(commandB.getName());
 				} catch (final NotDefinedException e) {
-					throw new AssertionError(e);
+					// should not happen
+					return 0;
 				}
 			}
 		});
