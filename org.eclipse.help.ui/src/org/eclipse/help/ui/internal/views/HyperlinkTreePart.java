@@ -20,6 +20,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -218,7 +219,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 	}

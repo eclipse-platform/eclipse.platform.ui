@@ -137,7 +137,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 		hookImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
@@ -197,11 +197,6 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void refilter() {
-	}
-
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveState(IMemento memento) {

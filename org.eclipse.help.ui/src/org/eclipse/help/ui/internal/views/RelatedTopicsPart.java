@@ -97,11 +97,11 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		dynamicHelpPart = new DynamicHelpPart(form.getBody(), toolkit);
 	}
 
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
-		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP);
-		dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT);
+		contextHelpPart.init(parent, IHelpUIConstants.HV_CONTEXT_HELP, memento);
+		dynamicHelpPart.init(parent, IHelpUIConstants.HV_SEARCH_RESULT, memento);
 		mform.addPart(contextHelpPart);
 		mform.addPart(dynamicHelpPart);
 		mform.initialize();
@@ -167,11 +167,6 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	}
 	public void startSearch(String newPhrase, IContext excludeContext) {
 		dynamicHelpPart.startSearch(newPhrase, excludeContext);
-	}
-
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveState(IMemento memento) {

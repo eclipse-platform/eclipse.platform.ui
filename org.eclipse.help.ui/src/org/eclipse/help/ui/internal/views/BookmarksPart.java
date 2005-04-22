@@ -230,11 +230,6 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	public void refilter() {
 	}
 
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void saveState(IMemento memento) {
 		// TODO Auto-generated method stub
 		

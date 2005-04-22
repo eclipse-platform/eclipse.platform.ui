@@ -174,7 +174,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 		parent.hookFormText(searchResults);
@@ -391,11 +391,6 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	public void refilter() {
 		if (phrase!=null && phrase.length() > 0)
 			startInPlaceSearch(phrase, context);		
-	}
-
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveState(IMemento memento) {

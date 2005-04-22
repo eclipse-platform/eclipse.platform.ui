@@ -175,7 +175,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 	}
@@ -357,11 +357,6 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	public void refilter() {
 		updateResultSections();
-	}
-
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveState(IMemento memento) {

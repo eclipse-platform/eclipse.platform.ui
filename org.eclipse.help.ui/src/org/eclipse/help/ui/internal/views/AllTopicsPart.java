@@ -191,8 +191,8 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 		});
 	}
 
-	public void init(ReusableHelpPart parent, String id) {
-		super.init(parent, id);
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		super.init(parent, id, memento);
 		if (parent.isFilteredByRoles())
 			treeViewer.addFilter(parent.getRoleFilter());
 		treeViewer.addFilter(new EmptyContainerFilter());
@@ -287,11 +287,6 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 
 	public void refilter() {
 		treeViewer.refresh();
-	}
-
-	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void saveState(IMemento memento) {
