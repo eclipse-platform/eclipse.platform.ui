@@ -50,9 +50,9 @@ public abstract class AbstractScope implements IScopeContext {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof AbstractScope))
+		if (!(obj instanceof IScopeContext))
 			return false;
-		AbstractScope other = (AbstractScope) obj;
+		IScopeContext other = (IScopeContext) obj;
 		if (!getName().equals(other.getName()))
 			return false;
 		IPath location = getLocation();
