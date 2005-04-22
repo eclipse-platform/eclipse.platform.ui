@@ -71,7 +71,6 @@ public final class ActivityRequirementBinding implements
 
     public int hashCode() {
         if (hashCode == HASH_INITIAL) {
-            hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(requiredActivityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);

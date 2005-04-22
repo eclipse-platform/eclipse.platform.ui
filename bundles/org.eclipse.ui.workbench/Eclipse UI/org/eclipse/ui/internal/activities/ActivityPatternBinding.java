@@ -71,7 +71,6 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
     public int hashCode() {
         if (hashCode == HASH_INITIAL) {
-            hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
             if (hashCode == HASH_INITIAL)
