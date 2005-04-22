@@ -117,9 +117,6 @@ body {
 a#new-and-noteworthy img { background-image : url(../graphics/icons/obj48/new_obj.gif); }
 a#new-and-noteworthy:hover img { background-image : url(../graphics/icons/obj48/newhov_obj.gif); }
 
-a#migration img { background-image : url(../graphics/icons/obj48/migrate_obj.gif); }
-a#migration:hover img { background-image : url(../graphics/icons/obj48/migratehov_obj.gif); }
-
 a#updates img { background-image : url(../graphics/icons/obj48/updates_obj.gif); }
 a#updates:hover img { background-image : url(../graphics/icons/obj48/updateshov_obj.gif); }
 

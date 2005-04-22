@@ -140,27 +140,6 @@
             <text style-id="page-title" id="page-title" filteredFrom="html">SAMPLES</text>
             <text style-id="page-description" id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
             <anchor id="beginAnchor"/>
-            <group label="SWT" id="swt" style-id="samples-group">
-                <text style-id="group-description">Run SWT samples using either the standalone SWT launcher or as an integrated workbench view.</text>
-                <link label="Workbench views and standalone applications" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples" id="swt-examples" style-id="sample-link">
-                    <text>The SWT Example launcher will allow you to launch a collection of SWT examples.  Some of the examples can be run independent of the eclipse platform and others will be available as views inside the workbench.</text>
-                </link>
-                <anchor id="swtGroupAnchor"/>
-            </group>
-            <group label="Workbench" id="workbench" style-id="samples-group">
-                <text style-id="group-description">The following samples demonstrate how to tightly integrate into the Eclipse workbench.</text>
-                <link label="Multi-page editor" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.multipageeditor" id="multi-page-editor" style-id="sample-link">
-                    <text>Shows how to create an editor with multiple pages</text>
-                </link>
-                <link label="Property sheet and outline" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.propertysheet" id="property-sheet" style-id="sample-link">
-                    <text>Demonstrates how to use property sheet and outline views</text>
-                </link>
-                <link label="Readme tool" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.readmetool" id="readmetool" style-id="sample-link">
-                    <text>Shows how to create your own extension points</text>
-                </link>
-                <anchor id="jdtAnchor"/>
-                <anchor id="workbenchGroupAnchor"/>
-            </group>
             <anchor id="endAnchor"/>
         </group>
     </page>
@@ -186,9 +165,7 @@
                 <anchor id="generalAnchor"/>
             </group>
             <group id="news-links" label="General">
-                <link label="Migration from the previous release" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.isv/porting/eclipse_3_1_porting_guide.html" id="migration">
-                    <text>Learn what you need to do to make your old code work in Eclipse 3.1</text>
-                </link>
+				<anchor id="linksBeginAnchor"/>
                 <link label="New Updates" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.ui.ide&amp;class=org.eclipse.ui.internal.ide.update.InstallWizardAction" id="updates">
                     <text>Get the latest updates from Eclipse.org</text>
                 </link>
