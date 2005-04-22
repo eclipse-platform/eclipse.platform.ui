@@ -578,7 +578,7 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 		if(nonPluginDataAcceptor == null){
 			try{
 				Class[] types = {INonPluginEntry.class};
-				nonPluginDataAcceptor = handler.getClass().getMethod("acceptNonPluginData",types);
+				nonPluginDataAcceptor = handler.getClass().getMethod("acceptNonPluginData",types); //$NON-NLS-1$
 			}catch(NoSuchMethodException nsme){
 			}
 		}

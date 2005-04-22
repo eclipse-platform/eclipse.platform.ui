@@ -152,8 +152,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			File fileToRemove = new File(originalName);
 			if (fileToRemove.exists()) {
 				if(!fileToRemove.delete()){
-                    //TODO Need to translate this
-					String msg = NLS.bind("Unable to delete {0}", (new String[] { originalName })); //$NON-NLS-1$
+					String msg = NLS.bind(Messages.SiteFilePluginContentConsumer_unableToDelete, (new String[] { originalName })); //$NON-NLS-1$
 					UpdateCore.log(msg, null);	
 					success = false;
 				}

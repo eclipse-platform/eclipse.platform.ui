@@ -72,7 +72,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final String MIRROR = "mirror"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INFO_URL = "index.html"; //$NON-NLS-1$
-	private static final String FEATURES = "features/";
+	private static final String FEATURES = "features/"; //$NON-NLS-1$
     
 	// Current State Information
 	Stack stateStack = new Stack();
@@ -773,11 +773,11 @@ public class DefaultSiteParser extends DefaultHandler {
 		catch (Exception e) {
 		    // log if absolute url
 		    if (mirrorsURL != null &&
-		    		(mirrorsURL.startsWith("http://")
-					|| mirrorsURL.startsWith("https://")
-					|| mirrorsURL.startsWith("file://")
-					|| mirrorsURL.startsWith("ftp://")
-					|| mirrorsURL.startsWith("jar://")))
+		    		(mirrorsURL.startsWith("http://") //$NON-NLS-1$
+					|| mirrorsURL.startsWith("https://") //$NON-NLS-1$
+					|| mirrorsURL.startsWith("file://") //$NON-NLS-1$
+					|| mirrorsURL.startsWith("ftp://") //$NON-NLS-1$
+					|| mirrorsURL.startsWith("jar://"))) //$NON-NLS-1$
 		    	UpdateCore.log(Messages.DefaultSiteParser_mirrors, e);
 			return null;
 		}

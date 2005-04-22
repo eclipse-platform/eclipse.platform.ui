@@ -1177,16 +1177,16 @@ public class OperationValidator implements IOperationValidator {
 					ArrayList combined = new ArrayList();
 					combined.add(
 						createMultiStatus(
-							"ActivityConstraints.beforeMessage", //$NON-NLS-1$
+							Messages.ActivityConstraints_beforeMessage,
 							beforeStatus,
 							IStatus.ERROR));
 					combined.add(
 						createMultiStatus(
-							"ActivityConstraints.afterMessage", //$NON-NLS-1$
+							Messages.ActivityConstraints_afterMessage,
 							status,
 							IStatus.ERROR));
 					return createMultiStatus(
-						"ActivityConstraints.rootMessageInitial",
+						Messages.ActivityConstraints_rootMessageInitial,
 						combined,
 						IStatus.ERROR);
 				}

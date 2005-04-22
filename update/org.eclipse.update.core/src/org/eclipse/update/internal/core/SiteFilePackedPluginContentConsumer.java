@@ -126,8 +126,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 		}
 
 		if (!sucess) {
-            //TODO need to translate this
-			String msg = NLS.bind("Unable to delete {0}", (new String[] { jarPath })); //$NON-NLS-1$
+			String msg = NLS.bind(Messages.SiteFilePackedPluginContentConsumer_unableToDelete, (new String[] { jarPath })); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		}
 		closed = true;

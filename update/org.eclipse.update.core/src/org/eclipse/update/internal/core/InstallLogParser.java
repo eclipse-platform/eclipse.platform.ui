@@ -98,7 +98,7 @@ public class InstallLogParser {
 		    // throws FileNotFoundException, IOException
 		    InputStream is = new FileInputStream(logPath.toOSString());
 		    // throws UnsupportedEncodingException
-		    InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+		    InputStreamReader isr = new InputStreamReader(is,"UTF-8"); //$NON-NLS-1$
 		    buffRead = new BufferedReader(isr);
 		} catch (Exception e) {
 			throwCoreException(e);

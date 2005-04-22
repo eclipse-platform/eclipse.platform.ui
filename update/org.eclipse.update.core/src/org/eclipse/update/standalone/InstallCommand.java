@@ -187,8 +187,8 @@ public class InstallCommand extends ScriptedCommand {
 			
 		IConfiguredSite[] configuredSites = getConfiguration().getConfiguredSites();
 		File sitePath = new File(toSite);
-		File secondaryPath = sitePath.getName().equals("eclipse") ? // $NON-NLS-1$
-							null : new File(sitePath, "eclipse"); // $NON-NLS-1$
+		File secondaryPath = sitePath.getName().equals("eclipse") ? //$NON-NLS-1$
+							null : new File(sitePath, "eclipse"); //$NON-NLS-1$
 
 		for (int i = 0; i < configuredSites.length; i++) {
 			IConfiguredSite csite = configuredSites[i];

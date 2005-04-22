@@ -155,6 +155,7 @@ public final class Messages extends NLS {
 	public static String InstallConfiguration_AlreadyNativelyLinked;
 	public static String InstallConfiguration_AlreadyProductSite;
 	public static String InstallConfiguration_NotAnExtensionSite;
+	public static String InstallConfiguration_unableToFindSite;
 	public static String InternalSiteManager_UnableToCreateSiteWithType;
 	public static String InternalSiteManager_UnableToAccessURL;
 	public static String InternalSiteManager_UnableToCreateURL;
@@ -168,6 +169,7 @@ public final class Messages extends NLS {
 	public static String GlobalConsumer_ErrorCreatingFile;
 	public static String SiteFileContentConsumer_UnableToCreateURL;
 	public static String SiteFileContentConsumer_UnableToCreateURLForFile;
+	public static String SiteFileContentConsumer_unableToDelete;
 	public static String ContentConsumer_UnableToRename;
 	public static String SiteFileFactory_UnableToRetriveSite;
 	public static String SiteFileFactory_UnableToObtainParentDirectory;
@@ -324,6 +326,9 @@ public final class Messages extends NLS {
 	public static String Standalone_updating;
 	public static String Standalone_noUpdate;
 	public static String Standalone_updated;
+	
+	public static String SiteFilePluginContentConsumer_unableToDelete;
+	public static String SiteFilePackedPluginContentConsumer_unableToDelete;	
 	
 	public static String HttpResponse_rangeExpected;
 	public static String HttpResponse_wrongRange;

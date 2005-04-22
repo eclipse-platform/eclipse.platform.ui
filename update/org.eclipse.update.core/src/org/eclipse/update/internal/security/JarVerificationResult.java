@@ -210,11 +210,11 @@ public class JarVerificationResult implements IVerificationResult {
 		try {
 			cert.checkValidity();
 		} catch (CertificateExpiredException e) {
-			return ("\r\n" + Messages.JarVerificationResult_ExpiredCertificate); 
+			return ("\r\n" + Messages.JarVerificationResult_ExpiredCertificate);  //$NON-NLS-1$
 		} catch (CertificateNotYetValidException e) {
-			return ("\r\n" + Messages.JarVerificationResult_CertificateNotYetValid); 
+			return ("\r\n" + Messages.JarVerificationResult_CertificateNotYetValid);  //$NON-NLS-1$
 		}
-		return ("\r\n" + Messages.JarVerificationResult_CertificateValid); 
+		return ("\r\n" + Messages.JarVerificationResult_CertificateValid);  //$NON-NLS-1$
 	}
 
 	/*
