@@ -263,7 +263,7 @@ public class ReviewPage	extends BannerPage {
             if (obj instanceof IInstallFeatureOperation) {
                 IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
                 IFeature feature = job.getFeature();
-                return feature.getLabel() + " " + feature
+                return feature.getLabel() + " " + feature //$NON-NLS-1$
                             .getVersionedIdentifier()
                             .getVersion()
                             .toString();
@@ -465,7 +465,7 @@ public class ReviewPage	extends BannerPage {
 						setDescription(UpdateUIMessages.InstallWizard_ReviewPage_zeroUpdates); 
 					else
 						setDescription(UpdateUIMessages.InstallWizard_ReviewPage_zeroFeatures); 
-					label.setText("");
+					label.setText(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -689,7 +689,7 @@ public class ReviewPage	extends BannerPage {
 //      });
         
       descLabel = new ScrolledFormText(sform, true);
-      descLabel.setText("");
+      descLabel.setText(""); //$NON-NLS-1$
       descLabel.setBackground(parent.getBackground());
       HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
       descLabel.getFormText().setHyperlinkSettings(settings);
