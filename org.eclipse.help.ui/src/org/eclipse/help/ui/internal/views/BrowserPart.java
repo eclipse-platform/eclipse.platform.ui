@@ -39,6 +39,7 @@ import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -154,7 +155,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 									.showExternalURL(relativeURL);
 							event.required = true;
 						}
-
 					} catch (MalformedURLException e) {
 						// TODO report this
 					}
@@ -211,7 +211,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		syncTocAction.setEnabled(false);
 		bookmarkAction = new Action() {
 			public void run() {
-				BaseHelpSystem.getBookmarkManager().addBookmark(url, title);
+				String href = BaseHelpSystem.unresolve(url);
+				BaseHelpSystem.getBookmarkManager().addBookmark(href, title);
 			}
 		};
 		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip);
@@ -233,9 +234,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
-	public void init(ReusableHelpPart parent, String id) {
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
+		if (memento!=null) {
+			String url = memento.getString("BrowserPart.url");
+			if (url!=null)
+				showURL(url);
+		}
 	}
 
 	public String getId() {
@@ -279,9 +285,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void stop() {
-		if (browser != null && !browser.isDisposed())
+		if (browser != null && !browser.isDisposed()) {
 			browser.stop();
-
+		}
 	}
 
 	private void doPrint() {
@@ -314,7 +320,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
-		} else if (url.startsWith("javascript:liveAction(")) {
+		}
+		else if (url.startsWith("javascript:liveAction(")) {
 			return processLiveAction(url);
 		}
 		return false;
@@ -396,5 +403,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void refilter() {
+		showURL(this.url);
+	}
+
+	public void saveState(IMemento memento) {
 	}
 }

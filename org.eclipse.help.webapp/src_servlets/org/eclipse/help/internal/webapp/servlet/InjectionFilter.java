@@ -13,12 +13,16 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /**
@@ -32,7 +36,11 @@ public class InjectionFilter implements IFilter {
 
 	private static final String disabledBook1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 
-	private static final String disabledBook2 = "disabled_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$	
+	private static final String disabledBook2 = "disabled_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$
+
+	private static final String disabledBook3 = "\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+
+	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$
 
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
@@ -40,7 +48,10 @@ public class InjectionFilter implements IFilter {
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		boolean addNarrow = false;
 		boolean addDisabled = false;
-		boolean addFeedback = true;
+
+		// This filter only works inside the workbench
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_WORKBENCH)
+			return out;
 
 		String uri = req.getRequestURI();
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -60,50 +71,66 @@ public class InjectionFilter implements IFilter {
 		if (!enabled) {
 			addDisabled = true;
 		}
-		if (!addNarrow && !addDisabled && !addFeedback)
+		if (!addNarrow && !addDisabled)
 			return out;
 
 		IPath path = new Path(pathInfo);
-		int segmentCount = path.segmentCount();
+		int upLevels = path.segmentCount() - 1;
 		StringBuffer script = new StringBuffer();
 		StringBuffer disabledContent = new StringBuffer();
 		StringBuffer feedbackContent = new StringBuffer();
 		if (addNarrow) {
 			script.append(narrowBook1);
-			appendRelativePath(script, segmentCount - 1);
+			appendRelativePath(script, upLevels);
 			script.append(narrowBook2);
 		}
 		if (addDisabled) {
 			script.append(disabledBook1);
-			appendRelativePath(script, segmentCount - 1);
+			appendRelativePath(script, upLevels);
 			script.append(disabledBook2);
-			appendDisabled(disabledContent);
-		}
-		if (addFeedback) {
-			appendFeedback(feedbackContent);
+			script.append(disabledBook3);
+			appendRelativePath(script, upLevels, "org.eclipse.help"); //$NON-NLS-1$
+			script.append(disabledBook4);
+			appendDisabled(disabledContent, upLevels);
 		}
 		try {
 			return new FilterHTMLHeadAndBodyOutputStream(out, script.toString()
-					.getBytes("ASCII"), addDisabled ? disabledContent
-					.toString().getBytes("ASCII") : null,
-					addFeedback ? feedbackContent.toString().getBytes("ASCII")
-							: null);
+					.getBytes("ASCII"), addDisabled ? disabledContent //$NON-NLS-1$
+						// TODO disabled content must use charset of
+							// the document
+					.toString().getBytes("UTF-8") : null); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return out;
 		}
 	}
 
-	private void appendRelativePath(StringBuffer buff, int nsteps) {
+	private void appendRelativePath(StringBuffer buff, int nsteps,
+			String pluginId) {
 		for (int i = 0; i < nsteps; i++) {
-			buff.append("../");
+			buff.append("../"); //$NON-NLS-1$
 		}
-		buff.append("PRODUCT_PLUGIN/");
+		buff.append(pluginId + "/"); //$NON-NLS-1$
 	}
 
-	private void appendDisabled(StringBuffer buff) {
-		buff.append("<p><b>This topic belongs to a role that is disabled. <a href=\"enable.html\">Enable the role.</a></b></p>");
+	private void appendRelativePath(StringBuffer buff, int nsteps) {
+		appendRelativePath(buff, nsteps, "PRODUCT_PLUGIN"); //$NON-NLS-1$
 	}
-	private void appendFeedback(StringBuffer buff) {
-		buff.append("<p>Did you like this topic? <a href=\"feedback.html\">Tell us.</a></p>");
+
+	private void appendDisabled(StringBuffer buff, int nsteps) {
+		String localeStr = Platform.getNL();
+		Locale locale = UrlUtil.getLocale(localeStr);
+		buff.append("<div id=\"help-disabledTopic\">"); //$NON-NLS-1$
+		buff.append("<img src=\""); //$NON-NLS-1$
+		appendRelativePath(buff, nsteps, "org.eclipse.help.webapp"); //$NON-NLS-1$
+		buff
+				.append("advanced/images/e_show_all.gif\" border=\"0\" align=\"middle\">&nbsp;"); //$NON-NLS-1$
+		buff.append(WebappResources.getString("disabledTopic1", locale)); //$NON-NLS-1$
+		buff.append(WebappResources.getString("disabledTopic2", locale)); //$NON-NLS-1$
+		buff.append("<br><br>"); //$NON-NLS-1$
+		buff.append(WebappResources.getString("disabledTopic3", locale)); //$NON-NLS-1$
+		buff
+				.append("&nbsp;<a href='javascript:liveAction(\"org.eclipse.help.ui\", \"org.eclipse.help.ui.internal.ShowCapabilitiesPreferenceAction\",\"\")'>"); //$NON-NLS-1$
+		buff.append(WebappResources.getString("disabledTopic4", locale)); //$NON-NLS-1$
+		buff.append("</a><br><hr></div>"); //$NON-NLS-1$
 	}
 }

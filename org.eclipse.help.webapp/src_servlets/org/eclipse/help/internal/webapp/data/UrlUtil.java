@@ -256,6 +256,17 @@ public class UrlUtil {
 	public static Locale getLocaleObj(HttpServletRequest request,
 			HttpServletResponse response) {
 		String localeStr = getLocale(request, response);
+		return getLocale(localeStr);
+	}
+	
+	/**
+	 * Returns the locale object from the provided string.
+	 * @param localeStr the encoded locale string
+	 * @return the Locale object
+	 * 
+	 * @since 3.1
+	 */
+	public static Locale getLocale(String localeStr) {
 		if (localeStr.length() >= 5) {
 			return new Locale(localeStr.substring(0, 2), localeStr.substring(3,
 					5));

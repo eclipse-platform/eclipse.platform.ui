@@ -26,6 +26,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -564,5 +565,15 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	public void refilter() {
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}
 }

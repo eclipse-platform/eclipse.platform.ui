@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -356,5 +357,15 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	public void refilter() {
 		updateResultSections();
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -26,11 +26,11 @@ import org.eclipse.ui.part.ViewPart;
 
 public class HelpView extends ViewPart implements IPartListener2,
 		ISelectionChangedListener, IPageChangedListener {
-	protected FormToolkit toolkit;
+	private FormToolkit toolkit;
+	
+	private String firstPageId;
 
-	protected IMemento memento;
-
-	protected ReusableHelpPart reusableHelpPart;
+	private ReusableHelpPart reusableHelpPart;
 
 	private Hashtable pageRecs;
 
@@ -91,18 +91,26 @@ public class HelpView extends ViewPart implements IPartListener2,
 	}
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		this.memento = memento;
+		this.firstPageId = memento.getString("pageId");
 		init(site);
 		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow(),
 				getHelpPartStyle());
 		IActionBars actionBars = site.getActionBars();
 		reusableHelpPart.init(actionBars, actionBars.getToolBarManager(),
-				actionBars.getStatusLineManager());
+				actionBars.getStatusLineManager(), memento);
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IPartService service = window.getPartService();
 		service.addPartListener(this);
 	}
+	
+    public void saveState(IMemento memento) {
+    	if (reusableHelpPart!=null) {
+    		String pageId = reusableHelpPart.getCurrentPageId();
+    		if (pageId!=null)
+    			memento.putString("pageId", pageId);
+    	}
+    }
 
 	private void handlePartActivation(IWorkbenchPartReference ref) {
 		if (reusableHelpPart == null)
@@ -324,6 +332,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 	 * @see org.eclipse.help.ui.internal.views.BaseHelpView#getFirstPage()
 	 */
 	protected String getFirstPage() {
+		if (firstPageId!=null)
+			return firstPageId;
 		return IHelpUIConstants.HV_CONTEXT_HELP_PAGE;
 	}
 

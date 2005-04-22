@@ -16,6 +16,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -196,5 +197,15 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void refilter() {
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}	
 }

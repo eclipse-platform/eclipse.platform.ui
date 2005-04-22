@@ -69,6 +69,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -132,6 +133,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private HelpPartPage currentPage;
 
 	private int style;
+	
+	private IMemento memento;
 
 	private boolean showDocumentsInPlace = true;
 
@@ -664,7 +667,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void init(IActionBars bars, IToolBarManager toolBarManager,
-			IStatusLineManager statusLineManager) {
+			IStatusLineManager statusLineManager, IMemento memento) {
+		this.memento = memento;
 		this.actionBars = bars;
 		this.toolBarManager = toolBarManager;
 		this.statusLineManager = statusLineManager;
@@ -1003,7 +1007,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new BookmarksPart(parent, mform.getToolkit(), tbm);
 		}
 		if (part != null) {
-			part.init(this, id);
+			part.init(this, id, memento);
 			part.initialize(mform);
 			mform.addPart(part);
 		}

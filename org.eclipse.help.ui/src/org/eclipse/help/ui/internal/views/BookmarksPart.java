@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -227,5 +228,15 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	}
 
 	public void refilter() {
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}
 }

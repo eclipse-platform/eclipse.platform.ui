@@ -21,6 +21,7 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
@@ -390,5 +391,15 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	public void refilter() {
 		if (phrase!=null && phrase.length() > 0)
 			startInPlaceSearch(phrase, context);		
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}
 }

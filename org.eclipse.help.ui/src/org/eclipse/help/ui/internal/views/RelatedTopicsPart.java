@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.ManagedForm;
@@ -166,5 +167,15 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	}
 	public void startSearch(String newPhrase, IContext excludeContext) {
 		dynamicHelpPart.startSearch(newPhrase, excludeContext);
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveState(IMemento memento) {
+		// TODO Auto-generated method stub
+		
 	}
 }

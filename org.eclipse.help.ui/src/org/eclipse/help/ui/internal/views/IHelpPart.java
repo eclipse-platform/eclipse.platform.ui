@@ -13,10 +13,12 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.IFormPart;
 
 public interface IHelpPart extends IFormPart {
-	void init(ReusableHelpPart parent, String id);
+	void init(ReusableHelpPart parent, String id, IMemento memento);
+	void saveState(IMemento memento);
 	Control getControl();
 	String getId();
 	void setVisible(boolean visible);
