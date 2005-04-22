@@ -275,23 +275,44 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Sets focus to this part.
      */
     public void setFocus() {
+        
+        // The part might not be visible yet. When the part is invisible, we're actually setting
+        // the saved focus on the shell (which will be the initial focus location when the shell becomes
+        // visible). Trouble is, if the part isn't visible yet we have no way of testing whether the
+        // part actually received focus. This means we can't be as smart about assigning focus
+        // when the part is invisible. 
+        //
+        // When the part is visible, we first try the setFocus() method on the part, then assign
+        // focus directly to the part's widget, then fall back to the presentation widgets.
+        // This handles the case where setFocus() on the part doesn't do anything or where
+        // the part's top level control can't accept focus.
+        //
+        // When the part is invisible, we first assign focus directly to the part's top level control
+        // and then reassign focus using the part's setFocus method. This is less efficient and if the 
+        // part's top-level control can't accept focus, focus will just end up in limbo when 
+        // the shell becomes visible... but it seems to be the best we can do without any way
+        // to test whether the top-level control actually accepted focus.
+        //
+        // TODO: Find a way to set saved focus on an invisible shell that follows the same logic
+        // as when the shell is visible. (An invisible shell is usually the reason for 
+        // assigning focus to an invisible control).
+
         IWorkbenchPart part = partReference.getPart(true);
-        if (part != null) {
-            Control control = getControl();
-            // If the control already has focus, nothing to do
-            if (!SwtUtil.isFocusAncestor(control)) {
-                // First try to call part.setFocus
-                part.setFocus();
-                
-                // If that failed...
+        PartStack stack = getStack();
+        Control control = getControl();
+        if (control.isVisible()) {            
+            if (part != null) {
+                // If the control already has focus, nothing to do
                 if (!SwtUtil.isFocusAncestor(control)) {
-                    // Try to give the widget focus directly 
-                    if (!control.setFocus()) {
-                        // If that failed, give focus to the toolbar
-                        Control toolbar = getToolBar();
-                        if (toolbar == null || !toolbar.setFocus()) {
-                            // If the toolbar can't take focus, give focus to the presentation
-                            PartStack stack = getStack();
+                    // First try to call part.setFocus
+                    part.setFocus();
+                    
+                    // If that failed...
+                    if (!SwtUtil.isFocusAncestor(control)) {
+                        // Try to give the widget focus directly 
+                        if (!control.setFocus()) {
+                            // If that failed, give focus to the presentation
+
                             if (stack != null) {
                                 Control presentation = stack.getControl();
                                 if (presentation != null && !presentation.isDisposed()) {
@@ -302,8 +323,19 @@ public abstract class PartPane extends LayoutPart implements Listener {
                         }
                     }
                 }
+            } else {
+                control.setFocus();
             }
-        }        
+        } else {
+            // Assign saved focus for invisible shell
+            control.setFocus();
+           
+            // We can't test if setFocus actually worked, so we just reassign focus to our preferred
+            // location last.
+            if (part != null) {
+                part.setFocus();
+            }
+        }
     }
 
     /**
