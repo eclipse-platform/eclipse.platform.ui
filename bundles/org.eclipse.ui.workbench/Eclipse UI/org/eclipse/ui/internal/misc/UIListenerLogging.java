@@ -85,8 +85,8 @@ public class UIListenerLogging {
     public static final void logPageEvent(IWorkbenchWindow window, IWorkbenchPage page, String eventId) {
         if (isEnabled(WINDOW_PAGE_EVENTS)) {
             System.out.println(WINDOW_PAGE_EVENTS 
-                    + getWindowId(window) //$NON-NLS-1$
-                    + eventId + "(" + getPageId(page) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    + " " + getWindowId(window) //$NON-NLS-1$
+                    + " " + eventId + " (" + getPageId(page) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
         }
     }
 
@@ -95,8 +95,8 @@ public class UIListenerLogging {
         
         if (isEnabled(WINDOW_PERSPECTIVE_EVENTS)) {
             System.out.println(WINDOW_PERSPECTIVE_EVENTS 
-                    + getWindowId(window) //$NON-NLS-1$
-                    + eventId + "(" + getPageId(page) + ", " + getPerspectiveId(descriptor) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+                    + " " + getWindowId(window) //$NON-NLS-1$
+                    + " " + eventId + " (" + getPageId(page) + ", " + getPerspectiveId(descriptor) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
         }
     }
 
@@ -105,8 +105,8 @@ public class UIListenerLogging {
         
         if (isEnabled(WINDOW_PERSPECTIVE_EVENTS)) {
             System.out.println(WINDOW_PERSPECTIVE_EVENTS 
-                    + getWindowId(window) //$NON-NLS-1$
-                    + "perspectiveChanged (" + getPageId(page) + ", " + getPerspectiveId(descriptor)  //$NON-NLS-1$ //$NON-NLS-2$
+                    + " "+ getWindowId(window) //$NON-NLS-1$
+                    + " perspectiveChanged (" + getPageId(page) + ", " + getPerspectiveId(descriptor)  //$NON-NLS-1$ //$NON-NLS-2$
                     + ", " + getPartId(ref) + ", " + changeId + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             
         }
