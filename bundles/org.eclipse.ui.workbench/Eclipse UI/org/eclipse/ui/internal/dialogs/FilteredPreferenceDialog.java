@@ -95,6 +95,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		return node;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
+	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
 		PatternFilter filter = new PatternFilter() {
 			/**
@@ -245,8 +248,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @param filteredIds
 	 */
 	public void showOnly(String[] filteredIds) {
-		filteredTree.getViewer().addFilter(new PreferenceNodeFilter(filteredIds));
-
+		filteredTree.addFilter(new PreferenceNodeFilter(filteredIds));
 	}
 
 	/**

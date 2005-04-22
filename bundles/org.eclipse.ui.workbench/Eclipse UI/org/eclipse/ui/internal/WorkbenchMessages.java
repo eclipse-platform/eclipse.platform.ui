@@ -796,6 +796,8 @@ public class WorkbenchMessages extends NLS {
 	public static String RectangleAnimation_Animating_Rectangle;
 	public static String FilteredList_UpdateJobName;
 	public static String FilteredTree_ClearToolTip;
+	public static String FilteredTree_FilteredMessage;
+	public static String FilteredTree_FilteredDialogTitle;
 	public static String Workbench_restoreDisabled;
 	public static String Workbench_noStateToRestore;
 	public static String Workbench_noWindowsRestored;

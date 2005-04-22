@@ -511,6 +511,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 */
 	private KeySequenceText textTriggerSequenceManager;
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+	 */
+	public void applyData(Object data) {
+		if(data instanceof Binding)
+			editBinding((Binding) data);
+	}
 	protected final Control createContents(final Composite parent) {
 		tabFolder = new TabFolder(parent, SWT.NULL);
 
@@ -2414,4 +2422,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 			tableBindings.getColumn(i).pack();
 		}
 	}
+	
+	
 }

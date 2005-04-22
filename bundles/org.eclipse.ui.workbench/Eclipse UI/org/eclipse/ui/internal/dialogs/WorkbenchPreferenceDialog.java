@@ -45,57 +45,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @since 3.1
 	 */
 	private static WorkbenchPreferenceDialog instance = null;
-
-	/**
-	 * Creates a workbench preference dialog to a particular preference page. It
-	 * is the responsibility of the caller to then call <code>open()</code>.
-	 * The call to <code>open()</code> will not return until the dialog
-	 * closes, so this is the last chance to manipulate the dialog.
-	 * 
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
-	 * @return The selected preference page.
-	 * @deprecated This method will be removed before 3.1 is released.
-	 * Use  org.eclipse.ui.dialogs.PreferencesUtil#createPreferenceDialogOn(Shell, String,String[], Object)
-	 * @since 3.1
-	 * @see org.eclipse.ui.dialogs.PreferencesUtil
-	 */
-	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId) {
-		return createDialogOn(null,preferencePageId);
-	}
-	
-	/**
-	 * Creates a workbench preference dialog to a particular preference page.
-	 * Show the other pages as filtered results using whatever filtering
-	 * criteria the search uses. It is the responsibility of the caller to then
-	 * call <code>open()</code>. The call to <code>open()</code> will not
-	 * return until the dialog closes, so this is the last chance to manipulate
-	 * the dialog.
-	 * 
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
-	 * @param displayedIds
-	 *            The ids of the other pages to be highlighted using the same
-	 *            filtering criterea as search.
-	 * @return The dialog.
-	 * @deprecated This method will be removed before 3.1 is released.
-	 * Use  org.eclipse.ui.dialogs.PreferencesUtil#createPreferenceDialogOn(Shell, String,String[], Object)
-	 * @since 3.1
-	 * @see org.eclipse.ui.dialogs.PreferencesUtil
-	 */
-	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
-			String[] displayedIds) {
-		WorkbenchPreferenceDialog dialog =  createDialogOn(null,preferencePageId);
-		if(dialog == null)
-			return null;
-		if (displayedIds != null)
-			dialog.showOnly(displayedIds);
-		return dialog;
-	}
 	
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It

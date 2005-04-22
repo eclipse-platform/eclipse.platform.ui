@@ -16,6 +16,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -52,6 +53,8 @@ public class FilteredTree extends Composite {
     private Composite filterParent;
 
     private PatternFilter patternFilter;
+    
+    private PreferenceNodeFilter preferenceFilter;
 
     private FocusListener listener;
 
@@ -60,7 +63,9 @@ public class FilteredTree extends Composite {
     private static final String DCLEAR_ICON = "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
 
     private String initialText = ""; //$NON-NLS-1$
-
+    
+    private String cachedTitle;
+   
     static {
         ImageDescriptor descriptor = AbstractUIPlugin
                 .imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
@@ -205,7 +210,7 @@ public class FilteredTree extends Composite {
         } else {
             // disabled toolbar is a hint that there is no text to clear
             // and the list is currently not filtered
-            filterToolBar.getControl().setVisible(false);
+            filterToolBar.getControl().setVisible(preferenceFilter != null);
         }
     }
 
@@ -261,6 +266,13 @@ public class FilteredTree extends Composite {
      */
     protected void clearText() {
         setFilterText(""); //$NON-NLS-1$
+        
+        if(preferenceFilter != null){
+        	getViewer().removeFilter(preferenceFilter);
+        	preferenceFilter = null;
+    		getShell().setText(cachedTitle);
+        }
+		
         textChanged();
     }
 
@@ -331,5 +343,28 @@ public class FilteredTree extends Composite {
 	protected String getInitialText() {
 		return initialText;
 	}
+
+	/**
+	 * Add the filter to the viewer.
+	 * @param filter
+	 */
+	public void addFilter(PreferenceNodeFilter filter) {
+		preferenceFilter = filter;
+		getViewer().addFilter(filter);
+		setInitialText(WorkbenchMessages.FilteredTree_FilteredMessage);
+		
+		if(getFilterControl() != null){
+			setFilterText(WorkbenchMessages.FilteredTree_FilteredMessage);
+			textChanged();
+		}
+		
+		cachedTitle = getShell().getText();
+		getShell().setText(
+				NLS.bind(
+						WorkbenchMessages.FilteredTree_FilteredDialogTitle, 
+				cachedTitle));
+		
+	}
+
 	
 }

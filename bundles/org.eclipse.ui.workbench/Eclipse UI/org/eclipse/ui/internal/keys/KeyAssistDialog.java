@@ -30,7 +30,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +53,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -621,15 +621,9 @@ final class KeyAssistDialog extends Dialog {
 				"org.eclipse.ui.preferencePages.Keys", //$NON-NLS-1$
 				"org.eclipse.ui.preferencePages.Perspectives" //$NON-NLS-1$
 		};
-		final WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
-				.createDialogOn(keysPageId, highlights);
-
-		// Select the right command on the preference page.
-		final IPreferencePage page = dialog.getCurrentPage();
-		if (page instanceof KeysPreferencePage) {
-			final KeysPreferencePage keysPreferencePage = (KeysPreferencePage) page;
-			keysPreferencePage.editBinding(binding);
-		}
+		final PreferenceDialog dialog = 
+			PreferencesUtil.createPreferenceDialogOn(
+					getShell(),keysPageId, null ,binding);
 
 		/*
 		 * Forget the remembered state (so we don't get stuck editing
