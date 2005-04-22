@@ -283,9 +283,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		new PerformanceTestRunner() {
 			protected void test() {
 				// any interation that will cause the registry to be loaded
-				long start = System.currentTimeMillis();
 				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-				System.out.println("Timing: " + (System.currentTimeMillis() - start));
 			}
 		}.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
 		assertTrue("not loaded", ((ContentTypeManager) Platform.getContentTypeManager()).isLoaded());
