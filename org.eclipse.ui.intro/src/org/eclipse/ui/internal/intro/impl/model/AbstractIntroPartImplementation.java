@@ -346,7 +346,7 @@ public abstract class AbstractIntroPartImplementation {
             } else
                 Util
                     .logPerformanceTime(
-                        "setting standby state (zooming, displaying content) took:",
+                        "setting standby state (zooming, generating content, setText() ) took:",
                         +start);
 
             if (logUIcreationTime) {

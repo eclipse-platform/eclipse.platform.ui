@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
+import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -112,9 +114,19 @@ public class ModelUtil {
      */
     protected static void extractParentFolder(Bundle bundle, String contentFile) {
         try {
+            long start = 0;
+            if (Log.logPerformance)
+                start = System.currentTimeMillis();
             IPath parentFolder = ModelUtil.getParentFolder(contentFile);
             URL parentFolderURL = Platform.find(bundle, parentFolder);
             URL url = Platform.asLocalURL(parentFolderURL);
+            if (Log.logPerformance) {
+                String msg = StringUtil
+                    .concat("extracting content folder ", contentFile, " (",
+                        bundle.getSymbolicName(), ")", " took: ").toString();
+                Util.logPerformanceTime(msg, start);
+            }
+
         } catch (Exception e) {
             if (contentFile != null)
                 Log.error("Failed to extract Intro content folder for: " //$NON-NLS-1$
