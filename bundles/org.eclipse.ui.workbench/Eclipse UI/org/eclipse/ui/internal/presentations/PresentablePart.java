@@ -131,10 +131,10 @@ public class PresentablePart implements IPresentablePart {
      */
     public void setFocus() {
         if (!SwtUtil.isDisposed(part.getControl())) {
-            // Only allow the presentation to set focus on the active part. If it wants to give something
-            // else focus, it needs to activate that other part first.
             if (part.getPage().getActivePart() == part.getPartReference().getPart(false)) { 
                 part.setFocus();
+            } else {
+                part.requestActivation();
             }
         }
     }
