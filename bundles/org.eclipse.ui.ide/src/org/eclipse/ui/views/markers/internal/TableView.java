@@ -409,7 +409,7 @@ public abstract class TableView extends ViewPart {
         if (memento == null) {
             return;
         }
-        columnLayouts = new ColumnLayoutData[getFields().length];
+        columnLayouts = new ColumnLayoutData[getVisibleFields().length];
         for (int i = 0; i < columnLayouts.length; i++) {
             Integer width = memento.getInteger(TAG_COLUMN_WIDTH + i);
             if (width == null) {
