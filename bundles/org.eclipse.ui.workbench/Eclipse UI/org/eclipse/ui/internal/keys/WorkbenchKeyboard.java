@@ -742,12 +742,13 @@ public final class WorkbenchKeyboard {
 						.isEmpty());
 
 			} else if ((keyAssistDialog != null)
-					&& ((event.keyCode == SWT.ARROW_DOWN)
-							|| (event.keyCode == SWT.ARROW_UP)
-							|| (event.keyCode == SWT.ARROW_LEFT)
-							|| (event.keyCode == SWT.ARROW_RIGHT)
-							|| (event.keyCode == SWT.CR)
-							|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
+                    && (keyAssistDialog.getShell() != null)
+                    && ((event.keyCode == SWT.ARROW_DOWN)
+                            || (event.keyCode == SWT.ARROW_UP)
+                            || (event.keyCode == SWT.ARROW_LEFT)
+                            || (event.keyCode == SWT.ARROW_RIGHT)
+                            || (event.keyCode == SWT.CR)
+                            || (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
 				// We don't want to swallow keyboard navigation keys.
 				return false;
 
@@ -755,27 +756,27 @@ public final class WorkbenchKeyboard {
 		}
 
 		resetState(true);
-		return false;
+		return !sequenceBeforeKeyStroke.isEmpty();
 	}
 
 	/**
-	 * <p>
-	 * Actually performs the processing of the key event by interacting with the
-	 * <code>ICommandManager</code>. If work is carried out, then the event
-	 * is stopped here (i.e., <code>event.doit = false</code>). It does not
-	 * do any processing if there are no matching key strokes.
-	 * </p>
-	 * <p>
-	 * If the active <code>Shell</code> is not the same as the one to which
-	 * the state is associated, then a reset occurs.
-	 * </p>
-	 * 
-	 * @param keyStrokes
-	 *            The set of all possible matching key strokes; must not be
-	 *            <code>null</code>.
-	 * @param event
-	 *            The event to process; must not be <code>null</code>.
-	 */
+     * <p>
+     * Actually performs the processing of the key event by interacting with the
+     * <code>ICommandManager</code>. If work is carried out, then the event
+     * is stopped here (i.e., <code>event.doit = false</code>). It does not
+     * do any processing if there are no matching key strokes.
+     * </p>
+     * <p>
+     * If the active <code>Shell</code> is not the same as the one to which
+     * the state is associated, then a reset occurs.
+     * </p>
+     * 
+     * @param keyStrokes
+     *            The set of all possible matching key strokes; must not be
+     *            <code>null</code>.
+     * @param event
+     *            The event to process; must not be <code>null</code>.
+     */
 	void processKeyEvent(List keyStrokes, Event event) {
 		// Dispatch the keyboard shortcut, if any.
 		boolean eatKey = false;
