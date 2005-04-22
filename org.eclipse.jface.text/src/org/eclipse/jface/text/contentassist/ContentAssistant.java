@@ -11,7 +11,9 @@
 package org.eclipse.jface.text.contentassist;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -38,7 +40,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.contentassist.*;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jface.text.Assert;
@@ -257,7 +260,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		protected void stop() {
-			if (fThread != null) {
+			if (fThread != null && fThread.isAlive()) {
 				fThread.interrupt();
 			}
 		}
@@ -276,6 +279,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			// Only act on typed characters and ignore modifier-only events
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
+			// Only act on characters that are trigger candidates. This
+			// avoids computing the model selection on every keystroke
+			if (computeAllAutoActivationTriggers().indexOf(e.character) < 0) {
+				stop();
+				return;
+			}
 
 			int showStyle;
 			int pos= fContentAssistSubjectControlAdapter.getSelectedRange().x;
@@ -290,8 +299,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				if (contains(activation, e.character) && fContextInfoPopup != null && !fContextInfoPopup.isActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
-					if (fThread != null && fThread.isAlive())
-						stop();
+					stop();
 					return;
 				}
 			}
@@ -788,6 +796,27 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return null;
 
 		return (IContentAssistProcessor) fProcessors.get(contentType);
+	}
+
+	/**
+	 * Computes the sorted set of all auto activation trigger characters.
+	 * 
+	 * @return the sorted set of all auto activation trigger characters
+	 * @since 3.1
+	 */
+	private String computeAllAutoActivationTriggers() {
+		StringBuffer buf= new StringBuffer(5);
+		for (Iterator it= fProcessors.entrySet().iterator(); it.hasNext();) {
+			Entry entry= (Entry) it.next();
+			IContentAssistProcessor processor= (IContentAssistProcessor) entry.getValue();
+			char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
+			if (triggers != null)
+				buf.append(triggers);
+			triggers= processor.getContextInformationAutoActivationCharacters();
+			if (triggers != null)
+				buf.append(triggers);
+		}
+		return buf.toString();
 	}
 
 	/**
