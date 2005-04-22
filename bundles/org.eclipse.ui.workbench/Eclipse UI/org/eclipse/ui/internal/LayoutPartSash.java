@@ -40,6 +40,8 @@ class LayoutPartSash extends LayoutPart {
     SelectionListener selectionListener;
 
     private int left = 300, right = 300;
+
+    private Rectangle bounds = new Rectangle(0,0,0,0);
     
     /**
      * Stores whether or not the sash is visible. (This is expected to have a meaningful
@@ -119,7 +121,14 @@ class LayoutPartSash extends LayoutPart {
 	        sash = new Sash(this.rootContainer.getParent(), style | SWT.SMOOTH);
 	        sash.addSelectionListener(selectionListener);
 	        sash.setEnabled(enabled);
+            sash.setBounds(bounds);
         }
+    }
+    
+    public void setBounds(Rectangle r) {
+        super.setBounds(r);
+        
+        bounds = r;
     }
 
     /**
@@ -151,8 +160,10 @@ class LayoutPartSash extends LayoutPart {
      */
     public void dispose() {
 
-        if (sash != null)
+        if (sash != null) {
+            bounds = sash.getBounds();
             sash.dispose();
+        }
         sash = null;
     }
 
@@ -160,8 +171,10 @@ class LayoutPartSash extends LayoutPart {
      * Gets the presentation bounds.
      */
     public Rectangle getBounds() {
-        if (sash == null)
-            return super.getBounds();
+        if (sash == null) {
+            return bounds;
+        }
+
         return sash.getBounds();
     }
 
