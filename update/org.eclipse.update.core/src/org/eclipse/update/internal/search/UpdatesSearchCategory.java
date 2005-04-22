@@ -306,7 +306,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				continue;
 			// do not accept updates without a license
 			if (!UpdateUtils.hasLicense(job.getFeature())) {
-				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Messages.DefaultFeatureParser_NoLicenseText, null); 
+				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Messages.DefaultFeatureParser_NoLicenseText, null);  //$NON-NLS-1$
 				continue;
 			}
 			IStatus status;

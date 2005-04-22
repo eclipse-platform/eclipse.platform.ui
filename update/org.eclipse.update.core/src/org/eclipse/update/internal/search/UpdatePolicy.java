@@ -218,7 +218,7 @@ public class UpdatePolicy {
 		reset();
 		
 		if (root.getNodeName().equals(TAG_POLICY)==false)
-			throwCoreException("'"+TAG_POLICY+Messages.UpdatePolicy_policyExpected, null); 
+			throwCoreException("'"+TAG_POLICY+Messages.UpdatePolicy_policyExpected, null);  //$NON-NLS-1$
 				
 		NodeList nodes = root.getChildNodes();
 		

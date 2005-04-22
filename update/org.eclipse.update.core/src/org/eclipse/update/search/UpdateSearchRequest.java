@@ -13,12 +13,24 @@ package org.eclipse.update.search;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteWithMirrors;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.search.SiteSearchCategory;
 import org.eclipse.update.internal.search.UpdatePolicy;
+import org.eclipse.update.internal.search.UpdateSiteAdapter;
+import org.eclipse.update.internal.search.UpdatesSearchCategory;
 
 /**
  * This class is central to update search. The search pattern
@@ -321,7 +333,8 @@ public class UpdateSearchRequest {
 		SubProgressMonitor monitor,
 		boolean checkMirrors)
 		throws CoreException {
-		String text = Messages.UpdateSearchRequest_contacting + siteAdapter.getLabel() + "..."; 
+		
+		String text = NLS.bind(Messages.UpdateSearchRequest_contacting, siteAdapter.getLabel());
 		monitor.subTask(text);
 		monitor.beginTask("", 10); //$NON-NLS-1$
 		URL siteURL = siteAdapter.getURL();
@@ -361,7 +374,7 @@ public class UpdateSearchRequest {
 			return status;
 		}
 
-		text = Messages.UpdateSearchRequest_checking + " " + siteAdapter.getLabel() + "...";  //$NON-NLS-1$ //$NON-NLS-2$
+		text = NLS.bind(Messages.UpdateSearchRequest_checking, siteAdapter.getLabel());
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		query.run(

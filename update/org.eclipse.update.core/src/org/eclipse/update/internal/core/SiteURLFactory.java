@@ -64,13 +64,13 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 
 			SiteModelFactory factory = this;
 			site = (Site) factory.parseSite(siteStream);
-	
+			
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, url);
 			site.markReadOnly();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e);
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e); //$NON-NLS-1$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToAccessSiteStream, (new String[] { url == null ? "" : url.toExternalForm() })), ISite.SITE_ACCESS_EXCEPTION, e);	//$NON-NLS-1$
 		} finally {
