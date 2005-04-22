@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
 
 /**
  */
@@ -32,7 +38,7 @@ public class LocalSiteSelector {
 	public LocalSiteSelector() {
 		super();
 	}
-	public static SiteBookmark getLocaLSite(Shell parent) {
+	public static SiteBookmark getLocaLSite(Shell parent, SiteBookmark[] siteBookmarks) {
 		DirectoryDialog dialog = new DirectoryDialog(parent);
 		dialog.setMessage(
 			UpdateUIMessages.LocalSiteSelector_dialogMessage); 
@@ -43,8 +49,16 @@ public class LocalSiteSelector {
 		while (dir != null && siteBookmark == null) {
 			File dirFile = new File(dir);
 			if (isDirSite(dirFile)) {
-				siteBookmark = createDirSite(dirFile);
-				lastLocation = dir;
+				if (!isDuplicate( dirFile, siteBookmarks)) {
+					siteBookmark = createDirSite(dirFile);
+					lastLocation = dir;
+				} else {
+					MessageDialog.openInformation(parent,
+												  UpdateUIMessages.LocalSiteSelector_dirInfoTitle, 
+												  UpdateUIMessages.LocalSiteSelector_dirDuplicateDefinition); 
+					dialog.setFilterPath(dir);
+					dir = dialog.open();
+				}
 			} else {
 				MessageDialog.openInformation(
 					parent,
@@ -56,7 +70,7 @@ public class LocalSiteSelector {
 		}
 		return siteBookmark;
 	}
-	public static SiteBookmark getLocaLZippedSite(Shell parent) {
+	public static SiteBookmark getLocaLZippedSite(Shell parent, SiteBookmark[] siteBookmarks) {
 		FileDialog dialog = new FileDialog(parent);
 		dialog.setText(
 			UpdateUIMessages.LocalSiteSelector_dialogMessagezip); 
@@ -71,6 +85,13 @@ public class LocalSiteSelector {
 			File zipF = new File(zip);
 			if (isZipSite(zipF)) {
 				siteBookmark = createZipSite(zipF);
+				if (isDuplicate( siteBookmark.getURL(), siteBookmarks)) {
+					MessageDialog.openInformation(parent,
+							  UpdateUIMessages.LocalSiteSelector_zipInfoTitle, 
+							  UpdateUIMessages.LocalSiteSelector_zipDuplicateDefinition);
+					siteBookmark = null;
+					zip = dialog.open();
+				}
 			} else {
 				MessageDialog.openInformation(
 					parent,
@@ -213,5 +234,31 @@ public class LocalSiteSelector {
 			return valid;
 		}
 	}
+	
+	private static boolean isDuplicate( File file, SiteBookmark[] siteBookmarks) {
+		
+		try {
+			return isDuplicate(file.toURL(), siteBookmarks);
+		} catch (MalformedURLException mue) {
+			// this should not ever happen
+			mue.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	private static boolean isDuplicate( URL url, SiteBookmark[] siteBookmarks) {
+		
+		if ( siteBookmarks == null)
+			return false;
+
+		for( int i = 0; i < siteBookmarks.length; i++) {
+			if (siteBookmarks[i].getURL().equals(url))
+				return true;
+
+		}
+		return false;
+		
+	}	
 
 }

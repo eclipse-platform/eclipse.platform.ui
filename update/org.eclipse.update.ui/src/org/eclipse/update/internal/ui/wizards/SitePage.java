@@ -347,7 +347,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void handleAddSite() {
-		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell());
+		NewUpdateSiteDialog dialog = new NewUpdateSiteDialog(getShell(), getAllSiteBookmarks());
 		dialog.create();
 		dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
 		if (dialog.open() == NewUpdateSiteDialog.OK)
@@ -355,7 +355,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void handleAddLocal() {
-		SiteBookmark siteBookmark = LocalSiteSelector.getLocaLSite(getShell());
+		SiteBookmark siteBookmark = LocalSiteSelector.getLocaLSite(getShell(), this.getAllSiteBookmarks());
 		if (siteBookmark != null) {
 			if (handleNameEdit(siteBookmark) == EditSiteDialog.OK) {
 				siteBookmark.setSelected(true);
@@ -370,7 +370,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	private void handleAddLocalZipped() {
 		SiteBookmark siteBookmark = LocalSiteSelector
-				.getLocaLZippedSite(getShell());
+				.getLocaLZippedSite(getShell(), this.getAllSiteBookmarks());
 		if (siteBookmark != null) {
 			if (handleNameEdit(siteBookmark) == EditSiteDialog.OK) {
 				siteBookmark.setSelected(true);
@@ -413,7 +413,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			(IStructuredSelection) treeViewer.getSelection();
 		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
 		URL oldURL = bookmark.getURL();
-		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
+		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, getAllSiteBookmarks());
 		dialog.create();
 		String title = bookmark.isLocal() ? UpdateUIMessages.SitePage_dialogEditLocal : UpdateUIMessages.SitePage_dialogEditUpdateSite; 
 																																				  // //$NON-NLS-2$
@@ -452,7 +452,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 	
 	private int handleNameEdit(SiteBookmark bookmark) {
-		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, true);
+		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, getAllSiteBookmarks(), true);
 		dialog.create();
 		String title = bookmark.isLocal() ? UpdateUIMessages.SitePage_dialogEditLocal : UpdateUIMessages.SitePage_dialogEditUpdateSite; 
 		// //$NON-NLS-2$

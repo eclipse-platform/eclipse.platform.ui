@@ -264,6 +264,10 @@ public final class UpdateUIMessages extends NLS {
 	public static String MoreInfoGenerator_moreInfo;
 	public static String NewUpdateSiteDialog_name;
 	public static String NewUpdateSiteDialog_url;
+	public static String NewUpdateSiteDialog_error_nameOrUrlNotSpecified;
+	public static String NewUpdateSiteDialog_error_duplicateName;
+	public static String NewUpdateSiteDialog_error_duplicateUrl;
+	public static String NewUpdateSiteDialog_error_incorrectUrl;
 	public static String InstallWizard_isRunningTitle;
 	public static String InstallWizard_isRunningInfo;
 	public static String InstallWizard_jobName;
@@ -360,9 +364,11 @@ public final class UpdateUIMessages extends NLS {
 	public static String LocalSiteSelector_dialogMessage;
 	public static String LocalSiteSelector_dirInfoTitle;
 	public static String LocalSiteSelector_dirInfoMessage;
+	public static String LocalSiteSelector_dirDuplicateDefinition;
 	public static String LocalSiteSelector_dialogMessagezip;
 	public static String LocalSiteSelector_zipInfoTitle;
 	public static String LocalSiteSelector_zipInfoMessage;
+	public static String LocalSiteSelector_zipDuplicateDefinition;
 	public static String LocalSiteSelector_dialogMessageImport;
 	public static String LocalSiteSelector_importInfoTitle;
 	public static String LocalSiteSelector_importInfoMessage;

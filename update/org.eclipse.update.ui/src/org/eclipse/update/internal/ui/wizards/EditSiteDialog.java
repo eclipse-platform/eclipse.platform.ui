@@ -10,24 +10,38 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
 
 
 public class EditSiteDialog extends NewUpdateSiteDialog {
 	SiteBookmark bookmark;
+	private int ignoreBookmark = -1;
 
 	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark) {
 		super(parentShell);
 		this.bookmark = bookmark;
 	}
+	
+	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, SiteBookmark[] siteBookmarks) {
+		super(parentShell, siteBookmarks);
+		this.bookmark = bookmark;
+		ignoreBookmark(siteBookmarks);
+	}
 
 	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, boolean enableOK) {
 		super(parentShell,enableOK);
 		this.bookmark = bookmark;
+	}
+	
+	public EditSiteDialog(Shell parentShell, SiteBookmark bookmark, SiteBookmark[] siteBookmarks, boolean enableOK) {
+		super(parentShell, enableOK, siteBookmarks);
+		this.bookmark = bookmark;
+		ignoreBookmark(siteBookmarks);
 	}
 
 	protected void initializeFields() {
@@ -43,5 +57,23 @@ public class EditSiteDialog extends NewUpdateSiteDialog {
 			UpdateUI.getDefault().getUpdateModel().fireObjectChanged(bookmark, null);
 		} catch (MalformedURLException e) {
 		}
+	}
+	
+	private void ignoreBookmark( SiteBookmark[] siteBookmarks) {
+		
+		for( int i = 0; i < siteBookmarks.length; i++) {
+
+			if (siteBookmarks[i].getLabel().equals(bookmark.getLabel().trim()) &&
+				siteBookmarks[i].getURL().equals(bookmark.getURL())) {	
+				ignoreBookmark = i;	
+				return;
+			}
+			
+		}
+	}
+	
+	protected boolean isCurrentlyEditedSiteBookmark( int index) {
+		
+		return index == ignoreBookmark;
 	}
 }
