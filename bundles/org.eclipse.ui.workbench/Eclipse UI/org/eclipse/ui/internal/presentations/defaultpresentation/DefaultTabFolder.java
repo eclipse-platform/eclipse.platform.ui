@@ -286,8 +286,10 @@ public class DefaultTabFolder extends AbstractTabFolder {
             titleLabel.setVisible(false);
         }
         
-        if (!Util.equals(titleLabel.getText(), info.contentDescription)) {
-            titleLabel.setText(info.contentDescription);
+        String newTitle = DefaultTabItem.escapeAmpersands(info.contentDescription);
+        
+        if (!Util.equals(titleLabel.getText(), newTitle)) {
+            titleLabel.setText(newTitle);
         }
     }
 

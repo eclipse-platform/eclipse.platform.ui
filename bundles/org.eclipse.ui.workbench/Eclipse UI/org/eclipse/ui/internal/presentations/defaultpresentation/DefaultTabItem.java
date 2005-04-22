@@ -89,21 +89,33 @@ public class DefaultTabItem extends WidgetTabItem {
         
         String newName = tabItem.getParent().getSingle() ? longName : shortName;
         
-        StringBuffer title = new StringBuffer(newName.length());
-        for (int i = 0; i < newName.length(); i++) {
-            char character = newName.charAt(i);
-            title.append(character);
-            if (character == '&') {
-                title.append(character); // escape ampersand
-            }
-        }
-        newName = title.toString();
+        newName = escapeAmpersands(newName);
         
         if (!Util.equals(newName, tabItem.getText())) {
             tabItem.setText(newName);
         }
     }
 
+    /**
+     * Escapes all the ampersands in the given string such that they can be displayed
+     * verbatim in an SWT label rather than treated as accelerators.
+     * 
+     * @since 3.1 
+     *
+     * @return a string where all ampersands are escaped
+     */
+    public static String escapeAmpersands(String input) {
+        StringBuffer title = new StringBuffer(input.length());
+        for (int i = 0; i < input.length(); i++) {
+            char character = input.charAt(i);
+            title.append(character);
+            if (character == '&') {
+                title.append(character); // escape ampersand
+            }
+        }
+        return title.toString();
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setBold(boolean)
      */
