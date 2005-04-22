@@ -467,11 +467,6 @@ class JSchSession {
 		}
 	}
 
-    private static boolean isHostKeyPurged(String hostname) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     private static boolean isHostKeyChangeError(JSchException e) {
         return e.getMessage().equals("HostKey has been changed"); //$NON-NLS-1$
     }
