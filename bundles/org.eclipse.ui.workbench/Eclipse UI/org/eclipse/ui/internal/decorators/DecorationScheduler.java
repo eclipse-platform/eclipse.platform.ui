@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.decorators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -55,8 +57,13 @@ public class DecorationScheduler {
 	Job decorationJob;
 
 	UIJob updateJob;
-
+	
+	Collection removedListeners = new HashSet();
+	
 	private Job clearJob;
+	
+	//Static used for the updates to indicate an update is required
+	static int NEEDS_INIT = -1;
 
 	/**
 	 * Return a new instance of the receiver configured for the supplied
@@ -432,38 +439,73 @@ public class DecorationScheduler {
 	private WorkbenchJob getUpdateJob() {
 		WorkbenchJob job = new WorkbenchJob(
 				WorkbenchMessages.DecorationScheduler_UpdateJobName) {
+			
+			int currentIndex = NEEDS_INIT;
+			LabelProviderChangedEvent labelProviderChangedEvent;
+			ILabelProviderListener[] listeners;
+			
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 				if (shutdown)// Cancelled on shutdown
 					return Status.CANCEL_STATUS;
 
-				// Check again in case someone has already cleared it out.
-				if (pendingUpdate.isEmpty())
-					return Status.OK_STATUS;
-
-				// Get the elements awaiting update and then
-				// clear the list
-				Object[] elements = pendingUpdate
-						.toArray(new Object[pendingUpdate.size()]);
+				// If this is the first one check again in case 
+				// someone has already cleared it out.
+				if (currentIndex == NEEDS_INIT){
+					if(pendingUpdate.isEmpty())
+						return Status.OK_STATUS;
+					setUpUpdates();
+				}
+				
 				monitor.beginTask(
 						WorkbenchMessages.DecorationScheduler_UpdatingTask,
-						elements.length + 20);
-				pendingUpdate.clear();
-				monitor.worked(15);
-				decoratorManager.fireListeners(new LabelProviderChangedEvent(
-						decoratorManager, elements));
-				monitor.worked(elements.length);
-				// Other decoration requests may have occured due to
-				// updates. Only clear the results if there are none
-				// pending.
-				if (awaitingDecoration.isEmpty())
-					resultCache.clear();
+						10);
+				
 				monitor.worked(5);
+				
+				if(listeners.length == 0)
+					return Status.OK_STATUS;
+				
+				//If it was removed in the meantime then leave.
+				ILabelProviderListener listener = listeners[currentIndex];
+				currentIndex ++;
+				
+				if(!removedListeners.contains(listener))
+					decoratorManager.
+						fireListener(labelProviderChangedEvent,listener);
+				
 				monitor.done();
+				
+				if(currentIndex >= listeners.length){
+					// Other decoration requests may have occured due to
+					// updates. Only clear the results if there are none
+					// pending.
+					if (awaitingDecoration.isEmpty())
+						resultCache.clear();
+				
 
-				if (!pendingUpdate.isEmpty())
-					decorated();
+					if (!pendingUpdate.isEmpty())
+						decorated();
+					currentIndex = NEEDS_INIT;//Reset
+					labelProviderChangedEvent = null;
+					removedListeners.clear();
+				}
+				else
+					schedule();//Reschedule if we are not done
 				return Status.OK_STATUS;
+			}
+
+			private void setUpUpdates() {
+				// Get the elements awaiting update and then
+				// clear the list
+				removedListeners.clear();
+				currentIndex = 0;
+				Object[] elements = pendingUpdate
+						.toArray(new Object[pendingUpdate.size()]);
+				pendingUpdate.clear();
+				labelProviderChangedEvent = new LabelProviderChangedEvent(
+						decoratorManager, elements);
+				listeners = decoratorManager.getListeners();
 			}
 
 			/*
@@ -473,6 +515,13 @@ public class DecorationScheduler {
 			 */
 			public boolean belongsTo(Object family) {
 				return DecoratorManager.FAMILY_DECORATE == family;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+			 */
+			public boolean shouldRun(){
+				return PlatformUI.isWorkbenchRunning();
 			}
 		};
 
@@ -551,5 +600,17 @@ public class DecorationScheduler {
 	 */
 	public boolean processingUpdates() {
 		return !pendingUpdate.isEmpty() && !awaitingDecoration.isEmpty();
+	}
+
+	/**
+	 * A listener has been removed. If we are updating then
+	 * skip it.
+	 * @param listener
+	 */
+	void listenerRemoved(ILabelProviderListener listener) {
+		if(updateJob == null)
+			return;
+		removedListeners.add(listener);
+		
 	}
 }

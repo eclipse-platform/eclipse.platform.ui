@@ -207,8 +207,36 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      */
     public void removeListener(ILabelProviderListener listener) {
         listeners.remove(listener);
+        scheduler.listenerRemoved(listener);
     }
+    
+    /**
+	 * Get the list of elements listening to the receiver.
+	 * @return ILabelProviderListener []
+	 */
+	ILabelProviderListener [] getListeners(){
+		Object[] array = listeners.getListeners();
+		ILabelProviderListener [] listenerArray = 
+			new ILabelProviderListener [array.length];
+		System.arraycopy(array,0,listenerArray,0,listenerArray.length);
+		return listenerArray;		
+	}
 
+    /**
+	 * Inform all of the listeners that require an update
+	 * @param listener The listener we are updating. 
+	 * @param event
+	 *            the event with the update details
+	 */
+	void fireListener(final LabelProviderChangedEvent event, final ILabelProviderListener listener) {
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				listener.labelProviderChanged(event);
+			}
+		});
+
+	}
+	
     /**
      * Inform all of the listeners that require an update
      * @param event the event with the update details
