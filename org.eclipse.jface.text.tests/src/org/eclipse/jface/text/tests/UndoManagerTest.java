@@ -32,7 +32,7 @@ import org.eclipse.jface.text.TextViewer;
 public class UndoManagerTest extends TestCase {
 
 	/** The maximum undo level. */
-	private static final int MAX_UNDO_LEVEL = 256;
+	private static final int MAX_UNDO_LEVEL= 256;
 	
 	/** The shell. */
 	private Shell fShell;
@@ -56,9 +56,9 @@ public class UndoManagerTest extends TestCase {
 	 *  @see TestCase#setUp()
 	 */
 	protected void setUp() {
-		fShell = new Shell();	
-		fUndoManager = new DefaultUndoManager(MAX_UNDO_LEVEL);
-		fTextViewer = new TextViewer(fShell, SWT.NONE);
+		fShell= new Shell();	
+		fUndoManager= new DefaultUndoManager(MAX_UNDO_LEVEL);
+		fTextViewer= new TextViewer(fShell, SWT.NONE);
 		fTextViewer.setUndoManager(fUndoManager);
 		fUndoManager.connect(fTextViewer);
 	}
@@ -119,8 +119,6 @@ public class UndoManagerTest extends TestCase {
 				final Position position= createRandomPositionPoisson(document.getLength());
 				final String string= createRandomStringPoisson(4);
 				document.replace(position.getOffset(), position.getLength(), string);
-//				System.out.println("replace length = " + position.getLength());
-//				System.out.println("string length = " + string.length());
 			}
 		} catch (BadLocationException e) {
 			assertTrue(false);
@@ -171,6 +169,38 @@ public class UndoManagerTest extends TestCase {
 		doChange(document, RANDOM_REPLACE_COUNT);
 		// do not close the compound.
 		// fUndoManager.endCompoundChange();
+
+		assertTrue(fUndoManager.undoable());
+		while (fUndoManager.undoable())
+			fUndoManager.undo();
+		assertTrue(!fUndoManager.undoable());
+			
+		final String reverted= document.get();
+
+		assertEquals(original, reverted);		
+	}
+	
+	public void testRandomAccessWithMixedCompound() {
+
+		final int RANDOM_STRING_LENGTH= 50;
+		final int RANDOM_REPLACE_COUNT= 10;
+		final int NUMBER_COMPOUNDS= 5;
+		final int NUMBER_ATOMIC_PER_COMPOUND= 3;
+		
+		assertTrue(RANDOM_REPLACE_COUNT >= 1);
+		assertTrue(NUMBER_COMPOUNDS * (1 + NUMBER_ATOMIC_PER_COMPOUND) * RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
+		
+		String original= createRandomString(RANDOM_STRING_LENGTH);
+		final IDocument document= new Document(original);
+		fTextViewer.setDocument(document);
+
+		for (int i= 0; i < NUMBER_COMPOUNDS; i++) {
+			fUndoManager.beginCompoundChange();		
+			doChange(document, RANDOM_REPLACE_COUNT);
+			fUndoManager.endCompoundChange();
+			for (int j= 0; j < NUMBER_ATOMIC_PER_COMPOUND; j++)
+				doChange(document, RANDOM_REPLACE_COUNT);
+		}
 
 		assertTrue(fUndoManager.undoable());
 		while (fUndoManager.undoable())
@@ -238,6 +268,9 @@ public class UndoManagerTest extends TestCase {
 	
 	/**
 	 * Returns the faculty of k.
+	 * 
+	 * @param k the <code>int</code> for which to get the faculty
+	 * @return the faculty
 	 */
 	private static final int faculty(int k) {
 		return k == 0
