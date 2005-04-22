@@ -148,6 +148,8 @@ public final class Util {
             return -1;
         else if (right == null)
             return 1;
+        else if (left == right)
+            return 0;
         else
             return left.toString().compareTo(right.toString());
     }
