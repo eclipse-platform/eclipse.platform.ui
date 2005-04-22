@@ -51,6 +51,7 @@ public class DeviceResourceException extends Exception {
      * cause is nonexistent or unknown. 
      * 
      * @return the cause or <code>null</code>
+     * @since 3.1
      */
     public Throwable getCause() {
         return cause;
