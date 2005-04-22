@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -118,11 +118,11 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
         Object[] array = propChangeListeners.getListeners();
         for (int nX = 0; nX < array.length; nX++) {
             final IPropertyListener l = (IPropertyListener) array[nX];
-            Platform.run(new SafeRunnable() {
-                public void run() {
-                    l.propertyChanged(WorkbenchPart.this, propertyId);
-                }
-            });
+            try {
+                l.propertyChanged(WorkbenchPart.this, propertyId);
+            } catch (RuntimeException e) {
+                WorkbenchPlugin.log(e);
+            }
         }
     }
 
