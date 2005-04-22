@@ -148,7 +148,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
                     
                     element = selection.getFirstElement();
                     IStackFrame lastFrame = null;
-                    if (source instanceof IStackFrame) {
+                    if (element instanceof IStackFrame) {
                         lastFrame = (IStackFrame) element;
                     }
 					if (source instanceof IStackFrame) {
