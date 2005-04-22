@@ -24,6 +24,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -131,10 +133,18 @@ public class FilteredTree extends Composite {
              */
             public void keyReleased(KeyEvent e) {
             	// on a CR we want to transfer focus to the list
-            	if(e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.CR)
+            	if(e.keyCode == SWT.ARROW_DOWN)
             		treeViewer.getTree().setFocus();
             	else
             		textChanged();
+            }
+        });
+        
+        getFilterControl().addTraverseListener(new TraverseListener() {
+            public void keyTraversed(TraverseEvent e) {
+                if (e.detail == SWT.TRAVERSE_RETURN) {
+                	treeViewer.getTree().setFocus();
+                }
             }
         });
         GridData data = new GridData(GridData.FILL_HORIZONTAL
