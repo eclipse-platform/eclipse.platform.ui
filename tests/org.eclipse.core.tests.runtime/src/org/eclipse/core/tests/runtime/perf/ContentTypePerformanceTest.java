@@ -13,7 +13,6 @@ package org.eclipse.core.tests.runtime.perf;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
@@ -38,7 +37,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	private static final int NUMBER_OF_LEVELS = 10;
 	private static final int NUMBER_OF_ELEMENTS = computeTotalTypes(NUMBER_OF_LEVELS, ELEMENTS_PER_LEVEL);
 
-	private static Random random;
 	private static final String TEST_DATA_ID = "org.eclipse.core.tests.runtime.contenttype.perf.testdata";
 
 	private static int computeTotalTypes(int levels, int elementsPerLevel) {
@@ -94,18 +92,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private static String getContentTypeId(int i) {
 		return TEST_DATA_ID + ".performance" + i;
-	}
-
-	private static Random getRandom() {
-		if (random == null)
-			random = new Random(PI_RUNTIME_TESTS.hashCode());
-		return random;
-	}
-
-	private static int nextInt(int minimumPerLevel, int maximumPerLevel) {
-		if (maximumPerLevel == minimumPerLevel)
-			return maximumPerLevel;
-		return minimumPerLevel + getRandom().nextInt(maximumPerLevel - minimumPerLevel);
 	}
 
 	public static Test suite() {
