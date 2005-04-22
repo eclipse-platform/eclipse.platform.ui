@@ -39,7 +39,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private static SelectedResourceManager fgDefault;
 	
 	private IResource fSelectedResource = null;
-	private String fSelectedText = null;
+	private ITextSelection fSelectedText = null;
 	private Stack fWindowStack = new Stack();
 	private ContextListner fDebugListener = new ContextListner();
 	private IAdaptable fDebugContext = null;
@@ -166,7 +166,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 		}
 		
 		if (selection instanceof ITextSelection) {
-			fSelectedText = ((ITextSelection)selection).getText();
+			fSelectedText = (ITextSelection)selection;
 		}
 	}
 	
@@ -188,7 +188,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
 	public String getSelectedText() {
-		return fSelectedText;
+		return fSelectedText.getText();
 	}
 	
 	/**
