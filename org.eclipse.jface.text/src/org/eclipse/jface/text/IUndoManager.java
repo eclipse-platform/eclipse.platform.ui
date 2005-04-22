@@ -21,7 +21,7 @@ package org.eclipse.jface.text;
  * an undo request are rolled back in one atomic change.</p>
  * <p>
  * In order to provide backward compatibility for clients of
- * <code>ITextViewer</code>, extension interfaces are used as a means of
+ * <code>IUndoManager</code>, extension interfaces are used as a means of
  * evolution. The following extension interfaces exist:
  * <ul>
  * <li>{@link org.eclipse.jface.text.IUndoManagerExtension} since version 3.1
