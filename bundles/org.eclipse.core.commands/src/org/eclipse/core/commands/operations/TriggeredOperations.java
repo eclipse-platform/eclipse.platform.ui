@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  */
 public class TriggeredOperations extends AbstractOperation implements
-		ICompositeOperation {
+		ICompositeOperation, IUndoableAffectedObjects, IHistoryNotificationAwareOperation {
 
 	private IUndoableOperation triggeringOperation;
 
@@ -100,9 +100,10 @@ public class TriggeredOperations extends AbstractOperation implements
 	 *            the undo context being removed from the receiver.
 	 */
 	public void removeContext(IUndoContext context) {
+		
 		// first check to see if we are removing the only context of the
 		// triggering operation
-		if (triggeringOperation.hasContext(context)) {
+		if (triggeringOperation != null && triggeringOperation.hasContext(context)) {
 			if (triggeringOperation.getContexts().length == 1) {
 				remove(triggeringOperation);
 				return;
@@ -290,5 +291,26 @@ public class TriggeredOperations extends AbstractOperation implements
 	 */
 	public IUndoableOperation getTriggeringOperation() {
 		return triggeringOperation;
-	}	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IUndoableAffectedObjects#getAffectedObjects()
+	 */
+	public Object [] getAffectedObjects() {
+		if (triggeringOperation instanceof IUndoableAffectedObjects)
+			return ((IUndoableAffectedObjects)triggeringOperation).getAffectedObjects();
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IHistoryNotificationAwareOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
+	 */
+	public void aboutToNotify(OperationHistoryEvent event) {
+		if (triggeringOperation instanceof IHistoryNotificationAwareOperation)
+			((IHistoryNotificationAwareOperation)triggeringOperation).aboutToNotify(event);
+	}
 }

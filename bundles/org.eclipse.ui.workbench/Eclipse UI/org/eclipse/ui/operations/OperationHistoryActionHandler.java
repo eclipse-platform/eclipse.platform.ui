@@ -178,6 +178,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (adapter.equals(IWorkbenchPart.class)) {
 			return site.getPart();
 		}
+		if (adapter.equals(IUndoContext.class)) {
+			return undoContext;
+		}
 		return null;
 	}
 
@@ -242,13 +245,23 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		case OperationHistoryEvent.OPERATION_REMOVED:
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
-			if (event.getOperation().hasContext(undoContext))
-				update();
+		case OperationHistoryEvent.OPERATION_NOT_OK:
+			if (event.getOperation().hasContext(undoContext)) {
+		        site.getShell().getDisplay().asyncExec(new Runnable() {
+		            public void run() {
+		                update();
+		            }
+		        });
+			}
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
-		case OperationHistoryEvent.OPERATION_NOT_OK:
-			if (event.getOperation() == getOperation())
-				update();
+			if (event.getOperation() == getOperation()){
+		        site.getShell().getDisplay().asyncExec(new Runnable() {
+		            public void run() {
+		                update();
+		            }
+		        });
+			}
 			break;
 		}
 	}

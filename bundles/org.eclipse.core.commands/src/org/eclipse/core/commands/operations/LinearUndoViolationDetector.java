@@ -25,23 +25,51 @@ import org.eclipse.core.runtime.Status;
  */
 public abstract class LinearUndoViolationDetector implements IOperationApprover {
 
-	/*
+	/**
 	 * Return whether a linear redo violation is allowable. A linear redo
 	 * violation is defined as a request to redo a particular operation even if
 	 * it is not the most recently added operation to the redo history.
+	 * 
+	 * @param operation -
+	 *            the operation for which a linear redo violation has been
+	 *            detected.
+	 * @param context -
+	 *            the undo context in which the linear redo violation exists
+	 * @param history -
+	 *            the operation history containing the operation
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 */
 	protected abstract IStatus allowLinearRedoViolation(
 			IUndoableOperation operation, IUndoContext context,
-			IOperationHistory history, IAdaptable uiInfo);
+			IOperationHistory history, IAdaptable info);
 
-	/*
+	/**
 	 * Return whether a linear undo violation is allowable. A linear undo
 	 * violation is defined as a request to undo a particular operation even if
 	 * it is not the most recently added operation to the undo history.
+	 * 
+	 * @param operation -
+	 *            the operation for which a linear undo violation has been
+	 *            detected.
+	 * @param context -
+	 *            the undo context in which the linear undo violation exists
+	 * @param history -
+	 *            the operation history containing the operation
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 */
 	protected abstract IStatus allowLinearUndoViolation(
 			IUndoableOperation operation, IUndoContext context,
-			IOperationHistory history, IAdaptable uiInfo);
+			IOperationHistory history, IAdaptable info);
 
 	/*
 	 * (non-Javadoc)
