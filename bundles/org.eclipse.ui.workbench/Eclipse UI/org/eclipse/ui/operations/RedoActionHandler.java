@@ -13,6 +13,7 @@ package org.eclipse.ui.operations;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -56,12 +57,8 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 		return getHistory().getRedoOperation(undoContext);
 	}
 
-	public void run() {
-		try {
-			getHistory().redo(undoContext, getProgressMonitor(), this);
-		} catch (ExecutionException e) {
-			reportException(e);
-		}
+	IStatus runCommand() throws ExecutionException {
+		return getHistory().redo(undoContext, getProgressMonitor(), this);
 	}
 
 	protected boolean shouldBeEnabled() {

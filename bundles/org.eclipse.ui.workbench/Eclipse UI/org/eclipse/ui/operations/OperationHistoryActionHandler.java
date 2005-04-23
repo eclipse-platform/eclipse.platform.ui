@@ -159,9 +159,23 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	protected abstract IUndoableOperation getOperation();
 
 	/**
-	 * Run the action. Implemented by subclasses.
+	 * Run the action. Provide common error handling and let the subclasses do the
+	 * real work.
 	 */
-	public abstract void run();
+	public void run() {
+		try {
+			// we don't check the status since we rely on getting
+			// OPERATION_NOT_OK if the command fails.
+			runCommand();
+		} catch (ExecutionException e) {
+			reportException(e);
+			if (pruning)
+				flush();
+		}
+
+	}
+	
+	abstract IStatus runCommand() throws ExecutionException;
 
 	/*
 	 * (non-Javadoc)
