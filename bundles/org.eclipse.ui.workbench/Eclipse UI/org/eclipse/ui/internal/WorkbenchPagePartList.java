@@ -31,21 +31,11 @@ public class WorkbenchPagePartList extends PartList {
     }
     
     protected void firePartOpened(IWorkbenchPartReference part) {
-        partService.firePartOpened(part);
-     
-        IWorkbenchPart realPart = part.getPart(false);
-        if (realPart != null) {
-            selectionService.partOpened(realPart);
-        }
+        partService.firePartOpened(part);     
     }
 
     protected void firePartClosed(IWorkbenchPartReference part) {
         partService.firePartClosed(part);
-
-        IWorkbenchPart realPart = part.getPart(false);
-        if (realPart != null) {
-            selectionService.partClosed(realPart);
-        }
     }
 
     protected void firePartAdded(IWorkbenchPartReference part) {
@@ -63,19 +53,8 @@ public class WorkbenchPagePartList extends PartList {
     protected void fireActivePartChanged(IWorkbenchPartReference oldRef, IWorkbenchPartReference newRef) {
         partService.setActivePart(newRef);
         
-        if (oldRef != null) {
-            IWorkbenchPart realPart = oldRef.getPart(false);
-            if (realPart != null) {
-                selectionService.partDeactivated(realPart);
-            }
-        }
-        
-        if (newRef != null) {
-            IWorkbenchPart realPart = newRef.getPart(false);
-            if (realPart != null) {
-                selectionService.partActivated(realPart);
-            }
-        }
+        IWorkbenchPart realPart = newRef == null? null : newRef.getPart(false);
+        selectionService.setActivePart(realPart);
     }
     
     protected void firePartHidden(IWorkbenchPartReference ref) {
@@ -88,19 +67,9 @@ public class WorkbenchPagePartList extends PartList {
     
     protected void firePartInputChanged(IWorkbenchPartReference ref) {
         partService.firePartInputChanged(ref);
-        
-        IWorkbenchPart realPart = ref.getPart(false);
-        if (realPart != null) {        
-            selectionService.partInputChanged(realPart);
-        }
     }
 
     protected void firePartBroughtToTop(IWorkbenchPartReference ref) {
         partService.firePartBroughtToTop(ref);
-        
-        IWorkbenchPart realPart = ref.getPart(false);
-        if (realPart != null) {
-            selectionService.partBroughtToTop(realPart);
-        }
     }
 }

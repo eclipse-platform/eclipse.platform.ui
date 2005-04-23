@@ -70,7 +70,6 @@ public class WWinPartService implements IPartService {
      */
     public WWinPartService(IWorkbenchWindow window) {
         selectionService = new WindowSelectionService(window);
-        partService.addPartListener(selectionService);
     }
 
     /*
@@ -115,11 +114,15 @@ public class WWinPartService implements IPartService {
     
     private void updateActivePart() {
         IWorkbenchPartReference activeRef = null;
+        IWorkbenchPart activePart = null;
         
-        if (activePage != null)
+        if (activePage != null) {
+            activePart = activePage.getActivePart();
             activeRef = activePage.getActivePartReference();
+        }
         
         partService.setActivePart(activeRef);
+        selectionService.setActivePart(activePart);
     }
 
     /*
@@ -152,8 +155,6 @@ public class WWinPartService implements IPartService {
         // 3. Activate the new active part
         // 4. For each open part in the old page, make it invisible then close it        
 
-        selectionService.reset();
-        
         // Hook listener on the new page.
         if (newPage != null) {      
             IWorkbenchPartReference[] refs = ((WorkbenchPage)newPage).getOpenParts(); 
@@ -170,8 +171,10 @@ public class WWinPartService implements IPartService {
             }            
 
             partService.setActivePart(newPage.getActivePartReference());
+            selectionService.setActivePart(newPage.getActivePart());
         } else {
             partService.setActivePart(null);
+            selectionService.setActivePart(null);
         }
 
         // Unhook listener from the old page.

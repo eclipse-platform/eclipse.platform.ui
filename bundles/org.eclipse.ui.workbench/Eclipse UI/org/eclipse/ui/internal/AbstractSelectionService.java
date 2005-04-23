@@ -12,16 +12,13 @@ package org.eclipse.ui.internal;
 
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.INullSelectionListener;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -29,8 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Abstract selection service.
  */
-public abstract class AbstractSelectionService implements ISelectionService,
-        IPartListener {
+public abstract class AbstractSelectionService implements ISelectionService {
 
     /** 
      * The list of selection listeners (not per-part).
@@ -155,11 +151,12 @@ public abstract class AbstractSelectionService implements ISelectionService,
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                Platform.run(new SafeRunnable() {
-                    public void run() {
-                        l.selectionChanged(part, sel);
-                    }
-                });
+                
+                try {
+                    l.selectionChanged(part, sel);
+                } catch (Exception e) {
+                    WorkbenchPlugin.log(e);
+                }
             }
         }
     }
@@ -177,11 +174,12 @@ public abstract class AbstractSelectionService implements ISelectionService,
             final ISelectionListener l = (ISelectionListener) array[i];
             if ((part != null && sel != null)
                     || l instanceof INullSelectionListener) {
-                Platform.run(new SafeRunnable() {
-                    public void run() {
-                        l.selectionChanged(part, sel);
-                    }
-                });
+                
+                try {
+                    l.selectionChanged(part, sel);
+                } catch (Exception e) {
+                    WorkbenchPlugin.log(e);
+                }
             }
         }
     }
@@ -232,95 +230,31 @@ public abstract class AbstractSelectionService implements ISelectionService,
     }
 
     /**
-     * Notifies the listener that a part has been activated.
+     * Sets the current-active part (or null if none)
+     * 
+     * @since 3.1 
+     *
+     * @param newPart the new active part (or null if none)
      */
-    public void partActivated(IWorkbenchPart newPart) {
+    public void setActivePart(IWorkbenchPart newPart) {
         // Optimize.
         if (newPart == activePart)
             return;
-
-        // Unhook selection from the old part.
-        reset();
-
-        // Update active part.
-        activePart = newPart;
-
-        // Hook selection on the new part.
-        if (activePart != null) {
-            activeProvider = activePart.getSite().getSelectionProvider();
-            if (activeProvider != null) {
-                // Fire an event if there's an active provider
-                activeProvider.addSelectionChangedListener(selListener);
-                ISelection sel = activeProvider.getSelection();
-                fireSelection(newPart, sel);
-                if (activeProvider instanceof IPostSelectionProvider)
-                    ((IPostSelectionProvider) activeProvider)
-                            .addPostSelectionChangedListener(postSelListener);
-                else
-                    activeProvider.addSelectionChangedListener(postSelListener);
-                firePostSelection(newPart, sel);
-            } else {
-                //Reset active part. activeProvider may not be null next time this method is called.
-                activePart = null;
+        
+        ISelectionProvider selectionProvider = null;
+        
+        if (newPart != null) {
+            selectionProvider = newPart.getSite().getSelectionProvider();
+            
+            if (selectionProvider == null) {
+                newPart = null;
             }
         }
-        // No need to fire an event if no active provider, since this was done in reset()
-    }
-
-    /**
-     * Notifies the listener that a part has been brought to the front.
-     */
-    public void partBroughtToTop(IWorkbenchPart newPart) {
-        // do nothing, the active part has not changed,
-        // so the selection is unaffected
-    }
-
-    /**
-     * Notifies the listener that a part has been closed
-     */
-    public void partClosed(IWorkbenchPart part) {
-        // Unhook selection from the part.
-        if (part == activePart) {
-            reset();
-        }
-    }
-
-    /**
-     * Notifies the listener that a part has been deactivated.
-     */
-    public void partDeactivated(IWorkbenchPart part) {
-        // Unhook selection from the part.
-        if (part == activePart) {
-            reset();
-        }
-    }
-
-    /**
-     * Notifies the listener that a part has been opened.
-     */
-    public void partOpened(IWorkbenchPart part) {
-        // Wait for activation.
-    }
-
-    /**
-     * Notifies the listener that a part has been opened.
-     */
-    public void partInputChanged(IWorkbenchPart part) {
-        // 36501 - only process if part is active
-        if (activePart == part) {
-            reset();
-            partActivated(part);
-        }
-    }
-
-    /**
-     * Resets the service.  The active part and selection provider are
-     * dereferenced.
-     */
-    public void reset() {
+        
+        if (newPart == activePart)
+            return;
+        
         if (activePart != null) {
-            fireSelection(null, null);
-            firePostSelection(null, null);
             if (activeProvider != null) {
                 activeProvider.removeSelectionChangedListener(selListener);
                 if (activeProvider instanceof IPostSelectionProvider)
@@ -333,6 +267,129 @@ public abstract class AbstractSelectionService implements ISelectionService,
             }
             activePart = null;
         }
+
+        activePart = newPart;
+        
+        if (newPart != null) {
+            activeProvider = selectionProvider;
+            // Fire an event if there's an active provider
+            activeProvider.addSelectionChangedListener(selListener);
+            ISelection sel = activeProvider.getSelection();
+            fireSelection(newPart, sel);
+            if (activeProvider instanceof IPostSelectionProvider)
+                ((IPostSelectionProvider) activeProvider)
+                        .addPostSelectionChangedListener(postSelListener);
+            else
+                activeProvider.addSelectionChangedListener(postSelListener);
+            firePostSelection(newPart, sel);
+        } else {
+            fireSelection(null, null);
+            firePostSelection(null, null);
+        }
     }
+    
+//    /**
+//     * Notifies the listener that a part has been activated.
+//     */
+//    public void partActivated(IWorkbenchPart newPart) {
+//        // Optimize.
+//        if (newPart == activePart)
+//            return;
+//
+//        // Unhook selection from the old part.
+//        reset();
+//
+//        // Update active part.
+//        activePart = newPart;
+//
+//        // Hook selection on the new part.
+//        if (activePart != null) {
+//            activeProvider = activePart.getSite().getSelectionProvider();
+//            if (activeProvider != null) {
+//                // Fire an event if there's an active provider
+//                activeProvider.addSelectionChangedListener(selListener);
+//                ISelection sel = activeProvider.getSelection();
+//                fireSelection(newPart, sel);
+//                if (activeProvider instanceof IPostSelectionProvider)
+//                    ((IPostSelectionProvider) activeProvider)
+//                            .addPostSelectionChangedListener(postSelListener);
+//                else
+//                    activeProvider.addSelectionChangedListener(postSelListener);
+//                firePostSelection(newPart, sel);
+//            } else {
+//                //Reset active part. activeProvider may not be null next time this method is called.
+//                activePart = null;
+//            }
+//        }
+//        // No need to fire an event if no active provider, since this was done in reset()
+//    }
+//
+//    /**
+//     * Notifies the listener that a part has been brought to the front.
+//     */
+//    public void partBroughtToTop(IWorkbenchPart newPart) {
+//        // do nothing, the active part has not changed,
+//        // so the selection is unaffected
+//    }
+//
+//    /**
+//     * Notifies the listener that a part has been closed
+//     */
+//    public void partClosed(IWorkbenchPart part) {
+//        // Unhook selection from the part.
+//        if (part == activePart) {
+//            reset();
+//        }
+//    }
+//
+//    /**
+//     * Notifies the listener that a part has been deactivated.
+//     */
+//    public void partDeactivated(IWorkbenchPart part) {
+//        // Unhook selection from the part.
+//        if (part == activePart) {
+//            reset();
+//        }
+//    }
+//
+//    /**
+//     * Notifies the listener that a part has been opened.
+//     */
+//    public void partOpened(IWorkbenchPart part) {
+//        // Wait for activation.
+//    }
+//
+//    /**
+//     * Notifies the listener that a part has been opened.
+//     */
+//    public void partInputChanged(IWorkbenchPart part) {
+//        // 36501 - only process if part is active
+//        if (activePart == part) {
+//            reset();
+//            partActivated(part);
+//        }
+//    }
+//
+//    /**
+//     * Resets the service.  The active part and selection provider are
+//     * dereferenced.
+//     */
+//    public void reset() {
+//        if (activePart != null) {
+//            fireSelection(null, null);
+//            firePostSelection(null, null);
+//            if (activeProvider != null) {
+//                activeProvider.removeSelectionChangedListener(selListener);
+//                if (activeProvider instanceof IPostSelectionProvider)
+//                    ((IPostSelectionProvider) activeProvider)
+//                            .removePostSelectionChangedListener(postSelListener);
+//                else
+//                    activeProvider
+//                            .removeSelectionChangedListener(postSelListener);
+//                activeProvider = null;
+//            }
+//            activePart = null;
+//        }
+//    }
 
 }
