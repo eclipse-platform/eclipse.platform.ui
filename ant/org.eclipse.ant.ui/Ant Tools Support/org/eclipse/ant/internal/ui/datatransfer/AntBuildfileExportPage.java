@@ -268,7 +268,7 @@ class AntBuildfileExportPage extends WizardPage {
                 String warning= "<!--" + BuildFileCreator.WARNING;  //$NON-NLS-1$
                 while ((line = in.readLine()) != null)
                 {
-                    if (warning.startsWith(line))
+                    if (line.length() > 0 && warning.startsWith(line))
                     {
                         return false;
                     }
