@@ -278,6 +278,10 @@ public final class PaneFolder {
         return tabFolder;
     }
 
+    public void flushTopCenterSize() {
+        topCenterCache.flush();
+    }
+    
     /**
      * Sets the top-center control (usually a toolbar), or null if none. Note
      * that the control can have any parent.
@@ -293,10 +297,17 @@ public final class PaneFolder {
         removeDisposeListener(topCenterCache.getControl());
 
         topCenterCache.setControl(topCenter);
+        
+        if (putTrimOnTop) {
+            viewFormTopCenterProxy.setTarget(null);
+        } else {
+            viewFormTopCenterProxy.setTarget(topCenterCache);
+        }
+        
         if (topCenter != null) {
             topCenter.addDisposeListener(prematureDisposeListener);
+        
             if (!putTrimOnTop) {
-                viewFormTopCenterProxy.setTarget(topCenterCache);
                 if (!viewForm.isDisposed()) {
                     viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
                 }
@@ -323,10 +334,17 @@ public final class PaneFolder {
         removeDisposeListener(topRightCache.getControl());
 
         topRightCache.setControl(topRight);
+        
+        if (putTrimOnTop) {
+            viewFormTopRightProxy.setTarget(null);
+        } else {
+            viewFormTopRightProxy.setTarget(topRightCache);
+        }
+        
         if (topRight != null) {
             topRight.addDisposeListener(prematureDisposeListener);
             if (!putTrimOnTop) {
-                viewFormTopRightProxy.setTarget(topRightCache);
+                
                 viewForm.setTopRight(viewFormTopRightProxy.getControl());
             }
         } else {
@@ -355,7 +373,7 @@ public final class PaneFolder {
             viewFormTopLeftProxy.setTarget(topLeftCache);
             viewForm.setTopLeft(viewFormTopLeftProxy.getControl());
         } else {
-            viewFormTopLeftProxy.setTargetControl(null);
+            viewFormTopLeftProxy.setTarget(null);
             viewForm.setTopLeft(null);
         }
     }
@@ -423,8 +441,8 @@ public final class PaneFolder {
             // of the viewForm.
             if (!lastTrimOnTop) {
                 //	Arrange controls in the title bar
-                viewFormTopCenterProxy.setTargetControl(null);
-                viewFormTopRightProxy.setTargetControl(null);
+                viewFormTopCenterProxy.setTarget(null);
+                viewFormTopRightProxy.setTarget(null);
                 viewForm.setTopCenter(null);
                 viewForm.setTopRight(null);
             }
@@ -447,7 +465,7 @@ public final class PaneFolder {
 
                 Rectangle localCoords = Geometry.toControl(topCenter
                         .getParent(), topCenterArea);
-
+                
                 topCenter.setBounds(localCoords);
             }
         } else {

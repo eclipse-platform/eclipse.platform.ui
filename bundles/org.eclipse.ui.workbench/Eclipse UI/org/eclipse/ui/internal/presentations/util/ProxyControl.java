@@ -75,8 +75,13 @@ public class ProxyControl {
 	/**
 	 * Target control (possibly null)
 	 */
-	private Control target;
-	
+    private Control target = null;
+    
+    /**
+     * Target cache (possibly null)
+     */
+    private SizeCache targetCache = null;
+    
 	/**
 	 * Most specific common ancestor between the target and the proxy controls
 	 */
@@ -89,7 +94,7 @@ public class ProxyControl {
 	 * target.
 	 */
 	private boolean visible = true;
-	
+    
 	/**
 	 * Dispose listener. Breaks the link between the target and the proxy if either
 	 * control is disposed.
@@ -112,7 +117,7 @@ public class ProxyControl {
         }
 	    
 	};
-	
+    
 	/**
 	 * Movement listener. Updates the bounds of the target to match the 
 	 * bounds of the dummy control.
@@ -152,12 +157,12 @@ public class ProxyControl {
 			}
 			
 			protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
-				if (target == null) {
+				if (targetCache == null) {
 				    // Note: If we returned (0,0), SWT would ignore the result and use a default value.
 					return new Point(1,1);
 				}
-				
-				return target.computeSize(wHint, hHint);
+                
+				return targetCache.computeSize(wHint, hHint);
 			}
 		});
 		
@@ -172,7 +177,7 @@ public class ProxyControl {
 	 * 
 	 * @param target the control, or null if none
 	 */
-	public void setTargetControl(Control target) {
+	private void setTargetControl(Control target) {
 		if (this.target != target) {
 
 		    if (this.target != null) {
@@ -212,19 +217,16 @@ public class ProxyControl {
 		}
 	}
 	
-	/**
-	 * Returns the target control (the control whose size is being managed)
-	 * 
-	 * @return the target control (or null)
-	 */
-	public Control getTargetControl() {
-		if (target == null) {
-			return null;
-		}
-		
-		return target;
-	}
-	
+    public void setTarget(SizeCache cache) {
+        targetCache = cache;
+        
+        if (targetCache != null) {
+            setTargetControl(cache.getControl());
+        } else {
+            setTargetControl(null);
+        }
+    }
+    
 	/**
 	 * Returns the proxy control
 	 * 
@@ -235,18 +237,14 @@ public class ProxyControl {
 	}
 	
 	public Control getTarget() {
-	    return target;
-	}
-	
-	public void setTarget(SizeCache target) {
-	    setTargetControl(target.getControl());
+        return target;
 	}
 	
 	/**
 	 * Moves the target control on top of the dummy control.
 	 */
 	public void layout() {
-		if (getTargetControl() == null) {
+		if (getTarget() == null) {
 			return;
 		}
 		
@@ -258,9 +256,9 @@ public class ProxyControl {
 		displayBounds = displayBounds.intersection(clippingRegion);
 		
 		// Compute the bounds of the target, in the local coordinate system of its parent
-		Rectangle targetBounds = Geometry.toControl(getTargetControl().getParent(), displayBounds);
+		Rectangle targetBounds = Geometry.toControl(getTarget().getParent(), displayBounds);
 		
 		// Move the target
-		getTargetControl().setBounds(targetBounds);
+		getTarget().setBounds(targetBounds);
 	}
 }

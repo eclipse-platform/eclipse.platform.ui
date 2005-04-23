@@ -36,7 +36,6 @@ import org.eclipse.ui.internal.presentations.PaneFolder;
 import org.eclipse.ui.internal.presentations.PaneFolderButtonListener;
 import org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder;
 import org.eclipse.ui.internal.presentations.newapi.AbstractTabItem;
-import org.eclipse.ui.internal.presentations.newapi.EnhancedFillLayout;
 import org.eclipse.ui.internal.presentations.newapi.PartInfo;
 import org.eclipse.ui.internal.presentations.newapi.TabFolderEvent;
 import org.eclipse.ui.internal.util.Util;
@@ -47,7 +46,7 @@ import org.eclipse.ui.internal.util.Util;
 public class DefaultTabFolder extends AbstractTabFolder {
 
     private PaneFolder paneFolder;
-    private Composite viewToolBar;
+    private Control viewToolBar;
     private Label titleLabel;
     
     private PaneFolderButtonListener buttonListener = new PaneFolderButtonListener() {
@@ -98,12 +97,9 @@ public class DefaultTabFolder extends AbstractTabFolder {
         paneFolder.setTopRight(null);
         
         // Initialize view menu dropdown
-        {
-            viewToolBar = new Composite(paneFolder.getControl(), SWT.NO_BACKGROUND);
-            viewToolBar.setLayout(new EnhancedFillLayout());
-            viewToolBar.setVisible(false);
-            
-            ToolBar actualToolBar = new ToolBar(viewToolBar, SWT.FLAT | SWT.NO_BACKGROUND);
+        {            
+            ToolBar actualToolBar = new ToolBar(paneFolder.getControl(), SWT.FLAT | SWT.NO_BACKGROUND);
+            viewToolBar = actualToolBar;
             
 	        ToolItem pullDownButton = new ToolItem(actualToolBar, SWT.PUSH);
 	        Image hoverImage = WorkbenchImages
@@ -381,6 +377,10 @@ public class DefaultTabFolder extends AbstractTabFolder {
         paneFolder.setTabPosition(tabPosition);
         super.setTabPosition(tabPosition);
         layout(true);
+    }
+    
+    public void flushToolbarSize() {
+        paneFolder.flushTopCenterSize();
     }
     
     /* (non-Javadoc)

@@ -43,7 +43,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
     
     private AbstractTabFolder folder;
     private IPresentablePart current;
-    private ProxyControl toolbarProxy;
+    //private ProxyControl toolbarProxy;
     private Control contentProxy;
     private static PartInfo tempPartInfo = new PartInfo(); 
     
@@ -109,7 +109,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
 
         folder.getControl().addDisposeListener(tabDisposeListener);
         
-        toolbarProxy = new ProxyControl(folder.getToolbarParent());
+        //toolbarProxy = new ProxyControl(folder.getToolbarParent());
         
         contentProxy = new Composite(folder.getContentParent(), SWT.NONE);
         contentProxy.setVisible(false);
@@ -290,16 +290,9 @@ public final class PresentablePartFolder implements IPresentablePartList {
     }
     
     private void setToolbar(Control newToolbar) {
-        toolbarProxy.setTargetControl(newToolbar);
-        if (newToolbar != null) {
-            if (folder.getToolbar() == null) {
-                folder.setToolbar(toolbarProxy.getControl());                
-            }
-        } else {
-            if (folder.getToolbar() != null) {
-                folder.setToolbar(null);
-            }
-        }
+        if (folder.getToolbar() != newToolbar) {
+            folder.setToolbar(newToolbar);
+        }        
     }
 
     private DisposeListener toolbarDisposeListener = new DisposeListener() {
@@ -318,6 +311,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
             return;
         }
 
+        boolean flushToolbar = false;
+        
         switch (property) {
         case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
             if (getCurrent() != part) {//Set bold if it doesn't currently have focus
@@ -325,8 +320,13 @@ public final class PresentablePartFolder implements IPresentablePartList {
                 initTab(tab, part);
             }
             break;
-        case IPresentablePart.PROP_CONTENT_DESCRIPTION:
+            
         case IPresentablePart.PROP_TOOLBAR:
+            if (getCurrent() == part) {
+                folder.flushToolbarSize();
+            }
+            /* falls through */
+        case IPresentablePart.PROP_CONTENT_DESCRIPTION:
         case IPresentablePart.PROP_PANE_MENU:
         case IPresentablePart.PROP_TITLE:
             initTab(tab, part);
@@ -338,7 +338,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
             initTab(tab, part);
         }
     }
-
+    
     protected void initTab(AbstractTabItem item, IPresentablePart part) {
         tempPartInfo.set(part);
         item.setInfo(tempPartInfo);
@@ -379,6 +379,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
         
         return folder.findItem(part);
     }
+    
+    
 
     public int indexOf(IPresentablePart part) {
         AbstractTabItem item = getTab(part);
@@ -398,7 +400,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
         // Lay out the tab folder and compute the client area
         folder.layout(changed);
 
-        toolbarProxy.layout();
+        //toolbarProxy.layout();
         
         layoutContent();
     }

@@ -256,6 +256,10 @@ public abstract class AbstractTabFolder {
         listeners.remove(toRemove);
     }
 
+    public void flushToolbarSize() {
+        
+    }
+    
     protected final void fireEvent(TabFolderEvent e) {
         for (Iterator iter = listeners.iterator(); iter.hasNext();) {
             TabFolderListener next = (TabFolderListener)iter.next();
