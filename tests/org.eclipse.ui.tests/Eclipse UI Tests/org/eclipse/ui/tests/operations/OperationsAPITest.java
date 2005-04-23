@@ -355,14 +355,13 @@ public class OperationsAPITest extends TestCase {
 		assertFalse(status.isOK());
 		assertSame(history.getUndoOperation(contextC), op6);
 
-		// should fail and remove op5 since it's an error
+		// should fail and flush the context since it's an error
 		status = history.undo(contextB, null, null);
 		assertFalse(status.isOK());
 		assertNotSame("should not match", history.getUndoOperation(contextB), op5);
 
-		// should succeed
-		status = history.undo(contextB, null, null);
-		assertTrue(status.isOK());
+		// should have no undo history now
+		assertFalse(history.canUndo(contextB));
 	}
 
 	public void testOperationRedo() throws ExecutionException {
