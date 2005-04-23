@@ -27,11 +27,11 @@ public final class ContentType implements IContentType {
 
 	/* A placeholder for missing/invalid binary/text describers. */
 	private class InvalidDescriber implements IContentDescriber, ITextContentDescriber {
-		public int describe(InputStream contents, IContentDescription description) throws IOException {
+		public int describe(InputStream contents, IContentDescription description) {
 			return INVALID;
 		}
 
-		public int describe(Reader contents, IContentDescription description) throws IOException {
+		public int describe(Reader contents, IContentDescription description) {
 			return INVALID;
 		}
 
