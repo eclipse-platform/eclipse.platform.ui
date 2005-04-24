@@ -164,8 +164,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	public void run() {
 		try {
-			// we don't check the status since we rely on getting
-			// OPERATION_NOT_OK if the command fails.
 			runCommand();
 		} catch (ExecutionException e) {
 			reportException(e);
@@ -259,11 +257,22 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		case OperationHistoryEvent.OPERATION_REMOVED:
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
-		case OperationHistoryEvent.OPERATION_NOT_OK:
 			if (event.getOperation().hasContext(undoContext)) {
 		        site.getShell().getDisplay().asyncExec(new Runnable() {
 		            public void run() {
 		                update();
+		            }
+		        });
+			}
+			break;
+		case OperationHistoryEvent.OPERATION_NOT_OK:
+			if (event.getOperation().hasContext(undoContext)) {
+		        site.getShell().getDisplay().asyncExec(new Runnable() {
+		            public void run() {
+		                if (pruning)
+		                	flush();
+		                else
+		                	update();
 		            }
 		        });
 			}
