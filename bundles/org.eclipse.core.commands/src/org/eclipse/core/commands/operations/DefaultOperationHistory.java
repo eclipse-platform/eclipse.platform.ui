@@ -268,7 +268,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param operation
 	 */
 	private IStatus doRedo(IProgressMonitor monitor, IAdaptable info,
-			IUndoableOperation operation, boolean flushOnError)
+			IUndoableOperation operation)
 			throws ExecutionException {
 
 		IStatus status = getRedoApproval(operation, info);
@@ -319,9 +319,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 			notifyRedone(operation);
 		} else {
 			notifyNotOK(operation);
-			if (flushOnError && status.getSeverity() == IStatus.ERROR) {
-				remove(operation);
-			}
 		}
 
 		return status;
@@ -334,7 +331,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param operation
 	 */
 	private IStatus doUndo(IProgressMonitor monitor, IAdaptable info,
-			IUndoableOperation operation, boolean flushOnError)
+			IUndoableOperation operation)
 			throws ExecutionException {
 		IStatus status = getUndoApproval(operation, info);
 		if (status.isOK()) {
@@ -384,9 +381,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 			notifyUndone(operation);
 		} else {
 			notifyNotOK(operation);
-			if (flushOnError && status.getSeverity() == IStatus.ERROR) {
-				remove(operation);
-			}
 		}
 		return status;
 	}
@@ -1029,7 +1023,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
 
-		return doRedo(monitor, info, operation, true);
+		return doRedo(monitor, info, operation);
 	}
 
 	/*
@@ -1048,7 +1042,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		if (operation.canRedo()) {
 			status = getRedoApproval(operation, info);
 			if (status.isOK()) {
-				status = doRedo(monitor, info, operation, false);
+				status = doRedo(monitor, info, operation);
 			}
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
@@ -1200,7 +1194,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
 
-		return doUndo(monitor, info, operation, true);
+		return doUndo(monitor, info, operation);
 	}
 
 	/*
@@ -1218,7 +1212,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		if (operation.canUndo()) {
 			status = getUndoApproval(operation, info);
 			if (status.isOK()) {
-				status = doUndo(monitor, info, operation, false);
+				status = doUndo(monitor, info, operation);
 			}
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {

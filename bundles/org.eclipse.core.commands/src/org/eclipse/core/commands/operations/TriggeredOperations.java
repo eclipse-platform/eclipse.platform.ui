@@ -162,13 +162,18 @@ public class TriggeredOperations extends AbstractOperation implements
 			throws ExecutionException {
 		if (triggeringOperation != null) {
 			history.openOperation(this, IOperationHistory.REDO);
+			List childrenToRestore = new ArrayList(children);
 			try {
 				removeAllChildren();
 				IStatus status = triggeringOperation.redo(monitor, info);
+				if (!status.isOK()) {
+					children = childrenToRestore;
+				}
 				history.closeOperation(status.isOK(), false,
 						IOperationHistory.REDO);
 				return status;
 			} catch (ExecutionException e) {
+				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.REDO);
 				throw e;
 			}
@@ -186,13 +191,18 @@ public class TriggeredOperations extends AbstractOperation implements
 			throws ExecutionException {
 		if (triggeringOperation != null) {
 			history.openOperation(this, IOperationHistory.UNDO);
+			List childrenToRestore = new ArrayList(children);
 			try {
 				removeAllChildren();
 				IStatus status = triggeringOperation.undo(monitor, info);
+				if (!status.isOK()) {
+					children = childrenToRestore;
+				}
 				history.closeOperation(status.isOK(), false,
 						IOperationHistory.UNDO);
 				return status;
 			} catch (ExecutionException e) {
+				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.UNDO);
 				throw e;
 			}

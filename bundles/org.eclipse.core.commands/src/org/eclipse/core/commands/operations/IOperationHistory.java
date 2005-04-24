@@ -448,16 +448,12 @@ public interface IOperationHistory {
 	 * <code>REDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * <code>CANCEL</code> severity indicates that the user cancelled the
-	 * operation and that the operation remains in the redo history.
-	 * <code>ERROR</code> severity indicates that the operation could not
-	 * successfully be redone and that it has been removed from the history.
-	 * Listeners will also be notified that the operation was removed. Any other
-	 * severity code is not specifically interpreted by the history, and is
-	 * simply passed back to the caller. For all severities other than
-	 * <code>OK</code>, listeners will receive the
-	 * <code>OPERATION_NOT_OK</code> notification instead of the
-	 * <code>REDONE</code> notification.
+	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>, <code>INFO</code>,
+	 * etc.) are not specifically interpreted by the history.  The operation will remain
+	 * in the history and the returned status is simply passed back to the
+	 * caller. For all severities other than <code>OK</code>, listeners
+	 * will receive the <code>OPERATION_NOT_OK</code> notification
+	 * instead of the <code>REDONE</code> notification.
 	 * </p>
 	 * 
 	 * @throws ExecutionException
@@ -594,14 +590,11 @@ public interface IOperationHistory {
 	 * <code>UNDONE</code> notification.
 	 * </p>
 	 * <p>
-	 * <code>CANCEL</code> severity indicates that the user cancelled the
-	 * operation and that the operation remains in the undo history.
-	 * <code>ERROR</code> severity indicates that the operation could not
-	 * successfully be undone and that it has been removed from the history.
-	 * Listeners will be notified that the operation was removed. Any other
-	 * severity code is not interpreted by the history, and is simply passed
-	 * back to the caller. For all severities other than <code>OK</code>,
-	 * listeners will receive the <code>OPERATION_NOT_OK</code> notification
+	 * Other severity codes (<code>CANCEL</code, <code>ERROR</code>, <code>INFO</code>,
+	 * etc.) are not specifically interpreted by the history.  The operation will remain
+	 * in the history and the returned status is simply passed back to the
+	 * caller. For all severities other than <code>OK</code>, listeners
+	 * will receive the <code>OPERATION_NOT_OK</code> notification
 	 * instead of the <code>UNDONE</code> notification.
 	 * </p>
 	 * 
