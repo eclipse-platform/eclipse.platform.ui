@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core;
 
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -70,7 +71,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * given stream (connected to system out or err).
 	 */
 	public OutputStreamMonitor(InputStream stream) {
-		fStream= new LazyInputStream(stream);
+//		fStream= new LazyInputStream(stream);
+        fStream = new BufferedInputStream(stream, 8192);
 		fContents= new StringBuffer();
 	}
 
