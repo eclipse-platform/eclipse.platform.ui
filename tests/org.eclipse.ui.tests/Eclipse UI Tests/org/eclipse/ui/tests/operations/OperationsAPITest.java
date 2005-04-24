@@ -358,17 +358,9 @@ public class OperationsAPITest extends TestCase {
 		// should fail since it's an error
 		status = history.undo(contextB, null, null);
 		assertFalse(status.isOK());
-		assertNotSame("should not match", history.getUndoOperation(contextB), op5);
 
-		// current behavior (pre-92506)
-		
-		// should succeed
-		status = history.undo(contextB, null, null);
-		assertTrue(status.isOK());
-
-		
-		// If 92506 results in a flushed context
-		// assertFalse(history.canUndo(contextB));
+		// operation remains on stack (see bug#92506)
+		assertSame(history.getUndoOperation(contextB), op5);
 	}
 
 	public void testOperationRedo() throws ExecutionException {
