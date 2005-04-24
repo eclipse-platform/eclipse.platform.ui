@@ -23,8 +23,6 @@ public final class HelpBaseResources extends NLS {
 	public static String UpdatingIndex;
 	public static String Preparing_for_indexing;
 	public static String Writing_index;
-	public static String Undoing_document_adds;
-	public static String Undoing_document_deletions;
 	public static String HelpWebappNotStarted;
 	public static String HelpDisplay_exceptionMessage;
 	public static String no_browsers;

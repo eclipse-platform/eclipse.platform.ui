@@ -43,6 +43,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -81,16 +82,17 @@ public class SearchIndex {
 
 	public static final String INDEXED_DOCS_FILE = "indexed_docs"; //$NON-NLS-1$
 
-	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies"; //$NON-NLS-1$
+	public static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies"; //$NON-NLS-1$
+
+	public static final String DEPENDENCIES_KEY_LUCENE = "lucene"; //$NON-NLS-1$
+
+	public static final String DEPENDENCIES_KEY_ANALYZER = "analyzer"; //$NON-NLS-1$
 
 	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene"; //$NON-NLS-1$
 
 	private static final String FIELD_NAME = "name"; //$NON-NLS-1$
 
 	private static final String FIELD_INDEX_ID = "index_path"; //$NON-NLS-1$
-
-	private static final IStatus OK_STATUS = new Status(IStatus.OK,
-			HelpBasePlugin.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 
 	private File inconsistencyFile;
 
@@ -208,7 +210,7 @@ public class SearchIndex {
 				parser.closeDocument();
 			}
 			indexedDocs.put(name, "0"); //$NON-NLS-1$
-			return OK_STATUS;
+			return Status.OK_STATUS;
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 					IStatus.ERROR,
@@ -250,37 +252,6 @@ public class SearchIndex {
 	}
 
 	/**
-	 * Starts additions. To be called before adding documents.
-	 */
-	public synchronized boolean beginMergeBatch() {
-		try {
-			if (iw != null) {
-				iw.close();
-			}
-			boolean create = false;
-			if (!exists()) {
-				create = true;
-				indexDir.mkdirs();
-				if (!indexDir.exists())
-					return false; // unable to setup index directory
-			}
-			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
-			indexedDocs.restore();
-			setInconsistent(true);
-			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(),
-					create);
-			iw.mergeFactor = 20;
-			iw.maxFieldLength = 1000000;
-			return true;
-		} catch (IOException e) {
-			HelpBasePlugin
-					.logError(
-							"Exception occurred in search indexing at beginMergeBatch.", e); //$NON-NLS-1$
-			return false;
-		}
-	}
-
-	/**
 	 * Starts deletions. To be called before deleting documents.
 	 */
 	public synchronized boolean beginDeleteBatch() {
@@ -309,9 +280,6 @@ public class SearchIndex {
 			if (ir != null) {
 				ir.close();
 			}
-			// indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
-			// indexedDocs.restore();
-			// setInconsistent(true);
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
@@ -327,9 +295,9 @@ public class SearchIndex {
 	 * 
 	 * @param name -
 	 *            document name
-	 * @return true if success
+	 * @return IStatus
 	 */
-	public boolean removeDocument(String name) {
+	public IStatus removeDocument(String name) {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
 			System.out.println("SearchIndex.removeDocument(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -338,58 +306,39 @@ public class SearchIndex {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			HelpBasePlugin.logError(
-					"IO exception occurred while removing document " //$NON-NLS-1$
-							+ name + " from index " //$NON-NLS-1$
-							+ indexDir.getAbsolutePath() + ".", e); //$NON-NLS-1$
-			return false;
+			return new Status(
+					IStatus.ERROR,
+					HelpBasePlugin.PLUGIN_ID,
+					IStatus.ERROR,
+					"IO exception occurred while removing document " + name //$NON-NLS-1$
+							+ " from index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
+					e);
 		}
-		return true;
+		return Status.OK_STATUS;
 	}
 
 	/**
 	 * Finish additions. To be called after adding documents.
 	 */
-	public synchronized boolean endAddBatch() {
+	public synchronized boolean endAddBatch(boolean optimize,
+			boolean lastOperation) {
 		try {
 			if (iw == null)
 				return false;
-			iw.optimize();
-			iw.close();
-			// save the update info:
-			// - all the docs
-			// - plugins (and their version) that were indexed
-			indexedDocs.save();
-			indexedDocs = null;
-			getDocPlugins().save();
-			saveDependencies();
-			setInconsistent(false);
-			return true;
-		} catch (IOException e) {
-			HelpBasePlugin.logError(
-					"Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
-			return false;
-		}
-	}
-
-	/**
-	 * Finish merging. To be called after adding documents.
-	 */
-	public synchronized boolean endMergeBatch() {
-		try {
-			if (iw == null)
-				return false;
-			// iw.optimize(); // done in lucene
+			if (optimize)
+				iw.optimize();
 			iw.close();
 			iw = null;
 			// save the update info:
 			// - all the docs
 			// - plugins (and their version) that were indexed
-			indexedDocs.save();
-			indexedDocs = null;
 			getDocPlugins().save();
 			saveDependencies();
-			setInconsistent(false);
+			if (lastOperation) {
+				indexedDocs.save();
+				indexedDocs = null;
+				setInconsistent(false);
+			}
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError(
@@ -406,6 +355,7 @@ public class SearchIndex {
 			if (ir == null)
 				return false;
 			ir.close();
+			ir = null;
 			// save the update info:
 			// - all the docs
 			// - plugins (and their version) that were indexed
@@ -413,7 +363,6 @@ public class SearchIndex {
 			indexedDocs = null;
 			getDocPlugins().save();
 			saveDependencies();
-			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin
@@ -431,13 +380,14 @@ public class SearchIndex {
 			if (ir == null)
 				return false;
 			ir.close();
+			ir = null;
 			// save the update info:
 			// - all the docs
 			// - plugins (and their version) that were indexed
-			// indexedDocs.save();
-			// indexedDocs = null;
-			// getDocPlugins().save();
-			// saveDependencies();
+			indexedDocs.save();
+			indexedDocs = null;
+			getDocPlugins().save();
+			saveDependencies();
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
@@ -449,6 +399,7 @@ public class SearchIndex {
 	}
 
 	/**
+	 * If
 	 * 
 	 * @param dirs
 	 * @param monitor
@@ -464,6 +415,9 @@ public class SearchIndex {
 		for (int p = 0; p < pluginIndexes.length; p++) {
 			List indexIds = pluginIndexes[p].getIDs();
 			List indexPaths = pluginIndexes[p].getPaths();
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 
 			for (int i = 0; i < indexPaths.size(); i++) {
 				String indexId = (String) indexIds.get(i);
@@ -476,6 +430,11 @@ public class SearchIndex {
 									"Help search indexing directory could not be created for directory " + indexPath, ioe); //$NON-NLS-1$
 					continue;
 				}
+				if (HelpBasePlugin.DEBUG_SEARCH) {
+					System.out
+							.println("SearchIndex.merge merging indexId=" + indexId + ", indexPath=" + indexPath); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+
 				HelpProperties prebuiltDocs = new HelpProperties(
 						INDEXED_DOCS_FILE, new File(indexPath));
 				prebuiltDocs.restore();
@@ -519,13 +478,20 @@ public class SearchIndex {
 		try {
 			iw.addIndexes(luceneDirs);
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError("Mergin search indexes failed.", ioe); //$NON-NLS-1$
+			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
 			return new HashMap();
 		}
 		return mergedDocs;
 	}
 
-	public void removeDuplicates(String name, String[] index_paths) {
+	public IStatus removeDuplicates(String name, String[] index_paths) {
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out.print("SearchIndex.removeDuplicates(" + name); //$NON-NLS-1$
+			for (int i = 0; i < index_paths.length; i++) {
+				System.out.print(", " + index_paths[i]); //$NON-NLS-1$
+			}
+			System.out.println(")"); //$NON-NLS-1$
+		}
 		TermDocs hrefDocs = null;
 		TermDocs indexDocs = null;
 		Term hrefTerm = new Term(FIELD_NAME, name);
@@ -542,7 +508,13 @@ public class SearchIndex {
 				removeDocuments(hrefDocs, indexDocs);
 			}
 		} catch (IOException ioe) {
-			// TODO handle
+			return new Status(
+					IStatus.ERROR,
+					HelpBasePlugin.PLUGIN_ID,
+					IStatus.ERROR,
+					"IO exception occurred while removing duplicates of document " + name //$NON-NLS-1$
+							+ " from index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
+					ioe);
 		} finally {
 			if (hrefDocs != null) {
 				try {
@@ -556,9 +528,8 @@ public class SearchIndex {
 				} catch (IOException e) {
 				}
 			}
-
 		}
-
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -688,8 +659,8 @@ public class SearchIndex {
 	}
 
 	/**
-	 * Gets properties with versions of Lucene plugin and Analyzer used for
-	 * indexing
+	 * Gets properties with versions of Lucene plugin and Analyzer used in
+	 * existing index
 	 */
 	private HelpProperties getDependencies() {
 		if (dependencies == null) {
@@ -700,45 +671,50 @@ public class SearchIndex {
 		return dependencies;
 	}
 
-	/**
-	 * Gets analyzer identifier from a file.
-	 */
-	private String readAnalyzerId() {
-		String analyzerVersion = getDependencies().getProperty("analyzer"); //$NON-NLS-1$
-		if (analyzerVersion == null) {
-			return ""; //$NON-NLS-1$
-		}
-		return analyzerVersion;
+	private boolean isLuceneCompatible() {
+		String usedLuceneVersion = getDependencies().getProperty(
+				DEPENDENCIES_KEY_LUCENE); //$NON-NLS-1$
+		return isLuceneCompatible(usedLuceneVersion);
 	}
 
-	/**
-	 * Gets Lucene plugin version from a file.
-	 */
-	private boolean isLuceneCompatible() {
-		String usedLuceneVersion = getDependencies().getProperty("lucene"); //$NON-NLS-1$
+	public boolean isLuceneCompatible(String luceneVersion) {
 		String currentLuceneVersion = ""; //$NON-NLS-1$
 		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (lucenePluginDescriptor != null) {
 			currentLuceneVersion += (String) lucenePluginDescriptor
 					.getHeaders().get(Constants.BUNDLE_VERSION);
 		}
-		// Later might add code to return true for other known cases
-		// of compatibility between post 1.2.1 versions.
-		return currentLuceneVersion.equals(usedLuceneVersion);
+		// Later might add code to return true for known cases
+		// of compatibility between 3.1 and post 3.1 versions.
+		return currentLuceneVersion.equals(luceneVersion);
+	}
+
+	private boolean isAnalyzerCompatible() {
+		String usedAnalyzer = getDependencies().getProperty(
+				DEPENDENCIES_KEY_ANALYZER); //$NON-NLS-1$
+		return isAnalyzerCompatible(usedAnalyzer);
+	}
+
+	public boolean isAnalyzerCompatible(String analyzerId) {
+		if (analyzerId == null) {
+			analyzerId = ""; //$NON-NLS-1$
+		}
+		return analyzerDescriptor.isCompatible(analyzerId);
 	}
 
 	/**
 	 * Saves Lucene version and analyzer identifier to a file.
 	 */
 	private void saveDependencies() {
-		getDependencies().put("analyzer", analyzerDescriptor.getId()); //$NON-NLS-1$
+		getDependencies().put(DEPENDENCIES_KEY_ANALYZER,
+				analyzerDescriptor.getId()); //$NON-NLS-1$
 		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
 		if (luceneBundle != null) {
 			String luceneBundleVersion = "" //$NON-NLS-1$
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);
-			getDependencies().put("lucene", luceneBundleVersion); //$NON-NLS-1$
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, luceneBundleVersion); //$NON-NLS-1$
 		} else {
-			getDependencies().put("lucene", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			getDependencies().put(DEPENDENCIES_KEY_LUCENE, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		getDependencies().save();
 	}
@@ -752,8 +728,7 @@ public class SearchIndex {
 		if (inconsistencyFile.exists()) {
 			return true;
 		}
-		return !isLuceneCompatible()
-				|| !analyzerDescriptor.isCompatible(readAnalyzerId());
+		return !isLuceneCompatible() || !isAnalyzerCompatible();
 	}
 
 	/**

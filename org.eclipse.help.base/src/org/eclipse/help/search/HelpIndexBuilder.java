@@ -559,7 +559,7 @@ public class HelpIndexBuilder {
 			monitor.worked(1);
 		}
 		monitor.subTask(HelpBaseResources.Writing_index);
-		if (!index.endAddBatch()) {
+		if (!index.endAddBatch(true, true)) {
 			IStatus status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 					IStatus.OK, "Error while writing the index", null);
 			if (multiStatus==null)

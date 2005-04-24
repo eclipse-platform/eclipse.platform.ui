@@ -15,27 +15,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.help.internal.base.HelpBasePlugin;
-
 /**
  * Plugins with prebuilt search indexes.
  * 
  */
 public class PrebuiltIndexes {
-	private String locale;
+	private SearchIndex targetIndex;
 
 	/**
 	 * Set of PluginIndex
 	 */
 	private Set set = new HashSet();
 
-	PrebuiltIndexes(String locale) {
+	PrebuiltIndexes(SearchIndex targetIndex) {
 		super();
-		this.locale = locale;
+		this.targetIndex = targetIndex;
 	}
 
 	void add(String plugin, String path) {
-		set.add(new PluginIndex(plugin, path, locale));
+		set.add(new PluginIndex(plugin, path, targetIndex));
 	}
 
 	/**
@@ -46,8 +44,6 @@ public class PrebuiltIndexes {
 		for (int i = 0; i < indexes.size();) {
 			PluginIndex index = (PluginIndex) indexes.get(i);
 			if (index.getPaths().size() == 0) {
-				HelpBasePlugin.logError("Help index missing for for plugin " //$NON-NLS-1$
-						+ index.getPluginId() + ".", null); //$NON-NLS-1$
 				set.remove(index);
 			}
 			i++;

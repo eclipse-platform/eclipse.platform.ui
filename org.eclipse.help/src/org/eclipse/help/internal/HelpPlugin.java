@@ -40,29 +40,23 @@ public class HelpPlugin extends Plugin
 	protected ContextManager contextManager;
 
 	/**
-	 * Logs an Error message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: Resources.getString() should
-	 * already have been called
+	 * Logs an Error message with an exception.
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
 				message, ex);
-		logError(errorStatus);
+		logStatus(errorStatus);
 	}
 	/**
-	 * Logs an Error message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: Resources.getString() should
-	 * already have been called
+	 * Logs an IStatus
 	 */
-	public static synchronized void logError(IStatus errorStatus) {
+	private static void logStatus(IStatus errorStatus) {
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
-	 * Logs a Warning message with an exception. Note that the message should
-	 * already be localized to proper local. ie: Resources.getString() should
-	 * already have been called
+	 * Logs a Warning message with an exception.
 	 */
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {

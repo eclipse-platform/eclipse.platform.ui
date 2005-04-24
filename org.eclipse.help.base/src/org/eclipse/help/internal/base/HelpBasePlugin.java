@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,7 @@ public class HelpBasePlugin extends Plugin {
 		}
 	};
 	/**
-	 * Logs an Error message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: Resources.getString() should
-	 * already have been called
+	 * Logs an Error message with an exception.
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
@@ -66,9 +64,13 @@ public class HelpBasePlugin extends Plugin {
 		HelpBasePlugin.getDefault().getLog().log(errorStatus);
 	}
 	/**
-	 * Logs a Warning message with an exception. Note that the message should
-	 * already be localized to proper local. ie: Resources.getString() should
-	 * already have been called
+	 * Logs an IStatus.
+	 */
+	public static synchronized void logStatus(IStatus errorStatus) {
+		HelpBasePlugin.getDefault().getLog().log(errorStatus);
+	}
+	/**
+	 * Logs a Warning message with an exception.
 	 */
 	public static synchronized void logWarning(String message) {
 		if (HelpBasePlugin.DEBUG) {

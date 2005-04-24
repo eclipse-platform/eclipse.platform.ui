@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	private int totalWork = IProgressMonitor.UNKNOWN;
 
-	private int currWork;
+	private double currWork;
 
 	static {
 		dummy_collector = new ISearchHitCollector() {
@@ -67,14 +67,15 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	}
 
 	public void worked(int work) {
+		internalWorked(work);
+	}
+
+	public void internalWorked(double work) {
 		currWork += work;
 		if (currWork > totalWork)
 			currWork = totalWork;
 		else if (currWork < 0)
 			currWork = 0;
-	}
-
-	public void internalWorked(double work) {
 	}
 
 	public int getPercentage() {
@@ -85,7 +86,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			return 0;
 		if (currWork >= totalWork)
 			return 100;
-		return (100 * currWork / totalWork);
+		return (int)(100 * currWork / totalWork);
 	}
 
 	/**
@@ -95,16 +96,6 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	 */
 	public boolean isCanceled() {
 		return canceled;
-	}
-
-	/**
-	 * Sets the isCanceled.
-	 * 
-	 * @param canceled
-	 *            The isCanceled to set
-	 */
-	public void setCancelled(boolean canceled) {
-		this.canceled = canceled;
 	}
 
 	/**

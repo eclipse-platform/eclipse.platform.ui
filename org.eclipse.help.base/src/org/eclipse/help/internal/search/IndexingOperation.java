@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
@@ -42,19 +43,6 @@ class IndexingOperation {
 	private int numRemoved;
 
 	private SearchIndex index = null;
-
-	// Constants for alocating progress among subtasks.
-	// The goal is to have a ratio among them
-	// that results in work accumulating at a constant rate.
-	private final static int WORK_PREPARE = 1; // * all documents
-
-	private final static int WORK_DELETEDOC = 5; // * removed documents
-
-	private final static int WORK_INDEXDOC = 50; // * added documents
-
-	private final static int WORK_SAVEINDEX = 2; // * all documents
-
-	private int workTotal;
 
 	/**
 	 * Construct indexing operation.
@@ -87,61 +75,34 @@ class IndexingOperation {
 		numRemoved = staleDocs.size();
 		Collection newDocs = getAddedDocuments(index);
 		numAdded = newDocs.size();
-
-		workTotal = (numRemoved + numAdded) * WORK_PREPARE + numAdded
-				* WORK_INDEXDOC + (numRemoved + numAdded) * WORK_SAVEINDEX;
-
-		if (numRemoved > 0) {
-			workTotal += (numRemoved + numAdded) * WORK_PREPARE + numRemoved
-					* WORK_DELETEDOC + (numRemoved + numAdded) * WORK_SAVEINDEX;
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out
+					.println("IndexingOperation.execute: " + numRemoved + " documents in deleted plug-ins, " + numAdded + " documents in added plug-ins."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
 		if (numRemoved + numAdded <= 0) {
 			pm.done();
 			return;
 		}
-
-		LazyProgressMonitor monitor = new LazyProgressMonitor(pm);
-		monitor.beginTask("", workTotal); //$NON-NLS-1$
-
-		// TODO see if workTotal can be calculated better or use subprgress
-		// monitors
+		pm.beginTask(HelpBaseResources.UpdatingIndex, numRemoved + 10
+				* numAdded); //$NON-NLS-1$
 
 		// 1. remove all documents for plugins changed (including change in a
 		// fragment)
-		removeDocuments(monitor, staleDocs);
+		removeStaleDocuments(new SubProgressMonitor(pm, numRemoved), staleDocs);
 
-		// 2a. merge prebult plugin indexes
-		Map prebuiltDocs = mergeIndexes(monitor);
-		// TODO index is not consistend until duplcates removed (until the end of this method)
-		// TODO worked should not include unneeded documents
-		pm.worked(prebuiltDocs.size());
+		// 2. merge prebult plugin indexes and addjust
+		addNewDocuments(new SubProgressMonitor(pm, 10 * numAdded), newDocs);
 
-		// Calculate documents that were not in prebuilt indexes, and still need
-		// to be added
-		// (newDocs minus prebuiltDocs)
-		Collection docsToIndex = null;
-		if (prebuiltDocs.size() > 0) {
-			docsToIndex = new HashSet(newDocs);
-			for (Iterator it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
-				String href = (String) it.next();
-				URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
-				if (u != null) {
-					docsToIndex.remove(u);
-				}
-			}
-		} else {
-			docsToIndex = newDocs;
-		}
-		// 2b. add all documents (that are were not in prebuilt index) (from
-		// plugin or fragment) for plugins changed
-		addDocuments(monitor, docsToIndex);
+		pm.done();
+	}
 
+	private Map calculateNewToRemove(Collection newDocs, Map prebuiltDocs) {
 		// Calculate document that were in prebuilt indexes, but are not in
-		// TOCs.
-		// (prebuiltDocs - newDocs)
-		/**
+		// TOCs. (prebuiltDocs - newDocs)
+		/*
 		 * Map. Keys are /pluginid/href of docs to delete. Values are null to
 		 * delete completely, or String[] of indexIds with duplicates of the
 		 * document
@@ -169,13 +130,62 @@ class IndexingOperation {
 				docsToDelete.put(href, null);
 			}
 		}
+		return docsToDelete;
+	}
 
-		// 3. perform removal of duplicates, and unused docs
-		if (docsToDelete.size() > 0) {
-			removeDuplicates(docsToDelete);
+	/**
+	 * Returns documents that must be deleted
+	 * 
+	 * @param pm
+	 * @param newDocs
+	 * @return
+	 * @throws IndexingException
+	 */
+	private Map addNewDocuments(IProgressMonitor pm, Collection newDocs)
+			throws IndexingException {
+		Map prebuiltDocs = mergeIndexes(pm);
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out
+					.println("IndexOperation.addNewDocuments: " + prebuiltDocs.size() + " different documents merged."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		Collection docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
+		Map docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
+		// IProgressMonitor addMonitor = new SubProgressMonitor(pm,
+		// docsToDelete.size()*10 + docsToIndex.size()*100;
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out
+					.println("IndexOperation.addNewDocuments: " + docsToIndex.size() + " documents not yet indexed."); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out
+					.println("IndexOperation.addNewDocuments: " + docsToDelete.size() + " documents have more than one copy indexed."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
 
-		monitor.done();
+		addDocuments(new SubProgressMonitor(pm, 10 * docsToIndex.size()),
+				docsToIndex, docsToDelete.size() == 0);
+		removeNewDocuments(new SubProgressMonitor(pm, docsToDelete.size()),
+				docsToDelete);
+		pm.done();
+		return docsToDelete;
+	}
+
+	private Collection calculateDocsToAdd(Collection newDocs, Map prebuiltDocs) {
+		// Calculate documents that were not in prebuilt indexes, and still need
+		// to be added
+		// (newDocs minus prebuiltDocs)
+		Collection docsToIndex = null;
+		if (prebuiltDocs.size() > 0) {
+			docsToIndex = new HashSet(newDocs);
+			for (Iterator it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
+				String href = (String) it.next();
+				URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
+				if (u != null) {
+					docsToIndex.remove(u);
+				}
+			}
+		} else {
+			docsToIndex = newDocs;
+		}
+		return docsToIndex;
 	}
 
 	/**
@@ -184,101 +194,123 @@ class IndexingOperation {
 	 *            delete href, or String[] of indexIds to delete duplicates with
 	 *            given index IDs
 	 */
-	private void removeDuplicates(Map docsToDelete) {
-		index.beginRemoveDuplicatesBatch();
-		for (Iterator it = docsToDelete.keySet().iterator(); it.hasNext();) {
-			String href = (String) it.next();
-			String[] indexIds = (String[]) docsToDelete.get(href);
-			if (indexIds == null) {
-				// delete all copies
-				index.removeDocument(href);
-				continue;
-			}
-			index.removeDuplicates(href, indexIds);
-
-		}
-		index.endRemoveDuplicatesBatch();
-
-	}
-
-	private void addDocuments(IProgressMonitor pm, Collection addedDocs)
+	private void removeNewDocuments(IProgressMonitor pm, Map docsToDelete)
 			throws IndexingException {
-		// Do not check here if (addedDocs.size() > 0), always perform add batch
-		// to ensure that index is created and saved even if no new documents
-		// exist
-
-		// now add all the new documents
-		if (!index.beginAddBatch()) {
-			throw new IndexingException();
-		}
-		try {
-			checkCancelled(pm);
-			pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-			pm.subTask(HelpBaseResources.UpdatingIndex);
+		pm = new LazyProgressMonitor(pm);
+		pm.beginTask("", docsToDelete.size()); //$NON-NLS-1$
+		checkCancelled(pm);
+		Set keysToDelete = docsToDelete.keySet();
+		if (keysToDelete.size() > 0) {
+			if (!index.beginRemoveDuplicatesBatch()) {
+				throw new IndexingException();
+			}
 			MultiStatus multiStatus = null;
-			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
-				URL doc = (URL) it.next();
-				IStatus status = index.addDocument(getName(doc), doc);
+			for (Iterator it = keysToDelete.iterator(); it.hasNext();) {
+				String href = (String) it.next();
+				String[] indexIds = (String[]) docsToDelete.get(href);
+				if (indexIds == null) {
+					// delete all copies
+					index.removeDocument(href);
+					continue;
+				}
+				IStatus status = index.removeDuplicates(href, indexIds);
 				if (status.getCode() != IStatus.OK) {
 					if (multiStatus == null) {
 						multiStatus = new MultiStatus(
 								HelpBasePlugin.PLUGIN_ID,
-								IStatus.ERROR,
-								"Help documentation could not be indexed completely.", //$NON-NLS-1$
+								IStatus.WARNING,
+								"Some help documents could not removed from index.", //$NON-NLS-1$
 								null);
 					}
 					multiStatus.add(status);
 				}
 				checkCancelled(pm);
-				pm.worked(WORK_INDEXDOC);
+				pm.worked(1);
+				if (multiStatus != null) {
+					HelpBasePlugin.logStatus(multiStatus);
+				}
 			}
-			if (multiStatus != null) {
-				HelpPlugin.logError(multiStatus);
-
+			if (!index.endRemoveDuplicatesBatch()) {
+				throw new IndexingException();
 			}
-		} catch (OperationCanceledException oce) {
-			// Need to perform rollback on the index
-			pm.subTask(HelpBaseResources.Undoing_document_adds);
-			// if (!index.abortUpdate())
-			// throw new Exception();
-			throw oce;
 		}
-		pm.subTask(HelpBaseResources.Writing_index);
-		if (!index.endAddBatch())
-			throw new IndexingException();
+		pm.done();
 	}
 
-	private void removeDocuments(IProgressMonitor pm, Collection removedDocs)
-			throws IndexingException {
+	private void addDocuments(IProgressMonitor pm, Collection addedDocs,
+			boolean lastOperation) throws IndexingException {
+		pm = new LazyProgressMonitor(pm);
+		// beginAddBatch()) called when processing prebuilt indexes
+		pm.beginTask("", addedDocs.size()); //$NON-NLS-1$
+		checkCancelled(pm);
+		pm.subTask(HelpBaseResources.UpdatingIndex);
+		MultiStatus multiStatus = null;
+		for (Iterator it = addedDocs.iterator(); it.hasNext();) {
+			URL doc = (URL) it.next();
+			IStatus status = index.addDocument(getName(doc), doc);
+			if (status.getCode() != IStatus.OK) {
+				if (multiStatus == null) {
+					multiStatus = new MultiStatus(
+							HelpBasePlugin.PLUGIN_ID,
+							IStatus.ERROR,
+							"Help documentation could not be indexed completely.", //$NON-NLS-1$
+							null);
+				}
+				multiStatus.add(status);
+			}
+			checkCancelled(pm);
+			pm.worked(1);
+		}
+		if (multiStatus != null) {
+			HelpBasePlugin.logStatus(multiStatus);
+		}
+		pm.subTask(HelpBaseResources.Writing_index);
+		if (!index.endAddBatch(addedDocs.size() > 0, lastOperation))
+			throw new IndexingException();
+		pm.done();
+	}
 
+	private void removeStaleDocuments(IProgressMonitor pm,
+			Collection removedDocs) throws IndexingException {
+		pm = new LazyProgressMonitor(pm);
+		pm.beginTask("", removedDocs.size()); //$NON-NLS-1$
 		pm.subTask(HelpBaseResources.Preparing_for_indexing);
 		checkCancelled(pm);
 
 		if (numRemoved > 0) {
+			if (HelpBasePlugin.DEBUG_SEARCH) {
+				System.out.println("SearchIndex.removeStaleDocuments"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
 			if (!index.beginDeleteBatch())
 				throw new IndexingException();
-			try {
-				checkCancelled(pm);
-				pm.worked((numRemoved + numAdded) * WORK_PREPARE);
-				pm.subTask(HelpBaseResources.UpdatingIndex);
-				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
-					URL doc = (URL) it.next();
-					index.removeDocument(getName(doc));
-					checkCancelled(pm);
-					pm.worked(WORK_DELETEDOC);
+			checkCancelled(pm);
+			pm.subTask(HelpBaseResources.UpdatingIndex);
+			MultiStatus multiStatus = null;
+			for (Iterator it = removedDocs.iterator(); it.hasNext();) {
+				URL doc = (URL) it.next();
+				IStatus status = index.removeDocument(getName(doc));
+				if (status.getCode() != IStatus.OK) {
+					if (multiStatus == null) {
+						multiStatus = new MultiStatus(
+								HelpBasePlugin.PLUGIN_ID,
+								IStatus.WARNING,
+								"Uninstalled or updated help documents could not be removed from index.", //$NON-NLS-1$
+								null);
+					}
+					multiStatus.add(status);
 				}
-			} catch (OperationCanceledException oce) {
-				// Need to perform rollback on the index
-				pm.subTask(HelpBaseResources.Undoing_document_deletions); //$NON-NLS-1$
-				// if (!index.abortUpdate())
-				// throw new Exception();
-				throw oce;
+				checkCancelled(pm);
+				pm.worked(1);
+			}
+			if (multiStatus != null) {
+				HelpBasePlugin.logStatus(multiStatus);
 			}
 			if (!index.endDeleteBatch()) {
 				throw new IndexingException();
 			}
-			pm.worked((numRemoved + numAdded) * WORK_SAVEINDEX);
 		}
+		pm.done();
 	}
 
 	/**
@@ -409,8 +441,8 @@ class IndexingOperation {
 	 * @param locale
 	 * @return
 	 */
-	private PrebuiltIndexes getIndicesToAdd(Collection pluginIds, String locale) {
-		PrebuiltIndexes indexes = new PrebuiltIndexes(locale);
+	private PrebuiltIndexes getIndexesToAdd(Collection pluginIds) {
+		PrebuiltIndexes indexes = new PrebuiltIndexes(index);
 		for (Iterator it = pluginIds.iterator(); it.hasNext();) {
 			String pluginId = (String) it.next();
 			String indexPath = HelpPlugin.getTocManager()
@@ -431,16 +463,22 @@ class IndexingOperation {
 	 *         for added document, or String[] of indexIds with duplicates of
 	 *         the document
 	 */
-	private Map mergeIndexes(IProgressMonitor monitor) {
+	private Map mergeIndexes(IProgressMonitor monitor) throws IndexingException {
 		Collection addedPluginIds = getAddedPlugins(index);
-		PrebuiltIndexes indexes = getIndicesToAdd(addedPluginIds, index
-				.getLocale());
+		PrebuiltIndexes indexes = getIndexesToAdd(addedPluginIds);
 		PluginIndex[] pluginIndexes = indexes.getIndexes();
+		if (HelpBasePlugin.DEBUG_SEARCH) {
+			System.out
+					.println("IndexingOperation.mergeIndexes: " + pluginIndexes.length + " plugins with prebuilt index."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		Map mergedDocs = null;
+		// Always perform add batch to ensure that index is created and saved
+		// even if no new documents
+		if (!index.beginAddBatch()) {
+			throw new IndexingException();
+		}
 		if (pluginIndexes.length > 0) {
-			index.beginMergeBatch();
 			mergedDocs = index.merge(pluginIndexes, monitor);
-			index.endMergeBatch();
 		}
 
 		if (mergedDocs == null) {
