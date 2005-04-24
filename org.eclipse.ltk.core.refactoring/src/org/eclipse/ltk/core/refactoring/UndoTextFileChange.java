@@ -133,8 +133,6 @@ public class UndoTextFileChange extends Change {
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
 		fValidationState= BufferValidationState.create(fFile);
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
-		fDirty= buffer != null && buffer.isDirty();
 		pm.worked(1);
 	}
 	
@@ -145,7 +143,9 @@ public class UndoTextFileChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		RefactoringStatus result= fValidationState.isValid();
+		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+		fDirty= buffer != null && buffer.isDirty();
+		RefactoringStatus result= fValidationState.isValid(needsSaving());
 		pm.worked(1);
 		return result;
 	}
@@ -163,11 +163,19 @@ public class UndoTextFileChange extends Change {
 			manager.connect(fFile.getFullPath(), new SubProgressMonitor(pm, 1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath());
 			IDocument document= buffer.getDocument();
+			ContentStamp currentStamp= ContentStamps.get(fFile, document);
+			// perform the changes
 			UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
-			ContentStamp currentStamp= ContentStamps.get(fFile);
-			if (needsSaving())
+			// try to restore the document content stamp
+			boolean success= ContentStamps.set(document, fContentStampToRestore);
+			if (needsSaving()) {
 				buffer.commit(pm, false);
-			ContentStamps.set(fFile, fContentStampToRestore);
+				if (!success) {
+					// We weren't able to restore document stamp.
+					// Since we save restore the file stamp instead
+					ContentStamps.set(fFile, fContentStampToRestore);
+				}
+			}
 			return createUndoChange(redo, currentStamp);
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);

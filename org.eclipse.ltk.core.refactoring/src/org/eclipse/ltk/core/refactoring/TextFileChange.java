@@ -148,8 +148,6 @@ public class TextFileChange extends TextChange {
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		fValidationState= BufferValidationState.create(fFile);
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
-		fDirty= buffer != null && buffer.isDirty();
 		pm.worked(1);
 	}
 	
@@ -158,7 +156,9 @@ public class TextFileChange extends TextChange {
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
-		RefactoringStatus result= fValidationState.isValid();
+		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+		fDirty= buffer != null && buffer.isDirty();
+		RefactoringStatus result= fValidationState.isValid(needsSaving());
 		if (needsSaving()) {
 			result.merge(Changes.validateModifiesFiles(new IFile[] {fFile}));
 		} else {
@@ -188,8 +188,9 @@ public class TextFileChange extends TextChange {
 		manager.connect(path, pm);
 		fAquireCount++;
 		fBuffer= manager.getTextFileBuffer(path);
-		fContentStamp= ContentStamps.get(fFile);
-		return fBuffer.getDocument();
+		IDocument result= fBuffer.getDocument();
+		fContentStamp= ContentStamps.get(fFile, result);
+		return result;
 	}
 	
 	/**
