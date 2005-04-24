@@ -223,6 +223,15 @@ public class HelpIndexBuilder {
 	 *            the file that contains TOC extensions
 	 */
 	public void setManifest(File manifest) {
+		if (manifest.getName().equalsIgnoreCase("MANIFEST.MF")) {
+			File parent = manifest.getParentFile();
+			if (parent.getName().equalsIgnoreCase("META-INF")) {
+				File project = parent.getParentFile();
+				manifest = new File(project, "plugin.xml");
+				if (!manifest.exists())
+					manifest=null;
+			}
+		}
 		this.manifest = manifest;
 	}
 
@@ -285,7 +294,7 @@ public class HelpIndexBuilder {
 			processExtension(extensions[i]);
 		}
 		if (indexPath == null) {
-			throwCoreException("Index destination path not specified.", null);
+			throwCoreException("Index destination path not specified in the extension.", null);
 		}
 		doc = null; // discard the DOM
 		
