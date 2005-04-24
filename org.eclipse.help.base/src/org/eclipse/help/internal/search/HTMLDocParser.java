@@ -28,28 +28,28 @@ public class HTMLDocParser {
 	private static final int MAX_OFFSET = 2048;
 
 	// elements, atributes and values contstants
-	final String ELEMENT_META = "META"; //$NON-NLS-1$
-	final String ELEMENT_BODY = "body"; //$NON-NLS-1$
-	final String ELEMENT_HEAD = "head"; //$NON-NLS-1$
-	final String ATTRIBUTE_HTTP = "http-equiv"; //$NON-NLS-1$
-	final String ATTRIBUTE_HTTP_VALUE = "content-type"; //$NON-NLS-1$
-	final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
+	final static String ELEMENT_META = "META"; //$NON-NLS-1$
+	final static String ELEMENT_BODY = "body"; //$NON-NLS-1$
+	final static String ELEMENT_HEAD = "head"; //$NON-NLS-1$
+	final static String ATTRIBUTE_HTTP = "http-equiv"; //$NON-NLS-1$
+	final static String ATTRIBUTE_HTTP_VALUE = "content-type"; //$NON-NLS-1$
+	final static String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
 
 	// states for parsing elements
-	final int STATE_ELEMENT_START = 0;
-	final int STATE_ELEMENT_AFTER_LT = 1;
-	final int STATE_ELEMENT_AFTER_LT_SLASH = 2;
-	final int STATE_ELEMENT_META = 3;
+	final static int STATE_ELEMENT_START = 0;
+	final static int STATE_ELEMENT_AFTER_LT = 1;
+	final static int STATE_ELEMENT_AFTER_LT_SLASH = 2;
+	final static int STATE_ELEMENT_META = 3;
 	// states for parsing HTTP-EQUIV attribute
-	final int STATE_HTTP_START = 0;
-	final int STATE_HTTP_AFTER_NAME = 1;
-	final int STATE_HTTP_AFTER_EQ = 2;
-	final int STATE_HTTP_DONE = 3;
+	final static int STATE_HTTP_START = 0;
+	final static int STATE_HTTP_AFTER_NAME = 1;
+	final static int STATE_HTTP_AFTER_EQ = 2;
+	final static int STATE_HTTP_DONE = 3;
 	// states for parsing CONTENT attribute
-	final int STATE_CONTENT_START = 0;
-	final int STATE_CONTENT_AFTER_NAME = 1;
-	final int STATE_CONTENT_AFTER_EQ = 2;
-	final int STATE_CONTENT_DONE = 3;
+	final static int STATE_CONTENT_START = 0;
+	final static int STATE_CONTENT_AFTER_NAME = 1;
+	final static int STATE_CONTENT_AFTER_EQ = 2;
+	final static int STATE_CONTENT_DONE = 3;
 
 	private HTMLParser htmlParser;
 	private InputStream inputStream = null;
@@ -137,7 +137,7 @@ public class HTMLDocParser {
 	 * 
 	 * @return String or null if encoding not found
 	 */
-	public String getCharsetFromHTML(InputStream is) {
+	public static String getCharsetFromHTML(InputStream is) {
 		// Set up an ascii reader for the document (documents should not use
 		// other characters before encoding is defined)
 		Reader asciiReader = new ASCIIReader(is, MAX_OFFSET);
@@ -161,7 +161,7 @@ public class HTMLDocParser {
 		}
 		return charset;
 	}
-	public String getCharsetFromHTMLTokens(StreamTokenizer tokenizer) {
+	public static String getCharsetFromHTMLTokens(StreamTokenizer tokenizer) {
 		// keeps track of content attribute attribute until parsing
 		// of the meta tag is complete
 		String contentValue = null;
@@ -364,7 +364,7 @@ public class HTMLDocParser {
 	 * @return value of charset parameter, for example ISO-8859-4 or null if
 	 *         parameter does not exist
 	 */
-	public String getCharsetFromHTTP(String contentValue) {
+	public static String getCharsetFromHTTP(String contentValue) {
 		StringTokenizer t = new StringTokenizer(contentValue, ";"); //$NON-NLS-1$
 		while (t.hasMoreTokens()) {
 			String parameter = t.nextToken().trim();

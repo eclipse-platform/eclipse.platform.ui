@@ -91,7 +91,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 	}
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		this.firstPageId = memento.getString("pageId");
+		if (memento!=null)
+			this.firstPageId = memento.getString("pageId");
 		init(site);
 		reusableHelpPart = new ReusableHelpPart(site.getWorkbenchWindow(),
 				getHelpPartStyle());
@@ -105,7 +106,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	}
 	
     public void saveState(IMemento memento) {
-    	if (reusableHelpPart!=null) {
+    	if (reusableHelpPart!=null && memento!=null) {
     		String pageId = reusableHelpPart.getCurrentPageId();
     		if (pageId!=null)
     			memento.putString("pageId", pageId);

@@ -11,10 +11,13 @@
 
 package org.eclipse.help.internal.webapp.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.eclipse.help.internal.search.HTMLDocParser;
 
 /**
  * Filters output stream and inserts specified bytes before the end of HEAD
@@ -47,6 +50,11 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	private static final int STATE_LT_BODY = 11;
 
 	private static final int STATE_DONE = 17;
+	
+	private static final int STATE_LT_M = 18;
+	private static final int STATE_LT_ME = 19;
+	private static final int STATE_LT_MET = 20;
+	private static final int STATE_LT_META = 21;	
 
 	private int areaState = STATE_START;
 
@@ -54,7 +62,9 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 
 	private byte[] toHead;
 
-	private byte[] toBody;
+	private String bodyContent;
+	
+	private String charset;
 
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(7);
 
@@ -74,10 +84,10 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	 *            <code>null</code>
 	 */
 	public FilterHTMLHeadAndBodyOutputStream(OutputStream out,
-			byte[] bytesForHead, byte[] bytesForBody) {
+			byte[] bytesForHead, String bodyContent) {
 		super(out);
 		toHead = bytesForHead;
-		toBody = bytesForBody;
+		this.bodyContent = bodyContent;
 	}
 
 	/**
@@ -110,7 +120,43 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 				state = STATE_LT_SLASH;
 			} else if (b == 'b' || b == 'B') {
 				state = STATE_LT_B;
+			} else if (b == 'm' || b== 'M') {
+				state = STATE_LT_M;
 			} else {
+				reset();
+			}
+			break;
+		case STATE_LT_M:
+			buffer.write(b);
+			if (b == 'e' || b=='E') {
+				state = STATE_LT_ME;
+			}
+			else {
+				reset();
+			}
+			break;
+		case STATE_LT_ME:
+			buffer.write(b);
+			if (b == 't' || b=='T') {
+				state = STATE_LT_MET;
+			}
+			else {
+				reset();
+			}
+			break;
+		case STATE_LT_MET:
+			buffer.write(b);
+			if (b == 'a' || b=='A') {
+				state = STATE_LT_META;
+			}
+			else {
+				reset();
+			}
+			break;
+		case STATE_LT_META:
+			buffer.write(b);
+			if (b=='>') {
+				parseMetaTag(buffer);
 				reset();
 			}
 			break;
@@ -143,9 +189,10 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 			if (b == '>') {
 				out.write(buffer.toByteArray());
 				buffer.reset();
-				if (toBody != null) {
+				if (bodyContent != null) {
 					out.write('\n');
-					out.write(toBody);
+					byte [] bytes = bodyContent.getBytes(charset!=null?charset:"UTF-8");
+					out.write(bytes);
 					out.write('\n');
 				}
 				areaState = STATE_DONE;
@@ -203,6 +250,18 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 			out.write(b);
 			break;
 		}
+	}
+	
+	private void parseMetaTag(ByteArrayOutputStream buffer) {
+		ByteArrayInputStream is = new ByteArrayInputStream(buffer.toByteArray());
+		String value = HTMLDocParser.getCharsetFromHTML(is);
+		try {
+			is.close();
+		}
+		catch (IOException e) {
+		}
+		if (value!=null)
+			this.charset = value;
 	}
 
 	private void reset() throws IOException {

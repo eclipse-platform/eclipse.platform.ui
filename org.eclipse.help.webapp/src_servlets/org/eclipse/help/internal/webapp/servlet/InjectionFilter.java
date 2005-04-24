@@ -94,11 +94,9 @@ public class InjectionFilter implements IFilter {
 			appendDisabled(disabledContent, upLevels);
 		}
 		try {
-			return new FilterHTMLHeadAndBodyOutputStream(out, script.toString()
-					.getBytes("ASCII"), addDisabled ? disabledContent //$NON-NLS-1$
-						// TODO disabled content must use charset of
-							// the document
-					.toString().getBytes("UTF-8") : null); //$NON-NLS-1$
+			return new FilterHTMLHeadAndBodyOutputStream(
+					out,
+					script.toString().getBytes("ASCII"), addDisabled ? disabledContent.toString() : null); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return out;
 		}
