@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal.application;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
@@ -87,8 +85,5 @@ public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor 
         wbAdvisor.createWindowContents(getWindowConfigurer(), shell);
     }
 
-    public Control createEmptyWindowContents(Composite parent) {
-        return wbAdvisor.createEmptyWindowContents(getWindowConfigurer(), parent); 
-    }
-
+ 
 }
