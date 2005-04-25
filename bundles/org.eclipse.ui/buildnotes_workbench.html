@@ -323,6 +323,72 @@ ul
 <h1>Eclipse Platform Build Notes<br>
 Workbench</h1>
 
+<p>Integration Build (<st1:date Year="2005" Day="26" Month="04">April 26, 2005, 8:00 a.m. (EDT)</st1:date>)</p>
+  <h2>What's new in this drop</h2>
+  <h2>Other highlights</h2>
+  <h2>Breaking API Changes</h2>
+  <h2><span class=GramE>Known deficiencies.</span> </h2>
+  <p><b style='mso-bidi-font-weight:normal'><span style='font-size:18.0pt'>Problem 
+    reports fixed<o:p></o:p></span></b></p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=11407">Bug 11407</a>. [Preferences] ScopedPreferenceStore#needsSaving always returns true<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53333">Bug 53333</a>. [Workbench] Way too many selection change events are being fired<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=62097">Bug 62097</a>. [Perspectives] Toolbar MenuDetect listeners leaking<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63251">Bug 63251</a>. [KeyBindings] interactions: If a key doesn't match while a prefix exists, then the key is not swallowed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=66436">Bug 66436</a>. [KeyBindings] errors: Commands should forward to WorkbenchAdvisor exception handling<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69430">Bug 69430</a>. [presentations] content description with '&amp;' treated as mnemonic indicator<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69667">Bug 69667</a>. [Dialogs] TVT3.0: Truncated text in Customize Perspective window.<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=75945">Bug 75945</a>. [Markers] Bookmark, problem and tasks view don't restore column widths<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=77787">Bug 77787</a>. [Commands] misc: dependency on Swing and AWT<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=79123">Bug 79123</a>. [Presentations] wrong cursor positions when switching editors with ctrl-pageup<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=80053">Bug 80053</a>. [RCP] Use only Foundation classes for RCP<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=80059">Bug 80059</a>. [RCP][JFace] Jface Use only Foundation<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=81444">Bug 81444</a>. [Contributions] ordering: Team menus (Compare, Replace, Team) not consistently ordered<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=81460">Bug 81460</a>. [Workbench] (regression) Close all perspectives, open Java perspective, layout wrong<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=81934">Bug 81934</a>. [DnD] Maximize intro, then put intro in stand-by, now can't resize views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=82476">Bug 82476</a>. [Preferences] [RCP] Verify that the preference key to close editors on shutdown is API<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=82988">Bug 82988</a>. [Import/Export] Importing Existing Projects should support Archive Files<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=83943">Bug 83943</a>. [Decorators] Updates should be done one job per listener<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=84056">Bug 84056</a>. [Contexts] Next/Previous Editor/View/Perspective does not work<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=86521">Bug 86521</a>. [Intro] [RCP] Welcome menu action gives NPE when no product defined<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=86628">Bug 86628</a>. [Decorators] IAE: beginRule: R/, does not match outer scope rule<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=88031">Bug 88031</a>. [Preferences] Allow to show all preferences<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=88867">Bug 88867</a>. [DetachedViews] NPE with detached views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89124">Bug 89124</a>. [RCP] Error message opening editors in not RCP friendly<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89197">Bug 89197</a>. [Undo] - Warning/prompting usability issues<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89237">Bug 89237</a>. [Preferences] Preferences dialog search Text should select page<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89596">Bug 89596</a>. [EditorMgmt] Editor drop-down handler registered in two different places<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89900">Bug 89900</a>. [Progress] showInDialog blocks if the parentShell is modal<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=89910">Bug 89910</a>. [WorkbenchParts] (regression) PartStack does not remember active part when switching among perspectives<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=90307">Bug 90307</a>. [Workbench] UI code uses extra Composites<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=90579">Bug 90579</a>. [Preferences] unable to search DBCS on Properties and Preferences<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=90788">Bug 90788</a>. [RCP] Remove M6 TODOs in WorkbenchAdvisors<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91015">Bug 91015</a>. [Commands] [Contexts] [KeyBindings] doc: org.eclipse.ui.commands and bindings extension points need more migration documentation<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91122">Bug 91122</a>. [Contributions] ordering: issue with multiple object contributions that contribute the same menu<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91298">Bug 91298</a>. preferenceTransfer extension point: problems with lots of keys<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91764">Bug 91764</a>. [Decorators] Need to optimize the fullDefinitions case<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91956">Bug 91956</a>. leaked refcount warnings in log<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=91994">Bug 91994</a>. [Commands] errors: Duplicate log entry for command warnings<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92000">Bug 92000</a>. [Workbench] (regression) AssertionFailedException in PartList.removePart when editors closed on shutdown<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92012">Bug 92012</a>. [DetachedView] Redundant activation changes when switching to perspective with detached views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92015">Bug 92015</a>. [IDE] IDEWorkbenchWindowAdvisor updates the window title too often<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92016">Bug 92016</a>. [Workbench] [RCP] IDEWorkbenchWindowAdvisor does not respond to changes in editor title<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92019">Bug 92019</a>. IAE in TextStyle constructor when disposing PDEFormEditor<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92049">Bug 92049</a>. Editor reuse no longer sends partInputChanged<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92137">Bug 92137</a>. [ActivityMgmt] IActivity still uses &quot;activity activity bindings&quot;<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92153">Bug 92153</a>. [WorkbenchParts] Request for new API on WorkbenchPart<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92161">Bug 92161</a>. [DynamicUI] Avoid getDeclaringExtension().getNamespace()<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92171">Bug 92171</a>. WorkbenchPage.getViewStack is too eager to activate views<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92215">Bug 92215</a>. [ActivityMgmt] Goofy hashCode implementations in the activities package<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92217">Bug 92217</a>. Innefficient pattern in equals() used<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92258">Bug 92258</a>. [WorkbenchParts] Workbench should set focus on part's control if part doesn't<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92291">Bug 92291</a>. [Commands] Util.compare uses toString()<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92366">Bug 92366</a>. [Undo] - If the execution of the undo/redo fails with a runtime exception the stack should be flushed<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92434">Bug 92434</a>. Failure in EncodingTestCase on 1.5.0 VM<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=92506">Bug 92506</a>. [Undo] - API SPEC Change - Operation should never be removed on undo/redo error<br>
+  </p>
+
+
 <p>Integration Build (<st1:date Year="2005" Day="19" Month="04">April 19, 2005, 8:00 a.m. (EDT)</st1:date>)</p>
   <h2>What's new in this drop</h2>
   <h2>Other highlights</h2>
