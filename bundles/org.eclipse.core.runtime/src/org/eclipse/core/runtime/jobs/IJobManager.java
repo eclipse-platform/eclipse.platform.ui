@@ -167,6 +167,16 @@ public interface IJobManager {
 	 * @see Job#belongsTo(Object)
 	 */
 	public Job[] find(Object family);
+	
+	/**
+	 * Returns whether the job manager is currently idle.  The job manager is
+	 * idle if no jobs are currently running or waiting to run.
+	 * 
+	 * @return <code>true</code> if the job manager is idle, and 
+	 * <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	public boolean isIdle();
 
 	/**
 	 * Waits until all jobs of the given family are finished.  This method will block the 
