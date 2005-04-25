@@ -226,10 +226,6 @@ final class ContextAuthority implements ISourceProviderListener {
 	 */
 	private final void checkWindowType(final Shell newShell,
 			final Shell oldShell) {
-        System.out.println("checkWindowType(" + newShell + ", " + oldShell + ')');  //$NON-NLS-1$//$NON-NLS-2$
-        if (oldShell != null) {
-            System.out.println();
-        }
 		if (newShell != oldShell) {
 			/*
 			 * If the previous active shell was recognized as a dialog by
