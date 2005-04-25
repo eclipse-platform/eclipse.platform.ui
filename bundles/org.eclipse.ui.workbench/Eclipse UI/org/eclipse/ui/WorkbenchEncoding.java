@@ -134,7 +134,12 @@ public class WorkbenchEncoding {
 			Object o = CharsetIsSupportedMethod.invoke(null, new Object[] { encoding });
 			return Boolean.TRUE.equals(o);
 		} catch (IllegalArgumentException e) {
-			// fall through
+			// Method.invoke can throw IllegalArgumentException if the wrong type of receiver is passed.
+			// This won't happen in this case because it's a static method.
+			// Charset.isSupported() throws IllegalCharsetNameException (which extends IllegalArgumentException)
+			// and we want to return false for this case, but can't refer to the class directly 
+			// because it's in java.nio, which does not exist in JCL Foundation. 
+			return false;
 		} catch (IllegalAccessException e) {
 			// fall through
 		} catch (InvocationTargetException e) {
