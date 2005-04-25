@@ -48,7 +48,7 @@ public class FormColors {
 	/**
 	 * Key for the section title bar foreground.
 	 * 
-	 * @deprecated this color is not used
+	 * 
 	 */
 	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG";
 

@@ -241,6 +241,7 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarForeground(Color color) {
 		putTitleBarColor(COLOR_FG, color);
+		textLabel.setForeground(color);
 	}
 
 	/**
@@ -320,6 +321,8 @@ public final class Section extends ExpandableComposite {
 	}
 
 	private void putTitleBarColor(String key, Color color) {
+		if (color==null)
+			return;
 		if (titleColors == null)
 			titleColors = new Hashtable();
 		titleColors.put(key, color);
