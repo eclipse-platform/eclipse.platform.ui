@@ -208,16 +208,20 @@ public class ToolBarContributionItem extends ContributionItem {
             coolItem.setControl(toolBar);
 
             // Handle Context Menu
-            toolBar.addListener(SWT.MenuDetect, new Listener() {
-
-                public void handleEvent(Event event) {
-                    // if the toolbar does not have its own context menu then
-                    // handle the event
-                    if (toolBarManager.getContextMenuManager() == null) {
-                        handleContextMenu(event);
-                    }
-                }
-            });
+            // ToolBarManager.createControl can actually return a pre-existing control.
+            // Only add the listener if the toolbar was newly created (bug 62097).
+            if (oldToolBar != toolBar) {
+	            toolBar.addListener(SWT.MenuDetect, new Listener() {
+	
+	                public void handleEvent(Event event) {
+	                    // if the toolbar does not have its own context menu then
+	                    // handle the event
+	                    if (toolBarManager.getContextMenuManager() == null) {
+	                        handleContextMenu(event);
+	                    }
+	                }
+	            });
+            }
 
             // Handle for chevron clicking
             if (getUseChevron()) {
