@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -43,12 +37,16 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -61,7 +59,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
@@ -347,61 +344,21 @@ public final class AntUtil {
 	}
 	
 	private static IDocument getDocument(File buildFile) {
-	    InputStream in= null;
-	    try {
-            in = new FileInputStream(buildFile);
-            String content= getStreamContentAsString(in);
-            if (content != null) {
-                return new Document(content);
-            }
-            return null;
-        } catch (FileNotFoundException e) {
-            return null;
-        } finally {
-	        if (in != null) {
-	            try {
-					in.close();
-				} catch (IOException x) {
-				}
-	        }
-        }
-	}
-	
-	private static String getStreamContentAsString(InputStream inputStream) {
-		InputStreamReader reader;
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		IPath location= new Path(buildFile.getAbsolutePath());
 		try {
-			reader = new InputStreamReader(inputStream, ResourcesPlugin.getEncoding());
-		} catch (UnsupportedEncodingException e) {
-			AntUIPlugin.log(e);
-			return ""; //$NON-NLS-1$
-		}
-		BufferedReader bufferedReader= null;
-		try {
-		    bufferedReader= new BufferedReader(reader);
-		    return getReaderContentAsString(bufferedReader);
-		} finally {
-		    try {
-                bufferedReader.close();
-            } catch (IOException e1) {
-            }
-		}
-	}
-	
-	private static String getReaderContentAsString(BufferedReader bufferedReader) {
-		StringBuffer result = new StringBuffer();
-		try {
-		    char[] readBuffer= new char[2048];
-			int n= bufferedReader.read(readBuffer);
-			while (n > 0) {
-			    result.append(readBuffer, 0, n);
-				n= bufferedReader.read(readBuffer);
+			manager.connect(location, new NullProgressMonitor());
+			ITextFileBuffer buffer= manager.getTextFileBuffer(location);
+			if (buffer == null) {
+				return null;
 			}
-		} catch (IOException e) {
-			AntUIPlugin.log(e);
+			IDocument document= buffer.getDocument();
+			manager.disconnect(location, new NullProgressMonitor());
+			return document;
+		} catch (CoreException ce) {
+			AntUIPlugin.log(ce.getStatus());
 			return null;
 		}
-
-		return result.toString();
 	}
 	
 	/**
