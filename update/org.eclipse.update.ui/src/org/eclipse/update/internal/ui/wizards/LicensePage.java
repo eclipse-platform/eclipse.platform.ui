@@ -31,8 +31,11 @@ import org.eclipse.update.operations.IInstallFeatureOperation;
 public class LicensePage extends WizardPage implements IDynamicPage {
 	private boolean multiLicenseMode = false;
 	private IInstallFeatureOperation[] jobs;
+	private IInstallFeatureOperation[] oldjJobs;
 	private Text text;
 	private Table table;
+	private Button acceptButton;
+	private Button declineButton;
 
 	/**
 	 * Constructor for LicensePage2
@@ -56,8 +59,8 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		setJobs(new IInstallFeatureOperation[] { job });
 	}
 
-	public void setJobs(IInstallFeatureOperation[] jobs) {
-		this.jobs = jobs;
+	public void setJobs(IInstallFeatureOperation[] jobs) {		
+		this.jobs = jobs;		
 	}
 
 	public void createControl(Composite parent) {
@@ -102,7 +105,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		buttonContainer.setLayout(new GridLayout());
 		buttonContainer.setLayoutData(gd);
 
-		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
+		acceptButton = new Button(buttonContainer, SWT.RADIO);
 		acceptButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_accept
                 : UpdateUIMessages.InstallWizard_LicensePage_accept);
 		acceptButton.addSelectionListener(new SelectionAdapter() {
@@ -110,7 +113,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 				setPageComplete(acceptButton.getSelection());
 			}
 		});
-		Button declineButton = new Button(buttonContainer, SWT.RADIO);
+		declineButton = new Button(buttonContainer, SWT.RADIO);
 		declineButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_decline2
                 : UpdateUIMessages.InstallWizard_LicensePage_decline);
 		declineButton.addSelectionListener(new SelectionAdapter() {
@@ -119,11 +122,16 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 			}
 		});
 		setControl(client);
-		
+
 		Dialog.applyDialogFont(parent);
 	}
 
 	public void setVisible(boolean visible) { // TO DO: Optimize out the case where a feature does not have a license?
+
+		boolean jobsChanged = didJobsChange(jobs);
+		declineButton.setSelection(!jobsChanged && declineButton.getSelection());
+		acceptButton.setSelection(!jobsChanged && acceptButton.getSelection());
+		
 		if (visible) {
 			if (multiLicenseMode) {
 				TableItem item;
@@ -157,6 +165,8 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 			}
 		}
 		super.setVisible(visible);
+		oldjJobs = jobs;
+		
 	}
 
 	private void showLicenseText() {
@@ -171,5 +181,27 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 			Object data = selectedItems[0].getData();
 			text.setText((data == null) ? "" : (String) data); //$NON-NLS-1$
 		}
+	}
+	
+	private boolean didJobsChange(IInstallFeatureOperation[] jobs){
+		
+		if ( (jobs == null) || (oldjJobs == null) || (jobs.length == 0) || (oldjJobs.length == 0) )
+			return true;
+				
+		boolean foundIt = false;
+		
+		for ( int i = 0; i < jobs.length; i++) {
+			foundIt = false;
+			for ( int j = 0; j < oldjJobs.length; j++) {
+				if (jobs[i].getFeature().getVersionedIdentifier().equals(oldjJobs[j].getFeature().getVersionedIdentifier()) ) {
+					foundIt = true;
+					break;
+				}
+			}
+			if (!foundIt) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
