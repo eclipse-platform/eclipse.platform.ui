@@ -84,8 +84,8 @@ public abstract class PartPane extends LayoutPart implements Listener {
                     LayoutPart parent = (LayoutPart) container;
                     Control parentControl = parent.getControl();
                     if (parentControl != null && !parentControl.isDisposed()) {
-                        parentControl.traverse(e.detail);
-                        e.doit = false;
+                        e.doit = parentControl.traverse(e.detail);
+                        if (e.doit) e.detail = SWT.TRAVERSE_NONE;
                     }
                 }
             }
