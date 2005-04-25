@@ -21,6 +21,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -198,5 +199,15 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return AntDocumentSetupParticipant.ANT_PARTITIONING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
+		if (AntEditorPartitionScanner.XML_TAG.equals(contentType)) {
+			return new AntDoubleClickStrategy();
+		}
+		return super.getDoubleClickStrategy(sourceViewer, contentType);
 	}
 }
