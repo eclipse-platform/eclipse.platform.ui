@@ -265,14 +265,12 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 	public void testLoadCatalog() {
 		// warm up preference service		
 		loadPreferences();
-		assertFalse("already loaded", ((ContentTypeManager) Platform.getContentTypeManager()).isLoaded());
 		new PerformanceTestRunner() {
 			protected void test() {
 				// any interation that will cause the registry to be loaded
 				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 			}
 		}.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
-		assertTrue("not loaded", ((ContentTypeManager) Platform.getContentTypeManager()).isLoaded());
 		// sanity check to make sure we are running with good data		
 		assertEquals("missing content types", NUMBER_OF_ELEMENTS, countTestContentTypes(Platform.getContentTypeManager().getAllContentTypes()));
 	}

@@ -133,13 +133,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	IEclipsePreferences getPreferences() {
 		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
-	
-	/**
-	 * For testing purposes only.
-	 */
-	public boolean isLoaded() {
-		return catalog != null;
-	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
 		// no changes related to the content type registry
