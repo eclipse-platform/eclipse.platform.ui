@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -152,11 +153,12 @@ public class BundleUtil {
             // we need to resolve this URL.
             String copyResource = resource;
             if (forceNLResolve && !copyResource.startsWith(NL_TAG)) {
-                if (copyResource.startsWith("/")) //$NON-NLS-1$
+                if (copyResource.startsWith("/")
+                        || copyResource.startsWith("\\"))
                     copyResource = resource.substring(1);
                 copyResource = NL_TAG + copyResource;
             }
-            Path resourcePath = new Path(copyResource);
+            IPath resourcePath = new Path(copyResource);
             localLocation = Platform.find(bundle, resourcePath);
             if (localLocation == null) {
                 // localLocation can be null if the passed resource could not

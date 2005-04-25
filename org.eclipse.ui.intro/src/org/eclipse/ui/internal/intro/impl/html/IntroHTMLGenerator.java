@@ -76,16 +76,15 @@ public class IntroHTMLGenerator {
      * Generates the HTML element and its content:
      * 
      * <pre>
-     *  
-     *      &lt;HTML&gt;
-     *      &lt;HEAD&gt;
-     *      head content
-     *      &lt;/HEAD&gt;
-     *      &lt;BODY&gt;
-     *      body content
-     *      &lt;/BODY&gt;
-     *      &lt;/HTML&gt;
-     *  
+     * 
+     *         &lt;HTML&gt;
+     *         &lt;HEAD&gt;
+     *         head content
+     *         &lt;/HEAD&gt;
+     *         &lt;BODY&gt;
+     *         body content
+     *         &lt;/BODY&gt;
+     *         &lt;/HTML&gt;
      * </pre>
      * 
      * @return the html HTMLElement
@@ -94,7 +93,7 @@ public class IntroHTMLGenerator {
         // this is the outermost element, so it has no indent
         int indentLevel = 0;
         HTMLElement html = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_HTML, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_HTML, indentLevel, true);
         HTMLElement head = generateHeadElement(indentLevel + 1);
         HTMLElement body = generateBodyElement(indentLevel + 1);
         html.addContent(head);
@@ -106,15 +105,15 @@ public class IntroHTMLGenerator {
      * Generates the HEAD element and its content:
      * 
      * <pre>
-     *  
-     *      &lt;HEAD&gt;
-     *      &lt;BASE href=&quot;base_plugin_location&gt;
-     *      &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-     *      &lt;TITLE&gt;page title &lt;/TITLE&gt;
-     *      &lt;LINK href=&quot;style sheet&quot;&gt;
-     *      additional head content, if specified
-     *      &lt;/HEAD&gt;
-     *   
+     * 
+     *         &lt;HEAD&gt;
+     *         &lt;BASE href=&quot;base_plugin_location&gt;
+     *         &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *         &lt;TITLE&gt;page title &lt;/TITLE&gt;
+     *         &lt;LINK href=&quot;style sheet&quot;&gt;
+     *         additional head content, if specified
+     *         &lt;/HEAD&gt;
+     *         
      * </pre>
      * 
      * @param indentLevel
@@ -124,12 +123,12 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateHeadElement(int indentLevel) {
         HTMLElement head = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
         // add the title
         head.addContent(generateTitleElement(null, indentLevel + 1));
         // create the BASE element
-        String basePath = BundleUtil.getResolvedBundleLocation(introPage
-                .getBundle());
+        String basePath = BundleUtil.getResolvedResourceLocation(introPage
+            .getBase(), introPage.getBundle());
         HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
         if (base != null)
             head.addContent(base);
@@ -137,10 +136,10 @@ public class IntroHTMLGenerator {
         head.addContent(generateStyleElement(indentLevel + 1));
         // add the presentation style
         String style = IntroPlugin.getDefault().getIntroModelRoot()
-                .getPresentation().getImplementationStyle();
+            .getPresentation().getImplementationStyle();
         if (style != null)
             head.addContent(generateLinkElement(style, indentLevel + 1));
-        //TODO: Should introPage.getStyles() return the main page style as
+        // TODO: Should introPage.getStyles() return the main page style as
         // well?
         style = introPage.getStyle();
         if (style != null)
@@ -159,9 +158,10 @@ public class IntroHTMLGenerator {
         // For the implementation's head contribution:
         StringBuffer content = null;
         IntroHead introHead = IntroPlugin.getDefault().getIntroModelRoot()
-                .getPresentation().getHead();
+            .getPresentation().getHead();
         if (introHead != null) {
-            content = readFromFile(introHead.getSrc(), introHead.getInlineEncoding());
+            content = readFromFile(introHead.getSrc(), introHead
+                .getInlineEncoding());
             if (content != null)
                 head.addContent(content);
         }
@@ -172,7 +172,8 @@ public class IntroHTMLGenerator {
         for (int i = 0; i < htmlHeads.length; i++) {
             introHead = htmlHeads[i];
             if (introHead != null) {
-                content = readFromFile(introHead.getSrc(), introHead.getInlineEncoding());
+                content = readFromFile(introHead.getSrc(), introHead
+                    .getInlineEncoding());
                 if (content != null)
                     head.addContent(content);
             }
@@ -184,14 +185,11 @@ public class IntroHTMLGenerator {
      * Generates the BODY element and its content:
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;BODY&gt;
-     *      &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
-     *      page content
-     *      &lt;/DIV&gt;
-     *      &lt;/BODY&gt;
-     * 
+     *         &lt;BODY&gt;
+     *         &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
+     *         page content
+     *         &lt;/DIV&gt;
+     *         &lt;/BODY&gt;
      *  
      * </pre>
      * 
@@ -202,14 +200,14 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateBodyElement(int indentLevel) {
         HTMLElement body = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_BODY, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_BODY, indentLevel, true);
         // Create the div that contains the page content
         String pageId = (introPage.getId() != null) ? introPage.getId()
                 : IIntroHTMLConstants.DIV_ID_PAGE;
         HTMLElement pageContentDiv = generateDivElement(pageId, indentLevel + 1);
         if (introPage.getStyleId() != null)
             pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
-                    introPage.getStyleId());
+                introPage.getStyleId());
         // Add any children of the page, in the order they are defined
         AbstractIntroElement[] children = introPage.getChildren();
         for (int i = 0; i < children.length; i++) {
@@ -217,7 +215,7 @@ public class IntroHTMLGenerator {
             // use indentLevel + 2 here, since this element is contained within
             // the pageContentDiv
             HTMLElement childElement = generateIntroElement(child,
-                    indentLevel + 2);
+                indentLevel + 2);
             if (childElement != null)
                 pageContentDiv.addContent(childElement);
         }
@@ -252,7 +250,7 @@ public class IntroHTMLGenerator {
             return generateIntroHTML((IntroHTML) element, indentLevel);
         case AbstractIntroElement.CONTENT_PROVIDER:
             return generateIntroContent((IntroContentProvider) element,
-                    indentLevel);
+                indentLevel);
         case AbstractIntroElement.IMAGE:
             return generateIntroImage((IntroImage) element, indentLevel);
         case AbstractIntroElement.TEXT:
@@ -268,12 +266,12 @@ public class IntroHTMLGenerator {
      * Create a div element and its content from an IntroDiv:
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;div id=&quot;attrvalue&quot;&gt;
-     *      &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
-     *      any defined divs, links, html, images, text, includes
-     *      &lt;/div&gt;
+     *     
+     *         &lt;div id=&quot;attrvalue&quot;&gt;
+     *         &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
+     *         any defined divs, links, html, images, text, includes
+     *         &lt;/div&gt;
+     *      
      *   
      *  
      * </pre>
@@ -288,17 +286,17 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroDiv(IntroGroup element, int indentLevel) {
         // Create the outer div element
         HTMLElement divElement = generateDivElement(element.getId(),
-                indentLevel);
+            indentLevel);
         // if a div class was specified, add it
         if (element.getStyleId() != null)
             divElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
-                    element.getStyleId());
+                element.getStyleId());
         // Create the div label, if specified
         if (element.getLabel() != null) {
             HTMLElement divLabel = generateTextElement(
-                    IIntroHTMLConstants.ELEMENT_H4, null,
-                    IIntroHTMLConstants.SPAN_CLASS_DIV_LABEL, element
-                            .getLabel(), indentLevel + 1);
+                IIntroHTMLConstants.ELEMENT_H4, null,
+                IIntroHTMLConstants.SPAN_CLASS_DIV_LABEL, element.getLabel(),
+                indentLevel + 1);
             divElement.addContent(divLabel);
         }
         // Add any children of the div, in the order they are defined
@@ -306,7 +304,7 @@ public class IntroHTMLGenerator {
         for (int i = 0; i < children.length; i++) {
             AbstractIntroElement child = children[i];
             HTMLElement childElement = generateIntroElement(child,
-                    indentLevel + 1);
+                indentLevel + 1);
             if (childElement != null)
                 divElement.addContent(childElement);
         }
@@ -317,15 +315,12 @@ public class IntroHTMLGenerator {
      * Generates an anchor (link) element and its content from an IntroLink:
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
-     *      &lt;IMG src=&quot;blank.gif&quot;&gt;
-     *      &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
-     *      &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
-     *      &lt;/A&gt;
-     *   
-     *  
+     *     
+     *         &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
+     *         &lt;IMG src=&quot;blank.gif&quot;&gt;
+     *         &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
+     *         &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
+     *         &lt;/A&gt;
      * </pre>
      * 
      * @param element
@@ -339,22 +334,22 @@ public class IntroHTMLGenerator {
         HTMLElement anchor = generateAnchorElement(element, indentLevel);
         // add <IMG src="blank.gif">
         String blankImageURL = BundleUtil.getResolvedResourceLocation(
-                IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
+            IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
         if (blankImageURL != null) {
             anchor.addContent(generateImageElement(blankImageURL, null,
-                    IIntroHTMLConstants.IMAGE_CLASS_BG, indentLevel + 1));
+                IIntroHTMLConstants.IMAGE_CLASS_BG, indentLevel + 1));
         }
         // add link image, if one is specified
         if (element.getImg() != null) {
             HTMLElement img = generateIntroElement(element.getImg(),
-                    indentLevel + 1);
+                indentLevel + 1);
             if (img != null)
                 anchor.addContent(img);
         }
         // add <SPAN class="link-label">linkLabel</SPAN>
         if (element.getLabel() != null) {
             HTMLElement label = generateSpanElement(
-                    IIntroHTMLConstants.SPAN_CLASS_LINK_LABEL, indentLevel + 1);
+                IIntroHTMLConstants.SPAN_CLASS_LINK_LABEL, indentLevel + 1);
             label.addContent(element.getLabel());
             anchor.addContent(label);
         }
@@ -392,10 +387,7 @@ public class IntroHTMLGenerator {
      * Generate an image element from an IntroImage:
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;IMG src=imageSrc id=imageId&gt;
-     *   
+     *         &lt;IMG src=imageSrc id=imageId&gt;
      *  
      * </pre>
      * 
@@ -408,10 +400,10 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateIntroImage(IntroImage element, int indentLevel) {
         HTMLElement imageElement = generateImageElement(element.getSrc(),
-                element.getAlt(), element.getStyleId(), indentLevel);
+            element.getAlt(), element.getStyleId(), indentLevel);
         if (element.getId() != null)
             imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element
-                    .getId());
+                .getId());
         return imageElement;
     }
 
@@ -422,10 +414,7 @@ public class IntroHTMLGenerator {
      * designers.
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
-     *   
+     *         &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
      *  
      * </pre>
      * 
@@ -438,10 +427,10 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateIntroText(IntroText element, int indentLevel) {
         String spanClass = (element.getStyleId() != null) ? element
-                .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
+            .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
         HTMLElement textElement = generateTextElement(
-                IIntroHTMLConstants.ELEMENT_PARAGRAPH, element.getId(),
-                spanClass, element.getText(), indentLevel);
+            IIntroHTMLConstants.ELEMENT_PARAGRAPH, element.getId(), spanClass,
+            element.getText(), indentLevel);
         return textElement;
     }
 
@@ -453,8 +442,8 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroTitle(IntroPageTitle element,
             int indentLevel) {
         HTMLElement titleElement = generateHeaderDiv(element.getId(), element
-                .getStyleId(), IIntroHTMLConstants.ELEMENT_H1, element
-                .getTitle(), indentLevel);
+            .getStyleId(), IIntroHTMLConstants.ELEMENT_H1, element.getTitle(),
+            indentLevel);
         return titleElement;
     }
 
@@ -464,13 +453,10 @@ public class IntroHTMLGenerator {
      * as-is into a div element:
      * 
      * <pre>
-     * 
-     *  
-     *      &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
-     *      content from file specified in src attribute
-     *      &lt;/div&gt;
-     *   
-     *  
+     *     
+     *         &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
+     *         content from file specified in src attribute
+     *         &lt;/div&gt;
      * </pre>
      * 
      * @param element
@@ -483,15 +469,17 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateInlineIntroHTML(IntroHTML element,
             int indentLevel) {
-        // make sure to ask model for encoding. If encoding is null (ie: not specified in
+        // make sure to ask model for encoding. If encoding is null (ie: not
+        // specified in
         // markup, local encoding is used.
-        StringBuffer content = readFromFile(element.getSrc(), element.getInlineEncoding());
+        StringBuffer content = readFromFile(element.getSrc(), element
+            .getInlineEncoding());
         if (content != null && content.length() > 0) {
             // Create the outer div element
             String divClass = (element.getStyleId() != null) ? element
-                    .getStyleId() : IIntroHTMLConstants.DIV_CLASS_INLINE_HTML;
+                .getStyleId() : IIntroHTMLConstants.DIV_CLASS_INLINE_HTML;
             HTMLElement divElement = generateDivElement(element.getId(),
-                    divClass, indentLevel);
+                divClass, indentLevel);
             // add the content of the specified file into the div element
             divElement.addContent(content);
             return divElement;
@@ -511,16 +499,16 @@ public class IntroHTMLGenerator {
             int indentLevel) {
         // create a new div to wrap the content
         HTMLElement divElement = generateDivElement(element.getId(),
-                IIntroHTMLConstants.DIV_CLASS_PROVIDED_CONTENT, indentLevel);
+            IIntroHTMLConstants.DIV_CLASS_PROVIDED_CONTENT, indentLevel);
 
         // If we've already loaded the content provider for this element,
         // retrieve it, otherwise load the class
         IIntroContentProvider providerClass = ContentProviderManager.getInst()
-                .getContentProvider(element);
+            .getContentProvider(element);
         if (providerClass == null)
             // content provider never created before, create it.
             providerClass = ContentProviderManager.getInst()
-                    .createContentProvider(element, providerSite);
+                .createContentProvider(element, providerSite);
 
         if (providerClass != null) {
             StringWriter stringWriter = new StringWriter();
@@ -537,11 +525,10 @@ public class IntroHTMLGenerator {
             IntroText htmlText = element.getIntroText();
             if (htmlText != null && htmlText.getText() != null) {
                 String textClass = (htmlText.getStyleId() != null) ? htmlText
-                        .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
+                    .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
                 HTMLElement text = generateTextElement(
-                        IIntroHTMLConstants.ELEMENT_PARAGRAPH,
-                        htmlText.getId(), textClass, element.getText(),
-                        indentLevel);
+                    IIntroHTMLConstants.ELEMENT_PARAGRAPH, htmlText.getId(),
+                    textClass, element.getText(), indentLevel);
                 if (text != null)
                     divElement.addContent(text);
             }
@@ -555,11 +542,12 @@ public class IntroHTMLGenerator {
      * <code>src</code> value.
      * 
      * <pre>
-     *  
-     *      &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
-     *      alternative text in case the object can not be rendered
-     *      &lt;/OBJECT&gt; 
-     *   
+     * 
+     *         &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
+     *         alternative text in case the object can not be rendered
+     *         &lt;/OBJECT&gt; 
+     *      
+     *    
      * </pre>
      * 
      * @param element
@@ -572,33 +560,33 @@ public class IntroHTMLGenerator {
     private HTMLElement generateEmbeddedIntroHTML(IntroHTML element,
             int indentLevel) {
         HTMLElement objectElement = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_OBJECT, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_OBJECT, indentLevel, true);
         objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE,
-                IIntroHTMLConstants.OBJECT_TYPE);
+            IIntroHTMLConstants.OBJECT_TYPE);
         if (element.getId() != null)
             objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID,
-                    element.getId());
+                element.getId());
         if (element.getSrc() != null)
             objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_DATA,
-                    element.getSrc());
+                element.getSrc());
         if (element.getStyleId() != null)
             objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
-                    element.getStyleId());
+                element.getStyleId());
         // The alternative content is added in case the browser can not render
         // the specified content
         IntroText htmlText = element.getIntroText();
         if (htmlText != null && htmlText.getText() != null) {
             String textClass = (htmlText.getStyleId() != null) ? htmlText
-                    .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
+                .getStyleId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
             HTMLElement text = generateTextElement(
-                    IIntroHTMLConstants.ELEMENT_PARAGRAPH, htmlText.getId(),
-                    textClass, element.getText(), indentLevel);
+                IIntroHTMLConstants.ELEMENT_PARAGRAPH, htmlText.getId(),
+                textClass, element.getText(), indentLevel);
             if (text != null)
                 objectElement.addContent(text);
         }
         if (element.getIntroImage() != null) {
             HTMLElement img = generateIntroImage(element.getIntroImage(),
-                    indentLevel);
+                indentLevel);
             if (img != null)
                 objectElement.addContent(img);
         }
@@ -611,8 +599,9 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *    	&lt;BASE href=baseURL&gt;
-     *  
+     *       	&lt;BASE href=baseURL&gt;
+     *     
+     *    
      * </pre>
      * 
      * @param indentLevel
@@ -621,7 +610,7 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateBaseElement(int indentLevel, String baseURL) {
         HTMLElement base = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_BASE, indentLevel, true, false);
+            IIntroHTMLConstants.ELEMENT_BASE, indentLevel, true, false);
         if (baseURL != null)
             base.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, baseURL);
         return base;
@@ -632,7 +621,8 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *      &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *         &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *    
      * </pre>
      * 
      * @param indentLevel
@@ -642,9 +632,9 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateStyleElement(int indentLevel) {
         HTMLElement style = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_STYLE, indentLevel, false);
+            IIntroHTMLConstants.ELEMENT_STYLE, indentLevel, false);
         style.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE,
-                IIntroHTMLConstants.LINK_STYLE);
+            IIntroHTMLConstants.LINK_STYLE);
         style.addContent(IIntroHTMLConstants.STYLE_HTML);
         return style;
     }
@@ -654,10 +644,8 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *  
-     *      &lt;TITLE&gt;intro title&lt;/TITLE&gt;
-     *   
-     *  
+     *         &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+     *      
      * </pre>
      * 
      * @param title
@@ -669,7 +657,7 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateTitleElement(String title, int indentLevel) {
         HTMLElement titleElement = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_TITLE, indentLevel, false);
+            IIntroHTMLConstants.ELEMENT_TITLE, indentLevel, false);
         if (title != null)
             titleElement.addContent(title);
         return titleElement;
@@ -680,10 +668,9 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *  
-     *      &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
-     *   
-     *  
+     *     
+     *         &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
+     *      
      * </pre>
      * 
      * @param href
@@ -695,11 +682,11 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateLinkElement(String href, int indentLevel) {
         HTMLElement link = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_LINK, indentLevel, true, false);
+            IIntroHTMLConstants.ELEMENT_LINK, indentLevel, true, false);
         link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_RELATIONSHIP,
-                IIntroHTMLConstants.LINK_REL);
+            IIntroHTMLConstants.LINK_REL);
         link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE,
-                IIntroHTMLConstants.LINK_STYLE);
+            IIntroHTMLConstants.LINK_STYLE);
         if (href != null)
             link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, href);
         return link;
@@ -710,9 +697,9 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *  
-     *      &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
-     *   
+     *     
+     *         &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
+     *      
      *  
      * </pre>
      * 
@@ -726,18 +713,18 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateAnchorElement(IntroLink link, int indentLevel) {
         HTMLElement anchor = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_ANCHOR, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_ANCHOR, indentLevel, true);
         if (link.getId() != null)
             anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, link.getId());
         if (link.getUrl() != null)
             anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, link
-                    .getUrl());
+                .getUrl());
         if (link.getStyleId() != null)
             anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, link
-                    .getStyleId());
+                .getStyleId());
         else
             anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
-                    IIntroHTMLConstants.ANCHOR_CLASS_LINK);
+                IIntroHTMLConstants.ANCHOR_CLASS_LINK);
         return anchor;
     }
 
@@ -746,12 +733,12 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *    
-     *      &lt;DIV id=divId&gt;
-     *      &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
-     *      &lt;/DIV&gt;
-     *   
-     *  
+     *       
+     *         &lt;DIV id=divId&gt;
+     *         &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
+     *         &lt;/DIV&gt;
+     *      
+     *     
      * </pre>
      * 
      * @param divId
@@ -771,7 +758,7 @@ public class IntroHTMLGenerator {
             String headerType, String spanContent, int indentLevel) {
         // create the text element: <P><SPAN>spanContent</SPAN></P>
         HTMLElement text = generateTextElement(headerType, null, null,
-                spanContent, indentLevel + 1);
+            spanContent, indentLevel + 1);
         // create the containing div element
         HTMLElement div = generateDivElement(divId, divClass, indentLevel);
         div.addContent(text);
@@ -784,9 +771,10 @@ public class IntroHTMLGenerator {
      * span element provides additional flexibility for CSS designers.
      * 
      * <pre>
+     * 
+     *         &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+     *     
      *    
-     *      &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
-     *  
      * </pre>
      * 
      * @param type
@@ -849,7 +837,7 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateDivElement(String divId, int indentLevel) {
         HTMLElement div = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_DIV, indentLevel, true);
+            IIntroHTMLConstants.ELEMENT_DIV, indentLevel, true);
         if (divId != null)
             div.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, divId);
         return div;
@@ -860,9 +848,10 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *    
-     *      &lt;IMG src=imageSrc alt=altText&gt;
-     *   
+     *  
+     *       
+     *         &lt;IMG src=imageSrc alt=altText&gt;
+     *      
      *  
      * </pre>
      * 
@@ -876,7 +865,7 @@ public class IntroHTMLGenerator {
     private HTMLElement generateImageElement(String imageSrc, String altText,
             String imageClass, int indentLevel) {
         HTMLElement image = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
+            IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
         image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
         if (altText == null)
             altText = ""; //$NON-NLS-1$
@@ -891,10 +880,9 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *  
-     *      &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
-     *   
-     *  
+     *     
+     *         &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
+     *      
      * </pre>
      * 
      * @param spanClass
@@ -906,7 +894,7 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateSpanElement(String spanClass, int indentLevel) {
         HTMLElement span = new FormattedHTMLElement(
-                IIntroHTMLConstants.ELEMENT_SPAN, indentLevel, false);
+            IIntroHTMLConstants.ELEMENT_SPAN, indentLevel, false);
         span.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, spanClass);
         return span;
     }
@@ -929,8 +917,8 @@ public class IntroHTMLGenerator {
      * @param src -
      *            the file that contains the target conent
      * @param charsetName -
-     *            the encoding of the file to be read. If null, local encoding is used.
-     * 			  But the default of the model is UTF-8, so we should
+     *            the encoding of the file to be read. If null, local encoding
+     *            is used. But the default of the model is UTF-8, so we should
      *            not get a null encoding.
      * @return a StringBuffer containing the content in the file, or null
      */
@@ -943,22 +931,23 @@ public class IntroHTMLGenerator {
         try {
             URL url = new URL(src);
             stream = url.openStream();
-            //TODO: Do we need to worry about the encoding here? e.g.:
-            //reader = new BufferedReader(new InputStreamReader(stream,
+            // TODO: Do we need to worry about the encoding here? e.g.:
+            // reader = new BufferedReader(new InputStreamReader(stream,
             // ResourcesPlugin.getEncoding()));
-            if(charsetName == null)
+            if (charsetName == null)
                 reader = new BufferedReader(new InputStreamReader(stream));
-            else 
-                reader = new BufferedReader(new InputStreamReader(stream, charsetName));
+            else
+                reader = new BufferedReader(new InputStreamReader(stream,
+                    charsetName));
             while (true) {
                 int character = reader.read();
                 if (character == -1) // EOF
                     break; // done reading file
 
                 else if (character == PluginIdParser.SUBSTITUTION_BEGIN) { // possible
-                                                                           // substitution
+                    // substitution
                     PluginIdParser parser = new PluginIdParser(character,
-                            reader);
+                        reader);
                     // If a valid plugin id was found in the proper format, text
                     // will be the absolute path to that plugin. Otherwise, text
                     // will simply be all characters read up to (but not
@@ -1008,7 +997,7 @@ public class IntroHTMLGenerator {
      * follows: <code>
      *   <a href="file:/install_path/plugins/test.plugin/html/test.html">link to file</a>
      * </code>
-     *  
+     * 
      */
     private static class PluginIdParser {
         private BufferedReader reader;
@@ -1110,7 +1099,7 @@ public class IntroHTMLGenerator {
                 int peek = reader.read(streamContent, 0, PLUGIN_SEGMENT.length);
                 if ((peek == PLUGIN_SEGMENT.length)
                         && (HTMLUtil.equalCharArrayContent(streamContent,
-                                PLUGIN_SEGMENT))) {
+                            PLUGIN_SEGMENT))) {
                     // we have found the "$plugin:" segment
                     tokenContent.append(streamContent);
                     return true;
@@ -1146,12 +1135,12 @@ public class IntroHTMLGenerator {
                         // reached EOF while looking for closing $
                         return null;
                     } else if (nextChar == SUBSTITUTION_END) { // end of plugin
-                                                               // id
+                        // id
                         // look up the plugin id. If it is a valid id
                         // return the absolute path to this plugin.
                         // otherwise return null.
                         String path = BundleUtil
-                                .getResolvedBundleLocation(pluginId.toString());
+                            .getResolvedBundleLocation(pluginId.toString());
 
                         // If the plugin id was not valid, reset reader to the
                         // previous mark. The mark should be at the character
@@ -1188,5 +1177,5 @@ public class IntroHTMLGenerator {
         }
     }
 
-    
+
 }
