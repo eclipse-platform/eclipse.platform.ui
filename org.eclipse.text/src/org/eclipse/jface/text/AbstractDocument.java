@@ -164,6 +164,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Results in the construction of an empty document.
 	 */
 	protected AbstractDocument() {
+		fModificationStamp= getNextModificationStamp();
 	}
 
 
