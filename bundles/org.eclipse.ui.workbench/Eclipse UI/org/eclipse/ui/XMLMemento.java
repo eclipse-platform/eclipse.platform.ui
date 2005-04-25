@@ -401,18 +401,10 @@ public final class XMLMemento implements IMemento {
     public void save(Writer writer) throws IOException {
     	DOMWriter out = new DOMWriter(writer);
         try {
-    		save(element, out);
+        	out.save(element);
     	} finally {
     		out.close();
     	}
-	}
-
-    private void save(Element element, DOMWriter out) {
-    	out.startTag(element);
-    	NodeList children = element.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) 
-			save ((Element)children.item(i), out);
-		out.endTag(element);
 	}
 
 	/**
@@ -431,7 +423,15 @@ public final class XMLMemento implements IMemento {
     		println(XML_VERSION);
     	}
 
-    	public void endTag(Element element) {
+        public void save(Element element) {
+        	startTag(element);
+        	NodeList children = element.getChildNodes();
+    		for (int i = 0; i < children.getLength(); i++) 
+    			save((Element) children.item(i));
+    		endTag(element);
+    	}
+
+    	private void endTag(Element element) {
     		tab--;
     		if (!element.hasChildNodes())
     			return;
@@ -443,12 +443,12 @@ public final class XMLMemento implements IMemento {
    			println(sb.toString());
     	}
     	
-    	public void printTabulation() {
+    	private void printTabulation() {
     		for (int i = 0; i < tab; i++)
-    			super.print("  "); //$NON-NLS-1$
+    			super.print("\t"); //$NON-NLS-1$
     	}
 
-    	public void printTag(Element element, boolean shouldTab, boolean newLine) {
+    	private void printTag(Element element, boolean shouldTab, boolean newLine) {
     		StringBuffer sb = new StringBuffer();
     		sb.append("<"); //$NON-NLS-1$
     		sb.append(element.getTagName());
@@ -470,7 +470,7 @@ public final class XMLMemento implements IMemento {
     			print(sb.toString());
     	}
 
-    	public void startTag(Element element) {
+    	private void startTag(Element element) {
     		printTag(element, true, true);
     		tab++;
     	}
@@ -486,7 +486,7 @@ public final class XMLMemento implements IMemento {
     		}
     	}
 
-    	public static String getEscaped(String s) {
+    	private static String getEscaped(String s) {
     		StringBuffer result = new StringBuffer(s.length() + 10);
     		for (int i = 0; i < s.length(); ++i)
     			appendEscapedChar(result, s.charAt(i));
