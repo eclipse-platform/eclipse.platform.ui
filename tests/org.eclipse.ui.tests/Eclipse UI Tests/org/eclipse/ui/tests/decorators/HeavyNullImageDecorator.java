@@ -62,7 +62,7 @@ public class HeavyNullImageDecorator implements ILabelDecorator {
     public Image decorateImage(Image image, Object element) {
         if (fail) {
             fail = false;
-            throw new ForcedException("Heavy image boom");
+            throw new ForcedException("Heavy image decorator boom");
         }
         return null;
     }

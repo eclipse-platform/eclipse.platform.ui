@@ -43,7 +43,7 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
     public void decorate(Object element, IDecoration decoration) {
         if (fail) {
             fail = false;
-            throw new ForcedException("Lighweight boom");
+            throw new ForcedException("Lighweight decorator boom");
         }
     }
 

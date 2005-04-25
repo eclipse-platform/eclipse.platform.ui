@@ -69,7 +69,7 @@ public class HeavyNullTextDecorator implements ILabelDecorator {
     public String decorateText(String text, Object element) {
         if (fail) {
             fail = false;
-            throw new ForcedException("Heavy text boom");
+            throw new ForcedException("Heavy text decorator boom");
         }
         return null;
     }
