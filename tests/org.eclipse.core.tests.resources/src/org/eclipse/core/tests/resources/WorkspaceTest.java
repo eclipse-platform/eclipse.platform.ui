@@ -39,8 +39,8 @@ public class WorkspaceTest extends ResourceTest {
 	 * be run last of all to clean up from all previous tests in this class.
 	 * @throws Exception
 	 */
-	public void cleanup() throws Exception {
-		super.tearDown();
+	public void doCleanup() throws Exception {
+		cleanup();
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class WorkspaceTest extends ResourceTest {
 		suite.addTest(new WorkspaceTest("testMultiDeletion"));
 		suite.addTest(new WorkspaceTest("testProjectDeletion"));
 
-		suite.addTest(new WorkspaceTest("cleanup"));
+		suite.addTest(new WorkspaceTest("doCleanup"));
 		return suite;
 	}
 

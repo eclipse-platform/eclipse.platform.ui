@@ -758,7 +758,11 @@ public class ResourceTest extends CoreTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// Ensure everything is in a clean state for next one.
-		// Session tests should overwrite it.
+		// Session tests should overwrite it.		
+		cleanup();
+	}
+
+	protected void cleanup() throws CoreException {
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 		getWorkspace().save(true, null);
 		//don't leak builder jobs, since they may affect subsequent tests

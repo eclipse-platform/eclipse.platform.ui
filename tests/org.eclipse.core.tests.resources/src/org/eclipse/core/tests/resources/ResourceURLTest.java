@@ -38,7 +38,7 @@ public class ResourceURLTest extends ResourceTest {
 		super(name);
 	}
 
-	public void cleanup() throws Throwable {
+	public void doCleanup() throws Throwable {
 		getWorkspace().getRoot().delete(true, true, null);
 	}
 
@@ -66,7 +66,7 @@ public class ResourceURLTest extends ResourceTest {
 		suite.addTest(new ResourceURLTest("testNonExistantURLs"));
 		suite.addTest(new ResourceURLTest("testBasicURLs"));
 		suite.addTest(new ResourceURLTest("testExternalURLs"));
-		suite.addTest(new ResourceURLTest("cleanup"));
+		suite.addTest(new ResourceURLTest("doCleanup"));
 		return suite;
 	}
 
