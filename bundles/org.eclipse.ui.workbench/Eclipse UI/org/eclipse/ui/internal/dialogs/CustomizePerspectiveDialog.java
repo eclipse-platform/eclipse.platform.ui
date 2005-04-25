@@ -845,9 +845,12 @@ public class CustomizePerspectiveDialog extends Dialog {
      */
     public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
         super(configurer.getWindow().getShell());
+        setShellStyle(SWT.MAX | SWT.RESIZE | getShellStyle());
+        
+        
         perspective = persp;
         window = (WorkbenchWindow) configurer.getWindow();
-
+        
         // build a structure for the menuitems and toolitems that the workbench contributes
         customizeWorkbenchActionBars = new CustomizeActionBars(configurer, 
                 new MenuManager(), new CoolBarManager());
