@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat, Inc - Extracted several methods to ArchiveFileManipulations
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -30,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 
 /**
@@ -44,11 +44,9 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  */
 public class WizardArchiveFileResourceImportPage1 extends
         WizardFileSystemResourceImportPage1 implements Listener {
-    private ZipFileStructureProvider zipProviderCache;
-    private TarFileStructureProvider tarProviderCache;
 
-    ZipFileStructureProvider zipCurrentProvider;
-    TarFileStructureProvider tarCurrentProvider;
+    ZipLeveledStructureProvider zipCurrentProvider;
+    TarLeveledStructureProvider tarCurrentProvider;
 
     // constants
     private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -88,11 +86,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      * it properly.
      */
     protected void clearProviderCache() {
-        if (zipProviderCache != null) {
-            closeZipFile(zipProviderCache.getZipFile());
-            zipProviderCache = null;
-        }
-        tarProviderCache = null;
+        ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
     }
 
     /**
@@ -132,36 +126,15 @@ public class WizardArchiveFileResourceImportPage1 extends
         overwriteExistingResourcesCheckbox.setFont(parent.getFont());
     }
 
-    /**
-     * Determine whether the file with the given filename is
-     * in .tar.gz or .tar format.
-     * 
-     * @param fileName file to test
-     * @return true if the file is in tar format
-     */
-    private boolean isTarFile(String fileName) {
-    	if (fileName.length() == 0)
-    		return false;
-
-        try {
-       		new TarFile(fileName);
-    	} catch (TarException tarException) {
-            return false;
-    	} catch (IOException ioException) {
-            return false;
-    	}
-
-    	return true;
-    }
-
     private boolean validateSourceFile(String fileName) {
-    	if(isTarFile(fileName)) {
+    	if(ArchiveFileManipulations.isTarFile(fileName)) {
     		TarFile tarFile = getSpecifiedTarSourceFile(fileName);
     		return (tarFile != null);
     	}
     	ZipFile zipFile = getSpecifiedZipSourceFile(fileName);
     	if(zipFile != null) {
-    		closeZipFile(zipFile);
+    		ArchiveFileManipulations.closeZipFile(zipFile, getContainer()
+					.getShell());
     		return true;
     	}
     	return false;
@@ -176,7 +149,8 @@ public class WizardArchiveFileResourceImportPage1 extends
         if (specifiedFile == null) {
             return false;
         }
-        return closeZipFile(specifiedFile);
+        return ArchiveFileManipulations.closeZipFile(specifiedFile,
+				getContainer().getShell());
     }
 
     private boolean ensureTarSourceIsValid() {
@@ -192,7 +166,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	and is valid (ie.- proper format)
      */
     protected boolean ensureSourceIsValid() {
-    	if (isTarFile(sourceNameField.getText())) {
+    	if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
     		return ensureTarSourceIsValid();
     	}
     	return ensureZipSourceIsValid();
@@ -209,7 +183,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         if (!super.finish())
             return false;
 
-        clearProviderCache();
+        ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
         return true;
     }
 
@@ -241,7 +215,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	currently defined then create and return it.
      */
     protected MinimizedFileSystemElement getFileSystemTree() {
-    	if(isTarFile(sourceNameField.getText())) {    		
+    	if(ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {    		
         	TarFile sourceTarFile = getSpecifiedTarSourceFile();
         	if (sourceTarFile == null) {
                 //Clear out the provider as well
@@ -250,7 +224,9 @@ public class WizardArchiveFileResourceImportPage1 extends
                 return null;
         	}
 	
-            TarFileStructureProvider provider = getTarStructureProvider(sourceTarFile);
+            TarLeveledStructureProvider provider = ArchiveFileManipulations
+					.getTarStructureProvider(sourceTarFile, getContainer()
+							.getShell());
             this.tarCurrentProvider = provider;
             this.zipCurrentProvider = null;
             return selectFiles(provider.getRoot(), provider);
@@ -264,7 +240,8 @@ public class WizardArchiveFileResourceImportPage1 extends
             return null;
         }
 
-        ZipFileStructureProvider provider = getZipStructureProvider(sourceFile);
+        ZipLeveledStructureProvider provider = ArchiveFileManipulations
+				.getZipStructureProvider(sourceFile, getContainer().getShell());
         this.zipCurrentProvider = provider;
         this.tarCurrentProvider = null;
         return selectFiles(provider.getRoot(), provider);
@@ -368,39 +345,6 @@ public class WizardArchiveFileResourceImportPage1 extends
     }
 
     /**
-     * Returns a structure provider for the specified zip file.
-     */
-    protected ZipFileStructureProvider getZipStructureProvider(ZipFile targetZip) {
-        if (zipProviderCache == null)
-            zipProviderCache = new ZipFileStructureProvider(targetZip);
-        else if (!zipProviderCache.getZipFile().getName().equals(
-                targetZip.getName())) {
-            clearProviderCache();
-            // ie.- new value, so finalize&remove old value
-            zipProviderCache = new ZipFileStructureProvider(targetZip);
-        } else if (!zipProviderCache.getZipFile().equals(targetZip))
-            closeZipFile(targetZip); // ie.- duplicate handle to same .zip
-
-        return zipProviderCache;
-    }
-
-    /**
-     * Returns a structure provider for the specified zip file.
-     */
-    protected TarFileStructureProvider getTarStructureProvider(TarFile targetTar) {
-        if (tarProviderCache == null)
-            tarProviderCache = new TarFileStructureProvider(targetTar);
-        else if (!tarProviderCache.getTarFile().getName().equals(
-                targetTar.getName())) {
-            clearProviderCache();
-            // ie.- new value, so finalize&remove old value
-            tarProviderCache = new TarFileStructureProvider(targetTar);
-        }
-
-        return tarProviderCache;
-    }
-
-    /**
      *	Open a FileDialog so that the user can specify the source
      *	file to import from
      */
@@ -423,10 +367,12 @@ public class WizardArchiveFileResourceImportPage1 extends
     protected boolean importResources(List fileSystemObjects) {
     	boolean result = false;
 
-    	if(isTarFile(sourceNameField.getText())) {
+    	if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
     		if( ensureTarSourceIsValid()) {
 	    		TarFile tarFile = getSpecifiedTarSourceFile();
-	    		TarFileStructureProvider structureProvider = getTarStructureProvider(tarFile);
+	    		TarLeveledStructureProvider structureProvider = ArchiveFileManipulations
+						.getTarStructureProvider(tarFile, getContainer()
+								.getShell());
 	    		ImportOperation operation = new ImportOperation(getContainerFullPath(),
 	    				structureProvider.getRoot(), structureProvider, this,
 						fileSystemObjects);
@@ -438,10 +384,11 @@ public class WizardArchiveFileResourceImportPage1 extends
 
     	if(ensureZipSourceIsValid()) {
     		ZipFile zipFile = getSpecifiedZipSourceFile();
-    		ZipFileStructureProvider structureProvider = getZipStructureProvider(zipFile);
-    		ImportOperation operation = new ImportOperation(getContainerFullPath(),
-    				structureProvider.getRoot(), structureProvider, this,
-					fileSystemObjects);
+            ZipLeveledStructureProvider structureProvider = ArchiveFileManipulations
+					.getZipStructureProvider(zipFile, getContainer().getShell());
+			ImportOperation operation = new ImportOperation(
+					getContainerFullPath(), structureProvider.getRoot(),
+					structureProvider, this, fileSystemObjects);
 
     		operation.setContext(getShell());
     		result = executeImportOperation(operation);

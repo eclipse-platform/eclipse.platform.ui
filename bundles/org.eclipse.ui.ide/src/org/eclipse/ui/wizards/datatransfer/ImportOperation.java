@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat, Inc - changed TarFileStructureProvider to TarLeveledStructureProvider 
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
@@ -42,7 +43,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
-import org.eclipse.ui.internal.wizards.datatransfer.TarFileStructureProvider;
+import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 
 /**
  * An operation which does the actual work of copying objects from the local file
@@ -538,9 +539,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
             else
                 targetResource.create(contentStream, false, null);
             
-            if (provider instanceof TarFileStructureProvider) {
+            if (provider instanceof TarLeveledStructureProvider) {
             	try {
-            		targetResource.setResourceAttributes(((TarFileStructureProvider) provider).getResourceAttributes(fileObject));
+            		targetResource.setResourceAttributes(((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
             	} catch (CoreException e) {
             		errorTable.add(e.getStatus());
             	}

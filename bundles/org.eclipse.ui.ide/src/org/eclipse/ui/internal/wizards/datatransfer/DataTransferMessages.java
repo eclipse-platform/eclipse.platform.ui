@@ -6,6 +6,8 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * Red Hat, Inc - WizardProjectsImportPage[_ArchiveSelectTitle,
+ * 										   _SelectArchiveDialogTitle]
  **********************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -86,6 +88,8 @@ public class DataTransferMessages extends NLS {
 	public static String WizardExternalProjectImportPage_directoryLabel;
 	public static String WizardProjectsImportPage_ImportProjectsDescription;
 	public static String WizardProjectsImportPage_CheckingMessage;
+	public static String WizardProjectsImportPage_ArchiveSelectTitle;
+	public static String WizardProjectsImportPage_SelectArchiveDialogTitle;
 
 	// --- Export Wizards ---
 	public static String DataTransfer_export;
