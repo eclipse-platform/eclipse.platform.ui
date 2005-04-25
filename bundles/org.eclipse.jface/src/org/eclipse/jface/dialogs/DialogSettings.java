@@ -82,17 +82,17 @@ public class DialogSettings implements IDialogSettings {
     // A Map with all the keys mapped to array of strings.
     private Map arrayItems;
 
-    private final String TAG_SECTION = "section";//$NON-NLS-1$
+    private static final String TAG_SECTION = "section";//$NON-NLS-1$
 
-    private final String TAG_NAME = "name";//$NON-NLS-1$
+    private static final String TAG_NAME = "name";//$NON-NLS-1$
 
-    private final String TAG_KEY = "key";//$NON-NLS-1$
+    private static final String TAG_KEY = "key";//$NON-NLS-1$
 
-    private final String TAG_VALUE = "value";//$NON-NLS-1$
+    private static final String TAG_VALUE = "value";//$NON-NLS-1$
 
-    private final String TAG_LIST = "list";//$NON-NLS-1$
+    private static final String TAG_LIST = "list";//$NON-NLS-1$
 
-    private final String TAG_ITEM = "item";//$NON-NLS-1$
+    private static final String TAG_ITEM = "item";//$NON-NLS-1$
 
     /**
      * Create an empty dialog settings which loads and saves its
@@ -386,7 +386,7 @@ public class DialogSettings implements IDialogSettings {
             attributes.put(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
             String string = (String) items.get(key);
             attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
-            out.printTag(TAG_ITEM, attributes);
+            out.printTag(TAG_ITEM, attributes, true);
         }
 
         attributes.clear();
@@ -400,7 +400,7 @@ public class DialogSettings implements IDialogSettings {
                 for (int index = 0; index < value.length; index++) {
                     String string = value[index];
                     attributes.put(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$
-                    out.printTag(TAG_ITEM, attributes);
+                    out.printTag(TAG_ITEM, attributes, true);
                 }
             }
             out.endTag(TAG_LIST);
@@ -408,7 +408,7 @@ public class DialogSettings implements IDialogSettings {
         for (Iterator i = sections.values().iterator(); i.hasNext();) {
             ((DialogSettings) i.next()).save(out);
         }
-        out.endTag(TAG_NAME);
+        out.endTag(TAG_SECTION);
     }
     
     /**
@@ -435,29 +435,21 @@ public class DialogSettings implements IDialogSettings {
 
     	public void endTag(String name) {
     		tab--;
-    		printTag('/' + name, null);
+    		printTag("/" + name, null, false); //$NON-NLS-1$
     	}
 
-    	public void printSimpleTag(String name, Object value) {
-    		if (value != null) {
-    			printTag(name, null, true, false);
-    			print(getEscaped(String.valueOf(value)));
-    			printTag('/' + name, null, false, true);
-    		}
-    	}
-
-    	public void printTabulation() {
+    	private void printTabulation() {
     		for (int i = 0; i < tab; i++)
     			super.print('\t');
     	}
 
-    	public void printTag(String name, HashMap parameters) {
-    		printTag(name, parameters, true, true);
+    	public void printTag(String name, HashMap parameters, boolean close) {
+    		printTag(name, parameters, true, true, close);
     	}
 
-    	public void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine) {
+    	private void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine, boolean close) {
     		StringBuffer sb = new StringBuffer();
-    		sb.append("<"); //$NON-NLS-1$
+    		sb.append('<');
     		sb.append(name);
     		if (parameters != null)
     			for (Enumeration e = Collections.enumeration(parameters.keySet()); e.hasMoreElements();) {
@@ -468,7 +460,9 @@ public class DialogSettings implements IDialogSettings {
     				sb.append(getEscaped(String.valueOf(parameters.get(key))));
     				sb.append("\""); //$NON-NLS-1$
     			}
-    		sb.append(">"); //$NON-NLS-1$
+    		if (close)
+    			sb.append('/');
+    		sb.append('>');
     		if (shouldTab)
     			printTabulation();
     		if (newLine)
@@ -479,11 +473,11 @@ public class DialogSettings implements IDialogSettings {
 
     	public void startTag(String name, HashMap parameters) {
     		startTag(name, parameters, true);
+    		tab++;
     	}
 
-    	public void startTag(String name, HashMap parameters, boolean newLine) {
-    		printTag(name, parameters, true, newLine);
-    		tab++;
+    	private void startTag(String name, HashMap parameters, boolean newLine) {
+    		printTag(name, parameters, true, newLine, false);
     	}
 
     	private static void appendEscapedChar(StringBuffer buffer, char c) {
@@ -497,7 +491,7 @@ public class DialogSettings implements IDialogSettings {
     		}
     	}
 
-    	public static String getEscaped(String s) {
+    	private static String getEscaped(String s) {
     		StringBuffer result = new StringBuffer(s.length() + 10);
     		for (int i = 0; i < s.length(); ++i)
     			appendEscapedChar(result, s.charAt(i));
