@@ -14,8 +14,6 @@ package org.eclipse.ui.application;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
@@ -349,8 +347,6 @@ public abstract class WorkbenchAdvisor {
      * for backwards compatibility with 3.0.
      * </p>
      * 
-     * TODO: replace this with an extension point and a getDefaultWorkbenchWindowAdvisorId() method
-     * 
      * @param configurer the workbench window configurer
      * @return a new workbench window advisor
      * @since 3.1
@@ -648,9 +644,6 @@ public abstract class WorkbenchAdvisor {
      */
     public abstract String getInitialWindowPerspectiveId();
 
-    // TODO see if getInitialWindowPerspectiveId() can be pushed
-    // to the window advisor (as getDefaultWindowPerspectiveId())
-    
     /**
      * Returns the id of the preference page that should be presented most
      * prominently.
@@ -666,9 +659,6 @@ public abstract class WorkbenchAdvisor {
         return null;
     }
 
-    // TODO see if getMainPreferencePageId() can be pushed
-    // to the window advisor    
-    
     /**
      * Creates the contents of the window.
      * <p>
@@ -721,28 +711,6 @@ public abstract class WorkbenchAdvisor {
         return true;
     }
 
-	/**
-	 * Creates and returns the control to be shown when a window has no open pages.
-	 * If <code>null</code> is returned, the default window background is shown.
-	 * <p>
-	 * The default implementation returns <code>null</code>.
-	 * Subclasses may override.
-	 * </p>
-	 * 
-	 * @param configurer an object for configuring the workbench window
-	 * @param parent the parent composite
-	 * @return the control or <code>null</code>
-	 * @since 3.1
-     * 
-     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#createEmptyWindowContents(Composite)} instead
-     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
-     * 
-     * TODO: get rid of this before M6 since it was both introduced and deprecated in 3.1
-	 */
-	public Control createEmptyWindowContents(IWorkbenchWindowConfigurer configurer, Composite parent) {
-		return null;
-	}
-	
 	/**
 	 * Saves arbitrary application-specific state information
      * for this workbench advisor.
