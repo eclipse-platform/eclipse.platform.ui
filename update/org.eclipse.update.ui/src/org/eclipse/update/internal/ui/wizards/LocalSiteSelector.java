@@ -241,7 +241,7 @@ public class LocalSiteSelector {
 			return isDuplicate(file.toURL(), siteBookmarks);
 		} catch (MalformedURLException mue) {
 			// this should not ever happen
-			mue.printStackTrace();
+			UpdateUI.logException(mue);
 		}
 		
 		return false;
