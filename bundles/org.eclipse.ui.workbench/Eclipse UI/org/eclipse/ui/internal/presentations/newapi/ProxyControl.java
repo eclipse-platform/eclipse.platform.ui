@@ -177,7 +177,7 @@ public class ProxyControl {
 	 * 
 	 * @param target the control, or null if none
 	 */
-	private void setTargetControl(Control target) {
+	public void setTargetControl(Control target) {
 		if (this.target != target) {
 
 		    if (this.target != null) {
