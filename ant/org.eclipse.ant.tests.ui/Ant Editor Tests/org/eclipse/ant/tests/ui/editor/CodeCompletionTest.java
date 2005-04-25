@@ -310,7 +310,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
                 break;
             }
         }
-        assertEquals("Did not find displayString: " + displayString, true, found);
+        assertTrue("Did not find displayString: " + displayString, found);
     }        
     
     /**
@@ -327,7 +327,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
                 break;
             }
         }
-        assertEquals("Found displayString: " + displayString, false, found);
+        assertFalse("Found displayString: " + displayString, found);
     }        
 
 	/**
