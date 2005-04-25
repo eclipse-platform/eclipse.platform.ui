@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545) 
+ *       
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
