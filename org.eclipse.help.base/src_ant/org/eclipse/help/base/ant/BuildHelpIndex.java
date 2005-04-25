@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.search.HelpIndexBuilder;
 
@@ -59,6 +60,8 @@ public class BuildHelpIndex extends Task {
 		builder.setDestination(target);
 		IProgressMonitor monitor = (IProgressMonitor) getProject()
 				.getReferences().get(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+        if (monitor == null)
+            monitor = new NullProgressMonitor();		
 		try {
 			builder.execute(monitor);
 		} catch (CoreException e) {
