@@ -94,7 +94,8 @@ class IndexingOperation {
 		removeStaleDocuments(new SubProgressMonitor(pm, numRemoved), staleDocs);
 
 		// 2. merge prebult plugin indexes and addjust
-		addNewDocuments(new SubProgressMonitor(pm, 10 * numAdded), newDocs);
+		addNewDocuments(new SubProgressMonitor(pm, 10 * numAdded), newDocs,
+				staleDocs.size() == 0);
 
 		pm.done();
 	}
@@ -141,9 +142,9 @@ class IndexingOperation {
 	 * @return
 	 * @throws IndexingException
 	 */
-	private Map addNewDocuments(IProgressMonitor pm, Collection newDocs)
-			throws IndexingException {
-		Map prebuiltDocs = mergeIndexes(pm);
+	private Map addNewDocuments(IProgressMonitor pm, Collection newDocs,
+			boolean opened) throws IndexingException {
+		Map prebuiltDocs = mergeIndexes(pm, opened);
 		if (HelpBasePlugin.DEBUG_SEARCH) {
 			System.out
 					.println("IndexOperation.addNewDocuments: " + prebuiltDocs.size() + " different documents merged."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -463,7 +464,8 @@ class IndexingOperation {
 	 *         for added document, or String[] of indexIds with duplicates of
 	 *         the document
 	 */
-	private Map mergeIndexes(IProgressMonitor monitor) throws IndexingException {
+	private Map mergeIndexes(IProgressMonitor monitor, boolean opened)
+			throws IndexingException {
 		Collection addedPluginIds = getAddedPlugins(index);
 		PrebuiltIndexes indexes = getIndexesToAdd(addedPluginIds);
 		PluginIndex[] pluginIndexes = indexes.getIndexes();
@@ -474,7 +476,7 @@ class IndexingOperation {
 		Map mergedDocs = null;
 		// Always perform add batch to ensure that index is created and saved
 		// even if no new documents
-		if (!index.beginAddBatch()) {
+		if (!index.beginAddBatch(opened)) {
 			throw new IndexingException();
 		}
 		if (pluginIndexes.length > 0) {

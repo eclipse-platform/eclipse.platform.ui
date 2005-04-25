@@ -540,7 +540,7 @@ public class HelpIndexBuilder {
 			SearchIndex index, Collection addedDocs, IProgressMonitor monitor)
 			throws CoreException {
 		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());		
-		if (!index.beginAddBatch()) {
+		if (!index.beginAddBatch(true)) {
 			throwCoreException("Error while creating the index", null);
 		}
 		checkCancelled(monitor);

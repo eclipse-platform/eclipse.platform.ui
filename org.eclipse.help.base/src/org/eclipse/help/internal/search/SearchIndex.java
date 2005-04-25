@@ -223,13 +223,15 @@ public class SearchIndex {
 	/**
 	 * Starts additions. To be called before adding documents.
 	 */
-	public synchronized boolean beginAddBatch() {
+	public synchronized boolean beginAddBatch(boolean firstOperation) {
 		try {
 			if (iw != null) {
 				iw.close();
 			}
 			boolean create = false;
-			if (!exists()) {
+			if (!indexDir.exists() || !isLuceneCompatible()
+					|| !isAnalyzerCompatible() || inconsistencyFile.exists()
+					&& firstOperation) {
 				create = true;
 				indexDir.mkdirs();
 				if (!indexDir.exists())
