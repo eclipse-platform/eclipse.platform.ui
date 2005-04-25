@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -445,28 +443,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             }
         });
 
-    }
-
-    class CustomizableIntroPartListener implements IPartListener {
-
-        public void partActivated(IWorkbenchPart part) {
-        }
-
-        public void partBroughtToTop(IWorkbenchPart part) {
-        }
-
-        public void partClosed(IWorkbenchPart part) {
-            if (part.getSite().getId().equals(
-                "org.eclipse.ui.internal.introview"))
-                CustomizableIntroPart.this.isClosing = true;
-        }
-
-        public void partDeactivated(IWorkbenchPart part) {
-            CustomizableIntroPart.this.isClosing = true;
-        }
-
-        public void partOpened(IWorkbenchPart part) {
-        }
     }
 
 
