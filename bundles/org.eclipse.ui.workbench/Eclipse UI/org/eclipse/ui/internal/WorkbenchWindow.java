@@ -52,13 +52,13 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -835,6 +835,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	        emptyWindowContents = getWindowAdvisor().createEmptyWindowContents(parent);
 	        emptyWindowContentsCreated = true;
             // force the empty window composite to be layed out
+	        ((StackLayout) parent.getLayout()).topControl = emptyWindowContents;
             parent.layout();
         }
     }
@@ -893,7 +894,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     protected Composite createPageComposite(Composite parent) {
         pageComposite = new Composite(parent, SWT.NONE);
-        pageComposite.setLayout(new FillLayout());        
+        // use a StackLayout instead of a FillLayout (see bug 81460 [Workbench] (regression) Close all perspectives, open Java perspective, layout wrong)
+        pageComposite.setLayout(new StackLayout());        
         return pageComposite;
     }
 
@@ -2346,13 +2348,21 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 if (in == null || pageList.contains(in))
                     pageList.setActive(in);
                 WorkbenchPage newPage = pageList.getActive();
+            	Composite parent = getPageComposite();
+            	StackLayout layout = (StackLayout) parent.getLayout();
                 if (newPage != null) {
+                	layout.topControl = newPage.getClientComposite();
+                	parent.layout();
                 	hideEmptyWindowContents();
                     newPage.onActivate();
                     firePageActivated(newPage);
                     if (newPage.getPerspective() != null)
                         firePerspectiveActivated(newPage, newPage
                                 .getPerspective());
+                } 
+                else {
+                	layout.topControl = null;
+                	parent.layout();
                 }
 
                 if (isClosing())
