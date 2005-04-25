@@ -446,16 +446,19 @@ public class HelpIndexBuilder {
 		File directory = (File)localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
 		prepareDirectory(indexDirectory);
-		String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
-		SearchIndex index = new SearchIndex(indexDirectory, locale,
-				new AnalyzerDescriptor(locale), null, localeDir.relativePath);
-		IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
-				fid, indexDirectory);
-		index.setDocPlugins(docPlugins);
 		Collection docs = collectDocs(localeDir);
-		MultiStatus status = createIndex(id.id, fid!=null, localeDir, index, docs,
+		MultiStatus status = null;
+		if (docs.size()>0) {
+			String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
+			SearchIndex index = new SearchIndex(indexDirectory, locale,
+				new AnalyzerDescriptor(locale), null, localeDir.relativePath);
+			IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
+				fid, indexDirectory);
+			index.setDocPlugins(docPlugins);
+			status = createIndex(id.id, fid!=null, localeDir, index, docs,
 				new SubProgressMonitor(monitor, 5, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-		index.deleteLockFile();
+			index.deleteLockFile();
+		}
 		monitor.setTaskName("");
 		monitor.done();
 		return status;
