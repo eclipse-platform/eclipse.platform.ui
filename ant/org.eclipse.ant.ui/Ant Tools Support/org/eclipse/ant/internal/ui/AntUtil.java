@@ -346,18 +346,31 @@ public final class AntUtil {
 	private static IDocument getDocument(File buildFile) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath location= new Path(buildFile.getAbsolutePath());
+		boolean connected= false;
 		try {
-			manager.connect(location, new NullProgressMonitor());
 			ITextFileBuffer buffer= manager.getTextFileBuffer(location);
 			if (buffer == null) {
-				return null;
+				//no existing file buffer..create one
+				manager.connect(location, new NullProgressMonitor());
+				connected= true;
+				buffer= manager.getTextFileBuffer(location);
+				if (buffer == null) {
+					return null;
+				}
 			}
-			IDocument document= buffer.getDocument();
-			manager.disconnect(location, new NullProgressMonitor());
-			return document;
+			
+			return buffer.getDocument();
 		} catch (CoreException ce) {
 			AntUIPlugin.log(ce.getStatus());
 			return null;
+		} finally {
+			if (connected) {
+				try {
+					manager.disconnect(location, new NullProgressMonitor());
+				} catch (CoreException e) {
+					AntUIPlugin.log(e.getStatus());
+				}
+			}
 		}
 	}
 	
