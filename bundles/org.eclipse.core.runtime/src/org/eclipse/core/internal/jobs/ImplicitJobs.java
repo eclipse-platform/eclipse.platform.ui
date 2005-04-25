@@ -96,6 +96,10 @@ class ImplicitJobs {
 				if (suspend && rule != null) 
 					suspendedRules.add(rule);
 			}
+			if (threadJob.isBlocked) {
+				threadJob.isBlocked = false;
+				manager.reportUnblocked(monitor);
+			}
 		}
 	}
 
@@ -173,7 +177,7 @@ class ImplicitJobs {
 		if (jobCache != null) {
 			ThreadJob job = jobCache;
 			job.setRule(rule);
-			job.acquireRule = job.running = false;
+			job.acquireRule = job.isRunning = false;
 			job.realJob = null;
 			jobCache = null;
 			return job;

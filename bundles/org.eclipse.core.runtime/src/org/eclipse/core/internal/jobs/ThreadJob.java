@@ -26,6 +26,19 @@ class ThreadJob extends Job {
 	 * rule during beginRule, and must release the rule during endRule.
 	 */
 	protected boolean acquireRule = false;
+
+	/**
+	 * Indicates that this thread job did report to the progress manager
+	 * that it will be blocked, and therefore when it begins it must
+	 * be reported to the job manager when it is no longer blocked.
+	 */
+	boolean isBlocked = false;
+
+	/**
+	 * True if this ThreadJob has begun execution
+	 */
+	protected boolean isRunning = false;
+
 	/**
 	 * Used for diagnosing mismatched begin/end pairs. This field
 	 * is only used when in debug mode, to capture the stack trace
@@ -43,13 +56,10 @@ class ThreadJob extends Job {
 	 */
 	private ISchedulingRule[] ruleStack;
 	/**
-	 * True if this ThreadJob has begun execution
-	 */
-	protected boolean running = false;
-	/**
 	 * Rule stack pointer.
 	 */
 	private int top;
+
 
 	ThreadJob(JobManager manager, ISchedulingRule rule) {
 		super("Implicit Job"); //$NON-NLS-1$
@@ -127,7 +137,7 @@ class ThreadJob extends Job {
 	 * Returns true if this thread job was scheduled and actually started running.
 	 */
 	synchronized boolean isRunning() {
-		return running;
+		return isRunning;
 	}
 
 	/**
@@ -210,7 +220,7 @@ class ThreadJob extends Job {
 		if (getState() != Job.NONE)
 			return false;
 		//clear and reset all fields
-		acquireRule = running = false;
+		acquireRule = isRunning = isBlocked = false;
 		realJob = null;
 		setRule(null);
 		setThread(null);
@@ -227,7 +237,7 @@ class ThreadJob extends Job {
 	 */
 	public IStatus run(IProgressMonitor monitor) {
 		synchronized (this) {
-			running = true;
+			isRunning = true;
 			notify();
 		}
 		return ASYNC_FINISH;
@@ -267,15 +277,16 @@ class ThreadJob extends Job {
 	 * @param monitor The monitor to report unblocking to.
 	 */
 	private void waitEnd(IProgressMonitor monitor) {
+		final LockManager lockManager = manager.getLockManager();
+		final Thread currentThread = Thread.currentThread();
 		if (isRunning()) {
-			manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
+			lockManager.addLockThread(currentThread, getRule());
 			//need to reaquire any locks that were suspended while this thread was blocked on the rule
-			manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
+			lockManager.resumeSuspendedLocks(currentThread);
 		} else {
 			//tell lock manager that this thread gave up waiting
-			manager.getLockManager().removeLockWaitThread(Thread.currentThread(), getRule());
+			lockManager.removeLockWaitThread(currentThread, getRule());
 		}
-		manager.reportUnblocked(monitor);
 	}
 
 	/**
@@ -286,6 +297,7 @@ class ThreadJob extends Job {
 	 */
 	private void waitStart(IProgressMonitor monitor, InternalJob blockingJob) {
 		manager.getLockManager().addLockWaitThread(Thread.currentThread(), getRule());
+		isBlocked = true;
 		manager.reportBlocked(monitor, blockingJob);
 	}
 }

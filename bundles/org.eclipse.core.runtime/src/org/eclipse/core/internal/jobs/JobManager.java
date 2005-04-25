@@ -41,7 +41,9 @@ public class JobManager implements IJobManager {
 	static final boolean DEBUG_DEADLOCK = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEADLOCK_ERROR));
 	private static DateFormat DEBUG_FORMAT;
 	static final boolean DEBUG_LOCKS = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_LOCKS));
+
 	static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_JOBS_TIMING));
+	
 	/**
 	 * The singleton job manager instance. It must be a singleton because
 	 * all job instances maintain a reference (as an optimization) and have no way 
@@ -49,21 +51,27 @@ public class JobManager implements IJobManager {
 	 */
 	private static JobManager instance;
 	/**
+	 * Scheduling rule used for validation of client-defined rules.
+	 */
+	private static final ISchedulingRule nullRule = new ISchedulingRule() {
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
+
+	/**
 	 * True if this manager is active, and false otherwise.  A job manager
 	 * starts out active, and becomes inactive if it has been shutdown
 	 * and not restarted.
 	 */
 	private volatile boolean active = true;
 
-	/**
-	 * True if this manager has been suspended, and false otherwise.  A job manager
-	 * starts out not suspended, and becomes suspended when <code>suspend</code>
-	 * is invoked. Once suspended, no jobs will start running until <code>resume</code>
-	 * is called.
-	 */
-	private boolean suspended = false;
-
 	final ImplicitJobs implicitJobs = new ImplicitJobs(this);
+	
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**
@@ -72,7 +80,7 @@ public class JobManager implements IJobManager {
 	 * held while third party code is being called.
 	 */
 	private final Object lock = new Object();
-
+	
 	private final LockManager lockManager = new LockManager();
 
 	/**
@@ -93,22 +101,17 @@ public class JobManager implements IJobManager {
 	 */
 	private final JobQueue sleeping;
 	/**
+	 * True if this manager has been suspended, and false otherwise.  A job manager
+	 * starts out not suspended, and becomes suspended when <code>suspend</code>
+	 * is invoked. Once suspended, no jobs will start running until <code>resume</code>
+	 * is called.
+	 */
+	private boolean suspended = false;
+
+	/**
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
-
-	/**
-	 * Scheduling rule used for validation of client-defined rules.
-	 */
-	private static final ISchedulingRule nullRule = new ISchedulingRule() {
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == this;
-		}
-	};
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
@@ -132,13 +135,6 @@ public class JobManager implements IJobManager {
 		return instance;
 	}
 
-	public static void shutdown() {
-		if (instance != null) {
-			instance.doShutdown();
-			instance = null;
-		}
-	}
-
 	/**
 	 * For debugging purposes only
 	 */
@@ -160,6 +156,13 @@ public class JobManager implements IJobManager {
 				return "ABOUT_TO_SCHEDULE";//$NON-NLS-1$
 		}
 		return "UNKNOWN"; //$NON-NLS-1$
+	}
+
+	public static void shutdown() {
+		if (instance != null) {
+			instance.doShutdown();
+			instance = null;
+		}
 	}
 
 	private JobManager() {
@@ -288,18 +291,6 @@ public class JobManager implements IJobManager {
 	}
 
 	/**
-	 * Returns a new progress monitor for this job.  Never returns null.
-	 */
-	private IProgressMonitor createMonitor(Job job) {
-		IProgressMonitor monitor = null;
-		if (progressProvider != null)
-			monitor = progressProvider.createMonitor(job);
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		return monitor;
-	}
-
-	/**
 	 * Returns a new progress monitor for this job, belonging to the given
 	 * progress group.  Returns null if it is not a valid time to set the job's group.
 	 */
@@ -317,6 +308,18 @@ public class JobManager implements IJobManager {
 				monitor = new NullProgressMonitor();
 			return monitor;
 		}
+	}
+
+	/**
+	 * Returns a new progress monitor for this job.  Never returns null.
+	 */
+	private IProgressMonitor createMonitor(Job job) {
+		IProgressMonitor monitor = null;
+		if (progressProvider != null)
+			monitor = progressProvider.createMonitor(job);
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		return monitor;
 	}
 
 	/* (non-Javadoc)
@@ -471,7 +474,7 @@ public class JobManager implements IJobManager {
 		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE && job.shouldSchedule();
 		if (notify)
 			jobListeners.done((Job) job, result, reschedule);
-		//finally reschedule the job if requested and we are still active
+		//reschedule the job if requested and we are still active
 		if (reschedule)
 			schedule(job, rescheduleDelay, reschedule);
 	}
@@ -567,6 +570,15 @@ public class JobManager implements IJobManager {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#isIdle()
+	 */
+	public boolean isIdle() {
+		synchronized (lock) {
+			return running.isEmpty() && waiting.isEmpty();
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
 	protected void join(InternalJob job) {
@@ -628,6 +640,12 @@ public class JobManager implements IJobManager {
 			if (jobCount == 1)
 				blocking = (Job) jobs.iterator().next();
 			listener = new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+					//don't remove from list if job is being rescheduled
+					if (!((JobChangeEvent) event).reschedule)
+						jobs.remove(event.getJob());
+				}
+
 				//update the list of jobs if new ones are added during the join
 				public void scheduled(IJobChangeEvent event) {
 					//don't add to list if job is being rescheduled
@@ -636,12 +654,6 @@ public class JobManager implements IJobManager {
 					Job job = event.getJob();
 					if (job.belongsTo(family))
 						jobs.add(job);
-				}
-
-				public void done(IJobChangeEvent event) {
-					//don't remove from list if job is being rescheduled
-					if (!((JobChangeEvent) event).reschedule)
-						jobs.remove(event.getJob());
 				}
 			};
 			addJobChangeListener(listener);
@@ -671,9 +683,9 @@ public class JobManager implements IJobManager {
 				Thread.sleep(100);
 			}
 		} finally {
+			removeJobChangeListener(listener);
 			reportUnblocked(monitor);
 			monitor.done();
-			removeJobChangeListener(listener);
 		}
 	}
 
@@ -1007,7 +1019,7 @@ public class JobManager implements IJobManager {
 		Job job = null;
 		while (true) {
 			job = nextJob();
-			if (job == null)
+			if (job == null) 
 				return null;
 			//must perform this outside sync block because it is third party code
 			if (job.shouldRun()) {
