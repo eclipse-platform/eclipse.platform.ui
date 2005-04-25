@@ -16,8 +16,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
-import org.osgi.framework.Bundle;
-import org.w3c.dom.Element;
 
 /**
  * An Intro Config component that has captures launch bar information.
@@ -32,11 +30,11 @@ public class LaunchBarElement extends AbstractIntroElement {
     private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
     private static final String ATT_BG = "bg"; //$NON-NLS-1$
     private static final String ATT_FG = "fg"; //$NON-NLS-1$
-	private static final String ATT_CLOSE = "close"; //$NON-NLS-1$
-	private static final String ATT_IMAGE = "image"; //$NON-NLS-1$
-	
+    private static final String ATT_CLOSE = "close"; //$NON-NLS-1$
+    private static final String ATT_IMAGE = "image"; //$NON-NLS-1$
+
     private static final String TAG_SHORTCUT = "shortcut"; //$NON-NLS-1$
-	private static final String TAG_HANDLE = "handle"; //$NON-NLS-1$
+    private static final String TAG_HANDLE = "handle"; //$NON-NLS-1$
 
     private ArrayList shortcuts;
 
@@ -44,9 +42,6 @@ public class LaunchBarElement extends AbstractIntroElement {
         super(element);
     }
 
-    public LaunchBarElement(Element element, Bundle bundle) {
-        super(element, bundle);
-    }
 
     /**
      * Returns LAUNCH_BAR.
@@ -94,29 +89,29 @@ public class LaunchBarElement extends AbstractIntroElement {
     public String getForeground() {
         return getCfgElement().getAttribute(ATT_FG);
     }
-	
-	public boolean getCreateHandle() {
-		return getHandleElement()!=null;
-	}
-	
-	public boolean getClose() {
-		IConfigurationElement handle = getHandleElement();
-		if (handle!=null) {
-			String value = handle.getAttribute(ATT_CLOSE);
-			return value==null || value.equals("true"); //$NON-NLS-1$
-		}
-		return true;
-	}
-	
+
+    public boolean getCreateHandle() {
+        return getHandleElement() != null;
+    }
+
+    public boolean getClose() {
+        IConfigurationElement handle = getHandleElement();
+        if (handle != null) {
+            String value = handle.getAttribute(ATT_CLOSE);
+            return value == null || value.equals("true"); //$NON-NLS-1$
+        }
+        return true;
+    }
+
     /**
      * Returns the relative icon path of the handle image.
      * 
      * @return
      */
     private String getHandleImage() {
-		IConfigurationElement handle = getHandleElement();
-		if (handle==null)
-			return null;
+        IConfigurationElement handle = getHandleElement();
+        if (handle == null)
+            return null;
         return handle.getAttribute(ATT_IMAGE);
     }
 
@@ -127,19 +122,19 @@ public class LaunchBarElement extends AbstractIntroElement {
      * @return
      */
     public ImageDescriptor getHandleImageDescriptor() {
-		String path = getHandleImage();
-		if (path==null)
-			return null;
+        String path = getHandleImage();
+        if (path == null)
+            return null;
         return ImageUtil.createImageDescriptor(getBundle(), path);
-    }	
-	
-	private IConfigurationElement getHandleElement() {
-	   IConfigurationElement[] children = getCfgElement().getChildren(
-		            TAG_HANDLE);
-	   if (children.length>0)
-		   return children[0];
-	   return null;
-	}
+    }
+
+    private IConfigurationElement getHandleElement() {
+        IConfigurationElement[] children = getCfgElement().getChildren(
+            TAG_HANDLE);
+        if (children.length > 0)
+            return children[0];
+        return null;
+    }
 
     /**
      * Returns an array of shorcut elements.

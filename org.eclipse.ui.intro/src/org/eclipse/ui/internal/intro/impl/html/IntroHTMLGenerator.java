@@ -106,7 +106,6 @@ public class IntroHTMLGenerator {
      * Generates the HEAD element and its content:
      * 
      * <pre>
-     * 
      *  
      *      &lt;HEAD&gt;
      *      &lt;BASE href=&quot;base_plugin_location&gt;
@@ -116,7 +115,6 @@ public class IntroHTMLGenerator {
      *      additional head content, if specified
      *      &lt;/HEAD&gt;
      *   
-     *  
      * </pre>
      * 
      * @param indentLevel

@@ -47,8 +47,8 @@ import org.eclipse.ui.intro.IIntroPart;
  * implmenetation.</li>
  * <li>The UI model class, AbstractIntroPartImplementation, that represents the
  * IntroPart implementation is cached here for quick access. It is used by intro
- * url actions for manipulation of UI. INTRO:This really should be in a UI model
- * class.
+ * url actions for manipulation of UI.<br>
+ * INTRO:This really should be in a UI model class.
  * <ul>
  */
 public class IntroPartPresentation extends AbstractIntroElement {

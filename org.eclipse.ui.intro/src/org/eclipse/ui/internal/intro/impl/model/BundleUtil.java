@@ -116,8 +116,9 @@ public class BundleUtil {
         return getResolvedResourceLocation(resource, bundle, true);
     }
 
+
     /**
-     * Shorthjand util meythod.
+     * Shorthand util method.
      * 
      * @param resource
      * @return
@@ -125,11 +126,20 @@ public class BundleUtil {
     public static String getResolvedResourceLocation(String resource,
             Bundle bundle) {
         return getResolvedResourceLocation(resource, bundle, true);
+    }
 
+    public static String getResolvedResourceLocation(String base,
+            String resource, Bundle bundle) {
+        // quick exits.
+        if (resource == null)
+            return null;
+
+        String fullResource = new Path(base).append(resource).toString();
+        return getResolvedResourceLocation(fullResource, bundle, true);
     }
 
     public static String getResolvedResourceLocation(String resource,
-            Bundle bundle, boolean force$nl$lResolve) {
+            Bundle bundle, boolean forceNLResolve) {
         // quick exits.
         if (resource == null)
             return null;
@@ -141,13 +151,13 @@ public class BundleUtil {
         try {
             // we need to resolve this URL.
             String copyResource = resource;
-            if (force$nl$lResolve && !copyResource.startsWith(NL_TAG)) {
+            if (forceNLResolve && !copyResource.startsWith(NL_TAG)) {
                 if (copyResource.startsWith("/")) //$NON-NLS-1$
                     copyResource = resource.substring(1);
                 copyResource = NL_TAG + copyResource;
             }
-
-            localLocation = Platform.find(bundle, new Path(copyResource));
+            Path resourcePath = new Path(copyResource);
+            localLocation = Platform.find(bundle, resourcePath);
             if (localLocation == null) {
                 // localLocation can be null if the passed resource could not
                 // be found relative to the plugin. log fact, return resource,
@@ -185,8 +195,8 @@ public class BundleUtil {
 
 
 
-    /** ********************* Used by HTML generator ****************** */
 
+    /** ********************* Used by HTML generator ****************** */
     /**
      * Get the absolute path of the given bundle, in the form
      * file:/path_to_plugin

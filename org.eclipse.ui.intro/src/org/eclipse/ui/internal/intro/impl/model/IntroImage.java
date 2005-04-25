@@ -28,14 +28,14 @@ public class IntroImage extends AbstractBaseIntroElement {
     private String src;
     private String alt;
 
-    IntroImage(Element element, Bundle bundle) {
+    IntroImage(Element element, Bundle bundle, String base) {
         super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         srcAsIs = src;
         alt = getAttribute(element, ATT_ALT);
 
         // Resolve src.
-        src = BundleUtil.getResolvedResourceLocation(src, bundle);
+        src = BundleUtil.getResolvedResourceLocation(base, src, bundle);
     }
 
     /**

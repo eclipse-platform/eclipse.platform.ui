@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -88,21 +89,26 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * 
      * @param element
      */
-    AbstractIntroPage(Element element, Bundle bundle) {
-        super(element, bundle);
+    AbstractIntroPage(Element element, Bundle bundle, String base) {
+        super(element, bundle, base);
         content = getAttribute(element, ATT_CONTENT);
         if (content == null)
-            init(element, bundle);
-        else
+            init(element, bundle, base);
+        else {
             // Content is not null. Resolve it. Other page attributes (style,
-            // ...) will be loaded when xml content file is loaded since we need
-            // to pick them up from external xml content file. In the case where
-            // this external content file is XHTML and we have HTML
-            // presentation, page attributes are simply not loaded. In the case
-            // where we have XHTML in a UI forms presentation, we need to load
-            // initial page attributes.
-            content = BundleUtil.getResolvedResourceLocation(content, bundle);
-
+            // alt-style...) will be loaded when xml content file is loaded
+            // since we need to pick them up from external xml content file. In
+            // the case where this external content file is XHTML and we have
+            // HTML presentation, page attributes are simply not loaded. In the
+            // case where we have XHTML in a UI forms presentation, we will need
+            // to load initial page attributes.
+            // BASE: since content is being loaded from another xml file, point
+            // the base of this page to be relative to the new xml file
+            // location.
+            this.base = new Path(base).append(content).toString();
+            content = BundleUtil.getResolvedResourceLocation(base, content,
+                bundle);
+        }
     }
 
     /**
@@ -113,14 +119,15 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @param element
      * @param bundle
      */
-    private void init(Element element, Bundle bundle) {
+    private void init(Element element, Bundle bundle, String base) {
         String[] styleValues = getAttributeList(element, ATT_STYLE);
         if (styleValues != null) {
             style = styleValues[0];
-            style = BundleUtil.getResolvedResourceLocation(style, bundle);
+            style = BundleUtil.getResolvedResourceLocation(base, style, bundle);
             for (int i = 1; i < styleValues.length; i++) {
                 String style = styleValues[i];
-                style = BundleUtil.getResolvedResourceLocation(style, bundle);
+                style = BundleUtil.getResolvedResourceLocation(base, style,
+                    bundle);
                 addStyle(style);
             }
         }
@@ -128,10 +135,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         String[] altStyleValues = getAttributeList(element, ATT_ALT_STYLE);
         if (altStyleValues != null) {
             altStyle = altStyleValues[0];
-            altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
+            altStyle = BundleUtil.getResolvedResourceLocation(base, altStyle,
+                bundle);
             for (int i = 1; i < altStyleValues.length; i++) {
                 String style = altStyleValues[i];
-                style = BundleUtil.getResolvedResourceLocation(style, bundle);
+                style = BundleUtil.getResolvedResourceLocation(base, style,
+                    bundle);
                 addAltStyle(style, bundle);
             }
         }
@@ -311,10 +320,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
      */
     protected AbstractIntroElement getModelChild(Element childElement,
-            Bundle bundle) {
+            Bundle bundle, String base) {
         AbstractIntroElement child = null;
         if (childElement.getNodeName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
-            child = new IntroHead(childElement, bundle);
+            child = new IntroHead(childElement, bundle, base);
         } else if (childElement.getNodeName().equalsIgnoreCase(
             IntroPageTitle.TAG_TITLE)) {
             // if we have a title, only add it as a child if we did not load one
@@ -325,7 +334,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
         if (child != null)
             return child;
-        return super.getModelChild(childElement, bundle);
+        return super.getModelChild(childElement, bundle, base);
     }
 
     /**
@@ -354,8 +363,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return;
         }
 
-        // content attribute is defined. It either points to an XHTML file, or a
-        // introContent.xml file. Process each case. Assume it is an
+        // content attribute is defined. It either points to an XHTML file, or
+        // an introContent.xml file. Process each case. Assume it is an
         // introContent file.
         // INTRO: XHTML file is loaded needlessly when we have XHTML content and
         // SWT presentation.
@@ -379,7 +388,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
 
         // parse content depending on type. Make sure to set the loaded flag
-        // accordongly, otherwise content file will always be parsed.
+        // accordingly, otherwise content file will always be parsed.
         IntroModelRoot model = (IntroModelRoot) getParent();
         String presentationStyle = model.getPresentation()
             .getImplementationKind();
@@ -421,7 +430,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 this.element = pageElement;
                 // call init on the new element. the filtering and the style-id
                 // are loaded by the parent class.
-                init(pageElement, getBundle());
+                init(pageElement, getBundle(), base);
                 // INTRO: revisit. Special processing here should be made more
                 // general. we know id is correct.
                 style_id = element
@@ -554,7 +563,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     protected void resolvePage() {
         // insert base meta-tag, and resolve includes.
-        ModelUtil.insertBase(dom, ModelUtil.getParentFolderPath(content));
+        ModelUtil.insertBase(dom, ModelUtil.getParentFolderOSString(content));
         resolveIncludes();
         // now remove all anchors from this page.
         ModelUtil.removeElement(dom, IntroAnchor.TAG_ANCHOR);

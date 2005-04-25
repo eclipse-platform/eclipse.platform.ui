@@ -33,6 +33,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected boolean resolved = false;
     protected Element element;
 
+    // store the base since it will needed later to resolve children.
+    protected String base;
+
     /**
      * @param element
      */
@@ -47,6 +50,16 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         super(element, bundle);
         this.element = element;
     }
+
+    /**
+     * @param element
+     */
+    AbstractIntroContainer(Element element, Bundle bundle, String base) {
+        super(element, bundle);
+        this.element = element;
+        this.base = base;
+    }
+
 
     /**
      * Get the children of this container. Loading children and resolving
@@ -208,7 +221,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
         // add the elements at the end children's vector.
-        insertElementsBefore(filteredElements, getBundle(), children.size());
+        insertElementsBefore(filteredElements, getBundle(), base, children
+            .size());
         loaded = true;
         // we cannot free DOM model element because a page's children may be
         // nulled when reflowing a content provider.
@@ -221,10 +235,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
-            int index) {
+            String base, int index) {
         for (int i = 0; i < childElements.length; i++) {
             Element childElement = childElements[i];
-            AbstractIntroElement child = getModelChild(childElement, bundle);
+            AbstractIntroElement child = getModelChild(childElement, bundle,
+                base);
             if (child != null) {
                 child.setParent(this);
                 children.add(index, child);
@@ -241,12 +256,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected void insertElementsBefore(Element[] childElements, Bundle bundle,
-            AbstractIntroElement child) {
+            String base, AbstractIntroElement child) {
         int childLocation = children.indexOf(child);
         if (childLocation == -1)
             // bad reference child.
             return;
-        insertElementsBefore(childElements, bundle, childLocation);
+        insertElementsBefore(childElements, bundle, base, childLocation);
     }
 
 
@@ -258,23 +273,23 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param childElements
      */
     protected AbstractIntroElement getModelChild(Element childElement,
-            Bundle bundle) {
+            Bundle bundle, String base) {
 
         AbstractIntroElement child = null;
         if (childElement.getNodeName().equalsIgnoreCase(IntroGroup.TAG_GROUP))
-            child = new IntroGroup(childElement, bundle);
+            child = new IntroGroup(childElement, bundle, base);
         else if (childElement.getNodeName()
             .equalsIgnoreCase(IntroLink.TAG_LINK))
-            child = new IntroLink(childElement, bundle);
+            child = new IntroLink(childElement, bundle, base);
         else if (childElement.getNodeName()
             .equalsIgnoreCase(IntroText.TAG_TEXT))
             child = new IntroText(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
             IntroImage.TAG_IMAGE))
-            child = new IntroImage(childElement, bundle);
+            child = new IntroImage(childElement, bundle, base);
         else if (childElement.getNodeName()
             .equalsIgnoreCase(IntroHTML.TAG_HTML))
-            child = new IntroHTML(childElement, bundle);
+            child = new IntroHTML(childElement, bundle, base);
         else if (childElement.getNodeName().equalsIgnoreCase(
             IntroInclude.TAG_INCLUDE))
             child = new IntroInclude(childElement, bundle);
@@ -543,5 +558,17 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         return clone;
     }
 
+    /**
+     * Returns the element.
+     * 
+     * @return
+     */
+    public Element getElement() {
+        return this.element;
+    }
+
+    public String getBase() {
+        return base;
+    }
 
 }

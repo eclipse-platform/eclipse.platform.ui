@@ -27,8 +27,8 @@ public class IntroGroup extends AbstractIntroContainer {
     /**
      * @param element
      */
-    IntroGroup(Element element, Bundle bundle) {
-        super(element, bundle);
+    IntroGroup(Element element, Bundle bundle, String base) {
+        super(element, bundle, base);
         label = getAttribute(element, ATT_LABEL);
     }
 

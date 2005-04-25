@@ -35,12 +35,12 @@ public class IntroLink extends AbstractTextElement {
     /**
      * @param element
      */
-    IntroLink(Element element, Bundle bundle) {
+    IntroLink(Element element, Bundle bundle, String base) {
         super(element, bundle);
         url = getAttribute(element, ATT_URL);
         label = getAttribute(element, ATT_LABEL);
 
-        url = ModelUtil.resolveURL(url, bundle);
+        url = ModelUtil.resolveURL(base, url, bundle);
         if (url != null) {
             // check the URL.
             IntroURLParser parser = new IntroURLParser(url);
@@ -51,7 +51,8 @@ public class IntroLink extends AbstractTextElement {
         // There should be at most one img element.
         NodeList imgElements = element.getElementsByTagName(TAG_IMG);
         if (imgElements.getLength() > 0) {
-            img = new IntroImage((Element) imgElements.item(0), getBundle());
+            img = new IntroImage((Element) imgElements.item(0), getBundle(),
+                base);
             img.setParent(this);
         }
     }

@@ -41,20 +41,23 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private String content;
 
     private Element element;
+    private String base;
 
-    IntroExtensionContent(Element element, Bundle bundle) {
+    IntroExtensionContent(Element element, Bundle bundle, String base) {
         super(element, bundle);
         path = getAttribute(element, ATT_PATH);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
         content = getAttribute(element, ATT_CONTENT);
         this.element = element;
+        this.base = base;
 
         // Resolve.
-        style = BundleUtil.getResolvedResourceLocation(style, bundle);
-        altStyle = BundleUtil.getResolvedResourceLocation(altStyle, bundle);
+        style = BundleUtil.getResolvedResourceLocation(base, style, bundle);
+        altStyle = BundleUtil.getResolvedResourceLocation(base, altStyle,
+            bundle);
         // if content is not null we have XHTML extension.
-        content = BundleUtil.getResolvedResourceLocation(content, bundle);
+        content = BundleUtil.getResolvedResourceLocation(base, content, bundle);
     }
 
     /**
@@ -128,5 +131,9 @@ public class IntroExtensionContent extends AbstractIntroElement {
      */
     public String getContent() {
         return content;
+    }
+
+    public String getBase() {
+        return base;
     }
 }

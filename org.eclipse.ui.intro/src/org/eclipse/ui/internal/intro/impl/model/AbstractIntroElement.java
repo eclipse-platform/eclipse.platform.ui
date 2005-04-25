@@ -175,7 +175,8 @@ public abstract class AbstractIntroElement implements Cloneable {
 
     /**
      * Constructor used when model elements are being loaded from an xml content
-     * file.
+     * file. Bundle is propagated down the model to enable resolving resources
+     * relative to the base of the bundle.
      * 
      * @param element
      * @param pd
@@ -183,6 +184,26 @@ public abstract class AbstractIntroElement implements Cloneable {
     AbstractIntroElement(Element element, Bundle bundle) {
         this.bundle = bundle;
     }
+
+
+    /**
+     * Constructor used when model elements are being loaded from an xml content
+     * file. Bundle AND base is propagated down the model to enable resolving
+     * resources relative to the xml content file. The base is set to point to
+     * the relative location of the parent folder that holds the content file.
+     * In the case of a configExtension, it is set to point to the relative
+     * position of the parent folder that holds the extension. The base field is
+     * not stored in each model element to save memory.
+     * 
+     * @param element
+     * @param pd
+     */
+    AbstractIntroElement(Element element, Bundle bundle, String base) {
+        this(element, bundle);
+    }
+
+
+
 
     /**
      * Returns the configuration element from which this intro element was
@@ -247,6 +268,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      */
     public abstract int getType();
 
+
     /**
      * Returns the parent of this intro element.
      * <p>
@@ -264,7 +286,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </ul>
      * 
      * @return returns the parent of this intro element. Null only for model
-     *               root.
+     *         root.
      */
     public AbstractIntroElement getParent() {
         return parent;
@@ -272,7 +294,7 @@ public abstract class AbstractIntroElement implements Cloneable {
 
     /**
      * @param parent
-     *                   The parent to set.
+     *            The parent to set.
      */
     public void setParent(AbstractIntroElement parent) {
         this.parent = parent;
@@ -320,10 +342,10 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </code>
      * 
      * @param elementMask
-     *                   element mask formed by bitwise OR of element type constants
-     *                   defined in this class.
+     *            element mask formed by bitwise OR of element type constants
+     *            defined in this class.
      * @return <code>true</code> if this element has a matching type, and
-     *               <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
     public boolean isOfType(int elementMask) {
         return (getType() & elementMask) != 0;
@@ -339,8 +361,8 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </code>
      * 
      * @return <code>true</code> if all elements are of the right type, and
-     *               <code>false</code> if the list is empty, or at least one
-     *               element is not of the specified types.
+     *         <code>false</code> if the list is empty, or at least one
+     *         element is not of the specified types.
      */
     public static final boolean allElementsAreOfType(
             AbstractIntroElement[] elements, int elementMask) {

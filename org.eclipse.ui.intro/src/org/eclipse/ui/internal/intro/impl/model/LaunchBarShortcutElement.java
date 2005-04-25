@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.intro.impl.model;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
-import org.osgi.framework.Bundle;
-import org.w3c.dom.Element;
 
 /**
  * An Intro Config component that captures launch bar shortcut information.
@@ -30,9 +28,6 @@ public class LaunchBarShortcutElement extends AbstractIntroElement {
         super(element);
     }
 
-    public LaunchBarShortcutElement(Element element, Bundle bundle) {
-        super(element, bundle);
-    }
 
     public int getType() {
         return LAUNCH_BAR_SHORTCUT;

@@ -30,15 +30,15 @@ public class IntroHomePage extends AbstractIntroPage {
     private boolean isStandbyPage;
 
 
-    IntroHomePage(Element element, Bundle bundle) {
-        super(element, bundle);
+    IntroHomePage(Element element, Bundle bundle, String base) {
+        super(element, bundle, base);
         url = getAttribute(element, ATT_URL);
         if (url == null)
             // if we do not have a URL attribute, then we have dynamic content.
             isDynamic = true;
         else
             // check the url/standby-url attributes and update accordingly.
-            url = ModelUtil.resolveURL(url, bundle);
+            url = ModelUtil.resolveURL(base, url, bundle);
     }
 
 

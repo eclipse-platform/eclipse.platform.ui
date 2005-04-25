@@ -38,6 +38,10 @@ public abstract class AbstractIntroIdElement extends AbstractIntroElement {
         id = getAttribute(element, ATT_ID);
     }
 
+    AbstractIntroIdElement(Element element, Bundle bundle, String base) {
+        super(element, bundle, base);
+        id = getAttribute(element, ATT_ID);
+    }
 
 
     /**

@@ -67,7 +67,7 @@ public class ModelUtil {
         if (pluginId != null)
             // if pluginId is not null, use it.
             bundle = Platform.getBundle(pluginId);
-        return resolveURL(url, bundle);
+        return resolveURL("", url, bundle); //$NON-NLS-1$
     }
 
 
@@ -84,7 +84,7 @@ public class ModelUtil {
      */
     protected static String resolveURL(String url, IConfigurationElement element) {
         Bundle bundle = BundleUtil.getBundleFromConfigurationElement(element);
-        return resolveURL(url, bundle);
+        return resolveURL("", url, bundle); //$NON-NLS-1$
     }
 
 
@@ -92,7 +92,7 @@ public class ModelUtil {
     /**
      * @see resolveURL(String url, IConfigurationElement element)
      */
-    protected static String resolveURL(String url, Bundle bundle) {
+    protected static String resolveURL(String base, String url, Bundle bundle) {
         // quick exit
         if (url == null)
             return null;
@@ -101,7 +101,7 @@ public class ModelUtil {
             return url;
         else
             // make plugin relative url. Only now we need the bundle.
-            return BundleUtil.getResolvedResourceLocation(url, bundle);
+            return BundleUtil.getResolvedResourceLocation(base, url, bundle);
     }
 
 
@@ -117,13 +117,13 @@ public class ModelUtil {
             long start = 0;
             if (Log.logPerformance)
                 start = System.currentTimeMillis();
-            IPath parentFolder = ModelUtil.getParentFolder(contentFile);
+            IPath parentFolder = ModelUtil.getParentFolderPath(contentFile);
             URL parentFolderURL = Platform.find(bundle, parentFolder);
             URL url = Platform.asLocalURL(parentFolderURL);
             if (Log.logPerformance) {
                 String msg = StringUtil
-                    .concat("extracting content folder ", contentFile, " (",
-                        bundle.getSymbolicName(), ")", " took: ").toString();
+                    .concat("extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$
+                        bundle.getSymbolicName(), ")", " took: ").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                 Util.logPerformanceTime(msg, start);
             }
 
@@ -135,6 +135,15 @@ public class ModelUtil {
     }
 
 
+    /**
+     * Returns the path to the parent folder containing the passed content xml
+     * file. It is assumed that the path is a local url representing a content
+     * file.
+     */
+    public static String getParentFolderToString(String contentFilePath) {
+        IPath path = getParentFolderPath(contentFilePath);
+        return path.toString();
+    }
 
 
     /*
@@ -147,15 +156,15 @@ public class ModelUtil {
      * file. It is assumed that the path is a local url representing a content
      * file.
      */
-    public static String getParentFolderPath(String contentFilePath) {
-        IPath path = getParentFolder(contentFilePath);
+    public static String getParentFolderOSString(String contentFilePath) {
+        IPath path = getParentFolderPath(contentFilePath);
         return path.toOSString();
     }
 
     /**
      * Returns the parent folder of the given path.
      */
-    public static IPath getParentFolder(String contentFilePath) {
+    public static IPath getParentFolderPath(String contentFilePath) {
         IPath path = new Path(contentFilePath);
         path = path.removeLastSegments(1).addTrailingSeparator();
         return path;
@@ -247,7 +256,7 @@ public class ModelUtil {
      */
     public static void updateResourceAttributes(Element element,
             String localContentFilePath) {
-        String folderLocalPath = getParentFolderPath(localContentFilePath);
+        String folderLocalPath = getParentFolderOSString(localContentFilePath);
         doUpdateResourceAttributes(element, folderLocalPath);
         NodeList children = element.getElementsByTagName("*"); //$NON-NLS-1$
         for (int i = 0; i < children.getLength(); i++) {

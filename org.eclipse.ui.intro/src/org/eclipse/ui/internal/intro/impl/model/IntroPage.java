@@ -22,8 +22,8 @@ public class IntroPage extends AbstractIntroPage {
     /**
      * An Intro Part page.
      */
-    IntroPage(Element element, Bundle bundle) {
-        super(element, bundle);
+    IntroPage(Element element, Bundle bundle, String base) {
+        super(element, bundle, base);
     }
 
     /*

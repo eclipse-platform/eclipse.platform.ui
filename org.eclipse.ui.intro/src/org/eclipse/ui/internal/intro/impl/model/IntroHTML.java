@@ -40,7 +40,7 @@ public class IntroHTML extends AbstractTextElement {
     private String encoding;
     private IntroImage introImage;
 
-    IntroHTML(Element element, Bundle bundle) {
+    IntroHTML(Element element, Bundle bundle, String base) {
         super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         html_type = getAttribute(element, ATT_TYPE);
@@ -53,16 +53,16 @@ public class IntroHTML extends AbstractTextElement {
             html_type = null;
 
         // description will be null if there is no description element.
-        introImage = getIntroImage(element);
+        introImage = getIntroImage(element, base);
 
         // Resolve.
-        src = BundleUtil.getResolvedResourceLocation(src, bundle);
+        src = BundleUtil.getResolvedResourceLocation(base, src, bundle);
     }
 
     /**
      * Retruns the intro image element embedded in this element.
      */
-    private IntroImage getIntroImage(Element element) {
+    private IntroImage getIntroImage(Element element, String base) {
         try {
             // There should only be one text element. Since elements where
             // obtained by name, no point validating name.
@@ -72,7 +72,7 @@ public class IntroHTML extends AbstractTextElement {
                 // no contributions. done.
                 return null;
             IntroImage image = new IntroImage((Element) imageElements.item(0),
-                getBundle());
+                getBundle(), base);
             image.setParent(this);
             return image;
         } catch (Exception e) {
