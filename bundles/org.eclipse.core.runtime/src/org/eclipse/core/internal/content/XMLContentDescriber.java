@@ -60,8 +60,12 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		// describe charset if requested
 		if (description.isRequested(IContentDescription.CHARSET)) {
 			String fullXMLDecl = readFullXMLDecl(input, xmlDeclEncoding);
-			if (fullXMLDecl != null)
-				description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
+			if (fullXMLDecl != null) {
+				String charset = getCharset(fullXMLDecl);
+				if (charset != null && !"UTF-8".equalsIgnoreCase(charset)) //$NON-NLS-1$
+					// only set property if value is not default (avoid using a non-default content description)
+					description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
+			}
 		}
 		return VALID;
 	}
