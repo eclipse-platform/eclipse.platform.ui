@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.encoding;
 
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,7 +44,13 @@ public class EncodingTestCase extends UITestCase {
 
 		while (iterator.hasNext()) {
 			String nextEncoding = (String) iterator.next();
-			Assert.isTrue(Charset.isSupported(nextEncoding), "Unsupported charset " + nextEncoding);
+			try {
+				Assert.isTrue(Charset.isSupported(nextEncoding), "Unsupported charset " + nextEncoding);
+				
+			} catch (IllegalCharsetNameException e) {
+				Assert.isTrue(false, "Unsupported charset " + nextEncoding);
+			}
+			
 
 		}
 	}
