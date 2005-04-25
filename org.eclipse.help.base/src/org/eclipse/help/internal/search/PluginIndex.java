@@ -26,6 +26,9 @@ import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.Bundle;
 
 public class PluginIndex {
+
+	private static final String COMPLETE_FILENAME = "indexed_complete"; //$NON-NLS-1$
+
 	private String pluginId;
 
 	/**
@@ -92,6 +95,10 @@ public class PluginIndex {
 			if ("file".equals(resolved.getProtocol())) { //$NON-NLS-1$
 				indexIDs.add(getIndexId(prefix));
 				resolvedPaths.add(resolved.getFile());
+				if (isComplete(bundle, prefixedPath)) {
+					// don't process default language index
+					break;
+				}
 			} else {
 				try {
 					// extract index from jarred bundles
@@ -99,6 +106,10 @@ public class PluginIndex {
 					if ("file".equals(localURL.getProtocol())) { //$NON-NLS-1$
 						indexIDs.add(getIndexId(prefix));
 						resolvedPaths.add(localURL.getFile());
+						if (isComplete(bundle, prefixedPath)) {
+							// don't process default language index
+							break;
+						}
 					}
 				} catch (IOException ioe) {
 					HelpBasePlugin.logError(
@@ -161,6 +172,17 @@ public class PluginIndex {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @param bundle
+	 * @param prefixedPath
+	 * @return true if index marked as complete (usually means all or most
+	 *         documents are translatable and translated)
+	 */
+	private boolean isComplete(Bundle bundle, IPath prefixedPath) {
+		URL url = Platform.find(bundle, prefixedPath.append(COMPLETE_FILENAME));
+		return url != null;
 	}
 
 	/**
