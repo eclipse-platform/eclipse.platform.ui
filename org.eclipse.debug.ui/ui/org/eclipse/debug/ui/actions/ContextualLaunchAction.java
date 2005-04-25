@@ -190,7 +190,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		}
 		iter = filteredShortCuts.iterator();
 		int accelerator = 1;
-		String category = null;
+		List categories = new ArrayList();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			Set modes = ext.getModes(); // supported launch modes
@@ -198,24 +198,37 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			while (modeIter.hasNext()) {
 				String mode = (String) modeIter.next();
 				if (mode.equals(fMode)) {
-					category = ext.getCategory();
+					String category = ext.getCategory();
+					// NOTE: category can be null
+					if (!categories.contains(category)) {
+						categories.add(category);
+					}
 					populateMenuItem(mode, ext, menu, accelerator++);
 				}
 			}
 		}
 		
-		ILaunchGroup group = fGroup;
-		if (category != null) {
-			group = (ILaunchGroup) fGroupsByCategory.get(category);
-		}
-		if (group != null) {
-		    if (accelerator > 1) {
-				new MenuItem(menu, SWT.SEPARATOR);
+		
+		if (!categories.isEmpty()) {
+			iter = categories.iterator();
+			while (iter.hasNext()) {
+				// NOTE: category can be null
+				String category = (String) iter.next();
+				ILaunchGroup group = fGroup;
+				if (category != null) {
+					group = (ILaunchGroup) fGroupsByCategory.get(category);
+				}
+				if (group != null) {
+				    if (accelerator > 1) {
+						new MenuItem(menu, SWT.SEPARATOR);
+					}
+				    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
+				    ActionContributionItem item= new ActionContributionItem(action);
+				    item.fill(menu, -1);
+				}
 			}
-		    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
-		    ActionContributionItem item= new ActionContributionItem(action);
-		    item.fill(menu, -1);
 		}
+
 	}
 
 	/**
