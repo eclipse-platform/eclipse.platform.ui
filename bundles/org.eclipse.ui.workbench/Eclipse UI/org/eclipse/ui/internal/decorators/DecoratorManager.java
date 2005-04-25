@@ -76,7 +76,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
     //Hold onto the list of listeners to be told if a change has occured
     private ListenerList listeners = new ListenerList();
 
-    //The full definitions read from the registry
+    //The full definitions read from the registry.
+    //Initalize to an empty collection as this is rarely used now.
     private FullDecoratorDefinition[] fullDefinitions;
 
     private FullTextDecoratorRunnable fullTextRunnable = new FullTextDecoratorRunnable();
@@ -510,8 +511,13 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @return FullDecoratorDefinition[]
      */
     private FullDecoratorDefinition[] enabledFullDefinitions() {
-        ArrayList result = new ArrayList();
+      
         FullDecoratorDefinition[] full = getFullDefinitions();
+        //As this are a deprecated data type optimize for
+        //the undefined case.
+        if(full.length == 0) 
+        	return full;
+        ArrayList result = new ArrayList();
         for (int i = 0; i < full.length; i++) {
             if (full[i].isEnabled())
                 result.add(full[i]);
