@@ -226,6 +226,10 @@ final class ContextAuthority implements ISourceProviderListener {
 	 */
 	private final void checkWindowType(final Shell newShell,
 			final Shell oldShell) {
+        System.out.println("checkWindowType(" + newShell + ", " + oldShell + ')');  //$NON-NLS-1$//$NON-NLS-2$
+        if (oldShell != null) {
+            System.out.println();
+        }
 		if (newShell != oldShell) {
 			/*
 			 * If the previous active shell was recognized as a dialog by
@@ -538,6 +542,7 @@ final class ContextAuthority implements ISourceProviderListener {
 			activations.add(dialogActivation);
 			break;
 		case IContextService.TYPE_NONE:
+            updateCurrentState();
 			break;
 		case IContextService.TYPE_WINDOW:
 			expression = new ActiveShellExpression(shell);
@@ -798,7 +803,14 @@ final class ContextAuthority implements ISourceProviderListener {
 				final Map.Entry entry = (Map.Entry) variableItr.next();
 				final String variableName = (String) entry.getKey();
 				final Object variableValue = entry.getValue();
-				if (variableName != null) {
+                /*
+                 * Bug 84056. If we update the active workbench window, then we
+                 * risk falling back to that shell when the active shell has
+                 * registered as "none".
+                 */
+				if ((variableName != null)
+                        && (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME
+                                .equals(variableName))) {
 					if (variableValue == null) {
 						context.removeVariable(variableName);
 					} else {
@@ -825,12 +837,18 @@ final class ContextAuthority implements ISourceProviderListener {
 	 */
 	private final void updateEvaluationContext(final String name,
 			final Object value) {
-		if (name != null) {
+        /*
+         * Bug 84056. If we update the active workbench window, then we risk
+         * falling back to that shell when the active shell has registered as
+         * "none".
+         */
+		if ((name != null)
+                && (!ISources.ACTIVE_WORKBENCH_WINDOW_NAME.equals(name))) {
 			/*
-			 * We need to track shell activation ourselves, as some special
-			 * contexts are automatically activated in response to different
-			 * types of shells becoming active.
-			 */
+             * We need to track shell activation ourselves, as some special
+             * contexts are automatically activated in response to different
+             * types of shells becoming active.
+             */
 			if (ISources.ACTIVE_SHELL_NAME.equals(name)) {
 				checkWindowType((Shell) value, (Shell) context
 						.getVariable(ISources.ACTIVE_SHELL_NAME));
