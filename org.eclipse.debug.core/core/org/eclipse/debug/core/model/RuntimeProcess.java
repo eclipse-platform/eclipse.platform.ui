@@ -412,6 +412,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 */
 		public ProcessMonitorThread(RuntimeProcess process) {
 			super(DebugCoreMessages.ProcessMonitorJob_0); //$NON-NLS-1$
+			setDaemon(true);
 			fRuntimeProcess= process;
 			fOSProcess= process.getSystemProcess();
 		}
