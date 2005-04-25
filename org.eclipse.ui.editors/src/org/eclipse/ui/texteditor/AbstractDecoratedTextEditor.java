@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.commands.operations.IUndoableAffectedObjects;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -68,6 +70,7 @@ import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -1197,9 +1200,29 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	public Object getAdapter(Class adapter) {
 		if (IGotoMarker.class.equals(adapter))
 			return fGotoMarkerAdapter;
+
 		if (IAnnotationAccess.class.equals(adapter))
 			return getAnnotationAccess();
+		
+		if (IUndoableAffectedObjects.class.equals(adapter)) {
+			if (getEditorInput() instanceof IStorageEditorInput) {
+				return new IUndoableAffectedObjects() {
+					public Object [] getAffectedObjects() {
+						Object affectedObject;
+						try {
+							affectedObject= ((IStorageEditorInput)getEditorInput()).getStorage();
+						} catch (CoreException ex) {
+							affectedObject= getEditorInput();
+						}
+						return new Object [] { affectedObject };
+					}
+				};
+			}
+			return super.getAdapter(adapter);
+		}
+		
 		return super.getAdapter(adapter);
+		
 	}
 
 	/*

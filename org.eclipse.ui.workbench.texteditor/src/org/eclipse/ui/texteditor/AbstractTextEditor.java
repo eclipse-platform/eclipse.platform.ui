@@ -54,7 +54,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoableAffectedObjects;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -148,6 +152,8 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.operations.LinearUndoViolationUserApprover;
+import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
@@ -1865,6 +1871,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	private Caret fInitialCaret;
+	/**
+	 * The operation approver used to warn on undoing of non-local operations.
+	 * @since 3.1
+	 */
+	private IOperationApprover fNonLocalOperationApprover;
+	/**
+	 * The operation approver used to warn of linear undo violations.
+	 * @since 3.1
+	 */
+	private IOperationApprover fLinearUndoViolationApprover;
 
 
 	/**
@@ -4179,6 +4195,23 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
 				actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
 				setAction(ActionFactory.REDO.getId(), action);
+
+				// install operation approvers
+				IOperationHistory history = OperationHistoryFactory.getOperationHistory();
+
+				// the first approver will prompt when operations affecting outside elements are to be undone or redone.
+				if (fNonLocalOperationApprover != null)
+					history.removeOperationApprover(fNonLocalOperationApprover);
+				fNonLocalOperationApprover = new NonLocalUndoUserApprover(undoContext, this);
+				history.addOperationApprover(fNonLocalOperationApprover);
+
+				// the second approver will prompt from this editor when an undo is attempted on an operation
+				// and it is not the most recent operation in the editor.
+				if (fLinearUndoViolationApprover != null)
+					history.removeOperationApprover(fLinearUndoViolationApprover);
+				fLinearUndoViolationApprover = new LinearUndoViolationUserApprover(undoContext, this);
+				history.addOperationApprover(fLinearUndoViolationApprover);
+
 			}
 		} else {
 			ResourceAction action;
@@ -4640,6 +4673,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (Control.class.equals(required))
 			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
+
+		if (IUndoableAffectedObjects.class.equals(required)) {
+			return new IUndoableAffectedObjects() {
+				public Object [] getAffectedObjects() {
+					return new Object [] { getEditorInput() };
+				}
+			};
+		}
 
 		return super.getAdapter(required);
 	}
