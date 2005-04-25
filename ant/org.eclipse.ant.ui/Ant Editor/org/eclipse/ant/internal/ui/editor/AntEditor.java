@@ -1121,16 +1121,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		((ProjectionViewer)getViewer()).removeProjectionListener(this);
-		if (fProjectionSupport != null) {
-			fProjectionSupport.dispose();
-		}
-		
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
 		}
 		
+		((ProjectionViewer)getViewer()).removeProjectionListener(this);
 		if (fProjectionSupport != null) {
 			fProjectionSupport.dispose();
 			fProjectionSupport= null;
