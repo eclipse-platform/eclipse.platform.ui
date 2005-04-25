@@ -185,6 +185,8 @@ public final class ContentType implements IContentType {
 				String message = NLS.bind(Messages.content_errorReadingContents, id);
 				ContentType.log(message, ioe);
 			}
+			// we don't know what the describer would say if the exception didn't occur
+			return IContentDescriber.INDETERMINATE;
 		} finally {
 			contents.rewind();
 		}

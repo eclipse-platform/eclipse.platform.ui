@@ -63,7 +63,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY2 = "<?xml version=\"1.0\"?><!DOCTYPE org.eclipse.core.runtime.tests.root-element PUBLIC \"org.eclipse.core.runtime.tests.root-elementId\" \"org.eclipse.core.runtime.tests.root-element.dtd\" ><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_ROOT_ELEMENT_NO_DECL = "<org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- αινσϊ --><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- Non-ASCII chars: αινσϊ --><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
