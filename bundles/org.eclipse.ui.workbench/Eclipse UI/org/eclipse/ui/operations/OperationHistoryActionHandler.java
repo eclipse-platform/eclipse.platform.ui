@@ -162,7 +162,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Run the action. Provide common error handling and let the subclasses do the
 	 * real work.
 	 */
-	public void run() {
+	public final void run() {
 		try {
 			runCommand();
 		} catch (ExecutionException e) {
