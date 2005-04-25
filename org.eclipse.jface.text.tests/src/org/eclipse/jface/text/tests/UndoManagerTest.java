@@ -42,6 +42,14 @@ public class UndoManagerTest extends TestCase {
 	private IUndoManager fUndoManager;
 
 	private static final int LOOP_COUNT= 20;
+	
+	//--- Static data sets for comparing scenarios - obtained from capturing random data ---
+	/** Original document */
+	private static final String staticOriginal= "y/D!=m}@#i4|;=/^::du]3_5g6JnYA>b*%hv#OKZUNkm&5Ujs:";
+	/** Replacement string */
+	private static final String [] staticStrings= {"0G6", "8o", "+>$", "+P+", "> 5Z", "%+", "\n", "WzVa", "wv", "a", "sDn", "+p;", ")L5", "]aR", "3w0", "%=tVt", "-<p", "{-v", "yM", "(*SD&"};
+	/** Position/offset pairs */
+	private static final int [] staticPositions= {21, 0, 22, 4, 5, 2, 1, 1, 29, 2, 44, 2, 19, 2, 37, 1, 26, 2, 17, 2, 32, 2, 34, 2, 7, 1, 12, 1, 37, 4, 12, 4, 24, 2, 38, 2, 2, 3, 0, 2, 22, 2, 5, 2, 27, 2, 43, 2, 0, 1, 39, 3, 30, 3, 28, 0, 26, 1, 37, 1, 29, 1, 35, 4, 43, 1, 45, 1, 12, 1, 8, 4, 11, 0, 35, 0, 11, 4, 46, 4};
 
 	public static Test suite() {
 		return new TestSuite(UndoManagerTest.class);
@@ -121,6 +129,18 @@ public class UndoManagerTest extends TestCase {
 				final Position position= createRandomPositionPoisson(document.getLength());
 				final String string= createRandomStringPoisson(4);
 				document.replace(position.getOffset(), position.getLength(), string);
+			}
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	// repeatable test case for comparing success/failure among different tests
+	private void doRepeatableChange(IDocument document) {
+		assertTrue(staticPositions.length >= (2 * staticStrings.length));
+		try {
+			for (int i= 0; i < staticStrings.length; i++) {
+				document.replace(staticPositions[i*2], staticPositions[i*2+1], staticStrings[i]);
 			}
 		} catch (BadLocationException e) {
 			assertTrue(false);
@@ -245,6 +265,7 @@ public class UndoManagerTest extends TestCase {
 			fUndoManager.beginCompoundChange();		
 			doChange(document, RANDOM_REPLACE_COUNT);
 			fUndoManager.endCompoundChange();
+			assertTrue(fUndoManager.undoable());
 			for (int j= 0; j < NUMBER_ATOMIC_PER_COMPOUND; j++)
 				doChange(document, RANDOM_REPLACE_COUNT);
 		}
@@ -259,6 +280,98 @@ public class UndoManagerTest extends TestCase {
 		assertEquals(original, reverted);		
 	}
 
+	public void testRepeatableAccess() {
+		
+		final IDocument document= new Document(staticOriginal);
+		fTextViewer.setDocument(document);
+	
+		doRepeatableChange(document);
+		
+		assertTrue(fUndoManager.undoable());
+		while (fUndoManager.undoable())
+			fUndoManager.undo();
+			
+		final String reverted= document.get();
+
+		assertEquals(staticOriginal, reverted);
+	}
+	
+	public void testRepeatableAccessAsCompound() {
+		
+		final IDocument document= new Document(staticOriginal);
+		fTextViewer.setDocument(document);
+	
+		fUndoManager.beginCompoundChange();
+		doRepeatableChange(document);
+		fUndoManager.endCompoundChange();
+		
+		assertTrue(fUndoManager.undoable());
+		fUndoManager.undo();
+		// with a single compound, there should be only one undo
+		assertFalse(fUndoManager.undoable());
+			
+		final String reverted= document.get();
+
+		assertEquals(staticOriginal, reverted);
+	}
+	
+	public void testRepeatableAccessAsUnclosedCompound() {
+		
+		final IDocument document= new Document(staticOriginal);
+		fTextViewer.setDocument(document);
+	
+		fUndoManager.beginCompoundChange();
+		doRepeatableChange(document);
+		
+		assertTrue(fUndoManager.undoable());
+		while (fUndoManager.undoable())
+			fUndoManager.undo();
+			
+		final String reverted= document.get();
+
+		assertEquals(staticOriginal, reverted);
+	}
+	
+	public void testRepeatableAccessWithMixedAndEmptyCompound() {
+		
+		final int NUMBER_ATOMIC_PER_COMPOUND= 3;
+
+		final IDocument document= new Document(staticOriginal);
+		fTextViewer.setDocument(document);
+
+		fUndoManager.beginCompoundChange();		
+		doRepeatableChange(document);
+		fUndoManager.endCompoundChange();
+		assertTrue(fUndoManager.undoable());
+		
+		// insert an empty compound
+		fUndoManager.beginCompoundChange();
+		fUndoManager.endCompoundChange();
+			
+	    // insert the atomic changes
+		for (int j=0; j<NUMBER_ATOMIC_PER_COMPOUND; j++)
+				doRepeatableChange(document);
+
+		assertTrue(fUndoManager.undoable());
+		while (fUndoManager.undoable())
+			fUndoManager.undo();
+		assertTrue(!fUndoManager.undoable());
+			
+		final String reverted= document.get();
+
+		assertEquals(staticOriginal, reverted);		
+	}
+	
+	public void testDocumentStamp() {
+		final Document document= new Document(staticOriginal);
+		fTextViewer.setDocument(document);
+		long stamp= document.getModificationStamp();
+		doChange(document, 1);
+		fUndoManager.undo();
+		assertEquals(stamp, document.getModificationStamp());
+
+	}
+	
 	private static String createRandomString(int length) {
 		final StringBuffer buffer= new StringBuffer();
 		
