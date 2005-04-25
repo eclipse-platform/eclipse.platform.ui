@@ -174,12 +174,6 @@ public class PluginIndex {
 		return true;
 	}
 
-	/**
-	 * @param bundle
-	 * @param prefixedPath
-	 * @return true if index marked as complete (usually means all or most
-	 *         documents are translatable and translated)
-	 */
 	private boolean isComplete(Bundle bundle, IPath prefixedPath) {
 		URL url = Platform.find(bundle, prefixedPath.append(COMPLETE_FILENAME));
 		return url != null;
