@@ -1039,11 +1039,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
 					} else {
-						completeCommonPrefix();
-						fComputedProposals= fFilteredProposals;
-						createProposalSelector();
-						setProposals(fComputedProposals, false);
-						displayProposals();
+						if (completeCommonPrefix())
+							hide();
+						else {
+							fComputedProposals= fFilteredProposals;
+							createProposalSelector();
+							setProposals(fComputedProposals, false);
+							displayProposals();
+						}
 					}
 				}
 			});
@@ -1054,10 +1057,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Acts upon <code>fFilteredProposals</code>: if there is just one valid
 	 * proposal, it is inserted, otherwise, the common prefix of all proposals
-	 * is inserted into the document. If there is no common prefix, <code>false</code>
-	 * is returned.
-	 *
-	 * @return <code>true</code> if common prefix insertion was successful, <code>false</code> otherwise
+	 * is inserted into the document. If there is no common prefix, nothing
+	 * happens and <code>false</code> is returned.
+	 * 
+	 * @return <code>true</code> if a single proposal was inserted and the
+	 *         selector can be closed, <code>false</code> if more than once
+	 *         choice remain
 	 * @since 3.0
 	 */
 	private boolean completeCommonPrefix() {
@@ -1169,7 +1174,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fContentAssistSubjectControlAdapter.setSelectedRange(fFilterOffset + postfix.length(), 0);
 			fContentAssistSubjectControlAdapter.revealRange(fFilterOffset + postfix.length(), 0);
 
-			return postfix.length() > 0;
+			return false;
 		} catch (BadLocationException e) {
 			// ignore and return false
 			return false;
