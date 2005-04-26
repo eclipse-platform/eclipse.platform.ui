@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoableAffectedObjects;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
@@ -158,6 +158,7 @@ import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
+import org.eclipse.ui.operations.UndoableAffectedObjectsAdapter;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
@@ -3210,7 +3211,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (fVerticalRuler != null)
 			fVerticalRuler= null;
-		
+
 		IOperationHistory history= OperationHistoryFactory.getOperationHistory();
 		if (history != null) {
 			if (fNonLocalOperationApprover != null)
@@ -4198,30 +4199,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (undoContext != null) {
 			// Use actions provided by global undo/redo
 			
-			IActionBars actionBars= getEditorSite().getActionBars();
 			OperationHistoryActionHandler action;
-			
+
 			// Create the undo action
 			action= new UndoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 			setAction(ActionFactory.UNDO.getId(), action);
-			
+
 			// Create the redo action.
 			action= new RedoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			setAction(ActionFactory.REDO.getId(), action);
-			
+
 			// install operation approvers
 			IOperationHistory history= OperationHistoryFactory.getOperationHistory();
-			
+
 			// the first approver will prompt when operations affecting outside elements are to be undone or redone.
 			if (fNonLocalOperationApprover != null)
 				history.removeOperationApprover(fNonLocalOperationApprover);
 			fNonLocalOperationApprover= new NonLocalUndoUserApprover(undoContext, this);
 			history.addOperationApprover(fNonLocalOperationApprover);
-			
+
 			// the second approver will prompt from this editor when an undo is attempted on an operation
 			// and it is not the most recent operation in the editor.
 			if (fLinearUndoViolationApprover != null)
@@ -4690,12 +4690,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (Control.class.equals(required))
 			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
 
-		if (IUndoableAffectedObjects.class.equals(required)) {
-			return new IUndoableAffectedObjects() {
-				public Object [] getAffectedObjects() {
-					return new Object [] { getEditorInput() };
-				}
-			};
+		if (IAdvancedUndoableOperation.class.equals(required)) {
+			return new UndoableAffectedObjectsAdapter(new Object [] { getEditorInput() });
 		}
 
 		return super.getAdapter(required);
