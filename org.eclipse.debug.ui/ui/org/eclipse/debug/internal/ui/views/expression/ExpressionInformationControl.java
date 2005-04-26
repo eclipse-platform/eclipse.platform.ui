@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
@@ -149,7 +150,12 @@ public class ExpressionInformationControl extends PopupInformationControl {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
                         if (!valueDisplay.isDisposed()) {
-                            valueDisplay.setText(result);
+                        	String text = result;
+                        	int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+							if (max > 0 && result.length() > max) {
+								text = result.substring(0, max) + "..."; //$NON-NLS-1$
+							}
+                            valueDisplay.setText(text);
                         }
 					}
 				});
