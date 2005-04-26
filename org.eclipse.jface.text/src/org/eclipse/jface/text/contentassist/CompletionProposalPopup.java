@@ -1083,7 +1083,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		// whether to check for non-case compatible matches. This is initially true, and stays so
 		// as long as there are i) no case-sensitive matches and ii) all proposals share the same
-		// (altough not corresponding with the document contents) common prefix.
+		// (although not corresponding with the document contents) common prefix.
 		boolean checkWrongCase= true;
 		// the prefix of all case insensitive matches. This differs from the document
 		// contents and will be replaced.
