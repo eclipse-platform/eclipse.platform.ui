@@ -201,10 +201,10 @@ of the transfer engine functionality.
             &lt;mapping scope=&quot;instance&quot;&gt;
                 &lt;entry node=&quot;org.eclipse.ui&quot;&gt;
                    &lt;key name=&quot;showIntro,DOCK_PERSPECTIVE_BAR&quot;/&gt;
-                &lt;/node&gt;
+                &lt;/entry&gt;
                 &lt;entry node=&quot;org.eclipse.ui.workbench&quot;&gt;
                    &lt;key name=&quot;bogus,RUN_IN_BACKGROUND&quot;/&gt;
-                &lt;/node&gt;   
+                &lt;/entry&gt;   
                 &lt;entry node=&quot;org.eclipse.ui.ide&quot;/&gt;
                 &lt;entry node=&quot;org.eclipse.core.resources&quot;/&gt;
             &lt;/mapping&gt;
