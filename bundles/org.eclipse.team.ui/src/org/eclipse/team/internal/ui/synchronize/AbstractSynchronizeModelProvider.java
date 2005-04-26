@@ -484,8 +484,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		//	save visible expanded elements and selection
 	    final StructuredViewer viewer = getViewer();
 		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
-			final IResource[][] expandedResources = new IResource[1][1];
-			final IResource[][] selectedResources = new IResource[1][1];
+			final IResource[][] expandedResources = new IResource[1][0];
+			final IResource[][] selectedResources = new IResource[1][0];
 			viewer.getControl().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (viewer != null && !viewer.getControl().isDisposed()) {
