@@ -52,7 +52,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	static final RootPreferences root = new RootPreferences();
 	private static final Map defaultsRegistry = Collections.synchronizedMap(new HashMap());
 	private static final Map scopeRegistry = Collections.synchronizedMap(new HashMap());
-	private ListenerList modifyListeners = new ListenerList();
+	private ListenerList modifyListeners;
 	/**
 	 * The last time analysis was done to remove duplicate strings
 	 */
@@ -168,7 +168,6 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private PreferencesService() {
 		super();
 		initializeScopes();
-		initializeModifyListeners();
 	}
 
 	/*
@@ -1095,6 +1094,8 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 */
 	private IEclipsePreferences firePreApplyEvent(IEclipsePreferences tree) {
 		final IEclipsePreferences[] result = new IEclipsePreferences[] {tree};
+		if (modifyListeners == null)
+			initializeModifyListeners();
 		Object[] listeners = modifyListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final PreferenceModifyListener listener = (PreferenceModifyListener) listeners[i];
