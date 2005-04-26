@@ -985,9 +985,9 @@ public class DefaultOperationHistory implements IOperationHistory {
 	private void preNotifyOperation(IUndoableOperation operation,
 			OperationHistoryEvent event) {
 
-		if (operation instanceof IHistoryNotificationAwareOperation) {
+		if (operation instanceof IAdvancedUndoableOperation) {
 			try {
-				((IHistoryNotificationAwareOperation) operation)
+				((IAdvancedUndoableOperation) operation)
 						.aboutToNotify(event);
 			} catch (Exception e) {
 				handleNotificationException(e);

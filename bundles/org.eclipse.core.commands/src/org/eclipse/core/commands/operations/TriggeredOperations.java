@@ -17,6 +17,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * <p>
@@ -31,7 +33,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.1
  */
 public class TriggeredOperations extends AbstractOperation implements
-		ICompositeOperation, IUndoableAffectedObjects, IHistoryNotificationAwareOperation {
+		ICompositeOperation, IAdvancedUndoableOperation {
 
 	private IUndoableOperation triggeringOperation;
 
@@ -306,21 +308,54 @@ public class TriggeredOperations extends AbstractOperation implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableAffectedObjects#getAffectedObjects()
+	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#getAffectedObjects()
 	 */
 	public Object [] getAffectedObjects() {
-		if (triggeringOperation instanceof IUndoableAffectedObjects)
-			return ((IUndoableAffectedObjects)triggeringOperation).getAffectedObjects();
+		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+			return ((IAdvancedUndoableOperation)triggeringOperation).getAffectedObjects();
 		return null;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IHistoryNotificationAwareOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
+	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
 	 */
 	public void aboutToNotify(OperationHistoryEvent event) {
-		if (triggeringOperation instanceof IHistoryNotificationAwareOperation)
-			((IHistoryNotificationAwareOperation)triggeringOperation).aboutToNotify(event);
+		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+			((IAdvancedUndoableOperation)triggeringOperation).aboutToNotify(event);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) throws ExecutionException {
+		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+			try {
+				return ((IAdvancedUndoableOperation)triggeringOperation).computeUndoableStatus(monitor);
+			} catch (OperationCanceledException e) {
+				return Status.CANCEL_STATUS;
+			}
+		return Status.OK_STATUS;
+
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) throws ExecutionException {
+		if (triggeringOperation instanceof IAdvancedUndoableOperation)
+			try {
+				return ((IAdvancedUndoableOperation)triggeringOperation).computeRedoableStatus(monitor);
+			} catch (OperationCanceledException e) {
+				return Status.CANCEL_STATUS;
+			}
+		return Status.OK_STATUS;
+
+	}
+
 }
