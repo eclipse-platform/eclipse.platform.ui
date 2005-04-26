@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -252,13 +253,14 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 *            the event that has occurred.
 	 */
 	public void historyNotification(OperationHistoryEvent event) {
+		Display display = getWorkbenchWindow().getWorkbench().getDisplay();
 		switch (event.getEventType()) {
 		case OperationHistoryEvent.OPERATION_ADDED:
 		case OperationHistoryEvent.OPERATION_REMOVED:
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
-			if (event.getOperation().hasContext(undoContext)) {
-		        site.getShell().getDisplay().asyncExec(new Runnable() {
+			if (display != null && event.getOperation().hasContext(undoContext)) {
+		        display.asyncExec(new Runnable() {
 		            public void run() {
 		                update();
 		            }
@@ -266,8 +268,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 			break;
 		case OperationHistoryEvent.OPERATION_NOT_OK:
-			if (event.getOperation().hasContext(undoContext)) {
-		        site.getShell().getDisplay().asyncExec(new Runnable() {
+			if (display != null && event.getOperation().hasContext(undoContext)) {
+		        display.asyncExec(new Runnable() {
 		            public void run() {
 		                if (pruning)
 		                	flush();
@@ -278,8 +280,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
-			if (event.getOperation() == getOperation()){
-		        site.getShell().getDisplay().asyncExec(new Runnable() {
+			if (display != null && event.getOperation() == getOperation()){
+		        display.asyncExec(new Runnable() {
 		            public void run() {
 		                update();
 		            }
