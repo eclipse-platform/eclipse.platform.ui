@@ -11,6 +11,7 @@
 package org.eclipse.ltk.core.refactoring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -444,6 +445,23 @@ public class CompositeChange extends Change {
 	 */
 	protected Change createUndoChange(Change[] childUndos) {
 		return new CompositeChange(getName(), childUndos);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Object[] getAffectedObjects() {
+		if (fChanges.size() == 0)
+			return new Object[0];
+		List result= new ArrayList();
+		for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
+			Change change= (Change)iter.next();
+			Object[] affectedObjects= change.getAffectedObjects();
+			if (affectedObjects == null)
+				return null;
+			result.addAll(Arrays.asList(affectedObjects));
+		}
+		return result.toArray();
 	}
 	
 	/**

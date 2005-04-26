@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
-import org.eclipse.ltk.internal.core.refactoring.UndoManager;
+import org.eclipse.ltk.internal.core.refactoring.UndoManager2;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -107,6 +107,6 @@ public class RefactoringCore {
 	 * @return a new undo manager
 	 */
 	private static IUndoManager createUndoManager() {
-		return new UndoManager();
+		return new UndoManager2();
 	}
 }

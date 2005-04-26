@@ -52,7 +52,11 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String Refactoring_execute_label;
 	public static String Refactoring_undo_label;
 	public static String Refactoring_redo_label;
+	
+	public static String UndoableOperation2ChangeAdapter_no_undo_available;
+	public static String UndoableOperation2ChangeAdapter_no_redo_available;
 	public static String UndoableOperation2ChangeAdapter_error_message;
+	
 	public static String UndoManager2_no_change;
 
 	static {

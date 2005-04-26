@@ -128,6 +128,16 @@ public class UndoTextFileChange extends Change {
 	/**
 	 * {@inheritDoc}
 	 */
+	public Object[] getAffectedObjects() {
+		Object modifiedElement= getModifiedElement();
+		if (modifiedElement == null)
+			return null;
+		return new Object[] { modifiedElement };
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void initializeValidationData(IProgressMonitor pm) {
 		if (pm == null)
 			pm= new NullProgressMonitor();

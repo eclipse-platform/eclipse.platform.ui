@@ -142,6 +142,13 @@ public class TextFileChange extends TextChange {
 		return fFile;
 	}
 
+	public Object[] getAffectedObjects() {
+		Object modifiedElement= getModifiedElement();
+		if (modifiedElement == null)
+			return null;
+		return new Object[] { modifiedElement };
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

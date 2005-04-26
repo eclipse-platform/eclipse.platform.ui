@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.core.commands.operations.IHistoryNotificationAwareOperation;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
@@ -34,7 +36,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
-public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHistoryNotificationAwareOperation {
+public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation  {
 	
 	private String fLabel;
 	private Change fExecuteChange;
@@ -98,10 +100,12 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 		return fActiveChange.getName();
 	}
 
-	public boolean isComposite() {
-		return false;
+	public Object[] getAffectedObjects() {
+		if (fActiveChange == null)
+			return null;
+		return fActiveChange.getAffectedObjects();
 	}
-
+	
 	public void addContext(IUndoContext context) {
 		fContexts.add(context);
 	}
@@ -131,7 +135,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 		return fExecuteChange != null;
 	}
 
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			ExecuteResult result= executeChange(
 				getQuery(
@@ -146,7 +152,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			fExecuteChange= null;
 			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 		} catch (CoreException e) {
-			return e.getStatus();
+			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
 	}
 
@@ -154,7 +160,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 		return fUndoChange != null;
 	}
 
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			ExecuteResult result= executeChange(
 				getQuery(
@@ -169,7 +177,21 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			fUndoChange= null;
 			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 		} catch (CoreException e) {
-			return e.getStatus();
+			throw new ExecutionException(e.getStatus().getMessage(), e);
+		}
+	}
+	
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) throws ExecutionException {
+		if (fUndoChange == null)
+			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR, 
+				RefactoringCoreMessages.UndoableOperation2ChangeAdapter_no_undo_available, 
+				null);
+		try {
+			if (monitor == null)
+				monitor= new NullProgressMonitor();
+			return asStatus(fUndoChange.isValid(monitor));
+		} catch (CoreException e) {
+			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
 	}
 	
@@ -177,7 +199,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 		return fRedoChange != null;
 	}
 
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			ExecuteResult result= executeChange(
 				getQuery(
@@ -192,7 +216,21 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			fRedoChange= null;
 			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 		} catch (CoreException e) {
-			return e.getStatus();
+			throw new ExecutionException(e.getStatus().getMessage(), e);
+		}
+	}
+	
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) throws ExecutionException {
+		if (fRedoChange == null)
+			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR, 
+				RefactoringCoreMessages.UndoableOperation2ChangeAdapter_no_redo_available, 
+				null);
+		try {
+			if (monitor == null)
+				monitor= new NullProgressMonitor();
+			return asStatus(fRedoChange.isValid(monitor));
+		} catch (CoreException e) {
+			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
 	}
 	
@@ -226,7 +264,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 					result.validationStatus= fActiveChange.isValid(new SubProgressMonitor(monitor, 2));
 					if (result.validationStatus.hasFatalError()) {
 						query.stopped(result.validationStatus);
-						fActiveChange.dispose();
+						// fActiveChange.dispose();
 						return;
 					}
 					if (!result.validationStatus.isOK() && !query.proceed(result.validationStatus)) {
@@ -276,6 +314,14 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR, 
 				RefactoringCoreMessages.UndoableOperation2ChangeAdapter_error_message,  
 				null);
+		}
+	}
+	
+	private IStatus asStatus(RefactoringStatus status) {
+		if (status.isOK()) {
+			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		} else {
+			return asStatus(status.getEntryWithHighestSeverity());
 		}
 	}
 

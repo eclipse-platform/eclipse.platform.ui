@@ -244,6 +244,25 @@ public abstract class Change implements IAdaptable {
 	 * @return the element modified by this change
 	 */
 	public abstract Object getModifiedElement();
+
+	/**
+	 * Returns the elements affected by this change or <code>null</code> if
+	 * the affected elements cannot be determined. Returns an empty array
+	 * if the change doesn't modify any elements.
+	 * <p>
+	 * This default implementation returns <code>null</code> to indicate that
+	 * the affected elements are unknown. Subclasses should reimplement this method 
+	 * if they can compute the set of affected elements.
+	 * </p>
+	 * 
+	 * @return the elements affected by this change or <code>null</code> if
+	 *  the affected elements cannot be determined
+     *
+     * @since 3.1
+	 */
+	public Object[] getAffectedObjects() {
+		return null;
+	}
 	
 	/**
 	 * {@inheritDoc}
