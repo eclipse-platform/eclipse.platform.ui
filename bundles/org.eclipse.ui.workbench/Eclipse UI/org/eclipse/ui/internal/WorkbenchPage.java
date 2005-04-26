@@ -75,6 +75,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -730,7 +731,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             ILayoutContainer newPartContainer = getContainer(part);
             
             if (newPartContainer == activePartContainer) {
-                makeActive(getReference(part));
+                makeActive(ref);
             } else if (newPartContainer == activeEditorContainer) {
                 if (ref instanceof IEditorReference) {
                     makeActiveEditor((IEditorReference)ref);
@@ -945,7 +946,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         if (part instanceof IEditorPart) {
             IEditorReference ref = (IEditorReference) getReference(part);
-            return getEditorManager().containsEditor(ref);
+            return ref != null && getEditorManager().containsEditor(ref);
         }
         if (part instanceof IViewPart) {
             Perspective persp = getActivePerspective();
@@ -1057,12 +1058,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
     
     /**
-     * Makes the given editor active. Brings it to front if necessary. Permits null 
+     * Makes the given editor active. Brings it to front if necessary. Permits <code>null</code> 
      * (indicating that no editor is active).
      * 
      * @since 3.1 
      *
-     * @param ref
+     * @param ref the editor to make active, or <code>null</code> for no active editor
      */
     private void makeActiveEditor(IEditorReference ref) {
         if (ref == getActiveEditor()) {
@@ -1176,8 +1177,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage#closeEditor
      */
     public boolean closeEditor(IEditorPart editor, boolean save) {
-        
-        return closeEditors(new IEditorReference[] {(IEditorReference)getReference(editor)}, save);
+        IWorkbenchPartReference ref = getReference(editor);
+        if (ref instanceof IEditorReference) {
+        	return closeEditors(new IEditorReference[] {(IEditorReference) ref}, save);
+        }
+        return false;
     }
 
     /**
@@ -3230,10 +3234,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return activationList.getParts();
     }
 
+    /**
+     * Returns the reference to the given part, or <code>null</code> if it has no reference 
+     * (i.e. it is not a top-level part).
+     * 
+     * @param part the part
+     * @return the part's reference or <code>null</code>
+     */
     public IWorkbenchPartReference getReference(IWorkbenchPart part) {
-        if (part == null)
+        if (part == null) {
             return null;
-        PartPane pane = ((PartSite) part.getSite()).getPane();
+        }
+        IWorkbenchPartSite site = part.getSite();
+        if (!(site instanceof PartSite)) {
+        	return null;
+        }
+        PartPane pane = ((PartSite) site).getPane();
         if (pane instanceof MultiEditorInnerPane) {
             MultiEditorInnerPane innerPane = (MultiEditorInnerPane) pane;
             return innerPane.getParentPane().getPartReference();
@@ -3269,10 +3285,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         true));
             } else {
                 IWorkbenchPartReference ref = getReference(part);
-                if (ref == parts.get(parts.size() - 1))
-                    return;
-                parts.remove(ref);
-                parts.add(ref);
+                if (ref != null) {
+	                if (ref == parts.get(parts.size() - 1))
+	                    return;
+	                parts.remove(ref);
+	                parts.add(ref);
+                }
             }
         }
         
@@ -3424,10 +3442,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         /*
          * Retuns the index of the part within the activation list. The higher
-         * the index, the more recent it was used.
+         * the index, the more recently it was used.
          */
         int indexOf(IWorkbenchPart part) {
-            return parts.indexOf(getReference(part));
+        	IWorkbenchPartReference ref = getReference(part);
+        	if (ref == null) {
+        		return -1;
+        	}
+            return parts.indexOf(ref);
         }
 
         /*
