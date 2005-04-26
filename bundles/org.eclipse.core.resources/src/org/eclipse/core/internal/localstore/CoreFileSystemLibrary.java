@@ -23,7 +23,7 @@ import org.eclipse.osgi.util.NLS;
 public abstract class CoreFileSystemLibrary {
 
 	/** Indicates whether or not this FS is case sensitive */
-	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	private static boolean hasNatives = false;
 	private static boolean isUnicode = false;
 
