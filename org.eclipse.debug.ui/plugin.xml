@@ -756,6 +756,14 @@
                menubarPath="viewActions"
                id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
          </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.variables.MaxDetailsLengthAction"
+               helpContextId="detail_pane_max_length_action_context"
+               id="org.eclipse.debug.ui.variableViewActions.pulldown.MaxDetailsLength"
+               label="%DetailPaneMaxLengthAction.label"
+               menubarPath="viewActions"
+               style="push"
+               tooltip="%DetailPaneMaxLengthAction.tooltip"/>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"

@@ -193,6 +193,14 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_WAIT_FOR_BUILD= IDebugUIConstants.PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
+	
+	/**
+	 * Maximum number of characters to display in the details area of the variables
+	 * view, or 0 if unlimited.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String PREF_MAX_DETAIL_LENGTH = IDebugUIConstants.PLUGIN_ID + ".max_detail_length"; //$NON-NLS-1$
 	    
 	/**
 	 * Font for Memory View

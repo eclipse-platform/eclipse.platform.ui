@@ -528,6 +528,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			getEventHandler().refresh();
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
+		} else if (propertyName.equals(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
+			populateDetailPane();
 		}
 	}
 	
@@ -1100,11 +1102,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					// requested
 					if (value == fLastValueDetail) {
 						String insert = result;
-						int length = getDetailDocument().get().length();
+						int length = getDetailDocument().getLength();
 						if (length > 0) {
 							insert = "\n" + result; //$NON-NLS-1$
 						}
 						try {
+							int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+							if (max > 0 && insert.length() > max) {
+								insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
+							}
 							getDetailDocument().replace(length, 0,insert);
 						} catch (BadLocationException e) {
 							DebugUIPlugin.log(e);
