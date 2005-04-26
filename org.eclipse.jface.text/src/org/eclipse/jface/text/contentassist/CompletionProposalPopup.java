@@ -62,7 +62,7 @@ import org.eclipse.jface.text.TextUtilities;
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	/** Set to <code>true</code> to use a Table with SWT.VIRTUAL. */
-	private static final boolean USE_VIRTUAL= false;
+	private static final boolean USE_VIRTUAL= true;
 
 	private final class ProposalSelectionListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
