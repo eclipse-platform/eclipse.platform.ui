@@ -1039,14 +1039,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
 					} else {
-						if (completeCommonPrefix())
-							hide(); // TODO add some caching? for now: just throw away the completions
-						else {
-							fComputedProposals= fFilteredProposals;
-							createProposalSelector();
-							setProposals(fComputedProposals, false);
-							displayProposals();
-						}
+						completeCommonPrefix();
+						fComputedProposals= fFilteredProposals;
+						createProposalSelector();
+						setProposals(fComputedProposals, false);
+						displayProposals();
 					}
 				}
 			});
@@ -1067,7 +1064,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		// 0: insert single proposals
 		if (fFilteredProposals.length == 1) {
-			insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
+			insertProposal(fFilteredProposals[0], (char) 0, 0, fFilterOffset);
 			hide();
 			return true;
 		}
