@@ -96,8 +96,9 @@
 	</extension>
 	
 	<extension point="org.eclipse.ui.bindings">
+		<!-- COMMAND+H is "Hide" on carbon, so don't overwrite it -->
 		<key
-			sequence="M1+H"
+			sequence="Ctrl+H"
 			commandId="org.eclipse.search.ui.openSearchDialog"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
