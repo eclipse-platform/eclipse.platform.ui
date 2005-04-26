@@ -55,17 +55,30 @@ public class DeferredStackFrame extends DeferredDebugElementWorkbenchAdapter {
 	    	if (collector instanceof RemoteVariableContentManager.VariableCollector) {
 	    		RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
 			    for (int i = 0; i < children.length; i++) {
-					IVariable child = (IVariable) children[i];
-					try {
-						IValue value = child.getValue();
-						remoteCollector.setHasChildren(child, value.hasVariables());
-					} catch (DebugException e) {
-					}
+			    	Object child = children[i];
+			    	remoteCollector.setHasChildren(child, hasChildren(child));
 				}	    	
 	    	}
 	        collector.add(children, monitor);
 	    }
 	    collector.done();
 	}	
+	
+	/**
+	 * Returns whether the given child has children.
+	 * Subclasses should override for different type of children.
+	 * 
+	 * @param child child fetched from getChildren()
+	 * @return whether the given child has children
+	 */
+	protected boolean hasChildren(Object child) {
+		IVariable variable = (IVariable) child;
+		try {
+			IValue value = variable.getValue();
+			return value.hasVariables();
+		} catch (DebugException e) {
+		}
+		return false;
+	}
 
 }
