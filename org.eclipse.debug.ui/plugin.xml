@@ -1543,6 +1543,11 @@
             class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"
             id="org.eclipse.debug.ui.properties.process">
       </page>
+      <page
+            class="org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPropertiesPage"
+            id="org.eclipse.debug.ui.properties.tablerendering"
+            name="%TableRenderingInfo.label"
+            objectClass="org.eclipse.debug.ui.memory.AbstractTableRendering"/>
    </extension>
 <!-- commands and their bindings
 NOTE: 

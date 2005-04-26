@@ -313,7 +313,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 			try {
 				if (((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
 				{
-					memoryBlockLabel += " <0x" + ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16) + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+					memoryBlockLabel += " <0x" + ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16).toUpperCase() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} catch (DebugException e) {
 				// return whatever we have for label
@@ -323,7 +323,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		else
 		{
 			long address = getMemoryBlock().getStartAddress();
-			memoryBlockLabel = Long.toHexString(address);
+			memoryBlockLabel = Long.toHexString(address).toUpperCase();
 		}
 		return memoryBlockLabel;
 	}

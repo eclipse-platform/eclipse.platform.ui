@@ -45,6 +45,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
@@ -86,6 +87,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.PageBook;
 
 /**
@@ -179,9 +182,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private MouseAdapter fCursorMouseListener;
 	private KeyAdapter fEditorKeyListener;
 	private SelectionAdapter fCursorSelectionListener;
+	private IWorkbenchAdapter fWorkbenchAdapter;
 	
 	private boolean fIsShowAddressColumn = true;
 	private SelectionAdapter fScrollbarSelectionListener;
+
+	private PropertyDialogAction fPropertiesAction;
 	
 	private class EventHandleLock
 	{
@@ -1355,6 +1361,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		menu.add(new Separator());
 		menu.add(fCopyToClipboardAction);
 		menu.add(fPrintViewTabAction);
+		if (fPropertiesAction != null)
+		{
+			menu.add(new Separator());
+			menu.add(fPropertiesAction);
+		}
 	}
 	
 	/**
@@ -1436,7 +1447,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				if (showAddress && ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress() != null)
 				{	
 					fLabel += " : 0x"; //$NON-NLS-1$
-					fLabel += ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16);
+					fLabel += ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress().toString(16).toUpperCase();
 				}
 			} catch (DebugException e) {
 				// do nothing, the label will not show the address
@@ -1445,7 +1456,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		else
 		{
 			long address = getMemoryBlock().getStartAddress();
-			fLabel = Long.toHexString(address);
+			fLabel = Long.toHexString(address).toUpperCase();
 		}
 		
 		String preName = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId()).getLabel();
@@ -1883,6 +1894,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		fReformatAction = new ReformatAction(this);
 		fToggleAddressColumnAction = new ToggleAddressColumnAction();
+		
+		IMemoryRenderingSite site = getMemoryRenderingContainer().getMemoryRenderingSite();
+		if (site.getSite().getSelectionProvider() != null)
+		{
+			fPropertiesAction = new PropertyDialogAction(site.getSite(),site.getSite().getSelectionProvider()); 
+		}
 	}
 	
 	/**
@@ -2541,8 +2558,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		TableItem rowItem = fTableCursor.getRow();
 		int row = fTableViewer.getTable().indexOf(rowItem);
 		
+		if (col == 0)
+		{
+			return rowItem.getText(0);
+		}
+		
 		// check precondition
-		if (col == 0 || col > getBytesPerLine()/getBytesPerColumn())
+		if (col > getBytesPerLine()/getBytesPerColumn())
 		{
 			return ""; //$NON-NLS-1$
 		}
@@ -2644,7 +2666,37 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		if (adapter == IMemoryBlockTablePresentation.class)
 			return getTablePresentationAdapter();
 		
+		if (adapter == IWorkbenchAdapter.class)
+		{
+			// needed workbench adapter to fill the title of property page
+			if (fWorkbenchAdapter == null) {
+				fWorkbenchAdapter = new IWorkbenchAdapter() {
+					public Object[] getChildren(Object o) {
+						return new Object[0];
+					}
+
+					public ImageDescriptor getImageDescriptor(Object object) {
+						return null;
+					}
+
+					public String getLabel(Object o) {
+						return getInstance().getLabel();
+					}
+
+					public Object getParent(Object o) {
+						return null;
+					}
+				};
+			}
+			return fWorkbenchAdapter;
+		}
+		
 		return super.getAdapter(adapter);
+	}
+	
+	private AbstractTableRendering getInstance()
+	{
+		return this;
 	}
 	
 	private boolean hasCustomizedDecorations()

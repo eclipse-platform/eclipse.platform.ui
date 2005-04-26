@@ -173,8 +173,38 @@ public class DebugUIMessages extends NLS {
 	public static String SetPaddedStringDialog_3;
 	public static String SetPaddedStringDialog_4;
 
+	public static String TableRenderingPropertiesPage_0;
+	public static String TableRenderingPropertiesPage_1;
+	public static String TableRenderingPropertiesPage_2;
+	public static String TableRenderingPropertiesPage_3;
+	public static String TableRenderingPropertiesPage_4;
+	public static String TableRenderingPropertiesPage_5;
+	public static String TableRenderingPropertiesPage_6;
+	public static String TableRenderingPropertiesPage_7;
+	public static String TableRenderingPropertiesPage_8;
+	public static String TableRenderingPropertiesPage_9;
+	public static String TableRenderingPropertiesPage_10;
+	public static String TableRenderingPropertiesPage_11;
+	public static String TableRenderingPropertiesPage_12;
+	public static String TableRenderingPropertiesPage_13;
+	public static String TableRenderingPropertiesPage_14;
+	public static String TableRenderingPropertiesPage_15;
+	public static String TableRenderingPropertiesPage_16;
+	public static String TableRenderingPropertiesPage_17;
+	public static String TableRenderingPropertiesPage_18;
+	public static String TableRenderingPropertiesPage_19;
+	public static String TableRenderingPropertiesPage_20;
+	public static String TableRenderingPropertiesPage_21;
+	public static String TableRenderingPropertiesPage_22;
+	public static String TableRenderingPropertiesPage_23;
+	public static String TableRenderingPropertiesPage_24;
+	public static String TableRenderingPropertiesPage_25;
+	public static String TableRenderingPropertiesPage_26;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
+
+
 }

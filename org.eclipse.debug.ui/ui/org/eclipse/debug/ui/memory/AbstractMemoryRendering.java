@@ -195,7 +195,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 				if (fVisible && ((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress() != null)
 				{	
 					label.append(" : 0x"); //$NON-NLS-1$
-					label.append(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress().toString(16));
+					label.append(((IMemoryBlockExtension)fMemoryBlock).getBigBaseAddress().toString(16).toUpperCase());
 				}
 			} catch (DebugException e) {
 				// do nothing... the label will not show memory block's address
@@ -204,7 +204,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		else
 		{
 			long address = fMemoryBlock.getStartAddress();
-			label.append(Long.toHexString(address));
+			label.append(Long.toHexString(address).toUpperCase());
 		}
 		
 		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId());

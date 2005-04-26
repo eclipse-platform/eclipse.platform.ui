@@ -168,7 +168,14 @@ public class TableRenderingLine extends Object {
 		
 		// if the string representation is the same, no need to compare
 		if (oldData.getRawMemoryString().equals(getRawMemoryString()))
+		{
+			for (int i=0; i<fBytes.length; i++)
+			{
+				// set history as known if we have old data for this line
+				fBytes[i].setHistoryKnown(true);
+			}
 			return;
+		}
 		
 		MemoryByte[] oldMemory = oldData.getBytes();
 		
