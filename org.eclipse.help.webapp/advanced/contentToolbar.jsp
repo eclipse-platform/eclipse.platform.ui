@@ -22,7 +22,7 @@
 		backImage = "back.gif";
 	}
 	boolean isBookmarkAction = prefs.isBookmarksView() 
-		|| prefs.isBookmarksAction() && data.isIE(); // for infocenter, add to favorites supported on IE
+		|| prefs.isBookmarksAction() && data.isIE() && !data.isOpera(); // for infocenter, add to favorites supported on IE
 	String bookmarkButtonState = isBookmarkAction?"off":"hidden";
 	String bookmarkAction = RequestData.MODE_INFOCENTER==data.getMode()?"bookmarkInfocenterPage":"bookmarkPage";
 %>
