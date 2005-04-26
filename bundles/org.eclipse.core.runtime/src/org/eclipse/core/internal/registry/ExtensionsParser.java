@@ -299,9 +299,9 @@ public class ExtensionsParser extends DefaultHandler {
 			internalError(NLS.bind(Messages.parse_unknownTopElement, elementName));
 			return;
 		}
-		// new manifests should have the plugin (not fragment) element empty
+		// new manifests should have the plugin (or fragment) element empty
 		// in compatibility mode, any extraneous elements will be silently ignored
-		compatibilityMode = !(elementName.equals(PLUGIN) && attributes.getLength() == 0);
+		compatibilityMode = attributes.getLength() > 0;
 		stateStack.push(new Integer(BUNDLE_STATE));
 		objectStack.push(namespace);
 	}
