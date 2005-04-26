@@ -55,9 +55,9 @@ public class XMLWriter extends PrintWriter {
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
 		if (parameters != null)
-			for (Enumeration e = Collections.enumeration(parameters.keySet()); e.hasMoreElements();) {
+			for (Iterator it = parameters.keySet().iterator(); it.hasNext();) {
 				sb.append(" "); //$NON-NLS-1$
-				String key = (String) e.nextElement();
+				String key = (String) it.next();
 				sb.append(key);
 				sb.append("=\""); //$NON-NLS-1$
 				sb.append(getEscaped(String.valueOf(parameters.get(key))));
