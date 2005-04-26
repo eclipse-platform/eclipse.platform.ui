@@ -334,8 +334,6 @@ public abstract class WorkbenchAdvisor {
     }
 
     /**
-     * EXPERIMENTAL -- May change before 3.1 ships.
-     * 
      * Creates a new workbench window advisor for configuring a new workbench window
      * via the given workbench window configurer.
      * Clients should override to provide their own window configurer.
