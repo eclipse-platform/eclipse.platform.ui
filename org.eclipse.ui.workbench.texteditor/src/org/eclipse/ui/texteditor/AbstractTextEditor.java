@@ -3201,6 +3201,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (fVerticalRuler != null)
 			fVerticalRuler= null;
+		
+		IOperationHistory history= OperationHistoryFactory.getOperationHistory();
+		if (history != null) {
+			if (fNonLocalOperationApprover != null)
+				history.removeOperationApprover(fNonLocalOperationApprover);
+			if (fLinearUndoViolationApprover != null)
+				history.removeOperationApprover(fLinearUndoViolationApprover);
+		}
+		fNonLocalOperationApprover= null;
+		fLinearUndoViolationApprover= null;
 
 		super.setInput(null);
 
@@ -3960,7 +3970,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				element= (IConfigurationElement)actions.get(0);
 
 			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
-			final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
+			final String ATT_DEFINITION_ID= "definitionId";//$NON-NLS-1$
 			String defId= element.getAttribute(ATT_DEFINITION_ID);
 			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$
 		}
@@ -4178,41 +4188,38 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (undoContext != null) {
 			// Use actions provided by global undo/redo
+			
+			IActionBars actionBars= getEditorSite().getActionBars();
+			OperationHistoryActionHandler action;
+			
+			// Create the undo action
+			action= new UndoActionHandler(getEditorSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
+			setAction(ActionFactory.UNDO.getId(), action);
+			
+			// Create the redo action.
+			action= new RedoActionHandler(getEditorSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
+			setAction(ActionFactory.REDO.getId(), action);
+			
+			// install operation approvers
+			IOperationHistory history= OperationHistoryFactory.getOperationHistory();
+			
+			// the first approver will prompt when operations affecting outside elements are to be undone or redone.
+			if (fNonLocalOperationApprover != null)
+				history.removeOperationApprover(fNonLocalOperationApprover);
+			fNonLocalOperationApprover= new NonLocalUndoUserApprover(undoContext, this);
+			history.addOperationApprover(fNonLocalOperationApprover);
+			
+			// the second approver will prompt from this editor when an undo is attempted on an operation
+			// and it is not the most recent operation in the editor.
+			if (fLinearUndoViolationApprover != null)
+				history.removeOperationApprover(fLinearUndoViolationApprover);
+			fLinearUndoViolationApprover= new LinearUndoViolationUserApprover(undoContext, this);
+			history.addOperationApprover(fLinearUndoViolationApprover);
 
-
-			if (undoContext != null) {
-				IActionBars actionBars= getEditorSite().getActionBars();
-				OperationHistoryActionHandler action;
-
-				// Create the undo action
-				action= new UndoActionHandler(getEditorSite(), undoContext);
-				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-				actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
-				setAction(ActionFactory.UNDO.getId(), action);
-
-				// Create the redo action.
-				action= new RedoActionHandler(getEditorSite(), undoContext);
-				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-				actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
-				setAction(ActionFactory.REDO.getId(), action);
-
-				// install operation approvers
-				IOperationHistory history = OperationHistoryFactory.getOperationHistory();
-
-				// the first approver will prompt when operations affecting outside elements are to be undone or redone.
-				if (fNonLocalOperationApprover != null)
-					history.removeOperationApprover(fNonLocalOperationApprover);
-				fNonLocalOperationApprover = new NonLocalUndoUserApprover(undoContext, this);
-				history.addOperationApprover(fNonLocalOperationApprover);
-
-				// the second approver will prompt from this editor when an undo is attempted on an operation
-				// and it is not the most recent operation in the editor.
-				if (fLinearUndoViolationApprover != null)
-					history.removeOperationApprover(fLinearUndoViolationApprover);
-				fLinearUndoViolationApprover = new LinearUndoViolationUserApprover(undoContext, this);
-				history.addOperationApprover(fLinearUndoViolationApprover);
-
-			}
 		} else {
 			ResourceAction action;
 
