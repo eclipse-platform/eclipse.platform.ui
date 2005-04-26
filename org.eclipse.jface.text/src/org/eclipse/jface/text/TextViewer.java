@@ -995,7 +995,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @since 2.1
 	 */
-	protected static class TextHoverKey {
+	protected class TextHoverKey {
 
 		/** The content type this key belongs to */
 		private String fContentType;
