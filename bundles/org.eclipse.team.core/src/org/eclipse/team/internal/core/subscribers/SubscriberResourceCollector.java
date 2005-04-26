@@ -128,7 +128,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
 			        || (delta.getFlags() & IResourceDelta.OPEN) != 0 && !((IProject) resource).isOpen() /* closed project */
 			        || !isAncestorOfRoot(resource, roots)) /* not within subscriber roots */ {
 				// If the project has any entries in the sync set, remove them
-				if (hasMembers(resource)) {
+				if (hasMembers(resource, roots)) {
 					remove(resource);
 				}
 			}
@@ -184,8 +184,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
      * @return whether the resource has children that are being considered
      * by this handler.
      */
-    protected boolean hasMembers(IResource resource) {
-        IResource[] roots = getRoots();
+    protected boolean hasMembers(IResource resource, IResource[] roots) {
         for (int i = 0; i < roots.length; i++) {
             IResource root = roots[i];
             if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
