@@ -20,7 +20,7 @@ import org.eclipse.team.internal.core.Assert;
  */
 public class UnchangedResourceModelElement extends SynchronizeModelElement implements IAdaptable {
 
-	private IResource resource;
+	private final IResource resource;
 
 	public UnchangedResourceModelElement(IDiffContainer parent, IResource resource) {
 		super(parent);
