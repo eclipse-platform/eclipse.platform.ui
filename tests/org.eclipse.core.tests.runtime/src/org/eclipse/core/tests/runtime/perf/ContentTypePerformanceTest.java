@@ -33,10 +33,10 @@ import org.osgi.framework.BundleException;
 public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
+	private static final String DEFAULT_NAME = "file_" + ContentTypePerformanceTest.class.getName();
 	private static final int ELEMENTS_PER_LEVEL = 2;
 	private static final int NUMBER_OF_LEVELS = 10;
-	private static final int NUMBER_OF_ELEMENTS = computeTotalTypes(NUMBER_OF_LEVELS, ELEMENTS_PER_LEVEL);
-
+	private static final int NUMBER_OF_ELEMENTS = computeTotalTypes(NUMBER_OF_LEVELS, ELEMENTS_PER_LEVEL);	
 	private static final String TEST_DATA_ID = "org.eclipse.core.tests.runtime.contenttype.perf.testdata";
 
 	private static int computeTotalTypes(int levels, int elementsPerLevel) {
@@ -82,7 +82,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		int local = nodesPerLevel;
 		for (int i = 1; i < nodesPerLevel + 1; i++) {
 			String id = "performance" + (created + i);
-			String definition = createContentType(id, baseTypeId, null, baseTypeId == null ? new String[] {id} : null, NaySayerContentDescriber.class.getName());
+			String definition = createContentType(id, baseTypeId, new String[] {DEFAULT_NAME}, baseTypeId == null ? new String[] {id} : null, NaySayerContentDescriber.class.getName());
 			writer.write(definition);
 			writer.write(System.getProperty("line.separator"));
 			local += createContentTypes(writer, id, created + local, numberOfLevels - 1, nodesPerLevel);
@@ -103,6 +103,8 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 		TestSuite singleRun = new PerformanceSessionTestSuite(PI_RUNTIME_TESTS, 1, "singleSessionTests");
 		singleRun.addTest(new ContentTypePerformanceTest("testContentMatching"));
+		singleRun.addTest(new ContentTypePerformanceTest("testContentTXTMatching"));
+		singleRun.addTest(new ContentTypePerformanceTest("testContentXMLMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testNameMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testIsKindOf"));
 		suite.addTest(singleRun);
@@ -128,6 +130,24 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			if (all[i].getId().startsWith(namespace))
 				count++;
 		return count;
+	}
+
+	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis and name*/
+	public void doTestContentMatching(final String name, final String contents, int outer, int inner) {
+		// warm up preference service		
+		loadPreferences();
+		// warm up content type registry
+		final IContentTypeManager manager = loadContentTypeManager();
+		loadDescribers();
+		new PerformanceTestRunner() {
+			protected void test() {
+				try {
+					manager.findContentTypesFor(getContents(contents), name);
+				} catch (IOException e) {
+					fail("2.0", e);
+				}
+			}
+		}.run(this, outer, inner);
 	}
 
 	private Bundle installContentTypes(String tag, int numberOfLevels, int nodesPerLevel) {
@@ -201,27 +221,15 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis */
 	public void testContentMatching() {
-		// warm up preference service		
-		loadPreferences();
-		// warm up content type registry
-		final IContentTypeManager manager = loadContentTypeManager();
-		loadDescribers();
-		new PerformanceTestRunner() {
-			protected void test() {
-				IContentType[] associated = null;
-				try {
-					associated = manager.findContentTypesFor(getRandomContents(), null);
-				} catch (IOException e) {
-					fail("2.0", e);
-				}
-				// we know at least the text content type should be there
-				assertTrue("2.1", associated.length >= 1);
-				for (int i = 0; i < associated.length; i++)
-					if (associated[i].getId().equals(IContentTypeManager.CT_TEXT))
-						return;
-				fail("2.2");
-			}
-		}.run(this, 10, 100);
+		doTestContentMatching(DEFAULT_NAME, getRandomString(), 10, 1);
+	}
+
+	public void testContentTXTMatching() {
+		doTestContentMatching(getRandomString(), "foo.txt", 1, 200000);
+	}
+
+	public void testContentXMLMatching() {
+		doTestContentMatching(getRandomString(), "foo.xml", 1, 100000);
 	}
 
 	public void testDoSetUp() {
