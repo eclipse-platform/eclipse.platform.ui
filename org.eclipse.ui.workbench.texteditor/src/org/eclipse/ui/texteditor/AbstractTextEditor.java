@@ -4195,13 +4195,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// Create the undo action
 			action= new UndoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
+			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 			setAction(ActionFactory.UNDO.getId(), action);
 			
 			// Create the redo action.
 			action= new RedoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
+			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			setAction(ActionFactory.REDO.getId(), action);
 			
 			// install operation approvers
