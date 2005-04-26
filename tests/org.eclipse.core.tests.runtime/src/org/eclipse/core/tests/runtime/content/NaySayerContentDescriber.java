@@ -23,11 +23,17 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
  */
 public class NaySayerContentDescriber implements ITextContentDescriber {
 
-	public int describe(InputStream contents, IContentDescription description) {
+	public int describe(InputStream contents, IContentDescription description) throws IOException {
+		for (int i = 0;contents.read() != -1 && i < 2048; i++) {
+			// read some data so performance tests are more reallistic
+		}
 		return INVALID;
 	}
 
-	public int describe(Reader contents, IContentDescription description) {
+	public int describe(Reader contents, IContentDescription description) throws IOException {
+		for (int i = 0;contents.read() != -1 && i < 2048; i++) {
+			// read some data so performance tests are more reallistic
+		}		
 		return INVALID;
 	}
 
