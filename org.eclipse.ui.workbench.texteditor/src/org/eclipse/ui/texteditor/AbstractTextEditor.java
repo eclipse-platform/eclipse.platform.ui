@@ -133,6 +133,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
@@ -3036,6 +3037,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 
 			doSetInput(input);
+
+			/*
+			 * The following bugs explain why we fire this property change:
+			 * 	https://bugs.eclipse.org/bugs/show_bug.cgi?id=90283
+			 * 	https://bugs.eclipse.org/bugs/show_bug.cgi?id=92049
+			 * 	https://bugs.eclipse.org/bugs/show_bug.cgi?id=92286
+			 */
+			firePropertyChange(IEditorPart.PROP_INPUT);
 
 		} catch (CoreException x) {
 			String title= EditorMessages.Editor_error_setinput_title;
