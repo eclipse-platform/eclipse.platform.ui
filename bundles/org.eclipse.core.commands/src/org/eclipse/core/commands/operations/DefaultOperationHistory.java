@@ -1058,19 +1058,6 @@ public class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	/*
-	 * Remove the specified operation from the undo and redo history
-	 */
-	private void remove(IUndoableOperation operation) {
-		if (undoList.contains(operation)) {
-			undoList.remove(operation);
-			internalRemove(operation);
-		} else if (redoList.contains(operation)) {
-			redoList.remove(operation);
-			internalRemove(operation);
-		}
-	}
-
-	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#removeOperationApprover(org.eclipse.core.commands.operations.IOperationApprover)
