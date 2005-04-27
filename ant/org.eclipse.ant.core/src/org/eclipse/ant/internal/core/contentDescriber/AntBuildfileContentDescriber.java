@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.core;
+package org.eclipse.ant.internal.core.contentDescriber;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,13 +16,10 @@ import java.io.Reader;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.core.internal.content.XMLContentDescriber;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,7 +34,7 @@ import org.xml.sax.SAXException;
  *      else:
  *          returns INDETERMINATE
  * else
- *      returns INVALID
+ *      returns INDETERMINATE
  * </p>
  * 
  * @since 3.1
@@ -59,15 +56,14 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 		AntHandler antHandler = new AntHandler();
 		try {
 			if (!antHandler.parseContents(contents)) {
-				return INVALID;
+				return INDETERMINATE;
             }
 		} catch (SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
-			return INVALID;
+			return INDETERMINATE;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
-			String message = InternalCoreAntMessages.AntBuildfileContentDescriber_0; //$NON-NLS-1$
-            AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, 0, message, e));
+			String message = "Internal Error: XML parser configuration error during content description for Ant buildfiles"; //$NON-NLS-1$
 			throw new RuntimeException(message);
 		}
 		// Check to see if we matched our criteria.
@@ -80,7 +76,7 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
             return INDETERMINATE;
         } 
 			
-		return INVALID;
+		return INDETERMINATE;
 	}
 
 	/* (Intentionally not included in javadoc)

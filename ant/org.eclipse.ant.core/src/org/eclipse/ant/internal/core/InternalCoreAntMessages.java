@@ -27,7 +27,6 @@ public class InternalCoreAntMessages extends NLS {
 	public static String AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__2;
 	public static String AntRunner_Build_Failed__3;
 	public static String AntRunner_Already_in_progess;
-	public static String AntBuildfileContentDescriber_0;
 
 	static {
 		// load message values from bundle file

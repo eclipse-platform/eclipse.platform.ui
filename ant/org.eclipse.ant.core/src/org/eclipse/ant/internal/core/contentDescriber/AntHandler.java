@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.core;
+package org.eclipse.ant.internal.core.contentDescriber;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -17,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.osgi.framework.ServiceReference;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -101,14 +100,7 @@ public final class AntHandler extends DefaultHandler {
             if (fFactory != null) {
                 return fFactory;
             }
-            ServiceReference parserReference = AntCoreUtil.getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
-            if (parserReference == null) {
-                return null;
-            }
-            fFactory = (SAXParserFactory) AntCoreUtil.getBundleContext().getService(parserReference);
-            if (fFactory == null) {
-                return null;
-            }
+            fFactory= SAXParserFactory.newInstance();
             fFactory.setNamespaceAware(true);
         }
         return fFactory;
