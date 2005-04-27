@@ -17,7 +17,10 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
 
 /**
  * Extensions to the <code>IPersistableSourceLocator</code> interface.
- * 
+ * <p>
+ * Clients may optionally implement this interface when implementing an
+ * {@link org.eclipse.debug.core.model.IPersistableSourceLocator}.
+ * </p>
  * @see org.eclipse.debug.core.model.IPersistableSourceLocator
  * @since 3.0 
  */

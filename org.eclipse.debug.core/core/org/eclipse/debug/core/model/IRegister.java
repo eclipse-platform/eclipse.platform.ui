@@ -17,7 +17,9 @@ import org.eclipse.debug.core.DebugException;
  * A register is a special kind of variable that is contained
  * in a register group. Each register has a name and a value.
  * Not all debug architectures provide access to registers.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 2.0
  */
 public interface IRegister extends IVariable {

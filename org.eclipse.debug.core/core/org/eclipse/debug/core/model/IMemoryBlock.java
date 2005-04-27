@@ -18,7 +18,9 @@ import org.eclipse.debug.core.DebugException;
  * A memory block is represented by a starting memory address
  * and a length. Not all debug architectures support the retrieval
  * of memory blocks.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see IMemoryBlockRetrieval
  * @since 2.0
  */

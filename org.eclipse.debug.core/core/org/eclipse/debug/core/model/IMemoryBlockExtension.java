@@ -15,7 +15,7 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * Extensions to (@link org.eclipse.debug.core.model.IMemoryBlock}. Allows
+ * Extensions to {@link org.eclipse.debug.core.model.IMemoryBlock}. Allows
  * for bytes to be accessed in a larger address space, and for state information
  * to be provided for each byte. 
  * <p>

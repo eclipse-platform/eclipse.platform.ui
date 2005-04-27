@@ -20,7 +20,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
- * A source container that computers the default source lookup path
+ * A source container that computer the default source lookup path
  * for a launch configuration on each launch using a launch configuration's
  * associated source path computer.
  * <p>

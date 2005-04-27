@@ -19,7 +19,9 @@ import org.eclipse.debug.core.DebugException;
  * provide access to registers, and registers are often
  * grouped logically. For example, a floating point
  * register group. 
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 2.0
  */
 public interface IRegisterGroup extends IDebugElement {

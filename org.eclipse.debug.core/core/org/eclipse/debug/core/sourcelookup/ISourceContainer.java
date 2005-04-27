@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.IAdaptable;
  * source director is disposed. Clients creating source containers for other
  * purposes must dispose of containers themselves.
  * </p>
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see ISourceLookupParticipant
  * @see ISourceContainerType
  * @since 3.0
