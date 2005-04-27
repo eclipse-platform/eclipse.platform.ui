@@ -114,8 +114,7 @@ public class WorkbenchSiteProgressService implements
                 }
                 site.getPane().setBusy(busy);
                 IWorkbenchPart part = site.getPart();
-                // TODO: should not access WorkbenchPart directly -- IWorkbenchPart defines the API
-                if (part instanceof WorkbenchPart)
+                 if (part instanceof WorkbenchPart)
                     ((WorkbenchPart) part).showBusy(busy);
             }
             return Status.OK_STATUS;
