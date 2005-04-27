@@ -272,6 +272,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 *
 	 * @return the offset of the range in the document that will be replaced by
 	 *         applying this template
+	 * @since 3.1
 	 */
 	protected final int getReplaceOffset() {
 		int start;
@@ -290,6 +291,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 *
 	 * @return the end offset of the range in the document that will be replaced
 	 *         by applying this template
+	 * @since 3.1
 	 */
 	protected final int getReplaceEndOffset() {
 		int end;
