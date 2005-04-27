@@ -18,12 +18,12 @@ import org.eclipse.debug.core.model.IValue;
  * <p>
  * The following is an example of a logical structure provider extension:
  * <pre>
- *  <extension point="org.eclipse.debug.core.logicalStructureProviders">
- *   <logicalStructureProvider
- *    class="com.example.ExampleLogicalStructureProvider"
- *    modelIdentifier="com.example.debug.model">
- *   </logicalStructureProvider>
- * </extension>
+ *  &lt;extension point=&quot;org.eclipse.debug.core.logicalStructureProviders&quot;&gt;
+ *   &lt;logicalStructureProvider
+ *    class=&quot;com.example.ExampleLogicalStructureProvider&quot;
+ *    modelIdentifier=&quot;com.example.debug.model&quot;&gt;
+ *   &lt;/logicalStructureProvider&gt;
+ * &lt;/extension&gt;
  * </pre>
  * </p>
  * In the example above, the specified logical structure provider will be consulted for
