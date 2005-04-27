@@ -84,8 +84,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		preferences.setValue(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, false);
 		assertTrue("2.1", workspace.getDescription().getBuildOrder() != null);
 
-		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x:y,z:z");
-		List expectedList = Arrays.asList(new String[] {"x", "y,z", "z"});
+		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "x/y,:z/z");
+		List expectedList = Arrays.asList(new String[] {"x", "y,:z", "z"});
 		List actualList = Arrays.asList(workspace.getDescription().getBuildOrder());
 		assertEquals("2.2", expectedList, actualList);
 

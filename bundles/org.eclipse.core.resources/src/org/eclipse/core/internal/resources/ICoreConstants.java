@@ -70,6 +70,20 @@ public interface ICoreConstants {
 	static final int M_CONTENT_CACHE = M_NO_CONTENT_DESCRIPTION | M_DEFAULT_CONTENT_DESCRIPTION;
 	
 	static final int NULL_FLAG = -1;
+	
+	/**
+	 * A private preference stored in a preference node to indicate the preference
+	 * version that is used.  This version identifier is used to handle preference
+	 * migration when old preferences are loaded.
+	 */
+	public static final String PREF_VERSION_KEY = "version"; //$NON-NLS-1$
+
+	/**
+	 * A private preference stored in a preference node to indicate the preference
+	 * version that is used.  This version identifier is used to handle preference
+	 * migration when old preferences are loaded.
+	 */
+	public static final String PREF_VERSION = "1"; //$NON-NLS-1$
 
 	// Internal status codes	
 	// Information Only [00-24]
