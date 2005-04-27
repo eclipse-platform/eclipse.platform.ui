@@ -32,7 +32,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class SubscriberResourceMappingContext extends RemoteResourceMappingContext {
     
-    Subscriber subscriber;
+    private final Subscriber subscriber;
     private final SyncInfoFilter contentDiffFilter;
     
     // Lists used to keep track of resources that have been refreshed

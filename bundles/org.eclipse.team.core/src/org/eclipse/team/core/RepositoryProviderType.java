@@ -179,6 +179,9 @@ public abstract class RepositoryProviderType {
 	 * or in any way modify workspace resources (including auto-sharing the project). However,
 	 * auto-sharing (or other modification) could be performed by a background job scheduled from
 	 * this callback.
+     * 
+     * @since 3.1
+     * 
 	 * @param project the project that contains the detected meta-files.
 	 * @param containers the folders (possibly including the project folder) in which meta-files were found
 	 */
