@@ -59,6 +59,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
@@ -2243,11 +2244,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public boolean isEditorPinned(IEditorPart editor) {
-        return getReference(editor).isPinned();
+    	WorkbenchPartReference ref = getReference(editor); 
+        return ref != null && ref.isPinned();
     }
     
+    /**
+     * Returns the part reference for the given editor, or <code>null</code> if it is not a top-level editor. 
+     * @param editor the editor
+     * @return the part reference or <code>null</code>
+     */
     private WorkbenchPartReference getReference(IEditorPart editor) {
-        return (WorkbenchPartReference)((EditorSite)(editor.getEditorSite())).getPartReference();
+    	IEditorSite site = editor.getEditorSite();
+    	if (site instanceof EditorSite) {
+    		return (WorkbenchPartReference) ((EditorSite) site).getPartReference();
+    	}
+    	return null;
     }
 
     /**
