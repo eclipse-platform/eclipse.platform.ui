@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -75,7 +75,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(BackgroundColorDecorator.ID, true);
 		
-		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
+		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		backgroundCheck(view);
@@ -114,7 +114,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(ForegroundColorDecorator.ID, true);
 		
-		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
+		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 		dispatchDuringUpdates((DecoratorTestPart) view);
 
 		foregroundCheck(view);
@@ -170,7 +170,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 				.getDecoratorManager();
 		manager.setEnabled(FontDecorator.ID, true);
 		
-		JobManager.getInstance().join(DecoratorManager.FAMILY_DECORATE, null);
+		Platform.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 
 		dispatchDuringUpdates((DecoratorTestPart) view);
 		fontCheck(view);
