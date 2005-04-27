@@ -15,7 +15,9 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -72,8 +74,15 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			};
 			Platform.getJobManager().transferRule(rule, fDisplay.getThread());
 			fDisplay.syncExec(r);
-			if (exception[0] != null)
-				throw new CoreException(exception[0].getStatus());
+			if (exception[0] != null) {
+				IStatus status= exception[0].getStatus();
+				// it is more important to get the original cause of the
+				// exception. Therefore create a new status and take
+				// over the exception trace from the UI thread.
+				throw new CoreException(new Status(
+					IStatus.ERROR, status.getPlugin(), status.getCode(), 
+					status.getMessage(), exception[0]));
+			}
 		} else {
 			super.executeChange(pm);
 		}
