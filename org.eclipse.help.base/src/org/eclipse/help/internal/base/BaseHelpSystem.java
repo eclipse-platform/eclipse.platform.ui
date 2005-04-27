@@ -15,12 +15,14 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.workingset.*;
+import org.osgi.framework.Bundle;
 
 /**
  * Base Help System.
@@ -448,4 +450,27 @@ public final class BaseHelpSystem {
 		return getInstance().rtl;
 	}
 
+	public static void runLiveHelp(String pluginID, String className, String arg) {	
+		Bundle bundle = Platform.getBundle(pluginID);
+		if (bundle == null) {
+			return;
+		}
+	
+		try {
+			Class c = bundle.loadClass(className);
+			Object o = c.newInstance();
+			Runnable runnable = null;
+			if (o != null && o instanceof ILiveHelpAction) {
+				ILiveHelpAction helpExt = (ILiveHelpAction) o;
+				if (arg != null)
+					helpExt.setInitializationString(arg);
+				Thread runnableLiveHelp = new Thread(helpExt);
+				runnableLiveHelp.setDaemon(true);
+				runnableLiveHelp.start();
+			}
+		} catch (ThreadDeath td) {
+			throw td;
+		} catch (Exception e) {
+		}
+	}
 }

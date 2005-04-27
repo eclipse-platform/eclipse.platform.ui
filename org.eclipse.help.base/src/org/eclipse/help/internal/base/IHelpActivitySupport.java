@@ -30,8 +30,8 @@ public interface IHelpActivitySupport {
 	 * Checks if href is matches an enabled activity. If it does not match any
 	 * defined activites, it is assumed to be enabled.
 	 * 
-	 * @param href
-	 * @return
+	 * @param href the topic href
+	 * @return <code>true</code> if role for this href is enabled, <code>false</code> otherwise.
 	 */
 	public boolean isRoleEnabled(String href);
 	/**
@@ -55,4 +55,23 @@ public interface IHelpActivitySupport {
 	public boolean isFilteringEnabled();
 	public void setFilteringEnabled(boolean enabled);
 	public boolean isUserCanToggleFiltering();
+	/**
+	 * Returns the message to show in the warning dialog when
+	 * filtering is toggled off.
+	 * @return the message for the filtering warning dialog
+	 */
+	public String getShowAllMessage();
+	/**
+	 * Returns document message for disabled activities.
+	 * @return  the document message with Java script string substituted
+	 * if found.
+	 */
+	public String getDocumentMessage();
+	/**
+	 * 
+	 * @return <code>true</code> if the document message uses live help
+	 * and requires live help Java script header, or <code>false</code>
+	 * otherwise.
+	 */
+	public boolean getDocumentMessageUsesLiveHelp();
 }

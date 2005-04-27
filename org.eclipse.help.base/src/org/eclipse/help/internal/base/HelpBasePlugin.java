@@ -52,6 +52,15 @@ public class HelpBasePlugin extends Plugin {
 		public boolean isUserCanToggleFiltering() {
 			return false;
 		}
+		public String getShowAllMessage() {
+			return null;
+		}
+		public String getDocumentMessage() {
+			return null;
+		}
+		public boolean getDocumentMessageUsesLiveHelp() {
+			return false;
+		}
 	};
 	/**
 	 * Logs an Error message with an exception.
