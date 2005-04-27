@@ -56,7 +56,7 @@ public interface IContainer extends IResource, IAdaptable {
 
 	/**
 	 * Member constant (bit mask value 4) indicating that derived resources
-	 * are to be excluded
+	 * are to be excluded.
 	 * 
 	 * @see IResource#isDerived()
 	 * @since 3.1

@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.*;
  * is stored but does not provide more comprehensive model access or
  * manipulations.
  * <p>
- * Mappings provide two means of model traversal. The <code>accept</code> method
+ * Mappings provide two means of model traversal. The {@link #accept} method
  * can be used to visit the resources that constitute the model object. Alternatively,
- * a set or traversals can be obtained by calling <code>getTraversals</code>. A traversal
+ * a set or traversals can be obtained by calling {@link #getTraversals}. A traversal
  * contains a set of resources and a depth. This allows clients (such a repository providers)
  * to do optimal traversals of the resources w.r.t. the operation that is being performed
  * on the model object.
- * 
+ * </p>
  * <p>
  * This class may be subclassed by clients.
  * </p>
@@ -77,6 +77,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * corresponding remote files. This gives the model element the opportunity
 	 * to deduce what additional resources should be included in the traversal.
 	 * </p>
+	 * 
 	 * @param context gives access to the state of
 	 *            remote resources that correspond to local resources for the
 	 *            purpose of determining traversals that adequately cover the
@@ -97,7 +98,7 @@ public abstract class ResourceMapping extends PlatformObject {
 
     /**
 	 * Accepts the given visitor for the resources in this mapping.
-	 * The visitor's <code>visit</code> method is called for each resource
+	 * The visitor's {@link IResourceVisitor#visit} method is called for each resource
 	 * in this mapping. 
 	 * 
      * @param context the traversal context

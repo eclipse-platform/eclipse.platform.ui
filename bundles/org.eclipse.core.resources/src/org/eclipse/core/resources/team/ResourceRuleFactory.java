@@ -55,6 +55,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * <p>
 	 * Subclasses may override this method. The rule provided by an overriding 
 	 * method must at least contain the rule from this default implementation.
+	 * </p>
 	 * 
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#charsetRule(IResource)

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.internal.resources.ProjectPreferences;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -73,7 +73,7 @@ public final class ProjectScope implements IScopeContext {
 	public IPath getLocation() {
 		IProject project = ((IResource) context).getProject();
 		IPath location = project.getLocation();
-		return location == null ? null : location.append(ProjectPreferences.DEFAULT_PREFERENCES_DIRNAME);
+		return location == null ? null : location.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME);
 	}
 
 	/*

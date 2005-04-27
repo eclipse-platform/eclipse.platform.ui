@@ -183,6 +183,7 @@ public interface IResourceChangeEvent {
 	 * <p>
 	 * If the event is a <code>PRE_BUILD</code> or <code>POST_BUILD</code>
 	 * then this will be the kind of build that occurred to cause the event.
+	 * </p>
 	 *
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IWorkspace#build(int, IProgressMonitor)

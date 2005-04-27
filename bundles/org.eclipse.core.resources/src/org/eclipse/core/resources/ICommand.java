@@ -47,6 +47,7 @@ public interface ICommand {
 	 * Returns whether this build command responds to the given kind of build.
 	 * <p>
 	 * By default, build commands respond to all kinds of builds.
+	 * </p>
 	 * 
 	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * on <code>IncrementalProjectBuilder</code>
@@ -60,12 +61,12 @@ public interface ICommand {
 	/**
 	 * Returns whether this command allows configuring of what kinds of builds
 	 * it responds to.  By default, commands are only configurable
-	 * if the corresponding builder defines the <code>isConfigurable</code>
+	 * if the corresponding builder defines the {@link #isConfigurable}
 	 * attribute in its builder extension declaration. A command that is not 
 	 * configurable will always respond to all kinds of builds.
 	 * 
 	 * @return <code>true</code> If this command allows configuration of
-	 * what kinds of builds it responds to, and <code>false</code> otherwise.
+	 * 		what kinds of builds it responds to, and <code>false</code> otherwise.
 	 * @see #setBuilding(int, boolean)
 	 * @since 3.1
 	 */
@@ -110,14 +111,15 @@ public interface ICommand {
 	 * <p>
 	 * When a command is configured to not respond to a given kind of build, the
 	 * builder instance will not be called when a build of that kind is initiated.
-	 * <p>
+	 * </p><p>
 	 * This method has no effect if this build command does not allow its
 	 * build kinds to be configured.
+	 * </p>
 	 * 
 	 * @param kind One of the <tt>*_BUILD</code> constants defined
-	 * on <code>IncrementalProjectBuilder</code>
+	 * 		on <code>IncrementalProjectBuilder</code>
 	 * @param value <code>true</code> if this build command responds to the 
-	 * specified kind of build, and <code>false</code> otherwise.
+	 * 		specified kind of build, and <code>false</code> otherwise.
 	 * @see #isBuilding(int)
 	 * @see #isConfigurable()
 	 * @see IWorkspace#build(int, IProgressMonitor)

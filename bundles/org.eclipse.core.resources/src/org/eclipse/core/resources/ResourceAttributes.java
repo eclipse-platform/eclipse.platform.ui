@@ -14,7 +14,6 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 
-
 /**
  * This class represents platform specific attributes of files.
  * Any attributes can be added, but only the attributes that are 
@@ -22,6 +21,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
  * attributes in the file system.
  * <p>
  * This class is not intended to be subclassed. This class may be instantiated.
+ * </p>
  * 
  * @author Red Hat Incorporated
  * @see IResource#getResourceAttributes()
@@ -40,18 +40,19 @@ public class ResourceAttributes {
 	 * same effect as calling the default constructor.
 	 * 
 	 * @param file The file to get attributes from
-	 * @return A resource attributes object.
+	 * @return A resource attributes object
 	 */
 	public static ResourceAttributes fromFile(java.io.File file) {
 		return CoreFileSystemLibrary.getResourceAttributes(file.getAbsolutePath());
 	}
-	
+
 	/**
 	 * Creates a new instance of <code>ResourceAttributes</code>.
 	 */
 	public ResourceAttributes() {
 		super();
 	}
+
 	/**
 	 * Returns whether this ResourceAttributes object is marked archive.
 	 *
@@ -71,7 +72,7 @@ public class ResourceAttributes {
 	 * @see #setExecutable(boolean)
 	 */
 	public boolean isExecutable() {
-		return executable; 
+		return executable;
 	}
 
 	/**
@@ -84,7 +85,7 @@ public class ResourceAttributes {
 	public boolean isReadOnly() {
 		return readOnly;
 	}
-	
+
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked archive.
 	 *
@@ -117,6 +118,7 @@ public class ResourceAttributes {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
+
 	/**
 	 * Returns a string representation of the attributes, suitable 
 	 * for debugging purposes only.

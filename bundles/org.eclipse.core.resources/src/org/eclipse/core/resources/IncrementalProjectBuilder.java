@@ -176,6 +176,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * Any changes made to the returned command will only take effect if
 	 * the modified command is installed on a project build spec.
+	 * </p>
 	 * 
 	 * @see IProjectDescription#setBuildSpec(ICommand [])
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)

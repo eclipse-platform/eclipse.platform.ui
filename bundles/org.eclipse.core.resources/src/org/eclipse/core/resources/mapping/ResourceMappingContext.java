@@ -17,21 +17,20 @@ package org.eclipse.core.resources.mapping;
  * are included in the traversals of a mapping.
  * <p>
  * There are currently two resource mapping contexts: the local mapping context
- * (represented by the singleton <code>LOCAL_CONTEXT</code),
- * and <code>RemoteResourceMappingContext</code>. Implementors of <code>ResourceMapping</code>
+ * (represented by the singleton {@link #LOCAL_CONTEXT}),
+ * and {@link RemoteResourceMappingContext}. Implementors of {@link ResourceMapping}
  * should not assume that these are the only valid contexts (in order to allow future 
  * extensibility). Therefore, if the provided context is not of one of the above mentioed types,
  * the implementor can assume that the context is a local context.
- * 
+ * </p>
  * <p>
  * This class may be subclassed by clients; this class is not intended to be 
  * instantiated directly.
  * </p>
-
- * @since 3.1
  * 
  * @see ResourceMapping
  * @see RemoteResourceMappingContext
+ * @since 3.1
  */
 public class ResourceMappingContext {
 	

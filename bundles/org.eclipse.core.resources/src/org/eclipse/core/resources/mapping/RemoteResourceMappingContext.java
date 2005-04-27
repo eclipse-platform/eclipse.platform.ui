@@ -23,15 +23,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * determine if there are resources that exist remotely but do not exist locally
  * that should be included in the traversal. The traversals should also be as 
  * as possible to allow for optimization of remote operations.
- * 
  * <p>
  * This class may be subclassed by clients.
  * </p>
  * 
- * @since 3.1
- * 
  * @see ResourceMapping
  * @see ResourceMappingContext
+ * @since 3.1
  */
 public abstract class RemoteResourceMappingContext extends ResourceMappingContext {
 
@@ -65,6 +63,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * resources that constitute the model element are different in another
      * location. If the lcoa file exists and the remote file does not, then
      * the contents will be said to differ (i.e. <code>true</code> is returned).
+     * </p>
      * 
      * @param file the local file
      * @param monitor a progress monitor, or <code>null</code> if progress
@@ -85,16 +84,17 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * local resource. If the remote file does not exist, <code>null</code> is
      * returned. The provided local file handle need not exist locally. A
      * exception is thrown if the corresponding remote resource is not a file.
-     * 
+     * <p>
      * This method may be long running as a server may need to be contacted to
      * obtain the contents of the file.
+     * </p>
      * 
      * @param file the local file
      * @param monitor a progress monitor, or <code>null</code> if progress
      *    reporting is not desired
      * @return a storage that provides access to the contents of the local
      *         resource's corresponding remote resource. If the remote file
-     *         does not exist, <code>null</code> is returned.
+     *         does not exist, <code>null</code> is returned
      * @exception CoreException if the contents could not be fetched. Reasons include:
      * <ul>
      * <li>The corresponding remote resource is not a container
@@ -112,9 +112,10 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * corresponds to the container is empty. A <code>null</code> is
      * returned if the remote does not exist. An exception is thrown if the
      * corresponding remote is not capable of having members.
-     * 
+     * <p>
      * This method may be long running as a server may need to be contacted to
      * obtain the members of the containers corresponding remote resource.
+     * </p>
      * 
      * @param container the local container
      * @param monitor a progress monitor, or <code>null</code> if progress
@@ -139,13 +140,15 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      * <p>
      * Note that this is really only a hint to the context provider.
      * It is up to implementors to decide, based on the provided traversals, how to efficiently
-     * perform the refresh. In the ideal case, calls to <code>contentDiffers</code> and <code>fetchMembers</code>
+     * perform the refresh. In the ideal case, calls to {@link #contentDiffers} and {@link #fetchMembers}
      * would not need to contact the server after a call to a refresh with appropriate traversals. Also, ideally, 
-     * if <code>FILE_CONTENTS_REQUIRED</code> is on of the flags, then the contents for these files will be chached as efficiently
-     * as possible so that calls to <code>fetchContents</code> will also not need to contact the server. This may
+     * if {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents for these files will be chached as efficiently
+     * as possible so that calls to {@link #fetchContents} will also not need to contact the server. This may
      * not be possible for all context providers, so clients cannot assume that the above mentioed methods will not
-     * be long running. It is still advisably for clients to call <code>refresh</code> with as much details
+     * be long running. It is still advisably for clients to call {@link #refresh} with as much details
      * as possible since, in the case where a provider is optimized performance will be much better.
+     * </p>
+     * 
      * @param traversals the resource traversals which indicate which resources are to be refreshed
      * @param flags additional refresh behavior. For instance, if <code>FILE_CONTENTS_REQUIRED</code> 
      *      is one of the flags, this indicates that the client will be accessing the contents of
