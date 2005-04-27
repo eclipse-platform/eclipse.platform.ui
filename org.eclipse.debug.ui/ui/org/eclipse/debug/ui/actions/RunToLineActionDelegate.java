@@ -42,6 +42,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * Clients may reference/contribute this class as an action delegate
  * in plug-in XML. This class is not intended to be subclassed.
  * </p>
+ * <p>
+ * Since 3.1, this action also implements {@link org.eclipse.ui.IViewActionDelegate}.
+ * </p>
  * @since 3.0
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {

@@ -115,6 +115,8 @@ public interface IDebugUIConstants {
 	
 	/**
 	 * Console type identifier (value <code>"org.eclipse.debug.ui.ProcessConsoleType"</code>).
+	 * 
+	 * @since 3.1
 	 */
 	public static final String ID_PROCESS_CONSOLE_TYPE = PLUGIN_ID + ".ProcessConsoleType"; //$NON-NLS-1$
 	
@@ -403,10 +405,18 @@ public interface IDebugUIConstants {
 	/** Disabled breakpoint image identifier. */
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED= "IMG_OBJS_BREAKPOINT_DISABLED"; //$NON-NLS-1$
 	
-	/** Breakpoint group image identifier. */
+	/**
+	 * Breakpoint group image identifier.
+	 * 
+	 * @since 3.1
+	 */
 	public static final String IMG_OBJS_BREAKPOINT_GROUP = "IMG_OBJS_BREAKPOINT_GROUP"; //$NON-NLS-1$
 	
-	/** Disabled breakpoint group image identifier. */
+	/**
+	 * Disabled breakpoint group image identifier.
+	 * 
+	 * @since 3.1
+	 */
 	public static final String IMG_OBJS_BREAKPOINT_GROUP_DISABLED = "IMG_OBJS_BREAKPOINT_GROUP_DISABLED"; //$NON-NLS-1$
 		
 	/**

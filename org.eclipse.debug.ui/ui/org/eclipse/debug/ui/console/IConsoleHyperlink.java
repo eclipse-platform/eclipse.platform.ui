@@ -18,6 +18,9 @@ import org.eclipse.ui.console.IHyperlink;
  * <p>
  * Clients may implement this interface.
  * </p>
+ * <p>
+ * Since 3.1, this interface now extends {@link org.eclipse.ui.console.IHyperlink}.
+ * </p>
  * @since 2.1
  * @deprecated replaced by org.eclipse.ui.console.IHyperlink
  */
