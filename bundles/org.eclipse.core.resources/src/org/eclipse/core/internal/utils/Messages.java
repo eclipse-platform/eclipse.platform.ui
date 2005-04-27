@@ -218,7 +218,8 @@ public class Messages extends NLS {
 	public static String resources_oneTeamHook;
 	public static String resources_oneValidator;
 	public static String resources_opening_1;
-	public static String resources_overlapLocal;
+	public static String resources_overlapWorkspace;
+	public static String resources_overlapProject;
 	public static String resources_pathNull;
 	public static String resources_projectDesc;
 	public static String resources_projectDescSync;

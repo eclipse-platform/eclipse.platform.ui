@@ -2199,7 +2199,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation, true)) {
-			message = NLS.bind(Messages.resources_overlapLocal, location, defaultDefaultLocation);
+			message = NLS.bind(Messages.resources_overlapWorkspace, location.toOSString(), defaultDefaultLocation.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -2218,7 +2218,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
 			if (isOverlapping(location, definedLocalLocation, true)) {
-				message = NLS.bind(Messages.resources_overlapLocal, location, definedLocalLocation);
+				message = NLS.bind(Messages.resources_overlapProject, location.toOSString(), project.getName());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
