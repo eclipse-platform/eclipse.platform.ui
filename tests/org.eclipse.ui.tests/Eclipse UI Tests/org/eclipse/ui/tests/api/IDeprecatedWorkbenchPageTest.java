@@ -13,7 +13,6 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -79,8 +78,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
     public void testGetPerspective() throws Throwable {
         assertNotNull(fActivePage.getPerspective());
 
-        IWorkbenchPage page = fWin.openPage(EmptyPerspective.PERSP_ID,
-                ResourcesPlugin.getWorkspace());
+        IWorkbenchPage page = fWin.openPage(EmptyPerspective.PERSP_ID, getPageInput());
         assertEquals(EmptyPerspective.PERSP_ID, page.getPerspective().getId());
     }
 
@@ -97,7 +95,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
     }
 
     public void testGetInput() throws Throwable {
-        IAdaptable input = ResourcesPlugin.getWorkspace();
+        IAdaptable input = getPageInput();
         IWorkbenchPage page = fWin.openPage(input);
         assertEquals(input, page.getInput());
     }

@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
@@ -70,7 +71,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
     public void init() throws CoreException, WorkbenchException {
 
 		// Open an editor in a new window.
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
 		IWorkbenchPage activePage = window.getActivePage();
         Assert.assertNotNull(activePage);
 		

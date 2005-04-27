@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
@@ -57,21 +56,16 @@ public class SessionCreateTest extends UITestCase {
         saveOriginalWindows();
 
         // Create test window with empty perspective.
-        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID,
-                ResourcesPlugin.getWorkspace());
+        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
 
         // Create test window with empty perspective and
         // session perspective.
-        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID,
-                ResourcesPlugin.getWorkspace());
-        page = window.openPage(SessionPerspective.ID, ResourcesPlugin
-                .getWorkspace());
+        window = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
+        page = window.openPage(SessionPerspective.ID, getPageInput());
 
         // Create test window with two session perspectives.
-        window = fWorkbench.openWorkbenchWindow(SessionPerspective.ID,
-                ResourcesPlugin.getWorkspace());
-        page = window.openPage(SessionPerspective.ID, ResourcesPlugin
-                .getWorkspace());
+        window = fWorkbench.openWorkbenchWindow(SessionPerspective.ID, getPageInput());
+        page = window.openPage(SessionPerspective.ID, getPageInput());
 
         // Open 3 editors in last page.
         IProject proj = FileUtil.createProject(TEST_PROJ);

@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
@@ -163,8 +162,7 @@ public class DragTest extends UITestCaseWithResult {
         //initialize the window
         if (window == null) {
             window = (WorkbenchWindow) fWorkbench.openWorkbenchWindow(
-                    "org.eclipse.ui.tests.dnd.dragdrop", ResourcesPlugin
-                            .getWorkspace());
+                    "org.eclipse.ui.tests.dnd.dragdrop", getPageInput());
 
             page = (WorkbenchPage) window.getActivePage();
 

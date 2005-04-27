@@ -84,8 +84,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
         // Open and close page.
         // Verify no events are received.
         pageEventReceived = false;
-        IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
-                fWorkspace);
+        IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID, getPageInput());
         page.close();
         assertTrue(!pageEventReceived);
     }
@@ -166,8 +165,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
         // Open page and change persp feature.
         // Verify no events are received.
         perspEventReceived = false;
-        IWorkbenchPage page = fWindow.openPage(IDE.RESOURCE_PERSPECTIVE_ID,
-                fWorkspace);
+        IWorkbenchPage page = fWindow.openPage(IDE.RESOURCE_PERSPECTIVE_ID, getPageInput());
         page.setEditorAreaVisible(false);
         page.setEditorAreaVisible(true);
         page.close();

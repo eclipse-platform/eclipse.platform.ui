@@ -131,8 +131,7 @@ public class IWorkbenchTest extends UITestCase {
         // open a window with valid perspective 
         IWorkbenchWindow win = null;
         try {
-            win = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID,
-                    ResourcesPlugin.getWorkspace());
+            win = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
             assertNotNull(win);
             if (!PlatformUtil.onLinux()) {
                 assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
@@ -147,8 +146,7 @@ public class IWorkbenchTest extends UITestCase {
         // open a window with invalid perspective. WorkbenchException is expected.
         boolean exceptionOccured = false;
         try {
-            win = fWorkbench.openWorkbenchWindow("afdasfdasf", ResourcesPlugin
-                    .getWorkspace());
+            win = fWorkbench.openWorkbenchWindow("afdasfdasf", getPageInput());
         } catch (WorkbenchException ex) {
             exceptionOccured = true;
         }
@@ -165,7 +163,7 @@ public class IWorkbenchTest extends UITestCase {
 
         try {
             win = fWorkbench
-                    .openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+                    .openWorkbenchWindow(getPageInput());
             assertNotNull(win);
 
             if (!PlatformUtil.onLinux()) {

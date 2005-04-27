@@ -16,8 +16,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -33,7 +33,18 @@ import org.eclipse.ui.WorkbenchException;
  * windows when the tearDown method is called.
  */
 public abstract class UITestCase extends TestCase {
-    class TestWindowListener implements IWindowListener {
+
+	/**
+	 * Returns the workbench page input to use for newly created windows.
+	 *  
+	 * @return the page input to use for newly created windows
+	 * @since 3.1
+	 */
+	public static IAdaptable getPageInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	class TestWindowListener implements IWindowListener {
         private boolean enabled = true;
 
         public void setEnabled(boolean enabled) {
@@ -168,8 +179,7 @@ public abstract class UITestCase extends TestCase {
      */
     public IWorkbenchWindow openTestWindow(String perspectiveId) {
         try {
-            return fWorkbench.openWorkbenchWindow(perspectiveId,
-                    ResourcesPlugin.getWorkspace());
+            return fWorkbench.openWorkbenchWindow(perspectiveId, getPageInput());
         } catch (WorkbenchException e) {
             fail();
             return null;
@@ -200,15 +210,15 @@ public abstract class UITestCase extends TestCase {
     }
 
     /**
-     * Open "n" test pages with the empty perspectie in a window.
+     * Open "n" test pages with the empty perspective in a window.
      */
     public IWorkbenchPage[] openTestPage(IWorkbenchWindow win, int pageTotal) {
         try {
             IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
-            IWorkspace work = ResourcesPlugin.getWorkspace();
+            IAdaptable input = getPageInput();
 
             for (int i = 0; i < pageTotal; i++) {
-                pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
+                pages[i] = win.openPage(EmptyPerspective.PERSP_ID, input);
             }
             return pages;
         } catch (WorkbenchException e) {
