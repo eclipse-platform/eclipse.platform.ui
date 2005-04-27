@@ -184,16 +184,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
      * @return whether the resource has children that are being considered
      * by this handler.
      */
-    protected boolean hasMembers(IResource resource) {
-        IResource[] roots = getRoots();
-        for (int i = 0; i < roots.length; i++) {
-            IResource root = roots[i];
-            if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
-                return true;
-            }
-        }
-        return false;
-    }
+    protected abstract boolean hasMembers(IResource resource);
     
     /**
      * The resource is no longer of concern to the subscriber.

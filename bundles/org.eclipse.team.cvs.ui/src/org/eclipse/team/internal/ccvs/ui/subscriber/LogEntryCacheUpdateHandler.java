@@ -26,7 +26,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
@@ -142,6 +141,10 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
          */
         protected void change(IResource resource, int depth) {
             queueEvent(new ResourceEvent(resource, CHANGE, depth), false /* do not put in on the front of the queue*/); 
+        }
+
+        protected boolean hasMembers(IResource resource) {
+            return collectedInfos.hasMembers(resource);
         }
     }
     

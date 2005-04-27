@@ -255,6 +255,9 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
             handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_CHANGE, depth), false);
         }
         
+        protected boolean hasMembers(IResource resource) {
+            return SubscriberChangeSetCollector.this.hasMembers(resource);
+        }
     }
     
     public SubscriberChangeSetCollector(Subscriber subscriber) {
@@ -263,6 +266,17 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
         handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
+    public boolean hasMembers(IResource resource) {
+        ChangeSet[] sets = getSets();
+        for (int i = 0; i < sets.length; i++) {
+            ChangeSet set = sets[i];
+            if (set.getSyncInfoSet().hasMembers(resource));
+        }
+        if (defaultSet != null)
+            return (defaultSet.getSyncInfoSet().hasMembers(resource));
+        return false;
+    }
+
     /**
      * Add the active change set to this collector.
      * @param set the active change set being added
