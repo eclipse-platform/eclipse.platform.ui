@@ -14,6 +14,7 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.test.performance.Dimension;
 
 /**
  * The ListViewerRefreshTest is a test of refreshing the list viewer.
@@ -22,7 +23,9 @@ import org.eclipse.swt.widgets.Shell;
 public class ListViewerRefreshTest extends ViewerTest {
 
 	ListViewer viewer;
+
 	private RefreshTestContentProvider contentProvider;
+
 	public ListViewerRefreshTest(String testName, int tagging) {
 		super(testName, tagging);
 
@@ -33,13 +36,15 @@ public class ListViewerRefreshTest extends ViewerTest {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.tests.performance.ViewerTest#createViewer(org.eclipse.swt.widgets.Shell)
 	 */
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = new ListViewer(shell);
 		contentProvider = new RefreshTestContentProvider(
-						RefreshTestContentProvider.ELEMENT_COUNT);
+				RefreshTestContentProvider.ELEMENT_COUNT);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(getLabelProvider());
 		return viewer;
@@ -47,9 +52,13 @@ public class ListViewerRefreshTest extends ViewerTest {
 
 	/**
 	 * Test the time for doing a refresh.
+	 * 
 	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
+
+		tagIfNecessary("JFace - Refresh 10000 item ListViewer", Dimension.ELAPSED_PROCESS);
+
 		openBrowser();
 
 		for (int i = 0; i < ITERATIONS; i++) {
@@ -58,10 +67,9 @@ public class ListViewerRefreshTest extends ViewerTest {
 			processEvents();
 			stopMeasuring();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
 
 }

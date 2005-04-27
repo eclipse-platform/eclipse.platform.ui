@@ -32,7 +32,7 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     
     protected void runTest() throws Throwable {
     	
-    	tagIfNecessary("Open/Close Window", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+    	tagIfNecessary("Open/Close Window", Dimension.ELAPSED_PROCESS);
         
         exercise(new TestRunnable() {
             public void run() throws Exception {

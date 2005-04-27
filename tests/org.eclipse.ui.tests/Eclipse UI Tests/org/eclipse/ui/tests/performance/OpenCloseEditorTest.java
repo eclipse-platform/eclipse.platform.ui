@@ -51,7 +51,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
             } 
         });
         
-		tagIfNecessary("Open/Close Editor", Dimension.CPU_TIME);
+		tagIfNecessary("Open/Close Editor", Dimension.ELAPSED_PROCESS);
 		commitMeasurements();
 		assertPerformance();
 	}

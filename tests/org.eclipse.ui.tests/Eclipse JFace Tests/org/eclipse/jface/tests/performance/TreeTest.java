@@ -167,7 +167,7 @@ public class TreeTest extends ViewerTest {
 	 */
 	public void testAddHundred() throws CoreException {
 
-		tagIfNecessary("Add 100 items to tree", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer", Dimension.ELAPSED_PROCESS);
 
 		doTestAdd(100, TEST_COUNT, false);
 	}
@@ -249,7 +249,7 @@ public class TreeTest extends ViewerTest {
 	 *             Test addition to the tree with the items presorted.
 	 */
 	public void testAddThousandPreSort() throws CoreException {
-		tagIfNecessary("Add 2000 items in 2 blocks",
+		tagIfNecessary("JFace - Add 2000 items in 2 blocks to TreeViewer",
 				Dimension.ELAPSED_PROCESS);
 
 		doTestAdd(1000, 2000, true);
