@@ -51,16 +51,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * menu identifier in the <code>targetID</code> attribute.
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
- * 		&lt;viewerContribution
- *          targetID="example.rulerContextMenuId"
- *          id="example.RulerPopupActions"&gt;
+ *   &lt;viewerContribution
+ *     targetID="example.rulerContextMenuId"
+ *     id="example.RulerPopupActions"&gt;
  *       &lt;action
- *             label="Toggle Breakpoint"
- *             class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
- *             menubarPath="additions"
- *             id="example.rulerContextMenu.toggleBreakpointAction"&gt;
+ *         label="Toggle Breakpoint"
+ *         class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+ *         menubarPath="additions"
+ *         id="example.rulerContextMenu.toggleBreakpointAction"&gt;
  *       &lt;/action&gt;
- *    &lt;/viewerContribution&gt;
+ *   &lt;/viewerContribution&gt;
  * </pre>
  * </p>
  * <p>

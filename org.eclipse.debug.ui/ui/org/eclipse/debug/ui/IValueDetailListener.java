@@ -15,7 +15,9 @@ import org.eclipse.debug.core.model.IValue;
 
 /**
  * Notified of detailed value descriptions.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see IDebugModelPresentation
  * @since 2.0
  */

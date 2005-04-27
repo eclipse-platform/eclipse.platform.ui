@@ -86,6 +86,9 @@ import org.eclipse.ui.IEditorPart;
  * specified mode (e.g. run,debug,profile).</li>
  * </ul>
  * </p>
+ * <p>
+ * Clients contributing a lanuch shortcut are intended to implement this interface.
+ * </p>
  * @since 2.0
  */
 public interface ILaunchShortcut {
