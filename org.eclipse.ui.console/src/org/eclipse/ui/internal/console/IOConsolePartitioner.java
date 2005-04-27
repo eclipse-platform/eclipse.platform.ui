@@ -33,7 +33,7 @@ import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Partitions an IOConsole's document
@@ -457,16 +457,18 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Holds data until updateJob can be run and the document can be updated.
 	 */
 	private class PendingPartition {
-		String text;
+		StringBuffer text = new StringBuffer();
 		IOConsoleOutputStream stream;
 		
 		PendingPartition(IOConsoleOutputStream stream, String text) {
 			this.stream = stream;
-			this.text=text;
+			if (text != null) {
+                append(text);
+            }
 		}
 		
 		void append(String moreText) {
-			text += moreText;
+			text.append(moreText);
 		}
 	}
 	
@@ -559,7 +561,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
     /**
      * Job to trim the console document, runs in the  UI thread.
      */
-    private class TrimJob extends UIJob {
+    private class TrimJob extends WorkbenchJob {
         
         /**
          * trims output up to the line containing the given offset,

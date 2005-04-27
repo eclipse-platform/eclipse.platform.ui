@@ -11,6 +11,9 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
@@ -19,7 +22,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IPatternMatchListener;
@@ -34,7 +36,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	/**
 	 * Console listeners
 	 */
-	private ListenerList fListeners = new ListenerList(2);
+	private List fListeners = new ArrayList(2);
 
 	/**
 	 * The console this notifier is tracking 
@@ -66,11 +68,11 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	        return; //already disconnected
 	    }
 
-	    Object[] listeners = fListeners.getListeners();
-	    for (int i = 0; i < listeners.length; i++) {
-	        IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
-	        listener.dispose();
-	    }
+        int size = fListeners.size();
+        for (int i=0; i<size; i++) {
+            IConsoleLineTracker tracker = (IConsoleLineTracker) fListeners.get(i);
+            tracker.dispose();
+        }
 	
 	    fConsole.removePropertyChangeListener(this);
 	    
@@ -96,9 +98,9 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	    } catch (BadLocationException e) {
 	    }
 	    
-	    Object[] listeners= fListeners.getListeners();
-	    for (int i = 0; i < listeners.length; i++) {
-	        Object obj = listeners[i];
+        int size = fListeners.size();
+        for (int i=0; i<size; i++) {
+            Object obj = fListeners.get(i);
 	        if (obj instanceof IConsoleLineTrackerExtension) {
 	            ((IConsoleLineTrackerExtension)obj).consoleClosed();
 	        }
@@ -112,7 +114,8 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	 * @param listener
 	 */
 	public void addConsoleListener(IConsoleLineTracker listener) {
-		fListeners.add(listener);
+        if (!fListeners.contains(listener))
+            fListeners.add(listener);
 	}
 	
     /* (non-Javadoc)
@@ -121,28 +124,19 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
     public void matchFound(PatternMatchEvent event) {
         try  {
             IDocument document = fConsole.getDocument();
-            String text = document.get(event.getOffset(), event.getLength());
-            int strip = 1;
-            int length = text.length();
-            if (length >= 2) {
-                char c = text.charAt(length - 2);
-                if (c == '\r') {
-                    strip = 2;
-                }
-                text = new String(text.substring(0, length - strip));
-            } else {
-                text = ""; //$NON-NLS-1$
-            }
-            Region region = new Region(event.getOffset(), text.length()); 
+            int lineOfOffset = document.getLineOfOffset(event.getOffset());
+            String delimiter = document.getLineDelimiter(lineOfOffset);
+            int strip = delimiter==null ? 0 : delimiter.length();
+            Region region = new Region(event.getOffset(), event.getLength()-strip); 
             lineAppended(region);
         } catch (BadLocationException e) {}
     }
     
     public void lineAppended(IRegion region) {
-        Object[] listeners = fListeners.getListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
-            listener.lineAppended(region);
+        int size = fListeners.size();
+        for (int i=0; i<size; i++) {
+            IConsoleLineTracker tracker = (IConsoleLineTracker) fListeners.get(i);
+            tracker.lineAppended(region);
         }
     }
 

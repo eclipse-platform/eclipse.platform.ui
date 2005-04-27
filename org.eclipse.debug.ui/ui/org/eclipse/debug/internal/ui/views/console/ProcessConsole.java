@@ -440,13 +440,17 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     }
 
     private void resetName() {
-        Runnable r = new Runnable() {
-            public void run() {
-                setName(computeName());
-                warnOfContentChange();
-            }
-        };
-        DebugUIPlugin.getStandardDisplay().asyncExec(r);
+        final String newName = computeName();
+        String name = getName();
+        if (!name.equals(newName)) {
+            Runnable r = new Runnable() {
+                public void run() {
+                    setName(newName);
+                    warnOfContentChange();
+                }
+            };
+            DebugUIPlugin.getStandardDisplay().asyncExec(r);
+        }
     }
 
     private void warnOfContentChange() {

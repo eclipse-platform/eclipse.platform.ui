@@ -14,6 +14,9 @@ package org.eclipse.ui.console;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;
@@ -51,6 +54,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Default viewer used to display a <code>TextConsole</code>.
@@ -84,6 +88,17 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             updateLinks(event.fOffset);
         }
     };
+    
+    WorkbenchJob revealJob = new WorkbenchJob("Reveal End of Document"){//$NON-NLS-1$
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            StyledText textWidget = getTextWidget();
+            if (textWidget != null) {
+                int lineCount = textWidget.getLineCount();
+                textWidget.setTopIndex(lineCount-1);
+            }
+            return Status.OK_STATUS;
+        }
+    };
 
     /**
      * Constructs a new viewer in the given parent for the specified console.
@@ -111,6 +126,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         propertyChangeListener = new HyperlinkColorChangeListener();
         colorRegistry.addListener(propertyChangeListener);
         
+        revealJob.setSystem(true);
         document.addDocumentListener(documentListener);
     }
 
@@ -147,10 +163,8 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * Positions the cursor at the end of the document.
      */
     protected void revealEndOfDocument() {
-        StyledText textWidget = getTextWidget();
-        int lineCount = textWidget.getLineCount();
-        textWidget.setTopIndex(lineCount-1);
-    }
+        revealJob.schedule(50);        
+    } 
 
     /*
      * (non-Javadoc)
@@ -580,6 +594,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             documentAdapter = new ConsoleDocumentAdapter(consoleWidth = -1);
         }
         return documentAdapter;
+//        return super.createDocumentAdapter();
     }
 
     /**

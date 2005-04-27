@@ -258,70 +258,53 @@ public class ConsoleManager implements IConsoleManager {
 	public void showConsoleView(final IConsole console) {
 	    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
 	        public void run() {
-                boolean consoleFound = false;
+	            boolean consoleFound = false;
 	            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	            if (window != null) {
 	                IWorkbenchPage page= window.getActivePage();
 	                if (page != null) {
-                        IViewReference[] viewReferences = page.getViewReferences();
-                        for (int i = 0; i < viewReferences.length; i++) {
-                            IViewReference viewRef = viewReferences[i];
-                            if (viewRef == null) {
-                                continue;
-                            }
-                            if(IConsoleConstants.ID_CONSOLE_VIEW.equals(viewRef.getId())) {
-                                IWorkbenchPart part = viewRef.getPart(false);
-                                IConsoleView consoleView = null;
+	                    IViewReference[] viewReferences = page.getViewReferences();
+	                    for (int i = 0; i < viewReferences.length; i++) {
+	                        IViewReference viewRef = viewReferences[i];
+	                        if (viewRef == null) {
+	                            continue;
+	                        }
+	                        if(IConsoleConstants.ID_CONSOLE_VIEW.equals(viewRef.getId())) {
+	                            IWorkbenchPart part = viewRef.getPart(false);
+	                            if (part == null || !(part instanceof IConsoleView)) {
+	                                continue;
+	                            } 
+	                            
+                                IConsoleView consoleView = (IConsoleView) part;
+                                boolean consoleVisible = page.isPartVisible(consoleView);
+                                consoleFound = true;
                                 
-                                if (!(part instanceof IConsoleView)) {
-                                    continue;
-                                } 
-                                
-								consoleFound = true;
-                                consoleView = (IConsoleView) part;
-								
-								IViewPart viewPart = viewRef.getView(false);
-								IViewPart[] stackedViews = null;
-								boolean consoleVisibleInStack = false;
-								if (viewPart != null) {
-									// get a list of views currently stacked
-									// with the found console view
-									stackedViews = page.getViewStack(viewPart);
-
-									for (int j = 0; j < stackedViews.length; j++)
-										if (page.isPartVisible(stackedViews[j])
-												&& stackedViews[j] instanceof IConsoleView) {
-											consoleVisibleInStack = true;
-											break;
-										}
-								}
-
-								// a console view should not be brought to the top if 
-								// another console view from the same stack is already at the top
-							    boolean bringToTop = shouldBringToTop(console, consoleView);
-                                if (bringToTop && !consoleVisibleInStack) {
-                                    page.bringToTop(consoleView);
-                                }
-							
-                                consoleView.display(console);        
-                            }
-                        }
-                        
-                        if (!consoleFound) {
-                            try {
-                                IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-                                boolean bringToTop = shouldBringToTop(console, consoleView);
-                                if (bringToTop) {
-                                    page.bringToTop(consoleView);
-                                }
-                                consoleView.display(console);        
-                            } catch (PartInitException pie) {
-                                ConsolePlugin.log(pie);
-                            }
-                        }
+	                            // a console view should not be brought to the top if 
+	                            // another console view from the same stack is already at the top
+	                            boolean bringToTop = shouldBringToTop(console, consoleView);
+	                            if (bringToTop && !consoleVisible) {
+	                                page.bringToTop(consoleView);
+	                            }
+	                            
+	                            consoleView.display(console);        
+	                        }
+	                    }
+	                    
+	                    if (!consoleFound) {
+	                        try {
+	                            IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+	                            boolean bringToTop = shouldBringToTop(console, consoleView);
+	                            if (bringToTop) {
+	                                page.bringToTop(consoleView);
+	                            }
+	                            consoleView.display(console);        
+	                        } catch (PartInitException pie) {
+	                            ConsolePlugin.log(pie);
+	                        }
+	                    }
 	                }
-                }
-            }
+	            }
+	        }
 	    });
 	}	
 	
