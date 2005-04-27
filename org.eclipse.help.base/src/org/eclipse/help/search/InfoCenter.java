@@ -58,7 +58,7 @@ public final class InfoCenter implements ISearchEngine {
 		}
 	}
 
-	class InfoCenterResult implements ISearchEngineResult {
+	private class InfoCenterResult implements ISearchEngineResult {
 		private IHelpResource category;
 
 		private Element node;
@@ -157,14 +157,13 @@ public final class InfoCenter implements ISearchEngine {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"));//$NON-NLS-1$
 			monitor.worked(1);
-			load(((Scope) scope).url, reader, collector, new SubProgressMonitor(monitor, 4));
+			load(((Scope) scope).url, reader, collector,
+					new SubProgressMonitor(monitor, 4));
 			reader.close();
 		} catch (FileNotFoundException e) {
-			reportError(
-					HelpBaseResources.InfoCenter_fileNotFound, e, collector); 
+			reportError(HelpBaseResources.InfoCenter_fileNotFound, e, collector);
 		} catch (IOException e) {
-			reportError(
-					HelpBaseResources.InfoCenter_io, e, collector); 
+			reportError(HelpBaseResources.InfoCenter_io, e, collector);
 		} finally {
 			if (is != null) {
 				try {
@@ -205,7 +204,8 @@ public final class InfoCenter implements ISearchEngine {
 					return;
 			}
 			monitor.worked(1);
-			load(baseURL, document, (Element) root, collector, new SubProgressMonitor(monitor, 4));
+			load(baseURL, document, (Element) root, collector,
+					new SubProgressMonitor(monitor, 4));
 		} catch (ParserConfigurationException e) {
 			// ignore
 		} catch (IOException e) {

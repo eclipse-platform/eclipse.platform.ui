@@ -20,6 +20,8 @@ import org.eclipse.help.IHelpResource;
  * with the results must create one search result object whose
  * URL is the actual query. This URL will then be presented
  * in the Web browser.
+ * <p>
+ * This interface is inteded to be implemented by clients.
  * 
  * @since 3.1
  */

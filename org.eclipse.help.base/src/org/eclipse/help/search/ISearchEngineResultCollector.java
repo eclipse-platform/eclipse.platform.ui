@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * A collector for the search hits (asynchronously) returned by the help search
  * participants.
+ * <p>This interface is intended to be implemented by clients and 
+ * passed to the search engine instance.
  * 
  * @since 3.1
  */

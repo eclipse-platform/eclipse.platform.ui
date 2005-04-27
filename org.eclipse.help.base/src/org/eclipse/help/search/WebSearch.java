@@ -25,8 +25,8 @@ import org.eclipse.help.internal.base.HelpBaseResources;
  * <code>{expression}</code>.
  * <p>
  * This class is made public in order to be instantiated and parametrized
- * directly in the extensions. Clients are required to supply the URL
- * template string as a parameter <code>url</code>.
+ * directly in the extensions. Clients are required to supply the URL template
+ * string as a parameter <code>url</code>.
  * 
  * <p>
  * This class is not expected to be subclassed or otherwise accessed
@@ -35,9 +35,9 @@ import org.eclipse.help.internal.base.HelpBaseResources;
  * @since 3.1
  */
 public final class WebSearch implements ISearchEngine {
-	public static final char C_START = '{';
+	private static final char C_START = '{';
 
-	public static final char C_STOP = '}';
+	private static final char C_STOP = '}';
 
 	public static class Scope implements ISearchScope {
 		private String urlTemplate;
@@ -51,7 +51,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 	}
 
-	public static class SearchResult implements ISearchEngineResult {
+	private static class SearchResult implements ISearchEngineResult {
 		private String query;
 
 		private String urlTemplate;
@@ -62,7 +62,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getDescription() {
-			return HelpBaseResources.WebSearch_click; 
+			return HelpBaseResources.WebSearch_click;
 		}
 
 		public String getHref() {
@@ -79,7 +79,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getLabel() {
-			return HelpBaseResources.WebSearch_label; 
+			return HelpBaseResources.WebSearch_label;
 		}
 
 		public float getScore() {

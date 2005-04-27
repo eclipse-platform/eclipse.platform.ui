@@ -74,7 +74,7 @@ import org.xml.sax.InputSource;
  *                  
  *                  or
  *                  
- *                  destination/nl/country/variant/ 
+ *                  destination/nl/country/language/ 
  * </pre>
  * <p>
  * The relative directory specified in the <code>index</code> element of the
