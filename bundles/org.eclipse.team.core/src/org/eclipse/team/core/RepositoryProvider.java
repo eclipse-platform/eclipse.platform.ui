@@ -62,6 +62,9 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 	// lock to ensure that map/unmap and getProvider support concurrency
 	private static final ILock mappingLock = Platform.getJobManager().newLock();
+    
+    // Session property used to indentify projects that are not mapped
+    private static final Object NOT_MAPPED = new Object();
 	
 	/**
 	 * Instantiate a new RepositoryProvider with concrete class by given providerID
@@ -264,7 +267,11 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * Return the provider mapped to project, or null if none;
 	 */
 	private static RepositoryProvider lookupProviderProp(IProject project) throws CoreException {
-		return (RepositoryProvider) project.getSessionProperty(PROVIDER_PROP_KEY);
+		Object provider = project.getSessionProperty(PROVIDER_PROP_KEY);
+        if (provider instanceof RepositoryProvider) {
+            return (RepositoryProvider) provider;
+        }
+        return null;
 	}	
 
 
@@ -402,6 +409,10 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				RepositoryProvider provider = lookupProviderProp(project);
 				if(provider != null)
 					return provider;
+                // Do a quick check to see it the poroject is known to be unshared.
+                // This is done to avoid accessing the persistant property store
+                if (isMarkedAsUnshared(project))
+                    return null;
 				
 				// -----------------------------
 				//Next, check if it has the ID as a persistent property, if yes then instantiate provider
@@ -434,6 +445,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				TeamPlugin.log(e);
 			}
 		}
+        markAsUnshared(project);
 		return null;
 	}
 	
@@ -467,6 +479,11 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 						return null;
 					}
 				}
+                // Do a quick check to see it the poroject is known to be unshared.
+                // This is done to avoid accessing the persistant property store
+                if (isMarkedAsUnshared(project))
+                    return null;
+                
 				// There isn't one so check the persistant property
 				String existingID = project.getPersistentProperty(PROVIDER_PROP_KEY);
 				if(id.equals(existingID)) {
@@ -501,6 +518,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				TeamPlugin.log(e);
 			}
 		}
+        markAsUnshared(project);
 		return null;
 	}
 	
@@ -523,14 +541,37 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		if (!project.isAccessible()) return false;
 		try {
 			if (lookupProviderProp(project) != null) return true;
-			return project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+            // Do a quick check to see it the poroject is known to be unshared.
+            // This is done to avoid accessing the persistant property store
+            if (isMarkedAsUnshared(project))
+                return false;
+			boolean shared = project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+            if (!shared)
+                markAsUnshared(project);
+            return shared;
 		} catch (CoreException e) {
 			TeamPlugin.log(e);
 			return false;
 		}
 	}
  	
-	/*
+	private static boolean isMarkedAsUnshared(IProject project) {
+        try {
+            return project.getSessionProperty(PROVIDER_PROP_KEY) == NOT_MAPPED;
+        } catch (CoreException e) {
+            return false;
+        }
+    }
+
+    private static void markAsUnshared(IProject project) {
+        try {
+            project.setSessionProperty(PROVIDER_PROP_KEY, NOT_MAPPED);
+        } catch (CoreException e) {
+            // Just ignore the error as this is just an optimization
+        }
+    }
+
+    /*
 	 * @see IProjectNature#getProject()
 	 */
 	public IProject getProject() {
