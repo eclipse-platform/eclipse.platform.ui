@@ -386,6 +386,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @param dispose whether to dispose any current source containers and participants
 	 *  before initializing
 	 * @throws CoreException if an exception occurrs during initialization
+	 * @since 3.1
 	 */
 	protected void doInitializeFromMemento(String memento, boolean dispose) throws CoreException {
 	    if (dispose) {
