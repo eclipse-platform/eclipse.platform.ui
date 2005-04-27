@@ -85,32 +85,22 @@ public class ExceptionCollector {
 	 * 
 	 * @param exception the exception to collect
 	 */
-	public void handleException(Exception e) {
-		IStatus status = null;
-		if(e instanceof CoreException) {
-			status = ((CoreException)e).getStatus();
-		}
-		if(status != null) {
-			logStatus(status);
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				IStatus status2 = children[i];
-				logStatus(status2);
-			}
+	public void handleException(CoreException e) {
+        // log the exception if we have a log
+        if(log != null) {
+            log.log(new Status(severity, pluginId, 0, message, e));
+        }
+        // Record each status individually to flatten the resulting multi-status
+        IStatus status = e.getStatus();
+        recordStatus(status);
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IStatus status2 = children[i];
+            recordStatus(status2);
 		}
 	}
 
-	/**
-	 * Log and accumulate exceptions once for each {plugid,code} combination.
-	 */
-	private void logStatus(IStatus status) {
-		// collect the status
-		statuses.add(status);
-		
-		// log if necessary
-		if(log != null) {
-    		String pluginId = status.getPlugin();
-			log.log(new Status(status.getSeverity(), pluginId, status.getCode(), message, status.getException()));
-		}		
+	private void recordStatus(IStatus status) {
+		statuses.add(status);		
 	}
 }

@@ -424,7 +424,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	/**
 	 * Handle exceptions that occur in the decorator. 
 	 */
-	private static void handleException(Exception e) {
+	private static void handleException(CoreException e) {
 		exceptions.handleException(e);
 	}
 
