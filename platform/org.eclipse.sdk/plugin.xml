@@ -168,6 +168,20 @@
       </page>   
    </extension>
    
+   <extension
+   		point="org.eclipse.help.base.activitySupport">
+      <support productId="org.eclipse.platform.ide">
+         <showAllMessage>
+            %helpActivitySupport.showAllMessage
+         </showAllMessage>
+         <documentMessage
+               class="org.eclipse.help.ui.internal.ShowCapabilitiesPreferenceAction"
+               pluginId="org.eclipse.help.ui">
+            %helpActivitySupport.documentMessage
+         </documentMessage>
+      </support>
+   </extension>
+   
       <extension
             point="org.eclipse.ui.activitySupport">
       <triggerPointAdvisor

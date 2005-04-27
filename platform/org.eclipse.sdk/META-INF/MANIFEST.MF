@@ -6,5 +6,6 @@ Bundle-Version: 3.1.0
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- org.eclipse.help.ui
+ org.eclipse.help.ui,
+ org.eclipse.help.base
 Eclipse-AutoStart: true
