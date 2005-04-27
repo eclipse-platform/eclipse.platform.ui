@@ -20,8 +20,4 @@ public class Messages extends NLS {
     }
 
     public static String FormText_copy;
-    // not used so far.
-    // public static String FormText_copyShortcut;
-
-
 }
