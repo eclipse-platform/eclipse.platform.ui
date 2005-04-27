@@ -141,10 +141,10 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
     
     /**
-     * Returns the <code>Image<code> identified by the given key,
+     * Returns the <code>Image</code> identified by the given key,
      * or <code>null</code> if it does not exist.
      * 
-     * @return the <code>Image<code> identified by the given key,
+     * @return the <code>Image</code> identified by the given key,
      * or <code>null</code> if it does not exist
      * @since 3.1
      */
@@ -153,10 +153,10 @@ public class ConsolePlugin extends AbstractUIPlugin {
     }
     
     /**
-     * Returns the <code>ImageDescriptor<code> identified by the given key,
+     * Returns the <code>ImageDescriptor</code> identified by the given key,
      * or <code>null</code> if it does not exist.
      * 
-     * @return the <code>ImageDescriptor<code> identified by the given key,
+     * @return the <code>ImageDescriptor</code> identified by the given key,
      * or <code>null</code> if it does not exist
      * @since 3.1
      */

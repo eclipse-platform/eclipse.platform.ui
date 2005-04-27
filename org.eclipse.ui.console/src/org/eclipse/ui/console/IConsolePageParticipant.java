@@ -25,13 +25,13 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * <p>
  * Following is an example extension definition.
  * <pre>
- * </pre>
- * &lt;extension point="org.eclipse.ui.console.consolePageParticipants"&gt;
+ * &lt;extension point=&quot;org.eclipse.ui.console.consolePageParticipants&quot;&gt;
  *   &lt;consolePageParticipant
- *      id="com.example.ExamplePageParticipant"
- *      class="com.example.ExamplePageParticipant"&gt;
+ *      id=&quot;com.example.ExamplePageParticipant&quot;
+ *      class=&quot;com.example.ExamplePageParticipant&quot;&gt;
  *   &lt;/consolePageParticipant&gt;
  * &lt;/extension&gt;
+ * </pre>
  * </p>
  * The example page participant is contributed to all console pages. An optional
  * <code>enablement</code> attribute may be specified to control which consoles
