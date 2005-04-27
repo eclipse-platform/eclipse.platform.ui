@@ -60,6 +60,8 @@ public class IOConsoleOutputStream extends OutputStream {
 
     private String fEncoding;
     private String fDefaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+
+    private boolean fNeedsEncoding = false;
     
     /**
      * Constructs a new output stream on the given console.
@@ -175,7 +177,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     public void write(byte[] b, int off, int len) throws IOException {
-        if (fEncoding!=null && !fEncoding.equals(fDefaultEncoding)) {
+        if (fNeedsEncoding) {
             encodedWrite(new String(b, off, len, fEncoding));
         } else {
             encodedWrite(new String(b, off, len));
@@ -203,7 +205,7 @@ public class IOConsoleOutputStream extends OutputStream {
      * @throws IOException if the stream is closed.
      */
     public synchronized void write(String str) throws IOException {
-        if (fEncoding!=null && !fEncoding.equals(fDefaultEncoding)) {
+        if (fNeedsEncoding) {
 	        byte[] defaultBytes = str.getBytes();
 	        str = new String(defaultBytes, fEncoding);
         }
@@ -237,5 +239,6 @@ public class IOConsoleOutputStream extends OutputStream {
      */
     public void setEncoding(String encoding) {
         fEncoding = encoding;
+        fNeedsEncoding = (fEncoding!=null) && (!fEncoding.equals(fDefaultEncoding));
     }
 }

@@ -292,12 +292,6 @@ public class ConsolePatternMatcher implements IDocumentListener {
         fMatchJob.schedule();
     }
 
-    /**
-     * @return
-     */
-    public boolean isScheduled() {
-        return fMatchJob.getState()==Job.NONE;
-    }
     
     public void forceFinalMatching() {
     	fScheduleFinal = true;
