@@ -37,7 +37,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -141,12 +140,13 @@ public class CleanDialog extends MessageDialog {
      * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createCustomArea(Composite parent) {
-        Composite radioGroup = new Composite(parent, SWT.NONE);
+        Composite area = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginWidth = layout.marginHeight = 0;
-        layout.numColumns = 3;
-        radioGroup.setLayout(layout);
-        radioGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        layout.numColumns = 2;
+        layout.makeColumnsEqualWidth = true;
+        area.setLayout(layout);
+        area.setLayoutData(new GridData(GridData.FILL_BOTH));
         SelectionListener updateEnablement = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateEnablement();
@@ -156,23 +156,19 @@ public class CleanDialog extends MessageDialog {
         IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
         boolean selectSelectedButton= settings.getBoolean(TOGGLE_SELECTED);
         //first row
-        allButton = new Button(radioGroup, SWT.RADIO);
+        allButton = new Button(area, SWT.RADIO);
         allButton.setText(IDEWorkbenchMessages.CleanDialog_cleanAllButton);
         allButton.setSelection(!selectSelectedButton);
         allButton.addSelectionListener(updateEnablement);
-        //empty label to fill rest of grid row
-        new Label(radioGroup, SWT.NONE);
-        new Label(radioGroup, SWT.NONE);
-
-        //second row
-        selectedButton = new Button(radioGroup, SWT.RADIO);
+        selectedButton = new Button(area, SWT.RADIO);
         selectedButton.setText(IDEWorkbenchMessages.CleanDialog_cleanSelectedButton);
-        GridData data = new GridData();
-        data.verticalAlignment = SWT.TOP;
-        selectedButton.setLayoutData(data);
         selectedButton.setSelection(selectSelectedButton);
         selectedButton.addSelectionListener(updateEnablement);
-        createProjectSelectionTable(radioGroup);
+
+        //second row
+        createProjectSelectionTable(area);
+        
+        //third row
         //only prompt for immediate build if autobuild is off
         if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
             buildNowButton = new Button(parent, SWT.CHECK);
@@ -183,7 +179,7 @@ public class CleanDialog extends MessageDialog {
                     GridData.HORIZONTAL_ALIGN_BEGINNING));
         }
         projectNames.getTable().setEnabled(selectSelectedButton);
-        return radioGroup;
+        return area;
     }
 
     private void createProjectSelectionTable(Composite radioGroup) {
@@ -205,6 +201,7 @@ public class CleanDialog extends MessageDialog {
 		});
     	projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
     	GridData data = new GridData(GridData.FILL_BOTH);
+    	data.horizontalSpan = 2;
     	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
     	data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
     	projectNames.getTable().setLayoutData(data);
