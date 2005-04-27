@@ -128,7 +128,7 @@ public class HelpBasePlugin extends Plugin {
 		Location location = Platform.getConfigurationLocation();
 		if (location != null) {
 			URL configURL = location.getURL();
-			if (configURL != null & configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
+			if (configURL != null && configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
 				configurationDirectory = new File(configURL.getFile(),
 						PLUGIN_ID);
 			}
