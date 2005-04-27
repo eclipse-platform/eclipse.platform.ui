@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.osgi.service.prefs.BackingStoreException;
@@ -112,35 +110,7 @@ public class WorkbenchPreferenceInitializer extends
 					e.getLocalizedMessage(), e);
 			WorkbenchPlugin.getDefault().getLog().log(status);
 		}
-
-		rootNode
-				.addNodeChangeListener(new IEclipsePreferences.INodeChangeListener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
-					 */
-					public void added(NodeChangeEvent event) {
-						if (!event.getChild().name().equals(workbenchName))
-							return;
-						JFacePreferences.setPreferenceStore(WorkbenchPlugin
-								.getDefault().getPreferenceStore());
-						((IEclipsePreferences) event.getChild())
-								.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
-
-					}
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
-					 */
-					public void removed(NodeChangeEvent event) {
-						// Nothing to do here
-
-					}
-
-				});
+	
 	}
 
 }
