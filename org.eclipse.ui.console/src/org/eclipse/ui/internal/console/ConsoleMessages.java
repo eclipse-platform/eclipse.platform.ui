@@ -23,12 +23,6 @@ public class ConsoleMessages extends NLS {
 
 	public static String ConsoleView_0;
 
-
-	public static String find_replace_action_label;
-	public static String find_replace_action_tooltip;
-	public static String find_replace_action_image;
-	public static String find_replace_action_description;
-
 	public static String PinConsoleAction_0;
 	public static String PinConsoleAction_1;
 
