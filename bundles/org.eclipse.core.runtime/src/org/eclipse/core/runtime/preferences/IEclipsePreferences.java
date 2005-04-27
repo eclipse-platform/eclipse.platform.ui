@@ -253,7 +253,7 @@ public interface IEclipsePreferences extends Preferences {
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener);
 
 	/**
-	 * De-register the given listner from receiving notification of preference changes
+	 * De-register the given listener from receiving notification of preference changes
 	 * to this node. Calling this method multiple times with the same listener has no
 	 * effect. The given listener argument must not be <code>null</code>.
 	 * 
