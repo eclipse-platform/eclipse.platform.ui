@@ -156,9 +156,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
      *      behavior is required
      * @param monitor a progress monitor, or <code>null</code> if progress
      *    reporting is not desired
-     * @exception CoreException if the members could not be fetched. Reasons include:
-     * <ul>
-     * </ul>
+     * @exception CoreException if the members could not be fetched.
      */
     public abstract void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
 

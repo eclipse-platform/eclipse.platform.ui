@@ -89,10 +89,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 *    reporting is not desired
 	 * @return a set of traversals that cover the resources that constitute the
 	 *         model element
-	 * @exception CoreException if the traversals could not be obtained. Reasons include:
-	 * <ul>
-	 * <li>TBD: add reasons</li>
-	 * </ul>
+	 * @exception CoreException if the traversals could not be obtained.
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
 
