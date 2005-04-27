@@ -53,7 +53,7 @@ public class ResizeTest extends BasicPerformanceTest {
      */
     protected void runTest() throws CoreException, WorkbenchException {
 
-        tagIfNecessary(tagString, new Dimension[] {Dimension.ELAPSED_PROCESS, Dimension.CPU_TIME});
+        tagIfNecessary(tagString,Dimension.ELAPSED_PROCESS);
         
         widgetFactory.init();
         final Composite widget = widgetFactory.getControl();
@@ -76,8 +76,6 @@ public class ResizeTest extends BasicPerformanceTest {
                         int ySize = maxSize.y * yIteration / yIterations;
                         
                         widget.setSize(xSize, ySize);
-                        // Try to ensure that the resize event wasn't deferred by asking for the bounds
-                        widget.getBounds();
         
                         processEvents();
                     }

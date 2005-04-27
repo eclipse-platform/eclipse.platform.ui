@@ -126,7 +126,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveSwitchScenarios() {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
-            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0 ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE));            
+            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0 ? BasicPerformanceTest.GLOBAL & BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));            
         }   
     }
     
@@ -176,8 +176,8 @@ class WorkbenchPerformanceSuite extends TestSuite {
         for (int i = 0; i < perspectiveIds.length; i++) {
             String id = perspectiveIds[i];
             addTest(new ResizeTest(new PerspectiveWidgetFactory(id), 
-                    id.equals(resizeFingerprintTest) ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE, 
-                            "Window Resize"));
+                    id.equals(resizeFingerprintTest) ? BasicPerformanceTest.GLOBAL & BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE, 
+                            "UI - Workbench Window Resize"));
         }
     }
 }

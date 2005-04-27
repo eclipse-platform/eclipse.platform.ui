@@ -39,7 +39,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
         
-        tagIfNecessary("Open Multiple Editors", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+        tagIfNecessary("Open Multiple Editors",Dimension.ELAPSED_PROCESS);
         
         startMeasuring();      
                 

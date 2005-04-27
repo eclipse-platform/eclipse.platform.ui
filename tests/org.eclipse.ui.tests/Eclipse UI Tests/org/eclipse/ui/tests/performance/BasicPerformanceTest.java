@@ -197,14 +197,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 	
-	public void tagIfNecessary(String shortName, Dimension [] dimensions) {
-		if (shouldGloballyTag()) {
-			tagAsGlobalSummary(shortName, dimensions);
-		}
-		if (shouldLocallyTag()) {
-			tagAsSummary(shortName, dimensions);
-		}
-	}
 	
     public static void waitForBackgroundJobs() {
 

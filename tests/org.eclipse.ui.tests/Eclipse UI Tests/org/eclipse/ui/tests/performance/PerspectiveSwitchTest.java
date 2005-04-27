@@ -81,7 +81,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
         IDE.openEditor(page, aFile, true);
 
-       	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
+       	tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
         
         exercise(new TestRunnable() {
             public void run() throws Exception {

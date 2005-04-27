@@ -40,7 +40,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         waitForBackgroundJobs();
         processEvents();
         
-       	tagIfNecessary("Open/Close View", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+       	tagIfNecessary("UI - Open/Close View", Dimension.ELAPSED_PROCESS);
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 startMeasuring();
