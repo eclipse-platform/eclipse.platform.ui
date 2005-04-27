@@ -15,6 +15,7 @@ import java.util.Calendar;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -25,8 +26,6 @@ import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.internal.ui.wizards.InstallWizard;
 import org.eclipse.update.internal.ui.wizards.InstallWizard2;
 import org.eclipse.update.internal.ui.wizards.ResizableInstallWizardDialog;
-import org.eclipse.update.search.UpdateSearchRequest;
-import org.eclipse.update.ui.UpdateJob;
 
 /**
  * This plug-in is loaded on startup to fork a job that searches for new
@@ -52,10 +51,10 @@ public class SchedulerStartup implements IStartup {
 
 	public static final String P_HOUR = "hour"; //$NON-NLS-1$
 
-	// Keeps track of running job
-	private UpdateJob job;
+	// Keeps track of the running job
+	private Job job;
 
-	private static final Object automaticJobFamily = new Object();
+	static final Object automaticJobFamily = new Object();
 
 	// Listener for job changes
 	private UpdateJobChangeAdapter jobListener;
@@ -96,28 +95,13 @@ public class SchedulerStartup implements IStartup {
 			UpdateSchedulerMessages.SchedulerStartup_11PM,
 			UpdateSchedulerMessages.SchedulerStartup_12AM, };
 
-	private class AutomaticUpdateJob extends UpdateJob {
-
-		public AutomaticUpdateJob(String name, boolean isAutomatic,
-				boolean download) {
-			super(name, isAutomatic, download);
-		}
-
-		public AutomaticUpdateJob(String name, UpdateSearchRequest searchRequest) {
-			super(name, searchRequest);
-		}
-
-		public boolean belongsTo(Object family) {
-			return SchedulerStartup.automaticJobFamily == family;
-		}
-	}
-
 	private class UpdateJobChangeAdapter extends JobChangeAdapter {
 		public void done(IJobChangeEvent event) {
 			if (event.getJob() == SchedulerStartup.this.job) {
 
 				// prompt the user
-				if (SchedulerStartup.this.job.getUpdates().length > 0
+				if (((AutomaticUpdateJob) SchedulerStartup.this.job)
+						.getUpdates().length > 0
 						&& !InstallWizard.isRunning()) {
 					if (UpdateSchedulerPlugin.getDefault()
 							.getPluginPreferences().getBoolean(
@@ -185,9 +169,9 @@ public class SchedulerStartup implements IStartup {
 			if (InstallWizard.isRunning())
 				// job ends and a new one is rescheduled
 				return;
-
-			InstallWizard2 wizard = new InstallWizard2(job.getSearchRequest(),
-					job.getUpdates(), true);
+			AutomaticUpdateJob ujob = (AutomaticUpdateJob) job;
+			InstallWizard2 wizard = new InstallWizard2(ujob.getSearchRequest(),
+					ujob.getUpdates(), true);
 			WizardDialog dialog = new ResizableInstallWizardDialog(UpdateUI
 					.getActiveWorkbenchShell(), wizard,
 					UpdateUIMessages.AutomaticUpdatesJob_Updates);
