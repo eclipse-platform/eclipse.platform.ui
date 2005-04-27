@@ -99,34 +99,34 @@ public class StandaloneInfocenter extends EclipseController {
 	 * Prints usage of this class as a program.
 	 */
 	private static void printMainUsage() {
-		System.out.println("Parameters syntax:");
+		System.out.println("Parameters syntax:"); //$NON-NLS-1$
 		System.out.println();
 		System.out
 				.println("-command start | shutdown | [update command [update parameters]] [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-adminId administratorUserId] [-adminPassword administratorPassword] [-trustStoreLocation trustStoreLocation] [-trustStorePassword trustStorePassword][-noexec] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
-		System.out.println("where:");
+		System.out.println("where:"); //$NON-NLS-1$
 		System.out
-				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,");
+				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,"); //$NON-NLS-1$
 		System.out
-				.println(" helpServerHost specifies host name of the interface that help server will use,");
+				.println(" helpServerHost specifies host name of the interface that help server will use,"); //$NON-NLS-1$
 		System.out
-				.println(" helpServerPort specifies port number that help server will use,");
+				.println(" helpServerPort specifies port number that help server will use,"); //$NON-NLS-1$
 		System.out
-				.println(" administratorUserId specifies the administrator user id to use when secure access is enabled");
+				.println(" administratorUserId specifies the administrator user id to use when secure access is enabled"); //$NON-NLS-1$
 		System.out
-				.println(" administratorPassword specifies the administrator password to use when secure access is enabled");
+				.println(" administratorPassword specifies the administrator password to use when secure access is enabled"); //$NON-NLS-1$
 		System.out
-				.println(" trustStoreLocation specifies the location of the truststore file to use when secure access is enabled");
+				.println(" trustStoreLocation specifies the location of the truststore file to use when secure access is enabled"); //$NON-NLS-1$
 		System.out
-				.println(" trustStorePassword specifies the password of the truststore file when secure access is enabled");
+				.println(" trustStorePassword specifies the password of the truststore file when secure access is enabled"); //$NON-NLS-1$
 		System.out
-				.println(" noexec option indicates that Eclipse executable should not be used, ");
+				.println(" noexec option indicates that Eclipse executable should not be used, "); //$NON-NLS-1$
 		System.out
-				.println(" platform options are other options that are supported by Eclipse Executable,");
+				.println(" platform options are other options that are supported by Eclipse Executable,"); //$NON-NLS-1$
 		System.out
-				.println(" update command is one of install, update, enable, disable, uninstall, search, listFeatures, addSite, removeSite, or apply,");
+				.println(" update command is one of install, update, enable, disable, uninstall, search, listFeatures, addSite, removeSite, or apply,"); //$NON-NLS-1$
 		System.out
-				.println(" update parameters are -featureId, -version, -from, -to, -verifyOnly as required by update commands used.");
+				.println(" update parameters are -featureId, -version, -from, -to, -verifyOnly as required by update commands used."); //$NON-NLS-1$
 	}
 
 }

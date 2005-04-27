@@ -223,11 +223,11 @@ public class HelpIndexBuilder {
 	 *            the file that contains TOC extensions
 	 */
 	public void setManifest(File manifest) {
-		if (manifest.getName().equalsIgnoreCase("MANIFEST.MF")) {
+		if (manifest.getName().equalsIgnoreCase("MANIFEST.MF")) { //$NON-NLS-1$
 			File parent = manifest.getParentFile();
-			if (parent.getName().equalsIgnoreCase("META-INF")) {
+			if (parent.getName().equalsIgnoreCase("META-INF")) { //$NON-NLS-1$
 				File project = parent.getParentFile();
-				manifest = new File(project, "plugin.xml");
+				manifest = new File(project, "plugin.xml"); //$NON-NLS-1$
 				if (!manifest.exists())
 					manifest=null;
 			}
@@ -281,7 +281,7 @@ public class HelpIndexBuilder {
 		
 		if (!manifest.getParentFile().equals(destination)) {
 			// target is a fragment, source is a plug-in
-			File fragmentFile = new File(destination, "fragment.xml");
+			File fragmentFile = new File(destination, "fragment.xml"); //$NON-NLS-1$
 			Document fdoc=null;
 			if (fragmentFile.exists())
 				fdoc = readXMLFile(fragmentFile);
@@ -294,14 +294,14 @@ public class HelpIndexBuilder {
 			processExtension(extensions[i]);
 		}
 		if (indexPath == null) {
-			throwCoreException("Index destination path not specified in the extension.", null);
+			throwCoreException(HelpBaseResources.HelpIndexBuilder_noDestinationPath, null);
 		}
 		doc = null; // discard the DOM
 		
 		// compute the dir tree
 		computeLocaleDirs(fid!=null);		
 
-		monitor.beginTask("Building index: ", localeDirs.size());
+		monitor.beginTask(HelpBaseResources.HelpIndexBuilder_buildingIndex, localeDirs.size());
 		MultiStatus multiStatus = null;
 
 		for (int i=0; i<localeDirs.size(); i++) {
@@ -328,20 +328,20 @@ public class HelpIndexBuilder {
 		NodeList children = extensionNode.getElementsByTagName(EL_TOC);
 		for (int i = 0; i < children.getLength(); i++) {
 			Node node = children.item(i);
-			String file = getAttribute(node, "file");
-			String primary = getAttribute(node, "primary");
-			String extradir = getAttribute(node, "extradir");
+			String file = getAttribute(node, "file"); //$NON-NLS-1$
+			String primary = getAttribute(node, "primary"); //$NON-NLS-1$
+			String extradir = getAttribute(node, "extradir"); //$NON-NLS-1$
 			addTocFile(file, primary, extradir);
 		}
 		children = extensionNode.getElementsByTagName(EL_INDEX);
 		if (children.getLength() == 1) {
 			Node node = children.item(0);
-			indexPath = getAttribute(node, "path");
+			indexPath = getAttribute(node, "path"); //$NON-NLS-1$
 		}
 	}
 
 	private void addTocFile(String file, String primary, String extradir) {
-		boolean isPrimary = primary != null && primary.equalsIgnoreCase("true");
+		boolean isPrimary = primary != null && primary.equalsIgnoreCase("true"); //$NON-NLS-1$
 		tocFiles.add(new TocFile(file, isPrimary, extradir));
 	}
 
@@ -352,16 +352,16 @@ public class HelpIndexBuilder {
 	 */
 	private void computeLocaleDirs(boolean fragment) {
 		if (!fragment) {
-			LocaleDir dir = new LocaleDir(null, "/");
+			LocaleDir dir = new LocaleDir(null, "/"); //$NON-NLS-1$
 			dir.addDirectory(destination);
 			localeDirs.add(dir);
 		}
-		File ws = new File(destination, "ws");
+		File ws = new File(destination, "ws"); //$NON-NLS-1$
 		computeSystem(ws, Platform.knownWSValues());
-		File os = new File(destination, "os");
+		File os = new File(destination, "os"); //$NON-NLS-1$
 		computeSystem(os, Platform.knownOSValues());
 		
-		File nl = new File(destination, "nl");
+		File nl = new File(destination, "nl"); //$NON-NLS-1$
 		if (!nl.exists() || !nl.isDirectory())
 			return;
 		File [] languages = nl.listFiles();
@@ -375,15 +375,15 @@ public class HelpIndexBuilder {
 				File country = countries[j];
 				String locale;
 				if (country.isDirectory())
-					locale = language.getName()+"_"+country.getName();
+					locale = language.getName()+"_"+country.getName(); //$NON-NLS-1$
 				else
 					locale = language.getName();
 				if (isValidLocale(locale) && !locales.contains(locale)) {
 					String relativePath;
 					if (country.isDirectory())
-						relativePath = "/nl/"+language.getName()+"/"+country.getName();
+						relativePath = "/nl/"+language.getName()+"/"+country.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 					else
-						relativePath = "/nl/"+language.getName();
+						relativePath = "/nl/"+language.getName(); //$NON-NLS-1$
 					LocaleDir dir = new LocaleDir(locale, relativePath);
 					if (country.isDirectory())
 						dir.addDirectory(country);
@@ -408,7 +408,7 @@ public class HelpIndexBuilder {
 				for (int j=0; j<values.length; j++) {
 					if (values[j].equals(sname)) {
 						// valid
-						String relativePath="/"+systemRoot.getName()+"/"+sname;
+						String relativePath="/"+systemRoot.getName()+"/"+sname; //$NON-NLS-1$ //$NON-NLS-2$
 						LocaleDir dir = new LocaleDir(sname, relativePath);
 						dir.addDirectory(sdir);
 						dir.addDirectory(destination);
@@ -441,7 +441,7 @@ public class HelpIndexBuilder {
 			PluginIdentifier fid, LocaleDir localeDir, IProgressMonitor monitor)
 			throws CoreException {
 		// build an index for each locale directory
-		String message = NLS.bind("Index for {0}: ", ((File)localeDir.dirs.get(0)).getName());
+		String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, ((File)localeDir.dirs.get(0)).getName());
 		monitor.beginTask(message, 5);		
 		File directory = (File)localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
@@ -459,7 +459,7 @@ public class HelpIndexBuilder {
 				new SubProgressMonitor(monitor, 5, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			index.deleteLockFile();
 		}
-		monitor.setTaskName("");
+		monitor.setTaskName(""); //$NON-NLS-1$
 		monitor.done();
 		return status;
 	}
@@ -514,10 +514,10 @@ public class HelpIndexBuilder {
 	 * Recursive collection of hrefs from topics.
 	 */
 	private void add(Element topic, Set hrefs) {
-		String href = getAttribute(topic, "href");
-		if (topic.getTagName().equals("toc")) {
+		String href = getAttribute(topic, "href"); //$NON-NLS-1$
+		if (topic.getTagName().equals("toc")) { //$NON-NLS-1$
 			// toc element has 'topic' attribute. Don't ask why :-)
-			href = getAttribute(topic, "topic");
+			href = getAttribute(topic, "topic"); //$NON-NLS-1$
 		}
 		if (href != null
 				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -525,7 +525,7 @@ public class HelpIndexBuilder {
 			if (href != null)
 				hrefs.add(href);
 		}
-		NodeList subtopics = topic.getElementsByTagName("topic");
+		NodeList subtopics = topic.getElementsByTagName("topic"); //$NON-NLS-1$
 		for (int i = 0; i < subtopics.getLength(); i++)
 			add((Element) subtopics.item(i), hrefs);
 	}
@@ -541,7 +541,7 @@ public class HelpIndexBuilder {
 			throws CoreException {
 		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());		
 		if (!index.beginAddBatch(true)) {
-			throwCoreException("Error while creating the index", null);
+			throwCoreException(HelpBaseResources.HelpIndexBuilder_error, null);
 		}
 		checkCancelled(monitor);
 		MultiStatus multiStatus = null;
@@ -561,7 +561,7 @@ public class HelpIndexBuilder {
 			else {
 				// report missing document when in a plug-in
 				String locale = localeDir.locale!=null?localeDir.locale:Platform.getNL();
-				String message = NLS.bind("Locale ''{0}'': cannot find document: {1}", locale, href);
+				String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_cannotFindDoc, locale, href);
 				IStatus status = new Status(IStatus.WARNING, pluginId, IStatus.OK, message, null);
 				if (multiStatus == null)
 					multiStatus = createMultiStatus();
@@ -573,7 +573,7 @@ public class HelpIndexBuilder {
 		monitor.subTask(HelpBaseResources.Writing_index);
 		if (!index.endAddBatch(true, true)) {
 			IStatus status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
-					IStatus.OK, "Error while writing the index", null);
+					IStatus.OK, HelpBaseResources.HelpIndexBuilder_errorWriting, null);
 			if (multiStatus==null)
 				multiStatus = createMultiStatus();
 			multiStatus.add(status);
@@ -586,7 +586,7 @@ public class HelpIndexBuilder {
 		return new MultiStatus(
 				HelpBasePlugin.PLUGIN_ID,
 				IStatus.OK,
-				"Help documentation could not be indexed completely.",
+				HelpBaseResources.HelpIndexBuilder_incompleteIndex,
 				null);
 	}
 
@@ -601,7 +601,7 @@ public class HelpIndexBuilder {
 		int i = href.indexOf('?');
 		if (i != -1)
 			href = href.substring(0, i);
-		return "/" + pluginId + "/" + href;
+		return "/" + pluginId + "/" + href; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -619,12 +619,12 @@ public class HelpIndexBuilder {
 				boolean result = file.delete();
 				if (!result)
 					throwCoreException(
-							"Cannot scrub destination index directory", null);
+							HelpBaseResources.HelpIndexBuilder_cannotScrub, null);
 			}
 		} else {
 			boolean result = indexDirectory.mkdirs();
 			if (!result)
-				throwCoreException("Cannot create destination index directory",
+				throwCoreException(HelpBaseResources.HelpIndexBuilder_cannotCreateDest,
 						null);
 		}
 	}
@@ -640,8 +640,8 @@ public class HelpIndexBuilder {
 		String version = null;
 		if (doc != null) {
 			Node root = doc.getDocumentElement();
-			id = getAttribute(root, "id");
-			version = getAttribute(root, "version");
+			id = getAttribute(root, "id"); //$NON-NLS-1$
+			version = getAttribute(root, "version"); //$NON-NLS-1$
 			if (id != null && version != null)
 				return new PluginIdentifier(id, version);
 		}
@@ -673,7 +673,7 @@ public class HelpIndexBuilder {
 				if (id != null && version != null)
 					return new PluginIdentifier(id, version);
 			} catch (Exception e1) {
-				throwCoreException("Error extracting plug-in identifier.", e1);
+				throwCoreException(HelpBaseResources.HelpIndexBuilder_errorExtractingId, e1);
 			}
 		}
 		return null;
@@ -702,7 +702,7 @@ public class HelpIndexBuilder {
 				parser = documentBuilderFactory.newDocumentBuilder();
 			d = parser.parse(inputSource);
 		} catch (Exception e) {
-			throwCoreException("Error parsing plugin.xml file.", e);
+			throwCoreException(HelpBaseResources.HelpIndexBuilder_errorParsing, e);
 		} finally {
 			if (stream != null) {
 				try {
@@ -718,10 +718,10 @@ public class HelpIndexBuilder {
 	private Element[] getTocExtensions(Document doc) {
 		ArrayList list = new ArrayList();
 		Node root = doc.getDocumentElement();
-		NodeList children = doc.getElementsByTagName("extension");
+		NodeList children = doc.getElementsByTagName("extension"); //$NON-NLS-1$
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			String point = getAttribute(child, "point");
+			String point = getAttribute(child, "point"); //$NON-NLS-1$
 			if (point.equals(POINT_TOC))
 				list.add(child);
 		}

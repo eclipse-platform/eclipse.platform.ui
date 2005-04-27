@@ -30,7 +30,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		public UIThread2() {
 			super();
 			setDaemon(true);
-			setName("Help Browser UI");
+			setName("Help Browser UI"); //$NON-NLS-1$
 		}
 
 		public void run() {

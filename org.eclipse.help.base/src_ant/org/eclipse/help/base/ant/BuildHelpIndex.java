@@ -51,10 +51,10 @@ public class BuildHelpIndex extends Task {
 	public void execute() throws BuildException {
 		File file = getFile(manifest);
 		if (file == null)
-			throw new BuildException("Manifest not set.");
+			throw new BuildException("Manifest not set."); //$NON-NLS-1$
 		File target = getFile(destination);
 		if (target == null)
-			throw new BuildException("Target directory not set.");
+			throw new BuildException("Target directory not set."); //$NON-NLS-1$
 		builder = new HelpIndexBuilder();
 		builder.setManifest(file);
 		builder.setDestination(target);
@@ -80,7 +80,7 @@ public class BuildHelpIndex extends Task {
 			IStatus [] children = status.getChildren();
 			for (int i=0; i<children.length; i++) {
 				IStatus child = children[i];
-				System.out.println("    "+child.getMessage());
+				System.out.println("    "+child.getMessage()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -92,9 +92,9 @@ public class BuildHelpIndex extends Task {
 		if (path.isAbsolute())
 			return new File(fileName);
 		File root = getProject().getBaseDir();
-		if (fileName.equals(".") || fileName.equals("./"))
+		if (fileName.equals(".") || fileName.equals("./")) //$NON-NLS-1$ //$NON-NLS-2$
 			return root;
-		if (fileName.equals("..") || fileName.equals("../"))
+		if (fileName.equals("..") || fileName.equals("../")) //$NON-NLS-1$ //$NON-NLS-2$
 			return root.getParentFile();
 		return new File(root, fileName);
 	}

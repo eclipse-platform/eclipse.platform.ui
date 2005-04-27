@@ -14,6 +14,8 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.*;
 
 /**
@@ -27,6 +29,13 @@ public class ServletResources {
 	 */
 	protected ServletResources() {
 		super();
+	}
+
+	public static String getConfirmShowAllExplanation(HttpServletRequest request) {
+		String  message = HelpBasePlugin.getActivitySupport().getShowAllMessage();
+		if (message==null)
+			message = getString("confirmShowAllExplanation", request);
+		return message;
 	}
 
 	/**

@@ -19,7 +19,6 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -108,7 +107,7 @@ public final class InfoCenter implements ISearchEngine {
 		}
 
 		public float getScore() {
-			String value = node.getAttribute("score");
+			String value = node.getAttribute("score"); //$NON-NLS-1$
 			if (value != null)
 				return Float.parseFloat(value);
 			return (float) 0.0;
@@ -152,7 +151,7 @@ public final class InfoCenter implements ISearchEngine {
 		tocs.clear();
 		try {
 			URLConnection connection = url.openConnection();
-			monitor.beginTask("Connecting...", 5);
+			monitor.beginTask(HelpBaseResources.InfoCenter_connecting, 5);
 			is = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"));//$NON-NLS-1$
@@ -189,8 +188,8 @@ public final class InfoCenter implements ISearchEngine {
 					.newDocumentBuilder();
 			if (monitor.isCanceled())
 				return;
-			monitor.beginTask("", 5);
-			monitor.subTask("Searching...");
+			monitor.beginTask("", 5); //$NON-NLS-1$
+			monitor.subTask(HelpBaseResources.InfoCenter_searching);
 			document = parser.parse(new InputSource(r));
 			if (monitor.isCanceled())
 				return;
@@ -220,8 +219,8 @@ public final class InfoCenter implements ISearchEngine {
 		NodeList topics = root.getElementsByTagName("topic"); //$NON-NLS-1$
 		ISearchEngineResult[] results = new ISearchEngineResult[topics
 				.getLength()];
-		monitor.subTask("Processing results...");
-		monitor.beginTask("", results.length);
+		monitor.subTask(HelpBaseResources.InfoCenter_processing);
+		monitor.beginTask("", results.length); //$NON-NLS-1$
 		for (int i = 0; i < topics.getLength(); i++) {
 			Element el = (Element) topics.item(i);
 			if (monitor.isCanceled())

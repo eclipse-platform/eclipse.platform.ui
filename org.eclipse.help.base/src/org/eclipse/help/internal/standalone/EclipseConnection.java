@@ -59,8 +59,8 @@ public class EclipseConnection {
 				secureConnection.setHostnameVerifier(new HostnameVerifier() {
 					public boolean verify(String urlHostName, javax.net.ssl.SSLSession session) {
 						if (Options.isDebug()) {
-							System.out.println("Warning: URL Host: "
-									+ urlHostName + " vs. "
+							System.out.println("Warning: URL Host: " //$NON-NLS-1$
+									+ urlHostName + " vs. " //$NON-NLS-1$
 									+ session.getPeerHost());							
 						}
 			            return true;
@@ -82,17 +82,17 @@ public class EclipseConnection {
 			connection.disconnect();
 			if (code == HttpURLConnection.HTTP_MOVED_TEMP) {
 				// Redirect from server.
-				String redirectLocation = connection.getHeaderField("location");
+				String redirectLocation = connection.getHeaderField("location"); //$NON-NLS-1$
 				URL redirectURL = new URL(redirectLocation);
 				if (url.equals(redirectURL)) {
 					if (Options.isDebug()) {
-						System.out.println("Redirecting to the same URL! "
+						System.out.println("Redirecting to the same URL! " //$NON-NLS-1$
 								+ redirectLocation);
 					}
 					return;
 				}
 				if (Options.isDebug()) {
-					System.out.println("Follows redirect to " + redirectLocation); //$NON_NLS-1$
+					System.out.println("Follows redirect to " + redirectLocation); //$NON_NLS-1$ //$NON-NLS-1$
 				}
 				connect(redirectURL);
 			}

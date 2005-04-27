@@ -47,7 +47,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		
 		private void load() {
 			IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.activitySupport");//$NON-NLS-1$
-			if (elements.length==1 && elements[0].getName().equals("support"))
+			if (elements.length==1 && elements[0].getName().equals("support")) //$NON-NLS-1$
 				config = elements[0];
 			else if (elements.length>0) {
 				IProduct product = Platform.getProduct();
@@ -55,7 +55,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 				String productId = product.getId(); 
 				for (int i=0; i<elements.length; i++) {
 					IConfigurationElement element = elements[i];
-					if (element.getAttribute("productId").equals(productId)) {
+					if (element.getAttribute("productId").equals(productId)) { //$NON-NLS-1$
 						config = element;
 						break;
 					}
@@ -69,7 +69,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		public String getShowAllMessage() {
 			if (config==null)
 				return null;
-			IConfigurationElement child = getChild("showAllMessage");
+			IConfigurationElement child = getChild("showAllMessage"); //$NON-NLS-1$
 			if (child!=null)
 				return child.getValue();
 			return null;
@@ -80,12 +80,12 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		}
 		public String getDocumentMessage() {
 			if (config!=null && documentMessage==null) {
-				IConfigurationElement child = getChild("documentMessage");
+				IConfigurationElement child = getChild("documentMessage"); //$NON-NLS-1$
 				if (child!=null) {
 					String value = child.getValue();
-					String pluginId = child.getAttribute("pluginId");
-					String className = child.getAttribute("class");
-					int loc = value.indexOf("ACTIVITY_EDITOR");
+					String pluginId = child.getAttribute("pluginId"); //$NON-NLS-1$
+					String className = child.getAttribute("class"); //$NON-NLS-1$
+					int loc = value.indexOf("ACTIVITY_EDITOR"); //$NON-NLS-1$
 					if (loc!= -1 && className!=null) {
 						needsLiveHelp=true;
 						StringBuffer buffer = new StringBuffer();
@@ -101,7 +101,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			return documentMessage;
 		}
 		private String getActivityEditorValue(String pluginId, String className) {
-			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\"\")";
+			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	

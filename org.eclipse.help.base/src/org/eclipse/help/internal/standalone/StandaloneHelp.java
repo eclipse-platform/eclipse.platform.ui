@@ -150,20 +150,20 @@ public class StandaloneHelp extends EclipseController {
 	 * Prints usage of this class as a program.
 	 */
 	private static void printMainUsage() {
-		System.out.println("Parameters syntax:");
+		System.out.println("Parameters syntax:"); //$NON-NLS-1$
 		System.out.println();
 		System.out
 				.println("-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]"); //$NON-NLS-1$
 		System.out.println();
-		System.out.println("where:");
-		System.out.println(" href is the URL of the help resource to display,");
+		System.out.println("where:"); //$NON-NLS-1$
+		System.out.println(" href is the URL of the help resource to display,"); //$NON-NLS-1$
 		System.out
-				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,");
+				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,"); //$NON-NLS-1$
 		System.out
-				.println(" helpServerHost specifies host name of the interface that help server will use,");
+				.println(" helpServerHost specifies host name of the interface that help server will use,"); //$NON-NLS-1$
 		System.out
-				.println(" helpServerPort specifies port number that help server will use,");
+				.println(" helpServerPort specifies port number that help server will use,"); //$NON-NLS-1$
 		System.out
-				.println(" platform options are other options that are supported by Eclipse Executable.");
+				.println(" platform options are other options that are supported by Eclipse Executable."); //$NON-NLS-1$
 	}
 }

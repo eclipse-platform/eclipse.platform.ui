@@ -118,7 +118,7 @@ public class Eclipse extends Thread {
 				status = STATUS_ERROR;
 			}
 			if (status == STATUS_ERROR && exception == null) {
-				exception = new Exception("Unknown exception.");
+				exception = new Exception("Unknown exception."); //$NON-NLS-1$
 			}
 			lifeCycleListener.eclipseEnded();
 		}
@@ -155,8 +155,8 @@ public class Eclipse extends Thread {
 		if (vmExe.exists() && !vmExe.isDirectory()) {
 			return;
 		}
-		throw new Exception("File " + vmExe.getAbsolutePath()
-				+ " does not exists.  Pass a correct -vm option");
+		throw new Exception("File " + vmExe.getAbsolutePath() //$NON-NLS-1$
+				+ " does not exists.  Pass a correct -vm option"); //$NON-NLS-1$
 	}
 	private void ensureEclipseExeExists() throws Exception {
 		File eclipseExe = new File(Options.getEclipseHome(), "eclipse" //$NON-NLS-1$
@@ -166,16 +166,16 @@ public class Eclipse extends Thread {
 		if (eclipseExe.exists() && !eclipseExe.isDirectory()) {
 			return;
 		}
-		throw new Exception("File " + eclipseExe.getAbsolutePath()
-				+ " does not exists.  Pass a correct -eclipsehome option");
+		throw new Exception("File " + eclipseExe.getAbsolutePath() //$NON-NLS-1$
+				+ " does not exists.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
 	}
 	private void ensureStartupJarExists() throws Exception {
 		File startupJar = new File(Options.getEclipseHome(), "startup.jar"); //$NON-NLS-1$
 		if (startupJar.exists() && !startupJar.isDirectory()) {
 			return;
 		}
-		throw new Exception("File " + startupJar.getAbsolutePath()
-				+ " does not exists.  Pass a correct -eclipsehome option");
+		throw new Exception("File " + startupJar.getAbsolutePath() //$NON-NLS-1$
+				+ " does not exists.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
 	}
 	/**
 	 * @return Exception

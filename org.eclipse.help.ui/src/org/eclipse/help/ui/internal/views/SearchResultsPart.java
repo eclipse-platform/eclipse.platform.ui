@@ -219,6 +219,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			EngineDescriptor ed = (EngineDescriptor) eds.get(i);
 			if (ed==localHelp)
 				continue;
+			add(ed);
 		}
 		reflow();
 	}

@@ -98,7 +98,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	public static final Collator SHARED_COLLATOR = Collator.getInstance();
 
-	private static final String PROMPT_KEY = "askShowAll";
+	private static final String PROMPT_KEY = "askShowAll"; //$NON-NLS-1$
+
+	private static final int STATE_START = 1;
+	private static final int STATE_LT = 2;
+	private static final int STATE_LT_B = 3;
+	private static final int STATE_LT_BR = 4;
 
 	private RoleFilter roleFilter;
 
@@ -734,7 +739,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.setText(Messages.ReusableHelpPart_openInHelpContentsAction_label); //$NON-NLS-1$
 		copyAction = new CopyAction();
 		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); //$NON-NLS-1$
-		bookmarkAction = new OpenHrefAction("bookmark") {
+		bookmarkAction = new OpenHrefAction("bookmark") { //$NON-NLS-1$
 			protected void busyRun() {
 				doBookmark(getTarget());
 			}
@@ -1397,7 +1402,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				if (leaveBold) {
 					if (i + 3 < value.length()) {
 						String tag = value.substring(i, i + 4);
-						if (tag.equalsIgnoreCase("</b>")) {
+						if (tag.equalsIgnoreCase("</b>")) { //$NON-NLS-1$
 							buf.append(tag);
 							i += 3;
 							continue;
@@ -1405,7 +1410,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					}
 					if (i + 2 < value.length()) {
 						String tag = value.substring(i, i + 3);
-						if (tag.equalsIgnoreCase("<b>")) {
+						if (tag.equalsIgnoreCase("<b>")) { //$NON-NLS-1$
 							buf.append(tag);
 							i += 2;
 							continue;
@@ -1443,7 +1448,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				MessageDialogWithToggle dialog = MessageDialogWithToggle
 						.openOkCancelConfirm(null,
 								Messages.AskShowAll_dialogTitle,
-								Messages.AskShowAll_message,
+								getShowAllMessage(),
 								Messages.AskShowAll_toggleMessage, false,
 								store, PROMPT_KEY);
 				if (dialog.getReturnCode() != MessageDialogWithToggle.OK) {
@@ -1457,5 +1462,42 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			HelpPartPage page = (HelpPartPage) pages.get(i);
 			page.toggleRoleFilter();
 		}
+	}
+
+	private String getShowAllMessage() {
+		String message = HelpBasePlugin.getActivitySupport().getShowAllMessage();
+		if (message==null)
+			return Messages.AskShowAll_message;
+		StringBuffer buff = new StringBuffer();
+		int state = STATE_START;
+
+		for (int i=0; i<message.length(); i++) {
+			char c = message.charAt(i);
+			switch (state) {
+			case STATE_START:
+				if (c=='<')
+					state = STATE_LT;
+				else
+					buff.append(c);
+				break;
+			case STATE_LT:
+				if (c=='b' || c=='B')
+					state = STATE_LT_B;
+				break;
+			case STATE_LT_B:
+				if (c=='r' || c=='R')
+					state = STATE_LT_BR;
+				break;
+			case STATE_LT_BR:
+				if (c=='>') {
+					buff.append('\n');
+				}
+				state = STATE_START;
+				break;
+			default:
+				buff.append(c);
+			}
+		}
+		return buff.toString();
 	}
 }

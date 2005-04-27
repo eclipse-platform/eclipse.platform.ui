@@ -301,9 +301,9 @@ public final class BaseHelpSystem {
 	}
 
 	public static String unresolve(String href) {
-		String[] baseVariants = { getBase("/help/topic"),
-				getBase("/help/nftopic"), 
-				getBase("/help/ntopic") };
+		String[] baseVariants = { getBase("/help/topic"), //$NON-NLS-1$
+				getBase("/help/nftopic"),  //$NON-NLS-1$
+				getBase("/help/ntopic") }; //$NON-NLS-1$
 		for (int i = 0; i < baseVariants.length; i++) {
 			if (href.startsWith(baseVariants[i]))
 				return href.substring(baseVariants[i].length());

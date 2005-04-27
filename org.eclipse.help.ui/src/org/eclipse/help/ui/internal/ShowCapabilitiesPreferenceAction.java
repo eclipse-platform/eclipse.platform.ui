@@ -46,6 +46,6 @@ public class ShowCapabilitiesPreferenceAction implements ILiveHelpAction {
 	}
 
 	private String getCapabilityPageId() {
-		return "org.eclipse.sdk.capabilities";
+		return "org.eclipse.sdk.capabilities"; //$NON-NLS-1$
 	}
 }

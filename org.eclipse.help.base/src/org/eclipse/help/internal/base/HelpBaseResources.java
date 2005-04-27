@@ -47,4 +47,19 @@ public final class HelpBaseResources extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, HelpBaseResources.class);
 	}
+
+	public static String InfoCenter_connecting;
+	public static String InfoCenter_searching;
+	public static String InfoCenter_processing;
+	public static String HelpIndexBuilder_noDestinationPath;
+	public static String HelpIndexBuilder_buildingIndex;
+	public static String HelpIndexBuilder_indexFor;
+	public static String HelpIndexBuilder_error;
+	public static String HelpIndexBuilder_cannotFindDoc;
+	public static String HelpIndexBuilder_errorWriting;
+	public static String HelpIndexBuilder_incompleteIndex;
+	public static String HelpIndexBuilder_cannotScrub;
+	public static String HelpIndexBuilder_cannotCreateDest;
+	public static String HelpIndexBuilder_errorExtractingId;
+	public static String HelpIndexBuilder_errorParsing;
 }

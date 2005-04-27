@@ -176,11 +176,11 @@ public class EclipseController implements EclipseLifeCycleListener {
 		try {
 			String trustStoreLocation = Options.getTrustStoreLocation();
 			if (trustStoreLocation != null) {
-				System.setProperty("javax.net.ssl.trustStore", trustStoreLocation);
+				System.setProperty("javax.net.ssl.trustStore", trustStoreLocation); //$NON-NLS-1$
 			}
 			String trustStorePassword = Options.getTrustStorePassword();
 			if (trustStorePassword != null) {
-				System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);				
+				System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);				 //$NON-NLS-1$
 			}
 			URL url = createCommandURL(command, parameters);
 			if ("shutdown".equalsIgnoreCase(command) //$NON-NLS-1$

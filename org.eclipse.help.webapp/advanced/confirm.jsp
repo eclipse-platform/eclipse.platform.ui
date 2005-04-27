@@ -112,7 +112,7 @@ function confirmed(){
 	<div style="padding:10px;">
 	<span style="font-weight:bold;"><%=ServletResources.getString(request.getParameter("header"), request)%></span>
 	<br><br>
-	<%=ServletResources.getString(request.getParameter("message"), request)%>
+	<%=ServletResources.getConfirmShowAllExplanation(request)%>
 	</div>
 </div>
 <% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>

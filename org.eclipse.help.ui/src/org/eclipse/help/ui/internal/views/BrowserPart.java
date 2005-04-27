@@ -54,7 +54,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 	private final static int CLOSE_BRACKET = 5;
 	
-	private final static String QUERY = "BrowserPartQuery:";
+	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
 
 	private ReusableHelpPart parent;
 
@@ -127,8 +127,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 					monitor.done();
 				}
 				lastProgress = -1;
-				String value = executeQuery("document.title");
-				BrowserPart.this.title = value!=null?value:"N/A";
+				String value = executeQuery("document.title"); //$NON-NLS-1$
+				BrowserPart.this.title = value!=null?value:"N/A"; //$NON-NLS-1$
 			}
 		});
 		browser.addStatusTextListener(new StatusTextListener() {
@@ -164,17 +164,17 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private String executeQuery(String domValue) {
-		String query = "window.status=\""+QUERY+"\"+"+domValue+";";
+		String query = "window.status=\""+QUERY+"\"+"+domValue+";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		boolean status = browser.execute(query);
 		if (status) {
-			return (String)browser.getData("query");
+			return (String)browser.getData("query"); //$NON-NLS-1$
 		}
 		return null;
 	}
 
 	private boolean processQuery(String text) {
 		if (text.startsWith(QUERY)) {
-			browser.setData("query", text.substring(QUERY.length()));
+			browser.setData("query", text.substring(QUERY.length())); //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -237,7 +237,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		this.parent = parent;
 		this.id = id;
 		if (memento!=null) {
-			String url = memento.getString("BrowserPart.url");
+			String url = memento.getString("BrowserPart.url"); //$NON-NLS-1$
 			if (url!=null)
 				showURL(url);
 		}
@@ -320,14 +320,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				return true;
 			}
 		}
-		else if (url.startsWith("javascript:liveAction(")) {
+		else if (url.startsWith("javascript:liveAction(")) { //$NON-NLS-1$
 			return processLiveAction(url);
 		}
 		return false;
 	}
 
 	private boolean processLiveAction(String url) {
-		int size = "javascript:liveAction".length();
+		int size = "javascript:liveAction".length(); //$NON-NLS-1$
 		String args = url.substring(size);
 		ArrayList arglist = new ArrayList();
 		StringBuffer buff = new StringBuffer();

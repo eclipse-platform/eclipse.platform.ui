@@ -22,7 +22,7 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		return System.getProperty("os.name").equals("Mac OS X");
+		return System.getProperty("os.name").equals("Mac OS X"); //$NON-NLS-1$ //$NON-NLS-2$
 		/*
 		 * we assume that every Mac OS X has an "/usr/bin/osascript" so we don't
 		 * test any further

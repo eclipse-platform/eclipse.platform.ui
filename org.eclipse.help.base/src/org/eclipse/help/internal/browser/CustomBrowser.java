@@ -166,7 +166,7 @@ public class CustomBrowser implements IBrowser {
 	private String doSubstitutions(String token, String url) {
 		boolean substituted = false;
 		StringBuffer newToken = new StringBuffer(token);
-		String substitutionMarker = "%1";
+		String substitutionMarker = "%1"; //$NON-NLS-1$
 		int index = newToken.indexOf(substitutionMarker);
 		while (index != -1) {
 			newToken.replace(index, index + substitutionMarker.length(), url);
