@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
@@ -62,7 +63,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
      */
     public void init() throws CoreException, WorkbenchException {
     	// open the view in a new window
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
 		IWorkbenchPage page = window.getActivePage();
         Assert.assertNotNull(page);
 

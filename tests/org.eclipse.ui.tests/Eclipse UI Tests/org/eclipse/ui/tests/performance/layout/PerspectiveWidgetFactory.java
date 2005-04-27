@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
@@ -45,7 +46,7 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
      */
     public void init() throws WorkbenchException {
     	// open the perspective in a new window
-        window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, ResourcesPlugin.getWorkspace());
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, UITestCase.getPageInput());
 		IWorkbenchPage page = window.getActivePage();
         Assert.assertNotNull(page);
     }

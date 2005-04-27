@@ -26,14 +26,14 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 /**
  * Test opening and closing of items.
  */
-public class OpenCloseTest extends TestCase {
+public class OpenCloseTest extends UITestCase {
 	private static int index;
 	private static final int numIterations = 10;
 	private WorkbenchWindow workbenchWindow;
-	private Workspace workspace;
 	/**
 	 * Constructor.
 	 * 
@@ -44,7 +44,6 @@ public class OpenCloseTest extends TestCase {
 		super(testName);
 		workbenchWindow = (WorkbenchWindow) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
-		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 	}
 	/**
 	 * Test the opening and closing of a file.
@@ -54,7 +53,7 @@ public class OpenCloseTest extends TestCase {
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 		try {
 			FileUtil.createProject("TestProject");
-			IProject testProject = workspace.getRoot()
+			IProject testProject = ResourcesPlugin.getWorkspace().getRoot()
 					.getProject("TestProject"); //$NON-NLS-1$
 			FileUtil.createFile("tempFile.txt", testProject);
 			testProject.open(null);
@@ -80,7 +79,7 @@ public class OpenCloseTest extends TestCase {
 		try {
 			for (index = 0; index < numIterations; index++) {
 				secondWorkbenchWindow = PlatformUI.getWorkbench()
-						.openWorkbenchWindow(workspace);
+						.openWorkbenchWindow(getPageInput());
 				secondWorkbenchWindow.close();
 			}
 		} catch (WorkbenchException e) {

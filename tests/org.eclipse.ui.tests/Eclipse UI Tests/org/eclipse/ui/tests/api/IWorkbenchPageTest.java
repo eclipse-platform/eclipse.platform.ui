@@ -98,7 +98,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkbenchPage page =
 			fWin.openPage(
 				EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace());
+				getPageInput());
 		assertEquals(EmptyPerspective.PERSP_ID, page.getPerspective().getId());
 	}
 
@@ -118,7 +118,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	public void testGetInput() throws Throwable {
-		IAdaptable input = ResourcesPlugin.getWorkspace();
+		IAdaptable input = getPageInput();
 		IWorkbenchPage page = fWin.openPage(input);
 		assertEquals(input, page.getInput());
 	}

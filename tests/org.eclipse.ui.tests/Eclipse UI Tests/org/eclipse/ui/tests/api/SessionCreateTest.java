@@ -54,24 +54,24 @@ public class SessionCreateTest extends UITestCase {
 		// Create test window with empty perspective.
 		window = fWorkbench.openWorkbenchWindow(
 			EmptyPerspective.PERSP_ID,
-			ResourcesPlugin.getWorkspace());
+			getPageInput());
 			
 		// Create test window with empty perspective and
 		// session perspective.
 		window = fWorkbench.openWorkbenchWindow(
 			EmptyPerspective.PERSP_ID,
-			ResourcesPlugin.getWorkspace());
+			getPageInput());
 		page = window.openPage(
 			SessionPerspective.ID,
-			ResourcesPlugin.getWorkspace());
+			getPageInput());
 		
 		// Create test window with two session perspectives.
 		window = fWorkbench.openWorkbenchWindow(
 			SessionPerspective.ID,
-			ResourcesPlugin.getWorkspace());
+			getPageInput());
 		page = window.openPage(
 			SessionPerspective.ID,
-			ResourcesPlugin.getWorkspace());
+			getPageInput());
 			
 		// Open 3 editors in last page.
 		IProject proj = FileUtil.createProject(TEST_PROJ);
