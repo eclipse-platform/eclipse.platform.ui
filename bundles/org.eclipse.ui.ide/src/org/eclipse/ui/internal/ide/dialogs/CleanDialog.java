@@ -113,6 +113,8 @@ public class CleanDialog extends MessageDialog {
         super.buttonPressed(buttonId);
         if (buttonId != IDialogConstants.OK_ID)
         	return;
+        //save all dirty editors
+        BuildUtilities.saveEditors(null);
         //batching changes ensures that autobuild runs after cleaning
     	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.CleanDialog_taskName) {
     		public boolean belongsTo(Object family) {

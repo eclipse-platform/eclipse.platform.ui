@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
+import java.util.Collection;
 import java.util.HashSet;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,8 +24,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.ResourceUtil;
 
 /**
@@ -74,11 +77,11 @@ public class BuildUtilities {
 			//see if we can extract a selected project from the active editor
 			IWorkbenchPart part = window.getPartService().getActivePart();
 			if (part instanceof IEditorPart) {
-                IEditorPart editor = (IEditorPart) part; 
-                IFile file = ResourceUtil.getFile(editor.getEditorInput());
+				IEditorPart editor = (IEditorPart) part;
+				IFile file = ResourceUtil.getFile(editor.getEditorInput());
 				if (file != null) {
-					selected = new IProject[] { file.getProject() };
-                }
+					selected = new IProject[] {file.getProject()};
+				}
 			}
 		}
 		if (selected == null)
@@ -130,6 +133,38 @@ public class BuildUtilities {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Causes all editors to save any modified resources in the provided collection
+	 * of projects depending on the user's preference.
+	 * @param projects The projects in which to save editors, or <code>null</code>
+	 * to save editors in all projects.
+	 */
+	public static void saveEditors(Collection projects) {
+		if (!BuildAction.isSaveAllSet())
+			return;
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages = windows[i].getPages();
+			for (int j = 0; j < pages.length; j++) {
+				IWorkbenchPage page = pages[j];
+				if (projects == null) {
+					page.saveAllEditors(false);
+				} else {
+					IEditorPart[] editors = page.getDirtyEditors();
+					for (int k = 0; k < editors.length; k++) {
+						IEditorPart editor = editors[k];
+						IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+						if (inputFile != null) {
+							if (projects.contains(inputFile.getProject())) {
+								page.saveEditor(editor, false);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**

@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -30,11 +29,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -270,43 +266,14 @@ public class BuildAction extends WorkspaceAction {
      * open editors so that the updated contents will be used for building.
      */
     public void run() {
-        // Save all resources prior to doing build
-        saveAllResources();
+	    List projects = getProjectsToBuild();
+	    if (projects == null || projects.isEmpty())
+	        return;
 
+	    // Save all resources prior to doing build
+        BuildUtilities.saveEditors(projects);
         runInBackground(ResourcesPlugin.getWorkspace().getRuleFactory()
                 .buildRule(), ResourcesPlugin.FAMILY_MANUAL_BUILD);
-    }
-
-    /**
-     * Causes all editors to save any modified resources depending on the user's
-     * preference.
-     */
-    void saveAllResources() {
-        List projects = getProjectsToBuild();
-        if (projects == null || projects.isEmpty())
-            return;
-
-        if (!isSaveAllSet())
-            return;
-
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] pages = windows[i].getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IWorkbenchPage page = pages[j];
-                IEditorPart[] editors = page.getDirtyEditors();
-                for (int k = 0; k < editors.length; k++) {
-                    IEditorPart editor = editors[k];
-                    IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
-                    if (inputFile != null) {
-                        if (projects.contains(inputFile.getProject())) {
-                            page.saveEditor(editor, false);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /* (non-Javadoc)

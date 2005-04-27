@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -18,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -26,13 +26,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
  * Standard action for full and incremental builds of all projects within the
@@ -152,8 +152,7 @@ public class GlobalBuildAction extends Action implements
     private String getOperationMessage() {
         if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD)
             return IDEWorkbenchMessages.GlobalBuildAction_buildOperationTitle;
-        else
-            return IDEWorkbenchMessages.GlobalBuildAction_rebuildAllOperationTitle;
+        return IDEWorkbenchMessages.GlobalBuildAction_rebuildAllOperationTitle;
     }
 
     /**
@@ -234,25 +233,9 @@ public class GlobalBuildAction extends Action implements
         if (!verifyNoManualRunning())
             return;
         // Save all resources prior to doing build
-        saveAllResources();
+        BuildUtilities.saveEditors(null);
         // Perform the build on all the projects
         doBuildOperation();
-    }
-
-    /**
-     * Causes all editors to save any modified resources depending on the user's
-     * preference.
-     */
-    /* package */void saveAllResources() {
-        if (!BuildAction.isSaveAllSet())
-            return;
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] perspectives = windows[i].getPages();
-            for (int j = 0; j < perspectives.length; j++)
-                perspectives[j].saveAllEditors(false);
-        }
     }
 
     /**
@@ -300,7 +283,7 @@ public class GlobalBuildAction extends Action implements
      * @return whether or not there is a manual build job running.
      */
     private boolean verifyNoManualRunning() {
-        Job[] buildJobs = JobManager.getInstance().find(
+        Job[] buildJobs = Platform.getJobManager().find(
                 ResourcesPlugin.FAMILY_MANUAL_BUILD);
         if (buildJobs.length == 0)
             return true;
