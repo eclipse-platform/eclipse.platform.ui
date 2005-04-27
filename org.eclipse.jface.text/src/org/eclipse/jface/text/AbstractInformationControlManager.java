@@ -238,6 +238,13 @@ abstract public class AbstractInformationControlManager {
 	 */
 	private boolean fIsRestoringSize;
 
+	/**
+	 * The dispose listner on the subject control.
+	 * 
+	 * @since 3.1
+	 */
+	private DisposeListener fSubjectControlDisposeListener;
+
 
 	/**
 	 * Creates a new information control manager using the given information control creator.
@@ -446,21 +453,37 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectControl the subject control
 	 */
 	public void install(Control subjectControl) {
+		if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
+			fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
+
 		fSubjectControl= subjectControl;
 
-		if (fSubjectControl != null) {
-			fSubjectControl.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					handleSubjectControlDisposed();
-				}
-			});
-		}
+		if (fSubjectControl != null)
+			fSubjectControl.addDisposeListener(getSubjectControlDisposeListener());
 
 		if (fInformationControlCloser != null)
 			fInformationControlCloser.setSubjectControl(subjectControl);
 
 		setEnabled(true);
 		fDisposed= false;
+	}
+	
+	/**
+	 * Returns the dispose listener which gets added
+	 * to the subject control.
+	 * 
+	 * @return the dispose listener
+	 * @since 3.1
+	 */
+	private DisposeListener getSubjectControlDisposeListener() {
+		if (fSubjectControlDisposeListener == null) {
+			fSubjectControlDisposeListener= new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					handleSubjectControlDisposed();
+				}
+			};
+		}
+		return fSubjectControlDisposeListener;
 	}
 
 	/**
@@ -930,6 +953,11 @@ abstract public class AbstractInformationControlManager {
 
 			setEnabled(false);
 			disposeInformationControl();
+			
+			if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
+				fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
+			fSubjectControl= null;
+			fSubjectControlDisposeListener= null;
 
 			fIsCustomInformationControl= false;
 			fCustomInformationControlCreator= null;
