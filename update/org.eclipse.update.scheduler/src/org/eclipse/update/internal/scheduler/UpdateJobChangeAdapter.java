@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.scheduler;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -13,19 +23,19 @@ import org.eclipse.update.internal.ui.wizards.ResizableInstallWizardDialog;
 
 class UpdateJobChangeAdapter extends JobChangeAdapter {
 	private SchedulerStartup startup;
+
 	public UpdateJobChangeAdapter(SchedulerStartup startup) {
 		this.startup = startup;
 	}
+
 	public void done(IJobChangeEvent event) {
 		if (event.getJob() == startup.getJob()) {
 
 			// prompt the user
-			if (((AutomaticUpdateJob) startup.getJob())
-					.getUpdates().length > 0
+			if (((AutomaticUpdateJob) startup.getJob()).getUpdates().length > 0
 					&& !InstallWizard.isRunning()) {
-				if (UpdateSchedulerPlugin.getDefault()
-						.getPluginPreferences().getBoolean(
-								UpdateSchedulerPlugin.P_DOWNLOAD)) {
+				if (UpdateSchedulerPlugin.getDefault().getPluginPreferences()
+						.getBoolean(UpdateSchedulerPlugin.P_DOWNLOAD)) {
 					UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
 						public void run() {
 							asyncNotifyDownloadUser();
