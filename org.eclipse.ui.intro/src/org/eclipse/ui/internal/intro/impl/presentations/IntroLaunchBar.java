@@ -238,8 +238,14 @@ public class IntroLaunchBar implements IWindowTrim {
                 if (csize != null)
                     width += csize.x + CLOSE_SPACING;
             }
-            width += marginWidth + marginWidth;
-            height += marginHeight + marginHeight;
+            if (vertical) {
+            	width += marginWidth;
+            	height += marginHeight + marginHeight;
+            }
+            else {
+                width += marginWidth + marginWidth;
+                height += marginHeight;
+            }
             return new Point(width, height);
         }
 
@@ -258,7 +264,7 @@ public class IntroLaunchBar implements IWindowTrim {
             // Point tsize = coolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT,
             // changed);
             Rectangle carea = composite.getClientArea();
-            int x = carea.x + marginWidth;
+            int x = carea.x + (location==SWT.LEFT?0:marginWidth);
             int y = carea.y + marginHeight;
 
             if (vertical) {
@@ -268,13 +274,12 @@ public class IntroLaunchBar implements IWindowTrim {
                     y += csize.y + CLOSE_SPACING;
                 }
                 if (handle != null && ibounds != null) {
-                    handle.setBounds(x, y, carea.width - marginWidth
-                            - marginWidth, ibounds.height);
+                    handle.setBounds(x, y, carea.width-marginWidth, ibounds.height);
                     y += ibounds.height;
                 }
                 toolBarManager.getControl().setBounds(x, y,
                 // coolBar.setBounds(x, y,
-                    carea.width - marginWidth - marginWidth, tsize.y);
+                    carea.width - marginWidth, tsize.y);
             } else {
                 if (csize != null) {
                     closeButton.setBounds(x, y + CLOSE_SPACING, csize.x,
@@ -283,12 +288,12 @@ public class IntroLaunchBar implements IWindowTrim {
                 }
                 if (handle != null && ibounds != null) {
                     handle.setBounds(x, y, ibounds.width, carea.height
-                            - marginHeight - marginHeight);
+                            - marginHeight);
                     x += ibounds.width;
                 }
                 toolBarManager.getControl().setBounds(x, y, tsize.x,
                 // coolBar.setBounds(x, y, tsize.x,
-                    carea.height - marginHeight - marginHeight);
+                    carea.height - marginHeight);
             }
         }
     }
@@ -301,8 +306,11 @@ public class IntroLaunchBar implements IWindowTrim {
         this.location = element.getLocation();
         this.lastPageId = lastPageId;
         this.element = element;
+        /*
         simple = PlatformUI.getPreferenceStore().getBoolean(
             IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+            */
+        simple = true;
         presentationId = PlatformUI.getPreferenceStore().getString(
             IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
         loadStoredLocation();
@@ -468,9 +476,9 @@ public class IntroLaunchBar implements IWindowTrim {
         index = fillShape(shape, top, index, x, y, false);
         y = size.y - 1;
         index = fillShape(shape, bot, index, x, y, true);
-        shape[index++] = 0;
+        shape[index++] = -1;
         shape[index++] = size.y - 1;
-        shape[index++] = 0;
+        shape[index++] = -1;
         shape[index++] = 0;
         gc.fillPolygon(shape);
         gc.drawPolygon(shape);
@@ -488,9 +496,9 @@ public class IntroLaunchBar implements IWindowTrim {
         x = size.x - 1;
         index = fillShape(shape, right, index, x, y, false);
         shape[index++] = size.x - 1;
-        shape[index++] = size.y - 1;
+        shape[index++] = size.y;
         shape[index++] = 0;
-        shape[index++] = size.y - 1;
+        shape[index++] = size.y;
         gc.fillPolygon(shape);
         gc.drawPolygon(shape);
     }
@@ -504,9 +512,9 @@ public class IntroLaunchBar implements IWindowTrim {
         int x = 0;
         int y = 0;
         index = fillShape(shape, top, index, x, y, false);
-        shape[index++] = size.x - 1;
+        shape[index++] = size.x;
         shape[index++] = 0;
-        shape[index++] = size.x - 1;
+        shape[index++] = size.x;
         shape[index++] = size.y - 1;
         x = 0;
         y = size.y - 1;
@@ -520,7 +528,7 @@ public class IntroLaunchBar implements IWindowTrim {
 
         if (handleImage != null) {
             Rectangle ibounds = handleImage.getBounds();
-            int x = location == SWT.RIGHT ? size.x - ibounds.width : 0;
+            int x = location == SWT.RIGHT ? (size.x - ibounds.width) : (location==SWT.LEFT ? 1:0);
             int y = location == SWT.BOTTOM ? size.y - ibounds.height : 0;
 
             for (;;) {
