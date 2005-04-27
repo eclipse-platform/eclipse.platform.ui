@@ -569,7 +569,7 @@ M4 = Platform-specific fourth key -->
          name="%antDocumentFactory.name"
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
-            extensions="xml, ant, ent, macrodef"
+            extensions="ant, macrodef"
             contentTypeId="org.eclipse.ant.core.antBuildFile"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentFactory">
       </factory>
@@ -580,7 +580,7 @@ M4 = Platform-specific fourth key -->
          name="%antDocumentSetupParticipant.name"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="xml, ant, ent, macrodef"
+            extensions="ant, macrodef"
             contentTypeId="org.eclipse.ant.core.antBuildFile"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant">
       </participant>
