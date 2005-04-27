@@ -1272,6 +1272,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 *
 	 * @param toCreateOrModify the resource to create or modify
 	 * @return the minimal scheduling rule needed to modify or create a resource
+	 * @since 3.1
 	 */
 	protected ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
 		if (toCreateOrModify.exists())
