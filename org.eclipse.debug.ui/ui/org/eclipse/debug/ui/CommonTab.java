@@ -206,7 +206,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		Dialog.applyDialogFont(parent);
 	}
 	
-    protected void createOutputCaptureComponent(Composite parent) {
+    private void createOutputCaptureComponent(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
         group.setText(LaunchConfigurationsMessages.CommonTab_4); //$NON-NLS-1$
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
@@ -317,7 +317,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         });
     }
 
-    protected void createEncodingComponent(Composite parent) {
+    private void createEncodingComponent(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	    
@@ -462,7 +462,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateConsoleOutput(configuration);
 	}
 	
-    protected void updateConsoleOutput(ILaunchConfiguration configuration) {
+    private void updateConsoleOutput(ILaunchConfiguration configuration) {
         boolean outputToConsole = true;
         String outputFile = null;
         boolean append = false;
@@ -492,7 +492,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
 	
-	protected void updateEncoding(ILaunchConfiguration configuration) {
+	private void updateEncoding(ILaunchConfiguration configuration) {
 	    String encoding = null;
 	    try {
 	        encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
