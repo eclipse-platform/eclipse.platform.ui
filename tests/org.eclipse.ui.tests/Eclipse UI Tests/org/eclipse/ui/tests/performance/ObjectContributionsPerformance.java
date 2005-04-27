@@ -42,12 +42,12 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 
 	protected void runTest() {
 		ObjectContributionTest tests = new ObjectContributionTest("testObjectContributions");
-		tagIfNecessary(selection.size() + " contribution(s)", new Dimension[]{Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
-		for (int i = 0; i < 1000; i++) {			
-			startMeasuring();			
+		tagIfNecessary(selection.size() + " contribution(s)", new Dimension[]{Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});         
+        startMeasuring();   
+		for (int i = 0; i < 5000; i++) {		
 			tests.assertPopupMenus("1", new String[] {"bogus"}, selection, null, false);
-			stopMeasuring();
 		}	
+        stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
 	}
