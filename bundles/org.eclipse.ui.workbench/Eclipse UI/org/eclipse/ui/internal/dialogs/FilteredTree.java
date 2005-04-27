@@ -24,11 +24,10 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -64,7 +63,7 @@ public class FilteredTree extends Composite {
 
     private static final String DCLEAR_ICON = "org.eclipse.ui.internal.dialogs.DCLEAR_ICON"; //$NON-NLS-1$
 
-    private String initialText = ""; //$NON-NLS-1$
+    protected String initialText = ""; //$NON-NLS-1$
     
     private String cachedTitle;
    
@@ -124,29 +123,25 @@ public class FilteredTree extends Composite {
                 | GridData.GRAB_HORIZONTAL));
 
         createFilterControl(filterParent);
-        getFilterControl().addKeyListener(new KeyAdapter() {
+	        getFilterControl().addKeyListener(new KeyAdapter() {
+	
+	            /*
+	             * (non-Javadoc)
+	             * 
+	             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+	             */
+	            public void keyReleased(KeyEvent e) {
+	            	// on a CR we want to transfer focus to the list
+	            	if(e.keyCode == SWT.ARROW_DOWN){
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-             */
-            public void keyReleased(KeyEvent e) {
-            	// on a CR we want to transfer focus to the list
-            	if(e.keyCode == SWT.ARROW_DOWN)
-            		treeViewer.getTree().setFocus();
-            	else
-            		textChanged();
-            }
-        });
-        
-        getFilterControl().addTraverseListener(new TraverseListener() {
-            public void keyTraversed(TraverseEvent e) {
-                if (e.detail == SWT.TRAVERSE_RETURN) {
-                	treeViewer.getTree().setFocus();
-                }
-            }
-        });
+	                    if (!(getFilterControl() instanceof Combo)) {
+	                    	treeViewer.getTree().setFocus();
+	                    }
+	            	} else
+	            		textChanged();
+	            }
+	        });
+
         GridData data = new GridData(GridData.FILL_HORIZONTAL
                 | GridData.GRAB_HORIZONTAL);
         getFilterControl().setLayoutData(data);
@@ -210,7 +205,7 @@ public class FilteredTree extends Composite {
         } else {
             patternFilter.setPattern(getFilterControlText());
         }        
-        treeViewer.refresh(false);
+        treeViewer.refresh(true);
         
         if (filterText.length() > 0 && !initial) {
             treeViewer.expandAll();
@@ -292,7 +287,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected void setFilterText(String string) {
 		filterText.setText(string);
-		
+		selectAll();		
 	}
 
 	/**
@@ -305,7 +300,7 @@ public class FilteredTree extends Composite {
     }
 
     /**
-     * Get the filter text field associated with this contro.
+     * Get the filter text field associated with this control.
      * 
      * @return the text field
      */
@@ -328,10 +323,11 @@ public class FilteredTree extends Composite {
      */
     public void resetText() {
     	setFilterText(initialText);
+    	
         textChanged();
         listener = new FocusListener() {
             public void focusGained(FocusEvent event) {
-                setFilterText(""); //$NON-NLS-1$
+                selectAll();
                 getFilterControl().removeFocusListener(listener);
             }
 
@@ -345,6 +341,10 @@ public class FilteredTree extends Composite {
         };
         getFilterControl().addFocusListener(listener);
     }
+
+	protected void selectAll() {
+		filterText.selectAll();
+	}
 
 	/**
 	 * Get the initial text for the receiver.

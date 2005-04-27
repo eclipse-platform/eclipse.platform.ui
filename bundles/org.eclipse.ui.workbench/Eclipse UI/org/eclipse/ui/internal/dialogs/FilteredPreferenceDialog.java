@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,16 +23,13 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceContentProvider;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -45,7 +39,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 import org.eclipse.ui.internal.preferences.WorkingCopyManager;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
@@ -59,7 +52,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog implements IWorkbenchPreferenceContainer{
 
-	protected FilteredTree filteredTree;
+	protected FilteredComboTree filteredTree;
 
 	private Object pageData;
 	
@@ -99,67 +92,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		PatternFilter filter = new PatternFilter() {
-			/**
-			 * TODO: this cache is needed because
-			 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive.
-			 * When it tracks keyword changes effectively then this cache can be
-			 * removed.
-			 */
-			private Map keywordCache = new HashMap();
-			
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				ITreeContentProvider contentProvider = (ITreeContentProvider) getTreeViewer()
-						.getContentProvider();
-
-				IPreferenceNode node = (IPreferenceNode) element;
-				Object[] children = contentProvider.getChildren(node);
-				String text = node.getLabelText();
-				
-				// Break the label up into words, separating based on whitespace and common punctuation.
-				// Previously used String.split(..., "\\W"), where "\W" is a regular expression (see the Javadoc for class Pattern).
-				// Need to avoid both String.split and regular expressions, in order to compile against JCL Foundation (bug 80053).
-				// Also need to do this in an NL-sensitive way.  The use of BreakIterator was suggested in bug 90579.  
-				BreakIterator iter = BreakIterator.getWordInstance();
-				iter.setText(text);
-				int i = iter.first(); 
-				while (i != java.text.BreakIterator.DONE && i < text.length()) {
-					int j = iter.following(i);
-					if (j == java.text.BreakIterator.DONE)
-						j = text.length();
-					if (Character.isLetterOrDigit(text.charAt(i))) {
-						String word = text.substring(i, j);
-						if (match(word))
-							return true;
-					}
-					i = j;
-				}				
-				
-				if (filter(viewer, element, children).length > 0)
-					return true;
-				
-				if(node instanceof WorkbenchPreferenceExtensionNode){
-					WorkbenchPreferenceExtensionNode workbenchNode =
-						(WorkbenchPreferenceExtensionNode) node;
-					
-					Collection keywordCollection = (Collection) keywordCache
-							.get(node);
-					if (keywordCollection == null) {
-						keywordCollection = workbenchNode.getKeywordLabels();
-						keywordCache.put(node, keywordCollection);
-					}
-					if(keywordCollection.isEmpty())
-						return false;
-					Iterator keywords = keywordCollection.iterator();
-					while(keywords.hasNext()){
-						if(match((String) keywords.next()))
-							return true;
-					}
-				}
-				return false;
-
-			}
-		};
+		PatternItemFilter filter = new PatternItemFilter(true); 
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
 		filteredTree = new FilteredComboTree(parent, styleBits, filter);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -195,7 +128,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @param treeViewer
 	 */
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setLabelProvider(new PreferenceLabelProvider());
+		treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(filteredTree));
 		treeViewer.setContentProvider(new PreferenceContentProvider());
 	}
 

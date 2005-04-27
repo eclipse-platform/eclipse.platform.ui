@@ -15,11 +15,13 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The FilteredComboTree is a filtered tree that uses an 
@@ -44,7 +46,7 @@ public class FilteredComboTree extends FilteredTree {
 	 * @param treeStyle
 	 * @param filter
 	 */
-	public FilteredComboTree(Composite parent, int treeStyle, PatternFilter filter) {
+	public FilteredComboTree(Composite parent, int treeStyle, PatternItemFilter filter) {
 		super(parent, treeStyle, filter);
 	}
 
@@ -54,11 +56,20 @@ public class FilteredComboTree extends FilteredTree {
 	protected void createFilterControl(Composite parent) {
 		filterCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		
-		// do not allow the dialog to be closed when enter is pressed
-		filterCombo.addListener(SWT.Traverse, new Listener() {
-			public void handleEvent(Event e) {
-				if (e.detail == SWT.TRAVERSE_RETURN)
+		filterCombo.addTraverseListener( new TraverseListener () {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN) {
 					e.doit = false;
+					if (getViewer().getTree().getItemCount() == 0) {
+						Display.getCurrent().beep();
+						setFilterText(""); //$NON-NLS-1$
+					} else {
+						getViewer().getTree().setFocus();
+					}
+				} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					e.doit = false;
+					setFilterText(""); //$NON-NLS-1$
+				}
 			}
 		});
 		filterCombo.addFocusListener(new FocusAdapter(){
@@ -108,7 +119,13 @@ public class FilteredComboTree extends FilteredTree {
 	 */
 	protected void setFilterText(String string) {
 		filterCombo.setText(string);
+		selectAll();
 	}
+	
+	protected void selectAll() {
+		filterCombo.setSelection(new Point(0,filterCombo.getText().length()));
+	}
+	
 	/**
 	 * Get the combo box used by the receiver.
 	 * @return Combo
