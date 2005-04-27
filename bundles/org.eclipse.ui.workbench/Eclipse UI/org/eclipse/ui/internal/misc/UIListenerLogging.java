@@ -65,6 +65,9 @@ public class UIListenerLogging {
     // IPerspectiveListener events
     public static final String PLE_PERSP_DEACTIVATED = "perspectiveDeactivated"; //$NON-NLS-1$
     public static final String PLE_PERSP_ACTIVATED = "perspectiveActivated"; //$NON-NLS-1$
+    public static final String PLE_PERSP_OPENED = "perspectiveOpened"; //$NON-NLS-1$
+    public static final String PLE_PERSP_CLOSED = "perspectiveClosed"; //$NON-NLS-1$
+    public static final String PLE_PERSP_SAVED_AS = "perspectiveSavedAs"; //$NON-NLS-1$
 
     private static String getSourceId(Object source) {
         return Util.safeString(Integer.toString(source.hashCode() % 1000)); //$NON-NLS-1$
@@ -112,6 +115,17 @@ public class UIListenerLogging {
         }
     }
 
+    public static final void logPerspectiveSavedAs(IWorkbenchWindow window, IWorkbenchPage page, 
+    		IPerspectiveDescriptor oldDescriptor, IPerspectiveDescriptor newDescriptor) {
+        
+        if (isEnabled(WINDOW_PERSPECTIVE_EVENTS)) {
+            System.out.println(WINDOW_PERSPECTIVE_EVENTS 
+                    + " " + getWindowId(window) //$NON-NLS-1$
+                    + " " + PLE_PERSP_SAVED_AS + " (" + getPageId(page) + ", " + getPerspectiveId(oldDescriptor)  + ", " + getPerspectiveId(newDescriptor) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+        }
+    }
+
+    
     private static String getPartId(IWorkbenchPart part) {
         if (part == null) {
             return "null part"; //$NON-NLS-1$

@@ -1220,6 +1220,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveClosed(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
+        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_CLOSED);
     	perspectiveListeners.firePerspectiveClosed(page, perspective);
     }
 
@@ -1228,6 +1229,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveOpened(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
+        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_OPENED);
     	perspectiveListeners.firePerspectiveOpened(page, perspective);
     }
 
@@ -1238,6 +1240,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveSavedAs(IWorkbenchPage page,
             IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
+        UIListenerLogging.logPerspectiveSavedAs(this, page, oldPerspective, newPerspective);
     	perspectiveListeners.firePerspectiveSavedAs(page, oldPerspective, newPerspective);
     }
 
