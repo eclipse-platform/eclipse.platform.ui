@@ -28,15 +28,15 @@ import org.eclipse.core.internal.runtime.PerformanceStatsProcessor;
  * options for enabling or disabling performance event gathering and reporting.
  * See the "org.eclipse.core.runtime/perf*" debug options in the .options file
  * for the org.eclipse.core.runtime plugin for more details.
- * <p>
+ * </p><p>
  * A performance event can optionally have additional context information
- * (<code>getContext</code>).  This information is only stored in the case
+ * ({@link #getContext}).  This information is only stored in the case
  * of a performance failure, and can be used to provide further diagnostic 
  * information that can help track down the cause of the failure.
- * <p>
+ * </p><p>
  * Performance events and performance failures are batched up and periodically
  * sent to interested performance event listeners.
- * </p>
+ * </p><p>
  * This class is not intended to be subclassed or instantiated by clients.
  * </p>
  * @since 3.1
@@ -47,6 +47,7 @@ public class PerformanceStats {
 	 * or after events fail.
 	 * <p>
 	 * This class is intended to be subclassed.
+	 * </p>
 	 * 
 	 * @see PerformanceStats#addListener(PerformanceListener)
 	 */
@@ -62,6 +63,7 @@ public class PerformanceStats {
 		 * Notifies than an event exceeded the maximum duration for that event type.
 		 * <p>
 		 * This default implementation does nothing. Subclasses may override.
+		 * </p>
 		 * 
 		 * @param event The event that failed
 		 * @param duration The duration of the failed event, in milliseconds
@@ -75,6 +77,7 @@ public class PerformanceStats {
 		 * in the same thread or near the time of the actual event.
 		 * <p>
 		 * This default implementation does nothing. Subclasses may override.
+		 * </p>
 		 * 
 		 * @param event The event that occurred
 		 */
@@ -229,6 +232,7 @@ public class PerformanceStats {
 	 * be cached by the caller to minimize overhead when performance monitoring
 	 * is turned off.  It is not possible for enablement to change during the life
 	 * of this invocation of the platform.
+	 * </p>
 	 * 
 	 * @param eventName The name of the event to determine enablement for
 	 * @return <code>true</code>If the performance event with the given
@@ -358,6 +362,7 @@ public class PerformanceStats {
 	 * Note that this facility guards itself against runs that start but fail to stop,
 	 * so it is not necessary to call this method from a finally block.  Tracking
 	 * performance of failure cases is generally not of interest.
+	 * </p>
 	 * 
 	 * @see #startRun()
 	 */
@@ -471,6 +476,7 @@ public class PerformanceStats {
 
 	/**
 	 * Returns whether this performance event represents a performance failure.
+	 * 
 	 * @return <code>true</code> if this is a performance failure, and 
 	 * <code>false</code> otherwise.
 	 */
