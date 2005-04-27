@@ -164,7 +164,9 @@ public class ConsolePlugin extends AbstractUIPlugin {
         return ConsolePluginImages.getImageDescriptor(key);
     }
     
-    
+    /* (non-Javadoc)
+     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
     public void stop(BundleContext context) throws Exception {
     	if (fConsoleManager != null) {
 	        IConsole[] consoles = fConsoleManager.getConsoles();

@@ -20,6 +20,8 @@ import java.io.IOException;
  * Clients are not intended to subclass or instantiate this class. Instances
  * are created via a {@link org.eclipse.ui.console.MessageConsole}.
  * </p>
+ * <p>
+ * Since 3.1, this class extends {@link org.eclipse.ui.console.IOConsoleOutputStream}.
  * </p>
  * @since 3.0
  */

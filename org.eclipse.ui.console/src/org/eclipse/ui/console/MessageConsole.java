@@ -102,4 +102,15 @@ public class MessageConsole extends IOConsole {
         throw new UnsupportedOperationException("Message Console does not support user input"); //$NON-NLS-1$
     }
     
+	
+	/** 
+	 * Appends the given message to this console, from the specified stream.
+	 * 
+	 * @param text message
+	 * @param stream stream the message belongs to
+	 * @deprecated since 3.1, this method should no longer be called, and has no effect.\
+	 * Writing to a message console stream updates the document
+	 */
+	protected void appendToDocument(String text, MessageConsoleStream stream) {
+	}    
 }
