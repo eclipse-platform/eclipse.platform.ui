@@ -143,9 +143,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			currentTree = fullBuild ? null : workspace.getElementTree();
 			int depth = -1;
 			try {
+				//don't build if this builder doesn't respond to the given trigger
+				boolean needsBuild = builder.getCommand().isBuilding(trigger);
 				//short-circuit if none of the projects this builder cares about have changed.
-				if (!clean && !fullBuild && !needsBuild(currentBuilder))
+				if (needsBuild && !clean && !fullBuild && !needsBuild(currentBuilder))
+					needsBuild = false;
+				if (!needsBuild) {
+					//use up the progress allocated for this builder
+					monitor.beginTask("", 1); //$NON-NLS-1$
+					monitor.done();
 					return;
+				}
 				String name = currentBuilder.getLabel();
 				String message;
 				if (name != null)
@@ -188,10 +196,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
 				BuildCommand command = (BuildCommand) commands[i];
-				if (!command.isBuilding(trigger)) {
-					monitor.worked(1);
-					continue;
-				}
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				IncrementalProjectBuilder builder = getBuilder(project, command, i, status);
 				if (builder != null)

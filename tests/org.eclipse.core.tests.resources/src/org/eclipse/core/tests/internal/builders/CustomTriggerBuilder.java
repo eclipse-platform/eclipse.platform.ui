@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class CustomTriggerBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.flexbuilder";
 	private static CustomTriggerBuilder singleton;
-	private int triggerForLastBuild;
+	int triggerForLastBuild;
 
 	/**
 	 * Returns the singleton instance, or null if none has been created.

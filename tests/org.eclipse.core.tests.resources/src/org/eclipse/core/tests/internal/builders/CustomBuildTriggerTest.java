@@ -97,7 +97,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			fail("2.99", e);
 		}
 		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
-		assertTrue("2.0", builder == null);
+		assertTrue("2.0", builder == null || builder.triggerForLastBuild == 0);
 
 		try {
 			project.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
@@ -105,7 +105,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			fail("2.91", e);
 		}
 		builder = CustomTriggerBuilder.getInstance();
-		assertTrue("2.1", builder == null);
+		assertTrue("2.1", builder == null || builder.triggerForLastBuild == 0);
 
 		try {
 			project.touch(getMonitor());
@@ -114,7 +114,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			fail("3.99", e);
 		}
 		builder = CustomTriggerBuilder.getInstance();
-		assertTrue("3.0", builder == null);
+		assertTrue("3.0", builder == null || builder.triggerForLastBuild == 0);
 		try {
 			setAutoBuilding(true);
 			project.touch(getMonitor());
@@ -122,7 +122,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			fail("4.99", e);
 		}
 		builder = CustomTriggerBuilder.getInstance();
-		assertTrue("4.0", builder == null);
+		assertTrue("4.0", builder == null || builder.triggerForLastBuild == 0);
 		
 		//turn the builder back on and make sure it runs
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
