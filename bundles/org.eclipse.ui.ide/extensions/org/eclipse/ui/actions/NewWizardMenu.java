@@ -31,6 +31,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 
     private final IAction newExampleAction;
 
+    private boolean enabled = true;
+
     /**
      * Creates a new wizard shortcut menu for the IDE.
      * 
@@ -130,4 +132,30 @@ public class NewWizardMenu extends BaseNewWizardMenu {
         list.add(new ActionContributionItem(getShowDialogAction()));
     }
     
+	/* (non-Javadoc)
+	 * Method declared on IContributionItem.
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets the enabled state of the receiver.
+	 * 
+	 * @param enabledValue if <code>true</code> the menu is enabled; else
+	 * 		it is disabled
+	 */
+	public void setEnabled(boolean enabledValue) {
+		this.enabled = enabledValue;
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseNewWizardMenu#getContributionItems()
+	 */
+	protected IContributionItem[] getContributionItems() {
+		if (isEnabled()) {
+			return super.getContributionItems();
+		}
+		return new IContributionItem[0];
+	}
 }
