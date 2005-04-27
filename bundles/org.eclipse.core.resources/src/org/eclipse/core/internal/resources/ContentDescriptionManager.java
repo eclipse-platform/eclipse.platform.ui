@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.Bundle;
 
 /**
  * Keeps a cache of recently read content descriptions.
@@ -69,7 +70,10 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				try {
 					workspace.prepareOperation(rule, monitor);
 					workspace.beginOperation(true);
-					doFlushCache(monitor, getPathsToFlush());
+					//don't do anything if the system is shutting down or has been shut down
+					//it is too late to change the workspace at this point anyway
+					if (systemBundle.getState() != Bundle.STOPPING)
+						doFlushCache(monitor, getPathsToFlush());
 				} finally {
 					workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 				}
@@ -182,6 +186,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	private ProjectContentTypes projectContentTypes;
 
 	Workspace workspace;
+	final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
 	/**
 	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(ContentTypeChangeEvent)
