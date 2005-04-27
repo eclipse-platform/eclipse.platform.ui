@@ -159,6 +159,7 @@ public class AntCorePlugin extends Plugin {
 	 * when the facilities provided by the Ant Core plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
+	 * @since 3.1
 	 * 
 	 */
 	public AntCorePlugin() {
@@ -167,6 +168,7 @@ public class AntCorePlugin extends Plugin {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 * @since 3.1
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
@@ -178,6 +180,7 @@ public class AntCorePlugin extends Plugin {
     
     /* (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     * @since 3.1
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -243,8 +246,9 @@ public class AntCorePlugin extends Plugin {
 	
 	/**
 	 * Returns a new class loader to use when executing Ant builds.
-	 * 
+	 * @param urls the urls that define the classpath of the new classloader
 	 * @return the new class loader
+	 * @since 3.1
 	 */
 	public URLClassLoader getNewClassLoader(URL[] urls) {
 		return getNewClassLoader(false, urls);
@@ -270,6 +274,7 @@ public class AntCorePlugin extends Plugin {
 	 * with the new classloader to load Apache Ant classes.
 	 * @param urls the urls that define the classpath of the new classloader
 	 * @return the new class loader
+	 * @since 3.1
 	 */
 	public URLClassLoader getNewClassLoader(boolean allowLoading, URL[] urls) {
 		AntCorePreferences corePreferences = getPreferences();
