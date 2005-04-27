@@ -149,6 +149,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private WorkbenchPartFactory partFactory = new WorkbenchPartFactory(this);
     
     /**
+     * If we're in the process of activating a part, this points to the new part.
+     * Otherwise, this is null.
+     */
+    private IWorkbenchPartReference partBeingActivated = null;
+    
+    /**
      * Contains a list of perspectives that may be dirty due to plugin 
      * installation and removal. 
      */
@@ -2657,6 +2663,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
         return result;
     }
+    
+    private String getId(IWorkbenchPart part) {
+        return getId(getReference(part));
+    }
+    
+    private String getId(IWorkbenchPartReference ref) {
+        if (ref == null) {
+            return "null"; //$NON-NLS-1$
+        } return ref.getId();
+    }
 
     /**
      * Sets the active part.
@@ -2667,6 +2683,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (getActivePart() == newPart) {
             return;
         }
+        
+        if (partBeingActivated != null) {
+            if (partBeingActivated.getPart(false) != newPart) {
+                WorkbenchPlugin.log(new RuntimeException(NLS.bind(
+                        "WARNING: Prevented recursive attempt to activate part {0} while still in the middle of activating part {1}", //$NON-NLS-1$
+                        getId(newPart), getId(partBeingActivated))));
+            }
+            return;
+        }
 
         //No need to change the history if the active editor is becoming the
         // active part
@@ -2675,6 +2700,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
         }
         try {
+            IWorkbenchPartReference partref = getReference(newPart); 
+            partBeingActivated = partref;
+            
             UIStats.start(UIStats.ACTIVATE_PART, label);
             // Notify perspective. It may deactivate fast view.
             Perspective persp = getActivePerspective();
@@ -2686,7 +2714,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (oldPart != null) {
                 deactivatePart(oldPart);
             }
-
+            
             // Set active part.
             if (newPart != null) {
                 activationList.setActive(newPart);
@@ -2695,15 +2723,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     makeActiveEditor(ref);
                 }
             }
-            partList.setActivePart(getReference(newPart));
             activatePart(newPart);
-
             
-            // Update actions now so old actions have heard part deactivated
-            // and
-            // new actions can hear part activated.
             actionSwitcher.updateActivePart(newPart);
+            
+            partList.setActivePart(partref);
         } finally {
+            partBeingActivated = null;
         	Object blame = newPart == null ? (Object)this : newPart;
             UIStats.end(UIStats.ACTIVATE_PART, blame, label);
         }
