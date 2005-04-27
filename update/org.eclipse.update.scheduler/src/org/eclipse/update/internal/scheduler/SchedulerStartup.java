@@ -14,18 +14,9 @@ import java.util.Calendar;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IStartup;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.UpdateUIMessages;
-import org.eclipse.update.internal.ui.wizards.InstallWizard;
-import org.eclipse.update.internal.ui.wizards.InstallWizard2;
-import org.eclipse.update.internal.ui.wizards.ResizableInstallWizardDialog;
 
 /**
  * This plug-in is loaded on startup to fork a job that searches for new
@@ -57,7 +48,7 @@ public class SchedulerStartup implements IStartup {
 	static final Object automaticJobFamily = new Object();
 
 	// Listener for job changes
-	private UpdateJobChangeAdapter jobListener;
+	private JobChangeAdapter jobListener;
 
 	public static final String[] DAYS = {
 			UpdateSchedulerMessages.SchedulerStartup_day,
@@ -95,99 +86,11 @@ public class SchedulerStartup implements IStartup {
 			UpdateSchedulerMessages.SchedulerStartup_11PM,
 			UpdateSchedulerMessages.SchedulerStartup_12AM, };
 
-	private class UpdateJobChangeAdapter extends JobChangeAdapter {
-		public void done(IJobChangeEvent event) {
-			if (event.getJob() == SchedulerStartup.this.job) {
-
-				// prompt the user
-				if (((AutomaticUpdateJob) SchedulerStartup.this.job)
-						.getUpdates().length > 0
-						&& !InstallWizard.isRunning()) {
-					if (UpdateSchedulerPlugin.getDefault()
-							.getPluginPreferences().getBoolean(
-									UpdateSchedulerPlugin.P_DOWNLOAD)) {
-						UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
-							public void run() {
-								asyncNotifyDownloadUser();
-								scheduleUpdateJob();
-							}
-						});
-					} else {
-						UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
-							public void run() {
-								asyncNotifyUser();
-								scheduleUpdateJob();
-							}
-						});
-					}
-				}
-			}
-		}
-
-		private void asyncNotifyUser() {
-			// ask the user to install updates
-			UpdateUI.getStandardDisplay().beep();
-			if (MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(),
-					UpdateUIMessages.AutomaticUpdatesJob_EclipseUpdates1,
-					UpdateUIMessages.AutomaticUpdatesJob_UpdatesAvailable)) {
-				BusyIndicator.showWhile(UpdateUI.getStandardDisplay(),
-						new Runnable() {
-							public void run() {
-								openInstallWizard2();
-							}
-						});
-			}
-			// notify the manager that the job is done
-			// job.done(Status.OK_STATUS);
-		}
-
-		private void asyncNotifyDownloadUser() {
-			// ask the user to install updates
-			UpdateUI.getStandardDisplay().beep();
-			if (MessageDialog.openQuestion(UpdateUI.getActiveWorkbenchShell(),
-					UpdateUIMessages.AutomaticUpdatesJob_EclipseUpdates2,
-					UpdateUIMessages.AutomaticUpdatesJob_UpdatesDownloaded)) {
-				BusyIndicator.showWhile(UpdateUI.getStandardDisplay(),
-						new Runnable() {
-							public void run() {
-								openInstallWizard2();
-							}
-						});
-			} else {
-				// Don't discard downloaded data, as next time we compare
-				// timestamps.
-
-				// discard all the downloaded data from cache (may include old
-				// data as well)
-				// Utilities.flushLocalFile();
-			}
-			// notify the manager that the job is done
-			// job.done(Status.OK_STATUS);
-		}
-
-		private void openInstallWizard2() {
-			if (InstallWizard.isRunning())
-				// job ends and a new one is rescheduled
-				return;
-			AutomaticUpdateJob ujob = (AutomaticUpdateJob) job;
-			InstallWizard2 wizard = new InstallWizard2(ujob.getSearchRequest(),
-					ujob.getUpdates(), true);
-			WizardDialog dialog = new ResizableInstallWizardDialog(UpdateUI
-					.getActiveWorkbenchShell(), wizard,
-					UpdateUIMessages.AutomaticUpdatesJob_Updates);
-			dialog.create();
-			dialog.open();
-		}
-
-	}
-
 	/**
 	 * The constructor.
 	 */
 	public SchedulerStartup() {
 		UpdateSchedulerPlugin.setScheduler(this);
-		jobListener = new UpdateJobChangeAdapter();
-		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
 
 	public void earlyStartup() {
@@ -309,15 +212,22 @@ public class SchedulerStartup implements IStartup {
 			// cancel old job.
 			// We need to deregister the listener first,so we won't
 			// automatically start another job
-			Platform.getJobManager().removeJobChangeListener(jobListener);
+			if (jobListener!=null)
+				Platform.getJobManager().removeJobChangeListener(jobListener);
 			Platform.getJobManager().cancel(job);
-			Platform.getJobManager().addJobChangeListener(jobListener);
 		}
+		if (jobListener==null)
+			jobListener = new UpdateJobChangeAdapter(this);
+		Platform.getJobManager().addJobChangeListener(jobListener);
 		String jobName = UpdateSchedulerMessages.AutomaticUpdatesJob_AutomaticUpdateSearch; //$NON-NLS-1$);
 		boolean download = UpdateSchedulerPlugin.getDefault()
 				.getPluginPreferences().getBoolean(
 						UpdateSchedulerPlugin.P_DOWNLOAD);
 		job = new AutomaticUpdateJob(jobName, true, download);
 		job.schedule(delay);
+	}
+	
+	Job getJob() {
+		return job;
 	}
 }
