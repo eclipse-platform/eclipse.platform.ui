@@ -423,7 +423,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 */
 	public final void testBindingCacheHitSoft() throws ParseException {
 		// Constants
-		final int cacheHits = 40000;
+		final int cacheHits = 10000;
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
 
 		// Compute once for each context set.
