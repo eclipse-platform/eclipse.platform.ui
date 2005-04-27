@@ -41,7 +41,9 @@ public class InjectionFilter implements IFilter {
 	private static final String disabledBook3 = "\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
 
 	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$
-
+	
+	private void loadDocumentMessage() {
+	}
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -115,8 +117,13 @@ public class InjectionFilter implements IFilter {
 	}
 
 	private void appendDisabled(StringBuffer buff, int nsteps) {
-		String localeStr = Platform.getNL();
-		Locale locale = UrlUtil.getLocale(localeStr);
+		String message = HelpBasePlugin.getActivitySupport().getDocumentMessage();
+		if (message!=null)
+			buff.append(message);
+		//String localeStr = Platform.getNL();
+		//Locale locale = UrlUtil.getLocale(localeStr);
+		
+/*
 		buff.append("<div id=\"help-disabledTopic\">"); //$NON-NLS-1$
 		buff.append("<img src=\""); //$NON-NLS-1$
 		appendRelativePath(buff, nsteps, "org.eclipse.help.webapp"); //$NON-NLS-1$
@@ -130,5 +137,6 @@ public class InjectionFilter implements IFilter {
 				.append("&nbsp;<a href='javascript:liveAction(\"org.eclipse.help.ui\", \"org.eclipse.help.ui.internal.ShowCapabilitiesPreferenceAction\",\"\")'>"); //$NON-NLS-1$
 		buff.append(WebappResources.getString("disabledTopic4", locale)); //$NON-NLS-1$
 		buff.append("</a><br><hr></div>"); //$NON-NLS-1$
+*/
 	}
 }

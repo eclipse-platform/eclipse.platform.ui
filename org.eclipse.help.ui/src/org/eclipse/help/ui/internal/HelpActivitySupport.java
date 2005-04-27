@@ -34,9 +34,81 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private IWorkbenchActivitySupport activitySupport;
 	private boolean userCanToggleFiltering;
 	private boolean filteringEnabled;
+	private ActivityDescriptor activityDescriptor;
+	
+	class ActivityDescriptor {
+		private IConfigurationElement config;
+		private String documentMessage;
+		private boolean needsLiveHelp;
+		
+		public ActivityDescriptor() {
+			load();
+		}
+		
+		private void load() {
+			IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.activitySupport");//$NON-NLS-1$
+			if (elements.length==1 && elements[0].getName().equals("support"))
+				config = elements[0];
+			else if (elements.length>0) {
+				IProduct product = Platform.getProduct();
+				if (product==null) return;
+				String productId = product.getId(); 
+				for (int i=0; i<elements.length; i++) {
+					IConfigurationElement element = elements[i];
+					if (element.getAttribute("productId").equals(productId)) {
+						config = element;
+						break;
+					}
+				}
+			}
+		}
+		private IConfigurationElement getChild(String name) {
+			IConfigurationElement [] children = config.getChildren(name);
+			return children.length==1?children[0]:null;
+		}
+		public String getShowAllMessage() {
+			if (config==null)
+				return null;
+			IConfigurationElement child = getChild("showAllMessage");
+			if (child!=null)
+				return child.getValue();
+			return null;
+		}
+		public boolean needsLiveHelp() {
+			getDocumentMessage();
+			return needsLiveHelp;
+		}
+		public String getDocumentMessage() {
+			if (config!=null && documentMessage==null) {
+				IConfigurationElement child = getChild("documentMessage");
+				if (child!=null) {
+					String value = child.getValue();
+					String pluginId = child.getAttribute("pluginId");
+					String className = child.getAttribute("class");
+					int loc = value.indexOf("ACTIVITY_EDITOR");
+					if (loc!= -1 && className!=null) {
+						needsLiveHelp=true;
+						StringBuffer buffer = new StringBuffer();
+						buffer.append(value.substring(0, loc));
+						buffer.append(getActivityEditorValue(pluginId, className));
+						buffer.append(value.substring(loc+15));
+						documentMessage = buffer.toString();
+					}
+					else
+						documentMessage = value;
+				}
+			}
+			return documentMessage;
+		}
+		private String getActivityEditorValue(String pluginId, String className) {
+			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\"\")";
+		}
+	}
+	
 
 	public HelpActivitySupport(IWorkbench workbench) {
 		activitySupport = workbench.getActivitySupport();
+		activityDescriptor = new ActivityDescriptor();
 		pref = HelpBasePlugin.getDefault().getPluginPreferences();
 
 		String showDisabledActivities = pref
@@ -196,5 +268,14 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private static boolean isWorkbenchFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager().getDefinedActivityIds().isEmpty();
+	}
+	public String getShowAllMessage() {
+		return activityDescriptor.getShowAllMessage();
+	}
+	public String getDocumentMessage() {
+		return activityDescriptor.getDocumentMessage();
+	}
+	public boolean getDocumentMessageUsesLiveHelp() {
+		return activityDescriptor.needsLiveHelp();
 	}
 }

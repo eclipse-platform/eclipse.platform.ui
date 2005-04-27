@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.DisplayUtils;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -370,7 +369,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		String arg = null;
 		if (arglist.size() == 3)
 			arg = (String) arglist.get(2);
-		DisplayUtils.runLiveHelp(pluginId, className, arg);
+		BaseHelpSystem.runLiveHelp(pluginId, className, arg);
 		return true;
 	}
 

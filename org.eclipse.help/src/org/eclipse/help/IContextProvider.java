@@ -34,6 +34,7 @@ package org.eclipse.help;
  * 
  * @since 3.1
  * @see IContext
+ * @see org.eclipse.core.runtime.IAdaptable
  */
 
 public interface IContextProvider {

@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.DisplayUtils;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
 
 /**
@@ -54,7 +53,7 @@ public class LiveHelpServlet extends HttpServlet {
 		if (className == null)
 			return;
 		String arg = req.getParameter("arg"); //$NON-NLS-1$
-		DisplayUtils.runLiveHelp(pluginID, className, arg);
+		BaseHelpSystem.runLiveHelp(pluginID, className, arg);
 	}
 	/**
 	 * 
