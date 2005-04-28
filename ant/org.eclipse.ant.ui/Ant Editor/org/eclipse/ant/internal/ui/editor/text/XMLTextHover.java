@@ -232,10 +232,13 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		try {	
 			int pos= offset;
 			char c;
-			
+            
+            if (document.getChar(pos) == '"') {
+                pos--;
+            }
 			while (pos >= 0) {
 				c= document.getChar(pos);
-				if (c != '.' && c != '-' && c != '/' &&  c != '\\' && c != ' ' && !Character.isJavaIdentifierPart(c))
+				if (c != '.' && c != '-' && c != '/' &&  c != '\\' && c != ' ' && !Character.isJavaIdentifierPart(c) && pos != offset)
 					break;
 				--pos;
 			}
