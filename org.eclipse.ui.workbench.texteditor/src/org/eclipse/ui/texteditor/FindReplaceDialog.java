@@ -434,8 +434,8 @@ class FindReplaceDialog extends Dialog {
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fFindContentAssistHandler == null) {
-				fFindContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fFindField, createContentAssistant());
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fReplaceField, createContentAssistant());
+				fFindContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fFindField, createContentAssistant(true));
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fReplaceField, createContentAssistant(false));
 			}
 			fFindContentAssistHandler.setEnabled(true);
 			fReplaceContentAssistHandler.setEnabled(true);
@@ -1030,7 +1030,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Initializes the string to search for and the appropriate
-	 * text inout field based on the selection found in the
+	 * text in the Find field based on the selection found in the
 	 * action's target.
 	 */
 	private void initFindStringFromSelection() {
@@ -1170,7 +1170,7 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Creates a button.
 	 * @param parent the parent control
-	 * @param key the key to lookup the button label
+	 * @param label the button label
 	 * @param id the button id
 	 * @param dfltButton is this button the default button
 	 * @param listener a button pressed listener
@@ -1731,16 +1731,18 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Create a new regex content assistant.
+	 * @param isFind <code>true</code> iff the processor is for the find field.
+	 *                <code>false</code> iff the processor is for the replace field.
 	 *
 	 * @return a new configured content assistant
 	 * @since 3.0
 	 */
-	private SubjectControlContentAssistant createContentAssistant() {
+	private SubjectControlContentAssistant createContentAssistant(boolean isFind) {
 		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
 
 		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size")); //$NON-NLS-1$
 
-		IContentAssistProcessor processor= new RegExContentAssistProcessor();
+		IContentAssistProcessor processor= new RegExContentAssistProcessor(isFind);
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
 		contentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
