@@ -35,7 +35,7 @@ import org.eclipse.update.search.UpdateSearchRequest;
 /**
  * An UpdateJob performs the lookup for new features or updates to the existing features,
  * depending on how you construct it.
- *
+ * @since 3.1
  */
 public class UpdateJob extends Job {
 	
@@ -86,6 +86,10 @@ public class UpdateJob extends Job {
         setPriority(Job.DECORATE);
     }
 
+    /**
+     * Returns true if the job is performing update lookups, or false when searching for new features
+     * @return true when searching for updates of existing features
+     */
     public boolean isUpdate() {
         return isUpdate;
     }
@@ -97,7 +101,11 @@ public class UpdateJob extends Job {
 		return UpdateJob.family == family;
 	}
 	
-    // will always return ok status, but the jobStatus will keep the actual status
+	/**
+     * Runs the job and returns the OK status. Call getStatus() to get the actual execution status.
+     * @param monitor progress monitor
+     * @return IStatus the return code is always OK
+	 */
     public IStatus run(IProgressMonitor monitor) {
         if (isUpdate)
             jobStatus = runUpdates(monitor);
@@ -187,14 +195,26 @@ public class UpdateJob extends Job {
         }
     }
 
+    /**
+     * Returns an array of features to install
+     * @return IInstallFeatureOperation[]
+     */
     public IInstallFeatureOperation[] getUpdates() {
         return (IInstallFeatureOperation[]) updates.toArray(new IInstallFeatureOperation[updates.size()]);
     }
     
+    /**
+     * Returns the job status upon termination.
+     * @return IStatus
+     */
     public IStatus getStatus() {
         return jobStatus;
     }
     
+    /**
+     * Returns the update search request for this job.
+     * @return UpdateSearchRequest
+     */
     public UpdateSearchRequest getSearchRequest() {
         return searchRequest;
     }
