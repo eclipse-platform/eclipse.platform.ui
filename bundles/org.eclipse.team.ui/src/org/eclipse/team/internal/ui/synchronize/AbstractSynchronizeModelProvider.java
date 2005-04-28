@@ -345,8 +345,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 				    // Only refresh the model root bu also ensure that 
 				    // the parents of the model root and the model root
 				    // itself are added to the view
-				    ((AbstractTreeViewer)viewer).add(getModelRoot().getParent(), getModelRoot());
-				    viewer.refresh(getModelRoot());
+                    addToViewer(getModelRoot());
 				}
 				//	restore expansion state
 				if (isRootProvider())

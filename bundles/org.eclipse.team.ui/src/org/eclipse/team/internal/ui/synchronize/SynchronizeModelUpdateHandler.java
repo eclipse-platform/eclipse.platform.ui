@@ -596,7 +596,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
                             if (DEBUG) {
                                 System.out.println("Adding child view items of " + parent.getName()); //$NON-NLS-1$
                             }
-                            List toAdd = (List)additionsMap.get(parent);
+                            Set toAdd = (Set)additionsMap.get(parent);
                             ((AbstractTreeViewer)viewer).add(parent, toAdd.toArray(new Object[toAdd.size()]));
                         }
                         additionsMap = null;
@@ -741,9 +741,9 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
             if (DEBUG) {
                 System.out.println("Queueing view item for addition " + element.getName()); //$NON-NLS-1$
             }
-            List toAdd = (List)additionsMap.get(parent);
+            Set toAdd = (Set)additionsMap.get(parent);
             if (toAdd == null) {
-                toAdd = new ArrayList();
+                toAdd = new HashSet();
                 additionsMap.put(parent, toAdd);
             }
             toAdd.add(element);
