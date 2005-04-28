@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -46,10 +47,10 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 	
 	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		if (fDisplay != null && !fDisplay.isDisposed()) {
-			final CoreException[] exception= new CoreException[1];
+			final Throwable[] exception= new Throwable[1];
 			final ISchedulingRule rule= ResourcesPlugin.getWorkspace().getRoot();
 			final Thread callerThread= Thread.currentThread();
-			Runnable r= new Runnable() {
+			final ISafeRunnable safeRunnable= new ISafeRunnable() {
 				public void run() {
 					try {
 						final Button cancel= getCancelButton();
@@ -65,23 +66,41 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 								cancel.setEnabled(enabled);
 							}
 						}
-					} catch (CoreException e) {
+					} catch(CoreException e) {
 						exception[0]= e;
 					} finally {
 						Platform.getJobManager().transferRule(rule, callerThread);
 					}
 				}
+				public void handleException(Throwable e) {
+					exception[0]= e;
+				}
+			};
+			Runnable r= new Runnable() {
+				public void run() {
+					Platform.run(safeRunnable);
+				}
 			};
 			Platform.getJobManager().transferRule(rule, fDisplay.getThread());
 			fDisplay.syncExec(r);
 			if (exception[0] != null) {
-				IStatus status= exception[0].getStatus();
-				// it is more important to get the original cause of the
-				// exception. Therefore create a new status and take
-				// over the exception trace from the UI thread.
-				throw new CoreException(new Status(
-					IStatus.ERROR, status.getPlugin(), status.getCode(), 
-					status.getMessage(), exception[0]));
+				if (exception[0] instanceof CoreException) {
+					IStatus status= ((CoreException)exception[0]).getStatus();
+					// it is more important to get the original cause of the
+					// exception. Therefore create a new status and take
+					// over the exception trace from the UI thread.
+					throw new CoreException(new Status(
+						IStatus.ERROR, status.getPlugin(), status.getCode(), 
+						status.getMessage(), exception[0]));
+				} else {
+					String message= exception[0].getMessage();
+					throw new CoreException(new Status(
+						IStatus.ERROR, RefactoringUIPlugin.getPluginId(),IStatus.ERROR,
+						message == null
+							? RefactoringUIMessages.ChangeExceptionHandler_no_details
+							: message,
+						exception[0]));
+				}
 			}
 		} else {
 			super.executeChange(pm);

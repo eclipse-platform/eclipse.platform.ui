@@ -12,6 +12,14 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,21 +29,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 public class ChangeExceptionHandler {
 	
@@ -115,12 +114,16 @@ public class ChangeExceptionHandler {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask("", 11); //$NON-NLS-1$
-				undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
-				if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
-					monitor.done();
-					return;
+				try {
+					undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
+					if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
+						monitor.done();
+						return;
+					}
+					undo.perform(new SubProgressMonitor(monitor, 9));
+				} finally {
+					undo.dispose();
 				}
-				undo.perform(new SubProgressMonitor(monitor, 9));
 			}
 		};
 		WorkbenchRunnableAdapter adapter= new WorkbenchRunnableAdapter(runnable,
