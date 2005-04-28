@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -55,6 +56,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -594,7 +596,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd.horizontalSpan= 2;
 		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
 		l.setLayoutData(gd);
-
+		
 		l= new Label(appearanceComposite, SWT.LEFT);
 		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -612,8 +614,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		editorComposite.setLayoutData(gd);
 
 		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(8);
+		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		gd.heightHint= fAppearanceColorList.getItemHeight() * 8;
 		fAppearanceColorList.setLayoutData(gd);
 
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
@@ -682,8 +684,27 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
 			}
 		});
-
+		
+		Link link= new Link(appearanceComposite, SWT.NONE);
+		link.setText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.ColorsAndFonts", null, null); //$NON-NLS-1$
+			}
+		});
+		// TODO replace by link-specific tooltips when
+		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
+		link.setToolTipText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link_tooltip); 
+		
+		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		gridData.widthHint= 150; // only expand further if anyone else requires it
+		gridData.horizontalSpan= 2;
+		link.setLayoutData(gridData);
+		
+		addFiller(appearanceComposite, 2);
+		
 		appearanceComposite.layout();
+		
 		return appearanceComposite;
 	}
 
@@ -806,6 +827,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		super.dispose();
+	}
+
+	private void addFiller(Composite composite, int horizontalSpan) {
+		PixelConverter pixelConverter= new PixelConverter(composite);
+		Label filler= new Label(composite, SWT.LEFT );
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= horizontalSpan;
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
 	}
 
 	Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {

@@ -48,6 +48,8 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_invalidInput;
 	public static String TextEditorPreferencePage_invalidRange;
 	public static String TextEditorPreferencePage_emptyInput;
+	public static String TextEditorPreferencePage_colorsAndFonts_link;
+	public static String TextEditorPreferencePage_colorsAndFonts_link_tooltip;
 	public static String QuickDiffConfigurationBlock_description;
 	public static String QuickDiffConfigurationBlock_referenceProviderTitle;
 	public static String QuickDiffConfigurationBlock_characterMode;
