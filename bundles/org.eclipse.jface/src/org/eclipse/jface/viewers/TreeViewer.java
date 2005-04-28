@@ -199,7 +199,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			return;
 		}
 
-		colorAndFontCollector.setFontsAndColors(element);
+		getColorAndFontCollector().setFontsAndColors(element);
 
 		IBaseLabelProvider prov = getLabelProvider();
 		ITableLabelProvider tprov = null;
@@ -285,7 +285,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				}
 			}
 		}
-		colorAndFontCollector.applyFontsAndColors(treeItem);
+		getColorAndFontCollector().applyFontsAndColors(treeItem);
 	}
 
 	/**

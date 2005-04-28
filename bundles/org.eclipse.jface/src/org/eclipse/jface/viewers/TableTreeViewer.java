@@ -213,8 +213,8 @@ public class TableTreeViewer extends AbstractTreeViewer {
             if (ti.getImage(column) != image)
                 ti.setImage(column, image);
             
-            colorAndFontCollector.setFontsAndColors(element);
-			colorAndFontCollector.applyFontsAndColors(ti);
+            getColorAndFontCollector().setFontsAndColors(element);
+            getColorAndFontCollector().applyFontsAndColors(ti);
         }
    
     }

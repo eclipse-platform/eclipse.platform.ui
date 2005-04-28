@@ -436,7 +436,7 @@ public class TableViewer extends StructuredViewer {
 			
 			int columnCount = table.getColumnCount();
 			TableItem ti = item;
-			colorAndFontCollector.setFontsAndColors(element);
+			getColorAndFontCollector().setFontsAndColors(element);
 			
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
@@ -483,7 +483,7 @@ public class TableViewer extends StructuredViewer {
 			}
 			
 			
-			colorAndFontCollector.applyFontsAndColors(ti);
+			getColorAndFontCollector().applyFontsAndColors(ti);
 		}
 	}
 

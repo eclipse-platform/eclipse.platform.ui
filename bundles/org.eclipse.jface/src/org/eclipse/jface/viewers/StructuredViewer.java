@@ -120,8 +120,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * IViewerLabelProvider for color and font updates.
 	 * Initialize it to have no color or font providing
 	 * initially.
+	 * @since 3.1
 	 */
-	protected ColorAndFontCollector colorAndFontCollector = new ColorAndFontCollector();
+	private ColorAndFontCollector colorAndFontCollector = new ColorAndFontCollector();
 
 	/**
 	 * The ColorAndFontCollector is a helper class for viewers
@@ -1866,6 +1867,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	void buildLabel(ViewerLabel updateLabel, Object element,ILabelProvider labelProvider){
 			updateLabel.setText(labelProvider.getText(element));
 			updateLabel.setImage(labelProvider.getImage(element));
+	}
+
+	/**
+	 * Get the ColorAndFontCollector for the receiver.
+	 * @return ColorAndFontCollector 
+	 * @since 3.1
+	 */
+	protected ColorAndFontCollector getColorAndFontCollector() {
+		return colorAndFontCollector;
 	}
 
 }
