@@ -22,15 +22,15 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 public class LinkedPositionGroupTest extends TestCase {
 
-	public void testIsEmtpy() {
+	public void testIsEmpty() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
-		assertTrue(group.isEmtpy());
+		assertTrue(group.isEmpty());
 	}
 
 	public void testIsNotEmtpy() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
-		assertFalse(group.isEmtpy());
+		assertFalse(group.isEmpty());
 	}
 
 	public void testGetPositions() throws BadLocationException {

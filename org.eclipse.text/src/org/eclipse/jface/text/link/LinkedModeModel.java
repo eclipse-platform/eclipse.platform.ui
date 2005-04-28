@@ -518,7 +518,7 @@ public class LinkedModeModel {
 	private void enforceNotEmpty() {
         boolean hasPosition= false;
 		for (Iterator it= fGroups.iterator(); it.hasNext(); )
-			if (!((LinkedPositionGroup) it.next()).isEmtpy()) {
+			if (!((LinkedPositionGroup) it.next()).isEmpty()) {
 				hasPosition= true;
 				break;
 			}

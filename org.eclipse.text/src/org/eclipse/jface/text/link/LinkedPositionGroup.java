@@ -358,11 +358,21 @@ public class LinkedPositionGroup {
 	/**
 	 * Returns whether this group contains any positions.
 	 *
-	 * @return <code>true</code> if this group is empty, <code>false</code>
-	 *         if it is not
+	 * @return <code>true</code> if this group is empty, <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	public boolean isEmpty() {
+		return fPositions.size() == 0;
+	}
+	
+	/**
+	 * Returns whether this group contains any positions.
+	 *
+	 * @return <code>true</code> if this group is empty, <code>false</code> otherwise
+	 * @deprecated As of 3.1, replaced by {@link #isEmpty()}
 	 */
 	public boolean isEmtpy() {
-		return fPositions.size() == 0;
+		return isEmpty();
 	}
 
 	/**
