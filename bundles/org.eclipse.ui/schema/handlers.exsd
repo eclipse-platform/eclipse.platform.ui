@@ -219,7 +219,20 @@ To further avoid plug-in loading, it is possible to specify when the handler is 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         All handlers implement &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;.  Within the workbench, it is possible to activate and deactivate handlers using the &lt;code&gt;org.eclipse.ui.handlers.IHandlerService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself.  To retrieve the service, you would make a call like &lt;code&gt;IWorkbench.getAdapter(IHandlerService.class)&lt;/code&gt;.
+         &lt;p&gt;
+All handlers implement &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;.  Within the workbench, it is possible to activate and deactivate handlers using the &lt;code&gt;org.eclipse.ui.handlers.IHandlerService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself.  To retrieve the service, you would make a call like &lt;code&gt;IWorkbench.getAdapter(IHandlerService.class)&lt;/code&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+It is also possible to activate and deactive handlers using legacy code in the workbench.  This can be done through the legacy mechanism shown below.  This mechanism is useful to clients who are using actions to contribute to menus or toolbars.
+&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+ IWorkbenchPartSite mySite;
+ IAction myAction;
+ 
+ myAction.setActionDefinitionId(commandId);
+ IKeyBindingService service = mySite.getKeyBindingService();
+ service.registerAction(myAction);
+&lt;/code&gt;&lt;/pre&gt;
       </documentation>
    </annotation>
 

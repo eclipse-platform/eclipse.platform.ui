@@ -250,6 +250,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
          &lt;p&gt;
 There is no public API for defining bindings.  To try to achieve stability for the user, bindings are only defined through the extension points.  If you are an RCP application, you should be able to override this behaviour in the &lt;code&gt;WorkbenchAdvisor&lt;/code&gt;.
 &lt;/p&gt;
+&lt;p&gt;
+For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;command&lt;/a&gt;.  For the binding to work, the command must have an active &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;handler&lt;/a&gt;.  Handlers can be registered programmatically; please see the &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
