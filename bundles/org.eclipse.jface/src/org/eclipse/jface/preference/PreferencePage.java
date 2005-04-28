@@ -395,8 +395,7 @@ public abstract class PreferencePage extends DialogPage implements
      * @param parent
      * @param createMessageArea Create a MessageRegion
      * for the receiver if this is true.
-     * <strong>NOTE:</strong> This API is experimental
-     * and subject to change before the 3.1 release.
+     * 
      * @since 3.1
      */
     public void createControl(Composite parent, boolean createMessageArea) {
