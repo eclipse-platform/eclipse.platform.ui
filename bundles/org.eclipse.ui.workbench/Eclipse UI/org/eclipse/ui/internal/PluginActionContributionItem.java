@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
@@ -42,30 +43,72 @@ public class PluginActionContributionItem extends ActionContributionItem
     public PluginActionContributionItem(PluginAction action) {
         // dynamic UI (DDW) - this constructor has changed since 1113
         super(action);
-
-        PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
-                .addActivityManagerListener(this);
-
-        // set up the identifier if necessary
-        if (WorkbenchActivityHelper.isFiltering()) {
-            createIdentifier();
-        }
     }
 
     /**
+     * Hook the activity and identifier listener (if necessary);
+     * 
+     * @since 3.1
+     */
+    private void hookListeners() {
+        PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+                .addActivityManagerListener(this);
+        // set up the identifier if necessary
+        IIdentifier id = getIdentifier();
+        if (id != null)
+            id.addIdentifierListener(this);
+    }
+    
+    /**
+     * Unhook the activity and identifier listener (if necessary);
+     * 
+     * @since 3.1
+     */
+    private void unhookListeners() {
+        PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
+                .removeActivityManagerListener(this);
+
+        IIdentifier id = getIdentifier();
+        if (id != null)
+            id.removeIdentifierListener(this);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#setParent(org.eclipse.jface.action.IContributionManager)
+     */
+    public void setParent(IContributionManager parent) {
+        IContributionManager oldParent = getParent();
+        super.setParent(parent);
+        if (oldParent == parent) // don't redo the work if we're setting the parent to the same value
+            return;
+        
+        if (parent == null) 
+            unhookListeners();
+        else 
+            hookListeners();
+    }
+    
+    /**
      * Create the IIdentifier reference for this item.
      *
-     * @sicne 3.0
+     * @since 3.0
      */
-    private void createIdentifier() {
-        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-                .getWorkbench().getActivitySupport();
-        IPluginContribution contribution = (IPluginContribution) getAction();
-        // no need to check if contribution.getPluginId() == null - plugin actions are always from plugins.
-        identifier = workbenchActivitySupport.getActivityManager()
-                .getIdentifier(
-                        WorkbenchActivityHelper.createUnifiedId(contribution));
-        identifier.addIdentifierListener(this);
+    private IIdentifier getIdentifier() {
+        if (!WorkbenchActivityHelper.isFiltering())
+            return null;
+        
+        if (identifier == null) {
+            IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+                    .getWorkbench().getActivitySupport();
+            IPluginContribution contribution = (IPluginContribution) getAction();
+            // no need to check if contribution.getPluginId() == null - plugin
+            // actions are always from plugins.
+            identifier = workbenchActivitySupport.getActivityManager()
+                    .getIdentifier(
+                            WorkbenchActivityHelper
+                                    .createUnifiedId(contribution));
+        }
+        return identifier;
     }
 
     /**
@@ -74,10 +117,7 @@ public class PluginActionContributionItem extends ActionContributionItem
      * @since 3.0
      */
     private void disposeIdentifier() {
-        if (identifier != null) {
-            identifier.removeIdentifierListener(this);
-            identifier = null;
-        }
+        identifier = null;
     }
 
     /**
@@ -91,9 +131,7 @@ public class PluginActionContributionItem extends ActionContributionItem
             pluginAction.disposeDelegate();
         }
 
-        PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
-                .removeActivityManagerListener(this);
-
+        unhookListeners();
         disposeIdentifier();
     }
 
@@ -112,7 +150,18 @@ public class PluginActionContributionItem extends ActionContributionItem
      * @see org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org.eclipse.ui.activities.IdentifierEvent)
      */
     public void identifierChanged(IdentifierEvent identifierEvent) {
-        getParent().markDirty();
+        invalidateParent();
+    }
+
+    /**
+     * Mark the parent dirty if we have a parent.
+     * 
+     * @since 3.1
+     */
+    private void invalidateParent() {
+        IContributionManager parent = getParent();
+        if (parent != null)
+            parent.markDirty();
     }
 
     /* (non-Javadoc)
@@ -122,11 +171,12 @@ public class PluginActionContributionItem extends ActionContributionItem
         // ensure that if we're going from a non-filtering state that we get an identifier
         // and vice versa.
         if (WorkbenchActivityHelper.isFiltering() && identifier == null) {
-            createIdentifier();
-            getParent().markDirty();
+            hookListeners();
+            invalidateParent();
         } else if (!WorkbenchActivityHelper.isFiltering() && identifier != null) {
+            unhookListeners();
             disposeIdentifier();
-            getParent().markDirty();
+            invalidateParent();
         }
     }
     
