@@ -108,6 +108,11 @@ public abstract class AbstractBuilderTest extends ResourceTest {
 	 * Restores the auto-build flag to its original value.
 	 */
 	protected void tearDown() throws Exception {
+		//revert to default build order
+		IWorkspace workspace = getWorkspace();
+		IWorkspaceDescription desc = workspace.getDescription();
+		desc.setBuildOrder(null);
+		workspace.setDescription(desc);
 		waitForBuild();
 		setAutoBuilding(autoBuilding);
 		super.tearDown();

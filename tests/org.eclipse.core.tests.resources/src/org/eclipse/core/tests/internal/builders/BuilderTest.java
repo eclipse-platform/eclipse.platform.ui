@@ -60,6 +60,16 @@ public class BuilderTest extends AbstractBuilderTest {
 		if (builder != null)
 			builder.reset();
 	}
+	
+	/**
+	 * Make sure this test runs first, before any other test
+	 * has a chance to mess with the build order.
+	 */
+	public void testAardvarkBuildOrder() {
+		IWorkspace workspace = getWorkspace();
+		//builder order should initially be null
+		assertEquals("1.0", null, workspace.getDescription().getBuildOrder());
+	}
 
 	/**
 	 * Tests the lifecycle of a builder.
