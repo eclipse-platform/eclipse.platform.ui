@@ -163,6 +163,8 @@ public class Update extends Command {
 				folder = resources[i].getParent();
 			}
 			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
+                if (folder == null)
+                    folder = (ICVSFolder)resources[i];
 				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));//$NON-NLS-1$
 			}
 		}

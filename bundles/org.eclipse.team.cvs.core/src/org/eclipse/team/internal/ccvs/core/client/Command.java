@@ -270,7 +270,7 @@ public abstract class Command extends Request {
 			else {
 				folder = resources[i].getParent();
 			}
-			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
+			if (!folder.isCVSFolder() && folder.exists()) {
 				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));//$NON-NLS-1$
 			}
 		}

@@ -184,7 +184,7 @@ public class CommitSetDialog extends Dialog {
     private void updateEnablements() {
         commitCommentArea.setEnabled(isUseCustomComment());
 	    String name = nameText.getText();
-        if (name == null && name.length() == 0) {
+        if (name.length() == 0) {
             setPageComplete(false);
             return;
         }
