@@ -45,7 +45,7 @@ public class MatchLocator {
 		this(PatternConstructor.createPattern(pattern, isCaseSensitive, isRegexSearch));		
 	}
 	
-	public boolean isEmtpy() {
+	public boolean isEmpty() {
 		return fMatcher.pattern().pattern().length() == 0;
 	}
 	

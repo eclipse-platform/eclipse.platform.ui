@@ -155,7 +155,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		}
 		
 		try {
-			if (fLocator.isEmtpy()) {
+			if (fLocator.isEmpty()) {
 				fCollector.accept(proxy, -1, 0);
 				return false; // finish, files don't have children
 			}
