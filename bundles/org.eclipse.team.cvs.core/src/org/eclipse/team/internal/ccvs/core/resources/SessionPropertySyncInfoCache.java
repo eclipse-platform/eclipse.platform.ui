@@ -348,18 +348,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			try {
 				resource.setSessionProperty(key, value);
 			} catch (CoreException e) {
-				IStatus status = e.getStatus();
-				if(status != null) {
-					int code = e.getStatus().getCode();
-					if(code == IResourceStatus.RESOURCE_NOT_LOCAL ||
-					    code == IResourceStatus.RESOURCE_NOT_FOUND ||
-					    code == IResourceStatus.PROJECT_NOT_OPEN) {
-					    	// ignore error since a phantom would of been created
-					    	// and we can safely ignore these cases
-					}
-					// some other error we did not expect
-					throw CVSException.wrapException(e);
-				}
+				throw CVSException.wrapException(e);
 			}
 		}
 	
