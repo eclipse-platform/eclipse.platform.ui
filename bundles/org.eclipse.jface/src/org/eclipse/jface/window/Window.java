@@ -1027,9 +1027,6 @@ public abstract class Window implements IShellProvider {
 	 * Gets the default orientation for windows. If it is not
 	 * set the default value will be unspecified (SWT#NONE).
 	 * 
-	 * <strong>NOTE</strong> This API is experimental and may 
-	 * be subject to change during the development cycle for
-	 * Eclipse 3.1.
 	 * 
 	 * @return SWT#NONE, SWT.RIGHT_TO_LEFT or SWT.LEFT_TO_RIGHT
 	 * @see SWT#RIGHT_TO_LEFT
