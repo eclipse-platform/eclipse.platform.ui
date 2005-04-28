@@ -195,8 +195,8 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         //Do not make an empty path absolute so as not to confuse with the root
         if (text.length() == 0)
             return new Path(text);
-        else
-            return (new Path(text)).makeAbsolute();
+       
+        return (new Path(text)).makeAbsolute();
     }
 
     /**
