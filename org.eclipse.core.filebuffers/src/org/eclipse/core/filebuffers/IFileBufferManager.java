@@ -102,7 +102,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param location the location
-	 * @deprecated as of 3.1, use {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
+	 * @deprecated As of 3.1, replaced by {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
 	void requestSynchronizationContext(IPath location);
 
@@ -118,7 +118,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param location the location
-	 * @deprecated as of 3.1, use {@link IFileBuffer#releaseSynchronizationContext()}
+	 * @deprecated As of 3.1, replaced by {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
 	void releaseSynchronizationContext(IPath location);
 

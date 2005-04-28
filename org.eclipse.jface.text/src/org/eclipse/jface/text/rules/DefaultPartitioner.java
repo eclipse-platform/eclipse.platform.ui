@@ -45,7 +45,7 @@ import org.eclipse.jface.text.TypedRegion;
  *
  * @see IPartitionTokenScanner
  * @since 2.0
- * @deprecated as of 3.1 use {@link org.eclipse.jface.text.rules.FastPartitioner} instead
+ * @deprecated As of 3.1, replaced by {@link org.eclipse.jface.text.rules.FastPartitioner} instead
  */
 public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 
