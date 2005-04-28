@@ -729,8 +729,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      * 
      * @return a int
      * 
-     * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
-     * 
      * @deprecated
      */
     public int getEditorReuseThreshold();
@@ -738,8 +736,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     /**
      * Set the number of open editors before reusing editors. If
      * < 0 the user preference settings will be used.
-     * 
-     * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
      * 
      * @param openEditors the threshold
      * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
@@ -760,8 +756,6 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
     
     /**
      * Returns an array of IViewParts that are stacked with the given part.
-     * 
-     * <em>EXPERIMENTAL</em>
      * 
      * @param part the part to test
      * @return the parts that are stacked with this part, including the part in question.  

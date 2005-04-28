@@ -57,8 +57,6 @@ public abstract class AbstractPresentationFactory {
             IStackPresentationSite site);
 
     /**
-     * <em>EXPERIMENTAL<em>
-     * 
      * Creates a standalone stack presentation for presenting a standalone view.
      * A standalone view cannot be docked together with other views. The title
      * of a standalone view may be hidden.

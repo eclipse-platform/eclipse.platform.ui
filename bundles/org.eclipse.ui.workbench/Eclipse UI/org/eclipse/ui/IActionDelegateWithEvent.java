@@ -37,7 +37,6 @@ public interface IActionDelegateWithEvent {
      * If an action delegate implements this interface, this method
      * is called instead of <code>run(IAction)</code>.
      * <p>
-     * NOTE: This is experimental API, which may change in the future.
      *
      * @param action the action proxy that handles the presentation portion of the action
      * @param event the SWT event which triggered this action being run 
