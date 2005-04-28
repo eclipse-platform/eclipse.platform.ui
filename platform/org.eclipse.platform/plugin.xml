@@ -34,10 +34,9 @@
          <presentation
                home-page-id="root" standby-page-id="standby">
             <implementation
-                  ws="win32"
                   style="$nl$/intro/css/shared.css"
                   kind="html"
-                  os="win32">
+                  os="win32,linux">
             </implementation>
             <implementation
                   kind="swt">
