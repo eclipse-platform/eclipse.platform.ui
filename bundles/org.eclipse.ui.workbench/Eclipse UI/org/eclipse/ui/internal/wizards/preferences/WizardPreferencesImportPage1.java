@@ -24,7 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.preferences.PreferenceTransferElement;
+import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
 /**
  * Page 1 of the base preference import Wizard

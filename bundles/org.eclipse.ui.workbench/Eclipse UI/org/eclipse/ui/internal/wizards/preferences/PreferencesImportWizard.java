@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
 /**
@@ -54,9 +51,7 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
      * the file system.
      */
     public PreferencesImportWizard() {
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("PreferencesImportWizard");//$NON-NLS-1$
         if (section == null)
@@ -78,8 +73,8 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(PreferencesMessages.PreferencesImportWizard_import);
-        setDefaultPageImageDescriptor(
-				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
+       // setDefaultPageImageDescriptor(
+		//		IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

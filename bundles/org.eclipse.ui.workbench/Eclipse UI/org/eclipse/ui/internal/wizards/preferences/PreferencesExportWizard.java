@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Standard workbench wizard for exporting preferences from the workspace
@@ -52,9 +49,7 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
      * Creates a wizard for exporting workspace preferences to the local file system.
      */
     public PreferencesExportWizard() {
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("PreferencesExportWizard");//$NON-NLS-1$
         if (section == null)
@@ -76,7 +71,7 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(PreferencesMessages.PreferencesExportWizard_export);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
+       // setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

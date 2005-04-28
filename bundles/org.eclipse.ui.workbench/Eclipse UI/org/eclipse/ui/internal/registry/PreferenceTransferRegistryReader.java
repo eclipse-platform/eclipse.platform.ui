@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.preferences.PreferenceTransferElement;
+import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
 /**
  * Preference Transfer registry reader to read extenders of the preferenceTranser schema.

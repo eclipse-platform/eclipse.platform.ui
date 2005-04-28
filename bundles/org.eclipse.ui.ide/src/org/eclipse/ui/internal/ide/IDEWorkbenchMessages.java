@@ -838,8 +838,6 @@ public class IDEWorkbenchMessages extends NLS {
     public static String IDEEditorsPreferencePage_WorkbenchPreference_contentTypesRelatedLink;
 	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
-	public static String SelectionDialog_selectLabel;
-	public static String SelectionDialog_deselectLabel;
     
 	static {
 		// load message values from bundle file

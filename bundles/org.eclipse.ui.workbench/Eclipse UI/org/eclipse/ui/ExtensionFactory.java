@@ -26,6 +26,8 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.keys.KeysPreferencePage;
 import org.eclipse.ui.internal.progress.JobView;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
+import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
+import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
 
 /**
  * Factory for the workbench's public extensions.
@@ -75,6 +77,16 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
     public static final String PERSPECTIVES_PREFERENCE_PAGE = "perspectivesPreferencePage"; //$NON-NLS-1$
 
     /**
+     * Factory ID for the Preferences export wizard.
+     */
+    public static final String PREFERENCES_EXPORT_WIZARD = "preferencesExportWizard"; //$//$NON-NLS-1$
+ 
+    /**
+     * Factory ID for the Preferences import wizard.
+     */
+    public static final String PREFERENCES_IMPORT_WIZARD = "preferencesImportWizard"; //$//$NON-NLS-1$
+    
+    /**
      * Factory ID for the Progress view.
      */
     public static final String PROGRESS_VIEW = "progressView"; //$NON-NLS-1$
@@ -84,7 +96,6 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
      */
     public static final String WORKBENCH_PREFERENCE_PAGE = "workbenchPreferencePage"; //$NON-NLS-1$
 
-    
     private IConfigurationElement config;
 
     private String id;
@@ -124,6 +135,10 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
             return configure(new KeysPreferencePage());
         if (PERSPECTIVES_PREFERENCE_PAGE.equals(id))
             return configure(new PerspectivesPreferencePage());
+        if (PREFERENCES_EXPORT_WIZARD.equals(id))
+        	return configure(new PreferencesExportWizard());
+        if (PREFERENCES_IMPORT_WIZARD.equals(id))
+        	return configure(new PreferencesImportWizard());
         if (PROGRESS_VIEW.equals(id)) 
             return configure(new JobView());
         if (WORKBENCH_PREFERENCE_PAGE.equals(id))

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.preferences;
+package org.eclipse.ui.internal.preferences;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.PreferenceTransferRegistryReader;

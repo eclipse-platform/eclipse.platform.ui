@@ -42,8 +42,8 @@
       <wizard
             name="%ImportWizards.Preferences"
             icon="icons/full/etool16/importdir_wiz.gif"
-            class="org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard"
-            id="org.eclipse.ui.wizards.import.Preferences">
+            id="org.eclipse.ui.wizards.import.Preferences"
+            class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
          <description>
             %ImportWizards.PreferencesDescription
          </description>
@@ -87,7 +87,7 @@
       <wizard
             name="%ExportWizards.Preferences"
             icon="icons/full/etool16/exportdir_wiz.gif"
-            class="org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard"
+            class="org.eclipse.ui.ExtensionFactory:preferencesExportWizard"
             id="org.eclipse.ui.wizards.export.Preferences">
          <description>
             %ExportWizards.PreferencesDescription
