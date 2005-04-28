@@ -468,7 +468,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 				fCurrentPage= fCurrentPage.getPreviousPage();
 				break;
 			case IDialogConstants.CANCEL_ID:
-				super.cancelPressed();
+				cancelPressed();
 		}
 		return false;
 	}
