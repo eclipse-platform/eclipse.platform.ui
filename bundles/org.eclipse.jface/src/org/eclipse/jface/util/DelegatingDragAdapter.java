@@ -85,9 +85,6 @@ import org.eclipse.swt.dnd.TransferData;
  *		});
  *		viewer.addDragSupport(DND.DROP_COPY | DND.DROP_MOVE, dragAdapter.getTransfers(), dragAdapter);
  * </pre></code>
- * <p>
- * NOTE: This API is experimental and subject to change including removal.
- * </p>
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {

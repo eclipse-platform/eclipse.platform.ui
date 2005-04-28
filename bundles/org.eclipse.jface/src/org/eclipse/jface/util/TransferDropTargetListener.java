@@ -28,9 +28,6 @@ import org.eclipse.swt.dnd.Transfer;
  * separately for unrelated types of drags. <code>DelegatingDropAdapter</code> then 
  * combines the function of each <code>TransferDropTargetListener</code>, while 
  * allowing them to be implemented as if they were the only <code>DragSourceListener</code>.
- * <p>
- * NOTE: This API is experimental and subject to change including removal.
- * </p>
  * @since 3.0
  */
 public interface TransferDropTargetListener extends DropTargetListener {

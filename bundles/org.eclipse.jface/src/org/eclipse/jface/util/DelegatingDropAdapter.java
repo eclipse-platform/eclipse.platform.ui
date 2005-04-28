@@ -96,9 +96,6 @@ import org.eclipse.swt.dnd.TransferData;
  *		});		
  *		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_MOVE, dropAdapter.getTransfers(), dropAdapter);
  * </pre></code>
- * <p>
- * NOTE: This API is experimental and subject to change including removal.
- * </p>
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {
