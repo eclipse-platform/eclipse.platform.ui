@@ -46,8 +46,6 @@ public abstract class RootScopePage extends PreferencePage implements
 
     private Button masterButton;
 
-    private Label spacer;
-
     private Text labelText;
 
     private Text descText;

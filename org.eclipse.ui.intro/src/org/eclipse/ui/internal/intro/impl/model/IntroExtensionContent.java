@@ -77,7 +77,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     }
 
     protected Element[] getChildren() {
-        Vector children = new Vector();
+        //Vector children = new Vector();
         NodeList nodeList = element.getChildNodes();
         Vector vector = new Vector();
         for (int i = 0; i < nodeList.getLength(); i++) {

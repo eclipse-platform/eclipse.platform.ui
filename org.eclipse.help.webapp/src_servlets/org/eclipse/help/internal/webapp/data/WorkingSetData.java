@@ -53,8 +53,7 @@ public class WorkingSetData extends RequestData {
 		String name = getWorkingSetName();
 		if (name != null && name.length() > 0)
 			return wsmgr.getWorkingSet(name);
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -91,8 +90,7 @@ public class WorkingSetData extends RequestData {
 
 		if (!allTheSame)
 			return STATE_GRAYED;
-		else
-			return STATE_UNCHECKED;
+		return STATE_UNCHECKED;
 	}
 
 	/**

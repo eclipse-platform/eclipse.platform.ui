@@ -79,15 +79,13 @@ public class ToolbarData extends RequestData {
 	public String getName() {
 		if (request.getParameter("view") == null) //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
-		else
-			return request.getParameter("view"); //$NON-NLS-1$
+		return request.getParameter("view"); //$NON-NLS-1$
 	}
 
 	public String getTitle() {
 		if (request.getParameter("view") == null) //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
-		else
-			return ServletResources.getString(request.getParameter("view"), //$NON-NLS-1$
+		return ServletResources.getString(request.getParameter("view"), //$NON-NLS-1$
 					request);
 	}
 

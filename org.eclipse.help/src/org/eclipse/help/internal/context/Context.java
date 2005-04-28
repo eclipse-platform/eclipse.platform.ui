@@ -90,10 +90,9 @@ public class Context extends ContextsNode implements IContext2 {
 			IHelpResource[] related = new IHelpResource[children.size()];
 			children.toArray(related);
 			return related;
-		} else {
-			// signal empty toc. handled by calling class.
-			return null;
 		}
+		// signal empty toc. handled by calling class.
+		return null;
 	}
 	public void setStyledText(String s) {
 		text = s;

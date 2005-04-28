@@ -128,10 +128,12 @@ public class PageStyleManager extends SharedStyleManager {
      * @param key
      * @return
      */
+    /*
     private Bundle getAltStyleBundle(String key) {
         Properties aProperties = findPropertyOwner(key);
         return (Bundle) altStyleProperties.get(aProperties);
     }
+    */
 
     /**
      * Finds the bundle from which this key was loaded. If the key is not from
@@ -145,8 +147,7 @@ public class PageStyleManager extends SharedStyleManager {
         Bundle bundle = (Bundle) altStyleProperties.get(aProperties);
         if (bundle != null)
             return bundle;
-        else
-            return super.getAssociatedBundle(key);
+        return super.getAssociatedBundle(key);
     }
 
 

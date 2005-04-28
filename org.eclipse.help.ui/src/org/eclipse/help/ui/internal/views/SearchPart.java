@@ -159,8 +159,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			public void widgetSelected(SelectionEvent e) {
 				if (searchWordCombo.getSelectionIndex() < 0)
 					return;
-				int index = previousSearchQueryData.size() - 1
-						- searchWordCombo.getSelectionIndex();
+				//int index = previousSearchQueryData.size() - 1
+					//	- searchWordCombo.getSelectionIndex();
 				/*
 				 * searchQueryData = (SearchQueryData) previousSearchQueryData
 				 * .get(index);

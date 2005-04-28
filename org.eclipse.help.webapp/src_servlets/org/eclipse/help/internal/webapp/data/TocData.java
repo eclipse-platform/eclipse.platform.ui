@@ -52,7 +52,7 @@ public class TocData extends ActivitiesData {
 	// List of TOC's, unfiltered
 	private ITocElement[] tocs;
 	// List of TOC's, filtered by roles
-	private IToc[] filteredTocs;
+	//private IToc[] filteredTocs;
 
 	// images directory
 	private String imagesDirectory;
@@ -142,16 +142,14 @@ public class TocData extends ActivitiesData {
 	public String getSelectedTopic() {
 		if (topicHref != null && topicHref.length() > 0)
 			return UrlUtil.getHelpURL(topicHref);
-		else {
-			if (selectedToc == -1)
-				return null;
-			IToc toc = tocs[selectedToc];
-			ITopic tocDescription = toc.getTopic(null);
-			if (tocDescription != null)
-				return UrlUtil.getHelpURL(tocDescription.getHref());
-			else
-				return UrlUtil.getHelpURL(null);
-		}
+		else
+		if (selectedToc == -1)
+			return null;
+		IToc toc = tocs[selectedToc];
+		ITopic tocDescription = toc.getTopic(null);
+		if (tocDescription != null)
+			return UrlUtil.getHelpURL(tocDescription.getHref());
+		return UrlUtil.getHelpURL(null);
 	}
 
 	/**

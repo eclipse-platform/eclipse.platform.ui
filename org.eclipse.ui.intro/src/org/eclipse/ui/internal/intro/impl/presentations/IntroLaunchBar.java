@@ -348,7 +348,7 @@ public class IntroLaunchBar implements IWindowTrim {
         container = new Composite(parent, SWT.NULL);
         computeColors(parent.getDisplay());
         container.setLayout(new BarLayout());
-        boolean vertical = (orientation & SWT.VERTICAL) != 0;
+        //boolean vertical = (orientation & SWT.VERTICAL) != 0;
         toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
         Listener dragListener = new Listener() {
             public void handleEvent(Event event) {
@@ -374,7 +374,6 @@ public class IntroLaunchBar implements IWindowTrim {
             ImageDescriptor desc = element.getHandleImageDescriptor();
             if (desc != null)
                 handleImage = desc.createImage();
-            Rectangle ibounds = handleImage.getBounds();
             handle.setBackground(bg);
             handle.addPaintListener(new PaintListener() {
                 public void paintControl(PaintEvent e) {
@@ -430,13 +429,8 @@ public class IntroLaunchBar implements IWindowTrim {
     private void startDrag(Object toDrag, Rectangle dragRect, Point position,
             boolean usingKeyboard) {
 
-        boolean success = DragUtil.performDrag(toDrag, dragRect, position,
+        DragUtil.performDrag(toDrag, dragRect, position,
             !usingKeyboard);
-        /*
-         * // If the drag was cancelled, reopen the old fast view if (!success &&
-         * oldFastView != null && page != null) {
-         * page.toggleFastView(oldFastView); }
-         */
     }
 
     private void onPaint(PaintEvent e) {

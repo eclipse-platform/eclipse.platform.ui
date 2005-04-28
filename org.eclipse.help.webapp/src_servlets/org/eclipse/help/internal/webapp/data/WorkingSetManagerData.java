@@ -145,8 +145,7 @@ public class WorkingSetManagerData extends RequestData {
 	public WorkingSet getWorkingSet() {
 		if (name != null && name.length() > 0)
 			return wsmgr.getWorkingSet(name);
-		else
-			return null;
+		return null;
 	}
 
 	public boolean isCurrentWorkingSet(int i) {

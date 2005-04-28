@@ -808,7 +808,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private void executeHistoryEntry(HistoryEntry entry) {
 		history.setBlocked(true);
 		if (entry.getType() == HistoryEntry.PAGE) {
-			HelpPartPage page = showPage(entry.getTarget(), true);
+			//HelpPartPage page = showPage(entry.getTarget(), true);
 			mform.setInput(entry.getData());
 		} else if (entry.getType() == HistoryEntry.URL) {
 			String relativeUrl = (String) entry.getData();
@@ -1064,8 +1064,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart != null) {
-				boolean enabled = HelpBasePlugin.getActivitySupport()
-						.isEnabled(url);
+				//boolean enabled = HelpBasePlugin.getActivitySupport()
+						//.isEnabled(url);
 				bpart.showURL(BaseHelpSystem
 						.resolve(url, "/help/ntopic").toString()); //$NON-NLS-1$
 				return;
@@ -1143,7 +1143,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private void addPageAction(IMenuManager manager, final String pageId) {
-		String cid = getCurrentPageId();
+		//String cid = getCurrentPageId();
 		HelpPartPage page = findPage(pageId);
 		if (page == null)
 			return;
@@ -1281,12 +1281,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					res.getLabel());
 		}
 	}
-
+/*
 	private void doOpen(Object target) {
 		String href = getHref(target);
 		if (href != null)
 			showURL(href, getShowDocumentsInPlace());
 	}
+*/
 
 	private void doOpen(Object target, boolean replace) {
 		String href = getHref(target);

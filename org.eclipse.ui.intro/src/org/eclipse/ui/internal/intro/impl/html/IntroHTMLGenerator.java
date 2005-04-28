@@ -63,7 +63,7 @@ public class IntroHTMLGenerator {
         // create the main HTML element, and all of its contents.
         return generateHTMLElement();
     }
-
+/*
     private HTMLElement generateEncoding() {
         HTMLElement encoding = new HTMLElement(""); //$NON-NLS-1$
         // TODO: figure out how to handle locale based encoding
@@ -71,6 +71,7 @@ public class IntroHTMLGenerator {
         // simple as asking the model for the information
         return encoding;
     }
+   */
 
     /**
      * Generates the HTML element and its content:
@@ -379,8 +380,7 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroHTML(IntroHTML element, int indentLevel) {
         if (element.isInlined())
             return generateInlineIntroHTML(element, indentLevel);
-        else
-            return generateEmbeddedIntroHTML(element, indentLevel);
+        return generateEmbeddedIntroHTML(element, indentLevel);
     }
 
     /**
@@ -902,8 +902,7 @@ public class IntroHTMLGenerator {
     private boolean filteredFromPresentation(AbstractIntroElement element) {
         if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
             return ((AbstractBaseIntroElement) element).isFiltered();
-        else
-            return false;
+        return false;
     }
 
 
@@ -1058,10 +1057,10 @@ public class IntroHTMLGenerator {
                         // last $ is part of a subsequent "$plugin:" segment
                         // it can still be processed properly)
                         return tokenContent.toString();
-                    } else {
-                        return pluginPath;
                     }
-                } else {
+                    return pluginPath;
+                }
+                {
                     // The "plugin:" segment was not found. Reset the reader
                     // so we can continue reading character by character.
                     reader.reset();

@@ -40,7 +40,7 @@ public class LocalHelpPage extends RootScopePage {
 
 	private ILabelProvider elementLabelProvider;
 
-	private boolean firstCheck;
+	//private boolean firstCheck;
 
 	private WorkingSet workingSet;
 
@@ -57,7 +57,7 @@ public class LocalHelpPage extends RootScopePage {
 	 * Default constructor.
 	 */
 	public LocalHelpPage() {
-		firstCheck = true;
+		//firstCheck = true;
 	}
 
 	/*

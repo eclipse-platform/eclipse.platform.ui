@@ -233,8 +233,7 @@ public class IntroURL implements IIntroURL {
         IIntroPart introPart = IntroPlugin.showIntro(standby);
         if (introPart == null)
             return false;
-        else
-            return true;
+        return true;
     }
 
 
@@ -274,8 +273,7 @@ public class IntroURL implements IIntroURL {
             // ran action successfully. Now set intro intro standby if needed.
             if (standbyState == null)
                 return true;
-            else
-                return setStandbyState(standbyState);
+            return setStandbyState(standbyState);
         } catch (Exception e) {
             Log.error("Could not run action: " + className, e); //$NON-NLS-1$
             return false;
@@ -311,7 +309,8 @@ public class IntroURL implements IIntroURL {
                 .resolve(href, true).toExternalForm();
             impl.getBrowser().setUrl(href);
             return true;
-        } else {
+        } 
+        {
             // show href in Help window. SWT presentation is handled here.
             // WorkbenchHelp takes care of error handling.
             PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
@@ -361,7 +360,8 @@ public class IntroURL implements IIntroURL {
                 .getIntroParttImplementation();
             Browser browser = impl.getBrowser();
             return browser.setUrl(url);
-        } else {
+        }
+        {
             // SWT presentation.
             return openBrowser(url, pluginId);
         }
@@ -371,16 +371,14 @@ public class IntroURL implements IIntroURL {
     private boolean showMessage(String message) {
         if (message == null)
             return false;
-        else {
-            try {
-                message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
-                DialogUtil.displayInfoMessage(null, message);
-                return true;
-            } catch (UnsupportedEncodingException e) {
-                DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode", //$NON-NLS-1$
-                    new Object[] { message });
-                return false;
-            }
+        try {
+            message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
+            DialogUtil.displayInfoMessage(null, message);
+            return true;
+        } catch (UnsupportedEncodingException e) {
+            DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode", //$NON-NLS-1$
+                new Object[] { message });
+            return false;
         }
     }
 
@@ -413,11 +411,10 @@ public class IntroURL implements IIntroURL {
             // ran action successfully. Now set intro intro standby if needed.
             if (standbyState == null)
                 return true;
-            else
-                return setStandbyState(standbyState);
-        } else
-            // could not find referenced page.
-            return false;
+            return setStandbyState(standbyState);
+        }
+        // could not find referenced page.
+        return false;
     }
 
     /**
@@ -556,8 +553,7 @@ public class IntroURL implements IIntroURL {
         IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
         if (introURL != null)
             return introURL.execute();
-        else
-            return false;
+        return false;
     }
 
 

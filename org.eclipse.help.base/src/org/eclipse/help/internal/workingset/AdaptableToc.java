@@ -33,8 +33,7 @@ public class AdaptableToc extends AdaptableHelpResource {
 	public Object getAdapter(Class adapter) {
 		if (adapter == IToc.class)
 			return element;
-		else
-			return super.getAdapter(adapter);
+		return super.getAdapter(adapter);
 	}
 
 	public AdaptableHelpResource[] getChildren() {

@@ -52,7 +52,7 @@ public class InfoCenterPage extends RootScopePage {
 
 	private AdaptableTocsArray remoteTocs;
 
-	private boolean firstCheck;
+	//private boolean firstCheck;
 
 	private RemoteWorkingSet workingSet;
 
@@ -107,7 +107,7 @@ public class InfoCenterPage extends RootScopePage {
 	 * Default constructor.
 	 */
 	public InfoCenterPage() {
-		firstCheck = true;
+		//firstCheck = true;
 	}
 
 	/*

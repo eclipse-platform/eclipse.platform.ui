@@ -97,8 +97,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	public int getLineCount() {
 		if (lines.size() == 0)
 			return 1;
-		else
-			return lines.size();
+		return lines.size();
 	}
 
 	/**
@@ -129,14 +128,12 @@ public class StyledLineWrapper implements StyledTextContent {
 		if (l1 == l2)
 			return getLine(l1).substring(start - getOffsetAtLine(l1),
 					end - start);
-		else {
-			StringBuffer range = new StringBuffer(getLine(l1).substring(
-					start - getOffsetAtLine(l1)));
-			for (int i = l1 + 1; i < l2; i++)
-				range.append(getLine(i));
-			range.append(getLine(l2).substring(0, end - getOffsetAtLine(l2)));
-			return range.toString();
-		}
+		StringBuffer range = new StringBuffer(getLine(l1).substring(
+				start - getOffsetAtLine(l1)));
+		for (int i = l1 + 1; i < l2; i++)
+			range.append(getLine(i));
+		range.append(getLine(l2).substring(0, end - getOffsetAtLine(l2)));
+		return range.toString();
 	}
 
 	/**
@@ -189,7 +186,7 @@ public class StyledLineWrapper implements StyledTextContent {
 				// if we reached the end, stop
 				if (start >= textChars.length)
 					break;
-				else { // see if the next character is an LF
+				{ // see if the next character is an LF
 					ch = textChars[start];
 					if (ch == SWT.LF) {
 						start++;
@@ -245,9 +242,8 @@ public class StyledLineWrapper implements StyledTextContent {
 			currentIndex = lineBreaker.next();
 			if (currentIndex == BreakIterator.DONE) {
 				break;
-			} else {
-				width = gc.textExtent(line.substring(0, currentIndex)).x;
 			}
+			width = gc.textExtent(line.substring(0, currentIndex)).x;
 		}
 		return lastGoodIndex;
 	}

@@ -134,7 +134,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
 			ScopePreferenceManager.EnginePreferenceNode node = (ScopePreferenceManager.EnginePreferenceNode)obj;
 			EngineDescriptor desc = node.getDescriptor();
-			ScopePreferenceManager mng = (ScopePreferenceManager)getPreferenceManager();
+			//ScopePreferenceManager mng = (ScopePreferenceManager)getPreferenceManager();
 			getTreeViewer().remove(node);
 			scheduleOperation(DELETE_ID, desc);
 		}

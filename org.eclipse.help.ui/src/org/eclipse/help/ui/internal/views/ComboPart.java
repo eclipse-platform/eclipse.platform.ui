@@ -103,14 +103,12 @@ public class ComboPart {
 	public String getText() {
 		if (combo instanceof Combo)
 			return ((Combo) combo).getText();
-		else
-			return ((CCombo) combo).getText();
+		return ((CCombo) combo).getText();
 	}
 
 	public void setItems(String[] items) {
 		if (combo instanceof Combo)
 			((Combo) combo).setItems(items);
-		else
-			((CCombo) combo).setItems(items);
+		((CCombo) combo).setItems(items);
 	}
 }

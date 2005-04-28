@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.Hashtable;
-
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
@@ -32,7 +30,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 
 	private ReusableHelpPart reusableHelpPart;
 
-	private Hashtable pageRecs;
+	//private Hashtable pageRecs;
 
 	private IWorkbenchPart monitoredPart;
 

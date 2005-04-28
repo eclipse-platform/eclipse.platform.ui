@@ -315,8 +315,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private boolean redirectLink(final String url) {
 		if (url.indexOf("/topic/") != -1) { //$NON-NLS-1$
 			if (url.indexOf("noframes") == -1) { //$NON-NLS-1$
-				char sep = url.lastIndexOf('?') != -1 ? '&' : '?';
-				String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
+				//char sep = url.lastIndexOf('?') != -1 ? '&' : '?';
+				//String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
 		}

@@ -56,8 +56,7 @@ public class EngineTypeDescriptor {
 			HelpUIResources.getImageDescriptor(bundleId, icon);
 			return HelpUIResources.getImage(icon);
 		}
-		else
-			image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
+		image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return image;
 	}
 	public String getDescription() {
@@ -83,8 +82,7 @@ public class EngineTypeDescriptor {
 				RootScopePage page = (RootScopePage)obj;
 				return page;
 			}
-			else
-				return null;
+			return null;
 		}
 		catch (CoreException e) {
 			return null;
@@ -122,7 +120,6 @@ public class EngineTypeDescriptor {
 		}
 		if (factory!=null)
 			return factory.createSearchScope(store, engineId, parameters);
-		else
-			return null;
+		return null;
 	}
 }

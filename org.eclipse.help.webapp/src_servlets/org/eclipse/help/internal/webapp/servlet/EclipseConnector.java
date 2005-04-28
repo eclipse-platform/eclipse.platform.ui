@@ -25,7 +25,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * Performs transfer of data from eclipse to a jsp/servlet
  */
 public class EclipseConnector {
-	private ServletContext context;
+	//private ServletContext context;
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
 			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
@@ -39,7 +39,7 @@ public class EclipseConnector {
 	 * Constructor.
 	 */
 	public EclipseConnector(ServletContext context) {
-		this.context = context;
+		//this.context = context;
 	}
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)

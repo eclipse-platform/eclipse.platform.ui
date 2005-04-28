@@ -16,7 +16,6 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -59,7 +58,7 @@ public class BaseExtensionPointManager {
     protected IntroModelRoot loadModel(String attributeName,
             String attributeValue) {
 
-        PerformanceStats loadModelStats = null;
+        //PerformanceStats loadModelStats = null;
         long start = 0;
         if (Log.logPerformance)
             start = System.currentTimeMillis();

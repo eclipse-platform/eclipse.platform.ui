@@ -59,9 +59,8 @@ public class StandaloneHelp extends EclipseController {
 
 			if (help.executeCommand(helpCommand)) {
 				return;
-			} else {
-				printMainUsage();
 			}
+			printMainUsage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

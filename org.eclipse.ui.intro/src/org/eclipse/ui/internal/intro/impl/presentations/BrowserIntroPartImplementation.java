@@ -58,7 +58,7 @@ public class BrowserIntroPartImplementation extends
     private IntroHTMLGenerator htmlGenerator = null;
 
     // cache model instance for reuse.
-    private IntroModelRoot model = getModel();
+   // private IntroModelRoot model = getModel();
 
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);

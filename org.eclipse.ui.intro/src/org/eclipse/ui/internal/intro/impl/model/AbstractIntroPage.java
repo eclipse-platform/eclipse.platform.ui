@@ -172,8 +172,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (title == null)
             // still null. no title.
             return null;
-        else
-            return title.getTitle();
+        return title.getTitle();
     }
 
     /**
@@ -391,9 +390,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // parse content depending on type. Make sure to set the loaded flag
         // accordingly, otherwise content file will always be parsed.
-        IntroModelRoot model = (IntroModelRoot) getParent();
-        String presentationStyle = model.getPresentation()
-            .getImplementationKind();
+        //IntroModelRoot model = (IntroModelRoot) getParent();
+        //String presentationStyle = model.getPresentation()
+          //  .getImplementationKind();
         if (parser.hasXHTMLContent()) {
             // INTRO: commenting out degradation to UI forms for now.
             // Presentatoin kind flag is not yet defined at this stage.

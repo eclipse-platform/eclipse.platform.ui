@@ -451,9 +451,9 @@ public class FormIntroPartImplementation extends
             updateHistory(rootPage.getId());
             currentIntroPart.getControl().setRedraw(true);
             return success;
-        } else
-            // static model. Nothing to do.
-            return false;
+        }
+        // static model. Nothing to do.
+        return false;
     }
 
 

@@ -86,9 +86,8 @@ public class HelpApplication implements IPlatformRunnable, IExecutableExtension 
 		releaseLock();
 		if (status == STATUS_RESTARTING) {
 			return EXIT_RESTART;
-		} else {
-			return EXIT_OK;
 		}
+		return EXIT_OK;
 	}
 	/**
 	 * @see IExecutableExtension

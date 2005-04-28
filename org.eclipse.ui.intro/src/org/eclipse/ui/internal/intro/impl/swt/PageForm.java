@@ -41,7 +41,7 @@ public class PageForm implements IIntroConstants {
     protected IntroModelRoot model;
     private Form parentForm;
     protected Form pageForm;
-    private SharedStyleManager sharedStyleManager;
+    //private SharedStyleManager sharedStyleManager;
 
     // Id to this page. There is only a single instance of this page in the
     // main page book.
@@ -95,7 +95,7 @@ public class PageForm implements IIntroConstants {
 
         // Cash the shared style manager. We need to pass it around to category
         // forms. So, do not null it!
-        this.sharedStyleManager = sharedStyleManager;
+        //this.sharedStyleManager = sharedStyleManager;
 
         // creating page in Main page book.
         pageForm = toolkit.createForm(mainPageBook.getContainer());

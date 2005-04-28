@@ -208,8 +208,7 @@ public abstract class AbstractIntroPartImplementation {
     private int getHistoryEndPosition() {
         if (history.isEmpty())
             return 0;
-        else
-            return history.size() - 1;
+        return history.size() - 1;
     }
 
     protected void navigateHistoryBackward() {
@@ -236,8 +235,7 @@ public abstract class AbstractIntroPartImplementation {
         if (navigationLocation < 0 || navigationLocation >= history.size())
             // bad nav location.
             return true;
-        else
-            return false;
+        return false;
     }
 
     /**

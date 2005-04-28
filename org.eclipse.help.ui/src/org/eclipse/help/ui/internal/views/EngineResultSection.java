@@ -280,7 +280,7 @@ public class EngineResultSection {
         StringBuffer buff = new StringBuffer();
         buff.append("<form>"); //$NON-NLS-1$
         IHelpResource oldCat = null;
-        boolean earlyExit = false;
+        //boolean earlyExit = false;
 
         for (int i = resultOffset; i < results.length; i++) {
             if (i - resultOffset == HITS_PER_PAGE) {

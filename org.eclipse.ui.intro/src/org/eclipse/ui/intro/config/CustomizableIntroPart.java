@@ -87,7 +87,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     // the set to false when the standby part is first created.
     private boolean restoreStandby;
 
-    private boolean isClosing = false;
+    //private boolean isClosing = false;
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {

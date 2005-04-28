@@ -26,7 +26,7 @@ public class HelpWebappPlugin extends Plugin {
 
 	protected static HelpWebappPlugin plugin;
 
-	private static BundleContext bundleContext;
+	//private static BundleContext bundleContext;
 
 	/**
 	 * Logs an Error message with an exception.
@@ -69,7 +69,7 @@ public class HelpWebappPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		bundleContext = context;
+		//bundleContext = context;
 		// Setup debugging options
 		// Setup debugging options
 		DEBUG = isDebugging();
@@ -85,7 +85,7 @@ public class HelpWebappPlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		bundleContext = null;
+		//bundleContext = null;
 		super.stop(context);
 	}
 }

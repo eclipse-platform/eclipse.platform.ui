@@ -14,7 +14,6 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.jface.resource.*;
 import org.eclipse.osgi.service.environment.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
@@ -30,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
  * ContextHelpDialog
  */
 public class ContextHelpDialog {
-	private static ImageRegistry imgRegistry = null;
+	//private static ImageRegistry imgRegistry = null;
 
 	private Color backgroundColour = null;
 

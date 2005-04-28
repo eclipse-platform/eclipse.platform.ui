@@ -59,9 +59,8 @@ public class StandaloneInfocenter extends EclipseController {
 			
 			if (infocenter.executeCommand(helpCommand)) {
 				return;
-			} else {
-				printMainUsage();
 			}
+			printMainUsage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

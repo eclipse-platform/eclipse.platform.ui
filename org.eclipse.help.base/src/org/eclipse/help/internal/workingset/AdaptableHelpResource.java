@@ -37,8 +37,7 @@ public abstract class AdaptableHelpResource
 	public Object getAdapter(Class adapter) {
 		if (adapter == IHelpResource.class)
 			return element;
-		else
-			return null;
+		return null;
 	}
 
 	public abstract void saveState(Element element);
@@ -80,8 +79,7 @@ public abstract class AdaptableHelpResource
 	public int hashCode() {
 		if (element == null)
 			return -1;
-		else
-			return element.hashCode();
+		return element.hashCode();
 	}
 
 	/**

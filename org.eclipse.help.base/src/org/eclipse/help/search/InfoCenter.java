@@ -123,8 +123,8 @@ public final class InfoCenter implements ISearchEngine {
 				url = url + "/"; //$NON-NLS-1$
 			if (frames) {
 				return url + "topic" + href; //$NON-NLS-1$
-			} else
-				return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

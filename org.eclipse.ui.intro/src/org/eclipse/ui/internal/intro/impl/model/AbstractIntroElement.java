@@ -228,8 +228,7 @@ public abstract class AbstractIntroElement implements Cloneable {
     protected String getAttribute(Element element, String att) {
         if (element.hasAttribute(att))
             return element.getAttribute(att);
-        else
-            return null;
+        return null;
     }
 
     /**
@@ -242,8 +241,7 @@ public abstract class AbstractIntroElement implements Cloneable {
     protected String[] getAttributeList(Element element, String att) {
         if (element.hasAttribute(att))
             return element.getAttribute(att).split(","); //$NON-NLS-1$
-        else
-            return null;
+        return null;
     }
 
 
@@ -327,8 +325,7 @@ public abstract class AbstractIntroElement implements Cloneable {
             parent = parent.getParent();
         if (parent.isOfType(ABSTRACT_PAGE))
             return (AbstractIntroPage) parent;
-        else
-            return null;
+        return null;
     }
 
 

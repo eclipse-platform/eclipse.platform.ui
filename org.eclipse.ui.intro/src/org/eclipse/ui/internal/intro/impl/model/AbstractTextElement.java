@@ -60,8 +60,7 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
         // intro text may be null if there is no child Text element.
         if (introText != null)
             return introText.getText();
-        else
-            return null;
+        return null;
     }
 
     /**

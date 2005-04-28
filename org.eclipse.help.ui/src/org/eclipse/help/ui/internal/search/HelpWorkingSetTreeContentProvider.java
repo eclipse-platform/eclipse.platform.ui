@@ -41,8 +41,7 @@ public class HelpWorkingSetTreeContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
 		if (element instanceof AdaptableHelpResource)
 			return ((AdaptableHelpResource) element).getParent();
-		else
-			return null;
+		return null;
 	}
 
 	/**

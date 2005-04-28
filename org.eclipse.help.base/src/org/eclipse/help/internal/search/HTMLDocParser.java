@@ -233,9 +233,8 @@ public class HTMLDocParser {
 							// head element closed, we are too far, stop
 							// processing input
 							return null;
-						} else {
-							stateElement = STATE_ELEMENT_START;
 						}
+						stateElement = STATE_ELEMENT_START;
 						break;
 					default : // STATE_META_IN :
 						switch (token) {

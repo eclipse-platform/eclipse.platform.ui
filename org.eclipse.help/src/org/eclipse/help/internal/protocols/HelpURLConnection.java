@@ -178,8 +178,7 @@ public class HelpURLConnection extends URLConnection {
 			Object value = arguments.get(name);
 			if (value instanceof Vector)
 				return (Vector) value;
-			else
-				return null;
+			return null;
 		}
 		return null;
 	}
@@ -253,8 +252,7 @@ public class HelpURLConnection extends URLConnection {
 	public boolean isCacheable() {
 		if (getValue("resultof") != null) //$NON-NLS-1$
 			return false;
-		else
-			return cachingEnabled;
+		return cachingEnabled;
 	}
 	public String toString() {
 		return pluginAndFile;

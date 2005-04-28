@@ -160,12 +160,10 @@ public class SearchManager implements ITocsChangedListener {
 				pm.worked(1);
 				pm.done();
 				return;
-			} else {
-				if (pm instanceof SearchProgressMonitor) {
-					((SearchProgressMonitor) pm).started();
-				}
 			}
-			//
+			if (pm instanceof SearchProgressMonitor) {
+				((SearchProgressMonitor) pm).started();
+			}
 			updateIndex(pm, index, progressDistrib);
 		} finally {
 			progressDistrib.removeMonitor(pm);

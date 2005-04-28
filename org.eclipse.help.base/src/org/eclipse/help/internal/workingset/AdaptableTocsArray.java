@@ -37,8 +37,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	public Object getAdapter(Class adapter) {
 		if (adapter == IToc[].class)
 			return element;
-		else
-			return null;
+		return null;
 	}
 
 	public IAdaptable[] getChildren() {
@@ -97,8 +96,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	public int hashCode() {
 		if (element == null)
 			return -1;
-		else
-			return element.hashCode();
+		return element.hashCode();
 	}
 }
 

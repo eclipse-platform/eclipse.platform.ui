@@ -147,7 +147,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	}
 
 	private void createLinkArea(Composite parent) {
-		PreferenceManager manager = PlatformUI.getWorkbench().getPreferenceManager();
+		//PreferenceManager manager = PlatformUI.getWorkbench().getPreferenceManager();
 		IPreferenceNode node = getPreferenceNode(WBROWSER_PAGE_ID);
 		if (node!=null) {
 			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,

@@ -11,15 +11,9 @@
 package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.browser.CurrentBrowser;
-import org.eclipse.help.ui.internal.browser.embedded.EmbeddedBrowserAdapter;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 

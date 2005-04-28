@@ -141,12 +141,11 @@ public final class BaseHelpSystem {
 				getInstance().internalBrowser = BrowserManager.getInstance()
 						.createBrowser(false);
 			return getInstance().internalBrowser;
-		} else {
-			if (getInstance().browser == null)
-				getInstance().browser = BrowserManager.getInstance()
-						.createBrowser(true);
-			return getInstance().browser;
 		}
+		if (getInstance().browser == null)
+			getInstance().browser = BrowserManager.getInstance()
+					.createBrowser(true);
+		return getInstance().browser;
 	}
 
 	public static synchronized HelpDisplay getHelpDisplay() {
@@ -420,9 +419,8 @@ public final class BaseHelpSystem {
 				if ((i + 1) < args.length
 						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
 					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 		}
 
@@ -440,10 +438,8 @@ public final class BaseHelpSystem {
 				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$//$NON-NLS-2$
 				|| locale.startsWith("ur")) { //$NON-NLS-1$
 			return true;
-		} else {
-			return false;
 		}
-
+		return false;
 	}
 
 	public static boolean isRTL() {
@@ -459,7 +455,7 @@ public final class BaseHelpSystem {
 		try {
 			Class c = bundle.loadClass(className);
 			Object o = c.newInstance();
-			Runnable runnable = null;
+			//Runnable runnable = null;
 			if (o != null && o instanceof ILiveHelpAction) {
 				ILiveHelpAction helpExt = (ILiveHelpAction) o;
 				if (arg != null)

@@ -140,8 +140,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		Control focusControl = mform.getForm().getDisplay().getFocusControl();
 		if (contextHelpPart.hasFocusControl(focusControl))
 			return contextHelpPart.fillContextMenu(manager);
-		else
-			return dynamicHelpPart.fillContextMenu(manager);
+		return dynamicHelpPart.fillContextMenu(manager);
 	}
 
 	public IAction getGlobalAction(String id) {

@@ -14,7 +14,6 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.*;
 

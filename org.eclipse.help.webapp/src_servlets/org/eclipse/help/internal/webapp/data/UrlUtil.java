@@ -478,10 +478,9 @@ public class UrlUtil {
 						&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
 					infocenterDirection = INFOCENTER_DIRECTION_RTL;
 					return;
-				} else {
-					infocenterDirection = INFOCENTER_DIRECTION_LTR;
-					return;
 				}
+				infocenterDirection = INFOCENTER_DIRECTION_LTR;
+				return;
 			}
 		}
 		// by client locale
@@ -491,7 +490,8 @@ public class UrlUtil {
 			HttpServletResponse response) {
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 			return BaseHelpSystem.isRTL();
-		} else {
+		}
+		{
 			if (infocenterDirection == INFOCENTER_DIRECTION_RTL) {
 				return true;
 			} else if (infocenterDirection == INFOCENTER_DIRECTION_LTR) {
@@ -502,9 +502,8 @@ public class UrlUtil {
 					|| locale.startsWith("he") || locale.startsWith("iw")
 					| locale.startsWith("ur")) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 	}
 }

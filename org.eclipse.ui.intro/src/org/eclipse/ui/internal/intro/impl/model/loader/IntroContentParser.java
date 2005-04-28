@@ -136,13 +136,13 @@ public class IntroContentParser {
                         InputSource in = new InputSource(dtdURL.openStream());
                         in.setSystemId(dtdURL.toExternalForm());
                         return in;
-                    } else
-                        return null;
+                    }
+                    return null;
                 }
             });
 
             document = parser.parse(fileURI);
-            DocumentType docType = document.getDoctype();
+            //DocumentType docType = document.getDoctype();
             return document;
 
         } catch (SAXParseException spe) {

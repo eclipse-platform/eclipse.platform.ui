@@ -264,9 +264,8 @@ public class BrowserManager {
 		}
 		if (isEmbeddedBrowserPresent() && !alwaysUseExternal) {
 			return internalBrowserDesc.getID();
-		} else {
-			return getCurrentBrowserID();
 		}
+		return getCurrentBrowserID();
 	}
 
 	/**
@@ -334,11 +333,9 @@ public class BrowserManager {
 		if (external) {
 			return new CurrentBrowser(createBrowserAdapter(true),
 					getCurrentBrowserID(), true);
-		} else {
-			return new CurrentBrowser(createBrowserAdapter(alwaysUseExternal),
-					getCurrentInternalBrowserID(), false);
-
 		}
+		return new CurrentBrowser(createBrowserAdapter(alwaysUseExternal),
+				getCurrentInternalBrowserID(), false);
 	}
 
 	/**

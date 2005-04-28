@@ -28,7 +28,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	private static final String SHOW_DISABLED_ACTIVITIES_NEVER = "never"; //$NON-NLS-1$
 	private static final String SHOW_DISABLED_ACTIVITIES_OFF = "off"; //$NON-NLS-1$
 	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on"; //$NON-NLS-1$
-	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always"; //$NON-NLS-1$
+//	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always"; //$NON-NLS-1$
 
 	private Preferences pref;
 	private IWorkbenchActivitySupport activitySupport;
@@ -231,9 +231,8 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			// check children TOCs
 			if (isInTocSubtree(href, toc.getChildrenTocs())) {
 				return true;
-			} else {
-				// try other TOCs at this level
 			}
+			// try other TOCs at this level
 		}
 		return false;
 	}

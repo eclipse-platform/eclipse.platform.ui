@@ -298,8 +298,7 @@ public class PageWidgetFactory {
         if (isBold)
             return createFormText(parent, generateBoldFormText(text.getText()),
                 fg);
-        else
-            return createText(parent, text.getText(), fg);
+        return createText(parent, text.getText(), fg);
     }
 
     private Control createFormText(Composite parent, String text, Color fg) {
@@ -443,8 +442,7 @@ public class PageWidgetFactory {
     private boolean getFilterState(AbstractIntroElement element) {
         if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
             return ((AbstractBaseIntroElement) element).isFiltered();
-        else
-            return false;
+        return false;
     }
 
 

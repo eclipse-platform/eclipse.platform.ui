@@ -36,9 +36,9 @@ public class EngineDescriptor implements IEngineDescriptor {
 
 	private Hashtable parameters;
 
-	private boolean removable;
+	//private boolean removable;
 
-	private boolean enabled;
+	//private boolean enabled;
 
 	private String id;
 
@@ -133,7 +133,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 	public RootScopePage createRootPage(String scopeSetName) {
 		RootScopePage page = etdesc.createRootPage(scopeSetName);
 		if (page != null) {
-			Dictionary parameters = getParameters();
+			//Dictionary parameters = getParameters();
 			page.init(this, scopeSetName);
 		}
 		return page;

@@ -39,8 +39,6 @@ public class InjectionFilter implements IFilter {
 
 	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$
 	
-	private void loadDocumentMessage() {
-	}
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -80,7 +78,7 @@ public class InjectionFilter implements IFilter {
 		int upLevels = path.segmentCount() - 1;
 		StringBuffer script = new StringBuffer();
 		StringBuffer disabledContent = new StringBuffer();
-		StringBuffer feedbackContent = new StringBuffer();
+		//StringBuffer feedbackContent = new StringBuffer();
 		if (addNarrow) {
 			script.append(narrowBook1);
 			appendRelativePath(script, upLevels);

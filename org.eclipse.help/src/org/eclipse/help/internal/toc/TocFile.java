@@ -101,8 +101,7 @@ public class TocFile {
 	public Anchor getAnchor(String id) {
 		if (anchors == null || anchors.get(id) == null)
 			return null;
-		else
-			return (Anchor) anchors.get(id);
+		return (Anchor) anchors.get(id);
 	}
 
 	/**

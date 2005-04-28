@@ -53,16 +53,15 @@ public class HrefUtil {
 			return href;
 		if (href.startsWith("../")) { //$NON-NLS-1$
 			return href.substring(2);
-		} else {
-			if (href.length() > 0) {
-				StringBuffer buf = new StringBuffer(2 + pluginID.length()
-						+ href.length());
-				buf.append('/').append(pluginID);
-				buf.append('/').append(href);
-				return buf.toString();
-			} else
-				return "/" + pluginID; //$NON-NLS-1$
 		}
+		if (href.length() > 0) {
+			StringBuffer buf = new StringBuffer(2 + pluginID.length()
+					+ href.length());
+			buf.append('/').append(pluginID);
+			buf.append('/').append(href);
+			return buf.toString();
+		}
+		return "/" + pluginID; //$NON-NLS-1$
 	}
 	/**
 	 * Parses href and obtains plugin id
@@ -102,9 +101,8 @@ public class HrefUtil {
 			return null;
 		if (secondSlashIx + 1 < href.length()) // href is /pluginID/path
 			return href.substring(secondSlashIx + 1);
-		else
-			// href is /pluginID/
-			return ""; //$NON-NLS-1$
+		// href is /pluginID/
+		return ""; //$NON-NLS-1$
 	}
 
 }

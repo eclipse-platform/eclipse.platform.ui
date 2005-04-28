@@ -132,8 +132,7 @@ public class TocBuilder {
 			if (tocFile.getPluginID().equals(plugin)
 					&& tocFile.getHref().equals(path))
 				break;
-			else
-				tocFile = null;
+			tocFile = null;
 		}
 		if (tocFile == null)
 			return null;

@@ -60,15 +60,13 @@ public class ReusableHelpPartHistory {
 		if (hasNext()) {
 			return (HistoryEntry)queue.get(++cursor);
 		}
-		else
-			return null;
+		return null;
 	}
 	public HistoryEntry prev() {
 		if (hasPrev()) {
 			return (HistoryEntry)queue.get(--cursor);
 		}
-		else
-			return null;
+		return null;
 	}
 	/**
 	 * @return Returns the blocked.

@@ -78,8 +78,7 @@ public class LinksData extends RequestData {
 		IToc toc = findTocForTopic(links[i].getHref());
 		if (toc != null)
 			return UrlUtil.htmlEncode(toc.getLabel());
-		else
-			return ""; //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

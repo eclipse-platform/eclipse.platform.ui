@@ -95,9 +95,8 @@ public class ResourceLocator {
 			}
 			if (producer == STATIC_DOCS_ONLY) {
 				return null;
-			} else {
-				return (IHelpContentProducer) producer;
 			}
+			return (IHelpContentProducer) producer;
 		}
 	}
 
@@ -186,8 +185,7 @@ public class ResourceLocator {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle != null)
 			return openFromPlugin(bundle, file, locale);
-		else
-			return null;
+		return null;
 	}
 
 	/**

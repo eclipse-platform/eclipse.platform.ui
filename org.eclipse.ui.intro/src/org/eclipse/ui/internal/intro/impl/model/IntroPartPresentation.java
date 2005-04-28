@@ -71,7 +71,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private static final String TEXT_IMPL_KIND = "text"; //$NON-NLS-1$
 
 
-    private String title;
+    //private String title;
     private String implementationStyle;
     private String implementationKind;
     private String homePageId;
@@ -268,7 +268,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         // valid one. First start with OS, then WS then no OS.
         IConfigurationElement[] implementationElements = configElement
             .getChildren(TAG_IMPLEMENTATION);
-        IConfigurationElement implementationElement = null;
+        //IConfigurationElement implementationElement = null;
 
         if (implementationElements.length == 0)
             // no contributions. done.
@@ -348,7 +348,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         // There can be more than one implementation contribution.
         IConfigurationElement[] implementationElements = getCfgElement()
             .getChildren(TAG_IMPLEMENTATION);
-        IConfigurationElement implementationElement = null;
+        //IConfigurationElement implementationElement = null;
 
         if (implementationElements.length == 0)
             // no implementations. done.
@@ -374,6 +374,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * class attribute on implmentation.
      * 
      */
+    /*
     private AbstractIntroPartImplementation createIntroPartImplementation(
             IConfigurationElement configElement) {
         if (configElement == null)
@@ -388,6 +389,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         }
         return implementation;
     }
+*/
 
     /**
      * Creates the actual implementation class. Returns null on failure.
@@ -459,22 +461,19 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public boolean navigateForward() {
         if (implementation != null)
             return implementation.navigateForward();
-        else
-            return false;
+        return false;
     }
 
     public boolean navigateBackward() {
         if (implementation != null)
             return implementation.navigateBackward();
-        else
-            return false;
+        return false;
     }
 
     public boolean navigateHome() {
         if (implementation != null)
             return implementation.navigateHome();
-        else
-            return false;
+        return false;
     }
 
 

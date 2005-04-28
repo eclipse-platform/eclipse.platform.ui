@@ -69,9 +69,8 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 				secondThread.start();
 			}
 			return secondThread.getDisplay();
-		} else {
-			return Display.getDefault();
 		}
+		return Display.getDefault();
 	}
 
 	public void browserClosed() {

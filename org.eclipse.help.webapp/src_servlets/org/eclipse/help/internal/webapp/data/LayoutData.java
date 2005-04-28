@@ -129,8 +129,7 @@ public class LayoutData extends RequestData {
 		if (preferences.isWindowTitlePrefix()) {
 			return ServletResources.getString("browserTitle", //$NON-NLS-1$
 					BaseHelpSystem.getProductName(), request);
-		} else {
-			return BaseHelpSystem.getProductName();
 		}
+		return BaseHelpSystem.getProductName();
 	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.util.OverlayIcon;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -38,7 +37,7 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 
 	private Image containerWithTopicImage;
 
-	private Action showAllAction;
+	//private Action showAllAction;
 
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {

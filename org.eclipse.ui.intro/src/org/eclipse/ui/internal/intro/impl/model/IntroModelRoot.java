@@ -307,8 +307,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // have logged the fact. Parser would also have checked to
             // see if the content file has the correct root tag.
             return;
-        else
-            resolveConfigExtension(dom, configExtElement);
+        resolveConfigExtension(dom, configExtElement);
     }
 
 
@@ -448,7 +447,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (targetPage == null)
             // target could not be found. Signal failure.
             return false;
-        else {
+        {
             // extensions are only for anchors. Insert all children of this
             // extension before the target anchor. Anchors need to stay in DOM ,
             // even after all extensions have been resolved, to enable other
@@ -497,7 +496,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
             // target could not be found. Signal failure.
             return false;
-        else {
+        {
             // extensions are only for anchors. Insert all children of this
             // extension before this anchor. Anchors need to stay as model
             // children, even after all extensions have been

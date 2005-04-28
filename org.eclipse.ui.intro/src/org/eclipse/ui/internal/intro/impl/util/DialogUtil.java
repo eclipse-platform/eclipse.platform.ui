@@ -138,8 +138,7 @@ public class DialogUtil {
         Shell activeShell = display.getActiveShell();
         if (activeShell == null)
             return getActiveWorkbenchWindow().getShell();
-        else
-            return activeShell;
+        return activeShell;
     }
 
     /**
@@ -149,8 +148,7 @@ public class DialogUtil {
         Display display = Display.getCurrent();
         if (display != null)
             return display;
-        else
-            return Display.getDefault();
+        return Display.getDefault();
     }
 
 }

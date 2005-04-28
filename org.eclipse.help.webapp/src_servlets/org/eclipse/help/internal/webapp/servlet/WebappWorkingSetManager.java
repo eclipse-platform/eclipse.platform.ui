@@ -25,8 +25,8 @@ import org.eclipse.help.internal.workingset.*;
 public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	IHelpWorkingSetManager wSetManager;
 	// for keeping track if working set synchronized with working sets in UI
-	private static boolean workingSetsSynchronized = false;
-	private static final Object workingSetsSyncLock = new Object();
+	//private static boolean workingSetsSynchronized = false;
+	//private static final Object workingSetsSyncLock = new Object();
 
 	/**
 	 * Constructor

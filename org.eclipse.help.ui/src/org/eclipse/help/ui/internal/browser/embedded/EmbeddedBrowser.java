@@ -238,9 +238,8 @@ public class EmbeddedBrowser {
 				.getPluginPreferences().getString("windowTitlePrefix"))) { //$NON-NLS-1$
 			return NLS.bind(Messages.browserTitle, BaseHelpSystem
             .getProductName());
-		} else {
-			return BaseHelpSystem.getProductName();
 		}
+		return BaseHelpSystem.getProductName();
 	}
 	/**
 	 * Create shell images

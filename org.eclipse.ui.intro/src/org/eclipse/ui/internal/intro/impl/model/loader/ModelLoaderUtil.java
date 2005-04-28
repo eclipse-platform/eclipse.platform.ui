@@ -40,9 +40,8 @@ public class ModelLoaderUtil {
 
         if (element.getName().equals(validName))
             return true;
-        else
-            // bad element name.
-            return false;
+        // bad element name.
+        return false;
     }
 
     /**

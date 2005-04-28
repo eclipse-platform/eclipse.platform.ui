@@ -38,8 +38,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	public Object getAdapter(Class adapter) {
 		if (adapter == ITopic.class)
 			return element;
-		else
-			return super.getAdapter(adapter);
+		return super.getAdapter(adapter);
 	}
 
 	public AdaptableHelpResource[] getChildren() {

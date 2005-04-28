@@ -141,8 +141,7 @@ public class SearchData extends ActivitiesData {
 	public String getTopicTocLabel(int i) {
 		if (hits[i].getToc() != null)
 			return UrlUtil.htmlEncode(hits[i].getToc().getLabel());
-		else
-			return ""; //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -168,8 +167,7 @@ public class SearchData extends ActivitiesData {
 	public String getSearchWord() {
 		if (searchWord == null)
 			return ""; //$NON-NLS-1$
-		else
-			return searchWord;
+		return searchWord;
 	}
 
 	/**
@@ -266,15 +264,14 @@ public class SearchData extends ActivitiesData {
 							.logWarning("No search results returned.  Help index is in use."); //$NON-NLS-1$
 				}
 				return;
-			} else {
-				// progress
-				indexCompletion = pm.getPercentage();
-				if (indexCompletion >= 100) {
-					// 38573 We do not have results, so index cannot be 100
-					indexCompletion = 100 - 1;
-				}
-				return;
 			}
+			// progress
+			indexCompletion = pm.getPercentage();
+			if (indexCompletion >= 100) {
+				// 38573 We do not have results, so index cannot be 100
+				indexCompletion = 100 - 1;
+			}
+			return;
 		} catch (QueryTooComplexException qe) {
 			queryException = qe;
 		} catch (Exception e) {

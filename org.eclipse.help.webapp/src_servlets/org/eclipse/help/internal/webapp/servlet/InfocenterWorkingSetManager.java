@@ -255,8 +255,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			IAdaptable[] topics = toc.getChildren();
 			if (index < 0 || index >= topics.length)
 				return null;
-			else
-				return (AdaptableTopic) topics[index];
+			return (AdaptableTopic) topics[index];
 		}
 
 		return null;

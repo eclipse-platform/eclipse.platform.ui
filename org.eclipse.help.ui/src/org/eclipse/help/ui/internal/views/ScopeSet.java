@@ -149,8 +149,7 @@ public class ScopeSet {
 		String key = getMasterKey(desc.getId());
 		if (store.contains(key))
 			return store.getBoolean(key);
-		else
-			store.setValue(key, desc.isEnabled());
+		store.setValue(key, desc.isEnabled());
 		return desc.isEnabled();
 	}
 	public void setEngineEnabled(EngineDescriptor desc, boolean value) {

@@ -73,10 +73,9 @@ public class CurrentBrowser implements IBrowser {
 		checkDefaultAdapter();
 		if (newBrowserAdapterId == null) {
 			return browserAdapter.isSetLocationSupported();
-		} else {
-			return browserAdapter.isSetLocationSupported()
-					|| newBrowserAdapter.isSetLocationSupported();
 		}
+		return browserAdapter.isSetLocationSupported()
+				|| newBrowserAdapter.isSetLocationSupported();
 	}
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
@@ -85,10 +84,9 @@ public class CurrentBrowser implements IBrowser {
 		checkDefaultAdapter();
 		if (newBrowserAdapterId == null) {
 			return browserAdapter.isSetSizeSupported();
-		} else {
-			return browserAdapter.isSetSizeSupported()
-					|| newBrowserAdapter.isSetSizeSupported();
 		}
+		return browserAdapter.isSetSizeSupported()
+				|| newBrowserAdapter.isSetSizeSupported();
 	}
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)

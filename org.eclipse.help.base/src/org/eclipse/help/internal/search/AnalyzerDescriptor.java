@@ -105,24 +105,22 @@ public class AnalyzerDescriptor {
 						.createExecutableExtension("class"); //$NON-NLS-1$
 				if (!(analyzer instanceof Analyzer))
 					continue;
-				else {
-					String pluginId = configElements[i].getNamespace();
-					String pluginVersion = (String) Platform
-							.getBundle(pluginId).getHeaders().get(
-									Constants.BUNDLE_VERSION);
-					this.luceneAnalyzer = (Analyzer) analyzer;
-					this.id = pluginId + "#" + pluginVersion; //$NON-NLS-1$
-					this.lang = locale;
-					if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
-						// The analyzer is contributed by help plugin.
-						// Continue in case there is another analyzer for the
-						// same locale
-						// let another analyzer take precendence over one from
-						// help
-					} else {
-						// the analyzer does not come from help
-						return this.luceneAnalyzer;
-					}
+				String pluginId = configElements[i].getNamespace();
+				String pluginVersion = (String) Platform
+						.getBundle(pluginId).getHeaders().get(
+								Constants.BUNDLE_VERSION);
+				this.luceneAnalyzer = (Analyzer) analyzer;
+				this.id = pluginId + "#" + pluginVersion; //$NON-NLS-1$
+				this.lang = locale;
+				if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
+					// The analyzer is contributed by help plugin.
+					// Continue in case there is another analyzer for the
+					// same locale
+					// let another analyzer take precendence over one from
+					// help
+				} else {
+					// the analyzer does not come from help
+					return this.luceneAnalyzer;
 				}
 			} catch (CoreException ce) {
 				HelpBasePlugin.logError(

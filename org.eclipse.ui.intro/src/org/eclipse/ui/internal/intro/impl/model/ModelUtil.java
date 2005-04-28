@@ -99,9 +99,8 @@ public class ModelUtil {
         IntroURLParser parser = new IntroURLParser(url);
         if (parser.hasProtocol())
             return url;
-        else
-            // make plugin relative url. Only now we need the bundle.
-            return BundleUtil.getResolvedResourceLocation(base, url, bundle);
+        // make plugin relative url. Only now we need the bundle.
+        return BundleUtil.getResolvedResourceLocation(base, url, bundle);
     }
 
 
@@ -119,7 +118,7 @@ public class ModelUtil {
                 start = System.currentTimeMillis();
             IPath parentFolder = ModelUtil.getParentFolderPath(contentFile);
             URL parentFolderURL = Platform.find(bundle, parentFolder);
-            URL url = Platform.asLocalURL(parentFolderURL);
+            Platform.asLocalURL(parentFolderURL);
             if (Log.logPerformance) {
                 String msg = StringUtil
                     .concat("extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$

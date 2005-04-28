@@ -43,9 +43,8 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			int ret = pr.exitValue();
 			if (ret == 0) {
 				return !errorsInOutput(outputs, errors);
-			} else {
-				return false;
 			}
+			return false;
 		} catch (InterruptedException e) {
 			return false;
 		} catch (IOException e) {

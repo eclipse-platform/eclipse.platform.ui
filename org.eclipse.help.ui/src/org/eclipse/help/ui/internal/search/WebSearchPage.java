@@ -16,7 +16,6 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -33,7 +32,7 @@ public class WebSearchPage extends RootScopePage {
 	}
 
 	protected int createScopeContents(Composite parent) {
-		Font font = parent.getFont();
+		//Font font = parent.getFont();
 		initializeDialogUnits(parent);
 
 		Label label = new Label(parent, SWT.NULL);

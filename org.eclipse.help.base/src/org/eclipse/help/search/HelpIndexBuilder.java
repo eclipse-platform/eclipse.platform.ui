@@ -717,7 +717,7 @@ public class HelpIndexBuilder {
 
 	private Element[] getTocExtensions(Document doc) {
 		ArrayList list = new ArrayList();
-		Node root = doc.getDocumentElement();
+		//Node root = doc.getDocumentElement();
 		NodeList children = doc.getElementsByTagName("extension"); //$NON-NLS-1$
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);

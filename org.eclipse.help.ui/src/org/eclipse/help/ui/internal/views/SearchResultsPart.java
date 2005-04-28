@@ -51,7 +51,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	private String id;
 
-	private Action removeAllAction;
+	//private Action removeAllAction;
 
 	private Action showCategoriesAction;
 
@@ -59,7 +59,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	private ArrayList results;
 
-	private String phrase;
+	//private String phrase;
 
 	private FormToolkit innerToolkit;
 
@@ -208,7 +208,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	void startNewSearch(String phrase, ArrayList eds) {
-		this.phrase = phrase;
+		//this.phrase = phrase;
 		separator.setVisible(true);
 		// locate local help engine and add it first
 		EngineDescriptor localHelp = findLocalHelp(eds);

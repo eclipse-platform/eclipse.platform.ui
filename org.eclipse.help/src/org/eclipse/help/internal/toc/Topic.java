@@ -106,17 +106,15 @@ public class Topic extends TocNode implements ITopic, ITopicElement {
 					List ancestors = new ArrayList();
 					ancestors.add(topic);
 					return ancestors;
-				} else {
-					// substitute real topics for toc, link, and anchor parent
-					// nodes, because we are looking for the shortest path
-					List grandParents = tocNode.getParents();
-					it.remove();
-					for (Iterator it2 = grandParents.iterator(); it2.hasNext();) {
-						it.add(it2.next());
-						it.previous();
-					}
 				}
-
+				// substitute real topics for toc, link, and anchor parent
+				// nodes, because we are looking for the shortest path
+				List grandParents = tocNode.getParents();
+				it.remove();
+				for (Iterator it2 = grandParents.iterator(); it2.hasNext();) {
+					it.add(it2.next());
+					it.previous();
+				}
 			}
 		}
 
