@@ -1962,7 +1962,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public boolean isPartVisible(IWorkbenchPart part) {
-        return ((PartSite) part.getSite()).getPane().getVisible();
+    	PartPane pane = getPane(part);
+    	return pane != null && pane.getVisible();
     }
     
     /**
