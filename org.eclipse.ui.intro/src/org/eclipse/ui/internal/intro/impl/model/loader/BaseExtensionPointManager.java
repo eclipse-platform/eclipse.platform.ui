@@ -58,7 +58,6 @@ public class BaseExtensionPointManager {
     protected IntroModelRoot loadModel(String attributeName,
             String attributeValue) {
 
-        //PerformanceStats loadModelStats = null;
         long start = 0;
         if (Log.logPerformance)
             start = System.currentTimeMillis();

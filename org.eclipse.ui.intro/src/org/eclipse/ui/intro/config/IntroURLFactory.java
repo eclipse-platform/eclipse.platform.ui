@@ -19,8 +19,8 @@ import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
  * URLs need to be created if you need to programatically construct and execute
  * a valid Intro URL.
  * <p>
- * This class provides all its functionality via static members.
- * It is not intended to be instantiated.
+ * This class provides all its functionality via static members. It is not
+ * intended to be instantiated.
  * </p>
  * 
  * @see IIntroURL
@@ -56,7 +56,8 @@ public final class IntroURLFactory {
      * }
      * </pre>
      * 
-     * @param url the url to construct an IntroURL from
+     * @param url
+     *            the url to construct an IntroURL from
      * @return an IntroURL, or <code>null</code> if the url is invalid
      */
     public static IIntroURL createIntroURL(String url) {

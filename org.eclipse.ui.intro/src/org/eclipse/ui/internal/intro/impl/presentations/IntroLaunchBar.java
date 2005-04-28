@@ -239,10 +239,9 @@ public class IntroLaunchBar implements IWindowTrim {
                     width += csize.x + CLOSE_SPACING;
             }
             if (vertical) {
-            	width += marginWidth;
-            	height += marginHeight + marginHeight;
-            }
-            else {
+                width += marginWidth;
+                height += marginHeight + marginHeight;
+            } else {
                 width += marginWidth + marginWidth;
                 height += marginHeight;
             }
@@ -264,7 +263,7 @@ public class IntroLaunchBar implements IWindowTrim {
             // Point tsize = coolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT,
             // changed);
             Rectangle carea = composite.getClientArea();
-            int x = carea.x + (location==SWT.LEFT?0:marginWidth);
+            int x = carea.x + (location == SWT.LEFT ? 0 : marginWidth);
             int y = carea.y + marginHeight;
 
             if (vertical) {
@@ -274,7 +273,8 @@ public class IntroLaunchBar implements IWindowTrim {
                     y += csize.y + CLOSE_SPACING;
                 }
                 if (handle != null && ibounds != null) {
-                    handle.setBounds(x, y, carea.width-marginWidth, ibounds.height);
+                    handle.setBounds(x, y, carea.width - marginWidth,
+                        ibounds.height);
                     y += ibounds.height;
                 }
                 toolBarManager.getControl().setBounds(x, y,
@@ -307,9 +307,9 @@ public class IntroLaunchBar implements IWindowTrim {
         this.lastPageId = lastPageId;
         this.element = element;
         /*
-        simple = PlatformUI.getPreferenceStore().getBoolean(
-            IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-            */
+         * simple = PlatformUI.getPreferenceStore().getBoolean(
+         * IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+         */
         simple = true;
         presentationId = PlatformUI.getPreferenceStore().getString(
             IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
@@ -348,7 +348,7 @@ public class IntroLaunchBar implements IWindowTrim {
         container = new Composite(parent, SWT.NULL);
         computeColors(parent.getDisplay());
         container.setLayout(new BarLayout());
-        //boolean vertical = (orientation & SWT.VERTICAL) != 0;
+        // boolean vertical = (orientation & SWT.VERTICAL) != 0;
         toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
         Listener dragListener = new Listener() {
             public void handleEvent(Event event) {
@@ -429,8 +429,7 @@ public class IntroLaunchBar implements IWindowTrim {
     private void startDrag(Object toDrag, Rectangle dragRect, Point position,
             boolean usingKeyboard) {
 
-        DragUtil.performDrag(toDrag, dragRect, position,
-            !usingKeyboard);
+        DragUtil.performDrag(toDrag, dragRect, position, !usingKeyboard);
     }
 
     private void onPaint(PaintEvent e) {
@@ -522,7 +521,8 @@ public class IntroLaunchBar implements IWindowTrim {
 
         if (handleImage != null) {
             Rectangle ibounds = handleImage.getBounds();
-            int x = location == SWT.RIGHT ? (size.x - ibounds.width) : (location==SWT.LEFT ? 1:0);
+            int x = location == SWT.RIGHT ? (size.x - ibounds.width)
+                    : (location == SWT.LEFT ? 1 : 0);
             int y = location == SWT.BOTTOM ? size.y - ibounds.height : 0;
 
             for (;;) {

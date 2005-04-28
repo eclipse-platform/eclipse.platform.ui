@@ -447,38 +447,36 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (targetPage == null)
             // target could not be found. Signal failure.
             return false;
-        {
-            // extensions are only for anchors. Insert all children of this
-            // extension before the target anchor. Anchors need to stay in DOM ,
-            // even after all extensions have been resolved, to enable other
-            // plugins to contribute. Find the target node.
-            Document pageDom = targetPage.getDocument();
-            Element targetAnchor = targetPage.findDomChild(pathSegments[1],
-                IntroAnchor.TAG_ANCHOR);
-            if (targetAnchor == null)
-                return false;
 
-            // get extension content node.
-            Document extensionDom = extensionContent.getDocument();
-            if (extensionDom == null)
-                return false;
+        // extensions are only for anchors. Insert all children of this
+        // extension before the target anchor. Anchors need to stay in DOM ,
+        // even after all extensions have been resolved, to enable other
+        // plugins to contribute. Find the target node.
+        Document pageDom = targetPage.getDocument();
+        Element targetAnchor = targetPage.findDomChild(pathSegments[1],
+            IntroAnchor.TAG_ANCHOR);
+        if (targetAnchor == null)
+            return false;
 
-            Element extensionBody = ModelUtil.getBodyElement(extensionDom);
-            Element[] children = ModelUtil.getElementsByTagName(extensionBody,
-                "*"); //$NON-NLS-1$
-            // insert all children before anchor in page body.
-            for (int i = 0; i < children.length; i++) {
-                Node targetNode = pageDom.importNode(children[i], true);
-                // update the src attribute of this node, if defined by w3
-                // specs.
-                String localContentFilePath = extensionContent.getContent();
-                ModelUtil.updateResourceAttributes((Element) targetNode,
-                    localContentFilePath);
-                targetAnchor.getParentNode().insertBefore(targetNode,
-                    targetAnchor);
-            }
-            return true;
+        // get extension content node.
+        Document extensionDom = extensionContent.getDocument();
+        if (extensionDom == null)
+            return false;
+
+        Element extensionBody = ModelUtil.getBodyElement(extensionDom);
+        Element[] children = ModelUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+        // insert all children before anchor in page body.
+        for (int i = 0; i < children.length; i++) {
+            Node targetNode = pageDom.importNode(children[i], true);
+            // update the src attribute of this node, if defined by w3
+            // specs.
+            String localContentFilePath = extensionContent.getContent();
+            ModelUtil.updateResourceAttributes((Element) targetNode,
+                localContentFilePath);
+            targetAnchor.getParentNode().insertBefore(targetNode, targetAnchor);
         }
+        return true;
+
     }
 
 
@@ -496,18 +494,18 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
             // target could not be found. Signal failure.
             return false;
-        {
-            // extensions are only for anchors. Insert all children of this
-            // extension before this anchor. Anchors need to stay as model
-            // children, even after all extensions have been
-            // resolved, to enable other plugins to contribute.
-            IntroAnchor targetAnchor = (IntroAnchor) target;
-            insertAnchorChildren(targetAnchor, extensionContent,
-                extensionContent.getBundle(), extensionContent.getBase());
-            handleExtensionStyleInheritence(targetAnchor, extensionContent);
 
-            return true;
-        }
+        // extensions are only for anchors. Insert all children of this
+        // extension before this anchor. Anchors need to stay as model
+        // children, even after all extensions have been
+        // resolved, to enable other plugins to contribute.
+        IntroAnchor targetAnchor = (IntroAnchor) target;
+        insertAnchorChildren(targetAnchor, extensionContent, extensionContent
+            .getBundle(), extensionContent.getBase());
+        handleExtensionStyleInheritence(targetAnchor, extensionContent);
+
+        return true;
+
     }
 
 

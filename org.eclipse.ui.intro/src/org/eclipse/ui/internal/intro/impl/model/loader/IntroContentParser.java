@@ -142,7 +142,6 @@ public class IntroContentParser {
             });
 
             document = parser.parse(fileURI);
-            //DocumentType docType = document.getDoctype();
             return document;
 
         } catch (SAXParseException spe) {

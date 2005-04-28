@@ -13,17 +13,21 @@ package org.eclipse.ui.intro.config;
 
 /**
  * An Intro url. An intro URL is a valid http url, with org.eclipse.ui.intro as
- * a host name. It is intended to only be used in conjunction with the pre-supplied
- * CustomizableIntroPart. See the <code>org.eclipse.ui.intro.config</code>
- * extension point for more details.
+ * a host name. It is intended to only be used in conjunction with the
+ * pre-supplied CustomizableIntroPart. See the
+ * <code>org.eclipse.ui.intro.config</code> extension point for more details.
  * <p>
  * An intro url instance is created by parsing the url and retrieving the
  * embedded "command" and parametrs. For example, the following urls are valid
- * intro urls:   
- * <pre> 
- * http://org.eclipse.ui.intro/close
- * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&class=x.y.z.someClass
+ * intro urls:
+ * 
+ * <pre>
+ *  
+ *  http://org.eclipse.ui.intro/close
+ *  http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&amp;class=x.y.z.someClass
+ *  
  * </pre>
+ * 
  * </p>
  * <p>
  * When parsed, the first url has "close" as a command, and no parameters. While
@@ -46,7 +50,7 @@ public interface IIntroURL {
     /**
      * Executes whatever valid Intro command is embedded in this Intro URL.
      * Returns true if action succeeded, and false otherwise.
-     *  
+     * 
      */
     public boolean execute();
 
@@ -59,9 +63,10 @@ public interface IIntroURL {
      * Return a parameter defined in the Intro URL. Returns null if the
      * parameter is not defined.
      * 
-     * @param parameterId the id of the parameter being requested
-     * @return the value of the parameter, or <code>null</code> if
-     * the parameter is not defined
+     * @param parameterId
+     *            the id of the parameter being requested
+     * @return the value of the parameter, or <code>null</code> if the
+     *         parameter is not defined
      */
     public String getParameter(String parameterId);
 }

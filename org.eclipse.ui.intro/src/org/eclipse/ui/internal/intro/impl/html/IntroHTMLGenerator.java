@@ -380,6 +380,7 @@ public class IntroHTMLGenerator {
     private HTMLElement generateIntroHTML(IntroHTML element, int indentLevel) {
         if (element.isInlined())
             return generateInlineIntroHTML(element, indentLevel);
+            
         return generateEmbeddedIntroHTML(element, indentLevel);
     }
 
@@ -902,6 +903,7 @@ public class IntroHTMLGenerator {
     private boolean filteredFromPresentation(AbstractIntroElement element) {
         if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
             return ((AbstractBaseIntroElement) element).isFiltered();
+            
         return false;
     }
 
@@ -1059,7 +1061,7 @@ public class IntroHTMLGenerator {
                         return tokenContent.toString();
                     }
                     return pluginPath;
-                }
+                }else
                 {
                     // The "plugin:" segment was not found. Reset the reader
                     // so we can continue reading character by character.

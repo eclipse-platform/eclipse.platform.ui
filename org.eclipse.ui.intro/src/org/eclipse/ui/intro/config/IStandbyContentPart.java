@@ -23,13 +23,15 @@ import org.eclipse.ui.intro.IIntroPart;
  * <p>
  * 
  * <pre>
- *  &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
- * 	&lt;standbyPart
- *		pluginId=&quot;org.eclipse.ui.intro&quot;
- *		class=&quot;org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart&quot;
- *		id=&quot;org.eclipse.ui.intro.contextHelp&quot;&gt;
- *	&lt;/standbyPart&gt; 
- *  &lt;/extension&gt;
+ * 
+ *   &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
+ *  	&lt;standbyPart
+ * 		pluginId=&quot;org.eclipse.ui.intro&quot;
+ * 		class=&quot;org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart&quot;
+ * 		id=&quot;org.eclipse.ui.intro.contextHelp&quot;&gt;
+ * 	&lt;/standbyPart&gt; 
+ *   &lt;/extension&gt;
+ *  
  * </pre>
  * 
  * </p>

@@ -309,13 +309,13 @@ public class IntroURL implements IIntroURL {
                 .resolve(href, true).toExternalForm();
             impl.getBrowser().setUrl(href);
             return true;
-        } 
-        {
-            // show href in Help window. SWT presentation is handled here.
-            // WorkbenchHelp takes care of error handling.
-            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-            return true;
         }
+
+        // show href in Help window. SWT presentation is handled here.
+        // WorkbenchHelp takes care of error handling.
+        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+        return true;
+
     }
 
 
@@ -592,7 +592,7 @@ public class IntroURL implements IIntroURL {
 
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
-         LaunchBarElement launchBarElement = modelRoot.getPresentation()
+        LaunchBarElement launchBarElement = modelRoot.getPresentation()
             .getLaunchBar();
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement);

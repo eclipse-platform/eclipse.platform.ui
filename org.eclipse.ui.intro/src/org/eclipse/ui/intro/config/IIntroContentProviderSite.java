@@ -29,11 +29,13 @@ public interface IIntroContentProviderSite {
      * page should be regenerated. An SWT presentation should cause the page's
      * layout to be updated.
      * 
-     * @param provider the content provider that requests a reflow
-     * @param incremental if <code>true</code>, an attempt should be made
-     * to incrementally reflow the page. Otherwise, the page should
-     * be recreated from scratch. This is just a hint and the implementation
-     * of the interface can ignore it.
+     * @param provider
+     *            the content provider that requests a reflow
+     * @param incremental
+     *            if <code>true</code>, an attempt should be made to
+     *            incrementally reflow the page. Otherwise, the page should be
+     *            recreated from scratch. This is just a hint and the
+     *            implementation of the interface can ignore it.
      */
     public void reflow(IIntroContentProvider provider, boolean incremental);
 }

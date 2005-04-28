@@ -41,18 +41,17 @@ public interface IIntroXHTMLContentProvider extends IIntroContentProvider {
      * 
      * 
      * @param id
-     *                   the unique identifier of the content element. The same content
-     *                   provider class can be reused for several elements and the id
-     *                   can be used to tell them apart.
+     *            the unique identifier of the content element. The same content
+     *            provider class can be reused for several elements and the id
+     *            can be used to tell them apart.
      * 
      * @param parent
-     *                   the parent xml Element where dynamic content will be added as
-     *                   children.
-     *  
+     *            the parent xml Element where dynamic content will be added as
+     *            children.
+     * 
      */
     public void createContent(String id, Element parent);
 
 
 
 }
-

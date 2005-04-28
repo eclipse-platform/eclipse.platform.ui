@@ -20,7 +20,7 @@ import java.util.Properties;
  */
 public class IntroURLParser {
 
-    //private String url_string = null;
+    // private String url_string = null;
     private boolean hasProtocol = false;
     private boolean isIntroUrl = false;
     private String action = null;
@@ -32,7 +32,7 @@ public class IntroURLParser {
      * Constructor that gets the URL to parse.
      */
     public IntroURLParser(String url) {
-        //url_string = url;
+        // url_string = url;
         // create a URL instance, and parser it for parameters.
         parseUrl(url);
         if (isIntroUrl) {

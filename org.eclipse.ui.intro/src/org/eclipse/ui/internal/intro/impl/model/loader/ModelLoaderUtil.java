@@ -57,7 +57,7 @@ public class ModelLoaderUtil {
     public static IConfigurationElement validateSingleContribution(
             IConfigurationElement[] configElements, String logAttribute) {
 
-        int arraySize = configElements.length;   
+        int arraySize = configElements.length;
         if (arraySize == 0)
             // No one contributed to extension. return null.
             return null;
@@ -158,7 +158,7 @@ public class ModelLoaderUtil {
             buffer.append(":"); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
-        return buffer.toString();   
+        return buffer.toString();
     }
 
 

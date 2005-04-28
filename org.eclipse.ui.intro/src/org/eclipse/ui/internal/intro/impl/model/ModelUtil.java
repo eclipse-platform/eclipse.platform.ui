@@ -120,9 +120,9 @@ public class ModelUtil {
             URL parentFolderURL = Platform.find(bundle, parentFolder);
             Platform.asLocalURL(parentFolderURL);
             if (Log.logPerformance) {
-                String msg = StringUtil
-                    .concat("extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$
-                        bundle.getSymbolicName(), ")", " took: ").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+                String msg = StringUtil.concat(
+                    "extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$
+                    bundle.getSymbolicName(), ")", " took: ").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                 Util.logPerformanceTime(msg, start);
             }
 

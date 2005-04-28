@@ -196,10 +196,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         }
         if (src == null)
             return new Object[0];
-        {
-            vector.copyInto(src);
-            return src;
-        }
+
+        vector.copyInto(src);
+        return src;
+
     }
 
     /**
