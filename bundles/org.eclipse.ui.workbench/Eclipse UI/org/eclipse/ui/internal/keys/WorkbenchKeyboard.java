@@ -707,26 +707,7 @@ public final class WorkbenchKeyboard {
 					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
 							+ potentialKeyStrokes + ")"); //$NON-NLS-1$
 		}
-
-		/*
-		 * TODO Kludge. A partial workaround for Bug 56231. This should be
-		 * removed once SWT fixes Bug 56231 such that activation works properly
-		 * on all platforms. Commented out at the moment.
-		 */
-		// if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-		// final Widget widget = event.widget;
-		// final Shell shell;
-		// if ((widget instanceof Control) && (!widget.isDisposed())) {
-		// shell = ((Control) widget).getShell();
-		// } else {
-		// shell = Display.getCurrent().getActiveShell();
-		// }
-		//
-		// ((WorkbenchCommandSupport) workbench.getCommandSupport())
-		// .processHandlerSubmissions(false, shell);
-		// ((WorkbenchContextSupport) workbench.getContextSupport())
-		// .processEnabledSubmissions(false, shell);
-		// }
+        
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
 				.hasNext();) {
