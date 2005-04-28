@@ -19,7 +19,6 @@ import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,7 +52,7 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 
 	private IEditorPart part;
 
-	private ArrayList editorElementsAndResources;
+	private ArrayList editorElementsAndAdapters;
 
 	/**
 	 * Create a NonLocalUndoUserApprover associated with the specified editor
@@ -170,27 +169,32 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		// determine a match implies that a non-local operation is occurring.
 		// This is a conservative assumption that provides more user prompting.
 		if (modifiedElements != null) {
+			// HACK - temporary hack to prevent possible build failure related
+			// to
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=93051.
+			Class resourceClass = null;
+			try {
+				resourceClass = Class.forName("IResource"); //$NON-NLS-1$
+			} catch (ClassNotFoundException e) {
+			}
 			boolean local = true;
 			// Each modified element must be known by the editor in order to be
 			// considered local. First, expand the list of elements known by the
 			// editor to include resource adaptations of those elements if
 			// supported.
-			if (editorElementsAndResources == null)
-				computeEditorElementsAndResources();
+			if (editorElementsAndAdapters == null)
+				computeEditorElementsAndAdapters(resourceClass);
 			for (int i = 0; i < modifiedElements.length; i++) {
 				Object modifiedElement = modifiedElements[i];
-				if (!editorElementsAndResources.contains(modifiedElement)) {
+				if (!editorElementsAndAdapters.contains(modifiedElement)) {
 					if (modifiedElement instanceof IAdaptable) {
-						IResource modifiedElementResource = (IResource) ((IAdaptable) modifiedElement)
-								.getAdapter(IResource.class);
-						if (!editorElementsAndResources
-								.contains(modifiedElementResource)) {
+						if (!editorElementsAndAdapters.contains(
+								((IAdaptable) modifiedElement).getAdapter(resourceClass)))
 							local = false;
 							break;
 						}
 					}
 				}
-			}
 			if (local)
 				return Status.OK_STATUS;
 		}
@@ -236,10 +240,10 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 	}
 
 	/*
-	 * Compute the full list of affected editor elements and any resource
-	 * adapters provided by these elements.
+	 * Compute the full list of affected editor elements and include any of the specified
+	 * adapters provided by these elements if the elements support the adapter class.
 	 */
-	private void computeEditorElementsAndResources() {
+	private void computeEditorElementsAndAdapters(Class adapterClass) {
 		Object[] elements = null;
 		IAdvancedUndoableOperation affectedObjects = (IAdvancedUndoableOperation) part
 				.getAdapter(IAdvancedUndoableOperation.class);
@@ -247,17 +251,17 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 			elements = affectedObjects.getAffectedObjects();
 		}
 		if (elements == null) {
-			editorElementsAndResources = new ArrayList(0);
+			editorElementsAndAdapters = new ArrayList(0);
 		} else {
-			editorElementsAndResources = new ArrayList(elements.length);
+			editorElementsAndAdapters = new ArrayList(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
-				editorElementsAndResources.add(element);
+				editorElementsAndAdapters.add(element);
 				if (element instanceof IAdaptable) {
-					IResource resource = (IResource) ((IAdaptable) element)
-							.getAdapter(IResource.class);
-					if (resource != null)
-						editorElementsAndResources.add(resource);
+					Object adapter = ((IAdaptable) element)
+							.getAdapter(adapterClass);
+					if (adapter != null)
+						editorElementsAndAdapters.add(adapter);
 				}
 			}
 		}
