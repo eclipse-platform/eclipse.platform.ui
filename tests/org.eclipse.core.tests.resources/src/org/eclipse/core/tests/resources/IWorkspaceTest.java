@@ -17,7 +17,6 @@ import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class IWorkspaceTest extends ResourceTest {
 
@@ -896,7 +895,7 @@ public class IWorkspaceTest extends ResourceTest {
 		/* normal name */
 		assertTrue("1.1", getWorkspace().validateName("abcdef", IResource.FILE).isOK());
 		/* invalid characters (windows only) */
-		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			assertTrue("2.1", !getWorkspace().validateName("dsa:sf", IResource.FILE).isOK());
 			assertTrue("2.2", !getWorkspace().validateName("*dsasf", IResource.FILE).isOK());
 			assertTrue("2.3", !getWorkspace().validateName("?dsasf", IResource.FILE).isOK());
@@ -952,7 +951,7 @@ public class IWorkspaceTest extends ResourceTest {
 		assertTrue("1.1", getWorkspace().validatePath("/one/two/three/four/", IResource.FILE | IResource.FOLDER).isOK());
 
 		/* invalid characters (windows only) */
-		final boolean WINDOWS = Platform.getOS().equals(Constants.OS_WIN32);
+		final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 		if (WINDOWS) {
 			assertTrue("2.1", !(getWorkspace().validatePath("\\dsa:sf", IResource.FILE).isOK()));
 			assertTrue("2.2", !(getWorkspace().validatePath("/abc/*dsasf", IResource.FILE).isOK()));
@@ -1005,7 +1004,7 @@ public class IWorkspaceTest extends ResourceTest {
 		assertTrue("1.1", workspace.validateProjectLocation(project, new Path("/one/two/three/four/")).isOK());
 
 		/* invalid characters (windows only) */
-		final boolean WINDOWS = Platform.getOS().equals(Constants.OS_WIN32);
+		final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 		if (WINDOWS) {
 			assertTrue("2.1", !(workspace.validateProjectLocation(project, new Path("d:\\dsa:sf")).isOK()));
 			assertTrue("2.2", !(workspace.validateProjectLocation(project, new Path("/abc/*dsasf")).isOK()));

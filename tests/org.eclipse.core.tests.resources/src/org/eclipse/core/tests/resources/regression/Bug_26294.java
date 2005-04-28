@@ -17,7 +17,6 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * A parent container (projects and folders) would become out-of-sync if any of
@@ -39,7 +38,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void _testDeleteOpenProjectWindows() {
-		if (!(Platform.getOS().equals(Constants.OS_WIN32)))
+		if (!(Platform.getOS().equals(Platform.OS_WIN32)))
 			return;
 
 		IProject project = null;
@@ -145,7 +144,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -210,7 +209,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteClosedProjectWindows() {
-		if (!Platform.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -288,7 +287,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;
@@ -349,7 +348,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Windows.
 	 */
 	public void testDeleteFolderWindows() {
-		if (!Platform.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		IProject project = null;
@@ -420,7 +419,7 @@ public class Bug_26294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(Platform.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject project = null;

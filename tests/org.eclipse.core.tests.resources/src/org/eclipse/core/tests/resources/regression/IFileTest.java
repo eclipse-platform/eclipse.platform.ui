@@ -12,12 +12,11 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class IFileTest extends ResourceTest {
 	/**
@@ -58,7 +57,7 @@ public class IFileTest extends ResourceTest {
 			return;
 
 		// Don't test this on Windows
-		if (BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -94,7 +93,7 @@ public class IFileTest extends ResourceTest {
 
 		// Only run this test on Linux for now since Windows lets you create
 		// a file within a read-only folder.
-		if (!BootLoader.getOS().equals(Constants.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX))
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");

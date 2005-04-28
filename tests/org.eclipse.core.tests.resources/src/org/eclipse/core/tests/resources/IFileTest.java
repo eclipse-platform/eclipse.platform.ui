@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class IFileTest extends ResourceTest {
 	IProject[] projects = null;
@@ -690,7 +689,7 @@ public class IFileTest extends ResourceTest {
 
 		//do some tests with invalid names
 		names = new String[0];
-		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			//invalid windows names
 			names = new String[] {"foo::bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
 		} else {
@@ -710,7 +709,7 @@ public class IFileTest extends ResourceTest {
 		}
 
 		//do some tests with valid names that are *almost* invalid
-		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			//these names are valid on windows
 			names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		} else {

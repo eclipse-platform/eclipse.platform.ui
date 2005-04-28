@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class IResourceTest extends ResourceTest {
 
@@ -273,7 +272,7 @@ public class IResourceTest extends ResourceTest {
 	public void testCreate_1FW87XF() {
 		// FIXME: remove when fix this PR
 		String os = Platform.getOS();
-		if (!os.equals(Constants.OS_LINUX)) {
+		if (!os.equals(Platform.OS_LINUX)) {
 			debug("Skipping testCreate_1FW87XF because it is still not supported by the platform.");
 			return;
 		}

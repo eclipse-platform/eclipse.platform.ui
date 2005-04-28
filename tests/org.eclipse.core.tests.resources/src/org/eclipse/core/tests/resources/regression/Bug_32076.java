@@ -14,13 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * When moving a resource "x" from parent "a" to parent "b", if "x" or any of 
@@ -41,7 +38,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testFileBugOnWindows() {
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		InputStream input = null;
@@ -128,7 +125,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testFolderBugOnWindows() {
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		InputStream input = null;
@@ -224,7 +221,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testProjectBugOnWindows() {
-		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
 		IProject sourceProject = null;
@@ -307,7 +304,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testFileBugOnLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IPath roFolderLocation = null;
@@ -387,7 +384,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testFolderBugOnLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IPath roFolderLocation = null;
@@ -485,7 +482,7 @@ public class Bug_32076 extends ResourceTest {
 	}
 
 	public void testProjectBugOnLinux() {
-		if (!(BootLoader.getOS().equals(Constants.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && CoreFileSystemLibrary.usingNatives()))
 			return;
 
 		IProject sourceProject = null;

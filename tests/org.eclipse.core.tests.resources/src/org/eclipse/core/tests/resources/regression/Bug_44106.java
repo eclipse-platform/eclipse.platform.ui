@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Tests regression of bug 44106. In this case deleting a file which was a
@@ -39,7 +38,7 @@ public class Bug_44106 extends ResourceTest {
 	}
 
 	public void testDeleteLinkedFolder() {
-		if (!Platform.getOS().equals(Constants.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX))
 			return;
 		// create the file/folder that we are going to link to
 		IPath linkDestFolder = getTempDir().append(getUniqueString());
@@ -100,7 +99,7 @@ public class Bug_44106 extends ResourceTest {
 	}
 
 	public void testDeleteLinkedFile() {
-		if (!Platform.getOS().equals(Constants.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX))
 			return;
 		// create the file/folder that we are going to link to
 		IPath linkDestFile = getTempDir().append(getUniqueString());
@@ -156,7 +155,7 @@ public class Bug_44106 extends ResourceTest {
 	}
 
 	public void testDeleteLinkedResourceInProject() {
-		if (!Platform.getOS().equals(Constants.OS_LINUX))
+		if (!Platform.getOS().equals(Platform.OS_LINUX))
 			return;
 		// create the file/folder that we are going to link to
 		IPath linkDestFile = getTempDir().append(getUniqueString());
