@@ -23,8 +23,6 @@ import org.eclipse.jface.resource.JFaceResources;
 /**
  * The ViewSettingsDialog is an abstract class that
  * provides some common functionality for view preferences.
- * <strong>NOTE: This API is experimental and may change
- * before Eclipse 3.1 is released. <strong>
  * 
  * @since 3.1
  */
