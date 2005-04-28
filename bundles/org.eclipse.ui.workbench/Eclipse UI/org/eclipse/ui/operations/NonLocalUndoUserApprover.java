@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -169,14 +170,9 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		// determine a match implies that a non-local operation is occurring.
 		// This is a conservative assumption that provides more user prompting.
 		if (modifiedElements != null) {
-			// HACK - temporary hack to prevent possible build failure related
-			// to
+			// HACK - temporary hack until a better long-term solution is provided for
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=93051.
-			Class resourceClass = null;
-			try {
-				resourceClass = Class.forName("IResource"); //$NON-NLS-1$
-			} catch (ClassNotFoundException e) {
-			}
+			Class resourceClass = LegacyResourceSupport.getResourceClass();
 			boolean local = true;
 			// Each modified element must be known by the editor in order to be
 			// considered local. First, expand the list of elements known by the
@@ -257,7 +253,7 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 				editorElementsAndAdapters.add(element);
-				if (element instanceof IAdaptable) {
+				if (element instanceof IAdaptable && adapterClass != null) {
 					Object adapter = ((IAdaptable) element)
 							.getAdapter(adapterClass);
 					if (adapter != null)
