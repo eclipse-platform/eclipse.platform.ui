@@ -628,17 +628,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      double)
 	 */
 	public void setValue(String name, double value) {
-		silentRunning = true;//Turn off updates from the store
+		double oldValue = getDouble(name);
+		if (oldValue == value)
+			return;
 		try {
-			double oldValue = getDouble(name);
+			silentRunning = true;//Turn off updates from the store
 			if (getDefaultDouble(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putDouble(name, value);
-			if (oldValue != value) {
-				dirty = true;
-				firePropertyChangeEvent(name, new Double(oldValue), new Double(value));
-			}
+			dirty = true;
+			firePropertyChangeEvent(name, new Double(oldValue), new Double(value));
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -651,17 +651,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      float)
 	 */
 	public void setValue(String name, float value) {
-		silentRunning = true;//Turn off updates from the store
+		float oldValue = getFloat(name);
+		if (oldValue == value)
+			return;
 		try {
-			float oldValue = getFloat(name);
+			silentRunning = true;//Turn off updates from the store
 			if (getDefaultFloat(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putFloat(name, value);
-			if (oldValue != value) {
-				dirty = true;
-				firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
-			}
+			dirty = true;
+			firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -674,17 +674,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      int)
 	 */
 	public void setValue(String name, int value) {
-		silentRunning = true;//Turn off updates from the store
+		int oldValue = getInt(name);
+		if (oldValue == value)
+			return;
 		try {
-			int oldValue = getInt(name);
+			silentRunning = true;//Turn off updates from the store
 			if (getDefaultInt(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putInt(name, value);
-			if (oldValue != value) {
-				dirty = true;
-				firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value));
-			}
+			dirty = true;
+			firePropertyChangeEvent(name, new Integer(oldValue), new Integer(value));
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -697,17 +697,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      long)
 	 */
 	public void setValue(String name, long value) {
-		silentRunning = true;//Turn off updates from the store
+		long oldValue = getLong(name);
+		if (oldValue == value)
+			return;
 		try {
-			long oldValue = getLong(name);
+			silentRunning = true;//Turn off updates from the store
 			if (getDefaultLong(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putLong(name, value);
-			if (oldValue != value) {
-				dirty = true;
-				firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
-			}
+			dirty = true;
+			firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
@@ -735,17 +735,17 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *      boolean)
 	 */
 	public void setValue(String name, boolean value) {
-		silentRunning = true;//Turn off updates from the store
+		boolean oldValue = getBoolean(name);
+		if (oldValue == value)
+			return;
 		try {
-			boolean oldValue = getBoolean(name);
+			silentRunning = true;//Turn off updates from the store
 			if (getDefaultBoolean(name) == value)
 				getStorePreferences().remove(name);
 			else
 				getStorePreferences().putBoolean(name, value);
-			if (oldValue != value) {
-				dirty = true;
-				firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
-			}
+			dirty = true;
+			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
 		} finally {
 			silentRunning = false;//Restart listening to preferences
 		}
