@@ -745,9 +745,9 @@ public class ActionContributionItem extends ContributionItem {
 							.getInstance().getCallback();
 
 					// Block accelerators that are already in use.
-					if ((accelerator != 0)
-							&& (callback.isAcceleratorInUse(accelerator))) {
-						accelerator = 0;
+					if ((accelerator != 0) && (callback != null)
+                            && (callback.isAcceleratorInUse(accelerator))) {
+                        accelerator = 0;
 					}
 
 					/*
