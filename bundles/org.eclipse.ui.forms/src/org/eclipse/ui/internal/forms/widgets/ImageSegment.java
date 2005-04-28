@@ -46,12 +46,13 @@ public class ImageSegment extends ObjectSegment {
 		}
 		return image;
 	}
-
+/*
 	private String getSelectedImageId() {
 		if (getObjectId() == null)
 			return null;
 		return SEL_IMAGE_PREFIX + getObjectId();
 	}
+*/
 	
 	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		Image image = getImage(resourceTable);

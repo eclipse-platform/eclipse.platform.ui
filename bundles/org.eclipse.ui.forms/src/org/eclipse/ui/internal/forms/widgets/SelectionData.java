@@ -93,10 +93,8 @@ public class SelectionData {
 			// inter-row selection
 			return deltaY>0;
 		}
-		else {
-			// intra-row selection
-			return start.x > stop.x; 
-		}
+		// intra-row selection
+		return start.x > stop.x; 
 	}
 	public boolean isEnclosed() {
 		return !start.equals(stop);

@@ -296,8 +296,7 @@ public final class Section extends ExpandableComposite {
 			return null;
 		if ((getExpansionStyle() & SHORT_TITLE_BAR) != 0)
 			return getBackground();
-		else
-			return (Color) titleColors.get(COLOR_GBG);
+		return (Color) titleColors.get(COLOR_GBG);
 	}
 
 	/**

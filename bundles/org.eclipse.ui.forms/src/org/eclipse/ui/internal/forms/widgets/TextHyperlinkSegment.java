@@ -25,7 +25,7 @@ public class TextHyperlinkSegment extends TextSegment implements
 
 	private String tooltipText;
 
-	private static final String LINK_FG = "c.___link_fg";
+	//private static final String LINK_FG = "c.___link_fg";
 
 	private HyperlinkSettings settings;
 

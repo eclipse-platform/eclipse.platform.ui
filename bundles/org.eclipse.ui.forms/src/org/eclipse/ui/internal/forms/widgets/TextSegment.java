@@ -251,8 +251,8 @@ public class TextSegment extends ParagraphSegment {
 
 		computeTextFragments(gc);
 
-		int lineStart = 0;
-		int cursor = 0;
+		//int lineStart = 0;
+		//int cursor = 0;
 		int width = 0;
 		Point lineExtent = new Point(0, 0);
 
@@ -261,11 +261,11 @@ public class TextSegment extends ParagraphSegment {
 
 			if (locator.x + lineExtent.x + textFragment.length > wHint) {
 				// overflow
-				String line = text.substring(lineStart, cursor);
+				//String line = text.substring(lineStart, cursor);
 				int lineWidth = locator.x + lineExtent.x;
 				if (isSelectable())
 					lineWidth += 2;
-				lineStart = cursor;
+				//lineStart = cursor;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 				locator.leading = Math.max(locator.leading, fm.getLeading());
 				if (computeHeightOnly)
@@ -280,12 +280,12 @@ public class TextSegment extends ParagraphSegment {
 				width = Math.max(width, lineWidth);
 				newLine = true;
 			}
-			cursor = textFragment.index;
+			//cursor = textFragment.index;
 			lineExtent.x += textFragment.length;
 			lineExtent.y = Math.max(lineHeight, lineExtent.y);
 		}
 
-		String lastString = text.substring(lineStart, cursor);
+		//String lastString = text.substring(lineStart, cursor);
 		int lineWidth = lineExtent.x;
 		if (isSelectable())
 			lineWidth += 2;
@@ -327,7 +327,7 @@ public class TextSegment extends ParagraphSegment {
 			locator.rowCounter++;
 		}
 		int ly = locator.getBaseline(fm.getHeight() - fm.getLeading());
-		int lineY = ly + lineHeight - descent + 1;
+		//int lineY = ly + lineHeight - descent + 1;
 		Rectangle br = new Rectangle(locator.x - 1, ly, extent.x + 2,
 				lineHeight - descent + 3);
 		areaRectangles.add(new AreaRectangle(br, 0, -1));
@@ -655,11 +655,11 @@ public class TextSegment extends ParagraphSegment {
 					ewidth += 2;
 				if (locator.x + lineExtent.x + ewidth > width) {
 					// overflow
-					String prevLine = text.substring(lineStart, lastLoc);
+					//String prevLine = text.substring(lineStart, lastLoc);
 					int ly = locator.getBaseline(lineHeight - fm.getLeading());
 					Rectangle br = new Rectangle(locator.x - 1, ly,
 							lineExtent.x + 2, lineHeight - descent + 3);
-					int lineY = ly + lineHeight - descent + 1;
+					//int lineY = ly + lineHeight - descent + 1;
 					int prevWidth = lineExtent.x;
 					if (isSelectable())
 						prevWidth += 2;
@@ -682,14 +682,14 @@ public class TextSegment extends ParagraphSegment {
 				lineExtent.x += fragment.length;
 				lineExtent.y = Math.max(lineHeight, lineExtent.y);
 			}
-			String lastLine = text.substring(lineStart, lastLoc);
+			//String lastLine = text.substring(lineStart, lastLoc);
 			int ly = locator.getBaseline(lineHeight - fm.getLeading());
 			int lastWidth = lineExtent.x;
 			if (isSelectable())
 				lastWidth += 2;
 			Rectangle br = new Rectangle(locator.x - 1, ly, lineExtent.x + 2,
 					lineHeight - descent + 3);
-			int lineY = ly + lineHeight - descent + 1;
+			//int lineY = ly + lineHeight - descent + 1;
 			areaRectangles.add(new AreaRectangle(br, lineStart, lastLoc));
 			locator.x += lastWidth;
 			locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);

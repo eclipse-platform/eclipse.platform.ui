@@ -38,11 +38,11 @@ public class FormTextModel {
 
 	public static final String BOLD_FONT_ID = "f.____bold";
 
-	private static final int TEXT_ONLY_LINK = 1;
+	//private static final int TEXT_ONLY_LINK = 1;
 
-	private static final int IMG_ONLY_LINK = 2;
+	//private static final int IMG_ONLY_LINK = 2;
 
-	private static final int TEXT_AND_IMAGES_LINK = 3;
+	//private static final int TEXT_AND_IMAGES_LINK = 3;
 
 	public FormTextModel() {
 		reset();
@@ -441,7 +441,7 @@ public class FormTextModel {
 	private Object checkChildren(Node node) {
 		boolean text = false;
 		Node imgNode = null;
-		int status = 0;
+		//int status = 0;
 
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -617,8 +617,7 @@ public class FormTextModel {
 			selectedSegmentIndex = savedSelectedLinkIndex;
 			return true;
 		}
-		else
-			return false;
+		return false;
 	}
 
 	public void selectLink(IHyperlinkSegment link) {

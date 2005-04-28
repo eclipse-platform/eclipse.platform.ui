@@ -361,9 +361,8 @@ public class FormUtil {
 	static boolean isWrapControl(Control c) {
 		if (c instanceof Composite) {
 			return ((Composite) c).getLayout() instanceof ILayoutExtension;
-		} else {
-			return (c.getStyle() & SWT.WRAP) != 0;
 		}
+		return (c.getStyle() & SWT.WRAP) != 0;
 	}
 
 	public static int getWidthHint(int wHint, Control c) {

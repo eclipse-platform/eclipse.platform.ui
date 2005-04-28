@@ -910,8 +910,7 @@ public final class FormText extends Canvas {
 		checkWidget();
 		if (selData != null)
 			return selData.getSelectionText();
-		else
-			return "";
+		return "";
 	}
 
 	/**

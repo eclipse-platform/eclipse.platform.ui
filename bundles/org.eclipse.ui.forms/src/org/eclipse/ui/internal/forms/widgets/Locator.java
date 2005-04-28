@@ -56,8 +56,7 @@ public class Locator implements Cloneable {
 			int rleading = rdata[1];
 			if (text)
 				return y + rheight - segmentHeight - rleading;
-			else
-				return y + rheight - segmentHeight;
+			return y + rheight - segmentHeight;
 		}
 		return y;
 	}

@@ -234,16 +234,18 @@ public class ExpandableComposite extends Composite {
 				textLabelCache.setBounds(x, ty, size.x, size.y);
 			}
 			if (textClient != null) {
-				int tcx, tcy;
+				int tcx;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					tcx = x + size.x + GAP;
+					/*
 					if (tsize.y > tcsize.y)
 						tcy = tsize.y + marginHeight + tvmargin - tcsize.y;
 					else
 						tcy = y;
+						*/
 				} else {
 					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
-					tcy = y;
+					//tcy = y;
 				}
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}

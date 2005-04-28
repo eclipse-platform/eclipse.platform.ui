@@ -117,7 +117,7 @@ public class BulletParagraph extends Paragraph {
 			int y = loc.y + rowHeight / 2 - CIRCLE_DIAM / 2;
 			bbounds = new Rectangle(x, y, CIRCLE_DIAM, CIRCLE_DIAM);
 		} else if (style == TEXT && text != null) {
-			int height = gc.getFontMetrics().getHeight();
+			//int height = gc.getFontMetrics().getHeight();
 			Point textSize = gc.textExtent(text);
 			bbounds = new Rectangle(x, loc.y, textSize.x, textSize.y);
 		} else if (style == IMAGE && text != null) {

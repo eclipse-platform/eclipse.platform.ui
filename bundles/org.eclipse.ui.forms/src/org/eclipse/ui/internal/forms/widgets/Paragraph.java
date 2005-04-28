@@ -167,7 +167,7 @@ public class Paragraph {
 	public void layout(GC gc, int width, Locator loc, int lineHeight,
 			Hashtable resourceTable, IHyperlinkSegment selectedLink) {
 		ParagraphSegment[] segments = getSegments();
-		int height;
+		//int height;
 		if (segments.length > 0) {
 			if (segments[0] instanceof TextSegment
 					&& ((TextSegment) segments[0]).isSelectable())
@@ -184,10 +184,10 @@ public class Paragraph {
 			}
 			loc.heights = null;
 			loc.y += loc.rowHeight;
-			height = loc.rowHeight;
+			//height = loc.rowHeight;
 		} else {
 			loc.y += lineHeight;
-			height = lineHeight;
+			//height = lineHeight;
 		}
 	}
 
@@ -213,9 +213,9 @@ public class Paragraph {
 
 		for (int i = 0; i < segments.length; i++) {
 			ParagraphSegment segment = segments[i];
-			boolean doSelect = false;
+			//boolean doSelect = false;
 			if (selectedLink != null && segment.equals(selectedLink))
-				doSelect = true;
+				//doSelect = true;
 			segment.computeSelection(gc, resourceTable, selData);
 		}
 	}

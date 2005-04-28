@@ -300,8 +300,8 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2, I
 		if (okToClose()) {
 			hardClose();
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	public void dispose() {

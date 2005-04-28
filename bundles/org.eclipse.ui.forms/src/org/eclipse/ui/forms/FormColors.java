@@ -138,7 +138,7 @@ public class FormColors {
 		 * getSystemColor(SWT.COLOR_LIST_SELECTION));
 		 */
 		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
-		RGB white = new RGB(255, 255, 255);
+		//RGB white = new RGB(255, 255, 255);
 		RGB black = new RGB(0, 0, 0);
 		// test too light
 		if (testTwoPrimaryColors(rgb, 120, 151))
