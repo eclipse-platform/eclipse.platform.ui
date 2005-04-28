@@ -37,7 +37,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
 	private IInstallFeatureOperation[] jobs;
-    private IInstallFeatureOperation currentJob;
+    //private IInstallFeatureOperation currentJob;
     private Label installLocation;
     private Button changeLocation;
     static HashSet added;

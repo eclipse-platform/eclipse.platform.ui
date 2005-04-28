@@ -18,8 +18,6 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -102,9 +100,9 @@ public class ReviewPage	extends BannerPage {
 	private ContainmentFilter filter = new ContainmentFilter();
 	private LatestVersionFilter olderVersionFilter = new LatestVersionFilter();
 	private UpdateSearchRequest searchRequest;
-	private int LABEL_ORDER = 1;
-	private int VERSION_ORDER = 1;
-	private int PROVIDER_ORDER = 1;
+	//private int LABEL_ORDER = 1;
+	//private int VERSION_ORDER = 1;
+	//private int PROVIDER_ORDER = 1;
     private ContainerCheckedTreeViewer treeViewer;
     private boolean initialized;
     private boolean isUpdateSearch;
@@ -755,11 +753,11 @@ public class ReviewPage	extends BannerPage {
 //    }
     
     private void handleSelectionChanged(IStructuredSelection ssel) {
-        boolean enable = false;
+        //boolean enable = false;
         Object item = ssel.getFirstElement();
         String description = null;
         if (item instanceof SiteBookmark) {
-            enable = !((SiteBookmark) item).isReadOnly();
+            //enable = !((SiteBookmark) item).isReadOnly();
             description = ((SiteBookmark)item).getDescription();
         } else if (item instanceof SiteCategory) {
             IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
@@ -780,7 +778,7 @@ public class ReviewPage	extends BannerPage {
         moreInfoButton.setEnabled(false);
     }
 
-	
+/*	
 	private void fillContextMenu(IMenuManager manager) {
 		if (treeViewer.getSelection().isEmpty()) return;
 		Action action = new Action(UpdateUIMessages.InstallWizard_ReviewPage_prop) { 
@@ -790,6 +788,7 @@ public class ReviewPage	extends BannerPage {
 		};
 		manager.add(action);
 	}
+*/
 
 	private void jobSelected(IStructuredSelection selection) {
 		IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
@@ -1114,7 +1113,7 @@ public class ReviewPage	extends BannerPage {
 							return;
 						}
 						IFeatureReference iref = irefs[f];
-						IFeature ifeature = iref.getFeature(monitor);
+						iref.getFeature(monitor);
 					}
 				} catch (CoreException e) {
 				}

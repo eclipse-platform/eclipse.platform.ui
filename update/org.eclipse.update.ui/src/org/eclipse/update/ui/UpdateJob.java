@@ -11,7 +11,6 @@
 package org.eclipse.update.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -91,6 +90,9 @@ public class UpdateJob extends Job {
         return isUpdate;
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
+	 */
 	public boolean belongsTo(Object family) {
 		return UpdateJob.family == family;
 	}
@@ -200,7 +202,7 @@ public class UpdateJob extends Job {
     private class ResultCollectorWithMirrors extends SearchResultCollector
             implements IUpdateSearchResultCollectorFromMirror {
         
-        private HashMap mirrors = new HashMap(0);
+        //private HashMap mirrors = new HashMap(0);
         
         /* (non-Javadoc)
          * @see org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror#getMirror(org.eclipse.update.core.ISite, java.lang.String)

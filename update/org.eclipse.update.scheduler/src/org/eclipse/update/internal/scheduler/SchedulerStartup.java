@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.scheduler;
 
+import java.lang.reflect.Constructor;
 import java.util.Calendar;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.ui.IStartup;
 
 /**
@@ -34,6 +35,8 @@ public class SchedulerStartup implements IStartup {
 
 	public static final String P_DOWNLOAD = "download"; // value is true or
 
+	// //$NON-NLS-1$
+
 	// false, default is
 	// false //$NON-NLS-1$
 
@@ -48,7 +51,7 @@ public class SchedulerStartup implements IStartup {
 	static final Object automaticJobFamily = new Object();
 
 	// Listener for job changes
-	private JobChangeAdapter jobListener;
+	private IJobChangeListener jobListener;
 
 	public static final String[] DAYS = {
 			UpdateSchedulerMessages.SchedulerStartup_day,
@@ -212,21 +215,64 @@ public class SchedulerStartup implements IStartup {
 			// cancel old job.
 			// We need to deregister the listener first,so we won't
 			// automatically start another job
-			if (jobListener!=null)
+			if (jobListener != null)
 				Platform.getJobManager().removeJobChangeListener(jobListener);
 			Platform.getJobManager().cancel(job);
 		}
-		if (jobListener==null)
-			jobListener = new UpdateJobChangeAdapter(this);
+		if (jobListener == null) {
+			// using reflection to avoid premature class loading
+			jobListener = createJobChangeAdapter();
+			if (jobListener == null)
+				return;
+		}
 		Platform.getJobManager().addJobChangeListener(jobListener);
 		String jobName = UpdateSchedulerMessages.AutomaticUpdatesJob_AutomaticUpdateSearch; //$NON-NLS-1$);
 		boolean download = UpdateSchedulerPlugin.getDefault()
 				.getPluginPreferences().getBoolean(
 						UpdateSchedulerPlugin.P_DOWNLOAD);
-		job = new AutomaticUpdateJob(jobName, true, download);
-		job.schedule(delay);
+		job = createUpdateJob(jobName, download);
+		if (job != null)
+			job.schedule(delay);
+
 	}
-	
+
+	/*
+	 * Loads the update job using reflection to avoid premature startup of the
+	 * Update UI plug-in.
+	 */
+
+	private Job createUpdateJob(String name, boolean download) {
+		try {
+			Class theClass = Class
+					.forName("org.eclipse.update.internal.scheduler.AutomaticUpdateJob"); //$NON-NLS-1$
+			Constructor constructor = theClass.getConstructor(new Class[] {
+					String.class, Boolean.TYPE, Boolean.TYPE });
+			return (Job) constructor.newInstance(new Object[] { name,
+					Boolean.TRUE, new Boolean(download) });
+		} catch (Exception e) {
+			UpdateSchedulerPlugin.logException(e, false);
+			return null;
+		}
+	}
+
+	/*
+	 * Loads the job listener using reflection to avoid premature startup of the
+	 * Update UI plug-in.
+	 */
+	private IJobChangeListener createJobChangeAdapter() {
+		try {
+			Class theClass = Class
+					.forName("org.eclipse.update.internal.scheduler.UpdateJobChangeAdapter"); //$NON-NLS-1$
+			Constructor constructor = theClass
+					.getConstructor(new Class[] { SchedulerStartup.class });
+			return (IJobChangeListener) constructor
+					.newInstance(new Object[] { this });
+		} catch (Exception e) {
+			UpdateSchedulerPlugin.logException(e, false);
+			return null;
+		}
+	}
+
 	Job getJob() {
 		return job;
 	}

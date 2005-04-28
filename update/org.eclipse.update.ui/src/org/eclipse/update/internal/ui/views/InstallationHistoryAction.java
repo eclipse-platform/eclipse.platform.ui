@@ -22,7 +22,7 @@ import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.ui.*;
 
 public class InstallationHistoryAction extends Action {
-    private Shell shell;
+    //private Shell shell;
 	private BufferedReader buffRead;
 	private PrintWriter htmlLog;
 	private File tempFile;
@@ -36,7 +36,7 @@ public class InstallationHistoryAction extends Action {
 
 	public InstallationHistoryAction(Shell shell, String text, ImageDescriptor desc) {
 		super(text, desc);
-        this.shell = shell;
+        //this.shell = shell;
 		String location =
 			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()

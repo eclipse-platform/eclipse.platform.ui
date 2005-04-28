@@ -32,11 +32,11 @@ import org.eclipse.update.operations.*;
 public class TargetSiteDialog extends Dialog {
 	private TableViewer siteViewer;
 	private IInstallConfiguration config;
-    private Label installLocation;
+    //private Label installLocation;
 	private Button addButton;
 	private Button deleteButton;
 	private IInstallConfigurationChangedListener listener;
-    private IConfiguredSite targetSite;
+    //private IConfiguredSite targetSite;
     private IInstallFeatureOperation job;
     
     class SitesContentProvider

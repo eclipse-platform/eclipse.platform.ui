@@ -16,7 +16,7 @@ import java.net.*;
  * Update Manager Authenticator Sadly there can only be one registered per VM
  */
 public class UpdateManagerAuthenticator extends Authenticator {
-	private Authentication savedPasswordAuthentication;
+	//private Authentication savedPasswordAuthentication;
 
 	/*
 	 * @see Authenticator#getPasswordAuthentication()

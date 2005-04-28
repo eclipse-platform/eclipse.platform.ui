@@ -23,18 +23,18 @@ import org.eclipse.update.internal.ui.*;
 
 
 public class MirrorsDialog extends Dialog {
-	private ISiteWithMirrors site;
+	//private ISiteWithMirrors site;
 	private String siteName;
 	private IURLEntry[] mirrors;
 	private List mirrorsList;
 	private IURLEntry mirrorSelected;
-	private Button okButton;
+	//private Button okButton;
 	/**
 	 * @param parentShell
 	 */
 	public MirrorsDialog(Shell parentShell, ISiteWithMirrors site, String siteName) {
 		super(parentShell);
-		this.site = site;
+		//this.site = site;
 		this.siteName = siteName;
 		try {
 			this.mirrors = site.getMirrorSiteEntries();
@@ -44,7 +44,7 @@ public class MirrorsDialog extends Dialog {
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(
+		createButton(
 				parent,
 				IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL,
