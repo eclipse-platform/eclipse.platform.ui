@@ -82,6 +82,7 @@ public class TriggeredOperations extends AbstractOperation implements
 	public void remove(IUndoableOperation operation) {
 		if (operation == triggeringOperation) {
 			triggeringOperation = null;
+			operation.dispose();
 			history.replaceOperation(this, (IUndoableOperation[]) children
 					.toArray(new IUndoableOperation[children.size()]));
 		} else {
