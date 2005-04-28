@@ -594,7 +594,7 @@ public class ReviewPage	extends BannerPage {
 		filterOlderVersionCheck = new Button(client, SWT.CHECK);
 		filterOlderVersionCheck.setText(UpdateUIMessages.InstallWizard_ReviewPage_filterOlderFeatures); 
 		filterOlderVersionCheck.setSelection(true);
-//		tableViewer.addFilter(olderVersionFilter);
+		treeViewer.addFilter(olderVersionFilter);
 		filterOlderVersionCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (filterOlderVersionCheck.getSelection())
