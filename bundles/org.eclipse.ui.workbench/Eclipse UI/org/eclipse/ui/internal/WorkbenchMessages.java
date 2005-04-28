@@ -821,10 +821,10 @@ public class WorkbenchMessages extends NLS {
 	public static String HeapStatus_Error;
 	public static String HeapStatus_widthStr;
 	public static String HeapStatus_memoryToolTip;
-	public static String HeapStatus_memoryToolTipWithSnapshot;
+	public static String HeapStatus_memoryToolTipWithMark;
 	public static String HeapStatus_buttonToolTip;
-	public static String SnapshotAction_text;
-	public static String ClearSnapshotAction_text;
+	public static String SetMarkAction_text;
+	public static String ClearMarkAction_text;
 	public static String ShowKyrsoftViewAction_text;
 	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
 	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
