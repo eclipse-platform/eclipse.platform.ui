@@ -59,7 +59,7 @@ public class RangeDifferencerTest extends PerformanceTestCase {
 	
 	public void testLargeDocument() {
 			    
-		tagAsGlobalSummary("3-way compare, 5000 lines", Dimension.CPU_TIME); //$NON-NLS-1$
+		tagAsGlobalSummary("3-way compare, 5000 lines", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 
 		ITokenComparator ancestor= new DocLineComparator(createDocument(0), null, false);
 		ITokenComparator left= new DocLineComparator(createDocument(1), null, false);
