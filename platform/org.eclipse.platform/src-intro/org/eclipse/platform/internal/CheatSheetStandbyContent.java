@@ -22,7 +22,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 
     private static String MEMENTO_CHEATSHEET_ID_ATT = "cheatsheetId"; //$NON-NLS-1$
 
-    private IIntroPart introPart;
+    //private IIntroPart introPart;
     private ICheatSheetViewer viewer;
     private Composite container;
     private String input;
@@ -33,7 +33,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
      */
     public void init(IIntroPart introPart, IMemento memento) {
-        this.introPart = introPart;
+        //this.introPart = introPart;
         // try to restore last state.
         input = getCachedInput(memento);
     }

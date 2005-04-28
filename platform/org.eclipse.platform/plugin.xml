@@ -74,13 +74,17 @@
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
-            name="%cheatsheet.cvs.name"
+            category="org.eclipse.platform"
             contentFile="$nl$/cheatsheets/CVS_1.xml"
-            id="org.eclipse.platform.cvs_1">
+            id="org.eclipse.platform.cvs_1"
+            name="%cheatsheet.cvs.name">
          <description>
             %cheatsheet.cvs.desc
          </description>
       </cheatsheet>
+      <category
+            id="org.eclipse.platform"
+            name="%cheatsheet.category.platform"/>
    </extension>
    <!-- =====================================================  -->
    <!-- Standby Content Part contributions                     -->
