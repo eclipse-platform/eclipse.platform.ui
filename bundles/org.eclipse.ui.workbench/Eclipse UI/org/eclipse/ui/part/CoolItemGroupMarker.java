@@ -15,10 +15,6 @@ import org.eclipse.jface.action.GroupMarker;
 /**
  * A group marker used by EditorActionBars to delineate CoolItem groups.
  * Use this marker when contributing to the ToolBar for the EditorActionBar.  
- * 
- * Note that this class was introduced to address [Bug 17477], is experimental, 
- * and may change.
- * 
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
