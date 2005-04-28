@@ -57,10 +57,6 @@ public class WorkflowTests extends BenchmarkTest {
 	public void testBigWorkflow() throws Exception {
 		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false, new SynchronizeViewTestAdapter());
 	}
-	
-	public void testBigWorkflowForSummary() throws Exception {
-		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow", BenchmarkTestSetup.LOOP_COUNT, false, new SynchronizeViewTestAdapter());
-	}
     
     public void testBigWorkflowNoUI() throws Exception {
         runWorkflowTests("testBigWithNoUI", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow No UI", BenchmarkTestSetup.LOOP_COUNT, false, new SyncInfoSource());

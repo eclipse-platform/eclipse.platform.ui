@@ -47,10 +47,6 @@ public class SyncTests extends BenchmarkTest {
 	public void testSync100() throws Exception {
 		runTestSync(100, "CVS Synchronize 100", false, new SynchronizeViewTestAdapter());
 	}
-	
-	public void testSync100Global() throws Exception {
-		runTestSync(100, "CVS Synchronize", false, new SynchronizeViewTestAdapter());
-	}
     
     public void testSync100NoUI() throws Exception {
         runTestSync(100, "CVS Synchronize No UI", false, new SyncInfoSource());
