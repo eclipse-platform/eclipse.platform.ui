@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.util.Arrays;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Captures platform specific attributes relevant to the core resources plugin.  This
@@ -30,7 +29,7 @@ public abstract class OS {
 		char[] chars = null;
 		String[] names = null;
 		INSTALLED_PLATFORM = Platform.getOS();
-		if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
+		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
 			//list taken from http://support.microsoft.com/support/kb/articles/q177/5/06.asp
 			chars = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 
@@ -58,7 +57,7 @@ public abstract class OS {
 		//. and .. have special meaning on all platforms
 		if (name.equals(".") || name.equals("..")) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
-		if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
+		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
 			//on windows, filename suffixes are not relevant to name validity
 			int dot = name.indexOf('.');
 			name = dot == -1 ? name : name.substring(0, dot);
