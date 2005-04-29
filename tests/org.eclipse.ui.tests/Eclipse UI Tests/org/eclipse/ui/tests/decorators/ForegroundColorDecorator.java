@@ -35,6 +35,20 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 
+		if(color == null){
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					setUpColor();
+
+				}
+			});
+
+		}
 		decoration.setForegroundColor(color);
 
 	}
@@ -81,7 +95,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	}
 	
 	public static void setUpColor(){
-		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GREEN);
+		color = PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW);
 	}
 
 

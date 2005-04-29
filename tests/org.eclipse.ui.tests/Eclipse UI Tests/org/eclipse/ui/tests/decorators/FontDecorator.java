@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The FontDecorator is for testing the font enablement.
@@ -32,6 +33,22 @@ public class FontDecorator implements ILightweightLabelDecorator {
 	 *      org.eclipse.jface.viewers.IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
+		
+		if(font == null){
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					setUpFont();
+
+				}
+			});
+
+		}
+		
 		decoration.setFont(font);
 	}
 
