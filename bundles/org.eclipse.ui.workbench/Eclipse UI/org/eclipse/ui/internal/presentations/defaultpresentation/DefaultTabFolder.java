@@ -274,18 +274,18 @@ public class DefaultTabFolder extends AbstractTabFolder {
      * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setSelectedInfo(org.eclipse.ui.internal.presentations.newapi.PartInfo)
      */
     public void setSelectedInfo(PartInfo info) {
+        String newTitle = DefaultTabItem.escapeAmpersands(info.contentDescription);
+        
+        if (!Util.equals(titleLabel.getText(), newTitle)) {
+            titleLabel.setText(newTitle);
+        }
+    	
         if (!info.contentDescription.equals(Util.ZERO_LENGTH_STRING)) {
             paneFolder.setTopLeft(titleLabel);
             titleLabel.setVisible(true);
         } else {
             paneFolder.setTopLeft(null);
             titleLabel.setVisible(false);
-        }
-        
-        String newTitle = DefaultTabItem.escapeAmpersands(info.contentDescription);
-        
-        if (!Util.equals(titleLabel.getText(), newTitle)) {
-            titleLabel.setText(newTitle);
         }
     }
 
