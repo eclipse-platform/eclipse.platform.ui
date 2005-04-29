@@ -100,6 +100,7 @@ public class CVSMessages extends NLS {
 	public static String Session_transferNoSize;
 	public static String Session_calculatingCompressedSize;
 	public static String Session_0;
+    public static String Session_sending;
 
 	public static String Command_receivingResponses;
 	public static String Command_warnings;

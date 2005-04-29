@@ -854,7 +854,7 @@ public class Session {
 	 */
 	String getSendFileTitleMessage() {
 		if (sendFileTitleMessage == null)
-			return "Session.sending"; //$NON-NLS-1$
+			return CVSMessages.Session_sending; //$NON-NLS-1$
 		return sendFileTitleMessage;
 	}
 
