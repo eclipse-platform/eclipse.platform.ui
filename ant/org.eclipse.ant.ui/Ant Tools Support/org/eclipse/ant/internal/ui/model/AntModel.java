@@ -122,6 +122,7 @@ public class AntModel implements IAntModel {
 	
 	private boolean fReportingProblemsCurrent= false;
 	private boolean fDoNotReportProblems= false;
+	private boolean fShouldReconcile= true;
 	
 	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		init(document, problemRequestor, locationProvider);
@@ -229,7 +230,7 @@ public class AntModel implements IAntModel {
      */
     public void reconcile() {
 		synchronized (fDirtyLock) {
-			if (!fIsDirty) {
+			if (!fShouldReconcile || !fIsDirty) {
 				return;
 			}
 			fIsDirty= false;
@@ -1672,4 +1673,16 @@ public class AntModel implements IAntModel {
         }
         return null;
     }
+
+	/**
+	 * Sets whether the AntModel should reconcile if it become dirty.
+     * If set to reconcile, a reconcile is triggered if the model is dirty.
+	 * @param shouldReconcile
+	 */
+	public void setShouldReconcile(boolean shouldReconcile) {
+		fShouldReconcile= shouldReconcile;
+		if (fShouldReconcile) {
+			reconcile();
+		}		
+	}
 }

@@ -14,14 +14,12 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
 
-
 /**
- * Turns off occurrences highlighting on an Ant editor until linked mode is
- * left.
+ * Synchronizes the Ant editor with the state of its linked mode
  * 
  * @since 3.1
  */
-public class EditorHighlightingSynchronizer implements ILinkedModeListener {
+public class EditorSynchronizer implements ILinkedModeListener {
     
     private final AntEditor fEditor;
     private final boolean fWasOccurrencesOn;
@@ -29,26 +27,21 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
     /**
      * Creates a new synchronizer.
      * 
-     * @param editor the Ant editor the occurrences markers of which will be 
+     * @param editor the Ant editor that will be 
      *        synchonized with the linked mode
-     * 
      */
-    public EditorHighlightingSynchronizer(AntEditor editor) {
+    public EditorSynchronizer(AntEditor editor) {
         Assert.isLegal(editor != null);
         fEditor= editor;
         fWasOccurrencesOn= fEditor.isMarkingOccurrences();
-        
-        if (fWasOccurrencesOn)
-            fEditor.uninstallOccurrencesFinder();
+        fEditor.setInLinkedMode(true, fWasOccurrencesOn);
     }
 
     /*
      * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
      */
     public void left(LinkedModeModel environment, int flags) {
-        if (fWasOccurrencesOn) {
-            fEditor.installOccurrencesFinder();
-        }
+    	fEditor.setInLinkedMode(false, fWasOccurrencesOn);
     }
 
     /*

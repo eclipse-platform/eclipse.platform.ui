@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
-import org.eclipse.ant.internal.ui.editor.EditorHighlightingSynchronizer;
+import org.eclipse.ant.internal.ui.editor.EditorSynchronizer;
 import org.eclipse.ant.internal.ui.editor.OccurrencesFinder;
 import org.eclipse.jdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.jface.text.BadLocationException;
@@ -71,7 +71,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
 			LinkedModeModel model= new LinkedModeModel();
 			model.addGroup(group);
 			model.forceInstall();
-			model.addLinkingListener(new EditorHighlightingSynchronizer(fEditor));
+			model.addLinkingListener(new EditorSynchronizer(fEditor));
 			
 			LinkedModeUI ui= new EditorLinkedModeUI(model, viewer);
 			ui.setExitPosition(viewer, offset, 0, LinkedPositionGroup.NO_STOP);

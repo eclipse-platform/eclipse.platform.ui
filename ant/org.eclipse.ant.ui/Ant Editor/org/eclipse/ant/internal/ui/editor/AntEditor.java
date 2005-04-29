@@ -1477,4 +1477,24 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	public boolean isMarkingOccurrences() {
 		return fMarkOccurrenceAnnotations;
 	}
+
+
+	/**
+	 * The editor has entered or exited linked mode.
+	 * @param inLinkedMode whether an enter or exit has occurred
+	 * @param effectsOccurrences whether to change the state of the occurrences finder
+	 */
+	public void setInLinkedMode(boolean inLinkedMode, boolean effectsOccurrences) {
+		if (inLinkedMode) {
+			getAntModel().setShouldReconcile(false);
+			if (effectsOccurrences) {
+				uninstallOccurrencesFinder();
+			}
+		} else {
+			getAntModel().setShouldReconcile(true);
+			if (effectsOccurrences) {
+				installOccurrencesFinder();
+			}
+		}
+	}
 }
