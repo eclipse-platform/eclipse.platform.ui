@@ -132,8 +132,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 		TestSuite singleRun = new PerformanceSessionTestSuite(PI_RUNTIME_TESTS, 1, "singleSessionTests");
 		singleRun.addTest(new ContentTypePerformanceTest("testContentMatching"));
-		singleRun.addTest(new ContentTypePerformanceTest("testContentTXTMatching"));
-		singleRun.addTest(new ContentTypePerformanceTest("testContentXMLMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testNameMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testIsKindOf"));
 		suite.addTest(singleRun);
@@ -159,25 +157,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			if (all[i].getId().startsWith(namespace))
 				count++;
 		return count;
-	}
-
-	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis and name*/
-	public void doTestContentMatching(final String name, final String contents, int outer, int inner) {
-		// warm up preference service		
-		loadPreferences();
-		// warm up content type registry
-		final IContentTypeManager manager = loadContentTypeManager();
-		loadDescribers();
-		loadChildren();
-		new PerformanceTestRunner() {
-			protected void test() {
-				try {
-					manager.findContentTypesFor(getContents(contents), name);
-				} catch (IOException e) {
-					fail("2.0", e);
-				}
-			}
-		}.run(this, outer, inner);
 	}
 
 	private Bundle installContentTypes(String tag, int numberOfLevels, int nodesPerLevel) {
@@ -287,14 +266,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 				}
 			}
 		}.run(this, 10, 2);
-	}
-
-	public void testContentTXTMatching() {
-		doTestContentMatching("foo.txt", getRandomString(), 10, 40000);
-	}
-
-	public void testContentXMLMatching() {
-		doTestContentMatching("foo.xml", getRandomString(), 10, 300);
 	}
 
 	public void testDoSetUp() {
