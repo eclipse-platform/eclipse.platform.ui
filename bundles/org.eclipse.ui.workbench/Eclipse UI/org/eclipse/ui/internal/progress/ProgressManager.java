@@ -280,7 +280,7 @@ public class ProgressManager extends ProgressProvider implements
          * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
          */
         public void subTask(String name) {
-            if (name.length() == 0)
+            if (name == null || name.length() == 0)
                 return;
             JobInfo info = getJobInfo(job);
             info.clearChildren();
