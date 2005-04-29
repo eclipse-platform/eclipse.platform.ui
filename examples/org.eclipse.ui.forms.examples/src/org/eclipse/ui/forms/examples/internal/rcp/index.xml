@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
+<p><control href="node"/></p>
 <p>
 To check for updates for features you have installed, 
 go to the <a href="action1">My Eclipse 1</a> and select 

@@ -114,13 +114,15 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int width, height;
+		/*
 		if (wHint != SWT.DEFAULT)
 			width = wHint;
-		else
+		else */
 			width = innerWidth + 2 * marginWidth;
+		/*
 		if (hHint != SWT.DEFAULT)
 			height = hHint;
-		else
+		else */
 			height = innerHeight + 2 * marginHeight;
 		return new Point(width, height);
 	}

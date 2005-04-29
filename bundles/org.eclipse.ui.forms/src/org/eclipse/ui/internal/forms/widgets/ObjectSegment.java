@@ -133,6 +133,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			loc.newLine();
 			loc.rowCounter++;
 		}
+		//TODO vertical alignment is not used
 		int ix = loc.x+(isSelectable()?1:0);
 		int iy = loc.getBaseline(objHeight, false)+(isSelectable()?1:0);
 		loc.x += objWidth + (isSelectable()?1:0);

@@ -12,7 +12,10 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
+import org.eclipse.swt.graphics.Rectangle;
+
 public interface IFocusSelectable {
 	boolean isFocusSelectable(Hashtable resourceTable);
 	void setFocus(Hashtable resourceTable, boolean direction);
+	Rectangle getBounds();
 }

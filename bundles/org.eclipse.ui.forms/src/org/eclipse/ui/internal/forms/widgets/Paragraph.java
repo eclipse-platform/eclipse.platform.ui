@@ -214,7 +214,7 @@ public class Paragraph {
 		for (int i = 0; i < segments.length; i++) {
 			ParagraphSegment segment = segments[i];
 			//boolean doSelect = false;
-			if (selectedLink != null && segment.equals(selectedLink))
+			//if (selectedLink != null && segment.equals(selectedLink))
 				//doSelect = true;
 			segment.computeSelection(gc, resourceTable, selData);
 		}

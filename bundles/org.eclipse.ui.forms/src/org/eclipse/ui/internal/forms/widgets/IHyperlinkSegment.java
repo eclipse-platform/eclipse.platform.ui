@@ -18,7 +18,6 @@ public interface IHyperlinkSegment extends IFocusSelectable {
 	String getHref();
 	String getText();
 	void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion);
-	Rectangle getBounds();
 	boolean contains(int x, int y);
 	boolean intersects(Rectangle rect);
 }

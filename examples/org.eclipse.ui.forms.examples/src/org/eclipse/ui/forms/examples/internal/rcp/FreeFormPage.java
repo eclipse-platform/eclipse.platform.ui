@@ -134,6 +134,7 @@ public class FreeFormPage extends FormPage {
 		});
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		rtext.setImage("image1", ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_LARGE));
+		createCompositeControl(rtext, toolkit);
 		createControl(rtext, toolkit);
 		Menu menu = new Menu(rtext);
 		final MenuItem item = new MenuItem(menu, SWT.PUSH);
@@ -161,6 +162,11 @@ public class FreeFormPage extends FormPage {
 		}
 	}
 	private void createControl(FormText ftext, FormToolkit toolkit) {
+		TreeNode node = new TreeNode(ftext, SWT.NULL);
+		toolkit.adapt(node, true, true);
+		ftext.setControl("node", node);
+	}
+	private void createCompositeControl(FormText ftext, FormToolkit toolkit) {
 		Composite comp = toolkit.createComposite(ftext);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -168,7 +174,7 @@ public class FreeFormPage extends FormPage {
 		toolkit.createLabel(comp, "Sample text:");
 		Text text = toolkit.createText(comp, "");
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Button button = toolkit.createButton(comp, "Browse...", SWT.PUSH);
+		toolkit.createButton(comp, "Browse...", SWT.PUSH);
 		ftext.setControl("control1", comp);
 	}
 }

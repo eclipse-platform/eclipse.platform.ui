@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -16,6 +17,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
+
 /**
  * This is the base class for custom hyperlink widget. It is responsible for
  * processing mouse and keyboard events, and converting them into unified
@@ -26,15 +28,19 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  */
 public abstract class AbstractHyperlink extends Canvas {
 	private boolean hasFocus;
+
 	private Vector listeners;
+
 	/**
 	 * Amount of the margin width around the hyperlink (default is 1).
 	 */
 	protected int marginWidth = 1;
+
 	/**
 	 * Amount of the margin height around the hyperlink (default is 1).
 	 */
 	protected int marginHeight = 1;
+
 	/**
 	 * Creates a new hyperlink in the provided parent.
 	 * 
@@ -60,13 +66,13 @@ public abstract class AbstractHyperlink extends Canvas {
 		addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.detail) {
-					case SWT.TRAVERSE_PAGE_NEXT :
-					case SWT.TRAVERSE_PAGE_PREVIOUS :
-					case SWT.TRAVERSE_ARROW_NEXT :
-					case SWT.TRAVERSE_ARROW_PREVIOUS :
-					case SWT.TRAVERSE_RETURN :
-						e.doit = false;
-						return;
+				case SWT.TRAVERSE_PAGE_NEXT:
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+				case SWT.TRAVERSE_ARROW_NEXT:
+				case SWT.TRAVERSE_ARROW_PREVIOUS:
+				case SWT.TRAVERSE_RETURN:
+					e.doit = false;
+					return;
 				}
 				e.doit = true;
 			}
@@ -74,26 +80,26 @@ public abstract class AbstractHyperlink extends Canvas {
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
-					case SWT.FocusIn :
-						hasFocus = true;
-						handleEnter(e);
-						break;
-					case SWT.FocusOut :
-						hasFocus = false;
-						handleExit(e);
-						break;
-					case SWT.DefaultSelection :
-						handleActivate(e);
-						break;
-					case SWT.MouseEnter :
-						handleEnter(e);
-						break;
-					case SWT.MouseExit :
-						handleExit(e);
-						break;
-					case SWT.MouseUp :
-						handleMouseUp(e);
-						break;
+				case SWT.FocusIn:
+					hasFocus = true;
+					handleEnter(e);
+					break;
+				case SWT.FocusOut:
+					hasFocus = false;
+					handleExit(e);
+					break;
+				case SWT.DefaultSelection:
+					handleActivate(e);
+					break;
+				case SWT.MouseEnter:
+					handleEnter(e);
+					break;
+				case SWT.MouseExit:
+					handleExit(e);
+					break;
+				case SWT.MouseUp:
+					handleMouseUp(e);
+					break;
 				}
 			}
 		};
@@ -104,6 +110,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		addListener(SWT.FocusOut, listener);
 		setCursor(FormsResources.getHandCursor());
 	}
+
 	/**
 	 * Adds the event listener to this hyperlink.
 	 * 
@@ -116,6 +123,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
+
 	/**
 	 * Removes the event listener from this hyperlink.
 	 * 
@@ -127,6 +135,7 @@ public abstract class AbstractHyperlink extends Canvas {
 			return;
 		listeners.remove(listener);
 	}
+
 	/**
 	 * Returns the selection state of the control. When focus is gained, the
 	 * state will be <samp>true </samp>; it will switch to <samp>false </samp>
@@ -138,6 +147,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	public boolean getSelection() {
 		return hasFocus;
 	}
+
 	/**
 	 * Called when hyperlink is entered. Subclasses that override this method
 	 * must call 'super'.
@@ -147,12 +157,14 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
+				e.stateMask);
 		for (int i = 0; i < size; i++) {
 			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
 			listener.linkEntered(he);
 		}
 	}
+
 	/**
 	 * Called when hyperlink is exited. Subclasses that override this method
 	 * must call 'super'.
@@ -162,12 +174,14 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (listeners == null)
 			return;
 		int size = listeners.size();
-		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
+				e.stateMask);
 		for (int i = 0; i < size; i++) {
 			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
 			listener.linkExited(he);
 		}
 	}
+
 	/**
 	 * Called when hyperlink has been activated. Subclasses that override this
 	 * method must call 'super'.
@@ -177,7 +191,8 @@ public abstract class AbstractHyperlink extends Canvas {
 			return;
 		int size = listeners.size();
 		setCursor(FormsResources.getBusyCursor());
-		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(), e.stateMask);
+		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
+				e.stateMask);
 		for (int i = 0; i < size; i++) {
 			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
 			listener.linkActivated(he);
@@ -185,6 +200,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (!isDisposed())
 			setCursor(FormsResources.getHandCursor());
 	}
+
 	/**
 	 * Sets the object associated with this hyperlink. Concrete implementation
 	 * of this class can use if to store text, URLs or model objects that need
@@ -196,6 +212,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	public void setHref(Object href) {
 		setData("href", href);
 	}
+
 	/**
 	 * Returns the object associated with this hyperlink.
 	 * 
@@ -205,15 +222,17 @@ public abstract class AbstractHyperlink extends Canvas {
 	public Object getHref() {
 		return getData("href");
 	}
+
 	/**
-	 * Returns the textual representation of this hyperlink suitable for
-	 * showing in tool tips or on the status line.
+	 * Returns the textual representation of this hyperlink suitable for showing
+	 * in tool tips or on the status line.
 	 * 
 	 * @return the hyperlink text
 	 */
 	public String getText() {
 		return getToolTipText();
 	}
+
 	/**
 	 * Paints the hyperlink as a reaction to the provided paint event.
 	 * 
@@ -221,6 +240,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the paint event
 	 */
 	protected abstract void paintHyperlink(GC gc);
+
 	/**
 	 * Paints the control as a reaction to the provided paint event.
 	 * 
@@ -230,8 +250,10 @@ public abstract class AbstractHyperlink extends Canvas {
 	protected void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle clientArea = getClientArea();
-		if (clientArea.width==0 || clientArea.height==0) return;
-		Image buffer = new Image(getDisplay(), clientArea.width, clientArea.height);
+		if (clientArea.width == 0 || clientArea.height == 0)
+			return;
+		Image buffer = new Image(getDisplay(), clientArea.width,
+				clientArea.height);
 		buffer.setBackground(getBackground());
 		GC bufferGC = new GC(buffer, gc.getStyle());
 		bufferGC.setBackground(getBackground());
@@ -246,6 +268,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		bufferGC.dispose();
 		buffer.dispose();
 	}
+
 	private void handleMouseUp(Event e) {
 		if (e.button != 1)
 			return;

@@ -65,7 +65,10 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <b>li </b> elements:
  * <ul>
  * <li><b>img </b>- to render an image. Element accepts attribute 'href' that
- * is a key to the <code>Image</code> set using 'setImage' method.</li>
+ * is a key to the <code>Image</code> set using 'setImage' method. Vertical
+ * position of image relative to surrounding text is optionally controlled 
+ * by the attribute <b>align</b> that can have values <b>top</b>, <b>middle</b> and
+ * <b>bottom</b></li>
  * <li><b>a </b>- to render a hyperlink. Element accepts attribute 'href' that
  * will be provided to the hyperlink listeners via HyperlinkEvent object. The
  * element also accepts 'nowrap' attribute (default is false). When set to
@@ -83,7 +86,8 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * object set using 'setControl' method. Optionally, attribute 'fill' can be set to
  * <code>true</code> to make the control fill the entire width of the text.
  * Form text is not responsible for creating or disposing controls, it only
- * places them relative to the surrounding text.
+ * places them relative to the surrounding text. Similar to <b>img</b>, vertical
+ * position of the control can be set using the <b>align</b> attribute.
  * </ul>
  * <p>
  * None of the elements can nest. For example, you cannot have <b>b </b> inside
@@ -216,7 +220,7 @@ public final class FormText extends Canvas {
 			int width = wHint != SWT.DEFAULT ? wHint : 0;
 			FontMetrics fm = gc.getFontMetrics();
 			int lineHeight = fm.getHeight();
-			boolean linksInTheLastRow = false;
+			boolean selectableInTheLastRow = false;
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
 				if (i > 0 && getParagraphsSeparated()
@@ -227,14 +231,14 @@ public final class FormText extends Canvas {
 				loc.x = p.getIndent();
 				ParagraphSegment[] segments = p.getSegments();
 				if (segments.length > 0) {
-					linksInTheLastRow = false;
+					selectableInTheLastRow = false;
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
 						segment.advanceLocator(gc, wHint, loc, resourceTable,
 								false);
 						width = Math.max(width, loc.width);
-						if (segment instanceof IHyperlinkSegment)
-							linksInTheLastRow = true;
+						if (segment instanceof IFocusSelectable)
+							selectableInTheLastRow = true;
 					}
 					loc.y += loc.rowHeight;
 				} else {
@@ -243,7 +247,7 @@ public final class FormText extends Canvas {
 				}
 			}
 			gc.dispose();
-			if (linksInTheLastRow)
+			if (selectableInTheLastRow)
 				loc.y += 1;
 			return new Point(width, loc.y);
 		}
@@ -346,9 +350,12 @@ public final class FormText extends Canvas {
 		});
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
+				if (DEBUG) {
+					System.out.println("FormText: new focus - hasFocus="+hasFocus);
+				}
 				if (!hasFocus) {
 					hasFocus = true;
-					if (handleFocusGained)
+					if (!mouseFocus || handleFocusGained)
 						handleFocusChange();
 				}
 			}
@@ -672,6 +679,11 @@ public final class FormText extends Canvas {
 			Control [] children = parent.getChildren();
 			for (int i=0; i<children.length; i++) {
 				attachTraverseListener(children[i], listener);
+			}
+			if (c instanceof Canvas) {
+				// If Canvas, the control iteself can accept
+				// traverse events and should be monitored
+				c.addListener(SWT.Traverse, listener);
 			}
 		}
 		else {
@@ -1100,6 +1112,8 @@ public final class FormText extends Canvas {
 	}
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
+		if (DEBUG)
+			System.out.println("FormText: mouse click("+down+")");
 		if (down) {
 			// select a hyperlink
 			mouseFocus = true;
@@ -1205,14 +1219,20 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (hasFocus) {
-			// if (model.getSelectedLink() == null)
+			boolean advance=true;
 			if (!mouseFocus) {
 				if (model.restoreSavedLink() == false)
-					model.traverseFocusSelectableObjects(true);
-				enterLink(getSelectedLink(), SWT.NULL);
-				paintFocusTransfer(null, getSelectedLink());
-				if (getSelectedLink()!=null)
-					ensureVisible(getSelectedLink());
+					model.traverseFocusSelectableObjects(advance);
+				IFocusSelectable selectable = model.getSelectedSegment();
+				if (selectable!=null)
+					ensureVisible(selectable);
+				if (selectable instanceof IHyperlinkSegment) {
+					enterLink((IHyperlinkSegment)selectable, SWT.NULL);
+					paintFocusTransfer(null, (IHyperlinkSegment)selectable);
+				}
+				else if (selectable instanceof ControlSegment) {
+					selectable.setFocus(resourceTable, advance);
+				}
 			}
 		} else {
 			paintFocusTransfer(getSelectedLink(), null);
@@ -1254,10 +1274,6 @@ public final class FormText extends Canvas {
 		boolean selected = (link == getSelectedLink());
 		((ParagraphSegment) link).paint(gc, hover, resourceTable, selected,
 				selData, null);
-		// if (selected) {
-		// link.paintFocus(gc, getBackground(), getForeground(), false, null);
-		// link.paintFocus(gc, getBackground(), getForeground(), true, null);
-		// }
 		gc.dispose();
 	}
 
@@ -1366,7 +1382,7 @@ public final class FormText extends Canvas {
 		manager.add(new Separator());
 	}
 
-	private void ensureVisible(IHyperlinkSegment segment) {
+	private void ensureVisible(IFocusSelectable segment) {
 		if (mouseFocus) {
 			mouseFocus = false;
 			return;
