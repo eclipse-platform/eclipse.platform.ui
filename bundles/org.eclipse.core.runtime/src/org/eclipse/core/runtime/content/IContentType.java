@@ -197,8 +197,7 @@ public interface IContentType extends IContentTypeSettings {
 
 	/**
 	 * Returns the settings for this content type in the given 
-	 * preference context. Content types provide a protocol
-	 * 
+	 * preference context.
 	 * 
 	 * @param context a preference scope context 
 	 * @return setting in the given context
