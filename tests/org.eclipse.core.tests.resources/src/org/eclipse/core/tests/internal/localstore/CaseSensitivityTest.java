@@ -604,11 +604,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 
 		try {
 			file.delete(true, null);
-			// FIXME: there is a bug in the code related to this scenario
-			//		assert("5.0", isCaseSensitive);
 		} catch (CoreException e) {
-			// FIXME: there is a bug in the code related to this scenario
-			//		assert("5.1", !isCaseSensitive);
+			fail("5.0", e);
 		}
 
 		localFile.delete(); // so that we can change its parent folder
@@ -624,11 +621,8 @@ public class CaseSensitivityTest extends LocalStoreTest {
 
 		try {
 			folder.delete(true, null);
-			// FIXME: there is a bug in the code related to this scenario
-			//		assert("8.0", isCaseSensitive);
 		} catch (CoreException e) {
-			// FIXME: there is a bug in the code related to this scenario
-			//		assert("8.1", !isCaseSensitive);
+			fail("8.0", e);
 		}
 	}
 }
