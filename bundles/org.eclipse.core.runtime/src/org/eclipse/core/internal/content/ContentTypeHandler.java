@@ -70,8 +70,11 @@ public class ContentTypeHandler implements IContentType {
 	}
 
 	public IContentType getBaseType() {
-		final IContentType target = getTarget();
-		return (target != null) ? target.getBaseType() : null;
+		final ContentType target = getTarget();
+		if (target == null)
+			return null;
+		final ContentType baseType = (ContentType) target.getBaseType();
+		return (baseType != null) ? new ContentTypeHandler(baseType, baseType.getCatalog().getGeneration()) : null;
 	}
 
 	public String getDefaultCharset() {
@@ -109,8 +112,13 @@ public class ContentTypeHandler implements IContentType {
 	}
 
 	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
-		final IContentType target = getTarget();
-		return (target != null) ? target.getSettings(context) : this;
+		final ContentType target = getTarget();
+		if (target == null)
+			return null;
+		// the content type may returned itself as the settings object (instance scope context)
+		final IContentTypeSettings settings = target.getSettings(context);
+		// in that case, return this same handler; otherwise, just return the settings 
+		return settings == target ? this : settings;		
 	}
 
 	/**
