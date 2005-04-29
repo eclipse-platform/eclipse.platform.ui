@@ -72,7 +72,7 @@ public class InjectionFilter implements IFilter {
 		if (!addNarrow && !addDisabled)
 			return out;
 		
-		needsLiveHelp = HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp();
+		needsLiveHelp = HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp(addNarrow);
 
 		IPath path = new Path(pathInfo);
 		int upLevels = path.segmentCount() - 1;
@@ -93,7 +93,7 @@ public class InjectionFilter implements IFilter {
 				appendRelativePath(script, upLevels, "org.eclipse.help"); //$NON-NLS-1$
 				script.append(disabledBook4);
 			}
-			appendDisabled(disabledContent, upLevels);
+			appendDisabled(disabledContent, upLevels, addNarrow);
 		}
 		try {
 			return new FilterHTMLHeadAndBodyOutputStream(
@@ -116,8 +116,8 @@ public class InjectionFilter implements IFilter {
 		appendRelativePath(buff, nsteps, "PRODUCT_PLUGIN"); //$NON-NLS-1$
 	}
 
-	private void appendDisabled(StringBuffer buff, int nsteps) {
-		String message = HelpBasePlugin.getActivitySupport().getDocumentMessage();
+	private void appendDisabled(StringBuffer buff, int nsteps, boolean narrow) {
+		String message = HelpBasePlugin.getActivitySupport().getDocumentMessage(narrow);
 		if (message==null)
 			return;
 		buff.append("<div id=\"help-disabledTopic\">"); //$NON-NLS-1$

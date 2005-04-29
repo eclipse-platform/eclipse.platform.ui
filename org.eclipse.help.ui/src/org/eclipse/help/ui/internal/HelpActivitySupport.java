@@ -74,11 +74,11 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 				return child.getValue();
 			return null;
 		}
-		public boolean needsLiveHelp() {
-			getDocumentMessage();
+		public boolean needsLiveHelp(boolean embedded) {
+			getDocumentMessage(embedded);
 			return needsLiveHelp;
 		}
-		public String getDocumentMessage() {
+		public String getDocumentMessage(boolean embedded) {
 			if (config!=null && documentMessage==null) {
 				IConfigurationElement child = getChild("documentMessage"); //$NON-NLS-1$
 				if (child!=null) {
@@ -90,7 +90,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 						needsLiveHelp=true;
 						StringBuffer buffer = new StringBuffer();
 						buffer.append(value.substring(0, loc));
-						buffer.append(getActivityEditorValue(pluginId, className));
+						buffer.append(getActivityEditorValue(pluginId, className, embedded));
 						buffer.append(value.substring(loc+15));
 						documentMessage = buffer.toString();
 					}
@@ -100,8 +100,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			}
 			return documentMessage;
 		}
-		private String getActivityEditorValue(String pluginId, String className) {
-			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		private String getActivityEditorValue(String pluginId, String className, boolean embedded) {
+			String evalue = embedded?"narrow":"";
+			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\""+evalue+"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
@@ -271,10 +272,10 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	public String getShowAllMessage() {
 		return activityDescriptor.getShowAllMessage();
 	}
-	public String getDocumentMessage() {
-		return activityDescriptor.getDocumentMessage();
+	public String getDocumentMessage(boolean embedded) {
+		return activityDescriptor.getDocumentMessage(embedded);
 	}
-	public boolean getDocumentMessageUsesLiveHelp() {
-		return activityDescriptor.needsLiveHelp();
+	public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
+		return activityDescriptor.needsLiveHelp(embedded);
 	}
 }

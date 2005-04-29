@@ -55,10 +55,10 @@ public class HelpBasePlugin extends Plugin {
 		public String getShowAllMessage() {
 			return null;
 		}
-		public String getDocumentMessage() {
+		public String getDocumentMessage(boolean embedded) {
 			return null;
 		}
-		public boolean getDocumentMessageUsesLiveHelp() {
+		public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
 			return false;
 		}
 	};
