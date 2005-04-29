@@ -855,7 +855,7 @@ public class CheatSheetParser {
 			throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
 		}
 	}
-
+/*
 	private String getNormalizedText(String text) {
 		int [] spaceCounter = new int[1];
 		StringBuffer buf = new StringBuffer();
@@ -886,4 +886,5 @@ public class CheatSheetParser {
 
 		return buf.toString();
 	}
+*/
 }

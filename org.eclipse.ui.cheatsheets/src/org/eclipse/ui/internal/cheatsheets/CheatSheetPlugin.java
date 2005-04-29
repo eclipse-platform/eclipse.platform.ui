@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
 
 import javax.xml.parsers.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,8 +36,8 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	static CheatSheetPlugin plugin;
 
 	//Resource bundle.
-	private boolean resourceBundleInitialized = false;
-	private ResourceBundle resourceBundle;
+	//private boolean resourceBundleInitialized = false;
+	//private ResourceBundle resourceBundle;
 	private CheatSheetHistory history = null;
 	private DocumentBuilder documentBuilder = null;
 	
@@ -116,47 +115,47 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeImageRegistry(ImageRegistry reg) {
-		String imageFileName = "icons/full/obj16/skip_status.gif"; //$NON-NLS-1$
+		String imageFileName = "icons/obj16/skip_status.gif"; //$NON-NLS-1$
 		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_SKIP, imageDescriptor);
 
-		imageFileName = "icons/full/obj16/complete_status.gif"; //$NON-NLS-1$
+		imageFileName = "icons/obj16/complete_status.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/linkto_help.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/linkto_help.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_HELP, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/start_cheatsheet.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/start_cheatsheet.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_START, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/restart_cheatsheet.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/restart_cheatsheet.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_RESTART, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/start_task.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/start_task.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/skip_task.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/skip_task.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/complete_task.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/complete_task.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE, imageDescriptor);
 
-		imageFileName = "icons/full/clcl16/restart_task.gif"; //$NON-NLS-1$
+		imageFileName = "icons/elcl16/restart_task.gif"; //$NON-NLS-1$
 		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART, imageDescriptor);

@@ -37,7 +37,7 @@ public class CheatSheetView extends ViewPart {
 		IToolBarManager tbmanager = bars.getToolBarManager();
 	
 		// fields
-		String collapseExpandFile = "icons/full/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
+		String collapseExpandFile = "icons/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
 		URL collapseExpandURL = CheatSheetPlugin.getPlugin().find(new Path(collapseExpandFile));
 		ImageDescriptor collapseExpandImage = ImageDescriptor.createFromURL(collapseExpandURL);
 	
