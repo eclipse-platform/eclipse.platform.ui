@@ -14,7 +14,6 @@ package org.eclipse.ui;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 
@@ -401,7 +400,7 @@ public final class XMLMemento implements IMemento {
     public void save(Writer writer) throws IOException {
     	DOMWriter out = new DOMWriter(writer);
         try {
-        	out.save(element);
+        	out.print(element);
     	} finally {
     		out.close();
     	}
@@ -411,44 +410,74 @@ public final class XMLMemento implements IMemento {
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
      * compilation against JCL Foundation (bug 80053). 
      */
-    private static class DOMWriter extends PrintWriter {
-    	protected int tab;
+    private static final class DOMWriter extends PrintWriter {
+    	
+    	private int tab;
 
     	/* constants */
-    	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
+    	private static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
-    	public DOMWriter(Writer output) throws UnsupportedEncodingException {
+    	/**
+    	 * Creates a new DOM writer on the given output writer.
+    	 * 
+    	 * @param output the output writer
+    	 */
+    	public DOMWriter(Writer output) {
     		super(output);
     		tab = 0;
     		println(XML_VERSION);
     	}
 
-        public void save(Element element) {
-        	startTag(element);
-        	NodeList children = element.getChildNodes();
-    		for (int i = 0; i < children.getLength(); i++) 
-    			save((Element) children.item(i));
-    		endTag(element);
+    	/**
+    	 * Prints the given element.
+    	 * 
+    	 * @param element the element to print
+    	 */
+        public void print(Element element) {
+        	// Ensure extra whitespace is not emitted next to a Text node,
+        	// as that will result in a situation where the restored text data is not the
+        	// same as the saved text data.
+        	boolean hasChildren = element.hasChildNodes();
+        	startTag(element, hasChildren);
+        	if (hasChildren) {
+	        	tab++;
+	        	boolean prevWasText = false;
+	        	NodeList children = element.getChildNodes();
+	    		for (int i = 0; i < children.getLength(); i++) {
+	    			Node node = children.item(i);
+	    			if (node instanceof Element) {
+	    				if (!prevWasText) {
+	    					println();
+	    					printTabulation();
+	    				}
+	    				print((Element) children.item(i));
+	    				prevWasText = false;
+	    			}
+	    			else if (node instanceof Text) {
+	    				print(getEscaped(node.getNodeValue()));
+	    				prevWasText = true;
+	    			}
+	    		}
+	    		tab--;
+	    		if (!prevWasText) {
+	    			println();
+	    			printTabulation();
+	    		}
+	    		endTag(element);
+        	}
     	}
 
-    	private void endTag(Element element) {
-    		tab--;
-    		if (!element.hasChildNodes())
-    			return;
-    		StringBuffer sb = new StringBuffer();
-    		sb.append("</"); //$NON-NLS-1$
-    		sb.append(element.getNodeName());
-    		sb.append(">"); //$NON-NLS-1$
-   			printTabulation();
-   			println(sb.toString());
-    	}
-    	
     	private void printTabulation() {
-    		for (int i = 0; i < tab; i++)
-    			super.print("\t"); //$NON-NLS-1$
+        	// Indenting is disabled, as it can affect the result of getTextData().
+        	// In 3.0, elements were separated by a newline but not indented.
+    		// This causes getTextData() to return "\n" even if no text data had explicitly been set.
+        	// The code here emulates that behaviour.
+    		
+//    		for (int i = 0; i < tab; i++)
+//    			super.print("\t"); //$NON-NLS-1$
     	}
 
-    	private void printTag(Element element, boolean shouldTab, boolean newLine) {
+    	private void startTag(Element element, boolean hasChildren) {
     		StringBuffer sb = new StringBuffer();
     		sb.append("<"); //$NON-NLS-1$
     		sb.append(element.getTagName());
@@ -461,20 +490,18 @@ public final class XMLMemento implements IMemento {
 				sb.append(getEscaped(String.valueOf(attribute.getValue())));
 				sb.append("\""); //$NON-NLS-1$
    			}
-   			sb.append(element.hasChildNodes() ? ">" : "/>"); //$NON-NLS-1$ //$NON-NLS-2$
-    		if (shouldTab)
-    			printTabulation();
-    		if (newLine)
-    			println(sb.toString());
-    		else
-    			print(sb.toString());
+   			sb.append(hasChildren ? ">" : "/>"); //$NON-NLS-1$ //$NON-NLS-2$
+   			print(sb.toString());
     	}
 
-    	private void startTag(Element element) {
-    		printTag(element, true, true);
-    		tab++;
+    	private void endTag(Element element) {
+    		StringBuffer sb = new StringBuffer();
+    		sb.append("</"); //$NON-NLS-1$
+    		sb.append(element.getNodeName());
+    		sb.append(">"); //$NON-NLS-1$
+   			print(sb.toString());
     	}
-
+    	
     	private static void appendEscapedChar(StringBuffer buffer, char c) {
     		String replacement = getReplacement(c);
     		if (replacement != null) {
