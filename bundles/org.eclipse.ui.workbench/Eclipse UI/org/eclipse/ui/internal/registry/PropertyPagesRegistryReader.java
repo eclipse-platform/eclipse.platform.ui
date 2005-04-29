@@ -47,6 +47,13 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      * Value "<code>filter</code>".
      */
     public static final String TAG_FILTER = "filter";//$NON-NLS-1$
+    
+    
+    /**
+     * Value "<code>keywordReference</code>".
+     */
+    public static final String TAG_KEYWORD_REFERENCE = "keywordReference";//$NON-NLS-1$
+   
 
     /**
      * Value "<code>objectClass</code>".
@@ -146,6 +153,10 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
             return true;
         }
         if (element.getName().equals(TAG_FILTER)) {
+            return true;
+        }
+        
+         if (element.getName().equals(TAG_KEYWORD_REFERENCE)) {
             return true;
         }
 

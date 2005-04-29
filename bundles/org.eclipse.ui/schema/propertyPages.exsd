@@ -62,6 +62,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
       <complexType>
          <sequence>
             <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
