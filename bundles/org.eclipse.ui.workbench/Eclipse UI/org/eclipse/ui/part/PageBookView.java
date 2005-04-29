@@ -202,7 +202,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
     /**
      * A selection provider/listener for this view.
-     * It is a selection provider fo this view's site.
+     * It is a selection provider for this view's site.
      */
     protected class SelectionProvider implements ISelectionProvider {
         /**
