@@ -26,26 +26,26 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * @since 3.1
  */
 public interface ISearchScopeFactory {
-    /**
-     * Returns a new search scope object created from the data in the preference
-     * store. Factories should be prepared to compute default values if they are
-     * missing from the preference store. This can happen before users open
-     * scope preference pages for the first time.
-     * <p>
-     * In cases where conflicting values can be found in the preference store
-     * and parameters, preference store should win i.e. parameters should be
-     * treated as default values only.
-     * 
-     * @param store
-     *            the preference store that holds the scope data
-     * @param engineId
-     *            identifier of the engine instance that needs the scope object.
-     * @param parameters
-     *            configuration parameters provided in the engine extension
-     *            point. They should be used as default values and preference
-     *            store values (if defined) should be given precedance.
-     * @return a new search scope object
-     */
-    ISearchScope createSearchScope(IPreferenceStore store, String engineId,
-            Dictionary parameters);
+	/**
+	 * Returns a new search scope object created from the data in the preference
+	 * store. Factories should be prepared to compute default values if they are
+	 * missing from the preference store. This can happen before users open
+	 * scope preference pages for the first time.
+	 * <p>
+	 * In cases where conflicting values can be found in the preference store
+	 * and parameters, preference store should win i.e. parameters should be
+	 * treated as default values only.
+	 * 
+	 * @param store
+	 *            the preference store that holds the scope data
+	 * @param engineId
+	 *            identifier of the engine instance that needs the scope object.
+	 * @param parameters
+	 *            configuration parameters provided in the engine extension
+	 *            point. They should be used as default values and preference
+	 *            store values (if defined) should be given precedance.
+	 * @return a new search scope object
+	 */
+	ISearchScope createSearchScope(IPreferenceStore store, String engineId,
+			Dictionary parameters);
 }
