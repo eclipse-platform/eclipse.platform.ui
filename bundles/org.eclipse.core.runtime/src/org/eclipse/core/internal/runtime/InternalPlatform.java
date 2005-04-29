@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Julian Chen - fix for bug #92572, jclRM
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -865,14 +866,16 @@ public final class InternalPlatform {
 
 			// look for the no registry cache flag
 			if (args[i].equalsIgnoreCase(NO_REGISTRY_CACHE)) {
-				System.setProperty(PROP_NO_REGISTRY_CACHE, TRUE);
+				// use the long way to set the property to compile against eeminimum
+				System.getProperties().setProperty(PROP_NO_REGISTRY_CACHE, TRUE);
 				found = true;
 			}
 
 			// check to see if we should NOT be lazily loading plug-in definitions from the registry cache file.
 			// This will be processed below.
 			if (args[i].equalsIgnoreCase(NO_LAZY_REGISTRY_CACHE_LOADING)) {
-				System.setProperty(PROP_NO_LAZY_CACHE_LOADING, TRUE);
+				// use the long way to set the property to compile against eeminimum
+				System.getProperties().setProperty(PROP_NO_LAZY_CACHE_LOADING, TRUE);
 				found = true;
 			}
 
@@ -917,13 +920,15 @@ public final class InternalPlatform {
 			// look for the product to run
 			// treat -feature as a synonym for -product for compatibility.
 			if (args[i - 1].equalsIgnoreCase(PRODUCT) || args[i - 1].equalsIgnoreCase(FEATURE)) {
-				System.setProperty(PROP_PRODUCT, arg);
+				// use the long way to set the property to compile against eeminimum
+				System.getProperties().setProperty(PROP_PRODUCT, arg);
 				found = true;
 			}
 
 			// look for the application to run.  
 			if (args[i - 1].equalsIgnoreCase(APPLICATION)) {
-				System.setProperty(PROP_APPLICATION, arg);
+				// use the long way to set the property to compile against eeminimum
+				System.getProperties().setProperty(PROP_APPLICATION, arg);
 				found = true;
 			}
 

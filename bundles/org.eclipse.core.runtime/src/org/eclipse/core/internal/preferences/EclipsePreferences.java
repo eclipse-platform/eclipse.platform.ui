@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Julian Chen - fix for bug #92572, jclRM
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
@@ -189,18 +190,18 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		final ArrayList result = new ArrayList();
 		final String extension = '.' + PREFS_FILE_EXTENSION;
 		File file = dir.toFile();
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File directory, String child) {
-				if (new File(directory, child).isDirectory())
-					return false;
-				if (child.endsWith(extension)) {
-					String shortName = child.substring(0, child.length() - extension.length());
-					result.add(shortName);
+		File [] totalFiles = file.listFiles();
+		if (totalFiles != null) {
+			for (int i=0; i<totalFiles.length; i++) {
+				if (totalFiles[i].isFile()) {
+					String filename = totalFiles[i].getName();
+					if (filename.endsWith(extension)) {
+						String shortName = filename.substring(0, filename.length() - extension.length());
+						result.add(shortName);
+					}
 				}
-				return false;
 			}
-		};
-		file.list(filter);
+		}
 		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
 	}
 	

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Julian Chen - fix for bug #92572, jclRM
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -199,7 +200,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					if (product != null) {
 						applicationId = product.getApplication();
 						if (applicationId != null)
-							System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
+							// use the long way to set the property to compile against eeminimum
+							System.getProperties().setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
 					}
 				}
 				if (applicationId == null)
@@ -227,7 +229,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 					arg = InternalPlatform.getDefault().getApplicationArgs();
 				Object result = application.run(arg);
 				int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-				System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
+				// use the long way to set the property to compile against eeminimum
+				System.getProperties().setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
 				if (InternalPlatform.DEBUG)
 					System.out.println(NLS.bind(Messages.application_returned, (new String[] {applicationId, result == null ? "null" : result.toString()}))); //$NON-NLS-1$
 				return result;
