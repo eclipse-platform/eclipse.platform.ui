@@ -109,6 +109,18 @@ public interface IPreferenceStore {
      * or using the OSGI Preferences) the values will be unconverted
      * Strings.
      * </p>
+     * <p>
+     * A listener will be called in the same Thread
+     * that it is invoked in. Any Thread dependant listeners (such as 
+     * those who update an SWT widget) will need to update in the
+     * correct Thread. In the case of an SWT update you can update
+     * using Display#syncExec(Runnable) or Display#asyncExec(Runnable).
+     * </p>
+     * <p>  
+     * Likewise any application that updates an IPreferenceStore 
+     * from a Thread other than the UI Thread should be aware of
+     * any listeners that require an update in the UI Thread. 
+     * </p>
      *
      * @param listener a property change listener
      * @see org.eclipse.jface.util.PropertyChangeEvent
