@@ -13,10 +13,10 @@ package org.eclipse.help.ui.internal;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -230,8 +230,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (context == null)
 			return;
 		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
-		boolean winfopop = pref.getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
-		boolean dinfopop = pref.getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		boolean winfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
+		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();

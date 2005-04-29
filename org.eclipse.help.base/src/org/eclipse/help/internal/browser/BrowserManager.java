@@ -22,8 +22,6 @@ import org.eclipse.osgi.util.NLS;
  * Creates browser by delegating to appropriate browser adapter
  */
 public class BrowserManager {
-	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser"; //$NON-NLS-1$
-
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser"; //$NON-NLS-1$
 
 	public static final String BROWSER_ID_CUSTOM = HelpBasePlugin.PLUGIN_ID
@@ -176,7 +174,7 @@ public class BrowserManager {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
 		setAlwaysUseExternal(HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(ALWAYS_EXTERNAL_BROWSER_KEY));
+				.getBoolean(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
 	}
 
 	/**

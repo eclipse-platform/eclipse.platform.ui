@@ -13,8 +13,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceNode;
@@ -81,7 +81,7 @@ public class BrowsersPreferencePage extends PreferencePage
 			alwaysExternal.setText(Messages.use_only_external_browser); //$NON-NLS-1$
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
-							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
+							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
 			//createSpacer(mainComposite);
 		}
 /*
@@ -173,7 +173,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		whelpAsInfopopButton = new Button(group, SWT.RADIO);
 		whelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_winfopop); 
 		boolean winfopop = HelpBasePlugin.getDefault()
-		.getPluginPreferences().getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
+		.getPluginPreferences().getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
 		whelpAsViewButton.setSelection(!winfopop);
 		whelpAsInfopopButton.setSelection(winfopop);
 		
@@ -188,8 +188,8 @@ public class BrowsersPreferencePage extends PreferencePage
 		dhelpAsWindowButton.setText(Messages.BrowsersPreferencePage_window); 
 		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
 		dhelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_dinfopop); 
-		boolean dinfopop = HelpUIPlugin.getDefault()
-		.getPluginPreferences().getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		boolean dinfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
 	}
@@ -290,16 +290,16 @@ public class BrowsersPreferencePage extends PreferencePage
 		if (alwaysExternal != null) {
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
 					.getPluginPreferences().getDefaultBoolean(
-							BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
+							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
 		}
 		
-		boolean winfopop = HelpUIPlugin.getDefault()
-		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
+		boolean winfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getDefaultBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
 		whelpAsViewButton.setSelection(!winfopop);
 		whelpAsInfopopButton.setSelection(winfopop);		
 		
-		boolean dinfopop = HelpUIPlugin.getDefault()
-		.getPluginPreferences().getDefaultBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
+		boolean dinfopop = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getDefaultBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);		
 		
@@ -309,7 +309,7 @@ public class BrowsersPreferencePage extends PreferencePage
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
 		/*
 		for (int i = 0; i < externalBrowsers.length; i++) {
 			if (externalBrowsers[i].getSelection()) {
@@ -326,13 +326,13 @@ public class BrowsersPreferencePage extends PreferencePage
 				.getText());
 				*/
 		if (alwaysExternal != null) {
-			pref.setValue(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY,
+			pref.setValue(IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER,
 					alwaysExternal.getSelection());
 			BrowserManager.getInstance().setAlwaysUseExternal(
 					alwaysExternal.getSelection());
 		}
-		pref.setValue(IHelpUIConstants.P_WINDOW_INFOPOP, whelpAsInfopopButton.getSelection());
-		pref.setValue(IHelpUIConstants.P_DIALOG_INFOPOP, dhelpAsInfopopButton.getSelection());		
+		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP, whelpAsInfopopButton.getSelection());
+		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, dhelpAsInfopopButton.getSelection());		
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
