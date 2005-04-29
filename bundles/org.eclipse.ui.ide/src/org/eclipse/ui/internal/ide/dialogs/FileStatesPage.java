@@ -39,23 +39,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 public class FileStatesPage extends PreferencePage implements
         IWorkbenchPreferencePage, Listener {
 
-    private static final String LONGEVITY_TITLE = IDEWorkbenchMessages.FileHistory_longevity;
-
-    private static final String MAX_FILE_STATES_TITLE = IDEWorkbenchMessages.FileHistory_entries;
-
-    private static final String MAX_FILE_STATE_SIZE_TITLE = IDEWorkbenchMessages.FileHistory_diskSpace;
-
-    private static final String POSITIVE_MESSAGE = IDEWorkbenchMessages.FileHistory_mustBePositive;
-
-    private static final String INVALID_VALUE_MESSAGE = IDEWorkbenchMessages.FileHistory_invalid;
-
-    private static final String SAVE_ERROR_MESSAGE = IDEWorkbenchMessages.FileHistory_exceptionSaving;
-
-    private static final String NOTE_MESSAGE = IDEWorkbenchMessages.FileHistory_restartNote;
-
-    private static final String NOTE_LABEL = IDEWorkbenchMessages.Preference_note;
-
-    private static final int FAILED_VALUE = -1;
+	private static final int FAILED_VALUE = -1;
 
     //Set the length of the day as we have to convert back and forth
     private static final long DAY_LENGTH = 86400000;
@@ -156,11 +140,11 @@ public class FileStatesPage extends PreferencePage implements
         if (megabytes < 1)
             megabytes = 1;
 
-        this.longevityText = addLabelAndText(LONGEVITY_TITLE, String
+        this.longevityText = addLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
                 .valueOf(days), composite);
-        this.maxStatesText = addLabelAndText(MAX_FILE_STATES_TITLE, String
+        this.maxStatesText = addLabelAndText(IDEWorkbenchMessages.FileHistory_entries, String
                 .valueOf(description.getMaxFileStates()), composite);
-        this.maxStateSizeText = addLabelAndText(MAX_FILE_STATE_SIZE_TITLE,
+        this.maxStateSizeText = addLabelAndText(IDEWorkbenchMessages.FileHistory_diskSpace,
                 String.valueOf(megabytes), composite);
 
         checkState();
@@ -172,7 +156,7 @@ public class FileStatesPage extends PreferencePage implements
         spacer.setLayoutData(spacerData);
 
         Composite noteComposite = createNoteComposite(parent.getFont(),
-                composite, NOTE_LABEL, NOTE_MESSAGE);
+                composite, IDEWorkbenchMessages.Preference_note, IDEWorkbenchMessages.FileHistory_restartNote);
         GridData noteData = new GridData();
         noteData.horizontalSpan = 2;
         noteComposite.setLayoutData(noteData);
@@ -254,7 +238,7 @@ public class FileStatesPage extends PreferencePage implements
             //As it is only a copy save it back in
             ResourcesPlugin.getWorkspace().setDescription(description);
         } catch (CoreException exception) {
-            ErrorDialog.openError(getShell(), SAVE_ERROR_MESSAGE, exception
+            ErrorDialog.openError(getShell(), IDEWorkbenchMessages.FileHistory_exceptionSaving, exception
                     .getMessage(), exception.getStatus());
             return false;
         }
@@ -276,14 +260,14 @@ public class FileStatesPage extends PreferencePage implements
             value = Integer.parseInt(text.getText());
 
         } catch (NumberFormatException exception) {
-            setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE,
+            setErrorMessage(MessageFormat.format(IDEWorkbenchMessages.FileHistory_invalid,
                     new Object[] { exception.getLocalizedMessage() }));
             return FAILED_VALUE;
         }
 
         //Be sure all values are non zero and positive
         if (value <= 0) {
-            setErrorMessage(POSITIVE_MESSAGE);
+            setErrorMessage(IDEWorkbenchMessages.FileHistory_mustBePositive);
             return FAILED_VALUE;
         }
 
@@ -303,14 +287,14 @@ public class FileStatesPage extends PreferencePage implements
             value = Long.parseLong(text.getText());
 
         } catch (NumberFormatException exception) {
-            setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE,
+            setErrorMessage(MessageFormat.format(IDEWorkbenchMessages.FileHistory_invalid,
                     new Object[] { exception.getLocalizedMessage() }));
             return FAILED_VALUE;
         }
 
         //Be sure all values are non zero and positive
         if (value <= 0) {
-            setErrorMessage(POSITIVE_MESSAGE);
+            setErrorMessage(IDEWorkbenchMessages.FileHistory_mustBePositive);
             return FAILED_VALUE;
         }
 
