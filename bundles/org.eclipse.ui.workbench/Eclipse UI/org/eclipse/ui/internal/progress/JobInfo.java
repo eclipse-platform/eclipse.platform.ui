@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -27,7 +29,7 @@ class JobInfo extends JobTreeElement {
     private IStatus blockedStatus;
 
     private boolean canceled = false;
-    private ArrayList children = new ArrayList();
+    private List children = Collections.synchronizedList(new ArrayList());
 
     private Job job;
 
