@@ -59,28 +59,53 @@ public class RenameInFileAction extends SelectionDispatchAction {
 		if (positions == null) {
 			return;
 		}
-		Iterator iter= positions.iterator();
-		int i=0;
+	
+		addPositionsToGroup(offset, positions, document, group);
+		if (group.isEmtpy()) {
+		    return;         
+        }
 		try {
-			while (iter.hasNext()) {
-				Position position = (Position) iter.next();
-				group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), i));
-				i++;
-			}
-			
 			LinkedModeModel model= new LinkedModeModel();
 			model.addGroup(group);
 			model.forceInstall();
-			model.addLinkingListener(new EditorSynchronizer(fEditor));
-			
+            model.addLinkingListener(new EditorSynchronizer(fEditor));
 			LinkedModeUI ui= new EditorLinkedModeUI(model, viewer);
-			ui.setExitPosition(viewer, offset, 0, LinkedPositionGroup.NO_STOP);
+			ui.setExitPosition(viewer, offset, 0, Integer.MAX_VALUE);
 			ui.enter();
+			viewer.setSelectedRange(offset, 0);
 		} catch (BadLocationException e) {
 			AntUIPlugin.log(e);
 		}
 	}
 	
+    
+    private void addPositionsToGroup(int offset, List positions, IDocument document, LinkedPositionGroup group) {
+        Iterator iter= positions.iterator();
+        int i= 0;
+        int j= 0;
+        int firstPosition= -1;
+        try {
+            while (iter.hasNext()) {
+                Position position = (Position) iter.next();
+                if (firstPosition == -1) {
+                    if (position.overlapsWith(offset, 0)) {
+                        firstPosition= i;
+                        group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+                    }
+                } else {
+                    group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+                }
+                i++;
+            }
+            
+            for (i = 0; i < firstPosition; i++) {
+                Position position= (Position) positions.get(i);
+                group.addPosition(new LinkedPosition(document, position.getOffset(), position.getLength(), j++));
+            }
+        } catch (BadLocationException be) {
+            AntUIPlugin.log(be);
+        }
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.actions.SelectionDispatchAction#selectionChanged(org.eclipse.jface.text.ITextSelection)
 	 */
