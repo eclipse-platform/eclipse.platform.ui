@@ -12,8 +12,8 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
-import org.eclipse.ltk.internal.core.refactoring.UndoManager2;
 
 /**
  * Central access point to access resources managed by the refactoring
@@ -26,7 +26,6 @@ import org.eclipse.ltk.internal.core.refactoring.UndoManager2;
  */
 public class RefactoringCore {
 
-	private static IUndoManager fgUndoManager= null;
 	private static IValidationCheckResultQueryFactory fQueryFactory= new DefaultQueryFactory();
 
 	private static class NullQuery implements IValidationCheckResultQuery {
@@ -55,9 +54,7 @@ public class RefactoringCore {
 	 * @return the refactoring undo manager.
 	 */
 	public static IUndoManager getUndoManager() {
-		if (fgUndoManager == null)
-			fgUndoManager= createUndoManager();
-		return fgUndoManager;
+		return RefactoringCorePlugin.getUndoManager();
 	}
 	
 	/**
@@ -99,14 +96,5 @@ public class RefactoringCore {
 		} else {
 			fQueryFactory= factory;
 		}
-	}
-	
-	/**
-	 * Creates a new empty undo manager.
-	 * 
-	 * @return a new undo manager
-	 */
-	private static IUndoManager createUndoManager() {
-		return new UndoManager2();
-	}
+	}	
 }

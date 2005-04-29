@@ -22,11 +22,14 @@ import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.IUndoManager;
+
 import org.osgi.framework.BundleContext;
 
 public class RefactoringCorePlugin extends Plugin {
 	
 	private static RefactoringCorePlugin fgDefault;
+	private static IUndoManager fgUndoManager= null;
 	
 	private static IUndoContext fRefactoringUndoContext;
 	
@@ -92,6 +95,12 @@ public class RefactoringCorePlugin extends Plugin {
 		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringCoreStatusCodes.INTERNAL_ERROR, message, null));
 	}
 	
+	public static IUndoManager getUndoManager() {
+		if (fgUndoManager == null)
+			fgUndoManager= createUndoManager();
+		return fgUndoManager;
+	}
+	
 	public void stop(BundleContext context) throws Exception {
 		if (fRefactoringUndoContext != null) {
 			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
@@ -99,6 +108,17 @@ public class RefactoringCorePlugin extends Plugin {
 				((ObjectUndoContext)workspaceContext).removeMatch(fRefactoringUndoContext);
 			}
 		}
+		if (fgUndoManager != null)
+			fgUndoManager.shutdown();
 		super.stop(context);
+	}
+	
+	/**
+	 * Creates a new empty undo manager.
+	 * 
+	 * @return a new undo manager
+	 */
+	private static IUndoManager createUndoManager() {
+		return new UndoManager2();
 	}
 }
