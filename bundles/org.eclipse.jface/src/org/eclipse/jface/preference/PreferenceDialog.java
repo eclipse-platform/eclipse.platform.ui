@@ -622,7 +622,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 						// Everything went well
 						lastSuccessfulNode = (IPreferenceNode) selection;
 					}
-					viewer.getControl().setFocus();
 				}
 			}
 		});
