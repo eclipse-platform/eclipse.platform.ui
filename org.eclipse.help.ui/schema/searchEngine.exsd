@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          This extension point is used to plug in search participants in the federated help search. Each search engine can be configured individually. When search is initiated, each search engine is executed as a background job, and the results are collated in the help view immediately under the query.
-&lt;p&gt;Search engines defined here may not show up will not automatically show up as federated search participants until engine product binding is established. Only engines bound to a particular product will show up when that product is running.
+&lt;p&gt;Search engines defined here will not automatically show up as federated search participants until engine product binding is established, unless &lt;code&gt;productId&lt;/code&gt; attribute is left undefined. For engines that define it, only thouse bound to a particular product will show up when that product is running.
 &lt;p&gt;
 Search engines can simply compose a URL and provide only one hit containing that URL as href. Popular search engines for which API support requires license can be plugged in like this. On the other end of the spectrum, search engines can communicate with the server and receive individual hits with information like label, href, short description, score etc. Local help engine can produce hits this way.
 &lt;p&gt;Regardless of the search mechanism, engines can provide various search scope settings using JFace preference pages. These pages are shown when &apos;Advanced Settings&apos; link is followed from the Help view. In addition to root preference pages defined with the engine, additional preference sub-pages can be plugged in for more advanced settings.
@@ -276,7 +276,44 @@ of a search engine that can be individually modified. Products can preconfigure 
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is the example of the help search extension:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.help.ui.searchEngine&quot;&gt;
+      &lt;engineType
+            scopeFactory=&quot;com.example.xyz.XYZScopeFactory&quot;
+            label=&quot;XYZ Search&quot;
+            class=&quot;com.example.xyz.search.XYZSearch&quot;
+            icon=&quot;icons/etool16/xyzsearch.gif&quot;
+           pageClass=&quot;com.example.xyz.search.XYZSearchPage&quot;
+            id=&quot;com.example.xyz.XYZSearch&quot;&gt;
+         &lt;description&gt;
+            Instances of XYZ Search search the XYZ site.
+         &lt;/description&gt;
+      &lt;/engineType&gt;
+      &lt;engine
+            enabled=&quot;true&quot;
+            engineTypeId=&quot;com.example.xyz.search.XYZSearch&quot;
+            id=&quot;com.example.xyz.XYZSearch&quot;
+            label=&quot;XYZ Search&quot;&gt;
+      &lt;/engine&gt;
+      &lt;engine
+            enabled=&quot;true&quot;
+            engineTypeId=&quot;org.eclipse.help.ui.web&quot;
+            id=&quot;org.eclipse.sdk.Eclipse&quot;
+            label=&quot;%search.Eclipse.label&quot;&gt;
+      		&lt;description&gt;
+	      		%search.Eclipse.desc
+      		&lt;/description&gt;
+      		&lt;param 
+      			name=&quot;url&quot; 
+      			value=&quot;http://eclipse.org/search/search.cgi?q={expression}&amp;amp;ul=&amp;amp;ps=20&amp;amp;m=all&quot;&gt;
+      		&lt;/param&gt;
+      &lt;/engine&gt;
+    &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -285,7 +322,9 @@ of a search engine that can be individually modified. Products can preconfigure 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Attribute &lt;code&gt;class&lt;/code&gt; of the element &lt;code&gt;engineType&lt;/code&gt; must provide a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.search.ISearchEngine&lt;/code&gt;. Attribute &lt;code&gt;pageClass&lt;/code&gt; must provide a fully qualified name of the class that extends &lt;code&gt;org.eclipse.help.ui.RootScopePage&lt;/code&gt;. Attribute &lt;code&gt;scopeFactory&lt;/code&gt; must provide a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopeFactory&lt;/code&gt;.
+
+Attribute &lt;code&gt;class&lt;/code&gt; of the element &lt;code&gt;subpage&lt;/code&gt; must provide a fully qualified name of a class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopePage&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -294,7 +333,19 @@ of a search engine that can be individually modified. Products can preconfigure 
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Help UI plug-in provides search engine types for local help documentation, InfoCenter and Web search, as well as local help search engine.
+         Help UI plug-in provides search engine types for local help documentation, InfoCenter and Web search, as well as local help search engine instance. This instance does not accept parameters and has no product Id, thus will appear in every product.
+&lt;p&gt;
+Products can create concrete instances of InfoCenter and Web searches by using their engine id and the required paramaters.
+&lt;p&gt;
+InfoCenter engine type has engineId &lt;code&gt;org.eclipse.help.ui.infoCenter&lt;/code&gt; and accepts one parameter &lt;code&gt;url&lt;/code&gt; that points at the remote server where InfoCenter is installed. Results are shown in the same way as the local help results.
+&lt;p&gt;
+Web search engine type has engine id &lt;code&gt;org.eclipse.help.ui.web&lt;/code&gt; and accepts one parameter &lt;code&gt;url&lt;/code&gt; that represents a concrete search query with the actual search string replaced with a substitution symbol &apos;{expression}&apos;, as in the following example:
+&lt;p&gt;
+&lt;pre&gt;
+http://eclipse.org/search/search.cgi?q={expression}&amp;ul=&amp;ps=20&amp;m=all
+&lt;/pre&gt;
+&lt;/p&gt;
+Web search results are shown as one link that will open the web browser with the search string substituted in the &lt;code&gt;url&lt;/code&gt; parameter.
       </documentation>
    </annotation>
 

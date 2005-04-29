@@ -60,7 +60,7 @@ public class LocalHelp implements ISearchEngine {
 			ISearchEngineResultCollector collector, boolean activityFiltering) {
 		SearchHit[] searchHits = results.getSearchHits();
 		if (!activityFiltering) {
-			collector.add(searchHits);
+			collector.accept(searchHits);
 			return;
 		}
 		// Filtering of results by activities
@@ -71,7 +71,7 @@ public class LocalHelp implements ISearchEngine {
 				enabledHits.add(searchHits[i]);
 			}
 		}
-		collector.add((SearchHit[]) enabledHits
+		collector.accept((SearchHit[]) enabledHits
 				.toArray(new SearchHit[enabledHits.size()]));
 	}
 

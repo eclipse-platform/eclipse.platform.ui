@@ -11,8 +11,8 @@
 package org.eclipse.help;
 
 /**
- * Extends <code>IContext</code> to provide the support for styled text and
- * topic categorization.
+ * Extends <code>IContext</code> to provide support for styled text and topic
+ * categorization.
  * 
  * @since 3.1
  */
@@ -31,11 +31,11 @@ public interface IContext2 extends IContext {
 	/**
 	 * Returns the category of the provided topic. The category will be used in
 	 * the UI to render all the topics that belong to the same category grouped
-	 * together. The category string is expected to NL-ready i.e. presentable in
+	 * together. The category string is expected to be NL-ready i.e. presentable in
 	 * all NL locales.
 	 * 
 	 * @param topic
-	 *            the topic to return the category for
+	 *            the topic to be categorized 
 	 * @return the presentable name of the category that the topic belongs to,
 	 *         or <code>null</code> if the topic belongs to the default
 	 *         category.

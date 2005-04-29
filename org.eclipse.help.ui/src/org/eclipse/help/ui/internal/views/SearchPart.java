@@ -453,11 +453,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed
 						.getId(), ed.getLabel(), scope, ed.getEngine(),
 						new ISearchEngineResultCollector() {
-							public void add(ISearchEngineResult searchResult) {
+							public void accept(ISearchEngineResult searchResult) {
 								results.add(ed, searchResult);
 							}
 
-							public void add(ISearchEngineResult[] searchResults) {
+							public void accept(ISearchEngineResult[] searchResults) {
 								results.add(ed, searchResults);
 							}
 

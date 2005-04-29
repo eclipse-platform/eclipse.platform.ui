@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.search;
+package org.eclipse.help.internal.search;
 
 import java.io.*;
 import java.net.*;
@@ -19,6 +19,10 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.search.ISearchEngine;
+import org.eclipse.help.search.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResultCollector;
+import org.eclipse.help.search.ISearchScope;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -228,7 +232,7 @@ public final class InfoCenter implements ISearchEngine {
 			results[i] = new InfoCenterResult(baseURL, el);
 			monitor.worked(1);
 		}
-		collector.add(results);
+		collector.accept(results);
 	}
 
 	private URL createURL(String query, Scope scope) {

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.search;
+package org.eclipse.help.internal.search;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -16,6 +16,10 @@ import java.net.URLEncoder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.HelpBaseResources;
+import org.eclipse.help.search.ISearchEngine;
+import org.eclipse.help.search.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResultCollector;
+import org.eclipse.help.search.ISearchScope;
 
 /**
  * This implementation of <code>ISearchEngine</code> interface performs search
@@ -117,7 +121,7 @@ public final class WebSearch implements ISearchEngine {
 			throws CoreException {
 
 		collector
-				.add(new SearchResult(query, ((Scope) scope).getURLTemplate()));
+				.accept(new SearchResult(query, ((Scope) scope).getURLTemplate()));
 	}
 
 	private static String composeURL(String query, String urlTemplate) {

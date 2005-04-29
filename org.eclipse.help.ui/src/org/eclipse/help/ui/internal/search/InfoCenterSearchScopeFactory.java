@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.search;
 
 import java.util.*;
 
+import org.eclipse.help.internal.search.InfoCenter;
 import org.eclipse.help.search.*;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
