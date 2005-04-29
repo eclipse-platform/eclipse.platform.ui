@@ -59,7 +59,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
@@ -121,7 +120,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private EditorManager editorMgr;
 
     private EditorAreaHelper editorPresentation;
-        
+
     private ListenerList propertyChangeListeners = new ListenerList();
 
     private PageSelectionService selectionService = new PageSelectionService(
@@ -2077,7 +2076,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // This case lets us detect badly behaved editors that are not firing a PROP_INPUT event in response
         // to the input change... but if all editors obeyed their API contract, the "else" branch would be
         // sufficient.
-        WorkbenchPartReference ref = getReference(editor);
+        IWorkbenchPartReference ref = getReference(editor);
         if (ref instanceof EditorReference) {
             EditorReference editorRef = (EditorReference) ref;
             
@@ -2251,23 +2250,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public boolean isEditorPinned(IEditorPart editor) {
-    	WorkbenchPartReference ref = getReference(editor); 
+    	WorkbenchPartReference ref = (WorkbenchPartReference)getReference(editor); 
         return ref != null && ref.isPinned();
     }
     
-    /**
-     * Returns the part reference for the given editor, or <code>null</code> if it is not a top-level editor. 
-     * @param editor the editor
-     * @return the part reference or <code>null</code>
-     */
-    private WorkbenchPartReference getReference(IEditorPart editor) {
-    	IEditorSite site = editor.getEditorSite();
-    	if (site instanceof EditorSite) {
-    		return (WorkbenchPartReference) ((EditorSite) site).getPartReference();
-    	}
-    	return null;
-    }
-
     /**
      * Returns whether changes to a part will affect zoom. There are a few
      * conditions for this .. - we are zoomed. - the part is contained in the
@@ -3274,10 +3260,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     /**
      * Returns the reference to the given part, or <code>null</code> if it has no reference 
-     * (i.e. it is not a top-level part).
+     * (i.e. it is not a top-level part in this workbench page).
      * 
      * @param part the part
-     * @return the part's reference or <code>null</code>
+     * @return the part's reference or <code>null</code> if the given part does not belong 
+     * to this workbench page
      */
     public IWorkbenchPartReference getReference(IWorkbenchPart part) {
         if (part == null) {
@@ -3287,23 +3274,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (!(site instanceof PartSite)) {
         	return null;
         }
-        PartPane pane = ((PartSite) site).getPane();
+        PartSite partSite = ((PartSite) site);
+        PartPane pane = partSite.getPane();
         if (pane instanceof MultiEditorInnerPane) {
             MultiEditorInnerPane innerPane = (MultiEditorInnerPane) pane;
             return innerPane.getParentPane().getPartReference();
         }
-        if (pane == null) {
-            /*
-             * An error has occurred while creating the view.
-             */
-            IViewReference refs[] = getViewReferences();
-            for (int i = 0; i < refs.length; i++) {
-                if (refs[i].getPart(false) == part)
-                    return refs[i];
-            }
-            return null;
-        }
-        return pane.getPartReference();
+        return partSite.getPartReference();
     }
 
     private class ActivationList {
