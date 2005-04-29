@@ -391,6 +391,8 @@ public class CompositeChange extends Change {
 	 *
 	 * @return <code>true</code> if the given change should be performed although
 	 *  the execution got canceled; otherwise <code>false</code>
+	 *  
+	 * @since 3.1
 	 */
 	protected boolean internalProcessOnCancel(Change change) {
 		return false;

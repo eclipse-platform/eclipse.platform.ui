@@ -100,6 +100,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * than one input page will result in an exception when adding the user input
 	 * pages. This flag can't be specified together with the flag 
 	 * {@link #WIZARD_BASED_USER_INTERFACE}.
+	 * 
+	 * @since 3.1
 	 */
 	public static final int DIALOG_BASED_USER_INTERFACE= 1 << 2;
 	
