@@ -432,7 +432,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor pm) throws CoreException {
 				getLocalManager().write(file, getLocalManager().locationFor(file), contents, force, false, false, null);
 			}
 		};
@@ -441,7 +441,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor pm) throws CoreException {
 				getLocalManager().write(folder, force, null);
 			}
 		};

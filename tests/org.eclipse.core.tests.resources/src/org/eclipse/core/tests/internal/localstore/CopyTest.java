@@ -36,10 +36,10 @@ public class CopyTest extends LocalStoreTest {
 
 	public void testCopyResource() throws Throwable {
 		/* create common objects */
-		IProject[] projects = getWorkspace().getRoot().getProjects();
+		IProject[] testProjects = getWorkspace().getRoot().getProjects();
 
 		/* create folder and file */
-		IFolder folder = projects[0].getFolder("folder");
+		IFolder folder = testProjects[0].getFolder("folder");
 		IFile file = folder.getFile("file.txt");
 		ensureExistsInWorkspace(folder, true);
 		ensureExistsInFileSystem(folder);
@@ -56,7 +56,7 @@ public class CopyTest extends LocalStoreTest {
 		}
 
 		/* copy to absolute path */
-		IResource destination = projects[0].getFile("copy of file.txt");
+		IResource destination = testProjects[0].getFile("copy of file.txt");
 		ensureDoesNotExistInFileSystem(destination);
 		try {
 			file.copy(destination.getFullPath(), true, null);
@@ -106,12 +106,12 @@ public class CopyTest extends LocalStoreTest {
 		}
 
 		/* test flag force = false */
-		projects[0].refreshLocal(IResource.DEPTH_INFINITE, null);
+		testProjects[0].refreshLocal(IResource.DEPTH_INFINITE, null);
 		IFolder subfolder = folder.getFolder("subfolder");
 		ensureExistsInFileSystem(subfolder);
 		IFile anotherFile = folder.getFile("new file");
 		ensureExistsInFileSystem(anotherFile);
-		destination = projects[0].getFolder("destination");
+		destination = testProjects[0].getFolder("destination");
 		try {
 			folder.copy(destination.getFullPath(), false, null);
 			fail("4.1");
@@ -134,10 +134,10 @@ public class CopyTest extends LocalStoreTest {
 		ensureDoesNotExistInFileSystem(destination);
 
 		/* copy a file that is not local but exists in the workspace */
-		file = projects[0].getFile("ghost");
+		file = testProjects[0].getFile("ghost");
 		file.create(null, true, null);
 		ensureDoesNotExistInFileSystem(file);
-		destination = projects[0].getFile("destination");
+		destination = testProjects[0].getFile("destination");
 		try {
 			file.copy(destination.getFullPath(), true, null);
 			fail("5.1");
