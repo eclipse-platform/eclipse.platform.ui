@@ -59,21 +59,27 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
 		}
 	    Object[] children = getChildren(object);
 	    if (children.length > 0) {
-	    	if (collector instanceof RemoteVariableContentManager.VariableCollector) {
-	    		RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
-			    for (int i = 0; i < children.length; i++) {
-					IVariable child = (IVariable) children[i];
-					try {
-						IValue value = child.getValue();
-						remoteCollector.setHasChildren(child, value.hasVariables());
-					} catch (DebugException e) {
-					}
-				}	    	
-	    	}	    	
+	        if (collector instanceof RemoteVariableContentManager.VariableCollector) {
+	            RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
+	            for (int i = 0; i < children.length; i++) {
+                    Object child = children[i];
+                    remoteCollector.setHasChildren(child, hasChildren(child));
+	            }	    	
+	        }	    	
 	        collector.add(children, monitor);
 	    }
 	    collector.done();
 	}	
+    
+    protected boolean hasChildren(Object child) {
+        IVariable var = (IVariable) child;
+        try {
+            IValue value = var.getValue();
+            return value.hasVariables();
+        } catch (DebugException e) {
+        }
+        return false;
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)

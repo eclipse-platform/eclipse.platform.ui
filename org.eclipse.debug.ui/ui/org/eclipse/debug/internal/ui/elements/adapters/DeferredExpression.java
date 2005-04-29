@@ -36,6 +36,27 @@ public class DeferredExpression extends DeferredVariable {
 		return EMPTY;
 	}
 
+    protected boolean hasChildren(Object child) {
+        if (child instanceof IErrorReportingExpression) {
+            IErrorReportingExpression expression = (IErrorReportingExpression) child;
+            if (expression.hasErrors()) {
+                return true;
+            }
+        }
+        
+        if (child instanceof IExpression) {
+            IExpression expression = (IExpression) child;
+            IValue value = expression.getValue();
+            if (value != null) {
+                try {
+                    return value.hasVariables();
+                } catch (DebugException e) {
+                }
+            }
+        }
+        return false;
+    }
+
     
 
 }

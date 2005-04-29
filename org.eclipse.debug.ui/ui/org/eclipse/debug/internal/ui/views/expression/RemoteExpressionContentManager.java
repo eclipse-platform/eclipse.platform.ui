@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.expression;
 
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.DeferredExpressionLogicalStructure;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.RemoteVariableContentManager;
@@ -43,5 +47,38 @@ public class RemoteExpressionContentManager extends RemoteVariableContentManager
         }
         return super.getAdapter(element);
     }
+
+    public boolean mayHaveChildren(Object element) {
+        if (element instanceof IErrorReportingExpression) {
+            IErrorReportingExpression iere = (IErrorReportingExpression) element;
+            if (iere.hasErrors()) {
+                //errors are displayed as children of the expression
+                return true;
+            }
+        }
+        
+        if (element instanceof IExpression) {
+            IExpression expression = (IExpression) element;
+            IValue value = expression.getValue();
+            if (value != null) {
+                try {
+                    IVariable[] variables = value.getVariables();
+                    if (variables.length > 0) {
+                        //definitely children...
+                        return true;
+                    }
+                    
+                    //returning false because value!=null && variables.length=0 means no children
+                    return false;
+                } catch (DebugException e) {
+                }
+            }
+        }
+        
+        //expression has not been evaluated
+        return super.mayHaveChildren(element);
+    }
+    
+    
     
 }
