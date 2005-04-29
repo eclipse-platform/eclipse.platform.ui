@@ -565,7 +565,7 @@ public interface IOperationHistory {
 
 	/**
 	 * <p>
-	 * Undo the most recently undone operation in the given context
+	 * Undo the most recently executed operation in the given context
 	 * </p>
 	 * 
 	 * @param context -
