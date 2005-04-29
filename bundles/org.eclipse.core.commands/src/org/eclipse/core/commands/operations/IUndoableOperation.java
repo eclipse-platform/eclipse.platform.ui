@@ -134,8 +134,15 @@ public interface IUndoableOperation {
 			throws ExecutionException;
 
 	/**
+	 * <p>
 	 * Returns the array of contexts that have been assigned to the operation.
-	 * 
+	 * </p>
+	 * <p>
+	 * This method may be called from inside a synchronized block. To avoid
+	 * deadlock conditions, implementers of this method must avoid waiting on locks
+	 * during this method.
+	 * </p>
+
 	 * @return the array of contexts
 	 */
 	IUndoContext[] getContexts();
@@ -150,7 +157,14 @@ public interface IUndoableOperation {
 	String getLabel();
 
 	/**
+	 * <p>
 	 * Returns whether the operation has the specified context.
+	 * </p>
+	 * <p>
+	 * This method may be called from inside a synchronized block. To avoid
+	 * deadlock conditions, implementers of this method must avoid waiting on locks
+	 * during this method.
+	 * </p>
 	 * 
 	 * @param context -
 	 *            the context in question

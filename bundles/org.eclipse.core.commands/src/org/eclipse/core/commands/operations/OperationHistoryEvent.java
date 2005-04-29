@@ -12,10 +12,17 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * OperationHistoryEvent is used to communicate changes to a DefaultOperationHistory,
- * including operations added and removed from the history, and the execution,
- * undo, and redo of operations.
+ * OperationHistoryEvent is used to communicate changes to a
+ * DefaultOperationHistory, including operations added and removed from the
+ * history, and the execution, undo, and redo of operations.
  * </p>
+ * <p>
+ * Operation history listeners must be prepared to receive notifications from a
+ * background thread. Any UI access occurring inside the implementation must be
+ * properly synchronized using the techniques specified by the client's widget
+ * library.
+ * </p>
+ * 
  * 
  * @since 3.1
  */
@@ -25,10 +32,10 @@ public final class OperationHistoryEvent {
 	 * ABOUT_TO_EXECUTE indicates that an operation is about to execute.
 	 * Listeners should prepare for the execution as appropriate. Listeners will
 	 * receive a DONE notification if the operation is successful, or an
-	 * OPERATION_NOT_OK notification if the execution is cancelled or
-	 * otherwise fails. This notification is only received for those operations
-	 * executed by the operation history. Operations that are added to the
-	 * history after execution do not trigger these notifications.
+	 * OPERATION_NOT_OK notification if the execution is cancelled or otherwise
+	 * fails. This notification is only received for those operations executed
+	 * by the operation history. Operations that are added to the history after
+	 * execution do not trigger these notifications.
 	 * 
 	 * If the operation successfully executes, clients will also receive a
 	 * notification that it has been added to the history.
@@ -74,8 +81,8 @@ public final class OperationHistoryEvent {
 	public static final int OPERATION_ADDED = 5;
 
 	/**
-	 * OPERATION_CHANGED indicates that an operation has changed in
-	 * some way since it was added to the operations history.
+	 * OPERATION_CHANGED indicates that an operation has changed in some way
+	 * since it was added to the operations history.
 	 */
 	public static final int OPERATION_CHANGED = 6;
 
@@ -93,7 +100,7 @@ public final class OperationHistoryEvent {
 	/**
 	 * OPERATION_REMOVED indicates an operation was removed from the history.
 	 * Listeners typically remove any record of the operation that they may have
-	 * kept in their own state.  The operation has been disposed by the time
+	 * kept in their own state. The operation has been disposed by the time
 	 * listeners receive this notification.
 	 */
 	public static final int OPERATION_REMOVED = 8;

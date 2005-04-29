@@ -29,6 +29,12 @@ import org.eclipse.core.runtime.IStatus;
  * necessary information to the user about the fact that operation is not
  * approved.
  * </p>
+ * <p>
+ * Operation approvers must be prepared to receive the approval messages from a
+ * background thread. Any UI access occurring inside the implementation must be
+ * properly synchronized using the techniques specified by the client's widget
+ * library.
+ * </p>
  * 
  * @since 3.1
  */
@@ -50,7 +56,11 @@ public interface IOperationApprover {
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
-	 *            for the org.eclipse.swt.widgets.Shell.class.
+	 *            for the org.eclipse.swt.widgets.Shell.class. Even if UI
+	 *            information is provided, the implementation of this method
+	 *            must be prepared for being called from a background thread.
+	 *            Any UI access must be properly synchronized using the
+	 *            techniques specified by the client's widget library.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         redo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the redo will be
@@ -76,7 +86,11 @@ public interface IOperationApprover {
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
-	 *            for the org.eclipse.swt.widgets.Shell.class.
+	 *            for the org.eclipse.swt.widgets.Shell.class.  Even if UI
+	 *            information is provided, the implementation of this method
+	 *            must be prepared for being called from a background thread.
+	 *            Any UI access must be properly synchronized using the
+	 *            techniques specified by the client's widget library.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         undo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the undo will be

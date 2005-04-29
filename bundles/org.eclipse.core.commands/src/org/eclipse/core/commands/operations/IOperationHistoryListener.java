@@ -15,6 +15,12 @@ package org.eclipse.core.commands.operations;
  * This interface is used to listen to notifications from an IOperationHistory.
  * The supplied OperationHistoryEvent describes the particular notification.
  * </p>
+ * <p>
+ * Operation history listeners must be prepared to receive notifications from a
+ * background thread. Any UI access occurring inside the implementation must be
+ * properly synchronized using the techniques specified by the client's widget
+ * library.
+ * </p>
  * 
  * @since 3.1
  */
