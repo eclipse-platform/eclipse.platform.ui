@@ -280,7 +280,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		buff.append(Messages.expression);
 		if (searchWordChevron.isExpanded()) {
 			searchWordChevron.setToolTipText(Messages.SearchPart_collapse);
-			buff.append(" <control href=\""); //$NON-NLS-1$
+			buff.append("<control href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
 			buff.append("\"/>"); //$NON-NLS-1$
 			buff.append("</p><p>"); //$NON-NLS-1$
@@ -295,7 +295,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			buff.append("</a>"); //$NON-NLS-1$
 		} else {
 			searchWordChevron.setToolTipText(Messages.SearchPart_expand);
-			buff.append(" <control href=\""); //$NON-NLS-1$
+			buff.append("<control href=\""); //$NON-NLS-1$
 			buff.append(HREF_TOGGLE);
 			buff.append("\"/>"); //$NON-NLS-1$
 		}
