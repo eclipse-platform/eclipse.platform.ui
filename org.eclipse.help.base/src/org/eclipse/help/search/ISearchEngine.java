@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * to open a web browser and see the search results there.
  * <p>
  * Search engine must be cancelable.
- * <p>This interface is inteded to be implemented by clients.
+ * <p>This interface is intended to be implemented by clients.
  * 
  * @since 3.1
  */
