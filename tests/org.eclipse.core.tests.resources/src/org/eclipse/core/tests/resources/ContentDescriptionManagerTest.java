@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.content.ContentTypeHandler;
 import org.eclipse.core.internal.resources.ContentDescriptionManager;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -22,8 +23,8 @@ import org.eclipse.core.runtime.content.*;
 
 public class ContentDescriptionManagerTest extends ResourceTest {
 
-	private static final String CONTENT_TYPE_RELATED_NATURE2 = "org.eclipse.core.tests.resources.contentTypeRelated2";
 	private static final String CONTENT_TYPE_RELATED_NATURE1 = "org.eclipse.core.tests.resources.contentTypeRelated1";
+	private static final String CONTENT_TYPE_RELATED_NATURE2 = "org.eclipse.core.tests.resources.contentTypeRelated2";
 
 	public static Test suite() {
 		return new TestSuite(ContentDescriptionManagerTest.class);
@@ -39,95 +40,6 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 			contents.append("<nature>" + natures[i] + "</nature>");
 		contents.append("</natures></projectDescription>");
 		return new ByteArrayInputStream(contents.toString().getBytes());
-	}
-
-	public void testNatureContentTypeAssociation() {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType baseType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.nature_associated_1");
-		IContentType derivedType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.nature_associated_2");
-		assertNotNull("0.1", baseType);
-		assertNotNull("0.2", derivedType);
-		IProject project = getWorkspace().getRoot().getProject("proj1");
-		IFile file = project.getFile("file.nature-associated");
-		IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-		ensureExistsInWorkspace(file, "it really does not matter");
-		IContentDescription description = null;
-
-		// originally, project description has no natures		
-		try {
-			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[0]), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-		waitForCacheFlush();
-		try {
-			description = file.getContentDescription();
-		} catch (CoreException e) {
-			fail("1.1", e);
-		}
-		assertNotNull("1.2", description);
-		assertSame("1.3", baseType, description.getContentType());
-
-		// change project description to include one of the natures		
-		try {
-			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE1}), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		waitForCacheFlush();
-		try {
-			description = file.getContentDescription();
-		} catch (CoreException e) {
-			fail("2.1", e);
-		}
-		assertNotNull("2.2", description);
-		assertSame("2.3", baseType, description.getContentType());
-
-		// change project description to include the other nature		
-		try {
-			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE2}), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-		waitForCacheFlush();
-		try {
-			description = file.getContentDescription();
-		} catch (CoreException e) {
-			fail("3.1", e);
-		}
-		assertNotNull("3.2", description);
-		assertSame("3.3", derivedType, description.getContentType());
-
-		// change project description to include both of the natures
-		try {
-			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE1, CONTENT_TYPE_RELATED_NATURE2}), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("4.0", e);
-		}
-		waitForCacheFlush();
-		try {
-			description = file.getContentDescription();
-		} catch (CoreException e) {
-			fail("4.1", e);
-		}
-		assertNotNull("4.2", description);
-		assertSame("4.3", baseType, description.getContentType());
-
-		// back to no natures
-		try {
-			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[0]), IResource.FORCE, getMonitor());
-		} catch (CoreException e) {
-			fail("5.0", e);
-		}
-		waitForCacheFlush();
-		try {
-			description = file.getContentDescription();
-		} catch (CoreException e) {
-			fail("5.1", e);
-		}
-		assertNotNull("5.2", description);
-		assertSame("5.3", baseType, description.getContentType());
-
 	}
 
 	public void testBug79151() {
@@ -204,6 +116,95 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNotSame("5.2", description1c, description1d);
 		assertEquals("5.3", xml, description1d.getContentType());
 		assertNull("5.4", description2);
+	}
+
+	public void testNatureContentTypeAssociation() {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType baseType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.nature_associated_1");
+		IContentType derivedType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.nature_associated_2");
+		assertNotNull("0.1", baseType);
+		assertNotNull("0.2", derivedType);
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		IFile file = project.getFile("file.nature-associated");
+		IFile descFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		ensureExistsInWorkspace(file, "it really does not matter");
+		IContentDescription description = null;
+
+		// originally, project description has no natures		
+		try {
+			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[0]), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		waitForCacheFlush();
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		assertNotNull("1.2", description);
+		assertSame("1.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
+
+		// change project description to include one of the natures		
+		try {
+			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE1}), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		waitForCacheFlush();
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail("2.1", e);
+		}
+		assertNotNull("2.2", description);
+		assertSame("2.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
+
+		// change project description to include the other nature		
+		try {
+			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE2}), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		waitForCacheFlush();
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail("3.1", e);
+		}
+		assertNotNull("3.2", description);
+		assertSame("3.3", ((ContentTypeHandler) derivedType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
+		
+
+		// change project description to include both of the natures
+		try {
+			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[] {CONTENT_TYPE_RELATED_NATURE1, CONTENT_TYPE_RELATED_NATURE2}), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+		waitForCacheFlush();
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail("4.1", e);
+		}
+		assertNotNull("4.2", description);
+		assertSame("4.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());		
+
+		// back to no natures
+		try {
+			descFile.setContents(projectDescriptionWithNatures(project.getName(), new String[0]), IResource.FORCE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+		waitForCacheFlush();
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail("5.1", e);
+		}
+		assertNotNull("5.2", description);
+		assertSame("5.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
 	}
 
 	/**
