@@ -52,7 +52,10 @@ final public class TeamPlugin extends Plugin {
 	// The id of the default file modification vaidator extension point
 	public static final String DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION = "defaultFileModificationValidator"; //$NON-NLS-1$
 
-
+    // The id used to associate a provider with a project
+    public final static QualifiedName PROVIDER_PROP_KEY = 
+        new QualifiedName("org.eclipse.team.core", "repository");  //$NON-NLS-1$  //$NON-NLS-2$
+    
 	// The one and only plug-in instance
 	private static TeamPlugin plugin;	
 

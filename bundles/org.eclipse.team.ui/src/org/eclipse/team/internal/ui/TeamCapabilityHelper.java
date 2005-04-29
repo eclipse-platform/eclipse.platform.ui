@@ -38,13 +38,6 @@ public class TeamCapabilityHelper {
      */
     private static TeamCapabilityHelper singleton;
     
-    /*
-     * This is copied from RepositoryProviderType to provide a quick way to query if
-     * a project is mapped to a provider id.
-     */
-    private final static QualifiedName PROVIDER_PROP_KEY = 
-		new QualifiedName("org.eclipse.team.core", "repository");  //$NON-NLS-1$  //$NON-NLS-2$
-    
     /**
      * Get the singleton instance of this class.
      * @return the singleton instance of this class.
@@ -151,15 +144,16 @@ public class TeamCapabilityHelper {
      * @throws CoreException
      */
     public String getProviderIdFor(IProject project) throws CoreException {
-    	String id = null;
     	if(project.isAccessible()) {	
 			//First, look for the session property
-			RepositoryProvider provider = (RepositoryProvider)project.getSessionProperty(PROVIDER_PROP_KEY);
-			if(provider != null)
-				id = provider.getID();
+			Object prop = project.getSessionProperty(TeamPlugin.PROVIDER_PROP_KEY);
+			if(prop != null && prop instanceof RepositoryProvider) {
+                RepositoryProvider provider = (RepositoryProvider) prop;
+                return provider.getID();
+            }
 			//Next, check if it has the ID as a persistent property
-			id = project.getPersistentProperty(PROVIDER_PROP_KEY);
+			return project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
     	}
-    	return id;
+    	return null;
     }
 }

@@ -51,9 +51,6 @@ import org.eclipse.team.internal.core.*;
 public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 	private final static String TEAM_SETID = "org.eclipse.team.repository-provider"; //$NON-NLS-1$
-	
-	private final static QualifiedName PROVIDER_PROP_KEY = 
-		new QualifiedName("org.eclipse.team.core", "repository");  //$NON-NLS-1$  //$NON-NLS-2$
 
 	private final static List AllProviderTypeIds = initializeAllProviderTypes();
 	
@@ -94,7 +91,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				mappingLock.acquire();
 				RepositoryProvider existingProvider = null;
 	
-				if(project.getPersistentProperty(PROVIDER_PROP_KEY) != null)
+				if(project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY) != null)
 					existingProvider = getProvider(project);	// get the real one, not the nature one
 				
 				//if we already have a provider, and its the same ID, we're ok
@@ -112,11 +109,11 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 				//mark it with the persistent ID for filtering
 				try {
-					project.setPersistentProperty(PROVIDER_PROP_KEY, id);
+					project.setPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY, id);
 				} catch (CoreException outer) {
 					// couldn't set the persistant property so clear the session property
 					try {
-						project.setSessionProperty(PROVIDER_PROP_KEY, null);
+						project.setSessionProperty(TeamPlugin.PROVIDER_PROP_KEY, null);
 					} catch (CoreException inner) {
 						// something is seriously wrong
 						TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.RepositoryProvider_couldNotClearAfterError, new String[] { project.getName(), id }), inner);//$NON-NLS-1$
@@ -176,7 +173,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		
 		//store provider instance as session property
 		try {
-			project.setSessionProperty(PROVIDER_PROP_KEY, provider);
+			project.setSessionProperty(TeamPlugin.PROVIDER_PROP_KEY, provider);
 			provider.setProject(project);
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
@@ -192,7 +189,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			try {
 				// Ensure that the persistant property is still set
 				// (i.e. an unmap may have come in since we checked it last
-				String currentId = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				String currentId = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				if (currentId == null) {
 					// The provider has been unmapped
 					return null;
@@ -223,7 +220,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			Platform.getJobManager().beginRule(rule, null);
 			try {
 				mappingLock.acquire();
-				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				String id = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				
 				//If you tried to remove a non-existant nature it would fail, so we need to as well with the persistent prop
 				if(id == null) {
@@ -242,8 +239,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	
 				if (provider != null) provider.deconfigure();
 								
-				project.setSessionProperty(PROVIDER_PROP_KEY, null);
-				project.setPersistentProperty(PROVIDER_PROP_KEY, null);
+				project.setSessionProperty(TeamPlugin.PROVIDER_PROP_KEY, null);
+				project.setPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY, null);
 				
 				if (provider != null) provider.deconfigured();
 				
@@ -267,7 +264,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * Return the provider mapped to project, or null if none;
 	 */
 	private static RepositoryProvider lookupProviderProp(IProject project) throws CoreException {
-		Object provider = project.getSessionProperty(PROVIDER_PROP_KEY);
+		Object provider = project.getSessionProperty(TeamPlugin.PROVIDER_PROP_KEY);
         if (provider instanceof RepositoryProvider) {
             return (RepositoryProvider) provider;
         }
@@ -416,7 +413,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				
 				// -----------------------------
 				//Next, check if it has the ID as a persistent property, if yes then instantiate provider
-				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				String id = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				if(id != null)
 					return mapExistingProvider(project, id);
 				
@@ -485,7 +482,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
                     return null;
                 
 				// There isn't one so check the persistant property
-				String existingID = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				String existingID = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
 				if(id.equals(existingID)) {
 					// The ids are equal so instantiate and return					
 					RepositoryProvider newProvider = mapExistingProvider(project, id);
@@ -545,7 +542,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
             // This is done to avoid accessing the persistant property store
             if (isMarkedAsUnshared(project))
                 return false;
-			boolean shared = project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+			boolean shared = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY) != null;
             if (!shared)
                 markAsUnshared(project);
             return shared;
@@ -557,7 +554,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
  	
 	private static boolean isMarkedAsUnshared(IProject project) {
         try {
-            return project.getSessionProperty(PROVIDER_PROP_KEY) == NOT_MAPPED;
+            return project.getSessionProperty(TeamPlugin.PROVIDER_PROP_KEY) == NOT_MAPPED;
         } catch (CoreException e) {
             return false;
         }
@@ -565,7 +562,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 
     private static void markAsUnshared(IProject project) {
         try {
-            project.setSessionProperty(PROVIDER_PROP_KEY, NOT_MAPPED);
+            project.setSessionProperty(TeamPlugin.PROVIDER_PROP_KEY, NOT_MAPPED);
         } catch (CoreException e) {
             // Just ignore the error as this is just an optimization
         }
