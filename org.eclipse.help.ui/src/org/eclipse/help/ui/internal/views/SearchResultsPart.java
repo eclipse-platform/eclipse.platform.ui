@@ -15,20 +15,17 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
@@ -86,12 +83,23 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		innerForm = innerToolkit.createScrolledForm(container);
 		innerForm.setDelayedReflow(true);
 		innerForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final ScrollBar scrollBar = innerForm.getVerticalBar();
+		scrollBar.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateSeparatorVisibility();
+			}
+		});
 		TableWrapLayout tlayout = new TableWrapLayout();
-		tlayout.topMargin = 5;
+		tlayout.topMargin = 0;
 		tlayout.bottomMargin = 0;
 		innerForm.getBody().setLayout(tlayout);
 		results = new ArrayList();
 		contributeToToolBar(tbm);
+	}
+	
+	void updateSeparatorVisibility() {
+		ScrollBar scrollBar = innerForm.getVerticalBar();
+		separator.setVisible(scrollBar.getSelection()>0);
 	}
 
 	private void contributeToToolBar(IToolBarManager tbm) {
@@ -209,7 +217,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	void startNewSearch(String phrase, ArrayList eds) {
 		//this.phrase = phrase;
-		separator.setVisible(true);
+		//separator.setVisible(true);
 		// locate local help engine and add it first
 		EngineDescriptor localHelp = findLocalHelp(eds);
 		if (localHelp!=null)

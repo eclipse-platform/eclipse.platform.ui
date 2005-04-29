@@ -77,7 +77,8 @@ public class EngineResultSection {
     }
 
     public Control createControl(Composite parent, final FormToolkit toolkit) {
-        section = toolkit.createSection(parent, Section.COMPACT
+        section = toolkit.createSection(parent, Section.SHORT_TITLE_BAR
+        		| Section.COMPACT
                 | Section.TWISTIE | Section.EXPANDED
                 | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
         // section.marginHeight = 10;
@@ -241,6 +242,7 @@ public class EngineResultSection {
                         if (scrollToBeginning) {
                             searchResults.setFocus();
                             FormToolkit.setControlVisible(section, true);
+                            part.updateSeparatorVisibility();
                         }
                     }
                 });
@@ -412,12 +414,15 @@ public class EngineResultSection {
                 GridLayout glayout = new GridLayout();
                 glayout.numColumns = 2;
                 navContainer.setLayout(glayout);
+                GridData gd;
+                /*
                 Label sep = toolkit.createLabel(navContainer, null,
                         SWT.SEPARATOR | SWT.HORIZONTAL);
                 GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
                 gd.horizontalSpan = 2;
                 gd.widthHint = 2;
                 sep.setLayoutData(gd);
+                */
                 prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
 
                 prevLink.setText(NLS.bind(

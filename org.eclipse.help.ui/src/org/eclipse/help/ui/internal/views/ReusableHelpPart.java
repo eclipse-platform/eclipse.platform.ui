@@ -808,7 +808,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private void executeHistoryEntry(HistoryEntry entry) {
 		history.setBlocked(true);
 		if (entry.getType() == HistoryEntry.PAGE) {
-			//HelpPartPage page = showPage(entry.getTarget(), true);
+			showPage(entry.getTarget(), true);
 			mform.setInput(entry.getData());
 		} else if (entry.getType() == HistoryEntry.URL) {
 			String relativeUrl = (String) entry.getData();
