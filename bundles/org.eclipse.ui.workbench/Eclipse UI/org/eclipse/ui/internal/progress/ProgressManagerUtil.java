@@ -28,10 +28,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.views.IViewDescriptor;
 
 /**
  * The ProgressUtil is a class that contains static utility methods used for the
@@ -104,6 +106,12 @@ public class ProgressManagerUtil {
         if (page == null)
             return;
         try {
+        	IViewDescriptor reference =
+        		WorkbenchPlugin.getDefault()
+        			.getViewRegistry().find(IProgressConstants.PROGRESS_VIEW_ID);
+        	
+            if(reference == null)
+            	return;
             page.showView(IProgressConstants.PROGRESS_VIEW_ID);
         } catch (PartInitException exception) {
             logException(exception);
