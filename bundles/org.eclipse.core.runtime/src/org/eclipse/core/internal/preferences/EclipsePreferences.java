@@ -708,11 +708,18 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return calculateRoot().nodeExists(path.substring(1));
 
 		int index = path.indexOf(IPath.SEPARATOR);
-		String childName = index == -1 ? path : path.substring(0, index);
+		boolean noSlash = index == -1;
+
+		// if we are looking for a simple child then just look in the table and return
+		if (noSlash)
+			return getChild(path, null, false) != null;
+
+		// otherwise load the parent of the child and then recursively ask
+		String childName = path.substring(0, index);
 		IEclipsePreferences child = getChild(childName, null, true);
 		if (child == null)
 			return false;
-		return child.nodeExists(index == -1 ? EMPTY_STRING : path.substring(index + 1));
+		return child.nodeExists(path.substring(index + 1));
 	}
 
 	/*
