@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
@@ -29,11 +30,21 @@ public class DeferredStackFrame extends DeferredDebugElementWorkbenchAdapter {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parent) {
-		try {
-			return ((IStackFrame)parent).getVariables();
-		} catch (DebugException e) {
-		}
-		return EMPTY;
+	    if (parent instanceof IStackFrame) {
+            IStackFrame frame = (IStackFrame) parent;
+	        try {
+	            return frame.getVariables();
+	        } catch (DebugException e) {
+                IStatus status = e.getStatus();
+                if (status != null) {
+                    String message = status.getMessage();
+                    if (message != null) {
+                        return new String[] {message};
+                    }
+                }
+	        }
+	    }
+	    return EMPTY;
 	}
 
 	/* (non-Javadoc)
@@ -72,12 +83,14 @@ public class DeferredStackFrame extends DeferredDebugElementWorkbenchAdapter {
 	 * @return whether the given child has children
 	 */
 	protected boolean hasChildren(Object child) {
-		IVariable variable = (IVariable) child;
-		try {
-			IValue value = variable.getValue();
-			return value.hasVariables();
-		} catch (DebugException e) {
-		}
+	    if (child instanceof IVariable) {
+	        IVariable variable = (IVariable) child;
+	        try {
+	            IValue value = variable.getValue();
+	            return value.hasVariables();
+	        } catch (DebugException e) {
+	        }
+	    }
 		return false;
 	}
 
