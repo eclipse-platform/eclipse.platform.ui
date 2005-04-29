@@ -31,11 +31,9 @@ import org.osgi.framework.BundleException;
 public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$	
-	private static final String DEFAULT_BASE_EXTENSION = "extension_" + ContentTypePerformanceTest.class.getName().replace('.','_');
 	private static final String DEFAULT_NAME = "file_" + ContentTypePerformanceTest.class.getName();
-	private static final int ELEMENTS_PER_LEVEL = 4; 
-	private static final int NUMBER_OF_DIFFERENT_EXTENSIONS = 10;
-	private static final int NUMBER_OF_LEVELS = 4;	
+	private static final int ELEMENTS_PER_LEVEL = 4;
+	private static final int NUMBER_OF_LEVELS = 4;
 	private static final String TEST_DATA_ID = "org.eclipse.core.tests.runtime.contenttype.perf.testdata";
 	private static final int TOTAL_NUMBER_OF_ELEMENTS = computeTotalTypes(NUMBER_OF_LEVELS, ELEMENTS_PER_LEVEL);
 
@@ -48,7 +46,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 
 	private static String createContentType(Writer writer, int number, String baseTypeId) throws IOException {
 		String id = "performance" + number;
-		String definition = generateContentType(number, id, baseTypeId, new String[] {DEFAULT_NAME}, new String[] {DEFAULT_BASE_EXTENSION + number % NUMBER_OF_DIFFERENT_EXTENSIONS});
+		String definition = generateContentType(number, id, baseTypeId, new String[] {DEFAULT_NAME}, null);
 		writer.write(definition);
 		writer.write(System.getProperty("line.separator"));
 		return id;
@@ -133,8 +131,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		suite.addTest(setUp);
 
 		TestSuite singleRun = new PerformanceSessionTestSuite(PI_RUNTIME_TESTS, 1, "singleSessionTests");
-		singleRun.addTest(new ContentTypePerformanceTest("testContentMatchingWithFullName"));
-		singleRun.addTest(new ContentTypePerformanceTest("testContentMatchingWithExtension"));		
+		singleRun.addTest(new ContentTypePerformanceTest("testContentMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testContentTXTMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testContentXMLMatching"));
 		singleRun.addTest(new ContentTypePerformanceTest("testNameMatching"));
@@ -269,26 +266,8 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
-	public void testContentMatchingWithExtension() {
-		loadPreferences();
-		// warm up content type registry
-		final IContentTypeManager manager = loadContentTypeManager();
-		loadDescribers();
-		loadChildren();
-		new PerformanceTestRunner() {
-			protected void test() {
-				try {
-					for (int i = 0; i < NUMBER_OF_DIFFERENT_EXTENSIONS; i++)
-						manager.findContentTypesFor(new ByteArrayInputStream(getSignature(i)), "any name" + DEFAULT_BASE_EXTENSION + i);
-				} catch (IOException e) {
-					fail("2.0", e);
-				}
-			}
-		}.run(this, 10, 2);
-	}
-	
 	/** Tests how much the size of the catalog affects the performance of content type matching by content analysis */
-	public void testContentMatchingWithFullName() {
+	public void testContentMatching() {
 		loadPreferences();
 		// warm up content type registry
 		final IContentTypeManager manager = loadContentTypeManager();
@@ -309,7 +288,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			}
 		}.run(this, 10, 2);
 	}
-	
 
 	public void testContentTXTMatching() {
 		doTestContentMatching("foo.txt", getRandomString(), 10, 40000);
