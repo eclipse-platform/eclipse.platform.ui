@@ -45,9 +45,7 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 			Object parent = contentProvider.getParent(element);
 
 			if (filterForBoldElements.select(comboTree.getViewer(), parent, element)) {
-				return JFaceResources.getFontRegistry().getBold(
-						comboTree.getViewer().getTree().getFont().toString());
-
+				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 			}
 		}
 		return null;
