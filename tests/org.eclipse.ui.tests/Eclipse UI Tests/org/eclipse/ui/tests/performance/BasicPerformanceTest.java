@@ -280,4 +280,13 @@ public abstract class BasicPerformanceTest extends UITestCase {
         }
     }
     
+    /**
+     * Set the comment for the receiver to string.
+     * @param string The comment to write out for the test.
+     */
+    public void setDegradationComment(String string) {
+		tester.setDegradationComment(string);
+		
+	}
+
 }

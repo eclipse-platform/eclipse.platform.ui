@@ -138,4 +138,16 @@ final class PerformanceTester {
 	public void tagAsSummary(String shortName, Dimension[] dimensions) {
 		Performance.getDefault().tagAsSummary(fPerformanceMeter, shortName, dimensions);
 	}
+
+	/**
+	 * Set a degradation comment for the current meter.
+	 * @param string
+	 */
+	public void setDegradationComment(String string) {
+		Performance.getDefault().setComment(
+				fPerformanceMeter, 
+				Performance.EXPLAINS_DEGRADATION_COMMENT, 
+				string);
+		
+	}
 }
