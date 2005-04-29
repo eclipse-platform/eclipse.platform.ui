@@ -128,7 +128,9 @@ public interface IContainer extends IResource, IAdaptable {
 	 * this container, or <code>null</code> if no such resource exists.
 	 * The supplied path may be absolute or relative; in either case, it is
 	 * interpreted as relative to this resource.   Trailing separators and the path's
-	 * device are ignored. If the path is empty this container is returned.
+	 * device are ignored. If the path is empty this container is returned.  Parent
+	 * references in the supplied path are discarded if they go above the workspace
+	 * root.
 	 * <p>
 	 * Note that no attempt is made to exclude team-private member resources
 	 * as with <code>members</code>.
@@ -149,8 +151,9 @@ public interface IContainer extends IResource, IAdaptable {
 	 * this container, or <code>null</code> if there is no such resource.
 	 * The supplied path may be absolute or relative; in either case, it is
 	 * interpreted as relative to this resource.  Trailing separators and the path's
-	 * device are ignored.
-	 * If the path is empty this container is returned.
+	 * device are ignored.  If the path is empty this container is returned.
+	 * Parent references in the supplied path are discarded if they go above the 
+	 * workspace root.
 	 * <p>
 	 * If the <code>includePhantoms</code> argument is <code>false</code>, 
 	 * only a resource that exists at the given path will be returned.
