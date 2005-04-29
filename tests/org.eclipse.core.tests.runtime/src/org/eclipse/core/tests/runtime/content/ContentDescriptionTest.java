@@ -12,8 +12,7 @@ package org.eclipse.core.tests.runtime.content;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.content.ContentDescription;
-import org.eclipse.core.internal.content.ContentType;
+import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -31,7 +30,7 @@ public class ContentDescriptionTest extends RuntimeTest {
 	}
 
 	private ContentType getContentType() {
-		return (ContentType) Platform.getContentTypeManager().getContentType(CT_VOID);
+		return ((ContentTypeHandler) Platform.getContentTypeManager().getContentType(CT_VOID)).getTarget();
 	}
 
 	public void testAllProperties() {
