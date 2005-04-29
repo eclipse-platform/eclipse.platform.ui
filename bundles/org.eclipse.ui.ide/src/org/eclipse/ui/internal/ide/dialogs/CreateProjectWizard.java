@@ -33,6 +33,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Internal workbench wizard to create a project
@@ -106,7 +107,7 @@ public class CreateProjectWizard extends Wizard {
                 }
             } else {
                 // Unexpected runtime exceptions and errors may still occur.
-                Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+            	 IDEWorkbenchPlugin.getDefault().getLog().log(
                         new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, t
                                 .toString(), t));
                 MessageDialog

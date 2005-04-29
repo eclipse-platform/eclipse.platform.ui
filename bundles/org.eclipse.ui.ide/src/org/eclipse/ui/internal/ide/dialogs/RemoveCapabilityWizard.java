@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,6 +29,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Internal workbench wizard to remove a capability
@@ -116,7 +116,7 @@ public class RemoveCapabilityWizard extends Wizard implements
                         ((CoreException) t).getStatus());
             } else {
                 // Unexpected runtime exceptions and errors may still occur.
-                Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+            	 IDEWorkbenchPlugin.getDefault().getLog().log(
                         new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, t
                                 .toString(), t));
                 MessageDialog

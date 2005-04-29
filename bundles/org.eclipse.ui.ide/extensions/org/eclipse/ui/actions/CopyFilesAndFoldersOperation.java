@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -47,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -474,7 +475,7 @@ public class CopyFilesAndFoldersOperation {
             return copiedResources[0];
         } catch (InvocationTargetException e) {
             // CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-            Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+        	 IDEWorkbenchPlugin.getDefault().getLog().log(
                     StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format(
                             "Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
                             new Object[] { getClass().getName(),
@@ -534,7 +535,7 @@ public class CopyFilesAndFoldersOperation {
             return;
         } catch (InvocationTargetException e) {
             // CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-            Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+            IDEWorkbenchPlugin.getDefault().getLog().log(
                     StatusUtil.newStatus(IStatus.ERROR, MessageFormat.format(
                             "Exception in {0}.performCopy(): {1}", //$NON-NLS-1$
                             new Object[] { getClass().getName(),
@@ -988,8 +989,7 @@ public class CopyFilesAndFoldersOperation {
                 });
             } else {
                 // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-                Platform
-                        .getPlugin(PlatformUI.PLUGIN_ID)
+            	 IDEWorkbenchPlugin.getDefault()
                         .getLog()
                         .log(
                                 StatusUtil

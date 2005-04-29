@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -99,8 +98,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
     private static void readFilters() {
         definedFilters = new ArrayList();
         defaultFilters = new ArrayList();
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH);
+        AbstractUIPlugin plugin =  IDEWorkbenchPlugin.getDefault();
         if (plugin != null) {
             IExtensionPoint extension = plugin.getDescriptor()
                     .getExtensionPoint(ResourcePatternFilter.FILTERS_TAG);

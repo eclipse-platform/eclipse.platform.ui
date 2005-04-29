@@ -540,8 +540,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Returns the navigator's plugin.
      */
     public AbstractUIPlugin getPlugin() {
-        return (AbstractUIPlugin) Platform
-                .getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH);
+        return IDEWorkbenchPlugin.getDefault();
     }
 
     /**
