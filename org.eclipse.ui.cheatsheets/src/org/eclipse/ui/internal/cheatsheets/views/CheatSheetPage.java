@@ -80,7 +80,7 @@ public class CheatSheetPage extends Page {
 	 * @param parent the SWT parent for the title area composite
 	 */
 	protected String getTitle() {
-		if(cheatSheet != null & cheatSheet.getTitle() != null)
+		if(cheatSheet != null && cheatSheet.getTitle() != null)
 			return cheatSheet.getTitle();
 		else
 			return ICheatSheetResource.EMPTY_STRING;

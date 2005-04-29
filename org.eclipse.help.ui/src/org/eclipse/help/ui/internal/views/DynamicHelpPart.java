@@ -10,24 +10,41 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.internal.search.SearchQuery;
+import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.search.federated.IndexerJob;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.SectionPart;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
@@ -95,8 +112,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		// create 'clear' hyperlink on the section tool bar
-		ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
-		toolkit.adapt(clearLink, true, true);
+		//ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
+		//toolkit.adapt(clearLink, true, true);
 		/*
 		clearLink.setToolTipText(HelpUIResources
 				.getString("SearchPart.clearResults")); //$NON-NLS-1$
