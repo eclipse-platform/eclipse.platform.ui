@@ -61,7 +61,8 @@ public final class ContentDescription implements IContentDescription {
 	 * @see IContentDescription
 	 */
 	public IContentType getContentType() {
-		return contentType;
+		//TODO performance: potential creation of garbage
+		return new ContentTypeHandler(contentType, contentType.getCatalog().getGeneration());
 	}
 
 	/**

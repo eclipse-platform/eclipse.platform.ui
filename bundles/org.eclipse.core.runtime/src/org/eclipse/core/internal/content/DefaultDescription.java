@@ -34,8 +34,12 @@ public final class DefaultDescription implements IContentDescription {
 		return (String) getProperty(CHARSET);
 	}
 
+	/**
+	 * @see IContentDescription
+	 */
 	public IContentType getContentType() {
-		return contentType;
+		//TODO performance: potential creation of garbage
+		return new ContentTypeHandler(contentType, contentType.getCatalog().getGeneration());
 	}
 
 	public Object getProperty(QualifiedName key) {

@@ -70,7 +70,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
 
 	public static Test suite() {
-		//return new IContentTypeManagerTest("testListParsing");
+		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
 
@@ -516,9 +516,9 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2}), null);
 		IContentType[] selected = finder.findContentTypesFor(getInputStream(MINIMAL_XML), null);
 		assertEquals("4.0", 3, selected.length);
-		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
-		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
-		assertTrue("4.3", appropriate == selected[2]);
+		assertTrue("4.1", appropriateSpecific1.equals(selected[0]) || appropriateSpecific1.equals(selected[1]));
+		assertTrue("4.2", appropriateSpecific2.equals(selected[0]) || appropriateSpecific2.equals(selected[1]));
+		assertTrue("4.3", appropriate.equals(selected[2]));
 	}
 
 	public void testDefaultProperties() throws IOException /* never actually thrown */{
@@ -543,7 +543,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 		description = getDescriptionFor(finder, "some contents", null, "abc.tzt", IContentDescription.ALL, true);
 		assertNotNull("1.0", description);
-		assertSame("1.1", mytext, description.getContentType());
+		assertEquals("1.1", mytext, description.getContentType());
 		assertEquals("1.2", "value1", description.getProperty(property1));
 		assertNull("1.3", description.getProperty(property2));
 		assertEquals("1.4", "value3", description.getProperty(property3));
@@ -551,7 +551,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 		description = getDescriptionFor(finder, "some contents", null, "abc.tzt1", IContentDescription.ALL, true);
 		assertNotNull("2.0", description);
-		assertSame("2.1", mytext1, description.getContentType());
+		assertEquals("2.1", mytext1, description.getContentType());
 		assertEquals("2.2", "value1", description.getProperty(property1));
 		assertEquals("2.3", "value2", description.getProperty(property2));
 		assertNull("2.4", description.getProperty(property3));
@@ -560,7 +560,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 
 		description = getDescriptionFor(finder, "some contents", null, "abc.tzt2", IContentDescription.ALL, true);
 		assertNotNull("3.0", description);
-		assertSame("3.1", mytext2, description.getContentType());
+		assertEquals("3.1", mytext2, description.getContentType());
 		assertNull("3.2", description.getProperty(property1));
 		assertNull("3.3", description.getProperty(property2));
 		assertNull("3.4", description.getProperty(property3));
@@ -603,6 +603,9 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		text[0] = manager.getContentType(IContentTypeManager.CT_TEXT);
 		assertNotNull("1.0", text[0]);
 		text[1] = manager.getContentType(IContentTypeManager.CT_TEXT);
+		assertNotNull("1.1", text[1]);
+		text[0] = ((ContentTypeHandler) text[0]).getTarget();
+		text[1] = ((ContentTypeHandler) text[1]).getTarget();
 		assertEquals("2.0", text[0], text[1]);
 		assertTrue("2.1", text[0] == text[1]);
 		//	make arbitrary dynamic changes to the contentTypes extension point
@@ -613,6 +616,8 @@ public class IContentTypeManagerTest extends RuntimeTest {
 				assertNotNull("3.1", missing);
 				// ensure the content type instances are different
 				text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
+				assertNotNull("3.2", text[2]);
+				text[2] = ((ContentTypeHandler) text[2]).getTarget();
 				assertEquals("3.3", text[0], text[2]);
 				assertTrue("3.4", text[0] != text[2]);
 			}
@@ -620,10 +625,12 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertNull("4.0", manager.getContentType("org.eclipse.bundle01.missing"));
 		// ensure the content type instances are all different
 		text[3] = manager.getContentType(IContentTypeManager.CT_TEXT);
-		assertEquals("5.0", text[0], text[3]);
-		assertEquals("5.1", text[2], text[3]);
-		assertTrue("5.2", text[0] != text[3]);
-		assertTrue("5.3", text[2] != text[3]);
+		assertNotNull("5.0", text[3]);
+		text[3] = ((ContentTypeHandler) text[3]).getTarget();
+		assertEquals("5.1", text[0], text[3]);
+		assertEquals("5.2", text[2], text[3]);
+		assertTrue("5.3", text[0] != text[3]);
+		assertTrue("5.4", text[2] != text[3]);
 	}
 
 	public void testEvents() {
@@ -760,7 +767,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	public void testInvalidMarkup() {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		final IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 		assertEquals("1.0", 0, finder.findContentTypesFor("invalid.missing.identifier").length);
 		assertEquals("2.0", 0, finder.findContentTypesFor("invalid.missing.name").length);
@@ -769,7 +776,6 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		BundleTestingHelper.runWithBundles("1", new Runnable() {
 			public void run() {
 				// ensure the invalid content types are not available
-				IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 				assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
 				assertEquals("1.3", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
 				assertNull("1.4", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-missing-name"));
@@ -777,16 +783,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 				IContentType invalidDescriber = contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer");
 				assertNotNull("1.5", invalidDescriber);
 				// name based matching should work fine
-				assertSame("1.6", invalidDescriber, contentTypeManager.findContentTypeFor("invalid.describer"));
+				assertEquals("1.6", invalidDescriber, contentTypeManager.findContentTypeFor("invalid.describer"));
 				try {
-					// the describer class is invalid, the content type will be disabled
+					// the describer class is invalid, content matchong should fail
 					assertNull("1.7", contentTypeManager.findContentTypeFor(getRandomContents(), "invalid.describer"));
 				} catch (IOException e) {
 					fail("1.8", e);
 				}
-				// now it does not show up anymore 
-				assertNull("2.0", contentTypeManager.findContentTypeFor("invalid.describer"));
-				assertNull("2.1", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer"));
 			}
 		}, RuntimeTestsPlugin.getContext(), new String[] {RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle03"}, listener);
 	}
@@ -1108,13 +1111,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		assertNotNull("1.0", textContentType);
 		assertTrue("1.1", isText(contentTypeManager, textContentType));
-		assertNotNull("1.2", ((ContentType) textContentType).getDescriber());
+		assertNotNull("1.2", ((ContentTypeHandler) textContentType).getTarget().getDescriber());
 
 		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		assertNotNull("2.0", xmlContentType);
 		assertTrue("2.1", isText(contentTypeManager, xmlContentType));
 		assertEquals("2.2", textContentType, xmlContentType.getBaseType());
-		IContentDescriber xmlDescriber = ((ContentType) xmlContentType).getDescriber();
+		IContentDescriber xmlDescriber = ((ContentTypeHandler) xmlContentType).getTarget().getDescriber();
 		assertNotNull("2.3", xmlDescriber);
 		assertTrue("2.4", xmlDescriber instanceof XMLContentDescriber);
 

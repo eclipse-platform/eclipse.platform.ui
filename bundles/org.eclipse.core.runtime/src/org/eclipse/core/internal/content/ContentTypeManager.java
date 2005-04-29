@@ -25,6 +25,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;
 	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
 	private ContentTypeCatalog catalog;
+	private int catalogGeneration;
 
 	/** 
 	 * List of registered listeners (element type: 
@@ -99,7 +100,13 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public IContentType[] getAllContentTypes() {
-		return getCatalog().getAllContentTypes();
+		ContentTypeCatalog currentCatalog = getCatalog();
+		IContentType[] types = currentCatalog.getAllContentTypes();
+		IContentType[] result = new IContentType[types.length];
+		int generation = currentCatalog.getGeneration();
+		for (int i = 0; i < result.length; i++)
+			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
+		return result;
 	}
 
 	protected synchronized ContentTypeCatalog getCatalog() {
@@ -107,7 +114,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 			// already has one			
 			return catalog;
 		// create new catalog 
-		ContentTypeCatalog newCatalog = new ContentTypeCatalog(this);
+		ContentTypeCatalog newCatalog = new ContentTypeCatalog(this, catalogGeneration++);
 		// build catalog by parsing the extension registry
 		ContentTypeBuilder builder = createBuilder(newCatalog);
 		try {
@@ -122,7 +129,9 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public IContentType getContentType(String contentTypeIdentifier) {
-		return getCatalog().getContentType(contentTypeIdentifier);
+		ContentTypeCatalog currentCatalog = getCatalog();
+		ContentType type = currentCatalog.getContentType(contentTypeIdentifier);
+		return type == null ? null : new ContentTypeHandler(type, currentCatalog.getGeneration());
 	}
 
 	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy, final IScopeContext context) {
@@ -166,8 +175,9 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	public void fireContentTypeChangeEvent(ContentType type) {
 		Object[] listeners = this.contentTypeListeners.getListeners();
+		IContentType eventObject = new ContentTypeHandler(type, type.getCatalog().getGeneration());
 		for (int i = 0; i < listeners.length; i++) {
-			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(type);
+			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(eventObject);
 			final IContentTypeChangeListener listener = (IContentTypeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
 				public void handleException(Throwable exception) {

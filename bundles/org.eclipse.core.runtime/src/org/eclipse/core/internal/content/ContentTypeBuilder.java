@@ -75,10 +75,10 @@ public class ContentTypeBuilder {
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
-			target.internalAddFileSpec(catalog, fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
+			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
 		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
-			target.internalAddFileSpec(catalog, fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
+			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ContentTypeBuilder {
 						return true;
 					ContentType contentType = localCatalog.getContentType(node.name());
 					if (contentType != null)
-						contentType.processPreferences(localCatalog, node);
+						contentType.processPreferences(node);
 					// content type nodes don't have any children anyway
 					return false;
 				}

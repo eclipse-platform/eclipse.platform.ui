@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.content.*;
 
 public final class ContentTypeCatalog {
 	private static final IContentType[] NO_CONTENT_TYPES = new IContentType[0];
-	private Map aliases = new HashMap();
 
 	private Map allChildren = new HashMap();
 	private Map contentTypes = new HashMap();
@@ -29,6 +28,8 @@ public final class ContentTypeCatalog {
 
 	private ContentTypeManager manager;
 
+	private int generation;
+
 	/**
 	 * A sorting policy where the more generic content type wins. Lexicographical comparison is done
 	 * as a last resort when all other criteria fail.  
@@ -38,7 +39,7 @@ public final class ContentTypeCatalog {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
 			// first criteria: depth - the lower, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			int depthCriteria = type1.getDepth() - type2.getDepth();
 			if (depthCriteria != 0)
 				return depthCriteria;
 			// second criteria: priority - the higher, the better
@@ -59,7 +60,7 @@ public final class ContentTypeCatalog {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
 			// first criteria: depth - the higher, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			int depthCriteria = type1.getDepth() - type2.getDepth();
 			if (depthCriteria != 0)
 				return -depthCriteria;
 			// second criteria: priority - the higher, the better
@@ -79,7 +80,7 @@ public final class ContentTypeCatalog {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
 			// first criteria: depth - the lower, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			int depthCriteria = type1.getDepth() - type2.getDepth();
 			if (depthCriteria != 0)
 				return depthCriteria;
 			// second criteria: priority - the higher, the better
@@ -108,7 +109,7 @@ public final class ContentTypeCatalog {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
 			// first criteria: depth - the higher, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			int depthCriteria = type1.getDepth() - type2.getDepth();
 			if (depthCriteria != 0)
 				return -depthCriteria;
 			// second criteria: priority - the higher, the better
@@ -130,8 +131,9 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	public ContentTypeCatalog(ContentTypeManager manager) {
+	public ContentTypeCatalog(ContentTypeManager manager, int generation) {
 		this.manager = manager;
+		this.generation = generation;
 	}
 
 	void addContentType(IContentType contentType) {
@@ -158,10 +160,10 @@ public final class ContentTypeCatalog {
 	}
 
 	void associate(ContentType contentType) {
-		String[] builtInFileNames = contentType.getFileSpecs(this, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
+		String[] builtInFileNames = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
 		for (int i = 0; i < builtInFileNames.length; i++)
 			associate(contentType, builtInFileNames[i], IContentType.FILE_NAME_SPEC);
-		String[] builtInFileExtensions = contentType.getFileSpecs(this, IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
+		String[] builtInFileExtensions = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_EXTENSION_SPEC);
 		for (int i = 0; i < builtInFileExtensions.length; i++)
 			associate(contentType, builtInFileExtensions[i], IContentType.FILE_EXTENSION_SPEC);
 	}
@@ -178,7 +180,7 @@ public final class ContentTypeCatalog {
 	private int collectMatchingByContents(int valid, IContentType[] subset, List destination, ILazySource contents) throws IOException {
 		for (int i = 0; i < subset.length; i++) {
 			ContentType current = (ContentType) subset[i];
-			IContentDescriber describer = current.getDescriber(this);
+			IContentDescriber describer = current.getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
 				status = current.describe(describer, contents, null);
@@ -197,9 +199,10 @@ public final class ContentTypeCatalog {
 	 * Processes all content types in source, adding those matching the given file spec to the
 	 * destination collection.
 	 */
-	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType) {
+	private Set selectMatchingByName(Collection source, final Collection existing, final String fileSpecText, final int fileSpecType) {
 		if (source == null || source.isEmpty())
-			return;
+			return Collections.EMPTY_SET;
+		final Set destination = new HashSet(5);
 		// process all content types in the given collection
 		for (Iterator i = source.iterator(); i.hasNext();) {
 			final ContentType root = (ContentType) i.next();
@@ -215,13 +218,13 @@ public final class ContentTypeCatalog {
 						return RETURN;
 					// either the content type is the root and matches the file name or 
 					// is a sub content type and does not have built-in files specs
-					if (!destination.contains(type))
-						// make sure we don't add it twice						
+					if (!existing.contains(type))
 						destination.add(type);
 					return CONTINUE;
 				}
 			}, root);
 		}
+		return destination;
 	}
 
 	void dissociate(ContentType contentType, String text, int type) {
@@ -253,29 +256,26 @@ public final class ContentTypeCatalog {
 		// set this type temporarily as invalid to prevent cycles
 		// all types in a cycle would remain as invalid
 		type.setValidation(ContentType.STATUS_INVALID);
+		if (type.isAlias())
+			// it is an alias, leave as invalid
+			return false;
 		// check base type
+		ContentType baseType = null;
 		if (type.getBaseTypeId() != null) {
-			ContentType baseType = (ContentType) contentTypes.get(type.getBaseTypeId());
+			baseType = (ContentType) contentTypes.get(type.getBaseTypeId());
 			if (baseType == null)
 				// invalid: specified base type is not known
 				return false;
 			// base type exists, ensure it is valid
+			baseType = baseType.getAliasTarget(true);
 			ensureValid(baseType);
 			if (baseType.getValidation() != ContentType.STATUS_VALID)
 				// invalid: base type was invalid
 				return false;
 		}
-		// check alias target		
-		ContentType aliasTarget = type.getTarget(this, false);
-		if (aliasTarget != null) {
-			// alias target type exists, ensure it is valid
-			ensureValid(aliasTarget);
-			if (aliasTarget.getValidation() != ContentType.STATUS_VALID)
-				// invalid: alias target was invalid
-				return false;
-		}
 		// valid: all conditions satisfied
 		type.setValidation(ContentType.STATUS_VALID);
+		type.setBaseType(baseType);
 		return true;
 	}
 
@@ -296,15 +296,11 @@ public final class ContentTypeCatalog {
 		return selected;
 	}
 
-	public ContentType getAliasTarget(ContentType alias) {
-		return (ContentType) aliases.get(alias);
-	}
-
 	public IContentType[] getAllContentTypes() {
 		List result = new ArrayList(contentTypes.size());
 		for (Iterator i = contentTypes.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
-			if (type.isValid() && !type.isAlias(this))
+			if (type.isValid() && !type.isAlias())
 				result.add(type);
 		}
 		return (IContentType[]) result.toArray(new IContentType[result.size()]);
@@ -317,7 +313,7 @@ public final class ContentTypeCatalog {
 		List result = new ArrayList(5);
 		for (Iterator i = this.contentTypes.values().iterator(); i.hasNext();) {
 			ContentType next = (ContentType) i.next();
-			if (next.getBaseType(this) == parent)
+			if (next.getBaseType() == parent)
 				result.add(next);
 		}
 		children = (ContentType[]) result.toArray(new ContentType[result.size()]);
@@ -327,7 +323,7 @@ public final class ContentTypeCatalog {
 
 	public ContentType getContentType(String contentTypeIdentifier) {
 		ContentType type = internalGetContentType(contentTypeIdentifier);
-		return (type != null && type.isValid() && !type.isAlias(this)) ? type : null;
+		return (type != null && type.isValid() && !type.isAlias()) ? type : null;
 	}
 
 	private IContentDescription getDescriptionFor(ILazySource contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
@@ -340,7 +336,7 @@ public final class ContentTypeCatalog {
 			if (selected.length == 0)
 				return null;
 		}
-		return ((ContentType) selected[0]).internalGetDescriptionFor(this, contents, options);
+		return ((ContentType) selected[0]).internalGetDescriptionFor(contents, options);
 	}
 
 	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
@@ -355,8 +351,12 @@ public final class ContentTypeCatalog {
 		return manager;
 	}
 
+	public int getGeneration() {
+		return generation;
+	}
+
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
-		if (!root.isValid() || root.isAlias(this))
+		if (!root.isValid() || root.isAlias())
 			return true;
 		int result = visitor.visit(root);
 		switch (result) {
@@ -422,17 +422,14 @@ public final class ContentTypeCatalog {
 	public IContentType[][] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
 		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
 		final Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
-		List collected = new ArrayList(5);
-		collectMatchingByName(allByFileName, collected, fileName, IContentType.FILE_NAME_SPEC);
-		result[0] = (IContentType[]) collected.toArray(new IContentType[collected.size()]);
-		int byName = collected.size();
+		Set selectedByName = selectMatchingByName(allByFileName, Collections.EMPTY_SET, fileName, IContentType.FILE_NAME_SPEC);
+		result[0] = (IContentType[]) selectedByName.toArray(new IContentType[selectedByName.size()]);
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
 			final Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
-			collectMatchingByName(allByFileExtension, collected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
-			int byExtension = collected.size() - byName;
-			if (byExtension > 0)
-				result[1] = (IContentType[]) collected.subList(byName, byName + byExtension).toArray(new IContentType[byExtension]);
+			Set selectedByExtension = selectMatchingByName(allByFileExtension, selectedByName, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+			if (!selectedByExtension.isEmpty())
+				result[1] = (IContentType[]) selectedByExtension.toArray(new IContentType[selectedByExtension.size()]);
 		}
 		if (result[0].length > 1)
 			Arrays.sort(result[0], sortingPolicy);
@@ -445,7 +442,7 @@ public final class ContentTypeCatalog {
 		return (ContentType) contentTypes.get(contentTypeIdentifier);
 	}
 
-	private void makeAliases() {
+	void makeAliases() {
 		// process all content types marking aliases appropriately
 		for (Iterator i = contentTypes.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
@@ -454,10 +451,13 @@ public final class ContentTypeCatalog {
 				continue;
 			ContentType target = internalGetContentType(targetId);
 			if (target != null)
-				type.setAliasTarget(this, target);
+				type.setAliasTarget(target);
 		}
 	}
 
+	/**
+	 * Resolves inter-content type associations (inheritance and aliasing).
+	 */
 	protected void organize() {
 		// build the aliasing
 		makeAliases();
@@ -473,19 +473,5 @@ public final class ContentTypeCatalog {
 				if (!type.isValid())
 					Policy.debug("Invalid: " + type); //$NON-NLS-1$
 			}
-	}
-
-	void setAliasTarget(ContentType alias, ContentType target) {
-		// don't allow a sub-type to be made into an alias to the base type
-		if (target == null) {
-			aliases.remove(alias);
-			return;
-		}
-		// don't allow a sub-type to be made into an alias to the base type		
-		if (alias.isKindOf(this, target))
-			return;
-		aliases.put(alias, target);
-		if (ContentTypeManager.DEBUGGING)
-			Policy.debug("Set alias target for " + alias + " -> " + target); //$NON-NLS-1$ //$NON-NLS-2$		
 	}
 }

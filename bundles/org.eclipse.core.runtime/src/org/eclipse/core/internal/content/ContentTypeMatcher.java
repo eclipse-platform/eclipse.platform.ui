@@ -29,8 +29,9 @@ class ContentTypeMatcher implements IContentTypeMatcher {
 	 * @see IContentTypeMatcher
 	 */
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
-		IContentType[] all = findContentTypesFor(contents, fileName);
-		return all.length > 0 ? all[0] : null;
+		ContentTypeCatalog currentCatalog = getCatalog();
+		IContentType[] all = currentCatalog.findContentTypesFor(contents, fileName, policy);
+		return all.length > 0 ? new ContentTypeHandler((ContentType) all[0], currentCatalog.getGeneration()) : null;
 	}
 
 	/**
@@ -38,22 +39,35 @@ class ContentTypeMatcher implements IContentTypeMatcher {
 	 */
 	public IContentType findContentTypeFor(String fileName) {
 		// basic implementation just gets all content types
-		IContentType[] associated = findContentTypesFor(fileName);
-		return associated.length == 0 ? null : associated[0];
+		ContentTypeCatalog currentCatalog = getCatalog();
+		IContentType[] associated = currentCatalog.findContentTypesFor(fileName, policy);
+		return associated.length == 0 ? null : new ContentTypeHandler((ContentType) associated[0], currentCatalog.getGeneration());
 	}
 
 	/**
 	 * @see IContentTypeMatcher
 	 */
 	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
-		return getCatalog().findContentTypesFor(contents, fileName, policy);
+		ContentTypeCatalog currentCatalog = getCatalog();
+		IContentType[] types = currentCatalog.findContentTypesFor(contents, fileName, policy);
+		IContentType[] result = new IContentType[types.length];
+		int generation = currentCatalog.getGeneration();
+		for (int i = 0; i < result.length; i++)
+			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
+		return result;
 	}
 
 	/**
 	 * @see IContentTypeMatcher
 	 */
 	public IContentType[] findContentTypesFor(String fileName) {
-		return getCatalog().findContentTypesFor(fileName, policy);
+		ContentTypeCatalog currentCatalog = getCatalog();
+		IContentType[] types = currentCatalog.findContentTypesFor(fileName, policy);
+		IContentType[] result = new IContentType[types.length];
+		int generation = currentCatalog.getGeneration();
+		for (int i = 0; i < result.length; i++)
+			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
+		return result;
 	}
 
 	private ContentTypeCatalog getCatalog() {
