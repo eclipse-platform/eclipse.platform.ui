@@ -23,7 +23,9 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class PropertyTests extends AbstractAntDebugTest {
 	
-	public PropertyTests(String name) {
+	private static final String ANT_VERSION = "Apache Ant version 1.6.3 compiled on April 28 2005";
+
+    public PropertyTests(String name) {
 		super(name);
 	}
 
@@ -89,7 +91,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 			AntProperty property= frame.findProperty("ant.home");
 			assertNotNull(property);
 			
-			assertProperty(thread, "ant.version", "Apache Ant version 1.6.2 compiled on July 16 2004");
+			assertProperty(thread, "ant.version", ANT_VERSION);
 			assertProperty(thread, "ant.project.name", "debugEcho");
 		} finally {
 			terminateAndRemove(thread);
