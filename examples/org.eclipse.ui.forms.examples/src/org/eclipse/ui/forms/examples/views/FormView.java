@@ -59,6 +59,13 @@ public class FormView extends ViewPart {
 		td = new TableWrapData();
 		td.colspan = 2;
 		button.setLayoutData(td);
+		
+		ImageHyperlink ih = toolkit.createImageHyperlink(form.getBody(), SWT.NULL);
+		ih.setText("Image link with no image");
+		ih = toolkit.createImageHyperlink(form.getBody(), SWT.NULL);
+		ih.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
+		ih.setText("Link with image and text");
+		
 		ExpandableComposite ec = toolkit.createExpandableComposite(form.getBody(), ExpandableComposite.TREE_NODE|ExpandableComposite.CLIENT_INDENT);
 		ImageHyperlink eci = toolkit.createImageHyperlink(ec, SWT.NULL);
 		eci.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));

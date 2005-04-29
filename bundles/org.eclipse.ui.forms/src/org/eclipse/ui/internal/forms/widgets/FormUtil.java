@@ -337,10 +337,12 @@ public class FormUtil {
 				return;
 			switch (keyCode) {
 			case SWT.ARROW_DOWN:
-				FormUtil.scrollVertical(scomp, false);
+				if (scomp.getData("novarrows")==null)
+					FormUtil.scrollVertical(scomp, false);
 				break;
 			case SWT.ARROW_UP:
-				FormUtil.scrollVertical(scomp, true);
+				if (scomp.getData("novarrows")==null)
+					FormUtil.scrollVertical(scomp, true);
 				break;
 			case SWT.ARROW_LEFT:
 				FormUtil.scrollHorizontal(scomp, true);
