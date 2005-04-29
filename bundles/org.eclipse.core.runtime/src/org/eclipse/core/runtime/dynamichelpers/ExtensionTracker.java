@@ -12,15 +12,9 @@ package org.eclipse.core.runtime.dynamichelpers;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.internal.registry.ReferenceHashSet;
 import org.eclipse.core.internal.runtime.ListenerList;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 
 /**
  * Implementation of the IExtensionTracker. 
@@ -39,7 +33,7 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 	public ExtensionTracker() {
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
-
+	
 	public void registerHandler(IExtensionChangeHandler handler, IFilter filter) {
 		synchronized (lock) {
 			if (closed)
@@ -48,7 +42,7 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 			handlers.add(new HandlerWrapper(handler, filter));
 		}
 	}
-
+	
 	public void unregisterHandler(IExtensionChangeHandler handler) {
 		synchronized (lock) {
 			if (closed)
@@ -211,6 +205,11 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		};
 	}
 
+    /**
+     * Return an instance of filter matching all changes for the given extension points.
+     * @param xpts the extension points used to filter
+     * @return a filter
+     */
 	public static IFilter createExtensionPointFilter(final IExtensionPoint[] xpts) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
@@ -222,6 +221,11 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		};
 	}
 
+    /**
+     * Return an instance of filter matching all changes from a given plugin.
+     * @param id the plugin id 
+     * @return a filter
+     */
 	public static IFilter createNamespaceFilter(final String id) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
