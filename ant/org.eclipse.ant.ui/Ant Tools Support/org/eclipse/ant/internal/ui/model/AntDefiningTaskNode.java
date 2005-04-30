@@ -23,6 +23,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
+import org.apache.tools.ant.taskdefs.DefBase;
+import org.apache.tools.ant.types.Path;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
@@ -83,8 +85,13 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			try {
                 ComponentHelper helper= ComponentHelper.getComponentHelper(getProjectNode().getProject());
                 Hashtable old= new Hashtable(helper.getAntTypeTable());
-				getTask().maybeConfigure();
-				getTask().execute();
+                UnknownElement ue= (UnknownElement) getTask();
+				ue.maybeConfigure();
+                Object realThing= ue.getRealThing();
+                if (realThing instanceof DefBase) {
+                    ((DefBase)realThing).setClasspath(Path.systemClasspath);
+                }
+				ue.execute();
                 Iterator newNames= helper.getAntTypeTable().keySet().iterator();
                 List defined= new ArrayList();
                 while (newNames.hasNext()) {
