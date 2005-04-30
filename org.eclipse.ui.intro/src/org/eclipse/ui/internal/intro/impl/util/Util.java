@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -23,7 +24,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.internal.intro.impl.Messages;
 
 public class Util {
 
@@ -39,7 +39,7 @@ public class Util {
             return;
         if (variables != null) {
             // if variables is not null, errorId will never be null.
-            msg = Messages.bind(msg, variables);
+            msg = NLS.bind(msg, variables);
         }
         Log.error(msg, e);
     }
@@ -158,6 +158,7 @@ public class Util {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
+            // no-op
         }
     }
 

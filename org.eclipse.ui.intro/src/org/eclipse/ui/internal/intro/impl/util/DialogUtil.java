@@ -96,7 +96,7 @@ public class DialogUtil {
         if (msg == null)
             return;
         if (variables != null)
-            msg = Messages.bind(msg, variables);
+            msg = NLS.bind(msg, variables);
         displayWarningMessage(parent, msg);
     }
 
@@ -122,7 +122,7 @@ public class DialogUtil {
         if (msg == null)
             return;
         if (variables != null)
-            msg = Messages.bind(msg, variables);
+            msg = NLS.bind(msg, variables);
         displayInfoMessage(parent, msg);
     }
 

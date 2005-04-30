@@ -58,9 +58,9 @@ public class StandbyPart implements IIntroConstants {
 
     private FormToolkit toolkit;
     private IntroModelRoot model;
-    private ImageHyperlink returnLink;
+    protected ImageHyperlink returnLink;
     private Composite container;
-    private Composite content;
+    protected Composite content;
     private IIntroPart introPart;
     private EmptyStandbyContentPart emptyPart;
     private IMemento memento;
@@ -317,7 +317,7 @@ public class StandbyPart implements IIntroConstants {
         returnLink.setToolTipText(toolTip);
     }
 
-    private void doReturn() {
+    protected void doReturn() {
         // remove the flag to indicate that standbypart is no longer needed.
         ((CustomizableIntroPart) introPart).getControl().setData(
             IIntroConstants.SHOW_STANDBY_PART, null);

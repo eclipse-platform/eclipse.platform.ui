@@ -30,6 +30,7 @@ public class SharedStyleManager {
     protected Bundle bundle;
 
     SharedStyleManager() {
+        // no-op
     }
 
     /**
@@ -108,6 +109,7 @@ public class SharedStyleManager {
                 int b = Integer.parseInt(value.substring(5, 7), 16);
                 return new RGB(r, g, b);
             } catch (NumberFormatException e) {
+                Log.error("Failed to parser: " + value + " as an integer", e);
             }
         }
         return null;

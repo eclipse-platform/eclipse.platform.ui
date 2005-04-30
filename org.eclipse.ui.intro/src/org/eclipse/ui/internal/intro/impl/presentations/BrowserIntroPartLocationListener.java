@@ -38,6 +38,7 @@ public class BrowserIntroPartLocationListener implements LocationListener {
      * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
      */
     public void changed(LocationEvent event) {
+        // no-op
     }
 
     /**

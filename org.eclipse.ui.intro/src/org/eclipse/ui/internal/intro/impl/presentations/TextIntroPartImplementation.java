@@ -30,7 +30,7 @@ public class TextIntroPartImplementation extends
 
     public void doStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
-
+        // no-op
     }
 
     public void createPartControl(Composite container) {
@@ -42,11 +42,12 @@ public class TextIntroPartImplementation extends
     }
 
     protected void updateNavigationActionsState() {
+        // no-op
     }
 
 
     public void setFocus() {
-
+        // no-op
     }
 
     /*
@@ -73,6 +74,7 @@ public class TextIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
     protected void handleRegistryChanged(IRegistryChangeEvent event) {
+        // no-op
     }
 
     /*
@@ -85,5 +87,6 @@ public class TextIntroPartImplementation extends
     }
 
     public void reflow(IIntroContentProvider provider, boolean incremental) {
+        // no-op
     }
 }

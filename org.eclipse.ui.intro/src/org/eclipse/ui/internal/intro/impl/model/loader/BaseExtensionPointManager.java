@@ -17,7 +17,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroIdElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.Util;
@@ -40,7 +40,7 @@ public class BaseExtensionPointManager {
     protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId"; //$NON-NLS-1$
 
     // the id attribute in any intro element.
-    protected static final String ATT_ID = AbstractBaseIntroElement.ATT_ID;
+    protected static final String ATT_ID = AbstractIntroIdElement.ATT_ID;
 
 
     protected Hashtable introModels = new Hashtable();

@@ -46,16 +46,17 @@ public class IntroContentParser {
 
     private static String TAG_INTRO_CONTENT = "introContent"; //$NON-NLS-1$
     private static String TAG_HTML = "html"; //$NON-NLS-1$
-    private static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
-    private static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
-    private static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
+    protected static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
+    protected static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
+    protected static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
 
 
     /*
      * Load XHTML dtds from intro plugin location.
      */
-    private static Hashtable dtdMap = new Hashtable();
-    {
+    protected static Hashtable dtdMap = new Hashtable();
+
+    static {
         String dtdBaseLocation = "dtds/xhtml1-20020801/"; //$NON-NLS-1$
 
         String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$

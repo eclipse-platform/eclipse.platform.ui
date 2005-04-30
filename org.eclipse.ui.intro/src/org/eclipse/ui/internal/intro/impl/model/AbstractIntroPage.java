@@ -416,7 +416,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     private void loadXMLContent(Document dom) {
         Element[] pages = ModelUtil.getElementsByTagName(dom,
-            IntroPage.TAG_PAGE);
+            AbstractIntroPage.TAG_PAGE);
         if (pages.length == 0) {
             Log.warning("Content file has no pages."); //$NON-NLS-1$
             return;
@@ -427,7 +427,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         boolean foundMatchingPage = false;
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
-            if (pageElement.getAttribute(IntroPage.ATT_ID).equals(getId())) {
+            if (pageElement.getAttribute(AbstractIntroIdElement.ATT_ID).equals(
+                getId())) {
                 this.element = pageElement;
                 // call init on the new element. the filtering and the style-id
                 // are loaded by the parent class.

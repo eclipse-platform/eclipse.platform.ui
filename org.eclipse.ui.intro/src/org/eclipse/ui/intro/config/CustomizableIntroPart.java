@@ -82,7 +82,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     private StandbyPart standbyPart;
     private Composite container;
     private IMemento memento;
-    private IntroModelRoot model;
+    IntroModelRoot model;
     // this flag is used to recreate a cached standby part. It is used once and
     // the set to false when the standby part is first created.
     private boolean restoreStandby;
@@ -328,7 +328,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         return null;
     }
 
-    private IntroPartPresentation getPresentation() {
+    IntroPartPresentation getPresentation() {
         return presentation;
     }
 
@@ -358,7 +358,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     /**
      * @return Returns the standbyPart.
      */
-    private StandbyPart getStandbyPart() {
+    StandbyPart getStandbyPart() {
         return standbyPart;
     }
 
@@ -436,8 +436,8 @@ public final class CustomizableIntroPart extends IntroPart implements
                 model.setPresentation(getPresentation());
                 // keep same page on refresh. No need for notification here.
                 model.setCurrentPageId(currentPageId, false);
-                if (presentation != null)
-                    presentation.registryChanged(event);
+                if (getPresentation() != null)
+                    getPresentation().registryChanged(event);
 
             }
         });

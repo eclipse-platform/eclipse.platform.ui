@@ -128,7 +128,7 @@ public class IntroURL implements IIntroURL {
         return result[0];
     }
 
-    private boolean doExecute() {
+    protected boolean doExecute() {
 
         // check for all supported Intro actions first.
         if (action.equals(CLOSE))

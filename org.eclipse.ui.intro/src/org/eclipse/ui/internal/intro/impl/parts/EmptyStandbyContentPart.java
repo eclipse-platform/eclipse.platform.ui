@@ -61,7 +61,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
      */
     public void init(IIntroPart introPart, IMemento memento) {
-
+        // no-op
     }
 
     /*
@@ -70,7 +70,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#setInput(java.lang.Object)
      */
     public void setInput(Object input) {
-
+        // no-op
     }
 
     /*
@@ -79,7 +79,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#setFocus()
      */
     public void setFocus() {
-
+        // no-op
     }
 
     /*
@@ -88,11 +88,11 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#dispose()
      */
     public void dispose() {
-
-
+        // no-op
     }
 
     public void saveState(IMemento memento) {
+        // no-op
     }
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 
 public class PageStyleManager extends SharedStyleManager {
@@ -194,6 +195,7 @@ public class PageStyleManager extends SharedStyleManager {
         try {
             intValue = Integer.parseInt(value);
         } catch (NumberFormatException e) {
+            Log.error("Failed to parse key: " + key + " as an integer.", e);
         }
         return intValue;
     }

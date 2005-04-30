@@ -27,8 +27,8 @@ public class Messages extends NLS {
     // Dialogs
     // --------
     public static String MessageDialog_errorTitle;
-    public static String MessageDialog_warningTitle;;
-    public static String MessageDialog_infoTitle;;
+    public static String MessageDialog_warningTitle;
+    public static String MessageDialog_infoTitle;
 
     public static String CustomizableIntroPart_configNotFound;
     public static String StandbyPart_returnToIntro;
@@ -50,6 +50,8 @@ public class Messages extends NLS {
     // Misc
     // -------
     public static String IntroPart_showContentButton_tooltip;
+
+
 
 
 }

@@ -52,7 +52,7 @@ public class BrowserIntroPartImplementation extends
 
 
     // the browser widget that will display the intro content
-    private Browser browser = null;
+    protected Browser browser = null;
 
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
@@ -98,6 +98,7 @@ public class BrowserIntroPartImplementation extends
         browser.addProgressListener(new ProgressListener() {
 
             public void changed(ProgressEvent event) {
+                // no-op
             }
 
             public void completed(ProgressEvent event) {

@@ -79,6 +79,7 @@ public class ContentProviderManager {
      * Prevent creation.
      */
     protected ContentProviderManager() {
+        // do nothing
     }
 
     /**

@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.LaunchBarShortcutElement;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
@@ -71,26 +72,26 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
 public class IntroLaunchBar implements IWindowTrim {
     private Composite container;
 
-    private Composite handle;
+    protected Composite handle;
 
-    private CloseButton closeButton;
+    protected CloseButton closeButton;
 
-    private Image handleImage;
+    protected Image handleImage;
     // private CoolBar coolBar;
 
-    private ToolBarManager toolBarManager;
+    protected ToolBarManager toolBarManager;
 
-    private int orientation;
+    protected int orientation;
 
-    private int location;
+    protected int location;
 
-    private String lastPageId;
+    protected String lastPageId;
 
-    private Action closeAction;
+    protected Action closeAction;
 
     private LaunchBarElement element;
 
-    private boolean simple;
+    protected boolean simple;
 
     private String presentationId;
 
@@ -137,7 +138,7 @@ public class IntroLaunchBar implements IWindowTrim {
 
         private boolean armed;
 
-        private Color closeHotBg;
+        protected Color closeHotBg;
 
         public CloseButton(Composite parent, int style) {
             super(parent, style);
@@ -160,7 +161,7 @@ public class IntroLaunchBar implements IWindowTrim {
             return new Point(10, 12);
         }
 
-        private void onPaint(PaintEvent e) {
+        protected void onPaint(PaintEvent e) {
             e.gc.setBackground(hover ? closeHotBg : e.display
                 .getSystemColor(CLOSE_FILL));
             e.gc.fillPolygon(CLOSE_POINTS);
@@ -169,6 +170,7 @@ public class IntroLaunchBar implements IWindowTrim {
         }
 
         public void mouseDoubleClick(MouseEvent e) {
+            // no-op
         }
 
         public void mouseDown(MouseEvent e) {
@@ -194,6 +196,7 @@ public class IntroLaunchBar implements IWindowTrim {
         }
 
         public void mouseHover(MouseEvent e) {
+            // no-op
         }
     }
 
@@ -323,6 +326,7 @@ public class IntroLaunchBar implements IWindowTrim {
             if (storedLocation > 0)
                 setLocation(storedLocation);
         } catch (NumberFormatException e) {
+            Log.error("failed to access dialog store for Intro plugin", e);
         }
     }
 
@@ -340,7 +344,7 @@ public class IntroLaunchBar implements IWindowTrim {
         window.getShell().layout();
     }
 
-    private boolean isPlain() {
+    protected boolean isPlain() {
         return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
     }
 
@@ -421,7 +425,7 @@ public class IntroLaunchBar implements IWindowTrim {
         IntroPlugin.getDefault().setLaunchBar(this);
     }
 
-    private void startDragging(Point position, boolean usingKeyboard) {
+    protected void startDragging(Point position, boolean usingKeyboard) {
         Rectangle dragRect = DragUtil.getDisplayBounds(getControl());
         startDrag(this, dragRect, position, usingKeyboard);
     }
@@ -432,7 +436,7 @@ public class IntroLaunchBar implements IWindowTrim {
         DragUtil.performDrag(toDrag, dragRect, position, !usingKeyboard);
     }
 
-    private void onPaint(PaintEvent e) {
+    protected void onPaint(PaintEvent e) {
         GC gc = e.gc;
         Color color = fg;
         if (color == null) {
@@ -516,7 +520,7 @@ public class IntroLaunchBar implements IWindowTrim {
         gc.drawPolygon(shape);
     }
 
-    private void onHandlePaint(PaintEvent e) {
+    protected void onHandlePaint(PaintEvent e) {
         Point size = handle.getSize();
 
         if (handleImage != null) {
@@ -648,7 +652,7 @@ public class IntroLaunchBar implements IWindowTrim {
         closeLaunchBar(false);
     }
 
-    private IIntroPart closeLaunchBar(boolean restore) {
+    protected IIntroPart closeLaunchBar(boolean restore) {
         IntroPlugin.getDefault().setLaunchBar(null);
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
@@ -673,7 +677,7 @@ public class IntroLaunchBar implements IWindowTrim {
         return intro;
     }
 
-    private void executeShortcut(String url) {
+    protected void executeShortcut(String url) {
         IIntroURL introURL = IntroURLFactory.createIntroURL(url);
         if (introURL != null) {
             IIntroPart intro = closeLaunchBar(true);
@@ -683,7 +687,7 @@ public class IntroLaunchBar implements IWindowTrim {
         }
     }
 
-    private void openPage(String id) {
+    protected void openPage(String id) {
         IIntroPart intro = closeLaunchBar(true);
         if (intro == null)
             return;
@@ -695,7 +699,7 @@ public class IntroLaunchBar implements IWindowTrim {
             introURL.execute();
     }
 
-    private void contextMenuAboutToShow(IMenuManager manager) {
+    protected void contextMenuAboutToShow(IMenuManager manager) {
         manager.add(closeAction);
     }
 

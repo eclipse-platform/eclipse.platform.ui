@@ -50,7 +50,7 @@ public class RootPageForm implements IIntroConstants {
     private FormToolkit toolkit;
     private IntroHomePage rootPage;
     private Form parentForm;
-    private Label descriptionLabel;
+    protected Label descriptionLabel;
     private PageStyleManager rootPageStyleManager;
 
     class PageComposite extends Composite {

@@ -63,6 +63,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
 
 
     public void dispose() {
+        // nothing to dispose
     }
 
     /*
@@ -72,6 +73,7 @@ public class IntroModelContentProvider implements ITreeContentProvider {
      *      java.lang.Object, java.lang.Object)
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        // do nothing
 
     }
 

@@ -69,13 +69,17 @@ public final class ImageUtil {
             String imageName) {
         try {
             URL imageUrl = Platform.find(bundle, new Path(imageName));
-            ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
-            return desc;
+            if (imageUrl != null) {
+                ImageDescriptor desc = ImageDescriptor.createFromURL(imageUrl);
+                return desc;
+            }
         } catch (Exception e) {
             // Should never be here.
             Log.error("could not create Image Descriptor", e); //$NON-NLS-1$
-            return ImageDescriptor.getMissingImageDescriptor();
         }
+        Log.warning("could not create Image Descriptor for: " + imageName
+                + " in bundle: " + bundle.getSymbolicName());
+        return ImageDescriptor.getMissingImageDescriptor();
     }
 
     /**

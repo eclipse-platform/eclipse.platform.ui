@@ -108,7 +108,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IConfigurationElement[] configExtensionElements;
 
     // maintain listener list for model changes.
-    private ListenerList propChangeListeners = new ListenerList(2);
+    public ListenerList propChangeListeners = new ListenerList(2);
 
     // a hashtable to hold all loaded DOMs until resolving all configExtensions
     // is done. Key is one extensionContent DOM element, while value is the
@@ -230,17 +230,18 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String homePageId = getPresentation().getHomePageId();
         String standbyPageId = getPresentation().getStandbyPageId();
         Element[] pages = ModelUtil.getElementsByTagName(dom,
-            IntroPage.TAG_PAGE);
+            AbstractIntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
-            if (pageElement.getAttribute(IntroPage.ATT_ID).equals(homePageId)) {
+            if (pageElement.getAttribute(AbstractIntroIdElement.ATT_ID).equals(
+                homePageId)) {
                 // Create the model class for the Root Page.
                 homePage = new IntroHomePage(pageElement, bundle, base);
                 homePage.setParent(this);
                 currentPageId = homePage.getId();
                 children.add(homePage);
-            } else if (pageElement.getAttribute(IntroPage.ATT_ID).equals(
-                standbyPageId)) {
+            } else if (pageElement.getAttribute(AbstractIntroIdElement.ATT_ID)
+                .equals(standbyPageId)) {
                 // Create the model class for the standby Page.
                 standbyPage = new IntroHomePage(pageElement, bundle, base);
                 standbyPage.setParent(this);
@@ -345,7 +346,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             .getBundleFromConfigurationElement(configExtElement);
 
         Element[] pages = ModelUtil.getElementsByTagName(dom,
-            IntroPage.TAG_PAGE);
+            AbstractIntroPage.TAG_PAGE);
         for (int j = 0; j < pages.length; j++) {
             // Create the model class for an intro Page.
             IntroPage page = new IntroPage(pages[j], bundle, base);

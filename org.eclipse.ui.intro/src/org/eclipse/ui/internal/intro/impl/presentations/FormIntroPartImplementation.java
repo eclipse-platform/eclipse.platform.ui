@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.HyperlinkGroup;
+import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
@@ -115,7 +115,7 @@ public class FormIntroPartImplementation extends
             toolkit.setBackground(bg);
         }
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-            HyperlinkGroup.UNDERLINE_HOVER);
+            HyperlinkSettings.UNDERLINE_HOVER);
 
         // Define presentation title color and image.
         Form mainForm = toolkit.createForm(container);
@@ -479,7 +479,7 @@ public class FormIntroPartImplementation extends
     private void staticCreatePartControl(Composite parent) {
         toolkit = new FormToolkit(parent.getDisplay());
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-            HyperlinkGroup.UNDERLINE_HOVER);
+            HyperlinkSettings.UNDERLINE_HOVER);
 
         // create a page that has only one link. The URL and tooltip will be set
         // by the standby listener.
