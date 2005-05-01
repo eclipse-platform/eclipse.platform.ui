@@ -33,6 +33,15 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
         int style = decodeStyle(getViewSite().getSecondaryId());
         viewer = new BrowserViewer(parent, style);
         viewer.setContainer(this);
+		  
+		  /*PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (BrowserViewer.PROPERTY_TITLE.equals(event.getPropertyName())) {
+						setPartName((String) event.getNewValue());
+					}
+				}
+		  };
+		  viewer.addPropertyChangeListener(propertyChangeListener);*/
 	}
     
     /**

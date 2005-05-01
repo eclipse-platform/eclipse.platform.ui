@@ -241,10 +241,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 * @return the file name string
 	 */
 	public String getName() {
-		if (name != null)
-			return name;
-
-		return Messages.viewWebBrowserTitle;
+		return name;
 	}
 
 	/*

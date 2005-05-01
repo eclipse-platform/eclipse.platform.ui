@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -51,6 +53,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	protected TextAction pasteAction;
 	
 	private boolean disposed;
+	private boolean lockName;
 
 	/**
 	 * WebBrowserEditor constructor comment.
@@ -79,6 +82,17 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		
 		webBrowser.setURL(initialURL);
 		webBrowser.setContainer(this);
+		
+		if (!lockName) {
+			PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (BrowserViewer.PROPERTY_TITLE.equals(event.getPropertyName())) {
+						setPartName((String) event.getNewValue());
+					}
+				}
+			};
+			webBrowser.addPropertyChangeListener(propertyChangeListener);
+		}
 	}
 	
 	public void dispose() {
@@ -191,7 +205,12 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 				site.getWorkbenchWindow().getActivePage().bringToTop(this);
 			}
 	
-			setPartName(wbei.getName());
+			if (wbei.getName() == null)
+				setPartName(Messages.viewWebBrowserTitle);
+			else {
+				setPartName(wbei.getName());
+				lockName = true;
+			}
 			setTitleToolTip(wbei.getToolTipText());
 
 			Image oldImage = image;
