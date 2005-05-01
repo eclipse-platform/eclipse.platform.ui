@@ -55,6 +55,7 @@ public class Messages extends NLS {
 	public static String searching;
 	public static String errorDialogTitle;
 	public static String errorCouldNotLaunchWebBrowser;
+	public static String errorNoBrowser;
 	public static String editExternalBrowser;
 	public static String createBrowser;
 	public static String name;

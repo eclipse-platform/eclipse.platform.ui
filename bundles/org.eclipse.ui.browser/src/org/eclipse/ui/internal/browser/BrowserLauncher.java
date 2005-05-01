@@ -11,14 +11,17 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 public class BrowserLauncher implements IEditorLauncher {
 
 	public BrowserLauncher() {
+		// do nothing
 	}
 
 	public void open(IPath file) {
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		try {
-			support.createBrowser(DefaultBrowserSupport.SHARED_ID).openURL(file.toFile().toURL());
+			support.createBrowser(IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR,
+					DefaultBrowserSupport.SHARED_ID, null, null).openURL(file.toFile().toURL());
 		}
 		catch (MalformedURLException e) {
+			// ignore
 		}
 		catch (PartInitException e) {
 			//TODO Report this exception

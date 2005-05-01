@@ -105,20 +105,19 @@ public class BrowserManager extends Observable {
 				Integer current = memento.getInteger("current"); //$NON-NLS-1$
 				if (current != null) {
 					currentBrowser = (IBrowserDescriptor) browsers.get(current.intValue()); 
-				}	
+				}
 			} catch (Exception e) {
 				Trace.trace(Trace.WARNING, "Could not load browsers: " + e.getMessage()); //$NON-NLS-1$
 			}
-			
-			if (currentBrowser == null && browsers.size() > 0)
-				currentBrowser = (IBrowserDescriptor) browsers.get(0);
-			setChanged();
-			notifyObservers();
 		} else {
 			setupDefaultBrowsers();
 			saveBrowsers();
-			return;
 		}
+		
+		if (currentBrowser == null && browsers.size() > 0)
+			currentBrowser = (IBrowserDescriptor) browsers.get(0);
+		setChanged();
+		notifyObservers();
 	}
 
 	protected void saveBrowsers() {
@@ -171,17 +170,26 @@ public class BrowserManager extends Observable {
 		
 		saveBrowsers();
 	}
-	
+
 	protected void removeWebBrowser(IBrowserDescriptor browser) {
 		if (browsers == null)
 			loadBrowsers();
 		browsers.remove(browser);
+		
+		if (currentBrowser == null || currentBrowser.equals(browser)) {
+			currentBrowser = null;
+			if (browsers.size() > 0)
+				currentBrowser = (IBrowserDescriptor) browsers.get(0);
+		}
 	}
-	
+
 	public IBrowserDescriptor getCurrentWebBrowser() {
 		if (browsers == null)
 			loadBrowsers();
 
+		if (currentBrowser == null && browsers.size() > 0)
+			return (IBrowserDescriptor) browsers.get(0);
+		
 		return currentBrowser; 
 	}
 
