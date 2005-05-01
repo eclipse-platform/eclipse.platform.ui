@@ -10,6 +10,11 @@
  **********************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
@@ -78,6 +83,8 @@ public class BrowserViewer extends Composite {
      * LOCATION_BAR style.
      */
     public static final int BUTTON_BAR = 1 << 2;
+	 
+	 protected static final String PROPERTY_TITLE = "title"; //$NON-NLS-1$
 
     private static final int MAX_HISTORY = 50;
 
@@ -110,6 +117,8 @@ public class BrowserViewer extends Composite {
     protected String title;
 
     protected int progressWorked = 0;
+	 
+	 protected List propertyListeners;
 
     /**
      * Under development - do not use
@@ -152,7 +161,7 @@ public class BrowserViewer extends Composite {
      */
     public BrowserViewer(Composite parent, int style) {
         super(parent, SWT.NONE);
-
+		  
         if ((style & LOCATION_BAR) != 0)
             showURLbar = true;
 
@@ -174,7 +183,7 @@ public class BrowserViewer extends Composite {
         if (showToolbar || showURLbar) {
             Composite toolbarComp = new Composite(this, SWT.NONE);
             GridLayout outerLayout = new GridLayout();
-            outerLayout.numColumns = 3;
+            outerLayout.numColumns = 4;
             outerLayout.marginWidth = 2;
             outerLayout.marginHeight = 2;
             toolbarComp.setLayout(outerLayout);
@@ -182,14 +191,17 @@ public class BrowserViewer extends Composite {
                     GridData.VERTICAL_ALIGN_BEGINNING
                             | GridData.FILL_HORIZONTAL));
 
-            ToolBar toolbar = null;
-            if (showURLbar) {
-                toolbar = createLocationBar(toolbarComp);
+            if (showToolbar) {
+                createToolbar(toolbarComp);
+            }
+				if (showURLbar) {
+                createLocationBar(toolbarComp);
             }
 
-            if (showToolbar) {
-                createToolbar(toolbarComp, toolbar);
-            }
+				if (showToolbar | showURLbar) {
+				    busy = new BusyIndicator(toolbarComp, SWT.NONE);
+				    busy.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				}
         }
 
         // create a new SWT Web browser widget, checking once again to make sure
@@ -287,6 +299,7 @@ public class BrowserViewer extends Composite {
         // updating the status line
         browser.addStatusTextListener(new StatusTextListener() {
             public void changed(StatusTextEvent event) {
+					//System.out.println("status: " + event.text); //$NON-NLS-1$
                 if (container != null) {
                     IStatusLineManager status = container.getActionBars()
                             .getStatusLineManager();
@@ -352,6 +365,7 @@ public class BrowserViewer extends Composite {
 
         browser.addProgressListener(new ProgressListener() {
             public void changed(ProgressEvent event) {
+					//System.out.println("progress: " + event.current + ", " + event.total); //$NON-NLS-1$ //$NON-NLS-2$
                 if (event.total == 0)
                     return;
 
@@ -381,6 +395,7 @@ public class BrowserViewer extends Composite {
                         // busy to false
                         loading = false;
 
+						  //System.out.println("loading: " + loading); //$NON-NLS-1$
                     updateBackNextBusy();
                     updateHistory();
                 }
@@ -435,10 +450,58 @@ public class BrowserViewer extends Composite {
 
         browser.addTitleListener(new TitleListener() {
             public void changed(TitleEvent event) {
+					 String oldTitle = title;
                 title = event.title;
+					 firePropertyChangeEvent(PROPERTY_TITLE, oldTitle, title);
             }
         });
     }
+	 
+	 /**
+		 * Add a property change listener to this instance.
+		 *
+		 * @param listener java.beans.PropertyChangeListener
+		 */
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			if (propertyListeners == null)
+				propertyListeners = new ArrayList();
+			propertyListeners.add(listener);
+		}
+
+		/**
+		 * Remove a property change listener from this instance.
+		 *
+		 * @param listener java.beans.PropertyChangeListener
+		 */
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			if (propertyListeners != null)
+				propertyListeners.remove(listener);
+		}
+
+		/**
+		 * Fire a property change event.
+		 */
+		protected void firePropertyChangeEvent(String propertyName, Object oldValue, Object newValue) {
+			if (propertyListeners == null)
+				return;
+
+			PropertyChangeEvent event = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
+			//Trace.trace("Firing: " + event + " " + oldValue);
+			try {
+				int size = propertyListeners.size();
+				PropertyChangeListener[] pcl = new PropertyChangeListener[size];
+				propertyListeners.toArray(pcl);
+				
+				for (int i = 0; i < size; i++)
+					try {
+						pcl[i].propertyChange(event);
+					} catch (Exception e) {
+						// ignore
+					}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
 
     /**
      * Navigate to the next session history item. Convenience method that calls
@@ -572,6 +635,11 @@ public class BrowserViewer extends Composite {
             browser.refresh();
         else
             text.refresh();
+		  try {
+			  Thread.sleep(50);
+		  } catch (Exception e) {
+			  // ignore
+		  }
     }
 
     private void setURL(String url, boolean browse) {
@@ -668,23 +736,21 @@ public class BrowserViewer extends Composite {
         go.setHotImage(ImageResource.getImage(ImageResource.IMG_CLCL_NAV_GO));
         go.setDisabledImage(ImageResource
                 .getImage(ImageResource.IMG_DLCL_NAV_GO));
-        go
-                .setToolTipText(Messages.actionWebBrowserGo);
+        go.setToolTipText(Messages.actionWebBrowserGo);
         go.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 setURL(combo.getText());
             }
         });
-
-        return toolbar;
+		  
+		  new ToolItem(toolbar, SWT.SEPARATOR);
+		  
+		  return toolbar;
     }
 
-    private void createToolbar(Composite parent, ToolBar toolbar) {
-        if (toolbar == null)
-            toolbar = new ToolBar(parent, SWT.FLAT);
-        else
-            new ToolItem(toolbar, SWT.SEPARATOR);
-
+    private ToolBar createToolbar(Composite parent) {
+		  ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
+		  
         // create back and forward actions
         back = new ToolItem(toolbar, SWT.NONE);
         back.setImage(ImageResource
@@ -741,11 +807,10 @@ public class BrowserViewer extends Composite {
                 refresh();
             }
         });
-
-        new ToolItem(toolbar, SWT.SEPARATOR);
-
-        busy = new BusyIndicator(parent, SWT.NONE);
-        busy.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		  
+		  new ToolItem(toolbar, SWT.SEPARATOR);
+		  
+		  return toolbar;
     }
 
     /**
