@@ -334,8 +334,20 @@ public class Form extends Composite {
 		if (text==null) return;
 		Rectangle carea = getClientArea();
 		gc.setFont(getFont());
-		Point textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
-		int theight = TITLE_HMARGIN + textSize.y + TITLE_HMARGIN + TITLE_GAP;
+		int textWidth = carea.width-TITLE_HMARGIN-TITLE_HMARGIN;
+		int theight=0;
+		if (toolBarManager!=null) {
+			ToolBar toolBar = toolBarManager.getControl();
+			if (toolBar != null) {
+				toolbarCache.setControl(toolBar);
+				Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				textWidth -= TITLE_GAP-tbsize.x;
+				theight = tbsize.y;
+			}
+		}
+		Point textSize = FormUtil.computeWrapSize(gc, text, textWidth);
+		theight = Math.max(textSize.y, theight);
+		theight += TITLE_HMARGIN + TITLE_HMARGIN + TITLE_GAP;
 		if (backgroundImage!=null && !backgroundImageClipped) {
 			theight = Math.max(theight, backgroundImage.getBounds().height);
 		}

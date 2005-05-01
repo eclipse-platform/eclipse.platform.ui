@@ -727,7 +727,9 @@ public final class FormText extends Canvas {
 
 	/**
 	 * Controls whether whitespace inside paragraph and list items is
-	 * normalized.
+	 * normalized. Note that the new value will not affect the current
+	 * text in the control, only subsequent calls to <code>setText</code>
+	 * or <code>setContents</code>.
 	 * <p>
 	 * If normalized:
 	 * <ul>
