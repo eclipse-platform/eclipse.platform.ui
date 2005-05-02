@@ -11,8 +11,11 @@
 package org.eclipse.jface.text.link;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -43,6 +46,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IEditingSupport;
+import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -53,7 +57,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -981,17 +984,14 @@ public class LinkedModeUI {
 	 */
 	private void registerAutoEditVetoer(ITextViewer viewer) {
 		try {
-			if (viewer.getDocument() instanceof IDocumentExtension3) {
-				IDocumentExtension3 ext= (IDocumentExtension3) viewer.getDocument();
-				String[] contentTypes= ext.getLegalContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING);
-				if (viewer instanceof ITextViewerExtension2) {
-					ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
-					for (int i= 0; i < contentTypes.length; i++) {
-						vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
-					}
-				} else {
-					Assert.isTrue(false);
+			String[] contentTypes= getContentTypes(viewer.getDocument());
+			if (viewer instanceof ITextViewerExtension2) {
+				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+				for (int i= 0; i < contentTypes.length; i++) {
+					vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
 				}
+			} else {
+				Assert.isTrue(false);
 			}
 
 		} catch (BadPartitioningException e) {
@@ -1001,22 +1001,40 @@ public class LinkedModeUI {
 
 	private void unregisterAutoEditVetoer(ITextViewer viewer) {
 		try {
-			if (viewer.getDocument() instanceof IDocumentExtension3) {
-				IDocumentExtension3 ext= (IDocumentExtension3) viewer.getDocument();
-				String[] contentTypes= ext.getLegalContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING);
-				if (viewer instanceof ITextViewerExtension2) {
-					ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
-					for (int i= 0; i < contentTypes.length; i++) {
-						vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
-					}
+			String[] contentTypes= getContentTypes(viewer.getDocument());
+			if (viewer instanceof ITextViewerExtension2) {
+				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+				for (int i= 0; i < contentTypes.length; i++) {
+					vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
 				}
+			} else {
+				Assert.isTrue(false);
 			}
-
 		} catch (BadPartitioningException e) {
 			leave(ILinkedModeListener.EXIT_ALL);
 		}
 	}
 
+	/**
+	 * Returns all possible content types of <code>document</code>.
+	 * 
+	 * @param document the document
+	 * @return all possible content types of <code>document</code>
+	 * @throws BadPartitioningException
+	 */
+	private String[] getContentTypes(IDocument document) throws BadPartitioningException {
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 ext= (IDocumentExtension3) document;
+			String[] partitionings= ext.getPartitionings();
+			Set contentTypes= new HashSet(20);
+			for (int i= 0; i < partitionings.length; i++) {
+				contentTypes.addAll(Arrays.asList(ext.getLegalContentTypes(partitionings[i])));
+			}
+			return (String[]) contentTypes.toArray(new String[contentTypes.size()]);
+		}
+		return document.getLegalContentTypes();
+	}
+	
 	private void createAnnotationModel() {
 		if (fCurrentTarget.fAnnotationModel == null) {
 			LinkedPositionAnnotations lpa= new LinkedPositionAnnotations();
