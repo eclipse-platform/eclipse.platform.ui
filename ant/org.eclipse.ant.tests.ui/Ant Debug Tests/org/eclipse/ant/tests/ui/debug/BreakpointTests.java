@@ -116,6 +116,15 @@ public class BreakpointTests extends AbstractAntDebugTest {
             copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "entry1,entry2");
 			thread= launchToLineBreakpoint(copy, bp);
 			bp.setEnabled(false);
+            if (sepVM) {
+                synchronized (this) {
+                    try {
+                        //wait for the target to get updated for the new breakpoint state 
+                        wait(1000);
+                    } catch (InterruptedException ie) {
+                    }
+                }
+            }
 			resumeAndExit(thread);
 		} finally {
 			terminateAndRemove(thread);
