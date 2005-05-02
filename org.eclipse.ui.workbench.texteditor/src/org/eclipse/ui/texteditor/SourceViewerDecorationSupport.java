@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -96,12 +97,18 @@ public class SourceViewerDecorationSupport {
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 
-				Point left= textWidget.getLocationAtOffset(offset);
-				Point right= textWidget.getLocationAtOffset(offset + length);
-				int y= left.y + textWidget.getLineHeight() - 1;
+				Rectangle bounds;
+				if (offset + length > 0)
+					bounds= textWidget.getTextBounds(offset, offset + length - 1);
+				else {
+					Point loc= textWidget.getLocationAtOffset(offset);
+					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight());
+				}
+
+				int y= bounds.y + bounds.height - 1;
 
 				gc.setForeground(color);
-				gc.drawLine(left.x, y, right.x, y);
+				gc.drawLine(bounds.x, y, bounds.x + bounds.width, y);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);
@@ -127,15 +134,16 @@ public class SourceViewerDecorationSupport {
 
 			if (gc != null) {
 
-				Point left= textWidget.getLocationAtOffset(offset);
-				Point right= textWidget.getLocationAtOffset(offset + length);
-				int x1= left.x;
-				int x2= right.x - 1;
-				int y1= left.y;
-				int y2= y1 + textWidget.getLineHeight() - 1;
+				Rectangle bounds;
+				if (offset + length > 0)
+					bounds= textWidget.getTextBounds(offset, offset + length - 1);
+				else {
+					Point loc= textWidget.getLocationAtOffset(offset);
+					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight());
+				}
 
 				gc.setForeground(color);
-				gc.drawRectangle(x1, y1, x2 - x1, y2 - y1);
+				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);

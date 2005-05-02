@@ -2944,21 +2944,12 @@ public class TextViewer extends Viewer implements
 	 * @return the region covered by start and end offset
 	 */
 	final protected IRegion getExtent(int start, int end) {
-		Point left= fTextWidget.getLocationAtOffset(start);
-		Point right= new Point(left.x, left.y);
-
-		for (int i= start +1; i <= end; i++) {
-
-			Point p= fTextWidget.getLocationAtOffset(i);
-
-			if (left.x > p.x)
-				left.x= p.x;
-
-			if (right.x  < p.x)
-				right.x= p.x;
+		if (end > 0 && start < end) {
+			Rectangle bounds= fTextWidget.getTextBounds(start, end - 1);
+			return new Region(bounds.x, bounds.width);
 		}
-
-		return  new Region(left.x, right.x - left.x);
+		
+		return new Region(fTextWidget.getLocationAtOffset(start).x, 0);
 	}
 
 	/**
@@ -2972,23 +2963,7 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	final protected int getWidthInPixels(int offset, int length) {
-
-		Point left= fTextWidget.getLocationAtOffset(offset);
-		Point right= new Point(left.x, left.y);
-
-		int end= offset + length;
-		for (int i= offset +1; i <= end; i++) {
-
-			Point p= fTextWidget.getLocationAtOffset(i);
-
-			if (left.x > p.x)
-				left.x= p.x;
-
-			if (right.x  < p.x)
-				right.x= p.x;
-		}
-
-		return  right.x - left.x;
+		return getExtent(offset, offset + length).getLength();
 	}
 
 	/**

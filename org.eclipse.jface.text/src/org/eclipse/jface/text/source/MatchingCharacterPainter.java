@@ -17,6 +17,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -173,12 +174,19 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void draw(GC gc, int offset, int length) {
 		if (gc != null) {
-			Point left= fTextWidget.getLocationAtOffset(offset);
-			Point right= fTextWidget.getLocationAtOffset(offset + length);
-			gc.setForeground(fColor);
 
+			gc.setForeground(fColor);
+			
+			Rectangle bounds;
+			if (offset + length > 0)
+				bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
+			else {
+				Point loc= fTextWidget.getLocationAtOffset(offset);
+				bounds= new Rectangle(loc.x, loc.y, 1, fTextWidget.getLineHeight());
+			}
+			
 			// draw box around line segment
-			gc.drawRectangle(left.x, left.y, right.x - left.x - 1, fTextWidget.getLineHeight() - 1);
+			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
 
 			// draw box around character area
 //			int widgetBaseline= fTextWidget.getBaseline();

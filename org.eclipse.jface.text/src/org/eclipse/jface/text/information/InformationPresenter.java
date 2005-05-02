@@ -367,36 +367,20 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			start= widgetRegion.getOffset();
 			end= widgetRegion.getOffset() + widgetRegion.getLength();
 		}
-
+		
 		StyledText styledText= fTextViewer.getTextWidget();
-		Point upperLeft= styledText.getLocationAtOffset(start);
-		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
-
-		for (int i= start +1; i < end; i++) {
-
-			Point p= styledText.getLocationAtOffset(i);
-
-			if (upperLeft.x > p.x)
-				upperLeft.x= p.x;
-
-			if (upperLeft.y > p.y)
-				upperLeft.y= p.y;
-
-			if (lowerRight.x  < p.x)
-				lowerRight.x= p.x;
-
-			if (lowerRight.y < p.y)
-				lowerRight.y= p.y;
+		Rectangle bounds;
+		if (end > 0 && start < end)
+			bounds= styledText.getTextBounds(start, end - 1);
+		else {
+			GC gc= new GC(styledText);
+			int width= gc.getFontMetrics().getAverageCharWidth();
+			gc.dispose();
+			Point loc= styledText.getLocationAtOffset(widgetRegion.getOffset());
+			bounds= new Rectangle(loc.x, loc.y, width, styledText.getLineHeight());
 		}
-
-		GC gc= new GC(styledText);
-		lowerRight.x +=  gc.getFontMetrics().getAverageCharWidth();
-		lowerRight.y += styledText.getLineHeight();
-		gc.dispose();
-
-		int width= lowerRight.x - upperLeft.x;
-		int height= lowerRight.y - upperLeft.y;
-		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
+		
+		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	/**

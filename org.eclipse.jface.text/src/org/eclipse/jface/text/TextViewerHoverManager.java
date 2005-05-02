@@ -268,37 +268,24 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	private Rectangle computeArea(IRegion region) {
 
+		int start= 0;
+		int end= 0;
 		IRegion widgetRegion= modelRange2WidgetRange(region);
-		int start= widgetRegion.getOffset();
-		int end= widgetRegion.getOffset() + widgetRegion.getLength();
-
-		StyledText styledText= fTextViewer.getTextWidget();
-		Point upperLeft= styledText.getLocationAtOffset(start);
-		Point lowerRight= new Point(upperLeft.x, upperLeft.y);
-
-		for (int i= start +1; i < end; i++) {
-
-			Point p= styledText.getLocationAtOffset(i);
-
-			if (upperLeft.x > p.x)
-				upperLeft.x= p.x;
-
-			if (upperLeft.y > p.y)
-				upperLeft.y= p.y;
-
-			if (lowerRight.x  < p.x)
-				lowerRight.x= p.x;
-
-			if (lowerRight.y < p.y)
-				lowerRight.y= p.y;
+		if (widgetRegion != null) {
+			start= widgetRegion.getOffset();
+			end= widgetRegion.getOffset() + widgetRegion.getLength();
 		}
 
-		lowerRight.x += fTextViewer.getAverageCharWidth();
-		lowerRight.y += styledText.getLineHeight();
-
-		int width= lowerRight.x - upperLeft.x;
-		int height= lowerRight.y - upperLeft.y;
-		return new Rectangle(upperLeft.x, upperLeft.y, width, height);
+		StyledText styledText= fTextViewer.getTextWidget();
+		Rectangle bounds;
+		if (end > 0 && start < end)
+			bounds= styledText.getTextBounds(start, end - 1);
+		else {
+			Point loc= styledText.getLocationAtOffset(widgetRegion.getOffset());
+			bounds= new Rectangle(loc.x, loc.y, fTextViewer.getAverageCharWidth(), styledText.getLineHeight());
+		}
+		
+		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	/**
