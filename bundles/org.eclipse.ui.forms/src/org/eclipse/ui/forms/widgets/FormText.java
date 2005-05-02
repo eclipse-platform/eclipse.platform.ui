@@ -1412,10 +1412,13 @@ public final class FormText extends Canvas {
 	private void repaint(GC gc, int x, int y, int width, int height) {
 		Image textBuffer = new Image(getDisplay(), width, height);
 		Color bg = getBackground();
-		if (!isEnabled())
-			bg = getShell().getBackground();
+		Color fg = getForeground();
+		if (!isEnabled()) {
+			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			fg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		}
 		GC textGC = new GC(textBuffer, gc.getStyle());
-		textGC.setForeground(getForeground());
+		textGC.setForeground(fg);
 		textGC.setBackground(bg);
 		textGC.setFont(getFont());
 		textGC.fillRectangle(0, 0, width, height);
