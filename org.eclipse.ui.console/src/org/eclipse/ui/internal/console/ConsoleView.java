@@ -135,8 +135,14 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
             }
             return;
         }
+        
+        IConsole recConsole = (IConsole)fPartToConsole.get(pageRec.part);
+        if (recConsole!=null && recConsole.equals(fActiveConsole)) {
+            return;
+        }
+        
 	    super.showPageRec(pageRec);
-	    fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
+	    fActiveConsole = recConsole;
 	    IConsole tos = null;
 	    if (!fStack.isEmpty()) {
 	        tos = (IConsole) fStack.get(0);
@@ -280,7 +286,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void dispose() {
 		super.dispose();
 		getViewSite().getPage().removePartListener((IPartListener2)this);
-		getConsoleManager().removeConsoleListener(this);
+        ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
+        consoleManager.removeConsoleListener(this);        
+        consoleManager.registerConsoleView(this);
 	}
 
 	/**
@@ -370,6 +378,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		fConsoleToPart = new HashMap();
 		fPartToConsole = new HashMap();
 		fConsoleToPageParticipants = new HashMap();
+        
+		ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
+		consoleManager.registerConsoleView(this);
 	}
 	
 	protected void createActions() {

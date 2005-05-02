@@ -41,8 +41,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     private List textChangeListeners;
     private IDocument document;
     
-    int[] offsets = new int[10000];
-    int[] lengths = new int[10000];
+    int[] offsets = new int[5000];
+    int[] lengths = new int[5000];
     private int regionCount = 0;
     
     private Pattern pattern = Pattern.compile("^.*$", Pattern.MULTILINE); //$NON-NLS-1$

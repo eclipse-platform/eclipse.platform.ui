@@ -27,9 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -71,6 +69,8 @@ public class ConsoleManager implements IConsoleManager {
     private List fPageParticipants;
 
     private List fConsoleFactoryExtensions;
+    
+    private List fConsoleViews = new ArrayList();
     
     private boolean fWarnQueued = false;
     
@@ -174,8 +174,18 @@ public class ConsoleManager implements IConsoleManager {
 			fListener = null;			
 		}
 	}	
-	
 		
+	public void registerConsoleView(ConsoleView view) {
+	    synchronized (fConsoleViews) {
+	        fConsoleViews.add(view);
+	    }
+	}
+    public void unregisterConsoleView(ConsoleView view) {
+        synchronized (fConsoleViews) {
+            fConsoleViews.remove(view);
+        }
+    }
+    
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
@@ -263,30 +273,20 @@ public class ConsoleManager implements IConsoleManager {
 	            if (window != null) {
 	                IWorkbenchPage page= window.getActivePage();
 	                if (page != null) {
-	                    IViewReference[] viewReferences = page.getViewReferences();
-	                    for (int i = 0; i < viewReferences.length; i++) {
-	                        IViewReference viewRef = viewReferences[i];
-	                        if (viewRef == null) {
-	                            continue;
-	                        }
-	                        if(IConsoleConstants.ID_CONSOLE_VIEW.equals(viewRef.getId())) {
-	                            IWorkbenchPart part = viewRef.getPart(false);
-	                            if (part == null || !(part instanceof IConsoleView)) {
-	                                continue;
-	                            } 
-	                            
-                                IConsoleView consoleView = (IConsoleView) part;
-                                boolean consoleVisible = page.isPartVisible(consoleView);
+	                    synchronized (fConsoleViews) {
+	                        for (Iterator iter = fConsoleViews.iterator(); iter.hasNext();) {
+	                            ConsoleView consoleView = (ConsoleView) iter.next();
+	                            boolean consoleVisible = page.isPartVisible(consoleView);
                                 consoleFound = true;
                                 
-	                            // a console view should not be brought to the top if 
-	                            // another console view from the same stack is already at the top
-	                            boolean bringToTop = shouldBringToTop(console, consoleView);
-	                            if (bringToTop && !consoleVisible) {
-	                                page.bringToTop(consoleView);
-	                            }
-	                            
-	                            consoleView.display(console);        
+                                // a console view should not be brought to the top if 
+                                // another console view from the same stack is already at the top
+                                boolean bringToTop = shouldBringToTop(console, consoleView);
+                                if (bringToTop && !consoleVisible) {
+                                    page.bringToTop(consoleView);
+                                }
+                                
+                                consoleView.display(console);
 	                        }
 	                    }
 	                    

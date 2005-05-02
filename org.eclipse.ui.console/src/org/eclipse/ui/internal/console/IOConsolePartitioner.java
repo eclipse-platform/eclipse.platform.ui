@@ -457,7 +457,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Holds data until updateJob can be run and the document can be updated.
 	 */
 	private class PendingPartition {
-		StringBuffer text = new StringBuffer();
+		StringBuffer text = new StringBuffer(8192);
 		IOConsoleOutputStream stream;
 		
 		PendingPartition(IOConsoleOutputStream stream, String text) {
