@@ -617,10 +617,6 @@ final class KeyAssistDialog extends Dialog {
 	private final void editKeyBinding() {
 		// Create a preference dialog on the keys preference page.
 		final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
-		String[] highlights = new String[] {
-				"org.eclipse.ui.preferencePages.Keys", //$NON-NLS-1$
-				"org.eclipse.ui.preferencePages.Perspectives" //$NON-NLS-1$
-		};
 		final PreferenceDialog dialog = 
 			PreferencesUtil.createPreferenceDialogOn(
 					getShell(),keysPageId, null ,binding);
