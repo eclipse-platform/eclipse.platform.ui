@@ -35,13 +35,7 @@ public class DeferredStackFrame extends DeferredDebugElementWorkbenchAdapter {
 	        try {
 	            return frame.getVariables();
 	        } catch (DebugException e) {
-                IStatus status = e.getStatus();
-                if (status != null) {
-                    String message = status.getMessage();
-                    if (message != null) {
-                        return new String[] {message};
-                    }
-                }
+                return new Object[]{e};
 	        }
 	    }
 	    return EMPTY;

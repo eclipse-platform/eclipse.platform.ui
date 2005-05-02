@@ -17,12 +17,12 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
@@ -34,7 +34,7 @@ public class VariablesViewer extends RemoteTreeViewer {
     
     private ArrayList fUpdateListeners = new ArrayList();
     private StateRestorationJob fStateRestorationJob = new StateRestorationJob(DebugUIViewsMessages.RemoteTreeViewer_0); //$NON-NLS-1$
-    
+    private VariablesView fView = null;
     
     private class StateRestorationJob extends UIJob {
         public StateRestorationJob(String name) {
@@ -50,30 +50,16 @@ public class VariablesViewer extends RemoteTreeViewer {
             return Status.OK_STATUS;
         }   
     }
-    
-	/**
-	 * Constructor for VariablesViewer.
-	 * @param parent
-	 */
-	public VariablesViewer(Composite parent) {
-		super(parent);
-	}
 
 	/**
 	 * Constructor for VariablesViewer.
 	 * @param parent
 	 * @param style
+	 * @param view containing view, or <code>null</code> if none
 	 */
-	public VariablesViewer(Composite parent, int style) {
+	public VariablesViewer(Composite parent, int style, VariablesView view) {
 		super(parent, style);
-	}
-
-	/**
-	 * Constructor for VariablesViewer.
-	 * @param tree
-	 */
-	public VariablesViewer(Tree tree) {
-		super(tree);
+		fView = view;
 	}
 	
 	/**
@@ -133,4 +119,26 @@ public class VariablesViewer extends RemoteTreeViewer {
     public void removeUpdateListener(IRemoteTreeViewerUpdateListener listener) {
         fUpdateListeners.remove(listener);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.RemoteTreeViewer#replace(java.lang.Object, java.lang.Object[], int)
+	 */
+	public synchronized void replace(Object parent, Object[] children, int offset) {
+		if (fView != null) {
+	    	if (children.length == 1 && children[0] instanceof DebugException) {
+	    		IStatus status = ((DebugException)children[0]).getStatus();
+	    		if (status != null) {
+	    			String message = status.getMessage();
+	    			if (message != null) {
+	    				fView.showMessage(message);
+	    			}
+	    		}
+	    		return;
+	    	}
+	    	fView.showViewer();
+		}
+		super.replace(parent, children, offset);
+	}
+    
+    
 }

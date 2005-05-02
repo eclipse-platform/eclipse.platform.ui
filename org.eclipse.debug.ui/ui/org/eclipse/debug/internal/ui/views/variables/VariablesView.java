@@ -613,7 +613,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setSashForm(new SashForm(parent, SWT.NONE));
 		
 		// add tree viewer
-		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, this);
 		variablesViewer.setContentProvider(createContentProvider(variablesViewer));
 		variablesViewer.setLabelProvider(createLabelProvider(variablesViewer));
 		variablesViewer.setUseHashlookup(true);
