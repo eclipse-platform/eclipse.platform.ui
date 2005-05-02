@@ -61,7 +61,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, 100000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, 8);
 		
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, new RGB(0, 0, 255));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, new RGB(255, 0, 0));
 		
