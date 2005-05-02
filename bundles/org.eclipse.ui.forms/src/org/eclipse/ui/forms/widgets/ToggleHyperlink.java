@@ -151,8 +151,15 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 				e.result = getToolTipText();
 			}
 			public void getName(AccessibleEvent e) {
-				if (getParent() instanceof ExpandableComposite)
-					e.result = ((ExpandableComposite)getParent()).getText();
+				if (getParent() instanceof ExpandableComposite) {
+					String name = ((ExpandableComposite)getParent()).getText();
+					int index = name.indexOf('&');
+					if (index != -1) {
+						name = name.substring(0, index) + name.substring(index + 1);
+					}
+					e.result = name;
+				}
+					
 			}
 			public void getDescription(AccessibleEvent e) {
 				getName(e);
