@@ -26,7 +26,6 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -42,12 +41,9 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -63,7 +59,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * </p>
  * @since 3.1
  */
-public class TextConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
+public class TextConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener {
     /**
      * Adapts document to the text widget.
      */
@@ -120,7 +116,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         styledText.setEditable(true);
         setFont(console.getFont());
         styledText.addMouseTrackListener(this);
-        styledText.addPaintListener(this);
         
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
@@ -186,71 +181,41 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             }
 
             try {
-                Display display = ConsolePlugin.getStandardDisplay();
-                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
+//                Display display = ConsolePlugin.getStandardDisplay();
+//                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
                 Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
                 Position[] overlap = findPosition(offset, length, positions);
+                Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
                 if (overlap != null) {
-	                for (int i = 0; i < overlap.length; i++) {
-	                    weave(ranges, new StyleRange(overlap[i].offset, overlap[i].length, hyperlinkText, null));
-	                }
-                }
-                if (hyperlink != null) {
-                    IRegion region = console.getRegion(hyperlink);
-                    if (region != null) {
-                        Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-                        StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
-                        override(ranges, linkRange);
+                    for (int i = 0; i < overlap.length; i++) {
+                        Position position = overlap[i];
+                        StyleRange linkRange = new StyleRange(position.offset, position.length, color, null);
+                        linkRange.underline = true;
+                        override(ranges, linkRange);                    
                     }
                 }
+//                if (overlap != null) {
+//	                for (int i = 0; i < overlap.length; i++) {
+//                        StyleRange linkRange = new StyleRange(overlap[i].offset, overlap[i].length, hyperlinkText, null);
+//                        linkRange.underline = true;
+//	                    weave(ranges, linkRange);
+//	                }
+//                }
+////                if (hyperlink != null) {
+//                    IRegion region = console.getRegion(hyperlink);
+//                    if (region != null) {
+//                        Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+//                        StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
+//                        linkRange.underline = true;
+//                        override(ranges, linkRange);
+//                    }
+////                }
             } catch (BadPositionCategoryException e) {
             }
             
             if (ranges.size() > 0) {
                 event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
             }
-        }
-    }
-    
-    /**
-     * Weaves the given style range into the given list of style ranges. The given 
-     * range may overlap ranges in the list of ranges, and must be split into
-     * non-overlapping ranges and inserted into the list to maintain order.
-     * 
-     * @param ranges
-     * @param styleRange
-     */
-    private void weave(List ranges, StyleRange newRange) {
-        if (ranges.isEmpty()) {
-            ranges.add(newRange);
-            return;
-        }
-        int start = newRange.start;
-        int end = start + newRange.length;
-        for (int i = 0; i < ranges.size(); i++) {
-            StyleRange existingRange = (StyleRange) ranges.get(i);
-            int rEnd = existingRange.start + existingRange.length;
-            if (start < existingRange.start) {
-                if (end >= existingRange.start) {
-                    ranges.add(i, new StyleRange(start, existingRange.start - start, newRange.foreground, newRange.background));
-                    if (end > rEnd) {
-                        start = rEnd + 1;
-                    } else {
-                        return;
-                    }
-                } else {
-                    
-                }
-            } else if (start < rEnd) {
-                if (end > rEnd) {
-                    start = rEnd + 1;
-                } else {
-                    return;
-                }
-            }
-        }
-        if (start < end) {
-            ranges.add(new StyleRange(start, end - start, newRange.foreground, newRange.background));
         }
     }
     
@@ -270,7 +235,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             }
             
             if (start >= existingRange.start && end <=rEnd) {
-                existingRange.length = start - existingRange.start - 1;
+                existingRange.length = start - existingRange.start;
                 ranges.add(++i, newRange);
                 if (end != rEnd) {
                     ranges.add(++i, new StyleRange(end, rEnd-end-1, existingRange.foreground, existingRange.background));                    
@@ -360,52 +325,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     public void lineGetBackground(LineBackgroundEvent event) {
         event.lineBackground = null;
-    }
-
-    /**
-     * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-     */
-    public void paintControl(PaintEvent e) {
-        if (hyperlink != null) {
-            IDocument doc = getDocument();
-            StyledText text = getTextWidget();
-
-            if (doc == null || text == null) {
-                return;
-            }
-
-            IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
-            if (partitioner == null) {
-                return;
-            }
-
-            IRegion linkRegion = console.getRegion(hyperlink);
-            if (linkRegion != null) {
-                int start = linkRegion.getOffset();
-                int end = start + linkRegion.getLength();
-
-                Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-                Color color = e.gc.getForeground();
-                e.gc.setForeground(fontColor);
-                
-                FontMetrics metrics = e.gc.getFontMetrics();
-                int height = metrics.getHeight();
-                int width = metrics.getAverageCharWidth();
-
-                int startLine = text.getLineAtOffset(start);
-                int endLine = text.getLineAtOffset(end);
-                int baseLineBias = text.getBaseline() - (metrics.getAscent() + metrics.getLeading());
-
-                for (int i = startLine; i <= endLine; i++) {
-                    int styleStart = i == startLine ? start : text.getOffsetAtLine(i);
-                    int styleEnd = i == endLine ? end : text.getOffsetAtLine(i + 1);
-                    Point p1 = text.getLocationAtOffset(styleStart);
-                    Point p2 = text.getLocationAtOffset(styleEnd - 1);
-                    e.gc.drawLine(p1.x, p1.y + height + baseLineBias, p2.x + width, p2.y + height + baseLineBias);
-                }
-                e.gc.setForeground(color);
-            }
-        }
     }
 
     /**
@@ -594,7 +513,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             documentAdapter = new ConsoleDocumentAdapter(consoleWidth = -1);
         }
         return documentAdapter;
-//        return super.createDocumentAdapter();
     }
 
     /**
@@ -632,7 +550,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
         styledText.removeLineStyleListener(this);
         styledText.removeLineBackgroundListener(this);
         styledText.removeMouseTrackListener(this);
-        styledText.removePaintListener(this);
         
         handCursor = null;
         textCursor = null;
