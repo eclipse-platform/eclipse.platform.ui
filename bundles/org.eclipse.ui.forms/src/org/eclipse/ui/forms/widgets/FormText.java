@@ -1269,8 +1269,10 @@ public final class FormText extends Canvas {
 	private void paintLinkHover(IHyperlinkSegment link, boolean hover) {
 		GC gc = new GC(this);
 		HyperlinkSettings settings = getHyperlinkSettings();
-		gc.setForeground(hover ? settings.getActiveForeground() : settings
-				.getForeground());
+		Color newFg = hover ? settings.getActiveForeground() : settings
+				.getForeground();
+		if (newFg!=null)
+			gc.setForeground(newFg);
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == getSelectedLink());

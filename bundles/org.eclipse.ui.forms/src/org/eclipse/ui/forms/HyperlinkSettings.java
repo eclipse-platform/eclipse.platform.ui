@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.forms.widgets.*;
@@ -57,8 +58,12 @@ public class HyperlinkSettings {
 	 *            the display to use when creating colors
 	 */
 	public void initializeDefaultForegrounds(Display display) {
-		setForeground(JFaceColors.getHyperlinkText(display));
-		setActiveForeground(JFaceColors.getActiveHyperlinkText(display));
+		Color fg = JFaceColors.getHyperlinkText(display);
+		Color afg = JFaceColors.getActiveHyperlinkText(display);
+		if (fg==null)
+			fg = display.getSystemColor(SWT.COLOR_BLUE);
+		setForeground(fg);
+		setActiveForeground(afg);
 	}
 	/**
 	 * Returns the background to use for the active hyperlink.

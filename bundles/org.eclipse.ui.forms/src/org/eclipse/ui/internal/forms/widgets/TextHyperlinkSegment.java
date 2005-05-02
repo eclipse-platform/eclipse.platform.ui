@@ -59,8 +59,10 @@ public class TextHyperlinkSegment extends TextSegment implements
 			boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		boolean rolloverMode = settings.getHyperlinkUnderlineMode() == HyperlinkSettings.UNDERLINE_HOVER;
 		Color savedFg = gc.getForeground();
-		gc.setForeground(hover ? settings.getActiveForeground() : settings
-				.getForeground());
+		Color newFg = hover ? settings.getActiveForeground() : settings
+				.getForeground();
+		if (newFg!=null)
+			gc.setForeground(newFg); 
 		super.paint(gc, hover, resourceTable, selected, rolloverMode, selData,
 				repaintRegion);
 		gc.setForeground(savedFg);
