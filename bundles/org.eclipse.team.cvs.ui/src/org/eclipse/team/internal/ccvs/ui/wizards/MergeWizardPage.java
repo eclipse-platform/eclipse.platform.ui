@@ -96,7 +96,7 @@ public class MergeWizardPage extends CVSWizardPage {
         noPreviewButton.addSelectionListener(selectionAdapter);
     }
     private void createTagRefreshArea(Composite composite) {
-	    tagRefreshArea = new TagRefreshButtonArea(getShell(), getTagSource());
+	    tagRefreshArea = new TagRefreshButtonArea(getShell(), getTagSource(), null);
 	    tagRefreshArea.setRunnableContext(getContainer());
 	    tagRefreshArea.createArea(composite); 
     }

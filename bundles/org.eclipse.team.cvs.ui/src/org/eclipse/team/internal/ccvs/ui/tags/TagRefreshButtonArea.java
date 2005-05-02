@@ -40,8 +40,10 @@ public class TagRefreshButtonArea extends DialogArea {
     private Button refreshButton;
     private IRunnableContext context;
 	private Label fMessageLabel;
+    private final Listener addDateTagListener;
 
-    public TagRefreshButtonArea(Shell shell, TagSource tagSource) {
+    public TagRefreshButtonArea(Shell shell, TagSource tagSource, Listener addDateTagListener) {
+        this.addDateTagListener = addDateTagListener;
         Assert.isNotNull(shell);
         Assert.isNotNull(tagSource);
         this.shell = shell;
@@ -53,27 +55,35 @@ public class TagRefreshButtonArea extends DialogArea {
      */
     public void createArea(Composite parent) {
     	
-    	final String addButtonLabel= CVSUIMessages.TagConfigurationDialog_21; //$NON-NLS-1$
-    	final String refreshButtonLabel= CVSUIMessages.TagConfigurationDialog_20; //$NON-NLS-1$
-    	
     	final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
     	
     	final Composite buttonComp = new Composite(parent, SWT.NONE);
 	 	buttonComp.setLayoutData(SWTUtils.createHFillGridData());//SWT.DEFAULT, SWT.DEFAULT, SWT.END, SWT.TOP, false, false));
-	 	buttonComp.setLayout(SWTUtils.createGridLayout(3, converter, SWTUtils.MARGINS_NONE));
+	 	buttonComp.setLayout(SWTUtils.createGridLayout(4, converter, SWTUtils.MARGINS_NONE));
 	 	
 		fMessageLabel= SWTUtils.createLabel(buttonComp, null);
 		refreshButton = new Button(buttonComp, SWT.PUSH);
-		refreshButton.setText (refreshButtonLabel);
+		refreshButton.setText (CVSUIMessages.TagConfigurationDialog_20);
 		
-		final Button addButton = new Button(buttonComp, SWT.PUSH);
-		addButton.setText (addButtonLabel);
+		final Button configureTagsButton = new Button(buttonComp, SWT.PUSH);
+		configureTagsButton.setText (CVSUIMessages.TagConfigurationDialog_21);
+        
+        Button addDateTagButton = null;
+        int buttonWidth;
+        if (addDateTagListener != null) {
+            addDateTagButton = new Button(buttonComp, SWT.PUSH);
+            addDateTagButton.setText (CVSUIMessages.TagConfigurationDialog_AddDateTag);
+            Dialog.applyDialogFont(buttonComp);
+            buttonWidth= SWTUtils.calculateControlSize(converter, new Button [] { addDateTagButton, configureTagsButton, refreshButton });
+            addDateTagButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
+            addDateTagButton.addListener(SWT.Selection, addDateTagListener);   
+        } else {
+            Dialog.applyDialogFont(buttonComp);
+            buttonWidth= SWTUtils.calculateControlSize(converter, new Button [] { configureTagsButton, refreshButton });
+        }
 		
-		
-		Dialog.applyDialogFont(buttonComp);
-		final int buttonWidth= SWTUtils.calculateControlSize(converter, new Button [] { addButton, refreshButton });
 		refreshButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
-		addButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
+		configureTagsButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.END, SWT.CENTER, false, false));
 		
 		refreshButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -81,15 +91,15 @@ public class TagRefreshButtonArea extends DialogArea {
 			}
 		});
 	 	
-		addButton.addListener(SWT.Selection, new Listener() {
+		configureTagsButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					TagConfigurationDialog d = new TagConfigurationDialog(shell, tagSource);
 					d.open();
 				}
-			});		
+			});  
 		
 		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
-		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);		
+		WorkbenchHelp.setHelp(configureTagsButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);		
 		Dialog.applyDialogFont(buttonComp);
     }
     

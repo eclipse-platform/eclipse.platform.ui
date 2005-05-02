@@ -41,15 +41,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
@@ -309,7 +301,12 @@ public class TagSelectionArea extends DialogArea {
     protected void createRefreshButtons(Composite parent) {
 	    tagSource.addListener(listener);
         parent.addDisposeListener(disposeListener);
-	    tagRefreshArea = new TagRefreshButtonArea(shell, tagSource);
+	    tagRefreshArea = new TagRefreshButtonArea(shell, tagSource, new Listener() {
+            public void handleEvent(Event event) {
+                CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), getLocation());
+                addDateTag(dateTag);
+            }
+        });
 	    if (context != null)
 	        tagRefreshArea.setRunnableContext(context);
 	    tagRefreshArea.createArea(parent);

@@ -610,6 +610,7 @@ public class CVSUIMessages extends NLS {
 	public static String TagConfigurationDialog_20;
 	public static String TagConfigurationDialog_21;
 	public static String TagConfigurationDialog_22;
+    public static String TagConfigurationDialog_AddDateTag;
 
 	public static String ConfigureTagsFromRepoViewConfigure_Tag_Error_1;
 	public static String RemoteRootAction_label;
