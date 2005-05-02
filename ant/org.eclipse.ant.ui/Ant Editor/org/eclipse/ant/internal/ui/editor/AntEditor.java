@@ -11,6 +11,7 @@
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
  * 	   John-Mason P. Shackelford - bug 40255
+ *     Mark Melvin - bug 93378
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -808,10 +809,17 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 			Object value= event.getNewValue();
 			StatusLineSourceViewer viewer= (StatusLineSourceViewer) getSourceViewer();
+			int newValue= -1;
 			if (value instanceof Integer) {
-				viewer.getTextWidget().setTabs(((Integer) value).intValue());
+				newValue=((Integer) value).intValue();
 			} else if (value instanceof String) {
-				viewer.getTextWidget().setTabs(Integer.parseInt((String) value));
+				newValue= Integer.parseInt((String) value);
+			}
+			if (newValue != -1) {
+				viewer.getTextWidget().setTabs(newValue);
+				if (fTabConverter != null) {
+					fTabConverter.setNumberOfSpacesPerTab(newValue);
+				}
 			}
 			return;
 		}
