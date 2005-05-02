@@ -13,6 +13,7 @@ package org.eclipse.ui.intro.config;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -21,17 +22,14 @@ import org.eclipse.ui.intro.IIntroPart;
  * content. Standby parts can be contributed to the Eclipse intro using the
  * following extension point:
  * <p>
- * 
  * <pre>
- * 
- *   &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
- *  	&lt;standbyPart
- * 		pluginId=&quot;org.eclipse.ui.intro&quot;
- * 		class=&quot;org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart&quot;
- * 		id=&quot;org.eclipse.ui.intro.contextHelp&quot;&gt;
- * 	&lt;/standbyPart&gt; 
- *   &lt;/extension&gt;
- *  
+ *         &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
+ *        	&lt;standbyPart
+ *       		pluginId=&quot;com.x.y.somePluginId&quot;
+ *       		class=&quot;com.x.y.someClass&quot;
+ *       		id=&quot;com.x.y.someContentPartId&quot;&gt;
+ *       	&lt;/standbyPart&gt; 
+ *         &lt;/extension&gt;
  * </pre>
  * 
  * </p>
@@ -59,7 +57,9 @@ public interface IStandbyContentPart {
     public void createPartControl(Composite parent, FormToolkit toolkit);
 
     /**
-     * Returns the primary control associated with this standby part.
+     * Returns the primary control associated with this standby part. The
+     * control is typically set during the createPartControl() call when this
+     * part is being created.
      * 
      * @return the SWT control which displays this standby part's content, or
      *         <code>null</code> if this standby part's controls have not yet
@@ -86,7 +86,8 @@ public interface IStandbyContentPart {
      * @exception PartInitException
      *                if this part was not initialized successfully.
      */
-    public void init(IIntroPart introPart, IMemento memento);
+    public void init(IIntroPart introPart, IMemento memento)
+            throws PartInitException;
 
     /**
      * Sets the input to show in this standby part. Note that input can be null,

@@ -20,14 +20,10 @@ package org.eclipse.ui.intro.config;
  * An intro url instance is created by parsing the url and retrieving the
  * embedded "command" and parametrs. For example, the following urls are valid
  * intro urls:
- * 
  * <pre>
- *  
  *  http://org.eclipse.ui.intro/close
  *  http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&amp;class=x.y.z.someClass
- *  
  * </pre>
- * 
  * </p>
  * <p>
  * When parsed, the first url has "close" as a command, and no parameters. While

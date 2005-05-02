@@ -21,7 +21,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -132,10 +131,8 @@ public abstract class AbstractIntroPartImplementation {
      * you include a call to super.
      * 
      * @param introPart
-     * @throws PartInitException
      */
-    public void init(IIntroPart introPart, IMemento memento)
-            throws PartInitException {
+    public void init(IIntroPart introPart, IMemento memento) {
         // we know the class type to cast to.
         this.introPart = (CustomizableIntroPart) introPart;
         this.memento = memento;
@@ -267,6 +264,7 @@ public abstract class AbstractIntroPartImplementation {
      * dispose of resources. By default, this implementation does nothing.
      */
     public void dispose() {
+        // no-op
     }
 
 

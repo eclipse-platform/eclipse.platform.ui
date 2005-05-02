@@ -40,8 +40,7 @@ public final class IntroURLFactory {
      * Parses the given string, and returns an IntroURL if the string is a valid
      * Intro URL. Returns null in all other cases. Example usage:
      * 
-     * <pre> 
-     * <p>
+     * <pre>
      * StringBuffer url = new StringBuffer();
      * url.append(&quot;http://org.eclipse.ui.intro/showStandby?&quot;);
      * url.append(&quot;pluginId=org.eclipse.pde.ui&quot;);

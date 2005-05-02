@@ -6,7 +6,7 @@ org.eclipse.ui.intro/debug = true
 # Enable logging of information messages in the plugin. By default, info
 # messages are not logged. Setting this option to true will enable logging
 # trace information messages.
-org.eclipse.ui.intro/trace/logInfo = true
+org.eclipse.ui.intro/trace/logInfo = false
 
 # Enable logging of performance messages in the plugin. By default, performance
 # messages are not logged. Setting this option to true will enable logging
@@ -20,8 +20,10 @@ org.eclipse.ui.intro/trace/logPerformance = true
 org.eclipse.ui.intro/trace/printHTML = false
 
 # Performance flags used by the Performance framework to report failures 
-# of specific thresholds. "createView" is the time it takes to create and 
-# display the full Intro view. "setStandbyState" is the time neede to 
-# switch between Intro standby states.
+# of specific thresholds.  
+
+# Time to create and display the full Intro view.
 # org.eclipse.ui.intro/perf/createView = 1000
+
+# Time needed to switch between Intro standby states.
 # org.eclipse.ui.intro/perf/setStandbyState = 300

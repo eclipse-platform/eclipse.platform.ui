@@ -215,8 +215,7 @@ public class IntroURL implements IIntroURL {
             return true;
 
         // we do not have a valid partId or we failed to instantiate part or
-        // create the part content, show empty part and signal failure.
-        standbyPart.setTopControl(IIntroConstants.EMPTY_STANDBY_CONTENT_PART);
+        // create the part content, empty part will be shown. Signal failure.
         return false;
     }
 

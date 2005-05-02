@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.parts;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Point;
@@ -35,6 +36,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IStandbyContentPart;
@@ -164,12 +166,13 @@ public class StandbyPart implements IIntroConstants {
         content.setLayout(slayout);
 
         boolean success = false;
-        if (memento != null)
+        if (memento != null) {
             success = restoreState(memento);
+            if (!success)
+                // add empty standby content.
+                addAndShowEmptyPart(Messages.StandbyPart_canNotRestore);
+        }
 
-        if (!success)
-            // add empty standby content.
-            addEmptyPart();
         updateReturnLinkLabel();
     }
 
@@ -177,9 +180,11 @@ public class StandbyPart implements IIntroConstants {
      * Empty content part used as backup for failures.
      * 
      */
-    private void addEmptyPart() {
-        emptyPart = new EmptyStandbyContentPart();
+    private void addAndShowEmptyPart(String message) {
+        if (emptyPart == null)
+            emptyPart = new EmptyStandbyContentPart();
         addStandbyContentPart(EMPTY_STANDBY_CONTENT_PART, emptyPart);
+        emptyPart.setMessage(message);
         setTopControl(EMPTY_STANDBY_CONTENT_PART);
     }
 
@@ -230,16 +235,23 @@ public class StandbyPart implements IIntroConstants {
                     } catch (Exception e) {
                         Log.error("Failed to set the input: " + input //$NON-NLS-1$
                                 + " on standby part: " + partId, e); //$NON-NLS-1$
-                        return false;
                     }
                 }
+
+                // no content part defined with the passed partId, show empty
+                // part and signal failure.
+                String message = NLS.bind(Messages.StandbyPart_failedToCreate,
+                    partId);
+                addAndShowEmptyPart(message);
+                return false;
+
             }
         }
 
-
-        // we do not have a valid partId or we failed to instantiate part or
-        // create the part content, show empty part and signal failure.
-        setTopControl(EMPTY_STANDBY_CONTENT_PART);
+        // no content part defined with the passed partId, show empty part and
+        // signal failure.
+        String message = NLS.bind(Messages.StandbyPart_failedToCreate, partId);
+        addAndShowEmptyPart(message);
         return false;
     }
 
@@ -264,14 +276,31 @@ public class StandbyPart implements IIntroConstants {
                     MEMENTO_STANDBY_CONTENT_PART_TAG));
                 standbyContent.createPartControl(content, toolkit);
             } catch (Exception e) {
+                // a standby content part throws a PartInitException, log fact.
                 Log.error(
                     "Failed to create part for standby part: " + partId, e); //$NON-NLS-1$
                 return null;
             }
+
             Control control = standbyContent.getControl();
             controlKey = new ControlKey(control, standbyContent, partId);
             cachedContentParts.put(partId, controlKey);
+            if (partId.equals(EMPTY_STANDBY_CONTENT_PART))
+                // just in case it was created explicity, reuse it.
+                emptyPart = (EmptyStandbyContentPart) standbyContent;
+
+            if (controlKey.getControl() == null) {
+                // control is null. This means that interface was not
+                // implemented properly. log fact.
+                String message = StringUtil
+                    .concat("Standby Content part: ", partId,
+                        " has a null Control defined. This prevents the part from being displayed.")
+                    .toString();
+                Log.error(message, null);
+                return null;
+            }
         }
+
         return controlKey.getControl();
     }
 
@@ -313,7 +342,6 @@ public class StandbyPart implements IIntroConstants {
         if (page.getTitle() != null)
             toolTip += " " + page.getTitle(); //$NON-NLS-1$
 
-
         returnLink.setToolTipText(toolTip);
     }
 
@@ -329,7 +357,6 @@ public class StandbyPart implements IIntroConstants {
      * 
      */
     public void dispose() {
-
         Enumeration values = cachedContentParts.elements();
         while (values.hasMoreElements()) {
             ControlKey controlKey = (ControlKey) values.nextElement();

@@ -34,6 +34,9 @@ public class Messages extends NLS {
     public static String StandbyPart_returnToIntro;
     public static String StandbyPart_returnTo;
     public static String EmptyStandbyContentPart_text;
+    public static String StandbyPart_failedToCreate;
+    public static String StandbyPart_nonDefined;
+    public static String StandbyPart_canNotRestore;
 
     public static String IntroURL_failedToDecode;
     public static String IntroURL_badCommand;

@@ -118,6 +118,10 @@ public class ModelUtil {
                 start = System.currentTimeMillis();
             IPath parentFolder = ModelUtil.getParentFolderPath(contentFile);
             URL parentFolderURL = Platform.find(bundle, parentFolder);
+            if (parentFolderURL == null)
+                Log.error("Could not find folder to extract: " + contentFile,
+                    null);
+
             Platform.asLocalURL(parentFolderURL);
             if (Log.logPerformance) {
                 String msg = StringUtil.concat(

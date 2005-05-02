@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation;
@@ -185,10 +184,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     /**
      * @param introPart
-     * @throws PartInitException
      */
-    public void init(IIntroPart introPart, IMemento memento)
-            throws PartInitException {
+    public void init(IIntroPart introPart, IMemento memento) {
         // REVISIT: Called when the actual UI needs to be created. Incomplete
         // separation of model / UI. Will change later. should not get here if
         // there is no valid implementation.

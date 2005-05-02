@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.eclipse.ui.internal.intro.impl.util.Log;
+
 /**
  * A parser that knows how to parser OOBE action URLs. If URL is a valid intro
  * url, it will create an instance of the IntroURL class.
@@ -23,10 +25,8 @@ public class IntroURLParser {
     // private String url_string = null;
     private boolean hasProtocol = false;
     private boolean isIntroUrl = false;
-    private String action = null;
-    private Properties parameters = null;
 
-    private IntroURL introURL = null;
+    private URL url_inst;
 
     /**
      * Constructor that gets the URL to parse.
@@ -35,16 +35,12 @@ public class IntroURLParser {
         // url_string = url;
         // create a URL instance, and parser it for parameters.
         parseUrl(url);
-        if (isIntroUrl) {
-            // class instance vars are already populated by now.
-            introURL = new IntroURL(action, parameters);
-        }
     }
 
     private void parseUrl(String url) {
         if (url == null)
             return;
-        URL url_inst = null;
+        url_inst = null;
         try {
             url_inst = new URL(url);
         } catch (MalformedURLException e) {
@@ -56,17 +52,28 @@ public class IntroURLParser {
             // URL has some valid protocol. Check to see if it is an intro url.
             hasProtocol = true;
             isIntroUrl = isIntoUrl(url_inst);
-            if (isIntroUrl) {
-                // valid intro URL. Extract the action and parameters.
-                action = getPathAsAction(url_inst);
-                parameters = getQueryParameters(url_inst);
-            }
             return;
         }
 
         // not an Intro URL. do nothing.
         return;
     }
+
+
+    /**
+     * @return Returns the hasProtocol.
+     */
+    public boolean hasProtocol() {
+        return hasProtocol;
+    }
+
+    /**
+     * @return Returns the isIntroUrl.
+     */
+    public boolean hasIntroUrl() {
+        return isIntroUrl;
+    }
+
 
     /**
      * Checks to see if tha passed URL is an Intro URL. An intro URL is an http
@@ -83,8 +90,30 @@ public class IntroURLParser {
 
         if (url.getHost().equalsIgnoreCase(IntroURL.INTRO_HOST_ID))
             return true;
+
         return false;
     }
+
+
+
+    /**
+     * @return Returns the introURL. Will be null if the parsed URL is not an
+     *         Intro URL.
+     */
+    public IntroURL getIntroURL() {
+        IntroURL introURL = null;
+        if (isIntroUrl) {
+            // valid intro URL. Extract the action and parameters.
+            String action = getPathAsAction(url_inst);
+            Properties parameters = getQueryParameters(url_inst);
+
+            // class instance vars are already populated by now.
+            introURL = new IntroURL(action, parameters);
+        }
+        return introURL;
+    }
+
+
 
     /**
      * Retruns the path attribute of the passed URL, stripped out of the leading
@@ -124,31 +153,17 @@ public class IntroURLParser {
             // entry. we know we have the key as the first string in the array,
             // and the value as the second array.
             String[] keyValuePair = params[i].split("="); //$NON-NLS-1$
+            if (keyValuePair.length != 2) {
+                Log.warning("Ignoring the following Intro URL parameter: "
+                        + params[i]);
+                continue;
+            }
             properties.setProperty(keyValuePair[0], keyValuePair[1]);
         }
         return properties;
     }
 
-    /**
-     * @return Returns the hasProtocol.
-     */
-    public boolean hasProtocol() {
-        return hasProtocol;
-    }
 
-    /**
-     * @return Returns the isIntroUrl.
-     */
-    public boolean hasIntroUrl() {
-        return isIntroUrl;
-    }
 
-    /**
-     * @return Returns the introURL. Will be null if the parsed URL is not an
-     *         Intro URL.
-     */
-    public IntroURL getIntroURL() {
-        return introURL;
-    }
 
 }

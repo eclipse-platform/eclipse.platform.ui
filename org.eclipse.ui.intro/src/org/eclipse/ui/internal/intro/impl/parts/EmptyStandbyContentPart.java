@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -28,7 +29,8 @@ import org.eclipse.ui.intro.config.IStandbyContentPart;
 
 public class EmptyStandbyContentPart implements IStandbyContentPart {
 
-    Composite contentComposite;
+    private Composite contentComposite;
+    private Text contentText;
 
     /*
      * (non-Javadoc)
@@ -44,6 +46,10 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         label.setFont(PageStyleManager.getBannerFont());
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(gd);
+        contentText = toolkit.createText(contentComposite, " ", SWT.MULTI
+                | SWT.WRAP);
+        GridData textGd = new GridData(GridData.FILL_BOTH);
+        contentText.setLayoutData(textGd);
     }
 
     /*
@@ -54,6 +60,15 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
     public Control getControl() {
         return contentComposite;
     }
+
+
+    public void setMessage(String message) {
+        if (message != null) {
+            contentText.setText(message);
+            contentComposite.layout();
+        }
+    }
+
 
     /*
      * (non-Javadoc)
@@ -70,7 +85,10 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#setInput(java.lang.Object)
      */
     public void setInput(Object input) {
-        // no-op
+        if (input != null)
+            setMessage((String) input);
+        else
+            setMessage("");
     }
 
     /*
