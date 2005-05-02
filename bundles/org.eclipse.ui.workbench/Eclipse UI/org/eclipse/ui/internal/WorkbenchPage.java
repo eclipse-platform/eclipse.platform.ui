@@ -1086,6 +1086,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         partList.setActiveEditor(ref);
         
         actionSwitcher.updateTopEditor(part);
+
+        if (ref != null) {
+            activationList.bringToTop(ref);
+        }
     }
     
     /**
