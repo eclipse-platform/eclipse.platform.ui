@@ -48,6 +48,8 @@ public class Setup implements Cloneable {
 	public static final String VM = "vm";
 
 	private static final String WS = "ws";
+	
+	private static final String PROP_BOOT_DELEGATION = "org.osgi.framework.bootdelegation";
 
 	public static String getDefaultArchOption() {
 		return System.getProperty(InternalPlatform.PROP_ARCH);
@@ -102,6 +104,8 @@ public class Setup implements Cloneable {
 	 */
 	static Setup getDefaultSetup(SetupManager manager) {
 		Setup defaultSetup = new Setup(manager);
+		// see bug 93343
+		defaultSetup.setSystemProperty(PROP_BOOT_DELEGATION, System.getProperty(PROP_BOOT_DELEGATION));
 		defaultSetup.setSystemProperty(InternalPlatform.PROP_CONSOLE_LOG, System.getProperty(InternalPlatform.PROP_CONSOLE_LOG, "true"));
 		if (Setup.getDefaultVMLocation() != null)
 			defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
