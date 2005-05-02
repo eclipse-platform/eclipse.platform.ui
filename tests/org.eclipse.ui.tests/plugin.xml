@@ -95,6 +95,14 @@
       		class="org.eclipse.ui.internal.components.framework.ReflectionFactory:org.eclipse.ui.tests.api.workbenchpart.ViewThatCachesItsShell"
       		id="org.eclipse.ui.test.api.workbenchpart.ViewThatCachesItsShell">
       </view>
+
+      <view
+       		name="ERROR: View that allocates all available graphics handles"
+       		icon="icons\view.gif"
+      		category="org.eclipse.ui.tests.errorhandling"
+       		class="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView"
+       		id="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView">
+      </view>
       
       <view
        		name="ERROR: View that throws PartInitException in init"
