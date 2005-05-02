@@ -380,9 +380,21 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return value == null ? defaultValue : Base64.decode(value.getBytes());
 	}
 
+	/*
+	 * Return a boolean value indicating whether or not a child with the given
+	 * name is known to this node.
+	 */
+	protected boolean childExists(String childName) {
+		synchronized (this) {
+			if (children == null)
+				return false;
+			return children.get(childName) != null;
+		}
+	}
+
 	/**
 	 * Thread safe way to obtain a child for a given key. Returns the child
-	 * that matches the given key, or null if there is no matching child
+	 * that matches the given key, or null if there is no matching child.
 	 */
 	protected IEclipsePreferences getChild(String key, Plugin context, boolean create) {
 		synchronized (this) {
@@ -712,10 +724,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 
 		// if we are looking for a simple child then just look in the table and return
 		if (noSlash)
-			return getChild(path, null, false) != null;
+			return childExists(path);
 
 		// otherwise load the parent of the child and then recursively ask
 		String childName = path.substring(0, index);
+		if (!childExists(childName))
+			return false;
 		IEclipsePreferences child = getChild(childName, null, true);
 		if (child == null)
 			return false;
