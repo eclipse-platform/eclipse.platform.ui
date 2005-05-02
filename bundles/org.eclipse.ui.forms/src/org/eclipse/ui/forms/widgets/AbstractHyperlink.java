@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.widgets;
 
 import java.util.Vector;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -187,7 +188,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * method must call 'super'.
 	 */
 	protected void handleActivate(Event e) {
-		getAccessible().selectionChanged();
+		getAccessible().setFocus(ACC.CHILDID_SELF);
 		if (listeners == null)
 			return;
 		int size = listeners.size();

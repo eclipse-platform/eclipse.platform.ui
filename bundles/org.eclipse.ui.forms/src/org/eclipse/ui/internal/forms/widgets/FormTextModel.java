@@ -61,10 +61,6 @@ public class FormTextModel {
 	public String getAccessibleText() {
 		if (paragraphs == null)
 			return "";
-		IFocusSelectable sel = getSelectedSegment();
-		if (sel instanceof IHyperlinkSegment) {
-			return ((IHyperlinkSegment)sel).getText();
-		}
 		StringBuffer sbuf = new StringBuffer();
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph paragraph = (Paragraph) paragraphs.get(i);
@@ -550,6 +546,16 @@ public class FormTextModel {
 		return selectableSegments;
 	}
 	
+	public IHyperlinkSegment getHyperlink(int index) {
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		if (selectables.length>index) {
+			IFocusSelectable link = selectables[index];
+			if (link instanceof IHyperlinkSegment)
+				return (IHyperlinkSegment)link;
+		}
+		return null;
+	}
+	
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (int i = 0; i < selectables.length; i++) {
@@ -561,6 +567,23 @@ public class FormTextModel {
 			}
 		}
 		return null;
+	}
+	
+	public int getHyperlinkCount() {
+		return getFocusSelectableSegments().length;
+	}
+	
+	public int indexOf(IHyperlinkSegment link) {
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		for (int i = 0; i < selectables.length; i++) {
+			IFocusSelectable segment = selectables[i];
+			if (segment instanceof IHyperlinkSegment) {
+				IHyperlinkSegment l = (IHyperlinkSegment)segment;
+				if (link==l)
+					return i;
+			}
+		}
+		return -1;
 	}
 
 	public ParagraphSegment findSegmentAt(int x, int y) {

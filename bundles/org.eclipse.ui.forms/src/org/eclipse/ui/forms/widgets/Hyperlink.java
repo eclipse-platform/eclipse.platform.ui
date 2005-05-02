@@ -43,6 +43,8 @@ public class Hyperlink extends AbstractHyperlink {
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = getText();
+				if (e.result==null)
+					getHelp(e);
 			}
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();

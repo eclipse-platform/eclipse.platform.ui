@@ -186,8 +186,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 								: ACC.STATE_COLLAPSED;
 					}
 					public void getValue(AccessibleControlEvent e) {
-						if (getParent() instanceof ExpandableComposite)
-							e.result = ((ExpandableComposite)getParent()).getText();
+						e.result = "0";
 					}
 				});
 	}

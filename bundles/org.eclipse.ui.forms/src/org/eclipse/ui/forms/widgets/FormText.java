@@ -1005,47 +1005,126 @@ public final class FormText extends Canvas {
 			contributeLinkActions(manager, link);
 	}
 
-	private String getAcessibleText() {
-		return model.getAccessibleText();
-	}
-
 	private void initAccessible() {
 		Accessible accessible = getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result = getAcessibleText();
+				if (e.childID==ACC.CHILDID_SELF)
+					e.result = model.getAccessibleText();
+				else {
+					int linkCount = model.getHyperlinkCount();
+					if (e.childID>=0 && e.childID<linkCount) {
+						IHyperlinkSegment link = model.getHyperlink(e.childID);
+						e.result = link.getText();
+					}
+				}
 			}
 
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
+				int linkCount = model.getHyperlinkCount();
+				if (e.result==null && e.childID>=0 && e.childID<linkCount) {
+					IHyperlinkSegment link = model.getHyperlink(e.childID);
+					e.result = link.getText();					
+				}
 			}
 		});
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = toControl(new Point(e.x, e.y));
-				e.childID = (getBounds().contains(pt)) ? ACC.CHILDID_SELF
-						: ACC.CHILDID_NONE;
+				IHyperlinkSegment link = model.findHyperlinkAt(pt.x, pt.y);
+				if (link!=null)
+					e.childID = model.indexOf(link);
+				else
+					e.childID = ACC.CHILDID_SELF;
 			}
 
 			public void getLocation(AccessibleControlEvent e) {
-				Rectangle location = getBounds();
+				Rectangle location = null;
+				if (e.childID !=ACC.CHILDID_SELF && e.childID!=ACC.CHILDID_NONE) {
+					int index = e.childID;
+					IHyperlinkSegment link = model.getHyperlink(index);
+					if (link!=null) {
+						location = link.getBounds();
+					}
+				}	
+				if (location ==null) {
+					location = getBounds();
+				}
 				Point pt = toDisplay(new Point(location.x, location.y));
 				e.x = pt.x;
 				e.y = pt.y;
 				e.width = location.width;
 				e.height = location.height;
 			}
+			
+			public void getFocus(AccessibleControlEvent e) {
+				int childID = ACC.CHILDID_NONE;
+
+				if (isFocusControl()) {
+					int selectedIndex = model.getSelectedSegmentIndex();
+					if (selectedIndex == -1) {
+						childID = ACC.CHILDID_SELF;
+					} else {
+						childID = selectedIndex;
+					}
+				}
+				e.childID = childID;
+			}
 
 			public void getChildCount(AccessibleControlEvent e) {
-				e.detail = 0;
+				e.detail = model.getHyperlinkCount();
 			}
 
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_TEXT;
+				int role = 0;
+				int childID = e.childID;
+				int linkCount = model.getHyperlinkCount();
+				if (childID == ACC.CHILDID_SELF) {
+					role = ACC.ROLE_TEXT;
+				} else if (childID >= 0 && childID < linkCount) {
+					role = ACC.ROLE_LINK;
+				}
+				e.detail = role;
+			}
+
+			public void getSelection(AccessibleControlEvent e) {
+				int selectedIndex = model.getSelectedSegmentIndex();
+				e.childID = (selectedIndex == -1) ? ACC.CHILDID_NONE : selectedIndex;
 			}
 
 			public void getState(AccessibleControlEvent e) {
-				e.detail = ACC.STATE_READONLY;
+				int linkCount = model.getHyperlinkCount();
+				int selectedIndex = model.getSelectedSegmentIndex();
+				int state = 0;
+				int childID = e.childID;
+				if (childID == ACC.CHILDID_SELF) {
+					state = ACC.STATE_NORMAL;
+				} else if (childID >= 0 && childID < linkCount) {
+					state = ACC.STATE_SELECTABLE;
+					if (isFocusControl()) {
+						state |= ACC.STATE_FOCUSABLE;
+					}
+					if (selectedIndex == childID) {
+						state |= ACC.STATE_SELECTED;
+						if (isFocusControl()) {
+							state |= ACC.STATE_FOCUSED;
+						}
+					}
+				}
+				state |= ACC.STATE_READONLY;
+				e.detail = state;
+			}
+			public void getChildren(AccessibleControlEvent e) {
+				int linkCount = model.getHyperlinkCount();
+				Object[] children = new Object[linkCount];
+				for (int i = 0; i < linkCount; i++) {
+					children[i] = new Integer(i);
+				}
+				e.children = children;
+			}
+			public void getValue(AccessibleControlEvent e) {
+				//e.result = model.getAccessibleText();
 			}
 		});
 	}
