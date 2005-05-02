@@ -61,6 +61,10 @@ public class FormTextModel {
 	public String getAccessibleText() {
 		if (paragraphs == null)
 			return "";
+		IFocusSelectable sel = getSelectedSegment();
+		if (sel instanceof IHyperlinkSegment) {
+			return ((IHyperlinkSegment)sel).getText();
+		}
 		StringBuffer sbuf = new StringBuffer();
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph paragraph = (Paragraph) paragraphs.get(i);

@@ -187,6 +187,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * method must call 'super'.
 	 */
 	protected void handleActivate(Event e) {
+		getAccessible().selectionChanged();
 		if (listeners == null)
 			return;
 		int size = listeners.size();

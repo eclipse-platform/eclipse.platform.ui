@@ -150,6 +150,13 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
+			public void getName(AccessibleEvent e) {
+				if (getParent() instanceof ExpandableComposite)
+					e.result = ((ExpandableComposite)getParent()).getText();
+			}
+			public void getDescription(AccessibleEvent e) {
+				getName(e);
+			}
 		});
 		getAccessible().addAccessibleControlListener(
 				new AccessibleControlAdapter() {
@@ -179,9 +186,8 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 								: ACC.STATE_COLLAPSED;
 					}
 					public void getValue(AccessibleControlEvent e) {
-						e.result = ToggleHyperlink.this.isExpanded()
-								? "1"
-								: "0";
+						if (getParent() instanceof ExpandableComposite)
+							e.result = ((ExpandableComposite)getParent()).getText();
 					}
 				});
 	}
