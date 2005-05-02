@@ -17,12 +17,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
@@ -67,7 +73,17 @@ public final class MutableActivityManager extends AbstractActivityManager
     private Set enabledActivityIds = new HashSet();
 
     private Map identifiersById = new WeakHashMap();
+    
+    /**
+     * A list of identifiers that need to have their activity sets reconciled in the background job.
+     */
+    private List deferredIdentifiers = Collections.synchronizedList(new LinkedList());
 
+    /**
+     * The identifier update job.  Lazily initialized.
+     */
+    private Job deferredIdentifierJob = null;
+    
     private final IActivityRegistryListener activityRegistryListener = new IActivityRegistryListener() {
                 public void activityRegistryChanged(
                         ActivityRegistryEvent activityRegistryEvent) {
@@ -176,20 +192,6 @@ public final class MutableActivityManager extends AbstractActivityManager
             requiredActivityIds.addAll(childActivityIds);
             getRequiredActivityIds(childActivityIds, requiredActivityIds);
         }
-    }
-
-    private boolean isMatch(String string, Set activityIds) {
-        activityIds = Util.safeCopy(activityIds, String.class);
-
-        for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
-            String activityId = (String) iterator.next();
-            Activity activity = (Activity) getActivity(activityId);
-
-            if (activity.isMatch(string))
-                return true;
-        }
-
-        return false;
     }
 
     private void notifyActivities(Map activityEventsByActivityId) {
@@ -610,31 +612,51 @@ public final class MutableActivityManager extends AbstractActivityManager
         String id = identifier.getId();
         Set activityIds = new HashSet();
         
-        boolean matchesAtLeastOneEnabled = false;
-        boolean matchesAtLeastOneDisabled = false;
-        for (Iterator iterator = definedActivityIds.iterator(); iterator
-                .hasNext();) {
-            String activityId = (String) iterator.next();
-            Activity activity = (Activity) getActivity(activityId);
-
-            if (activity.isMatch(id)) {
-                activityIds.add(activityId);
-                if (activity.isEnabled()) 
-                    matchesAtLeastOneEnabled = true;
-                else
-                    matchesAtLeastOneDisabled = true;
-            }
+        boolean enabled = false;
+        
+        boolean activityIdsChanged = false;
+        
+        boolean enabledChanged = false;
+        
+        // short-circut logic. If all activities are enabled, then the
+        // identifier must be as well. Return true and schedule the remainder of
+        // the work to run in a background job.
+        if (enabledActivityIds.size() == definedActivityIds.size()) {
+            enabled = true;
+            enabledChanged = identifier.setEnabled(enabled);
+            identifier.setActivityIds(Collections.EMPTY_SET);
+            deferredIdentifiers.add(identifier);
+            getUpdateJob().schedule();
+            if (enabledChanged)
+                return new IdentifierEvent(identifier, activityIdsChanged,
+                        enabledChanged);
         }
-        
-        boolean enabled = matchesAtLeastOneEnabled ? true : !matchesAtLeastOneDisabled;
-        
-        boolean activityIdsChanged = identifier.setActivityIds(activityIds);
-        boolean enabledChanged = identifier.setEnabled(enabled);
-
-        if (activityIdsChanged || enabledChanged)
-            return new IdentifierEvent(identifier, activityIdsChanged,
-                    enabledChanged);
-        
+        else {
+            boolean matchesAtLeastOneEnabled = false;
+            boolean matchesAtLeastOneDisabled = false;
+            for (Iterator iterator = definedActivityIds.iterator(); iterator
+                    .hasNext();) {
+                String activityId = (String) iterator.next();
+                Activity activity = (Activity) getActivity(activityId);
+    
+                if (activity.isMatch(id)) {
+                    activityIds.add(activityId);
+                    if (activity.isEnabled()) 
+                        matchesAtLeastOneEnabled = true;
+                    else
+                        matchesAtLeastOneDisabled = true;
+                }
+            }
+            
+            enabled = matchesAtLeastOneEnabled ? true : !matchesAtLeastOneDisabled;
+            
+            activityIdsChanged = identifier.setActivityIds(activityIds);
+            enabledChanged = identifier.setEnabled(enabled);
+    
+            if (activityIdsChanged || enabledChanged)
+                return new IdentifierEvent(identifier, activityIdsChanged,
+                        enabledChanged);
+        }
         return null;
     }
 
@@ -674,5 +696,50 @@ public final class MutableActivityManager extends AbstractActivityManager
         MutableActivityManager clone = new MutableActivityManager(activityRegistry);
         clone.setEnabledActivityIds(getEnabledActivityIds());
         return clone;
+    }
+    
+    /**
+     * Return the identifier update job.
+     * 
+     * @return the job
+     * @since 3.1
+     */
+    private Job getUpdateJob() {
+        if (deferredIdentifierJob == null) {
+            deferredIdentifierJob = new Job("Identifier Update Job") { //$NON-NLS-1$
+                
+                /* (non-Javadoc)
+                 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+                 */
+                protected IStatus run(IProgressMonitor monitor) {
+                    while (!deferredIdentifiers.isEmpty()) {
+                        Identifier identifier = (Identifier) deferredIdentifiers.remove(0);
+                        Set activityIds = new HashSet();
+                        for (Iterator iterator = definedActivityIds.iterator(); iterator
+                                .hasNext();) {
+                            String activityId = (String) iterator.next();
+                            Activity activity = (Activity) getActivity(activityId);
+
+                            if (activity.isMatch(identifier.getId())) {
+                                activityIds.add(activityId);
+                            }
+                        }
+                        
+                        boolean activityIdsChanged = identifier.setActivityIds(activityIds);
+                        if (activityIdsChanged) {
+                            IdentifierEvent identifierEvent = new IdentifierEvent(identifier, activityIdsChanged,
+                                    false);
+                            Map identifierEventsByIdentifierId = new HashMap(1);
+                            identifierEventsByIdentifierId.put(identifier.getId(),
+                                    identifierEvent);
+                            notifyIdentifiers(identifierEventsByIdentifierId);
+                        }                
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
+            deferredIdentifierJob.setSystem(true);
+        }
+        return deferredIdentifierJob;
     }
 }
