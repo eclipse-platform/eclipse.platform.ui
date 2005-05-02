@@ -297,6 +297,49 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertNull("4.0", context.getNode(qualifier).get(key, null));
 	}
 
+	/** See bug 91244 and bug 93398. */
+	public void testProjectMove() {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject("Project1");
+		IProject project2 = null;
+		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		String qualifier = getUniqueString();
+		String key = getUniqueString();
+		String value = getUniqueString();
+		Preferences node = new ProjectScope(project1).getNode(qualifier);
+		node.put(key, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+		// move project and ensures charsets settings are preserved
+		try {
+			project1.move(new Path("Project2"), false, null);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		project2 = workspace.getRoot().getProject("Project2");
+		node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+		assertNotNull("2.1", node);
+		try {
+			assertTrue("2.2", node.nodeExists(project2.getName()));
+		} catch (BackingStoreException e) {
+			fail("2.3", e);
+		}
+		node = node.node(project2.getName());
+		assertNotNull("3.1", node);
+		try {
+			assertTrue("3.2", node.nodeExists(qualifier));
+		} catch (BackingStoreException e) {
+			fail("3.3", e);
+		}
+		node = node.node(qualifier);
+		assertNotNull("4.1", node);
+		assertEquals("4.2", value, node.get(key, null));
+	}
+	
+
 	/**
 	 * Regression test for Bug 60925 - project preferences do not show up in workspace.
 	 * 
