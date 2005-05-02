@@ -607,21 +607,27 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     private IdentifierEvent updateIdentifier(Identifier identifier) {
-        // TODO review performance characteristics
         String id = identifier.getId();
         Set activityIds = new HashSet();
-
+        
+        boolean matchesAtLeastOneEnabled = false;
+        boolean matchesAtLeastOneDisabled = false;
         for (Iterator iterator = definedActivityIds.iterator(); iterator
                 .hasNext();) {
             String activityId = (String) iterator.next();
             Activity activity = (Activity) getActivity(activityId);
 
-            if (activity.isMatch(id))
+            if (activity.isMatch(id)) {
                 activityIds.add(activityId);
+                if (activity.isEnabled()) 
+                    matchesAtLeastOneEnabled = true;
+                else
+                    matchesAtLeastOneDisabled = true;
+            }
         }
-
-        boolean enabled = isMatch(id, enabledActivityIds)
-                || !isMatch(id, definedActivityIds);
+        
+        boolean enabled = matchesAtLeastOneEnabled ? true : !matchesAtLeastOneDisabled;
+        
         boolean activityIdsChanged = identifier.setActivityIds(activityIds);
         boolean enabledChanged = identifier.setEnabled(enabled);
 
