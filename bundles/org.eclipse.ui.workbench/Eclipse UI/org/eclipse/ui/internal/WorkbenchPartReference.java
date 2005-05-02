@@ -18,7 +18,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
@@ -118,6 +121,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 
     private boolean queueEvents = false;
 
+    private static DisposeListener prematureDisposeListener = new DisposeListener() {
+        public void widgetDisposed(DisposeEvent e) {
+            WorkbenchPlugin.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
+        }    
+    };
+    
     private IPropertyListener propertyChangeListener = new IPropertyListener() {
         /* (non-Javadoc)
          * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
@@ -492,6 +501,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
                 IWorkbenchPart newPart = createPart();
                 if (newPart != null) {
                     part = newPart;
+                    // Add a dispose listener to the part. This dispose listener does nothing but log an exception
+                    // if the part's widgets get disposed unexpectedly. The workbench part reference is the only
+                    // object that should dispose this control, and it will remove the listener before it does so.
+                    getPane().getControl().addDisposeListener(prematureDisposeListener);
                     part.addPropertyListener(propertyChangeListener);
 
                     refreshFromPart();
@@ -521,6 +534,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     public void dispose() {
     	// Disposing the pane disposes the part's widgets. The part's widgets need to be disposed before the part itself.
         if (pane != null) {
+            // Remove the dispose listener since this is the correct place for the widgets to get disposed
+            Control targetControl = getPane().getControl(); 
+            if (targetControl != null) {
+                targetControl.removeDisposeListener(prematureDisposeListener);
+            }
             pane.dispose();
         }
         if (part != null) {

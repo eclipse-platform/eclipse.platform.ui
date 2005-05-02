@@ -1411,6 +1411,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
             getActionBarAdvisor().dispose();
             getWindowAdvisor().dispose();
+            detachedWindowShells.dispose();
             
             // Null out the progress region.  Bug 64024.
             progressRegion = null;

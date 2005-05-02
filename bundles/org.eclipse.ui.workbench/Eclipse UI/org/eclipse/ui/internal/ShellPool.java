@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
@@ -42,6 +44,12 @@ public class ShellPool {
     private final static String CLOSE_LISTENER = "close listener"; //$NON-NLS-1$
     
     private boolean isDisposed = false;
+    
+    private DisposeListener disposeListener = new DisposeListener() {
+        public void widgetDisposed(DisposeEvent e) {
+            WorkbenchPlugin.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
+        }  
+    };
     
     private ShellListener closeListener = new ShellAdapter() {
         
@@ -97,6 +105,7 @@ public class ShellPool {
         } else {
             result = new Shell(parentShell, flags);
             result.addShellListener(this.closeListener);
+            result.addDisposeListener(disposeListener);
         }
         
         result.setData(CLOSE_LISTENER, closeListener);
@@ -112,6 +121,7 @@ public class ShellPool {
     public void dispose() {
         for (Iterator iter = availableShells.iterator(); iter.hasNext();) {
             Shell next = (Shell) iter.next();
+            next.removeDisposeListener(disposeListener);
             
             next.dispose();
         }

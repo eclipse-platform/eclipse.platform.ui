@@ -83,6 +83,7 @@ public class DetachedWindow {
     public void create() {
         s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
         s.setData(this);
+        hideViewsOnClose = true;
         if (bounds.isEmpty()) {
             Point center = Geometry.centerPoint(page.getWorkbenchWindow().getShell().getBounds());
             Point size = new Point(300, 200);
@@ -118,7 +119,10 @@ public class DetachedWindow {
 
     public boolean close() {
         hideViewsOnClose = false;
-        getShell().close();
+        Shell shell = getShell();
+        if (shell != null) {
+            shell.close();
+        }
         return true;
     }
     
