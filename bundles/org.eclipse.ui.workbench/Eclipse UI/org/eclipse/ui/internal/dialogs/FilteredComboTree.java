@@ -80,12 +80,14 @@ public class FilteredComboTree extends FilteredTree {
 				String [] textValues = filterCombo.getItems();
 				String newText = filterCombo.getText();
 				
-				//Only add new entries
-				for (int i = 0; i < textValues.length; i++) {
-					if(textValues[i].equals(newText))
-						return;					
+				//Only add new entries which are not the empty string
+				if(!getFilterText().equals("")){ //$NON-NLS-1$
+					for (int i = 0; i < textValues.length; i++) {
+						if(textValues[i].equals(newText))
+							return;					
+					}
+					filterCombo.add(newText,0);
 				}
-				filterCombo.add(newText,0);
 			}
 		});
 		filterCombo.addSelectionListener(new SelectionAdapter(){

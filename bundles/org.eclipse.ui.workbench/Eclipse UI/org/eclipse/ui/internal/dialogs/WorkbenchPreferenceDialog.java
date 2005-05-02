@@ -379,6 +379,10 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	protected void selectSavedItem() {
 		getTreeViewer().setInput(getPreferenceManager());
 		super.selectSavedItem();
+		if(getTreeViewer().getTree().getItemCount() > 1) {
+			//unfortunately super will force focus to the list but we want the type ahead combo to get it.
+			filteredTree.getFilterControl().setFocus();
+		}
 	}
 
 	/*

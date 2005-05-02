@@ -315,13 +315,6 @@ public class FilteredTree extends Composite {
      */
     public void setInitialText(String text) {
         initialText = text;
-        resetText();
-    }
-
-    /**
-     * Set the text in the filter field back to the intial text 
-     */
-    public void resetText() {
     	setFilterText(initialText);
     	
         textChanged();
