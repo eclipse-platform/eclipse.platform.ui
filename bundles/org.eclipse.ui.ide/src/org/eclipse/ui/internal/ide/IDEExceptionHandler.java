@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -61,6 +62,8 @@ public final class IDEExceptionHandler {
 
     /**
      * Creates the exception handle for the IDE application
+     * 
+     * @param configurer an object for configuring the workbench
      */
     public IDEExceptionHandler(IWorkbenchConfigurer configurer) {
         super();
@@ -69,6 +72,8 @@ public final class IDEExceptionHandler {
 
     /**
      * Handles an event loop exception
+     * 
+     * @param t the exception to handle
      */
     public void handleException(Throwable t) {
         try {
@@ -154,8 +159,7 @@ public final class IDEExceptionHandler {
                 }
                 if (Policy.DEBUG_OPEN_ERROR_DIALOG)
                     return openQuestion(null, IDEWorkbenchMessages.Internal_error, msg, internalError, 1);
-                else
-                    return false;
+                return false;
             }
             // Always open the dialog in case of major error but do not show the
             // detail button if not in debug mode.
@@ -194,7 +198,7 @@ public final class IDEExceptionHandler {
 
         if (detail != null)
             dialog.setDetailButton(2);
-        boolean result = dialog.open() == 0;
+        boolean result = dialog.open() == Window.OK;
         dialog = null;
         return result;
     }
