@@ -16,16 +16,19 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.Path;
 
 /**
  * Derived from the original Ant Project class
  * This class allows property values to be written multiple times.
  * This facilitates incremental parsing of the Ant build file
  * It also attempts to ensure that we clean up after ourselves and allows
- * more manipulation of properties resulting from incremental parsing
+ * more manipulation of properties resulting from incremental parsing.
+ * Also allows the Eclipse additions to the Ant runtime classpath.
  */
 public class AntModelProject extends Project {
 	
@@ -118,4 +121,17 @@ public class AntModelProject extends Project {
 	public void setCurrentConfiguringProperty(AntPropertyNode node) {
 		fCurrentConfiguringPropertyNode= node;
 	}
+	
+	 /* (non-Javadoc)
+     * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
+     */
+    public AntClassLoader createClassLoader(Path path) {
+    	AntClassLoader loader= super.createClassLoader(path);
+    	if (path == null) {
+    		//use the "fake" Eclipse runtime classpath for Ant
+    		loader.setClassPath(Path.systemClasspath);
+    	}
+        
+        return loader;
+    }
 }
