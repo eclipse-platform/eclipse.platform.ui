@@ -86,6 +86,8 @@ public class ProjectHelper extends ProjectHelper2 {
 	private static AntHandler targetHandler= new TargetHandler();
 	private static AntHandler mainHandler= new MainHandler();
 	private static LexicalHandler lexicalHandler= new LexHandler();
+    
+    private static XMLReader fgXMLReader= null;
 	
 	public static class ElementHandler extends ProjectHelper2.ElementHandler {
 		
@@ -658,6 +660,10 @@ public class ProjectHelper extends ProjectHelper2 {
         }
     }
 
+    public static void reset() {
+        fgXMLReader= null;
+    }
+    
 	public static void setAntModel(IAntModel antModel) {
 		fgAntModel= antModel;
 		((ProjectHelper.ElementHandler)elementHandler).reset();
@@ -687,12 +693,14 @@ public class ProjectHelper extends ProjectHelper2 {
      * @since Ant 1.6 from org.apache.tools.ant.util.JAXPUtils
      */
     private XMLReader getNamespaceXMLReader() throws BuildException {
+        if (fgXMLReader == null) {
             try {
-            	return newSAXParser(getNSParserFactory()).getXMLReader();
+                fgXMLReader= newSAXParser(getNSParserFactory()).getXMLReader();
             } catch (SAXException e) {
             }
-            return null;
         }
+        return fgXMLReader;
+    }
     
     /**
      * Returns the parser factory to use to create namespace aware parsers.
@@ -720,9 +728,7 @@ public class ProjectHelper extends ProjectHelper2 {
         try {
             return factory.newSAXParser();
         } catch (ParserConfigurationException e) {
-          
         } catch (SAXException e) {
-           
         }
         return null;
     }

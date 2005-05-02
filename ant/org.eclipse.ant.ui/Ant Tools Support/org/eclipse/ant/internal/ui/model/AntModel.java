@@ -177,7 +177,11 @@ public class AntModel implements IAntModel {
         fDocument= document;
 		fProblemRequestor= problemRequestor;
 		fLocationProvider= locationProvider;
-		AntDefiningTaskNode.setJavaClassPath();
+        if (fgInstanceCount == 0) {
+            //no other models are open to ensure that the classpath is up to date wrt the
+            //Ant preferences
+            AntDefiningTaskNode.setJavaClassPath();
+        }
 		fgInstanceCount++;
 		DecayCodeCompletionDataStructuresThread.cancel();
     }
@@ -1565,6 +1569,7 @@ public class AntModel implements IAntModel {
     		fProjectNode= null; //need to reset tasks, types and properties
     		fgClassLoader= null;
     		AntDefiningTaskNode.setJavaClassPath();
+            ProjectHelper.reset();
     	}
     	fIsDirty= true;
     	reconcile();
