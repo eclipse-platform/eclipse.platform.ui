@@ -156,7 +156,8 @@ public class Synchronizer implements ISynchronizer {
 			} finally {
 				input.close();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
+			//don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup 
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
