@@ -384,12 +384,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Return a boolean value indicating whether or not a child with the given
 	 * name is known to this node.
 	 */
-	protected boolean childExists(String childName) {
-		synchronized (this) {
-			if (children == null)
-				return false;
-			return children.get(childName) != null;
-		}
+	protected synchronized boolean childExists(String childName) {
+		if (children == null)
+			return false;
+		return children.get(childName) != null;
 	}
 
 	/**
