@@ -839,6 +839,9 @@ public final class Workbench implements IWorkbench {
 			ModalContext.setDebugMode(true);
 		}
 
+		//Set up the JFace preference store
+		JFaceUtil.initializeJFacePreferences();
+		
 		// create workbench window manager
 		windowManager = new WindowManager();
 

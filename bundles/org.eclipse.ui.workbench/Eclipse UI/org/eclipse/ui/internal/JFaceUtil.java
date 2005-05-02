@@ -58,14 +58,14 @@ final class JFaceUtil {
 			Policy.TRACE_ACTIONS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
 			Policy.TRACE_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		initializeJFacePreferences();
+		
 	}
 
 	/**
 	 * Adds a preference listener so that the JFace preference store is initialized
 	 * as soon as the workbench preference store becomes available.
 	 */
-	private static void initializeJFacePreferences() {
+	public static void initializeJFacePreferences() {
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE);
 		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
 		
