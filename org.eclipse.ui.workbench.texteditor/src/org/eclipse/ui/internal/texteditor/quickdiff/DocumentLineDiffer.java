@@ -33,6 +33,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
@@ -463,17 +464,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				//
 				// We need to make sure that we do get all document modifications after
 				// copying the documents as we want to re-inject them later on to become consistent.
-				//
-				// Now this is fun. The reference documents may be PartiallySynchronizedDocuments
-				// which will result in a deadlock if they get changed externally before we get
-				// our exclusive copies.
-				// Here's what we do: we try over and over (without synchronization) to get copies
-				// without interleaving modification. If there is a document change, we just repeat.
-				//
-				// TODO we should only fall back to this method if document is not an
-				// ISynchronizable. If it is, we can adhere to the proper lock
-				// order (first document, then differ) and create a clean copy inside the
-				// critical section
 
 				IDocument right= fRightDocument; // fRightDocument, but not subject to change
 				IDocument actual= null; // the copy of the actual (right) document
@@ -497,42 +487,67 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					fIgnoreDocumentEvents= false;
 				}
 
-				// accessing the reference docuent offline - reference provider need
+				// accessing the reference document from a different thread - reference providers need
 				// to be able to deal with this.
 				left.addDocumentListener(DocumentLineDiffer.this);
-
-				int i= 0;
-				do {
-					// this is an arbitrary emergency exit in case a referenced document goes nuts
-					if (i++ == 100)
-						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(QuickDiffMessages.quickdiff_error_getting_document_content, new Object[] {left.getClass(), right.getClass()}), null);
-
-					// clear events
-					synchronized (DocumentLineDiffer.this) {
-						if (isCanceled(monitor))
-							return Status.CANCEL_STATUS;
-
-						fStoredEvents.clear();
+				
+				// create the reference copy - note that any changes on the
+				// reference will trigger re-initialization anyway
+				reference= createCopy(left);
+				if (reference == null)
+					return Status.CANCEL_STATUS;
+				
+				// create the actual copy
+				if (right instanceof ISynchronizable) {
+					// a) if we can, acquire locks in proper order and copy 
+					// the document
+					Object lock= ((ISynchronizable) right).getLockObject();
+					synchronized (lock) {
+						synchronized (DocumentLineDiffer.this) {
+							if (isCanceled(monitor))
+								return Status.CANCEL_STATUS;
+							fStoredEvents.clear();
+							actual= createUnprotectedCopy(right);
+						}
 					}
+				} else {
+					// b) cannot lock the document
+					// Now this is fun. The reference documents may be PartiallySynchronizedDocuments
+					// which will result in a deadlock if they get changed externally before we get
+					// our exclusive copies.
+					// Here's what we do: we try over and over (without synchronization) to get copies
+					// without interleaving modification. If there is a document change, we just repeat.
+					int i= 0;
+					do {
+						// this is an arbitrary emergency exit in case a referenced document goes nuts
+						if (i++ == 100)
+							return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(QuickDiffMessages.quickdiff_error_getting_document_content, new Object[] {left.getClass(), right.getClass()}), null);
+						
+						synchronized (DocumentLineDiffer.this) {
+							if (isCanceled(monitor))
+								return Status.CANCEL_STATUS;
+							
+							fStoredEvents.clear();
+						}
+						
+						// access documents non synchronized:
+						// get an exclusive copy of the actual document
+						actual= createCopy(right);
+						
+						synchronized (DocumentLineDiffer.this) {
+							if (isCanceled(monitor))
+								return Status.CANCEL_STATUS;
+							if (fStoredEvents.size() == 0 && actual != null)
+								break;
+						}
+					} while (true);
+				}
 
-					// access documents unsynched:
-					// get an exclusive copy of the actual document
-					reference= createCopy(left);
-					actual= createCopy(right);
-
-					synchronized (DocumentLineDiffer.this) {
-						if (fStoredEvents.size() == 0 && reference != null && actual != null)
-							break;
-					}
-
-				} while (true);
 
 				// 6:	Do Da Diffing
 				DocLineComparator ref= new DocLineComparator(reference, null, false);
 				DocLineComparator act= new DocLineComparator(actual, null, false);
-				List diffs;
-				diffs= RangeDifferencer.findRanges(monitor, ref, act);
-
+				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
 				synchronized (DocumentLineDiffer.this) {
@@ -543,7 +558,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					fDifferences= diffs;
 				}
 
-				// reinject events accumulated in the meantime.
+				// re-inject events accumulated in the meantime.
 				try {
 					do {
 						DocumentEvent event;
@@ -566,7 +581,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 							event= (DocumentEvent) fStoredEvents.remove(0);
 						}
 
-						// access documents unsynched:
+						// access documents non synchronized:
 						handleAboutToBeChanged(event);
 						handleChanged(event);
 
@@ -597,8 +612,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			/**
 			 * Creates a copy of <code>document</code> and catches any
-			 * exceptions that may occur if the document is not modified concurrently.
-			 * Do not call this method in a synchronized block as document.get() is called
+			 * exceptions that may occur if the document is modified concurrently.
+			 * Only call this method in a synchronized block if the document is
+			 * an ISynchronizable and has been locked, as document.get() is called
 			 * and may result in a deadlock otherwise.
 			 *
 			 * @param document the document to create a copy of
@@ -608,13 +624,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				Assert.isNotNull(document);
 				// this fixes https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
 				try {
-					return new Document(document.get());
+					return createUnprotectedCopy(document);
 				} catch (NullPointerException e) {
 				} catch (ArrayStoreException e) {
 				} catch (IndexOutOfBoundsException e) {
 				} catch (ConcurrentModificationException e) {
 				}
 				return null;
+			}
+
+			private IDocument createUnprotectedCopy(IDocument document) {
+				return new Document(document.get());
 			}
 		};
 
@@ -633,6 +653,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fIgnoreDocumentEvents)
 			return;
 
+		if (event.getDocument() == fLeftDocument) {
+			initialize();
+			return;
+		}
+		
 		// if a initialization is going on, we just store the events in the meantime
 		if (!isInitialized() && fInitializationJob != null) {
 			fStoredEvents.add(event);
@@ -684,9 +709,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fIgnoreDocumentEvents)
 			return;
 
-		if (!isInitialized())
-			return;
-
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
 		// don't allow incremental update for changes from the reference document
 		// as this could deadlock
@@ -695,6 +717,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			return;
 		}
 
+		if (!isInitialized())
+			return;
+		
 		try {
 			handleChanged(event);
 		} catch (BadLocationException e) {
