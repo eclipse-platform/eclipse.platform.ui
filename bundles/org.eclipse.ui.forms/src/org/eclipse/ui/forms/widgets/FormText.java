@@ -1330,10 +1330,12 @@ public final class FormText extends Canvas {
 
 	private void repaint(GC gc, int x, int y, int width, int height) {
 		Image textBuffer = new Image(getDisplay(), width, height);
-		textBuffer.setBackground(getBackground());
+		Color bg = getBackground();
+		if (!isEnabled())
+			bg = getShell().getBackground();
 		GC textGC = new GC(textBuffer, gc.getStyle());
 		textGC.setForeground(getForeground());
-		textGC.setBackground(getBackground());
+		textGC.setBackground(bg);
 		textGC.setFont(getFont());
 		textGC.fillRectangle(0, 0, width, height);
 		Rectangle repaintRegion = new Rectangle(x, y, width, height);
@@ -1352,7 +1354,7 @@ public final class FormText extends Canvas {
 		textGC.dispose();
 		textBuffer.dispose();
 	}
-
+	
 	private int getParagraphSpacing(int lineHeight) {
 		return lineHeight / 2;
 	}

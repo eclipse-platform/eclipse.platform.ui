@@ -34,7 +34,6 @@ public class FormPage extends EditorPart implements IFormPage {
 	private PageForm mform;
 	private int index;
 	private String id;
-	private String title;
 	
 	private static class PageForm extends ManagedForm {
 		public PageForm(FormPage page, ScrolledForm form) {
@@ -78,7 +77,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	public FormPage(String id, String title) {
 		this.id = id;
-		this.title = title;
+		setPartName(title);
 	}
 	/**
 	 * Initializes the form page.
@@ -184,14 +183,6 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	public String getId() {
 		return id;
-	}
-	/**
-	 * Returns the page title.
-	 * 
-	 * @return page title
-	 */
-	public String getTitle() {
-		return title;
 	}
 	/**
 	 * Returns <code>null</code>- form page has no title image. Subclasses

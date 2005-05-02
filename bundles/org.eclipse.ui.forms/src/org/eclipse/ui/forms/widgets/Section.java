@@ -219,7 +219,7 @@ public final class Section extends ExpandableComposite {
 	 *            the control that will be placed below the title text.
 	 */
 	public void setDescriptionControl(Control descriptionControl) {
-		Assert.isTrue((getExpansionStyle() & DESCRIPTION) != 0);
+		Assert.isTrue((getExpansionStyle() & DESCRIPTION) == 0);
 		Assert.isTrue(descriptionControl != null
 				&& descriptionControl.getParent().equals(this));
 		this.descriptionControl = descriptionControl;
