@@ -223,7 +223,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			Object element = elements[i];
 			int index;
 			if(sorter == null)
-				index = items.length + i;
+				index = -1;
 			else{
 				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
 				//As we are only searching the original array we keep track of those positions only
@@ -235,6 +235,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 					refresh(element);
 					break;
 				}
+				if(index == items.length)
+					index = -1;
 			}
 			createTreeItem(widget, element, index);		
 		}
@@ -322,15 +324,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
     protected int indexForElement(Widget parent, Object element) {
         ViewerSorter sorter = getSorter();
 		
-		int count;
-		if(parent instanceof Control)
-			count = getItemCount((Control) parent);
-		else{
-			if(parent instanceof Item)
-				count = getItemCount((Item) parent);
-			else
-				count = getChildren(parent).length;
-		}
+		
+		Item[] items = getChildren(parent);
+		int count = items.length;
 
         if (sorter == null)
             return count;
@@ -338,7 +334,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
         while (min <= max) {
             int mid = (min + max) / 2;
-            Object data = getChild (parent, mid).getData();
+            Object data = items[mid].getData();
             int compare = sorter.compare(this, data, element);
             if (compare == 0) {
                 // find first item > element
@@ -347,7 +343,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     if (mid >= count) {
                         break;
                     }
-                    data = getChild (parent, mid).getData();
+                    data = items[mid].getData();
                     compare = sorter.compare(this, data, element);
                 }
                 return mid;
