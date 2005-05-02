@@ -19,6 +19,6 @@ package org.eclipse.ui.internal.editors.text;
 public class ConvertLineDelimitersToMacOS9 extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToMacOS9(){
-		super("\r", TextEditorMessages.ConvertLineDelimitersToMacOS9_label);
+		super("\r", TextEditorMessages.ConvertLineDelimitersToMacOS9_label); //$NON-NLS-1$
 	}
 }
