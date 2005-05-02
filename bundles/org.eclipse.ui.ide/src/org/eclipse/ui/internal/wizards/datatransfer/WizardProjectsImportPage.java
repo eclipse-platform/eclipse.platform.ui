@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,10 +50,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -126,15 +127,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 			IProjectDescription newDescription = null;
 			try {
 				if (projectArchiveFile != null) {
+					InputStream stream = provider.getContents(projectArchiveFile);
 					newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
-							.loadProjectDescription(
-									provider.getContents(projectArchiveFile));
+							.loadProjectDescription(stream);
+					stream.close();
 				} else {
 					IPath path = new Path(projectSystemFile.getPath());
 					newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
 							.loadProjectDescription(path);
 				}
 			} catch (CoreException e) {
+				// no good couldn't get the name
+			} catch (IOException e) {
 				// no good couldn't get the name
 			}
 
@@ -184,12 +188,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	// constant from WizardArchiveFileResourceImportPage1
 	private static final String[] FILE_IMPORT_MASK = {
 			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
-
-	/**
-	 * The last path on which we performed a search. Avoids searching the same
-	 * path twice.
-	 */
-	private String previouslySearchedDirectory;
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -384,9 +382,24 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 			}
 		});
-
 		setButtonLayoutData(deselectAll);
 
+		Button refresh = new Button(buttonsComposite, SWT.PUSH);
+		refresh.setText(DataTransferMessages.DataTransfer_refresh);
+		refresh.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				if (projectFromDirectoryRadio.getSelection())
+					updateProjectsList(directoryPathField.getText().trim());
+				else
+					updateProjectsList(archivePathField.getText().trim());
+			}
+		});
+		setButtonLayoutData(refresh);
 	}
 
 	/**
@@ -442,22 +455,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		archivePathField.setEnabled(false);
 		browseArchivesButton.setEnabled(false);
 
-		directoryPathField.addFocusListener(new FocusAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.ModifyEvent)
-			 */
-			public void focusLost(FocusEvent e) {
-				if (projectFromDirectoryRadio.getSelection()) // Make sure the
-																// focus loss
-																// wasn't due to
-																// switching to
-																// Archive
-					updateProjectsList(directoryPathField.getText().trim());
-			}
-		});
-
 		browseDirectoriesButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -477,26 +474,40 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e) { 
 				handleLocationArchiveButtonPressed();
 			}
 
 		});
 
-		archivePathField.addFocusListener(new FocusAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.ModifyEvent)
-			 */
-			public void focusLost(FocusEvent e) {
-				if (projectFromArchiveRadio.getSelection()) // Make sure the
-															// focus loss wasn't
-															// due to switching
-															// to Directory
-					updateProjectsList(archivePathField.getText().trim());
-			}
+		directoryPathField.addTraverseListener(new TraverseListener() {
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+			 */
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN)
+				{
+					e.doit = false;
+					updateProjectsList(directoryPathField.getText().trim());
+				}
+			}
+			
+		});
+		
+		archivePathField.addTraverseListener(new TraverseListener() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+			 */
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN)
+				{
+					e.doit = false;
+					updateProjectsList(archivePathField.getText().trim());
+				}
+			}
+			
 		});
 
 		projectFromDirectoryRadio.addSelectionListener(new SelectionAdapter() {
@@ -506,7 +517,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 					browseDirectoriesButton.setEnabled(true);
 					archivePathField.setEnabled(false);
 					browseArchivesButton.setEnabled(false);
-					updateProjectsList(directoryPathField.getText().trim());
 				}
 			}
 		});
@@ -518,15 +528,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 					browseDirectoriesButton.setEnabled(false);
 					archivePathField.setEnabled(true);
 					browseArchivesButton.setEnabled(true);
-					updateProjectsList(archivePathField.getText().trim());
 				}
 			}
 		});
-
-		// new project label
-		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel
-				.setText(DataTransferMessages.WizardProjectsImportPage_RootSelectTitle);
 	}
 
 	/**
@@ -543,12 +547,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 			setPageComplete(selectedProjects.length > 0);
 			return;
 		}
-		// don't repeat the same search - the user might just be tabbing to
-		// traverse
-		if (previouslySearchedDirectory != null
-				&& previouslySearchedDirectory.equals(path))
-			return;
-		previouslySearchedDirectory = path;
+		// We can't access the radio button from the inner class so get the status beforehand
+		final boolean dirSelected = this.projectFromDirectoryRadio.getSelection();
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
 
@@ -571,7 +571,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					selectedProjects = new ProjectRecord[0];
 					Collection files = new ArrayList();
 					monitor.worked(10);
-					if (ArchiveFileManipulations.isTarFile(path)) {
+					if (!dirSelected && ArchiveFileManipulations.isTarFile(path)) {
 						TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
 						if (sourceTarFile == null) {
 							// Clear out the provider as well
@@ -599,7 +599,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 						while (filesIterator.hasNext())
 							selectedProjects[index++] = (ProjectRecord) filesIterator
 									.next();
-					} else if (ArchiveFileManipulations.isZipFile(path)) {
+					} else if (!dirSelected && ArchiveFileManipulations.isZipFile(path)) {
 						ZipFile sourceFile = getSpecifiedZipSourceFile(path);
 						if (sourceFile == null) {
 							// Clear out the provider as well
@@ -629,7 +629,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 									.next();
 					}
 
-					else if (directory.isDirectory()) {
+					else if (dirSelected && directory.isDirectory()) {
 
 						if (!collectProjectFilesFromDirectory(files, directory,
 								monitor))
@@ -787,8 +787,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		if (monitor.isCanceled())
 			return false;
-		monitor
-				.subTask(DataTransferMessages.WizardProjectsImportPage_CheckingMessage);
+		monitor.subTask(NLS.bind(
+				DataTransferMessages.WizardProjectsImportPage_CheckingMessage, provider.getLabel(entry)));
 		List children = provider.getChildren(entry); //$NON-NLS-1$
 		if (children == null) {
 			children = new ArrayList(1);

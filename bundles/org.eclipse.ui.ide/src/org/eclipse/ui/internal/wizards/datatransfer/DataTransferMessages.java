@@ -27,7 +27,7 @@ public class DataTransferMessages extends NLS {
 	public static String DataTransfer_selectTypes;
 	public static String DataTransfer_selectAll;
 	public static String DataTransfer_deselectAll;
-
+	public static String DataTransfer_refresh;
 	public static String DataTransfer_cannotOverwrite;
 	public static String DataTransfer_emptyString;
 	public static String DataTransfer_scanningChildren;
