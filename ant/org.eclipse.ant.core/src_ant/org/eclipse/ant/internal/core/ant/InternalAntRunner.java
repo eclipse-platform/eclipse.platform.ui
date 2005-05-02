@@ -366,12 +366,7 @@ public class InternalAntRunner {
 		    setJavaClassPath();
 			Project antProject;
 		
-			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-				//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
-				antProject= new Project();
-			} else {
-				antProject= new InternalProject();
-			}
+			antProject = getProject();
 			processAntHome(false);
 			antProject.init();
 			setTypes(antProject);
@@ -426,6 +421,21 @@ public class InternalAntRunner {
 		} finally {
 			processAntHome(true);
 		}
+	}
+
+	private Project getProject() {
+		Project antProject;
+		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
+			if (isVersionCompatible("1.6.3")) { //$NON-NLS-1$
+				antProject= new InternalProject2();
+			} else {
+				antProject= new Project();
+			}
+		} else {
+			antProject= new InternalProject();
+		}
+		return antProject;
 	}
 	
 	/**
