@@ -15,9 +15,9 @@ import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
 import org.eclipse.team.internal.core.streams.*;
@@ -176,6 +176,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				        }
 			        }
 			    }
+                CVSSSH2Plugin.getDefault().getLog().log(new CVSStatus(IStatus.ERROR, "An I/O error occurred connecting using SSH2", e)); //$NON-NLS-1$
 				throw new IOException(message);
 			}
 		}
