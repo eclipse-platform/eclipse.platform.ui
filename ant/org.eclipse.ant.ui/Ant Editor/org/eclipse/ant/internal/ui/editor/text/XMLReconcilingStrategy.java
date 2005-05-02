@@ -21,7 +21,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
@@ -39,13 +38,9 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 
 	private void internalReconcile() {
 		try {
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			if (provider instanceof AntEditorDocumentProvider) {
-				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-				IAntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
-				if (model != null && model instanceof AntModel) {
-					((AntModel)model).reconcile();
-				}
+            IAntModel model= fEditor.getAntModel();
+			if (model instanceof AntModel) {
+				((AntModel)model).reconcile();
 			}
 		} catch (Exception e) {
 			AntUIPlugin.log(e);

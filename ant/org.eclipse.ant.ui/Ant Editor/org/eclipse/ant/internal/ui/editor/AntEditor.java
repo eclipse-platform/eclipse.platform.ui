@@ -603,6 +603,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	
 	private boolean fMarkOccurrenceAnnotations;
 	private boolean fStickyOccurrenceAnnotations;
+    
+    private AntModel fAntModel;
   
     public AntEditor() {
         super();
@@ -702,7 +704,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (fOutlinePage == null) {
 			fOutlinePage= new AntEditorContentOutlinePage(AntModelCore.getDefault(), this);
 			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
-			setOutlinePageInput(getEditorInput());
+			setOutlinePageInput();
 		}
 		return fOutlinePage;
 	}
@@ -866,20 +868,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		setOutlinePageInput(input);
+        fAntModel= null;
+		setOutlinePageInput();
 		if (fFoldingStructureProvider != null) {
 			fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(input));
 		}
 	}
 
-	private void setOutlinePageInput(IEditorInput input) {
+	private void setOutlinePageInput() {
 		if (fOutlinePage != null) {
-			IDocumentProvider provider= getDocumentProvider();
-			if (provider instanceof AntEditorDocumentProvider) {
-				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-				AntModel model= documentProvider.getAntModel(input);
-				fOutlinePage.setPageInput(model);
-			}
+			fOutlinePage.setPageInput(getAntModel());
 		}
 	}
 	
@@ -888,12 +886,14 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @return the Ant model for this editor or <code>null</code>
 	 */
 	public AntModel getAntModel() {
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider instanceof AntEditorDocumentProvider) {
-			AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-			return documentProvider.getAntModel(getEditorInput());
-		}
-		return null;
+        if (fAntModel == null) {
+            IDocumentProvider provider= getDocumentProvider();
+            if (provider instanceof AntEditorDocumentProvider) {
+                AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
+                fAntModel= documentProvider.getAntModel(getEditorInput());
+            }
+        }
+		return fAntModel;
 	}
 	
 	/* (non-Javadoc)
