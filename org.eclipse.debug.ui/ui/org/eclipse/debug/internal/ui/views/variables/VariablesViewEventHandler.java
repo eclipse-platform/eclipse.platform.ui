@@ -11,8 +11,11 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 
+import java.util.ArrayList;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -133,6 +136,39 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	protected void viewBecomesVisible() {
 		super.viewBecomesVisible();
 		getVariablesView().populateDetailPane();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#filterEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	protected DebugEvent[] filterEvents(DebugEvent[] events) {
+		ArrayList filtered = null;
+		for (int i=0; i<events.length; i++) {
+			// filter out change events 
+			if (events[i].getKind() == DebugEvent.CHANGE) {
+				if (!(events[i].getSource() instanceof IStackFrame || events[i].getSource() instanceof IVariable)) {
+					if (events.length == 1) {
+						return EMPTY_EVENT_SET;
+					}
+					if (filtered == null) {
+						filtered = new ArrayList();
+					}
+					filtered.add(events[i]);
+				}
+			}
+		}
+		if (filtered == null) {
+			return events;
+		}
+		if (filtered.size() == events.length) {
+			return EMPTY_EVENT_SET;
+		}
+		ArrayList all = new ArrayList(events.length);
+		for (int i = 0; i < events.length; i++) {
+			all.add(events[i]);
+		}
+		all.removeAll(filtered);
+		return (DebugEvent[]) all.toArray(new DebugEvent[all.size()]);
 	}
 
 }

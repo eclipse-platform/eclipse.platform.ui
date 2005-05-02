@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.registers;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
@@ -71,5 +72,12 @@ public class RegistersView extends VariablesView {
 	 */
 	protected AbstractViewerState getViewerState() {
 		return new RegistersViewerState(getVariablesViewer());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createEventHandler()
+	 */
+	protected AbstractDebugEventHandler createEventHandler() {
+		return new RegistersViewEventHandler(this);
 	}
 }
