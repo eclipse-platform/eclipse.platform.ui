@@ -29,6 +29,7 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -323,8 +324,8 @@ public class MultiPageEditorSite implements IEditorSite {
         if (menuExtenders == null) {
             menuExtenders = new ArrayList(1);
         }
-        menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider,
-                editor));
+        PartSite.registerContextMenu(menuID, menuMgr, selProvider, true,
+                editor, menuExtenders);
     }
 
     /**
@@ -390,5 +391,22 @@ public class MultiPageEditorSite implements IEditorSite {
     public IWorkbenchPart getPart() {
         return editor;
     }
-
+    
+    public final void registerContextMenu(final String menuId,
+            final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        if (menuExtenders == null) {
+            menuExtenders = new ArrayList(1);
+        }
+        PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+                includeEditorInput, editor, menuExtenders);
+    }
+    
+    public final void registerContextMenu(final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        registerContextMenu(getId(), menuManager, selectionProvider,
+                includeEditorInput);
+    }
 }

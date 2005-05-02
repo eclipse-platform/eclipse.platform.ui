@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -91,8 +95,8 @@ public class EditorSite extends PartSite implements IEditorSite {
         EditorActionBars bars = (EditorActionBars) getActionBars();
         if (bars != null)
             return bars.getEditorContributor();
-        else
-            return null;
+        
+        return null;
     }
 
     /**
@@ -102,8 +106,8 @@ public class EditorSite extends PartSite implements IEditorSite {
         EditorActionBars bars = (EditorActionBars) getActionBars();
         if (bars != null)
             return bars.getExtensionContributor();
-        else
-            return null;
+        
+        return null;
     }
 
     /**
@@ -116,8 +120,6 @@ public class EditorSite extends PartSite implements IEditorSite {
     public EditorDescriptor getEditorDescriptor() {
         return desc;
     }
-
-
 
     protected String getInitialScopeId() {
         return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
@@ -137,5 +139,23 @@ public class EditorSite extends PartSite implements IEditorSite {
         }
         return new EditorToPartActionBarsAdapter(ab);
     }
-
+    
+    public final void registerContextMenu(final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        registerContextMenu(getId(), menuManager, selectionProvider,
+                includeEditorInput);
+    }
+    
+    public final void registerContextMenu(final String menuId,
+            final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        if (menuExtenders == null) {
+            menuExtenders = new ArrayList(1);
+        }
+        
+        PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+                includeEditorInput, getPart(), menuExtenders);
+    }
 }

@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.PartSite;
 
 /**
  * @since 3.1
@@ -93,20 +93,17 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
         registerContextMenu(getId(), menuManager, selProvider);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String,
-     *      org.eclipse.jface.action.MenuManager,
-     *      org.eclipse.jface.viewers.ISelectionProvider)
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(java.lang.String, org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
      */
     public void registerContextMenu(String menuID, MenuManager menuMgr,
             ISelectionProvider selProvider) {
         if (menuExtenders == null) {
             menuExtenders = new ArrayList(1);
         }
-        menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider,
-                part));
+        
+        PartSite.registerContextMenu(menuID, menuMgr, selProvider, true, part,
+                menuExtenders);
     }
     
     /* (non-Javadoc)
@@ -196,5 +193,24 @@ public class CompatibilityPartSite implements IWorkbenchPartSite, IViewSite, IEd
      */
     public String getSecondaryId() {
         return services.getSecondaryId().getSecondaryId();
+    }
+    
+    public final void registerContextMenu(final String menuId,
+            final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        if (menuExtenders == null) {
+            menuExtenders = new ArrayList(1);
+        }
+        
+        PartSite.registerContextMenu(menuId, menuManager, selectionProvider,
+                includeEditorInput, part, menuExtenders);
+    }
+    
+    public final void registerContextMenu(final MenuManager menuManager,
+            final ISelectionProvider selectionProvider,
+            final boolean includeEditorInput) {
+        registerContextMenu(getId(), menuManager, selectionProvider,
+                includeEditorInput);
     }
 }
