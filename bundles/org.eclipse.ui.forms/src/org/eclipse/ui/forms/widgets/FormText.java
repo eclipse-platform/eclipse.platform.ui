@@ -1534,10 +1534,9 @@ public final class FormText extends Canvas {
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.swt.widgets.Canvas#setFocus()
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
-
 	public boolean setFocus() {
 		handleFocusGained = true;
 		boolean value = super.setFocus();
