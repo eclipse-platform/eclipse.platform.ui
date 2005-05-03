@@ -99,7 +99,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * 
 	 * @return the hover color of the decoration.
 	 */
-	public Color geHoverDecorationColor() {
+	public Color getHoverDecorationColor() {
 		return hoverColor;
 	}
 	/**

@@ -1546,4 +1546,9 @@ public final class FormText extends Canvas {
 		handleFocusGained = false;
 		return value;
 	}
+	
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		redraw();
+	}
 }
