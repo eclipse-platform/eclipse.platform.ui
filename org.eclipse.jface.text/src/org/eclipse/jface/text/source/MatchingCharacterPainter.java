@@ -178,7 +178,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			gc.setForeground(fColor);
 			
 			Rectangle bounds;
-			if (offset + length > 0)
+			if (length > 0)
 				bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
 			else {
 				Point loc= fTextWidget.getLocationAtOffset(offset);
