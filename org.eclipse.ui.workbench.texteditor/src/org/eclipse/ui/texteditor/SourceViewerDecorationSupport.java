@@ -98,7 +98,7 @@ public class SourceViewerDecorationSupport {
 			if (gc != null) {
 
 				Rectangle bounds;
-				if (offset + length > 0)
+				if (length > 0)
 					bounds= textWidget.getTextBounds(offset, offset + length - 1);
 				else {
 					Point loc= textWidget.getLocationAtOffset(offset);
@@ -135,7 +135,7 @@ public class SourceViewerDecorationSupport {
 			if (gc != null) {
 
 				Rectangle bounds;
-				if (offset + length > 0)
+				if (length > 0)
 					bounds= textWidget.getTextBounds(offset, offset + length - 1);
 				else {
 					Point loc= textWidget.getLocationAtOffset(offset);
