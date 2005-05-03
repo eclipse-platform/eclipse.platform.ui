@@ -63,6 +63,9 @@ public class BreakpointTests extends AbstractAntDebugTest {
 				bps.remove(breakpoint);
 				breakpoint.delete();
 				if (!bps.isEmpty()) {
+                    if (sepVM) {
+                        waitForTarget();
+                    }
 					thread = resume(thread);
 				}
 			}
@@ -117,13 +120,7 @@ public class BreakpointTests extends AbstractAntDebugTest {
 			thread= launchToLineBreakpoint(copy, bp);
 			bp.setEnabled(false);
             if (sepVM) {
-                synchronized (this) {
-                    try {
-                        //wait for the target to get updated for the new breakpoint state 
-                        wait(1000);
-                    } catch (InterruptedException ie) {
-                    }
-                }
+                waitForTarget();
             }
 			resumeAndExit(thread);
 		} finally {
@@ -131,6 +128,14 @@ public class BreakpointTests extends AbstractAntDebugTest {
 			removeAllBreakpoints();
 		}
 	}
+
+    private synchronized void waitForTarget() {
+        try {
+            //wait for the target to get updated for the new breakpoint state 
+            wait(1000);
+        } catch (InterruptedException ie) {
+        }
+    }
 	
 	public void testSkipLineBreakpoint() throws Exception {
         skipLineBreakpoint(false);			    
