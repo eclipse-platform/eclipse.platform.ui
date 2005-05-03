@@ -22,12 +22,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * <p>
  * RedoActionHandler provides common behavior for redoing an operation, as well
- * as labeling and enabling the menu item.
+ * as labelling and enabling the menu item.  This class may be instantiated by 
+ * clients.
  * </p>
  * 
  * @since 3.1
  */
-public class RedoActionHandler extends OperationHistoryActionHandler {
+public final class RedoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
@@ -45,15 +46,15 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 
 	}
 
-	protected void flush() {
+	void flush() {
 		getHistory().dispose(undoContext, false, true, false);
 	}
 
-	protected String getCommandString() {
+	String getCommandString() {
 		return WorkbenchMessages.Workbench_redo;
 	}
 
-	protected IUndoableOperation getOperation() {
+	IUndoableOperation getOperation() {
 		return getHistory().getRedoOperation(undoContext);
 	}
 
@@ -61,7 +62,7 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 		return getHistory().redo(undoContext, getProgressMonitor(), this);
 	}
 
-	protected boolean shouldBeEnabled() {
+	boolean shouldBeEnabled() {
 		// make sure a context is set. If a part doesn't provide
 		// a context, then we should not enable.
 		if (undoContext == null)

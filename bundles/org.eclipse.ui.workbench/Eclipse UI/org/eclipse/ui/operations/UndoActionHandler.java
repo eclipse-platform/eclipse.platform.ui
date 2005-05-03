@@ -23,12 +23,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  * <p>
  * UndoActionHandler provides common behavior for performing an undo, as
- * well as enabling and labelling the undo menu item.  
+ * well as enabling and labelling the undo menu item.  This class may be
+ * instantiated by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class UndoActionHandler extends OperationHistoryActionHandler {
+public final class UndoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
@@ -45,15 +46,15 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
                 .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 	}
 
-	protected void flush() {
+	void flush() {
 		getHistory().dispose(undoContext, true, false, false);
 	}
 
-	protected String getCommandString() {
+	String getCommandString() {
 		return WorkbenchMessages.Workbench_undo;
 	}
 
-	protected IUndoableOperation getOperation() {
+	IUndoableOperation getOperation() {
 		return getHistory().getUndoOperation(undoContext);
 
 	}
@@ -62,7 +63,7 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 		return getHistory().undo(undoContext, getProgressMonitor(), this);
 	}
 
-	protected boolean shouldBeEnabled() {
+	boolean shouldBeEnabled() {
 		// if a context was not supplied, do not enable.
 		if (undoContext == null)
 			return false;

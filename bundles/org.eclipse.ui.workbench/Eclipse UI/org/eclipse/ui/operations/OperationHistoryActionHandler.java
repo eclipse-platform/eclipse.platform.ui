@@ -98,11 +98,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		}
 		
 	}
-	protected IUndoContext undoContext = null;
+	IUndoContext undoContext = null;
 	private boolean pruning = false;
 
 	private IPartListener partListener = new PartListener();
-	protected IWorkbenchPartSite site;
+	IWorkbenchPartSite site;
 	
 	/**
 	 * Construct an operation history action for the specified workbench window
@@ -113,7 +113,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @param context -
 	 *            the undo context to be used
 	 */
-	public OperationHistoryActionHandler(IWorkbenchPartSite site,
+	OperationHistoryActionHandler(IWorkbenchPartSite site,
 			IUndoContext context) {
 		// string will be reset inside action
 		super(""); //$NON-NLS-1$
@@ -139,17 +139,17 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/*
 	 * Flush the history associated with this action.
 	 */
-	protected abstract void flush();
+	abstract void flush();
 
 	/*
 	 * Return the string describing the command.
 	 */
-	protected abstract String getCommandString();
+	abstract String getCommandString();
 
 	/*
 	 * Return the operation history we are using.
 	 */
-	protected IOperationHistory getHistory() {
+	IOperationHistory getHistory() {
 		return getWorkbenchWindow().getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
@@ -157,7 +157,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/*
 	 * Return the current operation.
 	 */
-	protected abstract IUndoableOperation getOperation();
+	abstract IUndoableOperation getOperation();
 
 	/**
 	 * Run the action. Provide common error handling and let the subclasses do the
@@ -200,7 +200,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/*
 	 * Return the progress monitor that should be used for operations
 	 */
-	protected IProgressMonitor getProgressMonitor() {
+	IProgressMonitor getProgressMonitor() {
 		return null;
 	}
 	
@@ -216,12 +216,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 * @return - a boolean indicating enablement state
 	 */
-	protected abstract boolean shouldBeEnabled();
+	abstract boolean shouldBeEnabled();
 
 	/**
-	 * Set the context shown by the handler. Normally the context is set as
-	 * parts activate and deactivate, but a part may wish to set the context
-	 * manually.
+	 * Set the context shown by the handler. Normally the context is set up
+	 * when the action handler is created, but the context can also be changed
+	 * dynamically.
 	 * 
 	 * @param context -
 	 *            the context to be used for the undo history
