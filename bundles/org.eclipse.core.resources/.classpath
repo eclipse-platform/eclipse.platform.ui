@@ -19,11 +19,11 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.ant_1.6.2/lib/ant.jar">
+	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core_3.1.0.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core_3.1.0.jar">
+	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.ant_1.6.3/lib/ant.jar">
 		<attributes>
 		</attributes>
 	</classpathentry>
