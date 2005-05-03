@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -36,13 +35,19 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * An operation approver that prompts the user to see if a non-local undo should
  * proceed inside an editor. A non-local undo is detected when an operation
  * being undone or redone affects elements other than those described by the
- * editor itself.
+ * editor itself. Clients can optionally specify a class, the preferred
+ * comparison class, that should be used when comparing objects affected by the
+ * editor with objects affected by an undo or redo operation. If any of the
+ * compared objects are not instances of the preferred comparison class but are
+ * instances of {@link org.eclipse.core.runtime.IAdaptable}, then the operation
+ * approver will attempt to retrieve an adapter of the preferred comparison
+ * class to be used for the comparison.
  * 
  * The operation approver also rechecks the validity of the operation (using
  * {@link IAdvancedUndoableOperation#computeUndoableStatus(IProgressMonitor)} or
- * {@link IAdvancedUndoableOperation#computeRedoableStatus(IProgressMonitor)} before
- * any prompting occurs, so that the user is not prompted if the operation will fail
- * anyway.
+ * {@link IAdvancedUndoableOperation#computeRedoableStatus(IProgressMonitor)}
+ * before any prompting occurs, so that the user is not prompted if the
+ * operation will fail anyway.
  * </p>
  * 
  * @since 3.1
@@ -53,7 +58,11 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 
 	private IEditorPart part;
 
-	private ArrayList editorElementsAndAdapters;
+	private Object[] elements;
+
+	private Class affectedObjectsClass;
+
+	private ArrayList elementsAndAdapters;
 
 	/**
 	 * Create a NonLocalUndoUserApprover associated with the specified editor
@@ -63,11 +72,45 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 	 *            the undo context of operations in question.
 	 * @param part -
 	 *            the editor part that is displaying the element
+	 * @param affectedObjects -
+	 *            the objects that are affected by the editor and considered to
+	 *            be objects local to the editor. The objects are typically
+	 *            instances of the preferredComparison or else provide adapters
+	 *            for the preferredComparisonClass, although this is not
+	 *            required.
+	 * @param preferredComparisonClass -
+	 *            the preferred class to be used when comparing the editor's
+	 *            affectedObjects with those provided by the undoable operation
+	 *            using
+	 *            {@link org.eclipse.core.commands.operations.IAdvancedUndoableOperation#getAffectedObjects()}.
+	 *            If the operation's affected objects are not instances of the
+	 *            specified class, but are instances of
+	 *            {@link org.eclipse.core.runtime.IAdaptable}, then an adapter
+	 *            for this class will be requested. The preferredComparisonClass
+	 *            may be <code>null</code>, which indicates that there is no
+	 *            expected class or adapter necessary for the comparison.
 	 */
-	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part) {
+	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part,
+			Object[] affectedObjects, Class preferredComparisonClass) {
 		super();
 		this.context = context;
 		this.part = part;
+		this.affectedObjectsClass = preferredComparisonClass;
+		this.elements = affectedObjects;
+	}
+
+	/**
+	 * Create a NonLocalUndoUserApprover associated with the specified editor
+	 * and undo context
+	 * 
+	 * @param context -
+	 *            the undo context of operations in question.
+	 * @param part -
+	 *            the editor part that is displaying the element
+	 * @deprecated see https://bugs.eclipse.org/bugs/show_bug.cgi?id=89197
+	 */
+	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part) {
+		this(context, part, new Object[] {}, null);
 	}
 
 	/*
@@ -127,8 +170,8 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 
 		// see if the operation is still valid. Some advanced model operations
 		// cannot compute their validity in canUndo() or canRedo() and true
-		// validity
-		// cannot be determined until it is time to perform the operation.
+		// validity cannot be determined until it is time to perform the
+		// operation.
 		IStatus status;
 		try {
 			if (undoing)
@@ -169,31 +212,39 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		// we assume for the rest of this method that an inability to
 		// determine a match implies that a non-local operation is occurring.
 		// This is a conservative assumption that provides more user prompting.
-		if (modifiedElements != null) {
-			// HACK - temporary hack until a better long-term solution is provided for
-			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=93051.
-			Class resourceClass = LegacyResourceSupport.getResourceClass();
-			boolean local = true;
-			// Each modified element must be known by the editor in order to be
-			// considered local. First, expand the list of elements known by the
-			// editor to include resource adaptations of those elements if
-			// supported.
-			if (editorElementsAndAdapters == null)
-				computeEditorElementsAndAdapters(resourceClass);
+
+		boolean local;
+		if (modifiedElements == null) {
+			// The operation could not determine which elements are affected.
+			// Consider the operation non-local.
+			local = false;
+		} else {
+			// The operation answered some array of affected objects.  Consider
+			// the operation local until a non-match is found.  Note that an empty
+			// array of affected objects is considered a local change.
+			local = true;
 			for (int i = 0; i < modifiedElements.length; i++) {
 				Object modifiedElement = modifiedElements[i];
-				if (!editorElementsAndAdapters.contains(modifiedElement)) {
-					if (modifiedElement instanceof IAdaptable) {
-						if (!editorElementsAndAdapters.contains(
-								((IAdaptable) modifiedElement).getAdapter(resourceClass)))
-							local = false;
-							break;
+				if (!elementsContains(modifiedElement)) {
+					// the modified element is not known by the editor
+					local = false;
+					// one last try - try to adapt the modified element if a preferred 
+					// comparison class has been provided.
+					if (affectedObjectsClass != null
+							&& modifiedElement instanceof IAdaptable) {
+						if (elementsContains(((IAdaptable) modifiedElement)
+								.getAdapter(affectedObjectsClass))) {
+							local = true;
 						}
-					}
+					} 
+					// if the element did not match the affected objects, no need to check any others.
+					if (!local)
+						break;
 				}
-			if (local)
-				return Status.OK_STATUS;
+			}
 		}
+		if (local)
+			return Status.OK_STATUS;
 
 		// Now we know the operation affects more than just our element, so warn
 		// the user.
@@ -236,34 +287,6 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 	}
 
 	/*
-	 * Compute the full list of affected editor elements and include any of the specified
-	 * adapters provided by these elements if the elements support the adapter class.
-	 */
-	private void computeEditorElementsAndAdapters(Class adapterClass) {
-		Object[] elements = null;
-		IAdvancedUndoableOperation affectedObjects = (IAdvancedUndoableOperation) part
-				.getAdapter(IAdvancedUndoableOperation.class);
-		if (affectedObjects != null) {
-			elements = affectedObjects.getAffectedObjects();
-		}
-		if (elements == null) {
-			editorElementsAndAdapters = new ArrayList(0);
-		} else {
-			editorElementsAndAdapters = new ArrayList(elements.length);
-			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-				editorElementsAndAdapters.add(element);
-				if (element instanceof IAdaptable && adapterClass != null) {
-					Object adapter = ((IAdaptable) element)
-							.getAdapter(adapterClass);
-					if (adapter != null)
-						editorElementsAndAdapters.add(adapter);
-				}
-			}
-		}
-	}
-
-	/*
 	 * Return the progress monitor that should be used for computing validity
 	 * checks for undo and redo.
 	 */
@@ -297,5 +320,37 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 	private void reportErrorStatus(IStatus status) {
 		ErrorDialog.openError(part.getSite().getShell(),
 				WorkbenchMessages.Error, null, status);
+	}
+
+	/*
+	 * Return whether or not the collection of editor elements plus any of their
+	 * adapters contains the specified object.
+	 */
+	private boolean elementsContains(Object someObject) {
+		if (elements == null)
+			return false;
+		if (elementsAndAdapters == null) {
+			// Compute a list of not just the elements, but any adapters they
+			// may provide on the preferred class if they are not instances of
+			// the preferred class. This is done only once.
+			elementsAndAdapters = new ArrayList(elements.length);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				elementsAndAdapters.add(element);
+				if (affectedObjectsClass != null
+						&& !affectedObjectsClass.isInstance(element)
+						&& element instanceof IAdaptable) {
+					Object adapter = ((IAdaptable) element)
+							.getAdapter(affectedObjectsClass);
+					if (adapter != null)
+						elementsAndAdapters.add(adapter);
+				}
+			}
+		}
+		for (int i = 0; i < elementsAndAdapters.size(); i++) {
+			if (elementsAndAdapters.get(i).equals(someObject))
+				return true;
+		}
+		return false;
 	}
 }
