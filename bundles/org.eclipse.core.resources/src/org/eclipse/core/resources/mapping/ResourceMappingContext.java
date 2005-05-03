@@ -28,6 +28,7 @@ package org.eclipse.core.resources.mapping;
  * instantiated directly.
  * </p>
  * 
+ * @deprecated moved to org.eclipse.core.internal.resources.mapping
  * @see ResourceMapping
  * @see RemoteResourceMappingContext
  * @since 3.1

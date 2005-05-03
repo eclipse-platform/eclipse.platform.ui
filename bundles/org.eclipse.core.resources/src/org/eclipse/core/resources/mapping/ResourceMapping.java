@@ -30,7 +30,8 @@ import org.eclipse.core.runtime.*;
  * <p>
  * This class may be subclassed by clients.
  * </p>
-
+ * 
+ * @deprecated moved to org.eclipse.core.internal.resources.mapping
  * @see IResource
  * @see ResourceTraversal
  * @since 3.1

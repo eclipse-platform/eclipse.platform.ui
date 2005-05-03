@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This class may be subclassed by clients.
  * </p>
  * 
+ * @deprecated moved to org.eclipse.core.internal.resources.mapping
  * @see ResourceMapping
  * @see ResourceMappingContext
  * @since 3.1

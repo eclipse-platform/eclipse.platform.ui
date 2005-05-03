@@ -26,7 +26,8 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p>
-
+ * 
+ * @deprecated moved to org.eclipse.core.internal.resources.mapping
  * @see org.eclipse.core.resources.IResource
  * @since 3.1
  */
