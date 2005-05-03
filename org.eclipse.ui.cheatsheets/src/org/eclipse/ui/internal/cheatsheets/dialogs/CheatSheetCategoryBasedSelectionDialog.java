@@ -250,7 +250,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		Object obj = getSingleSelection(selectionEvent.getSelection());
 		if (obj instanceof CheatSheetCollectionElement) {
 			enableOKButton(false);
-			desc.setText("");
+			desc.setText(""); //$NON-NLS-1$
 		} else {
 			currentSelection = (CheatSheetElement) obj;
 

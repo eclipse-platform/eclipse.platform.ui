@@ -74,7 +74,7 @@ public abstract class Page {
 		toolkit = new FormToolkit(parent.getDisplay());
 		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after new FormToolkit(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		form = toolkit.createScrolledForm(parent);
-		form.setData("novarrows", Boolean.TRUE);
+		form.setData("novarrows", Boolean.TRUE); //$NON-NLS-1$
 		form.setDelayedReflow(true);
 		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after createScrolledForm(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
