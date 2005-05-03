@@ -584,9 +584,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (oldProposal instanceof ICompletionProposalExtension2 && fViewer != null)
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
 
+			ICompletionProposal[] oldProposals= fFilteredProposals;
+			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
-			if (isFilteredSubset && fFilteredProposals != null && fProposalTable.getItemCount() == fFilteredProposals.length) {
-				final int oldLen= fFilteredProposals.length;
+			if (isFilteredSubset && oldProposals != null && fProposalTable.getItemCount() == oldProposals.length) {
+				final int oldLen= oldProposals.length;
 				final int removedLen= oldLen - newLen;
 				Assert.isTrue(removedLen >= 0 && newLen > 0);
 
@@ -596,7 +598,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					ICompletionProposal next= proposals[0];
 					int nextIdx= 0;
 					for (int oldIdx= 0; oldIdx < oldLen; oldIdx++) {
-						if (fFilteredProposals[oldIdx] != next) {
+						if (oldProposals[oldIdx] != next) {
 							removed[removedIdx++]= oldIdx;
 						} else if (++nextIdx < newLen) {
 							next= proposals[nextIdx];
@@ -628,7 +630,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 				}
 			}
 
-			fFilteredProposals= proposals;
 			Point currentLocation= fProposalShell.getLocation();
 			Point newLocation= getLocation();
 			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y)
