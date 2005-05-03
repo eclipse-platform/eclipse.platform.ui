@@ -56,3 +56,6 @@ org.eclipse.core.resources/save/mastertable=false
 
 # Report debug of workspace auto-refresh
 org.eclipse.core.resources/refresh=false
+
+# Prints debug information on resource content description 
+org.eclipse.core.resources/contenttypes/flushcache=false
