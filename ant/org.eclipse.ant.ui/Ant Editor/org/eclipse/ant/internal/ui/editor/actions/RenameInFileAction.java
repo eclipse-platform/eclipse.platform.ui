@@ -61,7 +61,7 @@ public class RenameInFileAction extends SelectionDispatchAction {
 		}
 	
 		addPositionsToGroup(offset, positions, document, group);
-		if (group.isEmtpy()) {
+		if (group.isEmpty()) {
 		    return;         
         }
 		try {
