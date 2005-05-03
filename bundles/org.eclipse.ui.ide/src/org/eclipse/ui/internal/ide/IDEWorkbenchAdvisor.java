@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -63,7 +62,7 @@ import org.osgi.framework.Bundle;
 public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
     private static final String WORKBENCH_PREFERENCE_CATEGORY_ID = "org.eclipse.ui.preferencePages.Workbench"; //$NON-NLS-1$
-
+    
     /**
      * The dialog setting key to access the known installed features
      * since the last time the workbench was run.
@@ -100,8 +99,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
      * Helper for managing activites in response to workspace changes.
      */
     private IDEWorkbenchActivityHelper activityHelper = null;
-
+    
     /**
+     * Helper for managing work that is performed when the system is
+     * otherwise idle.
+     */
+    private IDEIdleHelper idleHelper;
+
+	/**
      * Creates a new workbench advisor instance.
      */
     protected IDEWorkbenchAdvisor() {
@@ -137,15 +142,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                 break;
             }
         }
-
+        
         // register shared images
         declareWorkbenchImages();
 
         // initialize the activity helper
         activityHelper = IDEWorkbenchActivityHelper.getInstance();
+
+        //initialize idle handler
+        idleHelper = new IDEIdleHelper(configurer);
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
      */
     public void preStartup() {
@@ -163,7 +171,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         service.registerIconForFamily(newImage,
                 ResourcesPlugin.FAMILY_AUTO_BUILD);
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.WorkbenchAdvisor#postStartup()
      */
@@ -174,7 +182,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         } finally {//Resume background jobs after we startup
             Platform.getJobManager().resume();
         }
-
     }
 
     /* (non-Javadoc)
@@ -184,6 +191,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         if (activityHelper != null) {
             activityHelper.shutdown();
             activityHelper = null;
+        }
+        if (idleHelper != null) {
+        	idleHelper.shutdown();
+        	idleHelper = null;
         }
         if (IDEWorkbenchPlugin.getPluginWorkspace() != null) {
             disconnectFromWorkspace();
