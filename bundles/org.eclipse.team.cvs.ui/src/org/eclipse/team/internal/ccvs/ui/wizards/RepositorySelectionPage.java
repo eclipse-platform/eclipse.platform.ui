@@ -80,35 +80,36 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new WorkbenchLabelProvider());
-		table.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				result = (ICVSRepositoryLocation)((IStructuredSelection)table.getSelection()).getFirstElement();
-				setPageComplete(true);
-			}
-		});
-		table.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				getContainer().showPage(getNextPage());
-			}
-		});
-		
-		useExistingRepo.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				if (useNewRepo.getSelection()) {
-					table.getTable().setEnabled(false);
-					result = null;
-				} else {
-					table.getTable().setEnabled(true);
-					result = (ICVSRepositoryLocation)((IStructuredSelection)table.getSelection()).getFirstElement();
-				}
-				setPageComplete(true);
-			}
-		});
+        table.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                getContainer().showPage(getNextPage());
+            }
+        });
 
 		setControl(composite);
 
 		initializeValues();
         Dialog.applyDialogFont(parent);
+        
+        table.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                result = (ICVSRepositoryLocation)((IStructuredSelection)table.getSelection()).getFirstElement();
+                setPageComplete(true);
+            }
+        });
+        
+        useExistingRepo.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+                if (useNewRepo.getSelection()) {
+                    table.getTable().setEnabled(false);
+                    result = null;
+                } else {
+                    table.getTable().setEnabled(true);
+                    result = (ICVSRepositoryLocation)((IStructuredSelection)table.getSelection()).getFirstElement();
+                }
+                setPageComplete(true);
+            }
+        });
 	}
 	/**
 	 * Initializes states of the controls.
@@ -118,11 +119,17 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		AdaptableList input = new AdaptableList(locations);
 		table.setInput(input);
 		if (locations.length == 0) {
-			useNewRepo.setSelection(true);	
+			useNewRepo.setSelection(true);
+            useExistingRepo.setSelection(false);
+            table.getTable().setEnabled(false);
 		} else {
-			useExistingRepo.setSelection(true);	
-			table.setSelection(new StructuredSelection(locations[0]));
+            useNewRepo.setSelection(false);
+			useExistingRepo.setSelection(true);
+            table.getTable().setEnabled(true);
+            result = locations[0];
+			table.setSelection(new StructuredSelection(result));
 		}
+        setPageComplete(true);
 	}
 	
 	public ICVSRepositoryLocation getLocation() {
