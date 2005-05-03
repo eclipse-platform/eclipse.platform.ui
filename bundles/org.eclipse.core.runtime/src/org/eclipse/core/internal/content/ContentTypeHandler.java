@@ -23,7 +23,11 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  */
 public class ContentTypeHandler implements IContentType {
 
-	class DummyContentDescription implements IContentDescription {
+	/**
+	 * A dummy description object to be returned by getDescription when this 
+	 * handler's target cannot be determined. 
+	 */
+	private class DummyContentDescription implements IContentDescription {
 		public String getCharset() {
 			return null;
 		}
@@ -111,14 +115,14 @@ public class ContentTypeHandler implements IContentType {
 		return (target != null) ? target.getName() : id;
 	}
 
-	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
+	public IContentTypeSettings getSettings(IScopeContext context) {
 		final ContentType target = getTarget();
 		if (target == null)
 			return null;
 		// the content type may returned itself as the settings object (instance scope context)
 		final IContentTypeSettings settings = target.getSettings(context);
 		// in that case, return this same handler; otherwise, just return the settings 
-		return settings == target ? this : settings;		
+		return settings == target ? this : settings;
 	}
 
 	/**
