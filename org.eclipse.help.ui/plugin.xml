@@ -86,7 +86,7 @@
       <engineType
             scopeFactory="org.eclipse.help.ui.internal.search.InfoCenterSearchScopeFactory"
             label="%InfoCenter.label"
-            class="org.eclipse.help.search.InfoCenter"
+            class="org.eclipse.help.internal.search.InfoCenter"
             icon="icons/etool16/search_menu.gif"
             pageClass="org.eclipse.help.ui.internal.search.InfoCenterPage"
             id="org.eclipse.help.ui.infoCenter">
@@ -97,7 +97,7 @@
       <engineType
             scopeFactory="org.eclipse.help.ui.internal.search.WebSearchScopeFactory"
             label="%WebSearch.label"
-            class="org.eclipse.help.search.WebSearch"
+            class="org.eclipse.help.internal.search.WebSearch"
             icon="icons/etool16/external_browser.gif"
             id="org.eclipse.help.ui.web"
             pageClass="org.eclipse.help.ui.internal.search.WebSearchPage">
