@@ -72,6 +72,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      *            contributions to this context menu.
      * @see IWorkbenchPartSite#registerContextMenu(MenuManager,
      *      ISelectionProvider)
+     * @since 3.1
      */
     public void registerContextMenu(MenuManager menuManager,
             ISelectionProvider selectionProvider, boolean includeEditorInput);
@@ -106,6 +107,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      *            contributions to this context menu.
      * @see IWorkbenchPartSite#registerContextMenu(MenuManager,
      *      ISelectionProvider)
+     * @since 3.1
      */
     public void registerContextMenu(String menuId, MenuManager menuManager,
             ISelectionProvider selectionProvider, boolean includeEditorInput);
