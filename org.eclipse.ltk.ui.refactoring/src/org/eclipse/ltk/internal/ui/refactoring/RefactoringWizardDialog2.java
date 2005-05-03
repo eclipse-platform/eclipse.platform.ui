@@ -482,18 +482,21 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		int dy= dh / 2;
 		Shell shell= getShell();
 		Rectangle rect= shell.getBounds();
-		Rectangle display= shell.getMonitor().getClientArea();
+		Rectangle displayRect= shell.getDisplay().getClientArea();
+		Rectangle monitorRect= shell.getMonitor().getClientArea();
 		rect.x= Math.max(0, rect.x - dx);
 		rect.y= Math.max(0, rect.y - dy);
-		rect.width= Math.min(rect.width + dw, display.width);
-		rect.height= Math.min(rect.height + dh, display.height);
+		// limit with and hight to monitor
+		rect.width= Math.min(rect.width + dw, monitorRect.width);
+		rect.height= Math.min(rect.height + dh, monitorRect.height);
 		int xe= rect.x + rect.width;
-		if (xe > display.width) {
-			rect.x-= xe - display.width; 
+		// position the dialog on the display
+		if (xe > displayRect.width) {
+			rect.x-= xe - displayRect.width; 
 		}
 		int ye= rect.y + rect.height;
-		if (ye > display.height) {
-			rect.y-= ye - display.height; 
+		if (ye > displayRect.height) {
+			rect.y-= ye - displayRect.height; 
 		}
 		shell.setBounds(rect);
 	}
