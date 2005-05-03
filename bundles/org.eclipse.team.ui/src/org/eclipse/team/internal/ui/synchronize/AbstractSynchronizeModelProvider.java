@@ -375,14 +375,20 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * after validating that the viewer is still valid.
      */
     protected IResource[] getExpandedResources() {
-        IResource[] resourcesToExpand = getCachedResources(P_VIEWER_EXPANSION_STATE);
-        if (resourcesToExpand.length > 0) {
-            // There is still saved state for the expanded resources so use it
-            return resourcesToExpand;
+        Set expanded = new HashSet();
+        IResource[] savedExpansionState = getCachedResources(P_VIEWER_EXPANSION_STATE);
+        for (int i = 0; i < savedExpansionState.length; i++) {
+            IResource resource = savedExpansionState[i];
+            expanded.add(resource);
         }
         StructuredViewer viewer = getViewer();
         Object[] objects = ((AbstractTreeViewer) viewer).getVisibleExpandedElements();
-        return getResources(objects);
+        IResource[] currentExpansionState = getResources(objects);
+        for (int i = 0; i < currentExpansionState.length; i++) {
+            IResource resource = currentExpansionState[i];
+            expanded.add(resource);
+        }
+        return (IResource[]) expanded.toArray(new IResource[expanded.size()]);
     }
     
     /*
