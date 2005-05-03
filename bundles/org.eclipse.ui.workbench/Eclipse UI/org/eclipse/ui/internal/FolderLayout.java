@@ -68,7 +68,7 @@ public class FolderLayout implements IFolderLayout {
 
         try {
             IViewDescriptor descriptor = viewFactory.getViewRegistry().find(
-                    viewId);
+                    ViewFactory.extractPrimaryId(viewId));
             if (descriptor == null) {
                 throw new PartInitException("View descriptor not found: " + viewId); //$NON-NLS-1$
             }

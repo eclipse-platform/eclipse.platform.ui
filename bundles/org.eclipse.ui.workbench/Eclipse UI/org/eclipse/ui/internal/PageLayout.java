@@ -441,8 +441,9 @@ public class PageLayout implements IPageLayout {
         if (partID.equals(ID_EDITOR_AREA)) {
             return editorFolder;
         } else {
+        	
             IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
-                    .find(partID);
+                    .find(ViewFactory.extractPrimaryId(partID));
             if (WorkbenchActivityHelper.filterItem(viewDescriptor))
                 return null;
             return LayoutHelper.createView(getViewFactory(), partID);

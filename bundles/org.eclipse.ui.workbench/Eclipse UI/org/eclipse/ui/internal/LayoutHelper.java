@@ -156,7 +156,8 @@ class LayoutHelper {
     public static final ViewPane createView(ViewFactory factory, String viewId)
             throws PartInitException {
         WorkbenchPartReference ref = (WorkbenchPartReference) factory
-                .createView(viewId);
+				.createView(ViewFactory.extractPrimaryId(viewId), ViewFactory
+						.extractSecondaryId(viewId));
         ViewPane newPart = (ViewPane) ref.getPane();
         return newPart;
     }
