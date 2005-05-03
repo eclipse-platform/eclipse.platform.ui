@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.Status;
  * </p>
  * 
  * @since 3.1
+ * @deprecated see https://bugs.eclipse.org/bugs/show_bug.cgi?id=89197 
+ * 
  * 
  */
 
