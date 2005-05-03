@@ -1030,6 +1030,7 @@ public class LinkedModeUI {
 			for (int i= 0; i < partitionings.length; i++) {
 				contentTypes.addAll(Arrays.asList(ext.getLegalContentTypes(partitionings[i])));
 			}
+			contentTypes.add(IDocument.DEFAULT_CONTENT_TYPE);
 			return (String[]) contentTypes.toArray(new String[contentTypes.size()]);
 		}
 		return document.getLegalContentTypes();
