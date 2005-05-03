@@ -20,6 +20,8 @@ Export-Package: org.eclipse.core.internal.resources.mapping,
  org.eclipse.core.internal.events,
  org.eclipse.core.internal.refresh,
  org.eclipse.core.internal.utils
-Require-Bundle: org.eclipse.core.runtime.compatibility
+Require-Bundle: org.eclipse.core.runtime.compatibility,
+ org.eclipse.ant.core;resolution:=optional,
+ org.apache.ant;resolution:=optional
 Plugin-Class: org.eclipse.core.resources.ResourcesPlugin
 Eclipse-AutoStart: true
