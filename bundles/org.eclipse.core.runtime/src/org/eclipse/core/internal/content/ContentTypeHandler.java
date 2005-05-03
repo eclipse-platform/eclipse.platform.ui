@@ -115,7 +115,7 @@ public class ContentTypeHandler implements IContentType {
 		return (target != null) ? target.getName() : id;
 	}
 
-	public IContentTypeSettings getSettings(IScopeContext context) {
+	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
 		final ContentType target = getTarget();
 		if (target == null)
 			return null;
