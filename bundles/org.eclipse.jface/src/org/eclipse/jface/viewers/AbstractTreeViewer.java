@@ -835,7 +835,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * Returns the parent item of the given item in the tree, or <code>null</code>
-     * if there is parent item.
+     * if there is no parent item.
      * 
      * @param item
      *           the item
@@ -1053,16 +1053,21 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             }
             Object parent = cp.getParent(element);
             if (parent != null) {
-                Widget pw = internalExpand(parent, expand);
+                Widget pw = internalExpand(parent, false);
                 if (pw != null) {
                     // let my parent create me
                     createChildren(pw);
                     // expand parent and find me
                     if (pw instanceof Item) {
                         Item item = (Item) pw;
-                        if (expand)
-                            setExpanded(item, true);
                         w = internalFindChild(item, element);
+                        if (expand) {
+                        	// expand parent items bottom-up after they have all been materialized, to reduce flicker
+                        	while (item != null && !getExpanded(item)) {
+                        		setExpanded(item, true);
+                        		item = getParentItem(item);
+                        	}
+                        }
                     }
                 }
             }
@@ -1579,15 +1584,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         for (int i = 0; i < size; ++i) {
             // Use internalExpand since item may not yet be created. See
             // 1G6B1AR.
-            Widget w = internalExpand(v.get(i), true);
+            Widget w = internalExpand(v.get(i), false);
             if (w instanceof Item) {
                 newSelection.add(w);
             }
         }
         setSelection(newSelection);
-        if (reveal && newSelection.size() > 0) {
-            showItem((Item) newSelection.get(0));
-        }
+//        if (reveal && newSelection.size() > 0) {
+//            showItem((Item) newSelection.get(0));
+//        }
     }
 
     /**
