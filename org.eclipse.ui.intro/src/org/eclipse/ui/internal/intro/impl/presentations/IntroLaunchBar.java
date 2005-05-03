@@ -56,7 +56,6 @@ import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.LaunchBarShortcutElement;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
-import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
@@ -321,13 +320,14 @@ public class IntroLaunchBar implements IWindowTrim {
 
     private void loadStoredLocation() {
         IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
-        try {
-            int storedLocation = settings.getInt(S_STORED_LOCATION);
-            if (storedLocation > 0)
-                setLocation(storedLocation);
-        } catch (NumberFormatException e) {
-            Log.error("failed to access dialog store for Intro plugin", e);
-        }
+       	try {
+       		int storedLocation = settings.getInt(S_STORED_LOCATION);
+       		if (storedLocation > 0)
+       			setLocation(storedLocation);
+       	} catch (NumberFormatException e) {
+       		// The stored value either does not exist or
+       		// is corrupted - just pick the default silently.
+       	}
     }
 
     private void storeLocation() {
