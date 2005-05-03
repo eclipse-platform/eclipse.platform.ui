@@ -593,23 +593,32 @@ class CompletionProposalPopup implements IContentAssistListener {
 				Assert.isTrue(removedLen >= 0 && newLen > 0);
 
 				if (removedLen > 0) {
-					int[] removed= new int[removedLen];
-					int removedIdx= 0;
+					int maxRanges= Math.min(oldLen / 2 + 1, removedLen);
+					int[][] ranges= new int[maxRanges][2];
+					int rangeIdx= 0;
+					int[] range= null;
 					ICompletionProposal next= proposals[0];
 					int nextIdx= 0;
 					for (int oldIdx= 0; oldIdx < oldLen; oldIdx++) {
 						if (oldProposals[oldIdx] != next) {
-							removed[removedIdx++]= oldIdx;
+							if (range == null || range[1] != oldIdx - 1)
+								ranges[rangeIdx++]= range= new int[] { oldIdx, oldIdx };
+							else
+								range[1]= oldIdx;
 						} else if (++nextIdx < newLen) {
 							next= proposals[nextIdx];
 						} else {
-							while (++oldIdx < oldLen)
-								removed[removedIdx++]= oldIdx;
+							if (oldIdx < oldLen - 1)
+								ranges[rangeIdx++]= new int[] {oldIdx + 1, oldLen - 1};
 							break;
 						}
 					}
+					
+					while (--rangeIdx >= 0) {
+						range= ranges[rangeIdx];
+						fProposalTable.remove(range[0], range[1]);
+					}
 
-					fProposalTable.remove(removed);
 				}
 			} else {
 				if (USE_VIRTUAL) {
