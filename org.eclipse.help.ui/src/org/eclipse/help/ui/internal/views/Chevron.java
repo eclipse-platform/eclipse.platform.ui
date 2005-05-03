@@ -42,8 +42,8 @@ public final class Chevron extends ToggleHyperlink {
 	 * @see SelectableControl#paint(GC)
 	 */
 	protected void paintHyperlink(GC gc) {
-		if (hover && geHoverDecorationColor() != null)
-			gc.setForeground(geHoverDecorationColor());
+		if (hover && getHoverDecorationColor() != null)
+			gc.setForeground(getHoverDecorationColor());
 		else if (getDecorationColor() != null)
 			gc.setForeground(getDecorationColor());
 		int[][] data;
