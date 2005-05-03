@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceTestCase;
 
 
@@ -61,7 +60,6 @@ public class RangeDifferencerTest extends PerformanceTestCase {
 	public void testLargeDocument() {
 			    
 		tagAsGlobalSummary("3-way compare, 5000 lines", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "a ¬simple test comment for the \"slowdown explained\" feature"); //$NON-NLS-1$
 
 		ITokenComparator ancestor= new DocLineComparator(createDocument(0), null, false);
 		ITokenComparator left= new DocLineComparator(createDocument(1), null, false);
