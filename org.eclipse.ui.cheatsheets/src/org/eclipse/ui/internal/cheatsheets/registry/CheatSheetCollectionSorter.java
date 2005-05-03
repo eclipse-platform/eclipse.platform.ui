@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.registry;
 import java.text.Collator;
 
 import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
@@ -40,8 +41,8 @@ public class CheatSheetCollectionSorter extends ViewerSorter {
 	 *			and a value greater than <code>0</code> if o1 is greater than o2.
 	 */
 	public int compare(Viewer viewer, Object o1, Object o2) {
-		String name1 = ((CheatSheetCollectionElement) o1).getLabel(o1);
-		String name2 = ((CheatSheetCollectionElement) o2).getLabel(o2);
+		String name1 = ((WorkbenchAdapter)o1).getLabel(o1);
+		String name2 = ((WorkbenchAdapter)o2).getLabel(o2);
 
 		if (name1.equals(name2))
 			return 0;

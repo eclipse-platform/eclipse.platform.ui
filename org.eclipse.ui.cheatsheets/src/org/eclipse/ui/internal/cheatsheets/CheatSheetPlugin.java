@@ -115,9 +115,14 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeImageRegistry(ImageRegistry reg) {
-		String imageFileName = "icons/obj16/skip_status.gif"; //$NON-NLS-1$
+		String imageFileName = "icons/obj16/cheatsheet_obj.gif"; //$NON-NLS-1$
 		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_OBJ, imageDescriptor);
+		
+		imageFileName = "icons/obj16/skip_status.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_SKIP, imageDescriptor);
 
 		imageFileName = "icons/obj16/complete_status.gif"; //$NON-NLS-1$

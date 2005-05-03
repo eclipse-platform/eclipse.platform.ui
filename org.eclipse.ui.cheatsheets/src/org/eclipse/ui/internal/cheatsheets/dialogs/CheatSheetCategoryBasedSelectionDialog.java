@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.dialogs;
 
-
 import java.util.*;
 import java.util.List;
 
@@ -19,8 +18,11 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.*;
 
@@ -30,53 +32,73 @@ import org.eclipse.ui.internal.cheatsheets.registry.*;
 /**
  * Dialog to allow the user to select a cheat sheet from a list.
  */
-public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog implements ISelectionChangedListener {
+public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
+		implements ISelectionChangedListener {
 	private IDialogSettings settings;
+
 	private CheatSheetCollectionElement cheatsheetCategories;
+
 	private CheatSheetElement currentSelection;
-	private TreeViewer categoryTreeViewer;
-	private TableViewer cheatsheetSelectionViewer;
-	private final static int SIZING_CATEGORY_LIST_HEIGHT = 150;
-	private final static int SIZING_CATEGORY_LIST_WIDTH = 180;
-	private final static int SIZING_CHEATSHEET_LIST_HEIGHT = 150;
-	private final static int SIZING_CHEATSHEET_LIST_WIDTH = 350;
+
+	private TreeViewer treeViewer;
+
+	private Text desc;
+
 	private boolean okButtonState;
 
 	// id constants
-	private final static String STORE_SELECTED_CATEGORY_ID = 
-		"CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CATEGORY_ID"; //$NON-NLS-1$
-	private final static String STORE_EXPANDED_CATEGORIES_ID = 
-		"CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
-	private final static String STORE_SELECTED_CHEATSHEET_ID = 
-		"CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
+
+	private final static String STORE_EXPANDED_CATEGORIES_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
+
+	private final static String STORE_SELECTED_CHEATSHEET_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
+
+	private class CheatsheetLabelProvider extends LabelProvider {
+		public String getText(Object obj) {
+			if (obj instanceof WorkbenchAdapter) {
+				return ((WorkbenchAdapter) obj).getLabel(null);
+			}
+			return super.getText(obj);
+		}
+
+		public Image getImage(Object obj) {
+			if (obj instanceof CheatSheetElement)
+				return CheatSheetPlugin.getPlugin().getImageRegistry().get(
+						ICheatSheetResource.CHEATSHEET_OBJ);
+			else
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJ_FOLDER);
+		}
+	}
 
 	/**
-	 * Creates an instance of this dialog to display
-	 * the a list of cheat sheets.
+	 * Creates an instance of this dialog to display the a list of cheat sheets.
 	 * 
-	 * @param shell the parent shell
+	 * @param shell
+	 *            the parent shell
 	 */
-	public CheatSheetCategoryBasedSelectionDialog(Shell shell, CheatSheetCollectionElement cheatsheetCategories) {
+	public CheatSheetCategoryBasedSelectionDialog(Shell shell,
+			CheatSheetCollectionElement cheatsheetCategories) {
 		super(shell);
 
 		this.cheatsheetCategories = cheatsheetCategories;
 
 		setTitle(Messages.CHEAT_SHEET_SELECTION_DIALOG_TITLE);
 		setMessage(Messages.CHEAT_SHEET_SELECTION_DIALOG_MSG);
-		
+
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Window.
+	/*
+	 * (non-Javadoc) Method declared on Window.
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		//  WorkbenchHelp.setHelp(newShell, IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
+		// WorkbenchHelp.setHelp(newShell,
+		// IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
@@ -84,23 +106,24 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 		enableOKButton(okButtonState);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
-		IDialogSettings workbenchSettings = CheatSheetPlugin.getPlugin().getDialogSettings();
-		IDialogSettings dialogSettings = workbenchSettings.getSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
-		if(dialogSettings==null)
-			dialogSettings = workbenchSettings.addNewSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
+		IDialogSettings workbenchSettings = CheatSheetPlugin.getPlugin()
+				.getDialogSettings();
+		IDialogSettings dialogSettings = workbenchSettings
+				.getSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
+		if (dialogSettings == null)
+			dialogSettings = workbenchSettings
+					.addNewSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
 
 		setDialogSettings(dialogSettings);
 
 		// top level group
 		Composite outerContainer = (Composite) super.createDialogArea(parent);
 		Layout layout = outerContainer.getLayout();
-		if(layout != null && layout instanceof GridLayout) {
-			((GridLayout)layout).numColumns = 2;
-		} else {
+		if (layout == null || !(layout instanceof GridLayout)) {
 			GridLayout gridLayout = new GridLayout();
 			outerContainer.setLayout(gridLayout);
 			outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -108,159 +131,141 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 
 		// Create label
 		createMessageArea(outerContainer);
-					
+
 		// category tree pane...create SWT tree directly to
 		// get single selection mode instead of multi selection.
-		Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		categoryTreeViewer = new TreeViewer(tree);
+		Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.BORDER);
+		treeViewer = new TreeViewer(tree);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = SIZING_CATEGORY_LIST_WIDTH;
-		data.heightHint = SIZING_CATEGORY_LIST_HEIGHT;
-		categoryTreeViewer.getTree().setLayoutData(data);
-		categoryTreeViewer.setContentProvider(new BaseWorkbenchContentProvider());
-		categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-		categoryTreeViewer.setSorter(CheatSheetCollectionSorter.INSTANCE);
-		categoryTreeViewer.addSelectionChangedListener(this);
-		categoryTreeViewer.setInput(cheatsheetCategories);
-	
-		// cheatsheet actions pane...create SWT table directly to
-		// get single selection mode instead of multi selection.
-		Table table = new Table(outerContainer, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		cheatsheetSelectionViewer = new TableViewer(table);
-		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = SIZING_CHEATSHEET_LIST_WIDTH;
-		data.heightHint = SIZING_CHEATSHEET_LIST_HEIGHT;
-		cheatsheetSelectionViewer.getTable().setLayoutData(data);
-		cheatsheetSelectionViewer.setContentProvider(getCheatSheetProvider());
-		cheatsheetSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
-		cheatsheetSelectionViewer.addSelectionChangedListener(this);
+		data.widthHint = 300;
+		data.heightHint = 300;
+		treeViewer.getTree().setLayoutData(data);
+		treeViewer.setContentProvider(getCheatSheetProvider());
+		treeViewer.setLabelProvider(new CheatsheetLabelProvider());
+		treeViewer.setSorter(CheatSheetCollectionSorter.INSTANCE);
+		treeViewer.addSelectionChangedListener(this);
+		treeViewer.setInput(cheatsheetCategories);
+
+		desc = new Text(outerContainer, SWT.MULTI | SWT.WRAP);
+		desc.setEditable(false);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 100;
+		data.heightHint = 48;
+		desc.setLayoutData(data);
 
 		// Add double-click listener
-		cheatsheetSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
+		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
-	
+
 		restoreWidgetValues();
 
-		if (!categoryTreeViewer.getSelection().isEmpty())
+		if (!treeViewer.getSelection().isEmpty())
 			// we only set focus if a selection was restored
-			categoryTreeViewer.getTree().setFocus();
+			treeViewer.getTree().setFocus();
 
 		Dialog.applyDialogFont(outerContainer);
 		return outerContainer;
 	}
 
 	/**
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#createMessageArea(Composite)
-	 */
-	protected Label createMessageArea(Composite composite) {
-		Label label = new Label(composite,SWT.NONE);
-		label.setText(getMessage()); 
-
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-		gridData.horizontalSpan = 2;
-		label.setLayoutData(gridData);
-
-		return label;
-	}
-
-	/**
-	 * Method enableOKButton enables/diables the OK button for the dialog
-	 * and saves the state, allowing the enabling/disabling to occur even if
-	 * the button has not been created yet.
+	 * Method enableOKButton enables/diables the OK button for the dialog and
+	 * saves the state, allowing the enabling/disabling to occur even if the
+	 * button has not been created yet.
 	 * 
 	 * @param value
 	 */
 	private void enableOKButton(boolean value) {
 		Button button = getButton(IDialogConstants.OK_ID);
-		
+
 		okButtonState = value;
-		if( button != null ) {
+		if (button != null) {
 			button.setEnabled(value);
 		}
 	}
 
 	/**
-	 * Expands the cheatsheet categories in this page's category viewer that were
-	 * expanded last time this page was used.  If a category that was previously
-	 * expanded no longer exists then it is ignored.
+	 * Expands the cheatsheet categories in this page's category viewer that
+	 * were expanded last time this page was used. If a category that was
+	 * previously expanded no longer exists then it is ignored.
 	 */
-	protected void expandPreviouslyExpandedCategories() {
-		String[] expandedCategoryPaths = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
+	protected CheatSheetCollectionElement expandPreviouslyExpandedCategories() {
+		String[] expandedCategoryPaths = settings
+				.getArray(STORE_EXPANDED_CATEGORIES_ID);
 		List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
-	
-		for (int i = 0; i < expandedCategoryPaths.length; i++){
-			CheatSheetCollectionElement category =
-				cheatsheetCategories.findChildCollection(
-					new Path(expandedCategoryPaths[i]));
-			if (category != null)	// ie.- it still exists
+
+		for (int i = 0; i < expandedCategoryPaths.length; i++) {
+			CheatSheetCollectionElement category = cheatsheetCategories
+					.findChildCollection(new Path(expandedCategoryPaths[i]));
+			if (category != null) // ie.- it still exists
 				categoriesToExpand.add(category);
 		}
-	
+
 		if (!categoriesToExpand.isEmpty())
-			categoryTreeViewer.setExpandedElements(categoriesToExpand.toArray());
+			treeViewer.setExpandedElements(categoriesToExpand.toArray());
+		return categoriesToExpand.isEmpty() ? null
+				: (CheatSheetCollectionElement) categoriesToExpand
+						.get(categoriesToExpand.size() - 1);
 	}
 
 	/**
 	 * Returns the content provider for this page.
 	 */
 	protected IContentProvider getCheatSheetProvider() {
-		//want to get the cheatsheets of the collection element
+		// want to get the cheatsheets of the collection element
 		return new BaseWorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof CheatSheetCollectionElement) {
-					return ((CheatSheetCollectionElement)o).getCheatSheets();
+					Object[] cheatsheets = ((CheatSheetCollectionElement) o)
+							.getCheatSheets();
+					if (cheatsheets.length > 0)
+						return cheatsheets;
 				}
-				return new Object[0];
+				return super.getChildren(o);
 			}
 		};
 	}
 
 	/**
-	 * Returns the single selected object contained in the passed selectionEvent,
-	 * or <code>null</code> if the selectionEvent contains either 0 or 2+ selected
-	 * objects.
+	 * Returns the single selected object contained in the passed
+	 * selectionEvent, or <code>null</code> if the selectionEvent contains
+	 * either 0 or 2+ selected objects.
 	 */
-	protected Object getSingleSelection(IStructuredSelection selection) {
-		return selection.size() == 1 ? selection.getFirstElement() : null;
+	protected Object getSingleSelection(ISelection selection) {
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		return ssel.size() == 1 ? ssel.getFirstElement() : null;
 	}
 
 	/**
-	 *	Handle the (de)selection of cheatsheet element(s)
-	 *
-	 * @param selectionEvent SelectionChangedEvent
+	 * The user selected either new cheatsheet category(s) or cheatsheet
+	 * element(s). Proceed accordingly.
+	 * 
+	 * @param newSelection
+	 *            ISelection
 	 */
-	private void handleCategorySelection(SelectionChangedEvent selectionEvent) {
-		Object selection = cheatsheetSelectionViewer.getInput();
-		Object selectedCategory =
-			getSingleSelection((IStructuredSelection)selectionEvent.getSelection());
-		if (selection != selectedCategory) {
-			cheatsheetSelectionViewer.setInput(selectedCategory);
-
+	public void selectionChanged(SelectionChangedEvent selectionEvent) {
+		Object obj = getSingleSelection(selectionEvent.getSelection());
+		if (obj instanceof CheatSheetCollectionElement) {
 			enableOKButton(false);
+			desc.setText("");
+		} else {
+			currentSelection = (CheatSheetElement) obj;
+
+			if (currentSelection != null) {
+				enableOKButton(true);
+				desc.setText(currentSelection.getDescription());
+			}
 		}
 	}
 
-	/**
-	 *	Handle the (de)selection of cheatsheet element(s)
-	 *
-	 *	@param selectionEvent SelectionChangedEvent
-	 */
-	private void handleCheatSheetSelection(SelectionChangedEvent selectionEvent) {
-		currentSelection = (CheatSheetElement)getSingleSelection((IStructuredSelection)selectionEvent.getSelection());
-
-		if( currentSelection != null ) {
-			enableOKButton(true);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void okPressed() {
-		if( currentSelection != null ) {
+		if (currentSelection != null) {
 			ArrayList result = new ArrayList(1);
 			result.add(currentSelection);
 			setResult(result);
@@ -268,124 +273,97 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 			return;
 		}
 
-		//save our selection state
+		// save our selection state
 		saveWidgetValues();
 
 		super.okPressed();
 	}
 
 	/**
-	 *	Set self's widgets to the values that they held last time this page was open
-	 *
+	 * Set self's widgets to the values that they held last time this page was
+	 * open
+	 * 
 	 */
 	protected void restoreWidgetValues() {
-		String[] expandedCategoryPaths = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
+		String[] expandedCategoryPaths = settings
+				.getArray(STORE_EXPANDED_CATEGORIES_ID);
 		if (expandedCategoryPaths == null)
-			return;				// no stored values
+			return; // no stored values
 
-		expandPreviouslyExpandedCategories();
-		selectPreviouslySelectedCategoryAndCheatSheet();
+		CheatSheetCollectionElement category = expandPreviouslyExpandedCategories();
+		if (category!=null)
+			selectPreviouslySelectedCheatSheet(category);
 	}
 
 	/**
-	 *	Store the current values of self's widgets so that they can
-	 *	be restored in the next instance of self
-	 *
+	 * Store the current values of self's widgets so that they can be restored
+	 * in the next instance of self
+	 * 
 	 */
 	public void saveWidgetValues() {
 		storeExpandedCategories();
-		storeSelectedCategoryAndCheatSheet();
+		storeSelectedCheatSheet();
 	}
 
 	/**
-	 *	The user selected either new cheatsheet category(s) or cheatsheet element(s).
-	 *	Proceed accordingly.
-	 *
-	 *	@param newSelection ISelection
+	 * Selects the cheatsheet category and cheatsheet in this page that were
+	 * selected last time this page was used. If a category or cheatsheet that
+	 * was previously selected no longer exists then it is ignored.
 	 */
-	public void selectionChanged(SelectionChangedEvent selectionEvent) {
-		if (selectionEvent.getSelectionProvider().equals(categoryTreeViewer))
-			handleCategorySelection(selectionEvent);
-		else
-			handleCheatSheetSelection(selectionEvent);
-	}
-
-	/**
-	 * Selects the cheatsheet category and cheatsheet in this page that were selected
-	 * last time this page was used.  If a category or cheatsheet that was previously
-	 * selected no longer exists then it is ignored.
-	 */
-	protected void selectPreviouslySelectedCategoryAndCheatSheet() {
-		String categoryId = settings.get(STORE_SELECTED_CATEGORY_ID);
-		if (categoryId == null)
-			return;
-		CheatSheetCollectionElement category =
-			cheatsheetCategories.findChildCollection(new Path(categoryId));
-		if (category == null)
-			return;				// category no longer exists, or has moved
-		
-		StructuredSelection selection = new StructuredSelection(category);
-		categoryTreeViewer.setSelection(selection);
-		selectionChanged(new SelectionChangedEvent(categoryTreeViewer,selection));
-	
+	protected void selectPreviouslySelectedCheatSheet(CheatSheetCollectionElement category) {
 		String cheatsheetId = settings.get(STORE_SELECTED_CHEATSHEET_ID);
 		if (cheatsheetId == null)
 			return;
-		CheatSheetElement cheatsheet = category.findCheatSheet(cheatsheetId,false);
+		CheatSheetElement cheatsheet = category.findCheatSheet(cheatsheetId,
+				false);
 		if (cheatsheet == null)
-			return;				// cheatsheet no longer exists, or has moved
-	
-		selection = new StructuredSelection(cheatsheet);
-		cheatsheetSelectionViewer.setSelection(selection);
-		selectionChanged(new SelectionChangedEvent(cheatsheetSelectionViewer,selection));
+			return; // cheatsheet no longer exists, or has moved
+
+		treeViewer.setSelection(new StructuredSelection(cheatsheet));
 	}
 
 	/**
-	 *	Set the dialog store to use for widget value storage and retrieval
-	 *
-	 *	@param settings IDialogSettings
+	 * Set the dialog store to use for widget value storage and retrieval
+	 * 
+	 * @param settings
+	 *            IDialogSettings
 	 */
 	public void setDialogSettings(IDialogSettings settings) {
 		this.settings = settings;
 	}
 
 	/**
-	 * Stores the collection of currently-expanded categories in this page's dialog store,
-	 * in order to recreate this page's state in the next instance of this page.
+	 * Stores the collection of currently-expanded categories in this page's
+	 * dialog store, in order to recreate this page's state in the next instance
+	 * of this page.
 	 */
 	protected void storeExpandedCategories() {
-		Object[] expandedElements = categoryTreeViewer.getExpandedElements();
+		Object[] expandedElements = treeViewer.getExpandedElements();
 		String[] expandedElementPaths = new String[expandedElements.length];
 		for (int i = 0; i < expandedElements.length; ++i) {
-			expandedElementPaths[i] =
-				((CheatSheetCollectionElement)expandedElements[i]).getPath().toString();
+			expandedElementPaths[i] = ((CheatSheetCollectionElement) expandedElements[i])
+					.getPath().toString();
 		}
-		settings.put(
-			STORE_EXPANDED_CATEGORIES_ID,
-			expandedElementPaths);
+		settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedElementPaths);
 	}
 
 	/**
-	 * Stores the currently-selected category and cheatsheet in this page's dialog store,
-	 * in order to recreate this page's state in the next instance of this page.
+	 * Stores the currently-selected category and cheatsheet in this page's
+	 * dialog store, in order to recreate this page's state in the next instance
+	 * of this page.
 	 */
-	protected void storeSelectedCategoryAndCheatSheet() {
-		CheatSheetCollectionElement selectedCategory = (CheatSheetCollectionElement)
-			getSingleSelection((IStructuredSelection)categoryTreeViewer.getSelection());
-	
-		if (selectedCategory != null) {
-			settings.put(
-				STORE_SELECTED_CATEGORY_ID,
-				selectedCategory.getPath().toString());
-		}
-	
-		CheatSheetElement selectedCheatSheet = (CheatSheetElement)
-			getSingleSelection((IStructuredSelection)cheatsheetSelectionViewer.getSelection());
-	
-		if (selectedCheatSheet != null) {
-			settings.put(
-				STORE_SELECTED_CHEATSHEET_ID,
-				selectedCheatSheet.getID());
-		}
+	protected void storeSelectedCheatSheet() {
+		CheatSheetElement element = null;
+
+		Object el = getSingleSelection(treeViewer.getSelection());
+		if (el == null)
+			return;
+
+		if (el instanceof CheatSheetElement) {
+			element = (CheatSheetElement) el;
+		} else
+			return;
+
+		settings.put(STORE_SELECTED_CHEATSHEET_ID, element.getID());
 	}
 }
