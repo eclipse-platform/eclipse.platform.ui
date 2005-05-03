@@ -98,8 +98,20 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * Returns the hover color of the decoration.
 	 * 
 	 * @return the hover color of the decoration.
+	 * @since 3.1
 	 */
 	public Color getHoverDecorationColor() {
+		return hoverColor;
+	}
+	
+	/**
+	 * Returns the hover color of the decoration.
+	 * 
+	 * @return the hover color of the decoration.
+	 * @deprecated use <code>getHoverDecorationColor</code>
+	 * @see #getHoverDecorationColor()
+	 */
+	public Color geHoverDecorationColor() {
 		return hoverColor;
 	}
 	/**
