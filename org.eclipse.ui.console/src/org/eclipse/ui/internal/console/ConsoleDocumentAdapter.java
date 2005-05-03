@@ -79,9 +79,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                 nextOffset += length;
                 
                 if (length == 0) {
-                    offsets[regionCount] = offset;
-                    lengths[regionCount] = 0;
-                    regionCount++;
+                    addRegion(offset, 0);
                 } else {
                     while (length > 0) {
                         int trimmedLength = length;
@@ -93,15 +91,11 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                         }
 
                         if (consoleWidth > 0 && consoleWidth < trimmedLength) {
-                            offsets[regionCount] = offset;
-                            lengths[regionCount] = consoleWidth;
-                            regionCount++;
+                            addRegion(offset, consoleWidth);
                             offset += consoleWidth;
                             length -= consoleWidth;
                         } else {
-                            offsets[regionCount] = offset;
-                            lengths[regionCount] = length;
-                            regionCount++;
+                            addRegion(offset, length);
                             offset += length;
                             length -= length;
                         }
@@ -109,23 +103,36 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                 }
             }
             if (line != null && lineEndsWithDelimeter(line)) {
-                offsets[regionCount] = nextOffset;
-                lengths[regionCount] = 0;
+                addRegion(nextOffset, 0);
             }
             
         } catch (BadLocationException e) {
         }
         
         if (regionCount == 0) {
-            offsets[0] = 0;
-            lengths[0] = document.getLength();
-            regionCount++;
+            addRegion(0, document.getLength());
         }
+    }
+    
+    private void addRegion(int offset, int length) {
+        if (regionCount == 0) {
+            offsets[0] = offset;
+            lengths[0] = length;
+        } else {
+            if (regionCount == offsets.length) {
+                growRegionArray(regionCount * 2);
+            }
+            offsets[regionCount] = offset;
+            lengths[regionCount] = length;
+        }
+        regionCount++;
     }
     
     /**
      * Returns <code>true</code> if the line ends with a legal line delimiter
-     * @return <code>true</code> if the line ends with a legal line delimiter, <code>false</code> otherwise
+     * 
+     * @return <code>true</code> if the line ends with a legal line delimiter,
+     *         <code>false</code> otherwise
      */
     private boolean lineEndsWithDelimeter(String line) {
         String[] lld = document.getLegalLineDelimiters();
