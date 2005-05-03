@@ -18,9 +18,9 @@ import java.net.URLConnection;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.adaptor.FileManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.service.datalocation.FileManager;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 
