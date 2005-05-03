@@ -3,9 +3,6 @@
 # Turn on debugging for the org.eclipse.ui plugin.
 org.eclipse.ui/debug=false
 
-# Show a dialog with details button when an internal error occur.
-org.eclipse.ui/debug/internalerror/openDialog=false
-
 # Show system jobs in all dialogs
 org.eclipse.ui/debug/showSystemJobs=false
 

@@ -16,9 +16,6 @@ import org.eclipse.ui.PlatformUI;
 public class Policy {
     public static boolean DEFAULT = false;
 
-    // @issue this is an IDE specific debug option
-    public static boolean DEBUG_OPEN_ERROR_DIALOG = DEFAULT;
-
     public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 
     public static boolean DEBUG_SWT_DEBUG = DEFAULT;
@@ -105,7 +102,6 @@ public class Policy {
 
     static {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
-            DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
