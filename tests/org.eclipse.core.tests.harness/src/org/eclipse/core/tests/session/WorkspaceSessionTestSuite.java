@@ -68,7 +68,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 				runTest(allTests[i], result);
 		} finally {
 			FileSystemHelper.clear(instanceLocation.toFile());
-		};
+		}
 
 	}
 

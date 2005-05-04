@@ -200,8 +200,8 @@ public class SessionTestRunner {
 	}
 
 	/**
-	 * Runs the setup. Returns a status object indicating the outcome of the operation.  
-	 * @param timeout
+	 * Runs the setup. Returns a status object indicating the outcome of the operation.
+	 *   
 	 * @return a status object indicating the outcome 
 	 */
 	private IStatus launch(Setup setup) {

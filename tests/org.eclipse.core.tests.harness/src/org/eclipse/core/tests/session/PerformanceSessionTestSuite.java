@@ -23,14 +23,16 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 	 * This custom test result allows multiple test runs to show up as a 
 	 * single run. 
 	 */
-	class ConsolidatedTestResult extends TestResult {
+	private static class ConsolidatedTestResult extends TestResult {
 		private boolean failed;
 		private int runs = 0;
 		private boolean started = false;
 		private TestResult target;
+		private int timesToRun;
 
-		public ConsolidatedTestResult(TestResult target) {
+		public ConsolidatedTestResult(TestResult target, int timesToRun) {
 			this.target = target;
+			this.timesToRun = timesToRun;
 		}
 
 		public void addError(Test test, Throwable t) {
@@ -102,7 +104,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		descriptor.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
 		descriptor.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));
 		// run test cases n-1 times
-		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result);
+		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result, timesToRun);
 		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
 			descriptor.run(consolidated);
 		if (consolidated.shouldStop())
