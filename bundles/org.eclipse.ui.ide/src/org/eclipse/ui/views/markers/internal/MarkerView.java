@@ -368,15 +368,18 @@ public abstract class MarkerView extends TableView {
                 resourceListener);
         getSite().getPage().removeSelectionListener(focusListener);
 
-        //dispose of selection provider actions
-        openAction.dispose();
-        copyAction.dispose();
-        selectAllAction.dispose();
-        deleteAction.dispose();
-        revealAction.dispose();
-        showInNavigatorAction.dispose();
-        propertiesAction.dispose();
-        clipboard.dispose();
+        //dispose of selection provider actions (may not have been created yet if
+        //createPartControls was never called)
+        if (openAction != null) {
+            openAction.dispose();
+            copyAction.dispose();
+            selectAllAction.dispose();
+            deleteAction.dispose();
+            revealAction.dispose();
+            showInNavigatorAction.dispose();
+            propertiesAction.dispose();
+            clipboard.dispose();            
+        }
     }
 
     /* (non-Javadoc)
