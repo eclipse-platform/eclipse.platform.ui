@@ -243,8 +243,8 @@ public class StandbyPart implements IIntroConstants {
                     }
                 }
 
-                // no content part defined with the passed partId, show empty
-                // part and signal failure.
+                // failed to create the standby part, show empty part and signal
+                // failure.
                 String message = NLS.bind(Messages.StandbyPart_failedToCreate,
                     partId);
                 addAndShowEmptyPart(message);
@@ -255,7 +255,7 @@ public class StandbyPart implements IIntroConstants {
 
         // no content part defined with the passed partId, show empty part and
         // signal failure.
-        String message = NLS.bind(Messages.StandbyPart_failedToCreate, partId);
+        String message = NLS.bind(Messages.StandbyPart_nonDefined, partId);
         addAndShowEmptyPart(message);
         return false;
     }
