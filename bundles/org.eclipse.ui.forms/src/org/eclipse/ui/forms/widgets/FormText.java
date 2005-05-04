@@ -184,9 +184,6 @@ public final class FormText extends Canvas {
 			if (DEBUG)
 				start = System.currentTimeMillis();
 			int innerWidth = wHint;
-			if (isLoading()) {
-				return computeLoading();
-			}
 			if (innerWidth != SWT.DEFAULT)
 				innerWidth -= marginWidth * 2;
 			Point textSize = computeTextSize(innerWidth);
@@ -199,17 +196,6 @@ public final class FormText extends Canvas {
 						+ "ms");
 			}
 			return result;
-		}
-
-		private Point computeLoading() {
-			GC gc = new GC(FormText.this);
-			gc.setFont(getFont());
-			String loadingText = getLoadingText();
-			Point size = gc.textExtent(loadingText);
-			gc.dispose();
-			size.x += 2 * marginWidth;
-			size.y += 2 * marginHeight;
-			return size;
 		}
 
 		private Point computeTextSize(int wHint) {
@@ -232,14 +218,22 @@ public final class FormText extends Canvas {
 				ParagraphSegment[] segments = p.getSegments();
 				if (segments.length > 0) {
 					selectableInTheLastRow = false;
+					int pwidth = 0;
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
 						segment.advanceLocator(gc, wHint, loc, resourceTable,
 								false);
-						width = Math.max(width, loc.width);
+						if (wHint!=SWT.DEFAULT) {
+							width = Math.max(width, loc.width);
+						}
+						else {
+							pwidth += loc.width; 
+						}
 						if (segment instanceof IFocusSelectable)
 							selectableInTheLastRow = true;
 					}
+					if (wHint==SWT.DEFAULT)
+						width = Math.max(width, pwidth);
 					loc.y += loc.rowHeight;
 				} else {
 					// empty new line
