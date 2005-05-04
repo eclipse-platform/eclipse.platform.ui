@@ -105,6 +105,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		 * @param project project to flush, or null for a full flush
 		 */
 		void flush(IProject project) {
+			if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+				Policy.debug("Scheduling flushing of content type cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$
 			synchronized (toFlush) {
 				if (!fullFlush)
 					if (project == null)
@@ -197,8 +199,11 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 
 	synchronized void doFlushCache(final IProgressMonitor monitor, IPath[] toClean) throws CoreException {
 		// nothing to be done if no information cached
-		if (getCacheState() != INVALID_CACHE)
+		if (getCacheState() != INVALID_CACHE) {
+			if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+				Policy.debug("Content type cache flush not performed"); //$NON-NLS-1$
 			return;
+		}
 		try {
 			setCacheState(FLUSHING_CACHE);
 			// flush the MRU cache
@@ -223,6 +228,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * Clears the content related flags for every file under the given root.
 	 */
 	private void clearContentFlags(IPath root, final IProgressMonitor monitor) {
+		long flushStart = System.currentTimeMillis();
+		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$		
 		// discard content type related flags for all files in the tree 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -241,6 +249,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			}
 		};
 		new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
+		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			Policy.debug("Content type cache for " + root + " flushed in " + (System.currentTimeMillis() - flushStart ) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$		
 	}
 
 	Cache getCache() {
