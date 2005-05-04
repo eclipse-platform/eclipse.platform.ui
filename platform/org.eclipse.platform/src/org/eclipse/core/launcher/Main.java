@@ -944,10 +944,20 @@ public class Main {
      * @param args the command line arguments
      * @see #run(String[])
      */
-    public static void main(String[] args) {
-        int result = new Main().run(args);
-        System.exit(result);
-    }
+	public static void main(String[] args) {
+		int result = 0;
+		try {
+			result = new Main().run(args);
+		} catch (Throwable t) {
+			// This is *really* unlikely to happen - run() takes care of exceptional situations.
+			// In case something weird happens, just dump stack - logging is not available at this point
+			t.printStackTrace();
+		} finally {
+			// make sure we always terminate the VM
+			System.exit(result);
+		}
+	}
+
 
     /**
      * Runs the platform with the given arguments.  The arguments must identify
