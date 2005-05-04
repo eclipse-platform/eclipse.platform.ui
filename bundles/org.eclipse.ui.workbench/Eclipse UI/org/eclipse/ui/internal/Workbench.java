@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -141,6 +143,12 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * </p>
  */
 public final class Workbench implements IWorkbench {
+	
+	/**
+	 * Family for the early startup job.
+	 */
+	public static final String EARLY_STARTUP_FAMILY = "earlyStartup"; //$NON-NLS-1$
+
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
@@ -1447,11 +1455,11 @@ public final class Workbench implements IWorkbench {
 	 * page.
 	 */
 	private void startPlugins() {
-		Runnable work = new Runnable() {
+		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
 			final String disabledPlugins = getPreferenceStore().getString(
 					IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 
-			public void run() {
+			protected IStatus run(IProgressMonitor monitor) { 
 				IExtensionRegistry registry = Platform.getExtensionRegistry();
 
 				// bug 55901: don't use getConfigElements directly, for pre-3.0
@@ -1469,11 +1477,14 @@ public final class Workbench implements IWorkbench {
 					if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
 						Platform.run(new EarlyStartupRunnable(extension));
 				}
+				return Status.OK_STATUS;
+			}
+			
+			public boolean belongsTo(Object family) {
+				return EARLY_STARTUP_FAMILY.equals(family);
 			}
 		};
-
-		Thread thread = new Thread(work);
-		thread.start();
+		job.schedule();
 	}
 
 	/**

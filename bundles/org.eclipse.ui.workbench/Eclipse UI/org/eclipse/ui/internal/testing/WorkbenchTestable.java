@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.testing;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.testing.ITestHarness;
 import org.eclipse.ui.testing.TestableObject;
 
 /**
@@ -51,16 +59,35 @@ public class WorkbenchTestable extends TestableObject {
         Assert.isNotNull(workbench);
         this.display = display;
         this.workbench = workbench;
-        if (getTestHarness() != null) {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    getTestHarness().runTests();
-                }
+        final ITestHarness harness = getTestHarness();
+        if (harness != null) {
+        	Job job = new Job("Workbench test runner") {  //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					waitForEarlyStartup();
+                    harness.runTests();
+					return Status.OK_STATUS;
+				}
             };
-            new Thread(runnable, "WorkbenchTestable").start(); //$NON-NLS-1$
+            job.schedule();
         }
     }
 
+    /**
+     * Waits for the early startup job to complete.
+     */
+    private void waitForEarlyStartup() {
+		try {
+			long t = System.currentTimeMillis();
+			Platform.getJobManager().join(Workbench.EARLY_STARTUP_FAMILY, null);
+			t = System.currentTimeMillis() - t;
+			System.out.println("WorkbenchTestable.waitForEarlyStartup() waited " + t + " ms.");  //$NON-NLS-1$//$NON-NLS-2$
+		} catch (OperationCanceledException e) {
+			// ignore
+		} catch (InterruptedException e) {
+			// ignore
+		}    	
+    }
+    
     /**
      * The <code>WorkbenchTestable</code> implementation of this 
      * <code>TestableObject</code> method ensures that the workbench
