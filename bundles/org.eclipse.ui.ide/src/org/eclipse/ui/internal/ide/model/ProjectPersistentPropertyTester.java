@@ -11,12 +11,13 @@
 package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IResourceActionFilter;

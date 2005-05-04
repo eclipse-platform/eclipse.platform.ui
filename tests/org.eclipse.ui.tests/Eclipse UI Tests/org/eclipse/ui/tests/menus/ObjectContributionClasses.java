@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.internal.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ui.IContributorResourceAdapter;
-import org.eclipse.ui.IContributorResourceAdapter2;
+import org.eclipse.ui.internal.ide.IContributorResourceAdapter2;
 
 public class ObjectContributionClasses implements IAdapterFactory {
 	

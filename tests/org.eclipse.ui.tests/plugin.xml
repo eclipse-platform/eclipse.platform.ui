@@ -2027,7 +2027,7 @@
        <factory
              class="org.eclipse.ui.tests.menus.ObjectContributionClasses"
              adaptableType="org.eclipse.ui.tests.menus.ObjectContributionClasses$IModelElement">
-          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+          <adapter type="org.eclipse.core.internal.resources.mapping.ResourceMapping"/>
        </factory>
     </extension>
     
@@ -2102,7 +2102,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
+            objectClass="org.eclipse.core.internal.resources.mapping.ResourceMapping"
             adaptable="true"
             id="adatableObjectContributions">
          <action

@@ -80,7 +80,7 @@ public final class LegacyResourceSupport {
 
     /**
      * Cached value of
-     * <code>Class.forName("org.eclipse.core.resources.mapping.ResourceMappingr")</code>;
+     * <code>Class.forName("org.eclipse.core.internal.resources.mapping.ResourceMappingr")</code>;
      * <code>null</code> if not initialized or not present.
      * @since 3.0
      */
@@ -160,7 +160,7 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return resourceMappingClass;
         }
-        Class c = loadClass("org.eclipse.core.resources", "org.eclipse.core.resources.mapping.ResourceMapping"); //$NON-NLS-1$ //$NON-NLS-2$
+        Class c = loadClass("org.eclipse.core.resources", "org.eclipse.core.internal.resources.mapping.ResourceMapping"); //$NON-NLS-1$ //$NON-NLS-2$
         if (c != null) {
             // The class was found so record it
             resourceMappingClass = c;
@@ -292,15 +292,15 @@ public final class LegacyResourceSupport {
     
     /**
      * Returns <code>true</code> if the provided type name is an
-     * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
+     * <code>"org.eclipse.core.internal.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
      * @param objectClassName
      * @return <code>true</code> if the provided type name is an
-     * <code>"org.eclipse.core.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
+     * <code>"org.eclipse.core.internal.resources.mapping.ResourceMapping"</code>, and <code>false</code> otherwise.
      * 
      * @since 3.1
      */
     public static boolean isResourceMappingType(String objectClassName) {
-        return objectClassName.equals("org.eclipse.core.resources.mapping.ResourceMapping"); //$NON-NLS-1$
+        return objectClassName.equals("org.eclipse.core.internal.resources.mapping.ResourceMapping"); //$NON-NLS-1$
     }
     
     /**

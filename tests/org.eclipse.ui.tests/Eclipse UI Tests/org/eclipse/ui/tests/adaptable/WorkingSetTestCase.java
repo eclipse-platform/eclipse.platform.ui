@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.internal.ide.model.ProjectPersistentPropertyTester;

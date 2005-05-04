@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
+import org.eclipse.core.internal.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * A resource mapping that contains child mappings which are used to obtain the traversals
@@ -53,21 +57,21 @@ public class CompositeResourceMapping extends ResourceMapping {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelObject()
+     * @see org.eclipse.core.internal.resources.mapping.ResourceMapping#getModelObject()
      */
     public Object getModelObject() {
         return modelObject;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.core.resources.mapping.ResourceMapping#getProjects()
+     * @see org.eclipse.core.internal.resources.mapping.ResourceMapping#getProjects()
      */
     public IProject[] getProjects() {
         return projects;
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.core.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.core.internal.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.internal.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
      */
     public ResourceTraversal[] getTraversals(ResourceMappingContext context,
             IProgressMonitor monitor) throws CoreException {
