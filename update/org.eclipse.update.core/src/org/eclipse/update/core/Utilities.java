@@ -253,8 +253,8 @@ public class Utilities {
 		if (s == null)
 			s = ""; //$NON-NLS-1$
 
-		IStatus childStatus1 = ((CoreException) e1).getStatus();
-		IStatus childStatus2 = ((CoreException) e2).getStatus();
+		IStatus childStatus1 = e1.getStatus();
+		IStatus childStatus2 = e2.getStatus();
 		int code = (childStatus1.getCode() == childStatus2.getCode()) ? childStatus1.getCode() : IStatus.OK;
 		MultiStatus multi = new MultiStatus(id, code, s, null);
 

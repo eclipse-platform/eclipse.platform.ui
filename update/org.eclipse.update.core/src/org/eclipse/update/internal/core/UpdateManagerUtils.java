@@ -709,7 +709,7 @@ public static class Writer {
 		w.println("<!-- File written by Update manager 2.0 -->"); //$NON-NLS-1$
 		w.println("<!-- comments in this file are not preserved -->"); //$NON-NLS-1$
 		w.println(""); //$NON-NLS-1$
-		 ((IWritable) element).write(0, w);
+		element.write(0, w);
 		close();
 	}
 	

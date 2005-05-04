@@ -193,7 +193,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				// our UI will check.
 				// For non-UI application, throw error is feature is configured
 				if (getConfigurationPolicy().isConfigured(referenceToRemove)) {
-					IFeature featureToRemove = ((IFeatureReference) referenceToRemove).getFeature(null);
+					IFeature featureToRemove = referenceToRemove.getFeature(null);
 					String featureLabel = (featureToRemove == null) ? null : featureToRemove.getLabel();
 					throw Utilities.newCoreException(NLS.bind(Messages.ConfiguredSite_UnableToRemoveConfiguredFeature, (new String[] { featureLabel })), null);
 				}
