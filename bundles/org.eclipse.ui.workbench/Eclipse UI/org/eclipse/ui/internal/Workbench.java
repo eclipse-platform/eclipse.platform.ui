@@ -1455,28 +1455,36 @@ public final class Workbench implements IWorkbench {
 	 * page.
 	 */
 	private void startPlugins() {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+
+		// bug 55901: don't use getConfigElements directly, for pre-3.0
+		// compat, make sure to allow both missing class
+		// attribute and a missing startup element
+		IExtensionPoint point = registry.getExtensionPoint(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+
+		final IExtension[] extensions = point.getExtensions();
+		if (extensions.length == 0) {
+			return;
+		}
 		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
 			final String disabledPlugins = getPreferenceStore().getString(
 					IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 
 			protected IStatus run(IProgressMonitor monitor) { 
-				IExtensionRegistry registry = Platform.getExtensionRegistry();
-
-				// bug 55901: don't use getConfigElements directly, for pre-3.0
-				// compat, make sure to allow both missing class
-				// attribute and a missing startup element
-				IExtensionPoint point = registry.getExtensionPoint(
-						PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
-
-				IExtension[] extensions = point.getExtensions();
+				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins, extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
 					IExtension extension = extensions[i];
 
+					monitor.subTask(extension.getNamespace());
+					
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
 					if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
 						Platform.run(new EarlyStartupRunnable(extension));
+					monitor.worked(1);
 				}
+				monitor.done();
 				return Status.OK_STATUS;
 			}
 			
@@ -1484,6 +1492,7 @@ public final class Workbench implements IWorkbench {
 				return EARLY_STARTUP_FAMILY.equals(family);
 			}
 		};
+		job.setSystem(true);
 		job.schedule();
 	}
 

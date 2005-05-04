@@ -801,6 +801,7 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_restoreDisabled;
 	public static String Workbench_noStateToRestore;
 	public static String Workbench_noWindowsRestored;
+	public static String Workbench_startingPlugins;
 	public static String ScopedPreferenceStore_DefaultAddedError;
 
 	public static String WorkbenchEncoding_invalidCharset;
@@ -850,5 +851,6 @@ public class WorkbenchMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, WorkbenchMessages.class);
 	}
+
 
 }

@@ -68,6 +68,7 @@ public class WorkbenchTestable extends TestableObject {
 					return Status.OK_STATUS;
 				}
             };
+            job.setSystem(true);
             job.schedule();
         }
     }
@@ -77,10 +78,7 @@ public class WorkbenchTestable extends TestableObject {
      */
     private void waitForEarlyStartup() {
 		try {
-			long t = System.currentTimeMillis();
 			Platform.getJobManager().join(Workbench.EARLY_STARTUP_FAMILY, null);
-			t = System.currentTimeMillis() - t;
-			System.out.println("WorkbenchTestable.waitForEarlyStartup() waited " + t + " ms.");  //$NON-NLS-1$//$NON-NLS-2$
 		} catch (OperationCanceledException e) {
 			// ignore
 		} catch (InterruptedException e) {
