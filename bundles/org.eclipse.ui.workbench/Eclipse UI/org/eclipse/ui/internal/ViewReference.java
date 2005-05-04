@@ -48,9 +48,12 @@ class ViewReference extends WorkbenchPartReference implements
     private boolean create = true;
     
     private boolean creationInProgress = false;
+    
+    private IMemento memento;
 
     public ViewReference(ViewFactory factory, String id, String secondaryId, IMemento memento) {
         super();
+        this.memento = memento;
         this.factory = factory;
         ViewDescriptor desc = (ViewDescriptor) this.factory.viewReg.find(id);
         ImageDescriptor iDesc = null;
@@ -236,8 +239,10 @@ class ViewReference extends WorkbenchPartReference implements
 
         IWorkbenchPart result = null;
         
-        String key = ViewFactory.getKey(this);
-        IMemento stateMem = factory.getViewState(key);
+        IMemento stateMem = null;
+        if (memento != null) {
+            stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
+        }
         
         IViewDescriptor desc = factory.viewReg.find(getId());
         if (desc == null) {

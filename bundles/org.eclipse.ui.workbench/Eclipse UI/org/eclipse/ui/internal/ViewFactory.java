@@ -160,6 +160,7 @@ import org.eclipse.ui.views.IViewRegistry;
         if (ref == null) {
             IMemento memento = (IMemento) mementoTable.get(key);
             ref = new ViewReference(this, id, secondaryId, memento);
+            mementoTable.remove(key);
             counter.put(key, ref);
             getWorkbenchPage().partAdded((ViewReference)ref);
         } else {
