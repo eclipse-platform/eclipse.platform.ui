@@ -14,8 +14,9 @@ package org.eclipse.team.internal.ui.actions;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;

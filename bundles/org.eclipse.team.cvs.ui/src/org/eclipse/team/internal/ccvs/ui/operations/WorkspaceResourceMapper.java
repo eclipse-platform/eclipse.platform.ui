@@ -12,8 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.*;
 
+import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
