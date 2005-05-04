@@ -211,12 +211,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	
 		for (int i = 0; i < elements.length; i++) {
+			boolean newItem = true;
 			Object element = elements[i];
 			int index;
 			if(sorter == null){
 				if(itemExists(items,element)){
 					refresh(element);
-					break;
+					newItem = false;
 				}
 				index = -1;
 			}
@@ -232,7 +233,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 						if (items[lastInsertion].getData().equals(element)) {
 							//refresh the element in case it has new children
 							refresh(element);
-							break;
+							newItem = false;
 						}
 						lastInsertion ++;//We had an insertion so increment
 					}
@@ -243,7 +244,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 						index = lastInsertion + i; //Add the index as the array is growing					
 				}
 			}
-			createTreeItem(widget, element, index);		
+			if(newItem)
+				createTreeItem(widget, element, index);		
 		}
     }
 	
