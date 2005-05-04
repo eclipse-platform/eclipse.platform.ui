@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
@@ -158,7 +157,6 @@ import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
-import org.eclipse.ui.operations.UndoableAffectedObjectsAdapter;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
@@ -4219,7 +4217,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// the first approver will prompt when operations affecting outside elements are to be undone or redone.
 			if (fNonLocalOperationApprover != null)
 				history.removeOperationApprover(fNonLocalOperationApprover);
-			fNonLocalOperationApprover= new NonLocalUndoUserApprover(undoContext, this);
+			fNonLocalOperationApprover= getUndoRedoOperationApprover(undoContext);
 			history.addOperationApprover(fNonLocalOperationApprover);
 
 			// the second approver will prompt from this editor when an undo is attempted on an operation
@@ -4242,6 +4240,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			setAction(ITextEditorActionConstants.REDO, action);
 		}
+	}
+	
+	/**
+	 * Return an {@link IOperationApprover} appropriate for approving the undo and
+	 * redo of operations that have the specified undo context.
+	 * 
+	 * @param undoContext - the IUndoContext of operations that should be examined by
+	 * the operation approver
+	 * 
+	 * @return the IOperationApprover appropriate for approving undo and redo operations
+	 * inside this editor, or <code>null</code> if no approval is needed.
+	 * 
+	 * @since 3.1
+	 */
+	protected IOperationApprover getUndoRedoOperationApprover(IUndoContext undoContext) {
+		return new NonLocalUndoUserApprover(undoContext, this, new Object [] { getEditorInput() }, Object.class);
 	}
 
 	/**
@@ -4689,10 +4703,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (Control.class.equals(required))
 			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
-
-		if (IAdvancedUndoableOperation.class.equals(required)) {
-			return new UndoableAffectedObjectsAdapter(new Object [] { getEditorInput() });
-		}
 
 		return super.getAdapter(required);
 	}

@@ -22,12 +22,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.jface.action.GroupMarker;
@@ -82,7 +84,7 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
-import org.eclipse.ui.operations.UndoableAffectedObjectsAdapter;
+import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
@@ -1205,19 +1207,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (IAnnotationAccess.class.equals(adapter))
 			return getAnnotationAccess();
 
-		if (IAdvancedUndoableOperation.class.equals(adapter)) {
-			if (getEditorInput() instanceof IStorageEditorInput) {
-				Object affectedObject;
-				try {
-					affectedObject= ((IStorageEditorInput)getEditorInput()).getStorage();
-				} catch (CoreException ex) {
-					affectedObject= getEditorInput();
-				}
-				return new UndoableAffectedObjectsAdapter(new Object [] { affectedObject });
-			}
-			return super.getAdapter(adapter);
-		}
-
 		return super.getAdapter(adapter);
 
 	}
@@ -1426,5 +1415,21 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected String[] collectRulerMenuPreferencePages() {
 		return collectContextMenuPreferencePages();
 	}
-
+	
+	/*
+	 * @see AbstractTextEditor#getUndoRedoOperationApprover(IUndoContext)
+	 * @since 3.1
+	 */
+	protected IOperationApprover getUndoRedoOperationApprover(IUndoContext undoContext) {
+		if (getEditorInput() instanceof IStorageEditorInput) {
+			Object affectedObject;
+			try {
+				affectedObject= ((IStorageEditorInput)getEditorInput()).getStorage();
+			} catch (CoreException ex) {
+				affectedObject= getEditorInput();
+			}
+			return new NonLocalUndoUserApprover(undoContext, this, new Object [] { affectedObject }, IResource.class);
+		}
+		return super.getUndoRedoOperationApprover(undoContext);
+	}
 }
