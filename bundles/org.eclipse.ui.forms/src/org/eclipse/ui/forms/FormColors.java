@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -28,44 +31,52 @@ public class FormColors {
 	/**
 	 * Key for the form title foreground color.
 	 */
-	public static final String TITLE = "org.eclipse.ui.forms.TITLE";
+	public static final String TITLE = "org.eclipse.ui.forms.TITLE"; //$NON-NLS-1$
 
 	/**
 	 * Key for the tree/table border color.
 	 */
-	public static final String BORDER = "org.eclipse.ui.forms.BORDER";
+	public static final String BORDER = "org.eclipse.ui.forms.BORDER"; //$NON-NLS-1$
 
 	/**
 	 * Key for the section separator color.
 	 */
-	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
+	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR"; //$NON-NLS-1$
 
 	/**
 	 * Key for the section title bar background.
 	 */
-	public static final String TB_BG = "org.eclipse.ui.forms.TB_BG";
+	public static final String TB_BG = "org.eclipse.ui.forms.TB_BG"; //$NON-NLS-1$
 
 	/**
 	 * Key for the section title bar foreground.
 	 * 
 	 * 
 	 */
-	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG";
+	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG"; //$NON-NLS-1$
 
 	/**
 	 * Key for the section title bar gradient.
 	 */
-	public static final String TB_GBG = "org.eclipse.ui.forms.TB_GBG";
+	public static final String TB_GBG = "org.eclipse.ui.forms.TB_GBG"; //$NON-NLS-1$
 
 	/**
 	 * Key for the section title bar border.
 	 */
-	public static final String TB_BORDER = "org.eclipse.ui.forms.TB_BORDER";
+	public static final String TB_BORDER = "org.eclipse.ui.forms.TB_BORDER"; //$NON-NLS-1$
 
 	/**
-	 * Key for the section toggle color.
+	 * Key for the section toggle color. Since 3.1, this color is used for all
+	 * section styles.
 	 */
-	public static final String TB_TOGGLE = "org.eclipse.ui.forms.TB_TOGGLE";
+	public static final String TB_TOGGLE = "org.eclipse.ui.forms.TB_TOGGLE"; //$NON-NLS-1$
+
+	/**
+	 * Key for the section toggle hover color.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String TB_TOGGLE_HOVER = "org.eclipse.ui.forms.TB_TOGGLE_HOVER"; //$NON-NLS-1$	
 
 	protected Map colorRegistry = new HashMap(10);
 
@@ -123,29 +134,12 @@ public class FormColors {
 	 * differently.
 	 */
 	protected void initializeColorTable() {
-		createColor(SEPARATOR, 152, 170, 203);
 		createTitleColor();
+		createTwistieColors();
+		createColor(SEPARATOR, getColor(TITLE).getRGB());
 		RGB border = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
 		RGB black = new RGB(0, 0, 0);
 		createColor(BORDER, blend(border, black, 80));
-	}
-
-	private void createTitleColor() {
-		/*
-		 * String osname = System.getProperty("os.name").toLowerCase(); if
-		 * (osname.startsWith("mac os")) createColor(TITLE,
-		 * getSystemColor(SWT.COLOR_LIST_FOREGROUND)); else createColor(TITLE,
-		 * getSystemColor(SWT.COLOR_LIST_SELECTION));
-		 */
-		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
-		//RGB white = new RGB(255, 255, 255);
-		RGB black = new RGB(0, 0, 0);
-		// test too light
-		if (testTwoPrimaryColors(rgb, 120, 151))
-			rgb = blend(rgb, black, 80);
-		else if (testTwoPrimaryColors(rgb, 150, 256))
-			rgb = blend(rgb, black, 50);
-		createColor(TITLE, rgb);
 	}
 
 	/**
@@ -159,84 +153,8 @@ public class FormColors {
 	public void initializeSectionToolBarColors() {
 		if (getColor(FormColors.TB_BG) != null)
 			return;
-
-		createTitleBarGradient();
-		createTitleBarOutline();
-		// toggle color
-		RGB toggle = getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		createColor(FormColors.TB_TOGGLE, toggle);
-	}
-	
-	private void createTitleBarGradient() {
-		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		Color bg = getImpliedBackground();
-		RGB formBackground = bg.getRGB();
-		
-		// blend 77% white with the title background gradient
-		tbBg = blend(formBackground, tbBg, 77);
-	
-		if (isWhiteBackground()) {
-			// corrections
-			if (testTwoPrimaryColors(tbBg, 241, 256)) {
-				// too light
-				tbBg = blend(tbBg, black, 90);
-			}
-			else if (testTwoPrimaryColors(tbBg, 0, 231)) {
-				// too dark
-				if (testAnyPrimaryColor(tbBg, 214, 231))
-					tbBg = blend(tbBg, white, 95);
-				else if (testAnyPrimaryColor(tbBg, 199, 215))
-					tbBg = blend(tbBg, white, 90);
-			}
-		}
-		else {
-			if (testTwoPrimaryColors(tbBg, 209, 256)) {
-				// too light
-				if (testAnyPrimaryColor(tbBg, 210, 236))
-					tbBg = blend(tbBg, black, 60);
-				else if (testAnyPrimaryColor(tbBg, 235, 256))
-					tbBg = blend(tbBg, black, 20);
-			}
-		}
-		createColor(FormColors.TB_BG, tbBg);		
-
-		// blend 50 % white with the previous blend for half-way
-		RGB tbGbg = blend(formBackground, tbBg, 50);
-		createColor(FormColors.TB_GBG, tbGbg);
-	}
-	
-	private void createTitleBarOutline() {
-		// title bar outline - border color
-		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-		// Perform adjustments for too bright
-		if (isWhiteBackground()) {
-			if (testTwoPrimaryColors(tbBorder, 215, 256)) {
-				// too bright
-				if (testAnyPrimaryColor(tbBorder, 215, 226))
-					// 	decrease white by 10%
-					tbBorder = blend(tbBorder, black, 90);
-				else if (testAnyPrimaryColor(tbBorder, 225, 256))
-					// decrease white by 20%
-					tbBorder = blend(tbBorder, black, 70);
-			}
-			else if (testTwoPrimaryColors(tbBorder, 0, 186)) {
-				// too dark
-				if (testAnyPrimaryColor(tbBorder, 175, 186))
-					// add 5% white
-					tbBorder = blend(tbBorder, white, 95);
-				else if (testTwoPrimaryColors(tbBorder, 154, 176))
-					// add 10% white
-					tbBorder = blend(tbBorder, white, 90);
-				else if (testTwoPrimaryColors(tbBorder, 124, 155))
-					// add 20% white
-					tbBorder = blend(tbBorder, white, 80);
-			}
-		} else {
-			if (testTwoPrimaryColors(tbBorder, 200, 256))
-				// too bright - decrease white by 50%
-				tbBorder = blend(tbBorder, black, 50);
-		}
-		createColor(FormColors.TB_BORDER, tbBorder);		
+		createTitleBarGradientColors();
+		createTitleBarOutlineColors();
 	}
 
 	/**
@@ -279,7 +197,7 @@ public class FormColors {
 	 * @since 3.1
 	 */
 	public Color getInactiveBackground() {
-		String key = "__ncbg__";
+		String key = "__ncbg__"; //$NON-NLS-1$
 		Color color = getColor(key);
 		if (color == null) {
 			RGB sel = getSystemColor(SWT.COLOR_LIST_SELECTION);
@@ -438,21 +356,71 @@ public class FormColors {
 	}
 
 	/**
-	 * Blends c1 and c2 based on the provided ratio.
+	 * Blends c1 and c2 based in the provided ratio.
 	 * 
 	 * @param c1
 	 *            first color
 	 * @param c2
 	 *            second color
 	 * @param ratio
-	 *            percentage of the first color in the blend
+	 *            percentage of the first color in the blend (0-100)
 	 * @return the RGB value of the blended color
+	 * @since 3.1
 	 */
-	private RGB blend(RGB c1, RGB c2, int ratio) {
+	public static RGB blend(RGB c1, RGB c2, int ratio) {
 		int r = blend(c1.red, c2.red, ratio);
 		int g = blend(c1.green, c2.green, ratio);
 		int b = blend(c1.blue, c2.blue, ratio);
 		return new RGB(r, g, b);
+	}
+
+	/**
+	 * Tests the source RGB for range.
+	 * 
+	 * @param rgb
+	 *            the tested RGB
+	 * @param from
+	 *            range start (excluding the value itself)
+	 * @param to
+	 *            range end (excluding the value itself)
+	 * @return <code>true</code> if at least one of the primary colors in the
+	 *         source RGB are within the provided range, <code>false</code>
+	 *         otherwise.
+	 * @since 3.1
+	 */
+	public static boolean testAnyPrimaryColor(RGB rgb, int from, int to) {
+		if (testPrimaryColor(rgb.red, from, to))
+			return true;
+		if (testPrimaryColor(rgb.green, from, to))
+			return true;
+		if (testPrimaryColor(rgb.blue, from, to))
+			return true;
+		return false;
+	}
+
+	/**
+	 * Tests the source RGB for range.
+	 * 
+	 * @param rgb
+	 *            the tested RGB
+	 * @param from
+	 *            range start (excluding the value itself)
+	 * @param to
+	 *            tange end (excluding the value itself)
+	 * @return <code>true</code> if at least two of the primary colors in the
+	 *         source RGB are within the provided range, <code>false</code>
+	 *         otherwise.
+	 * @since 3.1
+	 */
+	public static boolean testTwoPrimaryColors(RGB rgb, int from, int to) {
+		int total = 0;
+		if (testPrimaryColor(rgb.red, from, to))
+			total++;
+		if (testPrimaryColor(rgb.green, from, to))
+			total++;
+		if (testPrimaryColor(rgb.blue, from, to))
+			total++;
+		return total >= 2;
 	}
 
 	/**
@@ -466,7 +434,7 @@ public class FormColors {
 	 *            percentage of the first component in the blend
 	 * @return
 	 */
-	private int blend(int v1, int v2, int ratio) {
+	private static int blend(int v1, int v2, int ratio) {
 		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
 		return Math.min(255, b);
 	}
@@ -477,28 +445,102 @@ public class FormColors {
 		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 
-	private boolean testAnyPrimaryColor(RGB rgb, int from, int to) {
-		if (testPrimaryColor(rgb.red, from, to))
-			return true;
-		if (testPrimaryColor(rgb.green, from, to))
-			return true;
-		if (testPrimaryColor(rgb.blue, from, to))
-			return true;
-		return false;
-	}
-
-	private boolean testTwoPrimaryColors(RGB rgb, int from, int to) {
-		int total = 0;
-		if (testPrimaryColor(rgb.red, from, to))
-			total++;
-		if (testPrimaryColor(rgb.green, from, to))
-			total++;
-		if (testPrimaryColor(rgb.blue, from, to))
-			total++;
-		return total >= 2;
-	}
-
-	private boolean testPrimaryColor(int value, int from, int to) {
+	private static boolean testPrimaryColor(int value, int from, int to) {
 		return value > from && value < to;
+	}
+
+	private void createTitleColor() {
+		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
+		// RGB white = new RGB(255, 255, 255);
+		RGB black = new RGB(0, 0, 0);
+		// test too light
+		if (testTwoPrimaryColors(rgb, 120, 151))
+			rgb = blend(rgb, black, 80);
+		else if (testTwoPrimaryColors(rgb, 150, 256))
+			rgb = blend(rgb, black, 50);
+		createColor(TITLE, rgb);
+	}
+
+	private void createTwistieColors() {
+		RGB rgb = getColor(TITLE).getRGB();
+		createColor(TB_TOGGLE, rgb);
+
+		// hover twistie
+		rgb = blend(rgb, white, 70);
+		// bounds
+		if (testTwoPrimaryColors(rgb, 215, 226))
+			rgb = blend(rgb, black, 90);
+		else if (testTwoPrimaryColors(rgb, 225, 256))
+			rgb = blend(rgb, black, 95);
+		createColor(TB_TOGGLE_HOVER, rgb);
+	}
+
+	private void createTitleBarGradientColors() {
+		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		Color bg = getImpliedBackground();
+		RGB formBackground = bg.getRGB();
+
+		// blend 77% white with the title background gradient
+		tbBg = blend(formBackground, tbBg, 77);
+
+		if (isWhiteBackground()) {
+			// corrections
+			if (testTwoPrimaryColors(tbBg, 241, 256)) {
+				// too light
+				tbBg = blend(tbBg, black, 90);
+			} else if (testTwoPrimaryColors(tbBg, 0, 231)) {
+				// too dark
+				if (testAnyPrimaryColor(tbBg, 214, 231))
+					tbBg = blend(tbBg, white, 95);
+				else if (testAnyPrimaryColor(tbBg, 199, 215))
+					tbBg = blend(tbBg, white, 90);
+			}
+		} else {
+			if (testTwoPrimaryColors(tbBg, 209, 256)) {
+				// too light
+				if (testAnyPrimaryColor(tbBg, 210, 236))
+					tbBg = blend(tbBg, black, 60);
+				else if (testAnyPrimaryColor(tbBg, 235, 256))
+					tbBg = blend(tbBg, black, 20);
+			}
+		}
+		createColor(FormColors.TB_BG, tbBg);
+
+		// blend 50 % white with the previous blend for half-way
+		RGB tbGbg = blend(formBackground, tbBg, 50);
+		createColor(FormColors.TB_GBG, tbGbg);
+	}
+
+	private void createTitleBarOutlineColors() {
+		// title bar outline - border color
+		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+		// Perform adjustments for too bright
+		if (isWhiteBackground()) {
+			if (testTwoPrimaryColors(tbBorder, 215, 256)) {
+				// too bright
+				if (testAnyPrimaryColor(tbBorder, 215, 226))
+					// decrease white by 10%
+					tbBorder = blend(tbBorder, black, 90);
+				else if (testAnyPrimaryColor(tbBorder, 225, 256))
+					// decrease white by 20%
+					tbBorder = blend(tbBorder, black, 70);
+			} else if (testTwoPrimaryColors(tbBorder, 0, 186)) {
+				// too dark
+				if (testAnyPrimaryColor(tbBorder, 175, 186))
+					// add 5% white
+					tbBorder = blend(tbBorder, white, 95);
+				else if (testTwoPrimaryColors(tbBorder, 154, 176))
+					// add 10% white
+					tbBorder = blend(tbBorder, white, 90);
+				else if (testTwoPrimaryColors(tbBorder, 124, 155))
+					// add 20% white
+					tbBorder = blend(tbBorder, white, 80);
+			}
+		} else {
+			if (testTwoPrimaryColors(tbBorder, 200, 256))
+				// too bright - decrease white by 50%
+				tbBorder = blend(tbBorder, black, 50);
+		}
+		createColor(FormColors.TB_BORDER, tbBorder);
 	}
 }

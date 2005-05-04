@@ -541,6 +541,12 @@ public class ExpandableComposite extends Composite {
 					toggleState();
 				}
 			});
+			toggle.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					if (textLabel instanceof Label && !isFixedStyle())
+						textLabel.setForeground(toggle.hover?toggle.getHoverDecorationColor():null);
+				}
+			});
 			toggle.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode==SWT.ARROW_UP)
@@ -562,19 +568,39 @@ public class ExpandableComposite extends Composite {
 			final Label label = new Label(this, SWT.WRAP);
 			if (!isFixedStyle()) {
 				label.setCursor(FormsResources.getHandCursor());
-				label.addListener(SWT.MouseDown, new Listener() {
+				Listener listener = new Listener() {
 					public void handleEvent(Event e) {
-						if (toggle != null)
-							toggle.setFocus();
+						switch (e.type) {
+						case SWT.MouseDown:
+							if (toggle != null)
+								toggle.setFocus();
+							break;
+						case SWT.MouseUp: 
+							label.setCursor(FormsResources.getBusyCursor());
+							programmaticToggleState();
+							label.setCursor(FormsResources.getHandCursor());
+							break;
+						case SWT.MouseEnter:
+							if (toggle!=null) {
+								label.setForeground(toggle.getHoverDecorationColor());
+								toggle.hover=true;
+								toggle.redraw();
+							}
+							break;
+						case SWT.MouseExit:
+							if (toggle!=null) {
+								label.setForeground(null);
+								toggle.hover=false;
+								toggle.redraw();
+							}
+							break;
+						}
 					}
-				});
-				label.addListener(SWT.MouseUp, new Listener() {
-					public void handleEvent(Event e) {
-						label.setCursor(FormsResources.getBusyCursor());
-						programmaticToggleState();
-						label.setCursor(FormsResources.getHandCursor());
-					}
-				});
+				};
+				label.addListener(SWT.MouseDown, listener);
+				label.addListener(SWT.MouseUp, listener);
+				label.addListener(SWT.MouseEnter, listener);
+				label.addListener(SWT.MouseExit, listener);
 			}
 			textLabel = label;
 		}

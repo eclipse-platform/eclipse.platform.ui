@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * <p>
  * The toolkit creates some of the most common controls used to populate Eclipse
  * forms. Controls that must be created using their constructors,
- * <code>adapt()</code> method is available to change its properties in the 
+ * <code>adapt()</code> method is available to change its properties in the
  * same way as with the supported toolkit controls.
  * <p>
  * Typically, one toolkit object is created per workbench part (for example, an
@@ -44,11 +44,11 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * entire plug-in and share it between several toolkits. The plug-in is
  * responsible for disposing the colors (disposing the toolkit that uses shared
  * color object will not dispose the colors).
- *<p> 
- * FormToolkit is normally instantiated, but can also be 
- * subclassed if some of the methods needs to be modified.
- * In those cases, <code>super</code> must be called to 
- * preserve normal behaviour.
+ * <p>
+ * FormToolkit is normally instantiated, but can also be subclassed if some of
+ * the methods needs to be modified. In those cases, <code>super</code> must
+ * be called to preserve normal behaviour.
+ * 
  * @since 3.0
  */
 public class FormToolkit {
@@ -455,14 +455,14 @@ public class FormToolkit {
 		if (section.toggle != null) {
 			section.toggle.addFocusListener(visibilityHandler);
 			section.toggle.addKeyListener(keyboardHandler);
-			section.toggle.setHoverDecorationColor(getHyperlinkGroup()
-					.getActiveForeground());
+			section.toggle.setHoverDecorationColor(colors
+					.getColor(FormColors.TB_TOGGLE_HOVER));
 			section.toggle.setDecorationColor(colors
-					.getColor(FormColors.SEPARATOR));
+					.getColor(FormColors.TB_TOGGLE));
 		}
 		section.setFont(boldFontHolder.getBoldFont(parent.getFont()));
-		if ((sectionStyle & Section.TITLE_BAR) != 0 ||
-			 (sectionStyle & Section.SHORT_TITLE_BAR)!=0) {
+		if ((sectionStyle & Section.TITLE_BAR) != 0
+				|| (sectionStyle & Section.SHORT_TITLE_BAR) != 0) {
 			colors.initializeSectionToolBarColors();
 			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
 			section.setTitleBarBorderColor(colors
@@ -470,9 +470,6 @@ public class FormToolkit {
 			section.setTitleBarGradientBackground(colors
 					.getColor(FormColors.TB_GBG));
 			section.setTitleBarForeground(colors.getColor(FormColors.TB_FG));
-			if (section.toggle != null)
-				section.toggle.setDecorationColor(colors
-						.getColor(FormColors.TB_TOGGLE));
 		}
 		return section;
 	}
@@ -701,12 +698,14 @@ public class FormToolkit {
 	 * <pre>
 	 * 
 	 *  
-	 *          widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 *   
+	 *           widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 *           
+	 *           or
+	 *           
+	 *           widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 	 *          
-	 *          or
-	 *          
-	 *          widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-	 *         
+	 *   
 	 *  
 	 * </pre>
 	 * 
@@ -804,8 +803,7 @@ public class FormToolkit {
 				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 					borderStyle = SWT.BORDER;
 			}
-		}
-		else if (osname.startsWith("Mac"))
+		} else if (osname.startsWith("Mac"))
 			borderStyle = SWT.BORDER;
 	}
 
@@ -815,8 +813,8 @@ public class FormToolkit {
 	 * <code>SWT.LEFT_TO_RIGHT</code> and <code>SWT.RIGHT_TO_LEFT</code>.
 	 * 
 	 * @return orientation style for this toolkit, or <code>SWT.NULL</code> if
-	 *         not set. The default orientation is inherited from
-	 *         the Window default orientation.
+	 *         not set. The default orientation is inherited from the Window
+	 *         default orientation.
 	 * @see org.eclipse.jface.window.Window#getDefaultOrientation()
 	 * @since 3.1
 	 */
@@ -832,7 +830,7 @@ public class FormToolkit {
 	 * 
 	 * @param orientation
 	 *            style for this toolkit.
-	 * @since 3.1           
+	 * @since 3.1
 	 */
 
 	public void setOrientation(int orientation) {

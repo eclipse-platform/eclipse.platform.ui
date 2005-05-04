@@ -27,8 +27,8 @@ import org.eclipse.ui.forms.events.*;
 public abstract class ToggleHyperlink extends AbstractHyperlink {
 	protected int innerWidth;
 	protected int innerHeight;
-	private boolean expanded;
 	protected boolean hover;
+	private boolean expanded;	
 	private Color decorationColor;
 	private Color hoverColor;
 	/**
