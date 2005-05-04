@@ -61,7 +61,7 @@ public class StandbyPart implements IIntroConstants {
     private FormToolkit toolkit;
     private IntroModelRoot model;
     protected ImageHyperlink returnLink;
-    Control separator;
+    protected Control separator;
     private Composite container;
     protected Composite content;
     private IIntroPart introPart;
@@ -75,9 +75,10 @@ public class StandbyPart implements IIntroConstants {
 
     class StandbyLayout extends Layout {
 
-        private int VGAP = 10;
+        private int VGAP = 9;
         private int VMARGIN = 5;
         private int HMARGIN = 5;
+        private int SEPARATOR_HEIGHT = 1;
 
         /*
          * (non-Javadoc)
@@ -92,7 +93,7 @@ public class StandbyPart implements IIntroConstants {
             Point csize = content.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                 flushCache);
             int width = Math.max(lsize.x + 2 * HMARGIN, csize.x);
-            int height = HMARGIN + lsize.y + VGAP + csize.y;
+            int height = VMARGIN + lsize.y + VGAP + SEPARATOR_HEIGHT + csize.y;
             return new Point(width, height);
         }
 
@@ -111,11 +112,11 @@ public class StandbyPart implements IIntroConstants {
             int y = VMARGIN;
             returnLink.setBounds(x, y, lsize.x, lsize.y);
             x = 0;
-            y += lsize.y + VGAP-1;
-            separator.setBounds(x, y, carea.width, 1);
-            y+= 1;
+            y += lsize.y + VGAP;
+            separator.setBounds(x, y, carea.width, SEPARATOR_HEIGHT);
+            y += SEPARATOR_HEIGHT;
             content.setBounds(x, y, carea.width, carea.height - VMARGIN
-                    - lsize.y - VGAP);
+                    - lsize.y - VGAP - SEPARATOR_HEIGHT);
         }
     }
 
