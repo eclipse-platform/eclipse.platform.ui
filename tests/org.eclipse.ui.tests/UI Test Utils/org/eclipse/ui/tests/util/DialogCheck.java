@@ -111,28 +111,25 @@ public class DialogCheck {
             Assert assertion) {
         Control children[] = composite.getChildren();
         for (int i = 0; i < children.length; i++) {
-            if (children[i] instanceof TabFolder) {
-                TabFolder folder = (TabFolder) children[i];
+        	Control child = children[i];
+            if (child instanceof TabFolder) {
+                TabFolder folder = (TabFolder) child;
                 int numPages = folder.getItemCount();
                 for (int j = 0; j < numPages; j++) {
                     folder.setSelection(j);
                 }
             }
-            try {
+            else if (child instanceof Button) {
                 //verify the text if the child is a button
-                verifyButtonText((Button) children[i], assertion);
-            } catch (ClassCastException exNotButton) {
-                try {
-                    //child is not a button, maybe a label
-                    verifyLabelText((Label) children[i], assertion);
-                } catch (ClassCastException exNotLabel) {
-                    try {
-                        //child is not a label, make a recursive call if it is a composite
-                        verifyCompositeText((Composite) children[i], assertion);
-                    } catch (ClassCastException exNotComposite) {
-                        //the child is not a button, label, or composite - ignore it.
-                    }
-                }
+                verifyButtonText((Button) child, assertion);
+            }
+            else if (child instanceof Label) {
+                //child is not a button, maybe a label
+                verifyLabelText((Label) child, assertion);
+            }
+            else if (child instanceof Composite) {
+                //child is not a label, make a recursive call if it is a composite
+                verifyCompositeText((Composite) child, assertion);
             }
         }
     }
