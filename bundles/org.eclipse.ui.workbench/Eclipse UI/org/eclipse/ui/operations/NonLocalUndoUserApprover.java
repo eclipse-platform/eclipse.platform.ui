@@ -99,20 +99,6 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		this.elements = affectedObjects;
 	}
 
-	/**
-	 * Create a NonLocalUndoUserApprover associated with the specified editor
-	 * and undo context
-	 * 
-	 * @param context -
-	 *            the undo context of operations in question.
-	 * @param part -
-	 *            the editor part that is displaying the element
-	 * @deprecated see https://bugs.eclipse.org/bugs/show_bug.cgi?id=89197
-	 */
-	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part) {
-		this(context, part, new Object[] {}, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
