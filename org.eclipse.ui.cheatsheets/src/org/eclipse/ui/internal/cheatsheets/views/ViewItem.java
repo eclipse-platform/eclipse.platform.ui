@@ -11,17 +11,37 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.ArrayList;
-import org.eclipse.help.*;
-import org.eclipse.jface.resource.*;
+
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IContext;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
@@ -43,25 +63,15 @@ public abstract class ViewItem {
 	protected Item item;
 
 	// Colors
-	// Active color's RGB value
-	protected final RGB activeRGB = new RGB(232, 242, 254);
-	protected Color activeColor;
-	// Alternating color's RGB value
-	protected final RGB alternateRGB = new RGB(244, 244, 244);
-	protected Color alternateColor;
-
 	protected Color itemColor;
-	protected Color white;
 
 	private boolean isSkipped = false;
 	private ExpandableComposite mainItemComposite;
 
 	private Composite parent;
 	protected CheatSheetViewer viewer;
+	protected CheatSheetPage page;
 	private Composite titleComposite;
-	protected FormToolkit toolkit;
-	protected ScrolledForm form;
-
 	private boolean bold = true;
 	private Font boldFont;
 	private Font regularFont;
@@ -70,36 +80,26 @@ public abstract class ViewItem {
 	/**
 	 * Constructor for ViewItem.
 	 */
-	public ViewItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
+	public ViewItem(CheatSheetPage page, Item item, Color itemColor, CheatSheetViewer viewer) {
 		super();
-
-		this.toolkit = toolkit;
-		this.form = form;
-		this.parent = form.getBody();
+		this.page = page;
+		this.parent = page.getForm().getBody();
 		this.item = item;
 		this.itemColor = itemColor;
 		this.viewer = viewer;
-		activeColor = new Color(parent.getDisplay(), activeRGB);
-		alternateColor = new Color(parent.getDisplay(), alternateRGB);
-
 		addItem();
 	}
 
 	//Adds the item to the main composite.
 	private void addItem() {
 		CheatSheetStopWatch.startStopWatch("ViewItem.addItem()"); //$NON-NLS-1$
-
-		Display display = parent.getDisplay();
-		Color bg = JFaceColors.getBannerBackground(display);
-		white = bg;
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after getBannerBackground: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//		Set up the main composite for the item.******************************************
-		checkDoneLabel = toolkit.createLabel(parent, " "); //$NON-NLS-1$
-		checkDoneLabel.setBackground(white);
+		checkDoneLabel = page.getToolkit().createLabel(parent, " "); //$NON-NLS-1$
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create checkDoneLabel: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE|ExpandableComposite.COMPACT);
+		mainItemComposite = page.getToolkit().createSection(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
 		mainItemComposite.setBackground(itemColor);
 		mainItemComposite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String title = item.getTitle();
@@ -111,7 +111,7 @@ public abstract class ViewItem {
 		
 		mainItemComposite.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
+				page.getForm().reflow(true);
 			}
 		});
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after addExpansionListener: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -123,7 +123,7 @@ public abstract class ViewItem {
 
 		if((itemExts != null && itemExts.size() > 0) || item.getContextId() != null || item.getHref() != null) {
 			// Set up the title composite for the item.
-			titleComposite = toolkit.createComposite(mainItemComposite);
+			titleComposite = page.getToolkit().createComposite(mainItemComposite);
 			titleComposite.setBackground(itemColor);
 		}
 
@@ -143,7 +143,7 @@ public abstract class ViewItem {
 			// adjust the layout count
 			number++;
 			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, Messages.HELP_BUTTON_TOOLTIP);
-			toolkit.adapt(helpButton, true, true);
+			page.getToolkit().adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					// If we have a context id, handle this first and ignore an hrefs
@@ -172,14 +172,14 @@ public abstract class ViewItem {
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setTextClient: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//Body wrapper here.   this composite will be hidden and shown as appropriate.
-		bodyWrapperComposite = toolkit.createComposite(mainItemComposite);
+		bodyWrapperComposite = page.getToolkit().createComposite(mainItemComposite);
 		mainItemComposite.setClient(bodyWrapperComposite);
 		TableWrapLayout wrapperLayout = new TableWrapLayout();
 		bodyWrapperComposite.setLayout(wrapperLayout);
 		bodyWrapperComposite.setBackground(itemColor);
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create bodyWrapperComposite: "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		bodyText = toolkit.createFormText(bodyWrapperComposite, false);
+		bodyText = page.getToolkit().createFormText(bodyWrapperComposite, false);
 //		bodyText = toolkit.createLabel(bodyWrapperComposite, item.getDescription(), SWT.WRAP);
 		bodyText.setText(item.getDescription(), item.getDescription().startsWith(IParserTags.FORM_START_TAG), false);
 
@@ -216,7 +216,7 @@ public abstract class ViewItem {
 
 	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
 		ImageHyperlink button = new ImageHyperlink(parent, SWT.NULL);
-		toolkit.adapt(button, true, true);
+		page.getToolkit().adapt(button, true, true);
 		button.setImage(image);
 		button.setData(item);
 		button.setBackground(color);
@@ -228,10 +228,6 @@ public abstract class ViewItem {
 	}
 
 	public void dispose() {
-		if (alternateColor != null)
-			alternateColor.dispose();
-		if (activeColor != null)
-			activeColor.dispose();
 		if (checkDoneLabel != null)
 			checkDoneLabel.dispose();
 		if (bodyText != null)
@@ -244,8 +240,6 @@ public abstract class ViewItem {
 			bodyWrapperComposite.dispose();
 		if (mainItemComposite != null)
 			mainItemComposite.dispose();
-		if (white != null)
-			white.dispose();
 		if (titleComposite != null)
 			titleComposite.dispose();
 		if (regularFont != null)
@@ -443,7 +437,7 @@ public abstract class ViewItem {
 		if (mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(false);
 			if(initialized) {
-				form.reflow(true);
+				page.getForm().reflow(true);
 				FormToolkit.ensureVisible(getMainItemComposite());
 			}
 		}
@@ -451,8 +445,8 @@ public abstract class ViewItem {
 
 	private void setColorAsCurrent(boolean active) {
 		if (active) {
-			setTitleColor(activeColor);
-			setBodyColor(activeColor);
+			setTitleColor(page.getActiveColor());
+			setBodyColor(page.getActiveColor());
 		} else {
 			setTitleColor(itemColor);
 			setBodyColor(itemColor);
@@ -476,7 +470,7 @@ public abstract class ViewItem {
 		if (!mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(true);
 			if(initialized) {
-				form.reflow(true);
+				page.getForm().reflow(true);
 				FormToolkit.ensureVisible(getMainItemComposite());
 			}
 		}
@@ -520,13 +514,13 @@ public abstract class ViewItem {
 	/*package*/
 	abstract void setStartImage();
 
-	private void setTitleColor(Color color) {
+	private void setTitleColor(Color bg) {
 		if(titleComposite != null) {
-			titleComposite.setBackground(color);
+			titleComposite.setBackground(bg);
 
 			Control[] titlechildren = titleComposite.getChildren();
 			for (int i = 0; i < titlechildren.length; i++) {
-				titlechildren[i].setBackground(color);
+				titlechildren[i].setBackground(bg);
 			}
 		}
 	}

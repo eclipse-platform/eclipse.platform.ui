@@ -149,7 +149,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		searchWordChevron.setHoverDecorationColor(toolkit.getHyperlinkGroup()
 				.getActiveForeground());
 		searchWordChevron.setDecorationColor(toolkit.getColors().getColor(
-				FormColors.SEPARATOR));
+				FormColors.TB_TOGGLE));
 		searchWordText.setControl(HREF_TOGGLE, searchWordChevron);
 		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {

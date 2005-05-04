@@ -61,6 +61,7 @@ public class StandbyPart implements IIntroConstants {
     private FormToolkit toolkit;
     private IntroModelRoot model;
     protected ImageHyperlink returnLink;
+    Control separator;
     private Composite container;
     protected Composite content;
     private IIntroPart introPart;
@@ -74,7 +75,7 @@ public class StandbyPart implements IIntroConstants {
 
     class StandbyLayout extends Layout {
 
-        private int VGAP = 20;
+        private int VGAP = 10;
         private int VMARGIN = 5;
         private int HMARGIN = 5;
 
@@ -110,7 +111,9 @@ public class StandbyPart implements IIntroConstants {
             int y = VMARGIN;
             returnLink.setBounds(x, y, lsize.x, lsize.y);
             x = 0;
-            y += lsize.y + VGAP;
+            y += lsize.y + VGAP-1;
+            separator.setBounds(x, y, carea.width, 1);
+            y+= 1;
             content.setBounds(x, y, carea.width, carea.height - VMARGIN
                     - lsize.y - VGAP);
         }
@@ -159,6 +162,8 @@ public class StandbyPart implements IIntroConstants {
             }
         });
 
+        // create horizontal separator
+        separator = toolkit.createCompositeSeparator(container);
         // content stack container
         content = toolkit.createComposite(container);
         StackLayout slayout = new StackLayout();

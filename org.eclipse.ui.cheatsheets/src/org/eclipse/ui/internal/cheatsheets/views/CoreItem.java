@@ -38,12 +38,12 @@ public class CoreItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public CoreItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
-		super(toolkit, form, item, itemColor, viewer);
+	public CoreItem(CheatSheetPage page, Item item, Color itemColor, CheatSheetViewer viewer) {
+		super(page, item, itemColor, viewer);
 	}
 
 	private void createButtonComposite() {
-		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
+		buttonComposite = page.getToolkit().createComposite(bodyWrapperComposite);
 		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;
 		buttonlayout.marginWidth = 2;
@@ -55,7 +55,7 @@ public class CoreItem extends ViewItem {
 		buttonComposite.setLayoutData(buttonData);
 		buttonComposite.setBackground(itemColor);
 
-		Label spacer = toolkit.createLabel(buttonComposite, null);
+		Label spacer = page.getToolkit().createLabel(buttonComposite, null);
 		spacer.setBackground(itemColor);
 		GridData spacerData = new GridData();
 		spacerData.widthHint = 16;
@@ -65,7 +65,7 @@ public class CoreItem extends ViewItem {
 	private void createButtons(Action action) {
 		if (action != null ) {
 			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
-			toolkit.adapt(startButton, true, true);
+			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.runPerformAction(startButton);
@@ -74,7 +74,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (item.isSkip()) {
 			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
-			toolkit.adapt(skipButton, true, true);
+			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(skipButton, false);
@@ -83,7 +83,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (action == null || action.isConfirm()) {
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			toolkit.adapt(completeButton, true, true);
+			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(completeButton, true);
@@ -93,7 +93,7 @@ public class CoreItem extends ViewItem {
 	}
 
 	private void createSubItemButtonComposite() {
-		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
+		buttonComposite = page.getToolkit().createComposite(bodyWrapperComposite);
 		GridLayout xbuttonlayout = new GridLayout(6, false);
 		xbuttonlayout.marginHeight = 2;
 		xbuttonlayout.marginWidth = 2;
@@ -110,7 +110,7 @@ public class CoreItem extends ViewItem {
 		int added = 0;
 		
 		//Spacer label added.
-		Label checkDoneLabel = toolkit.createLabel(buttonComposite, null);
+		Label checkDoneLabel = page.getToolkit().createLabel(buttonComposite, null);
 		checkDoneLabel.setBackground(itemColor);
 		GridData checkDoneData = new GridData();
 		checkDoneData.widthHint = 16;
@@ -124,7 +124,7 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Label label = toolkit.createLabel(buttonComposite, labelText);
+		Label label = page.getToolkit().createLabel(buttonComposite, labelText);
 		label.setBackground(itemColor);
 		added++;
 
@@ -142,7 +142,7 @@ public class CoreItem extends ViewItem {
 			added++;
 			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			final ImageHyperlink finalStartButton = startButton;
-			toolkit.adapt(startButton, true, true);
+			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.runSubItemPerformAction(finalStartButton, fi);
@@ -152,7 +152,7 @@ public class CoreItem extends ViewItem {
 		if (sub.isSkip()) {
 			added++;
 			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
-			toolkit.adapt(skipButton, true, true);
+			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceSubItem(skipButton, false, fi);
@@ -162,7 +162,7 @@ public class CoreItem extends ViewItem {
 		if (subAction == null || subAction.isConfirm()) {
 			added++;
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			toolkit.adapt(completeButton, true, true);
+			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceSubItem(completeButton, true, fi);
@@ -172,7 +172,7 @@ public class CoreItem extends ViewItem {
 
 		while (added < 6) {
 			// Add filler labels as needed to complete the row
-			Label filler = toolkit.createLabel(buttonComposite, null);
+			Label filler = page.getToolkit().createLabel(buttonComposite, null);
 			filler.setBackground(itemColor);
 			added++;
 		}
@@ -338,7 +338,7 @@ public class CoreItem extends ViewItem {
 		if(refreshRequired) {
 			buttonComposite.layout();
 			getMainItemComposite().layout();
-			form.reflow(true);
+			page.getForm().reflow(true);
 		}
 	}
 
@@ -367,7 +367,7 @@ public class CoreItem extends ViewItem {
 		if(refreshRequired) {
 			buttonComposite.layout();
 			getMainItemComposite().layout();
-			form.reflow(true);
+			page.getForm().reflow(true);
 		}
 	}
 

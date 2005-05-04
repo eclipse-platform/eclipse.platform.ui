@@ -168,6 +168,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			saveCurrentSheet();
 			ViewItem item = getViewItemAtIndex(0);
 			item.setExpanded();
+			item.setBold(true);
 			item.getMainItemComposite().setFocus();
 			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 		}

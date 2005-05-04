@@ -26,9 +26,8 @@ public class ErrorPage extends Page {
 		this.message = errorMessage;
 	}
 
-	protected void createInfoArea(Composite parent) {
-		super.createInfoArea(parent);
-
+	public void createPart(Composite parent) {
+		super.createPart(parent);
 		String errorString = null;
 		if(message == null) {
 			errorString = Messages.ERROR_PAGE_MESSAGE;
