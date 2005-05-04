@@ -194,8 +194,8 @@ public class CheatSheetPage extends Page {
 				rgb = FormColors.blend(rgb, black, 40);
 			alternateColor = new Color(display, rgb);
 		}
-		rgb = alternateColor.getRGB();
-		rgb = FormColors.blend(rgb, black, 90);
+		rgb = activeColor.getRGB();
+		rgb = FormColors.blend(rgb, white, 40);
 		introColor = new Color(display, rgb);
 	}
 
