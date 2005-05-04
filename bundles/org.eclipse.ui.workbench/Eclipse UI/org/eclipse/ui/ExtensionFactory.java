@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IExecutableExtensionFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.dialogs.ContentTypesPreferencePage;
 import org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
 import org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage;
@@ -96,6 +97,11 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
      */
     public static final String WORKBENCH_PREFERENCE_PAGE = "workbenchPreferencePage"; //$NON-NLS-1$
 
+    /**
+     * Factory ID for the ContentTypes preference page.
+     */
+    public static final String CONTENT_TYPES_PREFERENCE_PAGE = "contentTypesPreferencePage"; //$NON-NLS-1$
+    
     private IConfigurationElement config;
 
     private String id;
@@ -136,14 +142,16 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
         if (PERSPECTIVES_PREFERENCE_PAGE.equals(id))
             return configure(new PerspectivesPreferencePage());
         if (PREFERENCES_EXPORT_WIZARD.equals(id))
-        	return configure(new PreferencesExportWizard());
+        	   return configure(new PreferencesExportWizard());
         if (PREFERENCES_IMPORT_WIZARD.equals(id))
-        	return configure(new PreferencesImportWizard());
+        	   return configure(new PreferencesImportWizard());
         if (PROGRESS_VIEW.equals(id)) 
             return configure(new JobView());
         if (WORKBENCH_PREFERENCE_PAGE.equals(id))
             return configure(new WorkbenchPreferencePage());
-
+        if (CONTENT_TYPES_PREFERENCE_PAGE.equals(id))
+			return configure(new ContentTypesPreferencePage());
+        	
         throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
                 0, "Unknown id in data argument for " + getClass(), null)); //$NON-NLS-1$
     }

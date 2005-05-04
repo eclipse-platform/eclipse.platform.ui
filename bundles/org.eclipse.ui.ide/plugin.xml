@@ -373,7 +373,7 @@
       </page>
     
       <page
-            class="org.eclipse.ui.internal.dialogs.ContentTypesPreferencePage"
+            class="org.eclipse.ui.ExtensionFactory:contentTypesPreferencePage"
             id="org.eclipse.ui.preferencePages.ContentTypes"
             category="org.eclipse.ui.preferencePages.Editors"
             name="%PreferencePages.ContentTypes">
