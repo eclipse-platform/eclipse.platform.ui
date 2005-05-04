@@ -250,7 +250,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		};
 		new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
 		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
-			Policy.debug("Content type cache for " + root + " flushed in " + (System.currentTimeMillis() - flushStart ) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$		
+			Policy.debug("Content type cache for " + root + " flushed in " + (System.currentTimeMillis() - flushStart) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	Cache getCache() {
@@ -275,7 +275,10 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		return cacheState;
 	}
 
-	private long getCacheTimestamp() throws CoreException {
+	/*
+	 * public for testing purposes.
+	 */
+	public long getCacheTimestamp() throws CoreException {
 		try {
 			return Long.parseLong(workspace.getRoot().getPersistentProperty(CACHE_TIMESTAMP));
 		} catch (NumberFormatException e) {
@@ -370,6 +373,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
+		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$		
 		if (flush)
 			flushJob.flush(project);
 	}
@@ -408,10 +413,11 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		//TODO are these the only events we care about?
 		switch (event.kind) {
 			case LifecycleEvent.PRE_PROJECT_CHANGE :
-			case LifecycleEvent.PRE_PROJECT_CLOSE :
+			// if the project changes, its natures may have changed as well (content types may be associated to natures)
 			case LifecycleEvent.PRE_PROJECT_DELETE :
+			// if the project gets deleted, we may get confused if it is recreated again (content ids might match)
 			case LifecycleEvent.PRE_PROJECT_MOVE :
-			case LifecycleEvent.PRE_PROJECT_OPEN :
+				// if the project moves, resource paths (used as keys in the in-memory cache) will have changed 
 				invalidateCache(true, (IProject) event.resource);
 		}
 	}

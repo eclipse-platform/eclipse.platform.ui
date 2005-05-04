@@ -16,6 +16,7 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(SampleSessionTest.suite());
+		suite.addTest(TestBug93473.suite());
 		suite.addTest(TestSave.suite());
 		suite.addTest(Test1G1N9GZ.suite());
 		suite.addTest(TestCloseNoSave.suite());
@@ -43,7 +44,7 @@ public class AllTests extends TestCase {
 		//suite.addTest(SaveParticipantTest.suite());		
 		//session tests from other packages  
 		suite.addTest(org.eclipse.core.tests.resources.regression.TestMultipleBuildersOfSameType.suite());
-		suite.addTest(org.eclipse.core.tests.resources.usecase.SnapshotTest.suite());		
+		suite.addTest(org.eclipse.core.tests.resources.usecase.SnapshotTest.suite());
 		return suite;
 	}
 }

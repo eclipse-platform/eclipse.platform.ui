@@ -174,7 +174,6 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		}
 		assertNotNull("3.2", description);
 		assertSame("3.3", ((ContentTypeHandler) derivedType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
-		
 
 		// change project description to include both of the natures
 		try {
@@ -189,7 +188,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 			fail("4.1", e);
 		}
 		assertNotNull("4.2", description);
-		assertSame("4.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());		
+		assertSame("4.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
 
 		// back to no natures
 		try {
@@ -210,7 +209,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 	/**
 	 * Blocks the calling thread until the cache flush job completes.
 	 */
-	protected void waitForCacheFlush() {
+	public static void waitForCacheFlush() {
 		try {
 			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
 		} catch (OperationCanceledException e) {
