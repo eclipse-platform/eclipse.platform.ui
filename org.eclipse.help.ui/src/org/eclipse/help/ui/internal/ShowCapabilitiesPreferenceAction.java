@@ -42,7 +42,7 @@ public class ShowCapabilitiesPreferenceAction implements ILiveHelpAction {
 					}
 				}
 				if (windowShell!=null)
-					windowShell.setActive();
+					windowShell.forceActive();
 				PreferenceDialog dialog = PreferencesUtil
 						.createPreferenceDialogOn(windowShell, getCapabilityPageId(),
 								null, null);
