@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.widgets.Display;
@@ -41,8 +42,17 @@ public class ShowCapabilitiesPreferenceAction implements ILiveHelpAction {
 						}
 					}
 				}
-				if (windowShell!=null)
+				if (windowShell!=null) {
 					windowShell.forceActive();
+					if (Platform.getWS().equals(Platform.WS_WIN32)) {
+						// feature in Windows. Without this code,
+						// the window will only flash in the launch bar.
+						windowShell.setVisible(false);
+						windowShell.setMinimized(true);
+						windowShell.setVisible(true);
+						windowShell.setMinimized(false);
+					}
+				}
 				PreferenceDialog dialog = PreferencesUtil
 						.createPreferenceDialogOn(windowShell, getCapabilityPageId(),
 								null, null);
