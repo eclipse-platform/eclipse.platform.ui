@@ -126,6 +126,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 
 		setTitleImage(cei.getTitleImage());
 		setPartName(cei.getTitle());	// was setTitle(cei.getTitle());
+		setTitleToolTip(cei.getToolTipText());
 				
 		if (input instanceof IPropertyChangeNotifier)
 			((IPropertyChangeNotifier)input).addPropertyChangeListener(fPropertyChangeListener);
@@ -140,6 +141,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 					fControl.setSize(oldSize);
 			}
 		}
+        
+        firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
 	}
 	
 	public IActionBars getActionBars() {
