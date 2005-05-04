@@ -43,6 +43,7 @@ public class WorkingSetTestCase extends UITestCase {
     }
     
     private void assertMatches(ResourceMapping mapping, IResource[] resources) throws CoreException {
+    	assertTrue(mapping != null);
         ResourceTraversal[] traversals = mapping.getTraversals(null, null);
         assertTrue(traversals.length == resources.length);
         for (int i = 0; i < traversals.length; i++) {
