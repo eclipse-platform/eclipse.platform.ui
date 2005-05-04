@@ -296,6 +296,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = layout.marginWidth = 0;
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         composite.setLayout(layout);
 
         Label label = new Label(composite, SWT.NONE);
