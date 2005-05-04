@@ -38,9 +38,9 @@ public interface IPropertySource2 extends IPropertySource {
     boolean isPropertyResettable(Object id);
 
     /**
-     * The <code>IPropertySource2</code> implementation of this <code>IPropertySource</code> 
-     * method changes the specification of the value that should be returned if the specified 
-     * property does not have a meaningful default value to <code>true</code>.
+     * <code>IPropertySource2</code> overrides the specification of this <code>IPropertySource</code> 
+     * method to return <code>true</code> instead of <code>false</code> if the specified 
+     * property does not have a meaningful default value.
      * <code>isPropertyResettable</code> will only be called if <code>isPropertySet</code> returns
      * <code>true</code>.
      * <p> 
