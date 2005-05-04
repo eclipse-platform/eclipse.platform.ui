@@ -22,6 +22,8 @@ import org.eclipse.jface.text.IDocumentListener;
 	protected UndoEdit undo;
 	private int fOffset;
 	private int fLength;
+	
+	private String fLastCurrentText;
 
 	public UndoCollector(TextEdit root) {
 		fOffset= root.getOffset();
@@ -57,6 +59,13 @@ import org.eclipse.jface.text.IDocumentListener;
 			currentText= event.getDocument().get(offset, currentLength);
 		} catch (BadLocationException cannotHappen) {
 			Assert.isTrue(false, "Can't happen"); //$NON-NLS-1$
+		}
+		
+		// simple approach to reuse the same string across undos..
+		if (fLastCurrentText != null && fLastCurrentText.equals(currentText)) {
+			currentText= fLastCurrentText;
+		} else {
+			fLastCurrentText= currentText;
 		}
 
 		String newText = event.getText();
