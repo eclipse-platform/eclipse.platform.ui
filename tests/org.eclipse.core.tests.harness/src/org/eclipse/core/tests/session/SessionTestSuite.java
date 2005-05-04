@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class SessionTestSuite extends TestSuite {
 	protected String pluginId;
 	private Setup setup;
 	protected SessionTestRunner testRunner;
+	private Set localTests = new HashSet();
 
 	public SessionTestSuite(String pluginId) {
 		super();
@@ -46,6 +47,14 @@ public class SessionTestSuite extends TestSuite {
 
 	public void addCrashTest(TestCase test) {
 		crashTests.add(test);
+		super.addTest(test);
+	}
+	
+	/**
+	 * Adds a local test, a test that is run locally, not in a separate session.
+	 */
+	public void addLocalTest(TestCase test) {
+		localTests .add(test);
 		super.addTest(test);
 	}
 
@@ -104,18 +113,26 @@ public class SessionTestSuite extends TestSuite {
 		}
 	}
 
-	public void runTest(Test test, TestResult result) {
+	public final void runTest(Test test, TestResult result) {
 		if (test instanceof TestDescriptor)
 			runSessionTest((TestDescriptor) test, result);
-		else if (test instanceof TestCase)
-			runSessionTest(new TestDescriptor((TestCase) test), result);
-		else if (test instanceof TestSuite)
+		else if (test instanceof TestCase) {
+			if (isLocalTest(test))
+				// local, ordinary test - just run it
+				test.run(result);
+			else
+				runSessionTest(new TestDescriptor((TestCase) test), result);
+		} else if (test instanceof TestSuite)
 			// find and run the test cases that make up the suite
 			runTestSuite((TestSuite) test, result);
 		else
 			// we don't support session tests for things that are not TestCases 
 			// or TestSuites (e.g. TestDecorators) 
 			test.run(result);
+	}
+
+	private boolean isLocalTest(Test test) {
+		return localTests.contains(test);
 	}
 
 	/*
