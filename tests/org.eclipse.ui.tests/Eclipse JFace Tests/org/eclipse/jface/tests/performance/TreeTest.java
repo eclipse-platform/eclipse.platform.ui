@@ -37,6 +37,7 @@ public class TreeTest extends ViewerTest {
 		viewer.setContentProvider(getContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.setSorter(new ViewerSorter());
+		viewer.setUseHashlookup(true);
 		return viewer;
 	}
 
