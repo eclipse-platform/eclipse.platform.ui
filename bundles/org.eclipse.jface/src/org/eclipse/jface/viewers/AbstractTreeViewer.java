@@ -196,52 +196,74 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 		
 		ViewerSorter sorter = getSorter ();
-		Item[] items = null;
-
-        if (sorter == null) {
-		   items = getChildren(widget);
-		  for (int i = 0; i < elements.length; i++) {
-			for (int j = 0; j < items.length; j++) {
-              if (items[j].getData().equals(elements[i])) {
-              	//refresh the element in case it has new children
-              	refresh(elements[i]);
-                 return;
-              }
-			}
-		  }
-        }
-
-		
+		Item[] items = getChildren(widget);
 		
 		//As the items are sorted already we optimize for a 
 		//start position
 		int lastInsertion = 0;		
-		if(items == null)//Don't ask if we already have it
-			items = getChildren(widget);			
 		
+		//Optimize for the empty case
+		if(items.length == 0){
+			for (int i = 0; i < elements.length; i++) {
+				createTreeItem(widget, elements[i], -1);		
+			}
+			return;
+		}
+	
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			int index;
-			if(sorter == null)
-				index = -1;
-			else{
-				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
-				//As we are only searching the original array we keep track of those positions only
-				index = lastInsertion + i; //Add the index as the array is growing
-				// Assume sorter is consistent with equals() - therefore we can
-				// just check against the item prior to this index (if any)
-				if (index >0 && index < items.length && items[index].getData().equals(element)) {
-					//refresh the element in case it has new children
+			if(sorter == null){
+				if(itemExists(items,element)){
 					refresh(element);
 					break;
 				}
-				if(index == items.length)
+				index = -1;
+			}
+			else{
+				lastInsertion = insertionPosition(items,sorter,lastInsertion, element);
+				//As we are only searching the original array we keep track of those positions only
+				if(lastInsertion == items.length)
 					index = -1;
+				else{//See if we should just refresh
+					while(lastInsertion < items.length && sorter.compare(this,element,items[lastInsertion].getData()) == 0){
+						//As we cannot assume the sorter is consistent with equals() - therefore we can
+						// just check against the item prior to this index (if any)
+						if (items[lastInsertion].getData().equals(element)) {
+							//refresh the element in case it has new children
+							refresh(element);
+							break;
+						}
+						lastInsertion ++;//We had an insertion so increment
+					}
+					//Did we get to the end?
+					if(lastInsertion == items.length)
+						index = -1;
+					else
+						index = lastInsertion + i; //Add the index as the array is growing					
+				}
 			}
 			createTreeItem(widget, element, index);		
 		}
     }
 	
+
+    /**
+     * See if element is the data of one of the elements in 
+     * items.
+     * @param items
+     * @param element
+     * @return <code>true</code> if the element matches.
+     */
+	private boolean itemExists(Item[] items, Object element) {
+		if(usingElementMap())//if we can do a constant time lookup find it
+			return findItem(element) != null;
+		for (int i = 0; i < items.length; i++) {
+			if(items[i].getData().equals(element))
+				return true;
+		}
+		return false;
+	}
 
 	/**
      * Returns the index where the item should be inserted. It uses sorter to
@@ -272,16 +294,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             Object data = items[mid].getData();
             int compare = sorter.compare(this, data, element);
             if (compare == 0) {
-                // find first item > element
-                while (compare == 0) {
-                    ++mid;
-                    if (mid >= size) {
-                        break;
-                    }
-                    data = items[mid].getData();
-                    compare = sorter.compare(this, data, element);
-                }
-                return mid;
+                return mid;//Return if we already match
             }
             if (compare < 0)
                 min = mid + 1;
