@@ -24,7 +24,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType == org.eclipse.core.resources.mapping.ResourceMapping.class && adaptableObject instanceof IResource) {
+		if (adapterType == ResourceMapping.class && adaptableObject instanceof IResource) {
 			return new SimpleResourceMapping((IResource) adaptableObject);
 		}
 		return null;

@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 3.1
  */
-public class SimpleResourceMapping extends org.eclipse.core.resources.mapping.ResourceMapping {
+public class SimpleResourceMapping extends ResourceMapping {
 	private final IResource resource;
-	private org.eclipse.core.resources.mapping.ResourceTraversal[] traversals;
+	private ResourceTraversal[] traversals;
 
 	public SimpleResourceMapping(IResource resource) {
 		this.resource = resource;
@@ -45,9 +45,9 @@ public class SimpleResourceMapping extends org.eclipse.core.resources.mapping.Re
 	/* (non-Javadoc)
 	 * Method declared on ResourceMapping.
 	 */
-	public org.eclipse.core.resources.mapping.ResourceTraversal[] getTraversals(org.eclipse.core.resources.mapping.ResourceMappingContext context, IProgressMonitor monitor) {
+	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		if (traversals == null) {
-			traversals = new org.eclipse.core.resources.mapping.ResourceTraversal[] {new org.eclipse.core.resources.mapping.ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
+			traversals = new ResourceTraversal[] {new ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
 		}
 		return traversals;
 	}
