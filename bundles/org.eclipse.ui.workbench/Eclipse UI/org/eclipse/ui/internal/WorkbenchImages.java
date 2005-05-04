@@ -236,6 +236,10 @@ public/*final*/class WorkbenchImages {
                         + "import_wiz.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN
                         + "export_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ, PATH_WIZBAN
+                + "importpref_wiz.gif", false); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_PREF_WIZ, PATH_WIZBAN
+                + "exportpref_wiz.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ,
                 PATH_WIZBAN + "workset_wiz.gif", false); //$NON-NLS-1$

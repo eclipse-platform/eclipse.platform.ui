@@ -41,7 +41,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%ImportWizards.Preferences"
-            icon="icons/full/etool16/importdir_wiz.gif"
+            icon="icons/full/obj16/importpref_obj.gif"
             id="org.eclipse.ui.wizards.import.Preferences"
             class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
          <description>
@@ -86,7 +86,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             name="%ExportWizards.Preferences"
-            icon="icons/full/etool16/exportdir_wiz.gif"
+            icon="icons/full/obj16/exportpref_obj.gif"
             class="org.eclipse.ui.ExtensionFactory:preferencesExportWizard"
             id="org.eclipse.ui.wizards.export.Preferences">
          <description>
@@ -727,7 +727,7 @@
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
             id="org.eclipse.ui.ide.transfer.keys"
-            icon="\icons\full\etool16\exportdir_wiz.gif"
+            icon="\icons\full\obj16\keyspref_obj.gif"
             name="%KeysPreference.Name">
             <mapping scope="instance">
             	<entry node="org.eclipse.ui.workbench">

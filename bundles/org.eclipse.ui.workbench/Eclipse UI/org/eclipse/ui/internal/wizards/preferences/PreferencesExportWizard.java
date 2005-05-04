@@ -15,6 +15,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -71,7 +73,8 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(PreferencesMessages.PreferencesExportWizard_export);
-       // setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_PREF_WIZ));
         setNeedsProgressMonitor(true);
     }
 

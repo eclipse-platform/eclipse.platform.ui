@@ -94,6 +94,10 @@ public interface IWorkbenchGraphicConstants {
     public final static String IMG_WIZBAN_EXPORT_WIZ = "IMG_WIZBAN_EXPORT_WIZ"; //$NON-NLS-1$
 
     public final static String IMG_WIZBAN_IMPORT_WIZ = "IMG_WIZBAN_IMPORT_WIZ"; //$NON-NLS-1$
+    
+    public final static String IMG_WIZBAN_EXPORT_PREF_WIZ = "IMG_WIZBAN_EXPORT_PREF_WIZ"; //$NON-NLS-1$
+
+    public final static String IMG_WIZBAN_IMPORT_PREF_WIZ = "IMG_WIZBAN_IMPORT_PREF_WIZ"; //$NON-NLS-1$
 
     public final static String IMG_WIZBAN_WORKINGSET_WIZ = "IMG_WIZBAN_WORKINGSET_WIZ"; //$NON-NLS-1$
 

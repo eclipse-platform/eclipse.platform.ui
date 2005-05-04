@@ -15,6 +15,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
@@ -73,8 +75,8 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
      */
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(PreferencesMessages.PreferencesImportWizard_import);
-       // setDefaultPageImageDescriptor(
-		//		IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ));
         setNeedsProgressMonitor(true);
     }
 
