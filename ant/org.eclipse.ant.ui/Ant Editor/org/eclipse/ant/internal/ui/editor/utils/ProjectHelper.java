@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +35,6 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
@@ -621,44 +618,20 @@ public class ProjectHelper extends ProjectHelper2 {
                 newCurrent.setProject(project);
                 newCurrent.setName(""); //$NON-NLS-1$
                 context.setCurrentTarget(newCurrent);
-                //context.setCurrentTargets(new HashMap());
-                configureContextCurrentTargets(context, new HashMap());
+                context.setCurrentTargets(new HashMap());
                 context.setImplicitTarget(newCurrent);
                 parse(project, source, new RootHandler(context, mainHandler));
             } finally {
                 context.setCurrentTarget(currentTarget);
                 context.setImplicitTarget(currentImplicit);
-                //context.setCurrentTargets(currentTargets);
-                configureContextCurrentTargets(context, currentTargets);
+                context.setCurrentTargets(currentTargets);
             }
         } else {
             // top level file
-            //context.setCurrentTargets(new HashMap());
-            configureContextCurrentTargets(context, new HashMap());
+            context.setCurrentTargets(new HashMap());
             parse(project, source, new RootHandler(context, mainHandler));
         }
 	}
-
-    /**
-     * Workaround for bug 93330
-     */
-    private void configureContextCurrentTargets(AntXMLContext context, Map targets) {
-        try {
-            Method setCurrentTargets= context.getClass().getDeclaredMethod("setCurrentTargets", new Class[] { Map.class }); //$NON-NLS-1$
-            setCurrentTargets.setAccessible(true);
-            setCurrentTargets.invoke(context, new Map[] { targets });
-        } catch (SecurityException e) {
-           AntUIPlugin.log(e);
-        } catch (NoSuchMethodException e) {
-            AntUIPlugin.log(e);
-        } catch (IllegalArgumentException e) {
-            AntUIPlugin.log(e);
-        } catch (IllegalAccessException e) {
-            AntUIPlugin.log(e);
-        } catch (InvocationTargetException e) {
-            AntUIPlugin.log(e);
-        }
-    }
 
     public static void reset() {
         fgXMLReader= null;
