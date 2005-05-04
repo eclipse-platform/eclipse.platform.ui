@@ -64,7 +64,7 @@ public final class LegacyResourceSupport {
 
     /**
      * Cached value of
-     * <code>Class.forName("org.eclipse.ui.IContributorResourceAdapter2")</code>;
+     * <code>Class.forName("org.eclipse.ui.internal.ide.IContributorResourceAdapter2")</code>;
      * <code>null</code> if not initialized or not present.
      * @since 3.1
      */
@@ -210,7 +210,7 @@ public final class LegacyResourceSupport {
             // tried before and succeeded
             return icontributorResourceAdapter2Class;
         }
-        Class c = loadClass("org.eclipse.ui.ide", "org.eclipse.ui.IContributorResourceAdapter2"); //$NON-NLS-1$ //$NON-NLS-2$
+        Class c = loadClass("org.eclipse.ui.ide", "org.eclipse.ui.internal.ide.IContributorResourceAdapter2"); //$NON-NLS-1$ //$NON-NLS-2$
         if (c != null) {
             // The class was found so record it
             icontributorResourceAdapter2Class = c;

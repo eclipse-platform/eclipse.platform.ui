@@ -12,7 +12,6 @@
   <type name="ICapabilityInstallWizard"/>
   <type name="ICapabilityUninstallWizard"/>
   <type name="IContributorResourceAdapter"/>
-  <type name="IContributorResourceAdapter2"/>
   <type name="IFileEditorInput"/>
   <type name="IMarkerActionFilter"/>
   <type name="IMarkerHelpRegistry"/>
