@@ -173,14 +173,13 @@ public class DebugUIMessages extends NLS {
 	public static String SetPaddedStringDialog_3;
 	public static String SetPaddedStringDialog_4;
 
-	public static String TableRenderingPropertiesPage_0;
+
 	public static String TableRenderingPropertiesPage_1;
 	public static String TableRenderingPropertiesPage_2;
 	public static String TableRenderingPropertiesPage_3;
 	public static String TableRenderingPropertiesPage_4;
 	public static String TableRenderingPropertiesPage_5;
 	public static String TableRenderingPropertiesPage_6;
-	public static String TableRenderingPropertiesPage_7;
 	public static String TableRenderingPropertiesPage_8;
 	public static String TableRenderingPropertiesPage_9;
 	public static String TableRenderingPropertiesPage_10;
@@ -197,7 +196,6 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingPropertiesPage_21;
 	public static String TableRenderingPropertiesPage_22;
 	public static String TableRenderingPropertiesPage_23;
-	public static String TableRenderingPropertiesPage_24;
 	public static String TableRenderingPropertiesPage_25;
 	public static String TableRenderingPropertiesPage_26;
 	
