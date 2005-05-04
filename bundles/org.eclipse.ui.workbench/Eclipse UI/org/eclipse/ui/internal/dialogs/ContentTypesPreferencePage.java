@@ -51,6 +51,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -210,7 +211,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             IContentType[] contentTypes = manager.getAllContentTypes();
             for (int i = 0; i < contentTypes.length; i++) {
                 IContentType type = contentTypes[i];
-                if (type.getBaseType() == baseType)
+                if (Util.equals(type.getBaseType(), baseType))
                     elements.add(type);
             }
             return elements.toArray();
