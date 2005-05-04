@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.internal.ide;
 
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IContributorResourceAdapter;
 
 /**
  * An extension to the <code>IContributorResourceAdapter</code> that adapts 
