@@ -23,9 +23,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -49,11 +47,11 @@ public class TaskView extends MarkerView {
 
     private static final String COMPLETION = "completion"; //$NON-NLS-1$
 
-    private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
+    private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
 			new ColumnPixelData(16, false, true),
 			new ColumnPixelData(16, false, true),
-			new ColumnWeightData(200), new ColumnWeightData(75),
-			new ColumnWeightData(150), new ColumnWeightData(60) };
+			new ColumnPixelData(200), new ColumnPixelData(75),
+			new ColumnPixelData(150), new ColumnPixelData(60) };
 
     private final IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
@@ -202,7 +200,7 @@ public class TaskView extends MarkerView {
         super.saveState(memento);
     }
 
-    protected ColumnLayoutData[] getDefaultColumnLayouts() {
+    protected ColumnPixelData[] getDefaultColumnLayouts() {
         return DEFAULT_COLUMN_LAYOUTS;
     }
 

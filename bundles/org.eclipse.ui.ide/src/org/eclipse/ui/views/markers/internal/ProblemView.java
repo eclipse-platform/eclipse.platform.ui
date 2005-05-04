@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Table;
@@ -33,10 +31,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ProblemView extends MarkerView {
 
-    private final ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
-            new ColumnPixelData(16, false, true), new ColumnWeightData(200),
-            new ColumnWeightData(75), new ColumnWeightData(150),
-            new ColumnWeightData(60) };
+    private final ColumnPixelData[] DEFAULT_COLUMN_LAYOUTS = {
+            new ColumnPixelData(16, false, true), new ColumnPixelData(200),
+            new ColumnPixelData(75), new ColumnPixelData(150),
+            new ColumnPixelData(60) };
 
     // Direction constants - use the ones on TableSorter to stay sane
     private final static int ASCENDING = TableSorter.ASCENDING;
@@ -109,7 +107,7 @@ public class ProblemView extends MarkerView {
         super.saveState(memento);
     }
 
-    protected ColumnLayoutData[] getDefaultColumnLayouts() {
+    protected ColumnPixelData[] getDefaultColumnLayouts() {
         return DEFAULT_COLUMN_LAYOUTS;
     }
 

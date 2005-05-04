@@ -71,7 +71,7 @@ public abstract class TableView extends ViewPart {
 
     private IMemento memento;
 
-    protected ColumnLayoutData[] columnLayouts;
+    //protected ColumnLayoutData[] columnLayouts;
 
     private Map actions = new HashMap();
 
@@ -116,7 +116,6 @@ public abstract class TableView extends ViewPart {
         parent.setLayout(new FillLayout());
 
         viewer = new TableViewer(createTable(parent));
-        restoreColumnWidths(memento);
         createColumns(viewer.getTable());
         content = new TableContentProvider(viewer, Messages.format(
                 "TableView.populating", //$NON-NLS-1$
@@ -205,25 +204,83 @@ public abstract class TableView extends ViewPart {
         table.setFont(parent.getFont());
         return table;
     }
+    
+    public ColumnPixelData[] getSavedColumnData() {
+        ColumnPixelData[] defaultData = getDefaultColumnLayouts();
+        
+        ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
+        for (int i = 0; i < defaultData.length; i++) {
+            ColumnPixelData data = result[i];
+            int width = defaultData[i].width;
+            ColumnPixelData defaultPixelData = defaultData[i];
+           
+            // non-resizable columns are always left at their default width
+            if (defaultPixelData.resizable) {
+                if (memento != null) {
+                    Integer widthInt = memento.getInteger(TAG_COLUMN_WIDTH + i);
+                    
+                    if (widthInt != null && widthInt.intValue() > 0) {
+                        width = widthInt.intValue();
+                    }
+                }
+            }
+            
+            result[i] = new ColumnPixelData(width, defaultPixelData.resizable, defaultPixelData.addTrim); 
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Return the column sizes from the actual widget. Returns the saved column sizes if the
+     * widget hasn't been created yet or its columns haven't been initialized yet. (Note that
+     * TableLayout only initializes the column widths after the first layout, so it is possible for
+     * the widget to exist but have all its columns incorrectly set to zero width - see bug 86329)
+     */
+    public ColumnPixelData[] getColumnData() {
+        ColumnPixelData[] defaultData = getSavedColumnData();
+        
+        Table table = getTable();
+        
+        if (table != null && (table.isDisposed() || table.getBounds().width == 0)) {
+            table = null;
+        }
+        
+        TableColumn[] column = null;
+        if (table != null) {
+            column = table.getColumns();
+        }
+        
+        ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
+        for (int i = 0; i < defaultData.length; i++) {
+            ColumnPixelData data = result[i];
 
+            ColumnPixelData defaultPixelData = defaultData[i];
+            int width = defaultData[i].width;
+            
+            if (column != null && i < column.length) {
+                TableColumn col = column[i];
+                
+                if (col.getWidth() > 0) {
+                    width = col.getWidth();
+                }
+            }
+            
+            result[i] = new ColumnPixelData(width, defaultPixelData.resizable, defaultPixelData.addTrim); 
+        }
+        
+        return result;
+    }
+    
     protected void createColumns(final Table table) {
         SelectionListener headerListener = getHeaderListener();
         TableLayout layout = new TableLayout();
         table.setLayout(layout);
         table.setHeaderVisible(true);
         final IField[] fields = getVisibleFields();
-        ColumnLayoutData[] columnWidths = columnLayouts;
-        if (columnWidths == null) {
-            columnWidths = getDefaultColumnLayouts();
-        }
+        ColumnLayoutData[] columnWidths = getSavedColumnData();
         for (int i = 0; i < fields.length; i++) {
-            if (columnWidths == null || i >= columnWidths.length
-                    || columnWidths[i] == null) {
-                layout.addColumnData(new ColumnPixelData(504 / fields.length,
-                        true));
-            } else {
-                layout.addColumnData(columnWidths[i]);
-            }
+            layout.addColumnData(columnWidths[i]);
             TableColumn tc = new TableColumn(table, SWT.NONE, i);
             tc.setText(fields[i].getColumnHeaderText());
             tc.setImage(fields[i].getColumnHeaderImage());
@@ -326,6 +383,16 @@ public abstract class TableView extends ViewPart {
     protected TableViewer getViewer() {
         return viewer;
     }
+    
+    protected Table getTable() {
+        TableViewer v = getViewer();
+        
+        if (v == null) {
+            return null;
+        }
+        
+        return v.getTable();
+    }
 
     protected SelectionListener getHeaderListener() {
         return new SelectionAdapter() {
@@ -347,7 +414,7 @@ public abstract class TableView extends ViewPart {
         };
     }
 
-    protected abstract ColumnLayoutData[] getDefaultColumnLayouts();
+    protected abstract ColumnPixelData[] getDefaultColumnLayouts();
 
     protected TableSortDialog getSortDialog() {
         if (getSorter() != null) {
@@ -384,10 +451,12 @@ public abstract class TableView extends ViewPart {
     public void saveState(IMemento memento) {
         super.saveState(memento);
 
-        //save column widths
-        TableColumn[] columns = viewer.getTable().getColumns();
-        for (int i = 0; i < columns.length; i++) {
-            memento.putInteger(TAG_COLUMN_WIDTH + i, columns[i].getWidth());
+        ColumnPixelData[] data = getColumnData();
+        
+        for (int i = 0; i < data.length; i++) {
+            ColumnPixelData data2 = data[i];
+            
+            memento.putInteger(TAG_COLUMN_WIDTH + i, data2.width);
         }
 
         saveSelection(memento);
@@ -404,22 +473,6 @@ public abstract class TableView extends ViewPart {
     }
 
     protected abstract void saveSelection(IMemento memento);
-
-    private void restoreColumnWidths(IMemento memento) {
-        if (memento == null) {
-            return;
-        }
-        columnLayouts = new ColumnLayoutData[getVisibleFields().length];
-        for (int i = 0; i < columnLayouts.length; i++) {
-            Integer width = memento.getInteger(TAG_COLUMN_WIDTH + i);
-            if (width == null) {
-                columnLayouts = null;
-                break;
-            } else {
-                columnLayouts[i] = new ColumnPixelData(width.intValue(), true);
-            }
-        }
-    }
 
     protected abstract IStructuredSelection restoreSelection(IMemento memento);
 
