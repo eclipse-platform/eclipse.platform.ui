@@ -23,8 +23,9 @@ public class StartupTest extends UITestCase {
     }
 
     public void testStartup() {
-        assertTrue("Startup - explicit", StartupClass.wasEarlyStartupCalled());
-        assertTrue("Startup - implicit", TestPlugin.wasEarlyStartupCalled());
+        assertTrue("Startup - explicit", StartupClass.getEarlyStartupCalled());
+        assertTrue("Startup - implicit", TestPlugin.getEarlyStartupCalled());
+        assertTrue("Startup - completed before tests", StartupClass.getEarlyStartupCompleted());
     }
 
     protected void doTearDown() throws Exception {
@@ -32,7 +33,7 @@ public class StartupTest extends UITestCase {
         // NOTE:  tearDown will run after each test.  Therefore, we
         // only want one test in this suite (or the values set when
         // this plugin started up will be lost).
-        StartupClass.clearEarlyStartup();
+        StartupClass.reset();
         TestPlugin.clearEarlyStartup();
     }
 }

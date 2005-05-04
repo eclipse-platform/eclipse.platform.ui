@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
+import org.eclipse.ui.tests.api.StartupTest;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.concurrency.ConcurrencyTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
@@ -55,6 +56,9 @@ public class UiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UiTestSuite() {
+    	// run the StartupTest first, since we need to check early that the tests 
+    	// run only after early startup has completed (bug 93518).
+        addTest(new TestSuite(StartupTest.class));
         addTest(new UIAutomatedSuite());
         addTest(new ApiTestSuite());
         addTest(new PropertySheetTestSuite());

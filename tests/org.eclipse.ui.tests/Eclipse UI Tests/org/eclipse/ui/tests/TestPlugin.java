@@ -109,7 +109,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
         earlyStartupCalled = true;
     }
 
-    public static boolean wasEarlyStartupCalled() {
+    public static boolean getEarlyStartupCalled() {
         return earlyStartupCalled;
     }
 
