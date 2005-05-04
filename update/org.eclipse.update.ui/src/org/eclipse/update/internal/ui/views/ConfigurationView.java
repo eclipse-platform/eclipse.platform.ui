@@ -28,9 +28,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.branding.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -108,12 +110,9 @@ public class ConfigurationView
 				return;
 		}
 
-		/**
-		 * @see ITreeContentProvider#getChildren(Object)
-		 */
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof UpdateModel) {
-				ILocalSite localSite = getLocalSite();
+				LocalSiteWorkbenchAdapter localSite = getUIReadyLocalSite(getLocalSite());
 				return (localSite != null) ? new Object[] { localSite }
 				: new Object[0];
 			}
@@ -841,6 +840,7 @@ public class ConfigurationView
 	protected void handleDoubleClick(DoubleClickEvent e) {
 		if (e.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
+			
 			Object obj = ssel.getFirstElement();
 			if (obj!=null)
 				propertiesAction.run();
@@ -1157,5 +1157,95 @@ public class ConfigurationView
 	ConfigurationManagerWindow getConfigurationWindow(){
 		return configurationWindow;
 	}
+	
+	private LocalSiteWorkbenchAdapter getUIReadyLocalSite(ILocalSite localSite) {
+			
+		return new LocalSiteWorkbenchAdapter(localSite);
+			
+	}
+	
+	
 
+}
+
+class LocalSiteWorkbenchAdapter extends SiteLocal implements IWorkbenchAdapter {
+	
+	private ILocalSite localSite;
+	
+	public LocalSiteWorkbenchAdapter(ILocalSite localSite) {
+		this.localSite = localSite;
+	}
+	
+	public Object[] getChildren(Object o) {
+		return null;
+	}
+
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+
+	public String getLabel(Object o) {
+		return Platform.getProduct().getName();
+	}
+
+	public Object getParent(Object o) {
+		return null;
+	}
+
+	public void addConfiguration(IInstallConfiguration config) {
+		localSite.addConfiguration(config);
+	}
+
+	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener) {
+		localSite.addLocalSiteChangedListener(listener);
+	}
+
+	public IInstallConfiguration addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
+		return localSite.addToPreservedConfigurations(configuration);
+	}
+
+	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
+		return localSite.cloneCurrentConfiguration();
+	}
+
+	public IInstallConfiguration[] getConfigurationHistory() {
+		return localSite.getConfigurationHistory();
+	}
+
+	public IInstallConfiguration getCurrentConfiguration() {
+		return localSite.getCurrentConfiguration();
+	}
+
+	public IStatus getFeatureStatus(IFeature feature) throws CoreException {
+		return localSite.getFeatureStatus(feature);
+	}
+
+	public int getMaximumHistoryCount() {
+		return localSite.getMaximumHistoryCount();
+	}
+
+	public IInstallConfiguration[] getPreservedConfigurations() {
+		return localSite.getPreservedConfigurations();
+	}
+
+	public void removeFromPreservedConfigurations(IInstallConfiguration configuration) {
+		localSite.removeFromPreservedConfigurations(configuration);
+	}
+
+	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener) {
+		localSite.removeLocalSiteChangedListener(listener);
+	}
+
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException {
+		localSite.revertTo(configuration, monitor, handler);
+	}
+
+	public boolean save() throws CoreException {
+		return localSite.save();
+	}
+
+	public void setMaximumHistoryCount(int history) {
+		localSite.setMaximumHistoryCount(history);
+	}
+	
 }

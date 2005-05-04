@@ -88,7 +88,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	/**
 	 * 
 	 */
-	private SiteLocal() {
+	protected SiteLocal() {
 	}
 
 	/**

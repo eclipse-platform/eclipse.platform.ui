@@ -13,19 +13,44 @@ package org.eclipse.update.internal.operations;
 //import java.io.*;
 //import java.net.*;
 //import java.nio.channels.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configurator.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.configurator.PlatformConfiguration;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.operations.*;
-import org.osgi.framework.*;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.IOperationValidator;
+import org.osgi.framework.Bundle;
 
 /**
  *  
@@ -154,6 +179,29 @@ public class OperationValidator implements IOperationValidator {
 
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
+	}
+	
+	/*
+	 * Called by the UI before doing a batched processing of several pending
+	 * changes.
+	 */
+	public RequiredFeaturesResult getRequiredFeatures(IInstallFeatureOperation[] jobs) {
+		
+		RequiredFeaturesResult requiredFeaturesResult = new RequiredFeaturesResult();
+		// check initial state
+		ArrayList beforeStatus = new ArrayList();
+		validateInitialState(beforeStatus);
+		checkPlatformWasModified(beforeStatus);
+
+		// check proposed change
+		ArrayList status = new ArrayList();
+		Set requiredFeatures = validatePendingChanges(jobs, status, beforeStatus);
+
+		// report status
+		//return createCombinedReportStatus(beforeStatus, status);
+		requiredFeaturesResult.setRequiredFeatures(requiredFeatures);
+		requiredFeaturesResult.setStatus(createCombinedReportStatus(beforeStatus, status));
+		return requiredFeaturesResult;
 	}
 
 	/*
@@ -285,7 +333,7 @@ public class OperationValidator implements IOperationValidator {
 	/*
 	 * Handle one-click changes as a batch
 	 */
-	private static void validatePendingChanges(
+	private static Set validatePendingChanges(
 		IInstallFeatureOperation[] jobs,
 		ArrayList status,
 		ArrayList beforeStatus) {
@@ -319,10 +367,10 @@ public class OperationValidator implements IOperationValidator {
 						oldFeature);
 			}
 			if (nexclusives > 0)
-				return;
+				return Collections.EMPTY_SET;
 			checkConstraints(features, tmpStatus);
 			if (tmpStatus.size() == 0) // the whole "batch" is OK
-				return;
+				return Collections.EMPTY_SET;
 
 			// pass 2: we have conflicts
 			features = savedFeatures;
@@ -337,7 +385,7 @@ public class OperationValidator implements IOperationValidator {
 						newFeature,
 						oldFeature);
 
-				checkConstraints(features, status);
+				Set result = checkConstraints(features, status);
 				if (status.size() > 0
 					&& !isBetterStatus(beforeStatus, status)) {
 // bug 75613
@@ -347,12 +395,14 @@ public class OperationValidator implements IOperationValidator {
 //							FeatureStatus.CODE_OTHER,
 //							Policy.bind(KEY_CONFLICT));
 //					status.add(0, conflict);
-					return;
+					return result;
 				}
 			}
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
+		
+		return Collections.EMPTY_SET;
 	}
 	
 	private static void checkPlatformWasModified(ArrayList status) {
@@ -433,7 +483,7 @@ public class OperationValidator implements IOperationValidator {
 	 * Compute the nested feature subtree starting at the specified base
 	 * feature
 	 */
-	private static ArrayList computeFeatureSubtree(
+	public static ArrayList computeFeatureSubtree(
 			IFeature top,
 			IFeature feature,
 			ArrayList features,
@@ -657,17 +707,17 @@ public class OperationValidator implements IOperationValidator {
 	/*
 	 * validate constraints
 	 */
-	private static void checkConstraints(ArrayList features, ArrayList status)
+	private static Set  checkConstraints(ArrayList features, ArrayList status)
 		throws CoreException {
 		if (features == null)
-			return;
+			return Collections.EMPTY_SET;
 
 		ArrayList plugins = computePluginsForFeatures(features);
 
 		checkEnvironment(features, status);
 		checkPlatformFeature(features, plugins, status);
 		checkPrimaryFeature(features, plugins, status);
-		checkPrereqs(features, plugins, status);
+		return checkPrereqs(features, plugins, status);
 	}
 
 	/*
@@ -801,10 +851,12 @@ public class OperationValidator implements IOperationValidator {
 	/*
 	 * Verify we do not break prereqs
 	 */
-	private static void checkPrereqs(
+	private static Set checkPrereqs(
 		ArrayList features,
 		ArrayList plugins,
 		ArrayList status) {
+		
+		HashSet result = new HashSet();
 
 		for (int i = 0; i < features.size(); i++) {
 			IFeature feature = (IFeature) features.get(i);
@@ -904,7 +956,7 @@ public class OperationValidator implements IOperationValidator {
 							msg =
 								NLS.bind(Messages.ActivityConstraints_prereqCompatible, (new String[] {
                                 target,
-                                id,
+                                feature.getLabel(),
                                 version.toString()}));
 						else if (rule == IImport.RULE_GREATER_OR_EQUAL)
 							msg =
@@ -914,11 +966,14 @@ public class OperationValidator implements IOperationValidator {
                                 version.toString()}));
 					}
 					IStatus s = createStatus(feature, errorCode, msg);
+					result.add(new InternalImport(iimport));
 					if (!status.contains(s))
 						status.add(s);
 				}
 			}
 		}
+		
+		return result;
 	}
 
 	/*
@@ -1247,6 +1302,67 @@ public class OperationValidator implements IOperationValidator {
 				return false;
 		}
 		return true;
+	}
+	
+	public class RequiredFeaturesResult {
+		
+		private IStatus status;
+		private Set requiredFeatures;
+		
+		public Set getRequiredFeatures() {
+			return requiredFeatures;
+		}
+		public void setRequiredFeatures(Set requiredFeatures) {
+			this.requiredFeatures = requiredFeatures;
+		}
+		public void addRequiredFeatures(Set requiredFeatures) {
+			if (requiredFeatures == null) {
+				requiredFeatures = new HashSet();
+			}
+			this.requiredFeatures.addAll(requiredFeatures);
+		}
+		public IStatus getStatus() {
+			return status;
+		}
+		public void setStatus(IStatus status) {
+			this.status = status;
+		}
+		
+		
+	}
+	
+	public static class InternalImport {
+		
+		private IImport iimport;
+
+		public InternalImport(IImport iimport) {
+			this.iimport = iimport;
+		}
+		
+		public IImport getImport() {
+			return iimport;
+		}
+
+		public void setImport(IImport iimport) {
+			this.iimport = iimport;
+		}
+		
+		public boolean equals(Object object) {
+
+			if ( ( object == null) || !(object instanceof InternalImport))
+				return false;
+			
+			if ( object == this)
+				return true;
+			
+			return iimport.getVersionedIdentifier().equals( ((InternalImport)object).getImport().getVersionedIdentifier()) && (getImport().getRule() == ((InternalImport)object).getImport().getRule());
+
+		}
+
+		public int hashCode() {
+			return iimport.getVersionedIdentifier().hashCode() * iimport.getRule();
+		}
+		
 	}
 
 }

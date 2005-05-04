@@ -104,7 +104,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
     /**
      * Updates the check state of all created children
      */
-    private void updateChildrenItems(TreeItem parent) {
+    protected void updateChildrenItems(TreeItem parent) {
         Item[] children = getChildren(parent);
         boolean state = parent.getChecked();
         for (int i = 0; i < children.length; i++) {
@@ -200,4 +200,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
+    protected void createChildren(final Widget widget) {
+    	super.createChildren(widget);
+    }
 }

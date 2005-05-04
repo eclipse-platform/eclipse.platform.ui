@@ -291,6 +291,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_ReviewPage_deselectAll;
 	public static String InstallWizard_ReviewPage_moreInfo;
 	public static String InstallWizard_ReviewPage_properties;
+	public static String InstallWizard_ReviewPage_selectRequired;
 	public static String InstallWizard_ReviewPage_showStatus;
 	public static String InstallWizard_ReviewPage_filterFeatures;
 	public static String InstallWizard_ReviewPage_filterPatches;

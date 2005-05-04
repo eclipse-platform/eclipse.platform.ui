@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,6 +58,7 @@ import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.Utilities;
@@ -76,6 +80,9 @@ import org.eclipse.update.internal.ui.parts.SharedLabelProvider;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 import org.eclipse.update.operations.IUpdateModelChangedListener;
 import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.internal.operations.OperationValidator;
+import org.eclipse.update.internal.operations.OperationValidator.InternalImport;
+import org.eclipse.update.internal.operations.OperationValidator.RequiredFeaturesResult;
 import org.eclipse.update.search.IUpdateSearchSite;
 import org.eclipse.update.search.UpdateSearchRequest;
 
@@ -95,6 +102,7 @@ public class ReviewPage	extends BannerPage {
 	private Button statusButton;
 	private Button moreInfoButton;
 	private Button propertiesButton;
+	private Button selectRequiredFeaturesButton;
 	private Button filterCheck;
 	private Button filterOlderVersionCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
@@ -241,7 +249,9 @@ public class ReviewPage	extends BannerPage {
                 IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
                 boolean patch = feature.isPatch();
                 
-                boolean problematic=problematicFeatures.contains(feature);
+                //boolean problematic=problematicFeatures.contains(feature) && treeViewer.getChecked(obj);
+                boolean problematic=treeViewer.getChecked(obj) && isFeatureProblematic(feature);
+                
                 
                 if (patch) {
                     return get(UpdateUIImages.DESC_EFIX_OBJ, problematic? F_ERROR : 0);
@@ -569,6 +579,19 @@ public class ReviewPage	extends BannerPage {
 			}
 		});
 		propertiesButton.setEnabled(false);
+
+		selectRequiredFeaturesButton = new Button(buttonContainer, SWT.PUSH);
+		selectRequiredFeaturesButton.setText(UpdateUIMessages.InstallWizard_ReviewPage_selectRequired);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_BEGINNING);
+		selectRequiredFeaturesButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(selectRequiredFeaturesButton);
+		selectRequiredFeaturesButton
+				.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						selectRequiredFeatures();
+					}
+				});
 
 		statusButton = new Button(buttonContainer, SWT.PUSH);
 		statusButton.setText(UpdateUIMessages.InstallWizard_ReviewPage_showStatus); 
@@ -920,6 +943,105 @@ public class ReviewPage	extends BannerPage {
 		});
 	}
 
+	private IStatus selectRequiredFeatures() {
+		
+		IInstallFeatureOperation[] jobs = getSelectedJobs();
+		RequiredFeaturesResult requiredFeaturesResult = ((OperationValidator)OperationsManager
+				.getValidator()).getRequiredFeatures(jobs);
+		validationStatus = requiredFeaturesResult.getStatus();
+		Set requiredFeatures = requiredFeaturesResult.getRequiredFeatures();
+		problematicFeatures.clear();
+
+		Iterator requiredFeaturesIterator = requiredFeatures.iterator();
+		ArrayList toBeInstalled = new ArrayList();
+		
+		while (requiredFeaturesIterator.hasNext()) {
+			IImport requiredFeature = ((InternalImport)requiredFeaturesIterator.next()).getImport();
+			//System.out.println("feature required: " + requiredFeature.getVersionedIdentifier()
+			//		.toString());
+			IInstallFeatureOperation currentFeatureSelected = null;
+			TreeItem[] items = treeViewer.getTree().getItems();
+			for (int i = 0; i < items.length; i++) {
+				TreeItem[] siteRootContent = items[i].getItems();
+				for (int j = 0; j < siteRootContent.length; j++) {
+					if (siteRootContent[j].getData() instanceof SiteCategory) {
+						if ( !treeViewer.getChecked(siteRootContent[j]))
+							treeViewer.createChildren(siteRootContent[j]);
+						TreeItem[] features = siteRootContent[j].getItems();
+						for (int k = 0; k < features.length; k++) {
+							currentFeatureSelected = decideOnFeatureSelection(
+									requiredFeature,
+									(IInstallFeatureOperation) features[k]
+											.getData(), currentFeatureSelected);
+						}
+					} else if (siteRootContent[j].getData() instanceof IInstallFeatureOperation) {
+						currentFeatureSelected = decideOnFeatureSelection(
+								requiredFeature,
+								(IInstallFeatureOperation) siteRootContent[j]
+										.getData(), currentFeatureSelected);
+					}
+				}
+			}
+
+			if (currentFeatureSelected != null)
+				toBeInstalled.add(currentFeatureSelected);
+		}
+
+		if (!toBeInstalled.isEmpty()) {
+			//System.out.println("and to be installed:"+ toBeInstalled.size());
+			Iterator toBeInstalledIterator = toBeInstalled.iterator();
+			while (toBeInstalledIterator.hasNext()) {
+				treeViewer.setChecked(toBeInstalledIterator.next(), true);			
+			}
+			return selectRequiredFeatures();
+		} else {
+			problematicFeatures.clear();
+			if (validationStatus != null) {
+				IStatus[] status = validationStatus.getChildren();
+				for (int i = 0; i < status.length; i++) {
+					IStatus singleStatus = status[i];
+					if (isSpecificStatus(singleStatus)) {
+						IFeature f = ((FeatureStatus) singleStatus)
+								.getFeature();
+						problematicFeatures.add(f);
+					}
+				}
+			}
+
+			setPageComplete(validationStatus == null
+					|| validationStatus.getCode() == IStatus.WARNING);
+
+			updateWizardMessage();
+			
+			/*ArrayList checked = new ArrayList();
+			TreeItem[] sites = treeViewer.getTree().getItems();
+			for( int siteCount = 0; siteCount < sites.length; siteCount++) {
+				TreeItem[] categories = sites[siteCount].getItems();
+				for ( int categoryCount = 0; categoryCount < categories.length; categoryCount++) {
+					System.out.println(categories[categoryCount].getItemCount());
+					TreeItem[] features = categories[categoryCount].getItems();
+					for ( int featureCount = 0; featureCount < features.length; featureCount++) {
+						if (features[featureCount].getChecked()) {
+							checked.add(features[featureCount]);
+						}
+					}
+				}
+			}
+			treeViewer.update(checked.toArray(), null);*/
+			treeViewer.update(getSelectedJobs(), null);
+			statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
+			/*Object site = getSite(event.getElement());
+            ArrayList descendants = new ArrayList();
+            collectDescendants(site, descendants);
+            Object[] nodes = new Object[descendants.size()];
+            for (int i=0; i<nodes.length; i++)
+                nodes[i] = descendants.get(i);
+            treeViewer.update(nodes, null);*/
+			//System.out.println("# of jobs selected: " + getSelectedJobs().length);
+			return validationStatus;
+		}
+	}
+
 	public IInstallFeatureOperation[] getSelectedJobs() {      
         Object[] selected = treeViewer.getCheckedElements();
         ArrayList selectedJobs = new ArrayList(selected.length);
@@ -946,6 +1068,8 @@ public class ReviewPage	extends BannerPage {
 		}
 
 		setPageComplete(validationStatus == null || validationStatus.getCode() == IStatus.WARNING);
+		
+		statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
 		
 		updateWizardMessage();
 	}
@@ -1154,4 +1278,101 @@ public class ReviewPage	extends BannerPage {
                 collectDescendants(children[i], list);
             }
     }
+
+	public boolean isFeatureGood(IImport requiredFeature,
+			IInstallFeatureOperation feature) {
+
+		if (!requiredFeature.getVersionedIdentifier().getIdentifier().equals(
+				feature.getFeature().getVersionedIdentifier().getIdentifier())) {
+			return false;
+		}
+
+		int rule = (requiredFeature.getRule() != IImport.RULE_NONE) ? requiredFeature
+				.getRule()
+				: IImport.RULE_COMPATIBLE;
+
+		switch (rule) {
+		case IImport.RULE_PERFECT:
+			return feature.getFeature().getVersionedIdentifier().getVersion()
+					.isPerfect(
+							requiredFeature.getVersionedIdentifier()
+									.getVersion());
+		case IImport.RULE_EQUIVALENT:
+			return feature.getFeature().getVersionedIdentifier().getVersion()
+					.isEquivalentTo(
+							requiredFeature.getVersionedIdentifier()
+									.getVersion());
+		case IImport.RULE_COMPATIBLE:
+			return feature.getFeature().getVersionedIdentifier().getVersion()
+					.isCompatibleWith(
+							requiredFeature.getVersionedIdentifier()
+									.getVersion());
+		case IImport.RULE_GREATER_OR_EQUAL:
+			return feature.getFeature().getVersionedIdentifier().getVersion()
+					.isGreaterOrEqualTo(
+							requiredFeature.getVersionedIdentifier()
+									.getVersion());
+		}
+
+		return false;
+	}
+
+	public boolean isFeatureBetter(IInstallFeatureOperation feature,
+			IInstallFeatureOperation currentFeatureSelected) {
+
+		if (currentFeatureSelected == null)
+			return true;
+
+		return !currentFeatureSelected.getFeature().getVersionedIdentifier()
+				.getVersion().isGreaterOrEqualTo(
+						feature.getFeature().getVersionedIdentifier()
+								.getVersion());
+	}
+
+	public IInstallFeatureOperation decideOnFeatureSelection(
+			IImport requiredFeature, IInstallFeatureOperation feature,
+			IInstallFeatureOperation currentFeatureSelected) {
+
+		if (isFeatureGood(requiredFeature, feature)
+				&& isFeatureBetter(feature, currentFeatureSelected)) {
+			return feature;
+		} else {
+			return currentFeatureSelected;
+		}
+	}
+	
+	private boolean isFeatureProblematic(IFeature feature) {
+		
+		if ( problematicFeatures.contains(feature) )
+			return true;
+		
+		IImport[] iimports = feature.getImports();
+		
+		for(int i = 0; i < iimports.length; i++) {
+			Iterator problematicFeatures = this.problematicFeatures.iterator();
+			while(problematicFeatures.hasNext()) {
+				if (iimports[i].getVersionedIdentifier().equals( ((IFeature)problematicFeatures.next()).getVersionedIdentifier()) ) {
+					return true;
+				}
+			}
+		}
+		try {
+			Iterator includedFeatures = OperationValidator.computeFeatureSubtree(feature, null, null, false, new ArrayList(), null ).iterator();
+			while (includedFeatures.hasNext()) {
+				Iterator problematicFeatures = this.problematicFeatures.iterator();		
+				VersionedIdentifier currentIncludedFeaturesVI = ((IFeature)includedFeatures.next()).getVersionedIdentifier();
+				while (problematicFeatures.hasNext()) {
+					Object currentProblematicFeatures = problematicFeatures.next();
+					if (currentProblematicFeatures instanceof IFeature) {
+						VersionedIdentifier currentProblematicFeaturesVI = ((IFeature)currentProblematicFeatures).getVersionedIdentifier();						
+						if (currentProblematicFeaturesVI.equals( currentIncludedFeaturesVI) ) {
+							return true;
+						}
+					}
+				}
+			}
+		} catch (CoreException ce) {
+		}
+ 		return false;
+	}
 }
