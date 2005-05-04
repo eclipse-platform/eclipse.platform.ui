@@ -20,6 +20,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -48,9 +50,10 @@ public class HeapStatus extends Composite {
 
 	private boolean armed;
 	private Image gcImage;
-	private Color bgCol, usedMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol;  
+	private Color bgCol, usedMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol, armCol;  
     private Canvas button;
 	private IPreferenceStore prefStore;
+	private int updateInterval;
 
     private final Runnable timer = new Runnable() {
 
@@ -60,10 +63,18 @@ public class HeapStatus extends Composite {
                 updateToolTip();
                 adjustPosition();
                 redraw();
-                getDisplay().timerExec(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), this);
+                getDisplay().timerExec(updateInterval, this);
             }
         }
     };
+    
+    private final IPropertyChangeListener prefListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (IHeapStatusConstants.PREF_UPDATE_INTERVAL.equals(event.getProperty())) {
+				updateUpdateInterval();
+			}
+		}
+	};
 
     private long totalMem;
     private long usedMem;
@@ -84,6 +95,8 @@ public class HeapStatus extends Composite {
 		super(parent, SWT.NONE);
         
         this.prefStore = prefStore;
+        prefStore.addPropertyChangeListener(prefListener);
+        updateUpdateInterval();
 		
         button = new Canvas(this, SWT.NONE);
         button.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
@@ -95,7 +108,7 @@ public class HeapStatus extends Composite {
 		Display display = getDisplay();
 		usedMemCol = new Color(display, 255, 255, 175);
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		sepCol = topLeftCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		sepCol = topLeftCol = armCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
 		markCol = textCol = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 		
@@ -154,13 +167,18 @@ public class HeapStatus extends Composite {
         getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (!isDisposed()) {
-					getDisplay().timerExec(HeapStatus.this.prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL), timer);
+					getDisplay().timerExec(updateInterval, timer);
 				}
 			}
 		});
    	}
 	
+	private void updateUpdateInterval() {
+		updateInterval = Math.max(20, prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
+	}
+
 	private void doDispose() {
+        prefStore.removePropertyChangeListener(prefListener);
     	if (gcImage != null)
     		gcImage.dispose();
         if (usedMemCol != null)
@@ -229,13 +247,12 @@ public class HeapStatus extends Composite {
     }
     
     private void paintButton(GC gc) {
-        Display display = button.getDisplay();
         Rectangle rect = button.getClientArea();
         
         if (armed) {
-            gc.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+            gc.setBackground(armCol);
+            gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
         }
-        gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
         if (gcImage != null) {
 			int by = (rect.height - imgBounds.height) / 2 + rect.y; // button y
 			gc.drawImage(gcImage, rect.x, by);
