@@ -68,6 +68,8 @@ public class HeapStatus extends Composite {
     private long totalMem;
     private long usedMem;
     private long mark = -1;
+    // start with 12x12
+	private Rectangle imgBounds = new Rectangle(0,0,12,12);
 
 
     /**
@@ -86,8 +88,10 @@ public class HeapStatus extends Composite {
         button = new Canvas(this, SWT.NONE);
         button.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
         
-		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("obj16/trash.gif"); //$NON-NLS-1$
+		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/trash.gif"); //$NON-NLS-1$
 		gcImage = imageDesc.createImage();
+		if (gcImage != null)
+			imgBounds = gcImage.getBounds();
 		Display display = getDisplay();
 		usedMemCol = new Color(display, 255, 255, 175);
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
@@ -106,7 +110,7 @@ public class HeapStatus extends Composite {
                     break;
                 case SWT.Resize:
                     Rectangle rect = getClientArea();
-                    button.setBounds(rect.width - 13, 1, 12, rect.height - 2);
+                    button.setBounds(rect.width - imgBounds.width, 1, imgBounds.width, rect.height - 2);
                     break;
                 case SWT.Paint:
                     if (event.widget == HeapStatus.this)
@@ -233,7 +237,7 @@ public class HeapStatus extends Composite {
         }
         gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
         if (gcImage != null) {
-			int by = (rect.height - 12) / 2 + rect.y; // button y
+			int by = (rect.height - imgBounds.height) / 2 + rect.y; // button y
 			gc.drawImage(gcImage, rect.x, by);
         }
     }
@@ -244,7 +248,7 @@ public class HeapStatus extends Composite {
         int y = rect.y;
         int w = rect.width;
         int h = rect.height;
-        int bw = 12; // button width
+        int bw = imgBounds.width; // button width
         int dx = x + w - bw - 2; // divider x
         int sw = w - bw - 3; // status width 
         int uw = (int) (sw * usedMem / totalMem); // used mem width
