@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.presentations.defaultpresentation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.internal.presentations.newapi.PartInfo;
-import org.eclipse.ui.internal.presentations.newapi.WidgetTabItem;
+import org.eclipse.ui.internal.presentations.util.PartInfo;
+import org.eclipse.ui.internal.presentations.util.WidgetTabItem;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -27,7 +27,7 @@ public class NativeTabItem extends WidgetTabItem {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#getBounds()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getBounds()
      */
     public Rectangle getBounds() {
         return new Rectangle(0,0,0,0);

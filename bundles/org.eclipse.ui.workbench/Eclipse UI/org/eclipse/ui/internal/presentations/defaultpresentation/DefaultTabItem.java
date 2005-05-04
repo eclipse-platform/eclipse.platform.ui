@@ -19,8 +19,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.presentations.newapi.PartInfo;
-import org.eclipse.ui.internal.presentations.newapi.WidgetTabItem;
+import org.eclipse.ui.internal.presentations.util.PartInfo;
+import org.eclipse.ui.internal.presentations.util.WidgetTabItem;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -42,7 +42,7 @@ public class DefaultTabItem extends WidgetTabItem {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#getBounds()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getBounds()
      */
     public Rectangle getBounds() {
         return getItem().getBounds();
@@ -53,14 +53,14 @@ public class DefaultTabItem extends WidgetTabItem {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#isShowing()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#isShowing()
      */
     public boolean isShowing() {
         return getItem().isShowing();
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setInfo(org.eclipse.ui.internal.presentations.newapi.PartInfo)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setInfo(org.eclipse.ui.internal.presentations.util.PartInfo)
      */
     public void setInfo(PartInfo info) {
         CTabItem tabItem = getItem();
@@ -117,7 +117,7 @@ public class DefaultTabItem extends WidgetTabItem {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setBold(boolean)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setBold(boolean)
      */
     public void setBold(boolean bold) {
         this.bold = bold;
@@ -126,7 +126,7 @@ public class DefaultTabItem extends WidgetTabItem {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setBusy(boolean)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setBusy(boolean)
      */
     public void setBusy(boolean busy) {
         this.busy = busy;

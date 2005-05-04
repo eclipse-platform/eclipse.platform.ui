@@ -26,11 +26,11 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder;
-import org.eclipse.ui.internal.presentations.newapi.AbstractTabItem;
-import org.eclipse.ui.internal.presentations.newapi.PartInfo;
-import org.eclipse.ui.internal.presentations.newapi.StandardSystemToolbar;
-import org.eclipse.ui.internal.presentations.newapi.TabFolderEvent;
+import org.eclipse.ui.internal.presentations.util.AbstractTabFolder;
+import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
+import org.eclipse.ui.internal.presentations.util.PartInfo;
+import org.eclipse.ui.internal.presentations.util.StandardSystemToolbar;
+import org.eclipse.ui.internal.presentations.util.TabFolderEvent;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -84,14 +84,14 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#computeSize(int, int)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#computeSize(int, int)
      */
     public Point computeSize(int widthHint, int heightHint) {
         return new Point(50, 50);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#add(int)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#add(int)
      */
     public AbstractTabItem add(int index, int flags) {
         NativeTabItem item = new NativeTabItem(this, index);
@@ -101,7 +101,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#layout(boolean)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#layout(boolean)
      */
     public void layout(boolean flushCache) {
         super.layout(flushCache);
@@ -117,14 +117,14 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getPaneMenuLocation()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getPaneMenuLocation()
      */
     public Point getPaneMenuLocation() {
         return systemToolbar.getPaneMenuLocation();
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setState(int)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setState(int)
      */
     public void setState(int state) {
         super.setState(state);
@@ -133,7 +133,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getClientArea()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getClientArea()
      */
     public Rectangle getClientArea() {
         Control content = viewForm.getContent();
@@ -146,7 +146,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getItems()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getItems()
      */
     public AbstractTabItem[] getItems() {
         TabItem[] items = control.getItems();
@@ -170,7 +170,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setSelection(org.eclipse.ui.internal.presentations.newapi.Widget)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setSelection(org.eclipse.ui.internal.presentations.util.Widget)
      */
     public void setSelection(AbstractTabItem toSelect) {
         if (toSelect == null) {
@@ -182,7 +182,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setSelectedInfo(org.eclipse.ui.internal.presentations.newapi.PartInfo)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setSelectedInfo(org.eclipse.ui.internal.presentations.util.PartInfo)
      */
     public void setSelectedInfo(PartInfo info) {
         if (!Util.equals(title.getText(), info.title)) {
@@ -193,14 +193,14 @@ public class NativeTabFolder extends AbstractTabFolder {
         }
     }
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getToolbarParent()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getToolbarParent()
      */
     public Composite getToolbarParent() {
         return viewForm;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getTabArea()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getTabArea()
      */
     public Rectangle getTabArea() {
 
@@ -216,7 +216,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setToolbar(org.eclipse.swt.widgets.Control)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setToolbar(org.eclipse.swt.widgets.Control)
      */
     public void setToolbar(Control toolbarControl) {
         viewForm.setTopCenter(toolbarControl);
@@ -229,7 +229,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#isOnBorder(org.eclipse.swt.graphics.Point)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#isOnBorder(org.eclipse.swt.graphics.Point)
      */
     public boolean isOnBorder(Point globalPos) {
         Point localPos = getControl().toControl(globalPos);
@@ -249,14 +249,14 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getContentParent()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getContentParent()
      */
     public Composite getContentParent() {
         return viewForm;
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#setContent(org.eclipse.swt.widgets.Control)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setContent(org.eclipse.swt.widgets.Control)
      */
     public void setContent(Control newContent) {
         viewForm.setContent(newContent);
@@ -288,7 +288,7 @@ public class NativeTabFolder extends AbstractTabFolder {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabFolder#getItem(org.eclipse.swt.graphics.Point)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getItem(org.eclipse.swt.graphics.Point)
      */
     public AbstractTabItem getItem(Point toFind) {
         return getSelection();

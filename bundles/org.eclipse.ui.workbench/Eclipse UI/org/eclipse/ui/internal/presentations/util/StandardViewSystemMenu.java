@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
@@ -68,7 +68,7 @@ public class StandardViewSystemMenu implements ISystemMenu {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.ISystemMenu#show(org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.ISystemMenu#show(org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
      */
     public void show(Control parent, Point displayCoordinates, IPresentablePart currentSelection) {
         restore.update();

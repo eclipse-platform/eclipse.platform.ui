@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

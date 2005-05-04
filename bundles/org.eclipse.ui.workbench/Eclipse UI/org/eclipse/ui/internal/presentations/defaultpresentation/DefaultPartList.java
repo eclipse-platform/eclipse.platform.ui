@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.internal.presentations.BasicPartList;
-import org.eclipse.ui.internal.presentations.newapi.ISystemMenu;
-import org.eclipse.ui.internal.presentations.newapi.PresentablePartFolder;
+import org.eclipse.ui.internal.presentations.util.ISystemMenu;
+import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -37,7 +37,7 @@ public class DefaultPartList implements ISystemMenu {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.ISystemMenu#show(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.ISystemMenu#show(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
      */
     public void show(Control control, Point displayCoordinates,
             IPresentablePart currentSelection) {

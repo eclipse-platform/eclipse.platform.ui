@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.layout.SizeCache;
-import org.eclipse.ui.internal.presentations.newapi.ProxyControl;
+import org.eclipse.ui.internal.presentations.util.ProxyControl;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**

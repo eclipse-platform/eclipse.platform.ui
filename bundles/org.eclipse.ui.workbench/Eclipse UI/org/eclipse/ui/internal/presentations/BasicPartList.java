@@ -35,8 +35,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
-import org.eclipse.ui.internal.presentations.newapi.AbstractTabItem;
-import org.eclipse.ui.internal.presentations.newapi.PresentablePartFolder;
+import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
+import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 

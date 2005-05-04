@@ -25,10 +25,10 @@ import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolde
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabPositionListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder;
-import org.eclipse.ui.internal.presentations.newapi.PresentablePartFolder;
-import org.eclipse.ui.internal.presentations.newapi.StandardEditorSystemMenu;
-import org.eclipse.ui.internal.presentations.newapi.StandardViewSystemMenu;
-import org.eclipse.ui.internal.presentations.newapi.TabbedStackPresentation;
+import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
+import org.eclipse.ui.internal.presentations.util.StandardEditorSystemMenu;
+import org.eclipse.ui.internal.presentations.util.StandardViewSystemMenu;
+import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 
 /**
  * The default presentation factory for the Workbench.

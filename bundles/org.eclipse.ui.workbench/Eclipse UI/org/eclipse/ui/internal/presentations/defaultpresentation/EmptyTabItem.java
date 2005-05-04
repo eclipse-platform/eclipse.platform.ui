@@ -11,8 +11,8 @@
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.internal.presentations.newapi.AbstractTabItem;
-import org.eclipse.ui.internal.presentations.newapi.PartInfo;
+import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
+import org.eclipse.ui.internal.presentations.util.PartInfo;
 
 /**
  * @since 3.1
@@ -20,35 +20,35 @@ import org.eclipse.ui.internal.presentations.newapi.PartInfo;
 public class EmptyTabItem extends AbstractTabItem {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#getBounds()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getBounds()
      */
     public Rectangle getBounds() {
         return new Rectangle(0,0,0,0);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setInfo(org.eclipse.ui.internal.presentations.newapi.PartInfo)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setInfo(org.eclipse.ui.internal.presentations.util.PartInfo)
      */
     public void setInfo(PartInfo info) {
 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#dispose()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#dispose()
      */
     public void dispose() {
 
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#getData()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getData()
      */
     public Object getData() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setData(java.lang.Object)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setData(java.lang.Object)
      */
     public void setData(Object data) {
 

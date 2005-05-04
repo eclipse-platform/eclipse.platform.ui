@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import org.eclipse.swt.widgets.Widget;
 
@@ -25,21 +25,21 @@ public abstract class WidgetTabItem extends AbstractTabItem {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#dispose()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#dispose()
      */
     public void dispose() {
         widget.dispose();
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#getData()
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getData()
      */
     public Object getData() {
         return data;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.AbstractTabItem#setData(java.lang.Object)
+     * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#setData(java.lang.Object)
      */
     public void setData(Object data) {
         this.data = data;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -31,42 +31,42 @@ public class LeftToRightTabOrder extends TabOrder {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#add(org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#add(org.eclipse.ui.presentations.IPresentablePart)
      */
     public void add(IPresentablePart newPart) {
         list.insert(newPart, list.size());
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#addInitial(org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#addInitial(org.eclipse.ui.presentations.IPresentablePart)
      */
     public void addInitial(IPresentablePart newPart) {
         add(newPart);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#insert(org.eclipse.ui.presentations.IPresentablePart, int)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#insert(org.eclipse.ui.presentations.IPresentablePart, int)
      */
     public void insert(IPresentablePart newPart, int index) {
         list.insert(newPart, index);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#remove(org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#remove(org.eclipse.ui.presentations.IPresentablePart)
      */
     public void remove(IPresentablePart removed) {
         list.remove(removed);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#select(org.eclipse.ui.presentations.IPresentablePart)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#select(org.eclipse.ui.presentations.IPresentablePart)
      */
     public void select(IPresentablePart selected) {
         list.select(selected);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#move(org.eclipse.ui.presentations.IPresentablePart, int)
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#move(org.eclipse.ui.presentations.IPresentablePart, int)
      */
     public void move(IPresentablePart toMove, int newIndex) {
         list.move(toMove, newIndex);
@@ -74,7 +74,7 @@ public class LeftToRightTabOrder extends TabOrder {
     
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabOrder#getPartList()
+     * @see org.eclipse.ui.internal.presentations.util.TabOrder#getPartList()
      */
     public IPresentablePart[] getPartList() {
         return list.getPartList();

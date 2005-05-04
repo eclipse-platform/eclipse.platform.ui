@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
-import org.eclipse.ui.internal.presentations.newapi.ProxyControl;
+import org.eclipse.ui.internal.presentations.util.ProxyControl;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**

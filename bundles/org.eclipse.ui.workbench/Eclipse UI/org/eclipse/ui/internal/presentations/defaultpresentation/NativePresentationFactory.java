@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.presentations.newapi.StandardEditorSystemMenu;
-import org.eclipse.ui.internal.presentations.newapi.StandardViewSystemMenu;
-import org.eclipse.ui.internal.presentations.newapi.TabbedStackPresentation;
+import org.eclipse.ui.internal.presentations.util.StandardEditorSystemMenu;
+import org.eclipse.ui.internal.presentations.util.StandardViewSystemMenu;
+import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -147,7 +147,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
     }
     
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.newapi.IPresentablePartList#getPartList()
+	 * @see org.eclipse.ui.internal.presentations.util.IPresentablePartList#getPartList()
 	 */
 	public IPresentablePart[] getPartList() {
 	    AbstractTabItem[] items = folder.getItems();

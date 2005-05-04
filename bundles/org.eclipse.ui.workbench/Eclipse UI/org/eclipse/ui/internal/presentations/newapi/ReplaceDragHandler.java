@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.presentations.newapi;
+package org.eclipse.ui.internal.presentations.util;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
@@ -37,7 +37,7 @@ public class ReplaceDragHandler extends TabDragHandler {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabDragHandler#dragOver(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point)
+     * @see org.eclipse.ui.internal.presentations.util.TabDragHandler#dragOver(org.eclipse.swt.widgets.Control, org.eclipse.swt.graphics.Point)
      */
     public StackDropResult dragOver(Control currentControl, Point location,
             int dragStart) {
@@ -116,7 +116,7 @@ public class ReplaceDragHandler extends TabDragHandler {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.newapi.TabDragHandler#getInsertionPosition(java.lang.Object)
+     * @see org.eclipse.ui.internal.presentations.util.TabDragHandler#getInsertionPosition(java.lang.Object)
      */
     public int getInsertionPosition(Object cookie) {
         if (cookie instanceof DragCookie) {
