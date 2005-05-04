@@ -168,7 +168,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		((ConfiguredSite)configSite).setConfigurationPolicyModel((ConfigurationPolicyModel)configPolicy);	
+		((ConfiguredSite)configSite).setConfigurationPolicyModel(configPolicy);	
 		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			

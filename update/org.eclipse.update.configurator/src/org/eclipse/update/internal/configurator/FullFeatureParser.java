@@ -60,7 +60,7 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 			this.url = new URL(feature.getSite().getResolvedURL(), feature.getURL() + FEATURE_XML);
 			in = url.openStream();
 			parser.parse(new InputSource(in), this);
-		} catch (SAXException e) {;
+		} catch (SAXException e) {
 		} catch (IOException e) {
 		} finally {
 			if (in != null)

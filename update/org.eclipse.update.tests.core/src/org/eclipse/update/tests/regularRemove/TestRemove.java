@@ -31,9 +31,9 @@ public class TestRemove extends UpdateManagerTestCase {
 		public void featureRemoved(IFeature feature) {
 		}
 		public void featureConfigured(IFeature feature) {
-		};
+		}
 		public void featureUnconfigured(IFeature feature) {
-		};
+		}
 
 		public boolean isNotified() {
 			return notified;

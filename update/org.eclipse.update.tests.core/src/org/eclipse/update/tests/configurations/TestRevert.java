@@ -16,7 +16,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -49,7 +48,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		excludepolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 		IConfiguredSite oldConfigSite = old.getConfiguredSites()[0];
 		excludepolicy.setConfiguredSiteModel((ConfiguredSiteModel)oldConfigSite);		
-		((ConfiguredSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
+		((ConfiguredSiteModel)oldConfigSite).setConfigurationPolicyModel(excludepolicy);
 		
 		// install one feature
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
@@ -110,7 +109,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+2,newNumberUnconfiguredFeatures);
 		
 		// cleanup
-		localFile = new File(siteLocal.getLocationURL().getFile());;
+		localFile = new File(siteLocal.getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				

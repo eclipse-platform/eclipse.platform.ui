@@ -40,9 +40,9 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		public void featureConfigured(IFeature feature) {
-		};
+		}
 		public void featureUnconfigured(IFeature feature) {
-		};
+		}
 
 		public boolean isNotified() {
 			return notified;

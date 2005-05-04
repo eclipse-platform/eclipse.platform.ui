@@ -59,7 +59,7 @@ public class FeatureParser extends DefaultHandler {
 			this.url = featureURL;
 			in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
-		} catch (SAXException e) {;
+		} catch (SAXException e) {
 		} catch (IOException e) {
 		} finally {
 			if (in != null)

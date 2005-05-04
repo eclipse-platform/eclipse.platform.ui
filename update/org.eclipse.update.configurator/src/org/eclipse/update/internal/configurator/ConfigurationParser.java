@@ -184,7 +184,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 
 		SitePolicy sp = new SitePolicy(policyType, policyList);
-		SiteEntry site = (SiteEntry) new SiteEntry(url, sp);
+		SiteEntry site = new SiteEntry(url, sp);
 
 		String flag = attributes.getValue(CFG_UPDATEABLE); //$NON-NLS-1$
 		if (flag != null) {

@@ -34,7 +34,7 @@ public class TestBundlesInstall extends StandaloneManagerTestCase {
 		String featureId = "com.example.bundle.feature";
 		String version = "1.0.0";
 
-		String fromRemoteSiteUrl = "http://"+getHttpHost()+":"+ getHttpPort()+ "/org.eclipse.update.tests.core.updatetests/bundleSite/";;
+		String fromRemoteSiteUrl = "http://"+getHttpHost()+":"+ getHttpPort()+ "/org.eclipse.update.tests.core.updatetests/bundleSite/";
 		if (!isInstalled) {
 			System.out.println(
 				"==============" + this.getClass() + "=============");

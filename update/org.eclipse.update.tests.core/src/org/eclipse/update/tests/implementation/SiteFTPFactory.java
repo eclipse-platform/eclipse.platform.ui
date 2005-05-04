@@ -35,7 +35,7 @@ public class SiteFTPFactory extends SiteModelFactory implements ISiteFactory {
 			URL resolvedURL = URLEncoder.encode(url);
 			siteStream = resolvedURL.openStream();
 
-			SiteModelFactory factory = (SiteModelFactory) this;
+			SiteModelFactory factory = this;
 			factory.parseSite(siteStream);
 
 			site = new SiteFTP(new URL("http://eclipse.org/" + FILE));
