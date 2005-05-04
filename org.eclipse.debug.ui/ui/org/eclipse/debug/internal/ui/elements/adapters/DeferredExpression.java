@@ -27,13 +27,15 @@ public class DeferredExpression extends DeferredVariable {
                 return expression.getErrorMessages();
             }
         }
-        IExpression expression = (IExpression)parent;
-        IValue value = expression.getValue();
-        try {
-			return getValueChildren(expression, value);
-		} catch (DebugException e) {
+		if (parent instanceof IExpression) {
+		    IExpression expression = (IExpression)parent;
+		    IValue value = expression.getValue();
+		    try {
+		        return getValueChildren(expression, value);
+		    } catch (DebugException e) {
+		    }
 		}
-		return EMPTY;
+		return super.getChildren(parent);
 	}
 
     protected boolean hasChildren(Object child) {
@@ -54,7 +56,8 @@ public class DeferredExpression extends DeferredVariable {
                 }
             }
         }
-        return false;
+        
+        return super.hasChildren(child);
     }
 
     
