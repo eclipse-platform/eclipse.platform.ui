@@ -209,7 +209,11 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		}
 		
 		
-		if (!categories.isEmpty()) {
+		if (categories.isEmpty()) {
+			IAction action = new OpenLaunchDialogAction(fGroup.getIdentifier());
+		    ActionContributionItem item= new ActionContributionItem(action);
+		    item.fill(menu, -1);
+		} else {
 			iter = categories.iterator();
 			while (iter.hasNext()) {
 				// NOTE: category can be null
