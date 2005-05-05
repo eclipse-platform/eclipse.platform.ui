@@ -72,11 +72,13 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
 	}	
     
     protected boolean hasChildren(Object child) {
-        IVariable var = (IVariable) child;
-        try {
-            IValue value = var.getValue();
-            return value.hasVariables();
-        } catch (DebugException e) {
+        if (child instanceof IVariable) {
+            IVariable var = (IVariable) child;
+            try {
+                IValue value = var.getValue();
+                return value.hasVariables();
+            } catch (DebugException e) {
+            }
         }
         return false;
     }
