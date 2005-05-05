@@ -1099,6 +1099,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (editorRefs.length == 0) {
             return true;
         }
+        
+        if (partBeingActivated != null) {
+            for (int i = 0; i < editorRefs.length; i++) {
+                IEditorReference reference = editorRefs[i];
+                
+                if (reference == partBeingActivated) {
+                    WorkbenchPlugin.log(new RuntimeException("WARNING: Blocked recursive attempt to close part "  //$NON-NLS-1$
+                            + partBeingActivated.getId() + " while still in the middle of activating it")); //$NON-NLS-1$
+                    return false;
+                }
+            }
+        }
+        
         if (save) {
             // Intersect the dirty editors with the editors that are closing
             IEditorPart[] dirty = getDirtyEditors();
