@@ -66,7 +66,7 @@ class PreferencePageHistory {
 	/**
 	 * The preference dialog we implement the history for.
 	 */
-	private final WorkbenchPreferenceDialog dialog;
+	private final FilteredPreferenceDialog dialog;
 
 	/**
 	 * The handler submission for these controls.
@@ -79,7 +79,7 @@ class PreferencePageHistory {
 	 * @param dialog
 	 *            the preference dialog to create a history for
 	 */
-	public PreferencePageHistory(WorkbenchPreferenceDialog dialog) {
+	public PreferencePageHistory(FilteredPreferenceDialog dialog) {
 		this.dialog = dialog;
 	}
 

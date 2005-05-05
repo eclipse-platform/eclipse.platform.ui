@@ -14,12 +14,10 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -145,18 +143,6 @@ public class PropertyDialog extends FilteredPreferenceDialog {
         lastPropertyId = pageId;
     }
     
-  
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#getCurrentPage()
-	 */
-	public IPreferencePage getCurrentPage() {
-		return super.getCurrentPage();
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#getTreeAreaStyle()
-	 */
-	public int getTreeAreaStyle() {
-		return SWT.BORDER;
-	}
+
+
 }
