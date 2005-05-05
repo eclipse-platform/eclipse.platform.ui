@@ -213,7 +213,6 @@ public interface IWorkbenchWindowConfigurer {
 
     /**
      * Returns the size to use for the window's shell when it is created.
-     * The default is 800x600.
      *
      * @return the initial size to use for the shell
      */
