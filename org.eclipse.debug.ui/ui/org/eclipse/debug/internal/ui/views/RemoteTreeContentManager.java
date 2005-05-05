@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +41,52 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 
     private RemoteTreeViewer fViewer;
     private IWorkbenchSiteProgressService progressService;
+    
+    /**
+     * Job to fetch children
+     */
+    private Job fFetchJob = new FetchJob();
+    
+    /**
+     * Queue of parents to fetch children for, and
+     * associated element collectors and deferred adapters.
+     */
+    private List fElementQueue = new ArrayList();
+    private List fCollectors = new ArrayList();
+    private List fAdapaters = new ArrayList();
+    
+    /**
+     * Fetching children is done in a single background job.
+     * This makes fetching single threaded/serial per view.
+     */
+    class FetchJob extends Job {
+    	
+    	public FetchJob() {
+    		super(DebugUIViewsMessages.RemoteTreeContentManager_0);
+    	}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			while (!fElementQueue.isEmpty() && !monitor.isCanceled()) {
+				Object element = null;
+				IElementCollector collector = null;
+				IDeferredWorkbenchAdapter adapter = null;
+				synchronized (fElementQueue) {
+					element = fElementQueue.remove(0);
+					collector = (IElementCollector) fCollectors.remove(0);
+					adapter = (IDeferredWorkbenchAdapter) fAdapaters.remove(0);
+				}
+				adapter.fetchDeferredChildren(element, collector, monitor);
+			}
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
+		}
+    	
+    }
     
     /**
      * Element collector
@@ -252,25 +301,18 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
         return deferred;
     }	
 	
-    protected void startFetchingDeferredChildren(final Object parent,
-			final IDeferredWorkbenchAdapter adapter,
-			final PendingUpdateAdapter placeholder) {
-		final IElementCollector collector = createElementCollector(parent,
-				placeholder);
-
-		String jobName = getFetchJobName(parent, adapter);
-		Job job = new Job(jobName) {
-			public IStatus run(IProgressMonitor monitor) {
-				adapter.fetchDeferredChildren(parent, collector, monitor);
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				return Status.OK_STATUS;
+    protected void startFetchingDeferredChildren(final Object parent, final IDeferredWorkbenchAdapter adapter, PendingUpdateAdapter placeholder) {
+		final IElementCollector collector = createElementCollector(parent, placeholder);
+		synchronized (fElementQueue) {
+			if (!fElementQueue.contains(parent)) {
+				fElementQueue.add(parent);
+				fCollectors.add(collector);
+				fAdapaters.add(adapter);
 			}
-		};
-		job.setRule(adapter.getRule(parent));
+		}
 		if (progressService == null)
-			job.schedule();
+			fFetchJob.schedule();
 		else
-			progressService.schedule(job);
+			progressService.schedule(fFetchJob);
 	}
 }
