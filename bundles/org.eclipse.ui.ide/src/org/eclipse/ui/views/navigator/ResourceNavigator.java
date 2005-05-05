@@ -136,6 +136,11 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     public static final String NAVIGATOR_VIEW_HELP_ID = INavigatorHelpContextIds.RESOURCE_VIEW;
 
+    /**
+     * True iff we've already scheduled an asynchronous call to linkToEditor
+     */
+    private boolean linkScheduled = false;
+    
     // Persistance tags.
     private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 
@@ -680,13 +685,24 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         updateStatusLine(sel);
         updateActionBars(sel);
         dragDetected = false;
-        if (isLinkingEnabled()) {
+        if (isLinkingEnabled() && !linkScheduled) {
+            // Ensure that if another selection change arrives while we're waiting for the *syncExec,
+            // we only do this work once.
+            linkScheduled = true;
             getShell().getDisplay().asyncExec(new Runnable() {
                 public void run() {
+                    // There's no telling what might have changed since the syncExec was scheduled.
+                    // Check to make sure that the widgets haven't been disposed.
+                    linkScheduled = false;
+                    
+                    if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
+                        return;
+                    }
+                    
                     if (dragDetected == false) {
                         // only synchronize with editor when the selection is not the result 
                         // of a drag. Fixes bug 22274.
-                        linkToEditor(sel);
+                        linkToEditor();
                     }
                 }
             });
@@ -816,16 +832,21 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * 
      * @since 2.0
      */
-    protected void linkToEditor(IStructuredSelection selection) {
-        Object obj = selection.getFirstElement();
-        if (obj instanceof IFile && selection.size() == 1) {
-            IFile file = (IFile) obj;
-            IWorkbenchPage page = getSite().getPage();
-            IEditorPart editor = ResourceUtil.findEditor(page, file);
-            if (editor != null) {
-                page.bringToTop(editor);
-                return;
-            }
+    protected void linkToEditor() {
+
+        ISelection sel = viewer.getSelection();
+        if (sel instanceof StructuredSelection) {
+            StructuredSelection selection = (StructuredSelection)sel;
+            Object obj = selection.getFirstElement();
+            if (obj instanceof IFile && selection.size() == 1) {
+                IFile file = (IFile) obj;
+                IWorkbenchPage page = getSite().getPage();
+                IEditorPart editor = ResourceUtil.findEditor(page, file);
+                if (editor != null) {
+                    page.bringToTop(editor);
+                    return;
+                }
+            }   
         }
     }
 
