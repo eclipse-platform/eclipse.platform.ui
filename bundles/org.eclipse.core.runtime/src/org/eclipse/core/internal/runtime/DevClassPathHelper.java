@@ -83,7 +83,8 @@ public class DevClassPathHelper {
 				is = url.openStream();
 				props.load(is);
 			} finally {
-				is.close();
+				if (is != null)
+					is.close();
 			}
 		} catch (IOException e) {
 			// TODO consider logging here
