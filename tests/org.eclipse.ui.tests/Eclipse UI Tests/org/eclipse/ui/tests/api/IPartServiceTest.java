@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -18,8 +23,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -447,8 +454,101 @@ public class IPartServiceTest extends UITestCase {
         fPage.addPartListener(listener);
         clearEventState();
         fPage.activate(view);
-        assertTrue(eventReceived[0]);
         fPage.removePartListener(listener);
+        assertTrue(eventReceived[0]);
+    }
+    
+//    /**
+//     * Tests that when a partOpened is received for a view being shown,
+//     * the view is available via findView, findViewReference, getViews and getViewReferences.
+//     * 
+//     * @since 3.1
+//     */
+// This does not work as expected.  See bug 93784.
+//  
+//    public void testViewFoundWhenOpened() throws Throwable {
+//    	final String viewId = MockViewPart.ID;
+//        final boolean[] eventReceived = { false, false };
+//        IPartListener listener = new TestPartListener() {
+//            public void partOpened(IWorkbenchPart part) {
+//                super.partOpened(part);
+//                // ensure that the notification is for the view we opened
+//                assertEquals(viewId, part.getSite().getId());
+//                // ensure that the view can be found
+//                assertNotNull(fPage.findView(viewId));
+//                IViewPart[] views = fPage.getViews();
+//                assertEquals(1, views.length);
+//                assertEquals(viewId, views[0].getSite().getId());
+//                eventReceived[0] = true;
+//            }
+//        };
+//        IPartListener2 listener2 = new TestPartListener2() {
+//            public void partOpened(IWorkbenchPartReference ref) {
+//                super.partOpened(ref);
+//                // ensure that the notification is for the view we opened
+//                assertEquals(viewId, ref.getId());
+//                // ensure that the view can be found
+//                assertNotNull(fPage.findViewReference(viewId));
+//                IViewReference[] refs = fPage.getViewReferences();
+//                assertEquals(1, refs.length);
+//                assertEquals(viewId, refs[0].getId());
+//                eventReceived[1] = true;
+//            }
+//        };
+//        fPage.addPartListener(listener);
+//        fPage.addPartListener(listener2);
+//        fPage.showView(viewId);
+//        fPage.removePartListener(listener);
+//        fPage.removePartListener(listener2);
+//        assertTrue(eventReceived[0]);
+//        assertTrue(eventReceived[1]);
+//    }
+
+    /**
+     * Tests that when a partOpened is received for an editor being opened,
+     * the editor is available via findEditor, getEditors, and getEditorReferences.
+     * 
+     * @since 3.1
+     */
+    public void testEditorFoundWhenOpened() throws Throwable {
+    	final String editorId = MockEditorPart.ID1;
+		IProject proj = FileUtil.createProject("IPartServiceTest");
+		IFile file = FileUtil.createFile("testEditorFoundWhenOpened.txt", proj);
+		final IEditorInput editorInput = new FileEditorInput(file);
+    	
+        final boolean[] eventReceived = { false, false };
+        IPartListener listener = new TestPartListener() {
+            public void partOpened(IWorkbenchPart part) {
+                super.partOpened(part);
+                // ensure that the notification is for the editor we opened
+                assertEquals(editorId, part.getSite().getId());
+                // ensure that the editor can be found
+                assertNotNull(fPage.findEditor(editorInput));
+                IEditorPart[] editors = fPage.getEditors();
+                assertEquals(1, editors.length);
+                assertEquals(editorId, editors[0].getSite().getId());
+                eventReceived[0] = true;
+            }
+        };
+        IPartListener2 listener2 = new TestPartListener2() {
+            public void partOpened(IWorkbenchPartReference ref) {
+                super.partOpened(ref);
+                // ensure that the notification is for the editor we opened
+                assertEquals(editorId, ref.getId());
+                // ensure that the editor can be found
+                IEditorReference[] refs = fPage.getEditorReferences();
+                assertEquals(1, refs.length);
+                assertEquals(editorId, refs[0].getId());
+                eventReceived[1] = true;
+            }
+        };
+        fPage.addPartListener(listener);
+        fPage.addPartListener(listener2);
+		fPage.openEditor(editorInput, editorId);
+        fPage.removePartListener(listener);
+        fPage.removePartListener(listener2);
+        assertTrue(eventReceived[0]);
+        assertTrue(eventReceived[1]);
     }
 
 }
