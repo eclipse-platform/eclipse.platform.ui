@@ -38,9 +38,15 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 
 public class EclipseTest extends ResourceTest {
 
-	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
+	private static final int LOCK_WAIT_TIME = 1000;
+    private static final String CVS_TEST_LOCK_FILE = ".lock";
+    private static final String CVS_TEST_LOCK_PROJECT  = "cvsTestLock";
+    protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final int RANDOM_CONTENT_SIZE = 3876;
 	protected static String eol = System.getProperty("line.separator");
+    private static final long LOCK_EXPIRATION_THRESHOLD = 1000 * 60 * 10; // 10 minutes
+    private static final int MAX_LOCK_ATTEMPTS = 60 * 30; // 30 minutes
+    private String lockId;
 	
 	public static Test suite(Class c) {
 		String testName = System.getProperty("eclipse.cvs.testName");
@@ -918,10 +924,17 @@ public class EclipseTest extends ResourceTest {
 			throw new OperationCanceledException();
 		}
 	}
-	/* (non-Javadoc)
+    
+    protected void setUp() throws Exception {
+        obtainCVSServerLock();
+        super.setUp();
+    }
+
+    /* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
+        releaseCVSServerLock();
 		super.tearDown();
 		if (CVSTestSetup.logListener != null) {
 			try {
@@ -936,8 +949,153 @@ public class EclipseTest extends ResourceTest {
 			}
 		}
 	}
+        
+    private void obtainCVSServerLock() {
+        IProject project = null;
+        boolean firstTry = true;
+        while (project == null) {
+            try {
+                project = checkoutProject(null, CVS_TEST_LOCK_PROJECT , null);
+            } catch (TeamException e) {
+                // The checkout of the lock project failed so lets create it if it doesn't exist
+                if (firstTry) {
+                    try {
+                        createTestLockProject(DEFAULT_MONITOR);
+                    } catch (TeamException e1) {
+                        // We couldn't check out the project or create it
+                        // It's possible someone beat us to it so we'll try the checkout again.
+                    }
+                } else {
+                    // We tried twice to check out the project and failed.
+                    // Lets just go ahead and run but we'll log the fact that we couldn't get the lock
+                    write(new CVSStatus(IStatus.ERROR, "Could not obtain the CVS server lock. The test will containue but any performance timings may be affected", e), 0);
+                    return;
+                }
+                firstTry = false;
+            }
+        }
+        if (project != null) {
+            IFile lockFile = project.getFile(CVS_TEST_LOCK_FILE);
+            boolean obtained = false;
+            int attempts = 0;
+            while (!obtained) {
+                attempts++;
+                if (lockFile.exists()) {
+                    // If the file exists, check if the lock has expired
+                    if (hasExpired(lockFile)) {
+                        try {
+                            overwriteLock(lockFile);
+                            return;
+                        } catch (CoreException e) {
+                            // Ignore the error and continue
+                        }
+                    }
+                } else {
+                    try {
+                        writeLock(lockFile);
+                        return;
+                    } catch (CoreException e) {
+                        // Ignore the error, since it probably means someone beat us to it.
+                    }
+                }
+                // Wait for a while before testing the lock again
+                try {
+                    Thread.sleep(LOCK_WAIT_TIME);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                try {
+                    // Update the lockfile in case someone else got to it first
+                    replace(new IResource[] { lockFile }, null, true);
+                } catch (CoreException e) {
+                    // An error updated is not recoverable so just continue
+                    write(new CVSStatus(IStatus.ERROR, "Could not obtain the CVS server lock. The test will continue but any performance timings may be affected", e), 0);
+                    return;
+                }
+                if (attempts > MAX_LOCK_ATTEMPTS) {
+                    write(new CVSStatus(IStatus.ERROR, "Could not obtain the CVS server lock. The test will continue but any performance timings may be affected", new Exception()), 0);
+                    return;
+                }
+            }
+        }
+    }
+    
+    private boolean hasExpired(IFile lockFile) {
+        long timestamp = lockFile.getLocalTimeStamp();
+        return System.currentTimeMillis() - timestamp > LOCK_EXPIRATION_THRESHOLD;
+    }
 
-	protected void write(IStatus status, int indent) {
+    private void overwriteLock(IFile lockFile) throws CoreException {
+        lockFile.setContents(getLockContents(), true, true, null);
+        commitResources(new IResource[] { lockFile }, IResource.DEPTH_ZERO);
+    }
+
+    private void writeLock(IFile lockFile) throws CoreException {
+        lockFile.create(getLockContents(), false, null);
+        addResources(new IResource[] { lockFile });
+        commitResources(new IResource[] { lockFile }, IResource.DEPTH_ZERO);
+    }
+
+    private InputStream getLockContents() {
+        lockId = Long.toString(System.currentTimeMillis());
+        return new ByteArrayInputStream(lockId.getBytes());
+    }
+
+    private void createTestLockProject(IProgressMonitor monitor) throws TeamException {
+        CVSRepositoryLocation repository = getRepository();
+        RemoteFolderTree root = new RemoteFolderTree(null, repository, Path.EMPTY.toString(), null);
+        RemoteFolderTree child = new RemoteFolderTree(root, CVS_TEST_LOCK_PROJECT, repository, new Path(null, root.getRepositoryRelativePath()).append(CVS_TEST_LOCK_PROJECT).toString(), null);
+        root.setChildren(new ICVSRemoteResource[] { child });
+        Session s = new Session(repository, root);
+        s.open(monitor, true /* open for modification */);
+        try {
+            IStatus status = Command.ADD.execute(s,
+                    Command.NO_GLOBAL_OPTIONS,
+                    Command.NO_LOCAL_OPTIONS,
+                    new String[] { CVS_TEST_LOCK_PROJECT },
+                    null,
+                    monitor);
+            // If we get a warning, the operation most likely failed so check that the status is OK
+            if (status.getCode() == CVSStatus.SERVER_ERROR  || ! status.isOK()) {
+                throw new CVSServerException(status);
+            }
+        } finally {
+            s.close();
+        }
+    }
+        
+	private void releaseCVSServerLock() {
+        if (lockId != null) {
+    	    try {
+                IProject project = getWorkspace().getRoot().getProject(CVS_TEST_LOCK_PROJECT);
+                // Update the project and verify we still have the lock
+                IFile file = project.getFile(CVS_TEST_LOCK_FILE);
+                String id = getFileContents(file);
+                if (id.equals(lockId)) {
+                    // We have the lock so let's free it (but first check if someone preempted us)
+                    ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+                    byte[] bytes = cvsFile.getSyncBytes();
+                    if (bytes != null) {
+                        String revision = ResourceSyncInfo.getRevision(bytes);
+                        updateResources(new IResource[] { file }, true);
+                        bytes = cvsFile.getSyncBytes();
+                        if (bytes == null || !ResourceSyncInfo.getRevision(bytes).equals(revision)) {
+                            write(new CVSStatus(IStatus.ERROR, "The CVS server lock expired while this test was running. Any performance timings may be affected", new Exception()), 0);
+                            return;
+                        }
+                    }
+                    // Delete the lock file and commit
+                    deleteResources(project, new String[] { CVS_TEST_LOCK_FILE }, true);
+                }
+            } catch (CoreException e) {
+                write(e.getStatus(), 0);
+            } catch (IOException e) {
+                write(new CVSStatus(IStatus.ERROR, "An error occurred while reading the lock file", e), 0);
+            }
+        }
+    }
+
+    protected void write(IStatus status, int indent) {
 		PrintStream output = System.out;
 		indent(output, indent);
 		output.println("Severity: " + status.getSeverity());
