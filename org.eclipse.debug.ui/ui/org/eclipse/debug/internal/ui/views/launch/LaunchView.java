@@ -82,7 +82,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
@@ -837,68 +836,30 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @param selectNeeded whether the element should be selected
 	 */
 	public void autoExpand(Object element, boolean selectNeeded) {
-	    boolean refresh = false;
-		if (element instanceof IThread) {
-			refresh = threadRefreshNeeded((IThread)element);
-		}
-		if (refresh) {
-			//ensures that the child item exists in the viewer widget
-			//set selection only works if the child exists
-			getStructuredViewer().refresh(element);
-		}
 		LaunchViewer launchViewer = (LaunchViewer)getViewer();
         launchViewer.deferExpansion(element);
 		if (selectNeeded) {
-			launchViewer.deferSelection(new StructuredSelection(element));
-		}
-	}
-	
-	/**
-	 * Returns whether the given thread needs to
-	 * be refreshed in the tree.
-	 * 
-	 * The tree needs to be refreshed if the
-	 * underlying model objects (IStackFrame) under the given thread
-	 * differ from those currently displayed in the tree.
-	 */
-	protected boolean threadRefreshNeeded(IThread thread) {
-		LaunchViewer viewer= (LaunchViewer)getStructuredViewer();
-		ILaunch launch= thread.getLaunch();
-		TreeItem[] launches= viewer.getTree().getItems();
-		for (int i = 0; i < launches.length; i++) {
-			if (launches[i].getData() == launch) {
-				IDebugTarget target= thread.getDebugTarget();
-				TreeItem[] targets= launches[i].getItems();
-				for (int j = 0; j < targets.length; j++) {
-					if (targets[j].getData() == target) {
-						TreeItem[] threads= targets[j].getItems();
-						for (int k = 0; k < threads.length; k++) {
-							if (threads[k].getData() == thread) {
-								IStackFrame[] frames= null;
-								try {
-									frames = thread.getStackFrames();
-								} catch (DebugException exception) {
-									return true;
-								}
-								TreeItem[] treeFrames= threads[k].getItems();
-								if (frames.length != treeFrames.length) {
-									return true;
-								}
-								for (int l= 0, numFrames= treeFrames.length; l < numFrames; l++) {
-									if (treeFrames[l].getData() != frames[l]) {
-										return true;
-									}
-								}
-								break;
-							}
+			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+			// if a frame is selected in a different thread, do not update selection
+			Iterator iterator = selection.iterator();
+			while (iterator.hasNext()) {
+				Object object = iterator.next();
+				if (object instanceof IStackFrame) {
+					if (element instanceof IStackFrame) {
+						IThread currThread = ((IStackFrame)object).getThread();
+						if (!currThread.equals(((IStackFrame)element).getThread())) {
+							// a frame in a different thread is selected, don't change
+							return;
 						}
-						break;
+					} else {
+						// a frame is selected and the new selection is not a frame
+						// do not change the selection
+						return;
 					}
 				}
-				break;
 			}
+			launchViewer.deferSelection(new StructuredSelection(element));
 		}
-		return false;
 	}
 	
 	/**

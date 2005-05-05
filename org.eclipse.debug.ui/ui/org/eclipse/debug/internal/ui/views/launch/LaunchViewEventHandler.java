@@ -47,8 +47,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * Cache of the last top stack frame
 	 */
 	private IStackFrame fLastStackFrame = null;
-
-    private boolean fSelectedThread = false;
 	
 	/**
 	 * Constructs an event handler for the given launch view.
@@ -177,7 +175,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * Handles the given resume event with the given source.
 	 */
 	protected void doHandleResumeEvent(DebugEvent event, Object source, Object data) {
-        fSelectedThread = false;
 		if (!event.isEvaluation()) {
 			clearSourceSelection(source);
 		}
@@ -193,7 +190,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		refresh(source);
 		if (source instanceof IThread) {
 		    if (data instanceof IStackFrame) {
-                fSelectedThread = true;
 				selectAndReveal(data);
 				return;
 			}
@@ -271,14 +267,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		    fLastStackFrame = frame;
 			// Auto-expand the thread. Only select the thread if this wasn't the end
 			// of an evaluation
-			getLaunchView().autoExpand(thread, false);
-			if (fLastStackFrame != null) {
-                boolean select = (!evaluationEvent) && (!fSelectedThread);
-                if (!fSelectedThread) {
-                    fSelectedThread = true;
-                }
-			    getLaunchView().autoExpand(fLastStackFrame, select);
-			}
+		    refresh(thread);
+			getLaunchView().autoExpand(fLastStackFrame, !evaluationEvent);
 		}
 	}
 	
