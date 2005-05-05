@@ -12,17 +12,44 @@ package org.eclipse.ui.examples.presentation.wrappedtabs;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.examples.presentation.PresentationImages;
-import org.eclipse.ui.presentations.*;
+import org.eclipse.ui.presentations.IPartMenu;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSerializer;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.PresentationUtil;
+import org.eclipse.ui.presentations.StackDropResult;
+import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -189,7 +216,11 @@ public class WrappedTabsPartPresentation extends StackPresentation {
 					return;
 				}
 			}
-			showPaneMenu(globalPos);
+            
+            IPresentablePart part = getCurrent();
+            if (part != null) {
+                showSystemMenu(globalPos);
+            }
 		}
 	};
 	
@@ -276,15 +307,16 @@ public class WrappedTabsPartPresentation extends StackPresentation {
 		});
 		
 		upperRight = new ToolBar(presentationControl, SWT.RIGHT | SWT.FLAT);
-		initPresentationWidget(upperRight);
+		//initPresentationWidget(upperRight);
 		
 		titleIconToolbar = new ToolBar(presentationControl, SWT.RIGHT | SWT.FLAT);
 		titleIcon = new ToolItem(titleIconToolbar, SWT.PUSH);
-		titleIcon.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showPaneMenu();
-			}
-		});
+        
+        titleIconToolbar.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+                showPaneMenu();
+            }
+        });
 		titleIconToolbar.addListener(SWT.MenuDetect, menuListener);
 		
 		titleIconToolbar.setVisible(!showIconOnTabs);
@@ -430,22 +462,26 @@ public class WrappedTabsPartPresentation extends StackPresentation {
 	}
 	
 	private void createButtonBar() {
-		
 		viewMenu = new ToolItem(upperRight, SWT.PUSH);
-		viewMenu.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showSystemMenu();
-			}
-		});
+        upperRight.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+                Point p = new Point(event.x, event.y);
+                Rectangle r = viewMenu.getBounds();
+                
+                if (r.contains(p)) {
+                    showSystemMenu();
+                }
+            }
+        });
 		viewMenu.setImage(PresentationImages.getImage(PresentationImages.VIEW_MENU));
 	
-		showToolbar = new ToolItem(upperRight, SWT.PUSH);
-		showToolbar.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showToolbar(!isShowingToolbar());
-			}
-		});
-		
+		showToolbar = new ToolItem(upperRight, SWT.PUSH);        
+        showToolbar.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                showToolbar(!isShowingToolbar());
+            }
+        });
+        	
 		if (getSite().supportsState(IStackPresentationSite.STATE_MINIMIZED)) {
 			minView = new ToolItem(upperRight, SWT.PUSH);
 			minView.addSelectionListener(new SelectionAdapter() {
