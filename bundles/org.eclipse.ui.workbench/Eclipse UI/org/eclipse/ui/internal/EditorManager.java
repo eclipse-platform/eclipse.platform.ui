@@ -67,6 +67,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -274,6 +275,27 @@ public class EditorManager implements IExtensionChangeHandler {
     }
 
     /**
+     * Answer a list of dirty views.
+     */
+	private List collectDirtyViews() {
+        List result = new ArrayList(3);
+		// add all the saveable views to the list
+		Perspective[] perspectives = page.getSortedInternalPerspectives();
+		for (int l=0; l<perspectives.length; l++) {
+			IViewPart[] viewParts = page.getViews(perspectives[l], false);
+			for (int m=0; m<viewParts.length; m++) {
+				IViewPart view = viewParts[m];
+				if (view instanceof ISaveablePart) {
+					ISaveablePart saveable = (ISaveablePart)view;
+					if (saveable.isDirty() && !result.contains(saveable)) {
+							result.add(saveable);
+					}
+				}
+			}
+		}
+		return result;
+	}
+    /**
      * Returns whether the manager contains an editor.
      */
     public boolean containsEditor(IEditorReference ref) {
@@ -448,6 +470,15 @@ public class EditorManager implements IExtensionChangeHandler {
         List dirtyEditors = collectDirtyEditors();
         return (IEditorPart[]) dirtyEditors
                 .toArray(new IEditorPart[dirtyEditors.size()]);
+    }
+	
+    /**
+     * Returns the dirty views in the page (across all perspectives in the page).
+     */
+    public IViewPart[] getDirtyViews() {
+        List dirtyViews = collectDirtyViews();
+        return (IViewPart[]) dirtyViews
+                .toArray(new IViewPart[dirtyViews.size()]);
     }
 
     /*
@@ -912,46 +943,92 @@ public class EditorManager implements IExtensionChangeHandler {
      * user has cancelled the command.
      */
     public boolean saveAll(boolean confirm, boolean closing) {
-        // Get the list of dirty editors.  If it is
+        // Get the list of dirty editors and views.  If it is
         // empty just return.
-        List dirtyEditors = collectDirtyEditors();
-        if (dirtyEditors.size() == 0)
+        List dirtyParts = collectDirtyEditors();
+		dirtyParts.addAll(collectDirtyViews());
+        if (dirtyParts.size() == 0)
             return true;
 
         // If confirmation is required ..
-        return saveAll(dirtyEditors, confirm, window); //$NON-NLS-1$
+        return saveAll(dirtyParts, confirm, window); //$NON-NLS-1$
     }
 
-    public static boolean saveAll(List dirtyEditors, boolean confirm,
+    /**
+     * Saves the given dirty editors and views, optionally prompting the user.
+     * 
+     * @param dirtyParts the dirty views and editors
+     * @param confirm <code>true</code> prompt whether to save, <code>false</code> to save without prompting 
+     * @param window the window to use as the parent for the dialog that prompts to save multiple dirty editors and views 
+     * @return <code>true</code> on success, <code>false</code> if the user canceled the save
+     */
+    public static boolean saveAll(List dirtyParts, boolean confirm,
             final IWorkbenchWindow window) {
         if (confirm) {
-         	// process all editors that implement ISaveablePart2
-        	// these parts are removed from the list after saving them.
-        	ListIterator listIterator = dirtyEditors.listIterator();
+         	// Process all parts that implement ISaveablePart2.
+        	// These parts are removed from the list after saving 
+			// them.  We then need to restore the workbench to 
+			// its previous state, for now this is just last 
+			// active perspective.
+        	// Note that the given parts may come from multiple
+        	// windows, pages and perspectives.
+        	ListIterator listIterator = dirtyParts.listIterator();
+        	
+        	WorkbenchPage currentPage = null;
+			Perspective currentPageOriginalPerspective = null;
             while (listIterator.hasNext()) {
-                IEditorPart part = (IEditorPart) listIterator.next();
+				IWorkbenchPart part = (IWorkbenchPart) listIterator.next();
                 if (part instanceof ISaveablePart2) {
-                	window.getActivePage().bringToTop(part);
-                	if (!SaveableHelper.savePart(part, part, window, true))
-                		return false;
+                	WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
+                	if (!Util.equals(currentPage, page)) {
+                		if (currentPage != null && currentPageOriginalPerspective != null) {
+                			if (!currentPageOriginalPerspective.equals(currentPage.getActivePerspective())) {
+                				currentPage.setPerspective(currentPageOriginalPerspective.getDesc());
+                			}
+                		}
+                		currentPage = page;
+                		currentPageOriginalPerspective = page.getActivePerspective();
+                	}
+                	if (confirm) {
+						if (part instanceof IViewPart) {
+							Perspective perspective = page.getFirstPerspectiveWithView((IViewPart) part);
+							if (perspective != null) {
+								page.setPerspective(perspective.getDesc());
+							}
+						}
+						page.bringToTop(part);
+        				// show the window containing the page?
+                	}
+					// try to save the part
+					if (!SaveableHelper.savePart((ISaveablePart2) part, part, page.getWorkbenchWindow(), confirm)) {
+						// If the user cancels, don't restore the previous workbench state, as that will
+						// be an unexpected switch from the current state.
+						return false;
+					}
                 	listIterator.remove();
                 }
-            }	
+            }
+			// try to restore the workbench to its previous state
+    		if (currentPage != null && currentPageOriginalPerspective != null) {
+    			if (!currentPageOriginalPerspective.equals(currentPage.getActivePerspective())) {
+    				currentPage.setPerspective(currentPageOriginalPerspective.getDesc());
+    			}
+    		}
             
         	// If the editor list is empty return.
-            if (dirtyEditors.isEmpty())
+            if (dirtyParts.isEmpty())
             	return true;
             
             // Convert the list into an element collection.
-            AdaptableList input = new AdaptableList(dirtyEditors);
+            AdaptableList input = new AdaptableList(dirtyParts);
 
             ListSelectionDialog dlg = new ListSelectionDialog(
                     window.getShell(), input,
                     new BaseWorkbenchContentProvider(),
                     new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
 
-            dlg.setInitialSelections(dirtyEditors
-                    .toArray(new Object[dirtyEditors.size()]));
+            dlg.setInitialSelections(dirtyParts
+                    .toArray(new Object[dirtyParts.size()]));
             dlg.setTitle(SAVE_RESOURCES_TITLE);
             int result = dlg.open();
 
@@ -959,18 +1036,18 @@ public class EditorManager implements IExtensionChangeHandler {
             if (result == IDialogConstants.CANCEL_ID)
                 return false;
 
-            dirtyEditors = Arrays.asList(dlg.getResult());
-            if (dirtyEditors == null)
+            dirtyParts = Arrays.asList(dlg.getResult());
+            if (dirtyParts == null)
                 return false;
 
             // If the editor list is empty return.
-            if (dirtyEditors.isEmpty())
+            if (dirtyParts.isEmpty())
                 return true;
         }
 
         // Create save block.
         // @issue reference to workspace runnable!
-        final List finalEditors = dirtyEditors;
+        final List finalParts = dirtyParts;
         /*		final IWorkspaceRunnable workspaceOp = new IWorkspaceRunnable() {
          public void run(IProgressMonitor monitor) {
          monitor.beginTask("", finalEditors.size()); //$NON-NLS-1$
@@ -993,10 +1070,10 @@ public class EditorManager implements IExtensionChangeHandler {
                 //					ResourcesPlugin.getWorkspace().run(workspaceOp, monitorWrap);
 
                 //--------- This code was in the IWorkspaceRunnable above
-                monitorWrap.beginTask("", finalEditors.size()); //$NON-NLS-1$
-                Iterator itr = finalEditors.iterator();
+                monitorWrap.beginTask("", finalParts.size()); //$NON-NLS-1$
+                Iterator itr = finalParts.iterator();
                 while (itr.hasNext()) {
-                    IEditorPart part = (IEditorPart) itr.next();
+                    ISaveablePart part = (ISaveablePart) itr.next();
                     part.doSave(new SubProgressMonitor(monitorWrap, 1));
                     if (monitorWrap.isCanceled())
                         break;

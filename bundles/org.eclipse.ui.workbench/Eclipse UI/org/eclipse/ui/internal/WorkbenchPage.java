@@ -1656,6 +1656,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IEditorPart[] getDirtyEditors() {
         return getEditorManager().getDirtyEditors();
     }
+	
+    public IViewPart[] getDirtyViews() {
+        return getEditorManager().getDirtyViews();
+    }
 
     public IEditorPart findEditor(IEditorInput input) {
         return getEditorManager().findEditor(input);
@@ -1805,12 +1809,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public IViewPart[] getViews() {
-        Perspective persp = getActivePerspective();
+		return getViews(null, true);
+    }
+	
+	/**
+	 * Returns all view parts in the specified perspective
+	 * 
+	 * @param persp the perspective
+	 * @return an array of view parts
+	 * @since 3.1
+	 */
+	/*package*/IViewPart[] getViews(Perspective persp, boolean restore) {			
+        if (persp == null)
+			persp = getActivePerspective();
+		
         if (persp != null) {
             IViewReference refs[] = persp.getViewReferences();
             ArrayList parts = new ArrayList(refs.length);
             for (int i = 0; i < refs.length; i++) {
-                IWorkbenchPart part = refs[i].getPart(true);
+                IWorkbenchPart part = refs[i].getPart(restore);
                 if (part != null)
                     parts.add(part);
             }
@@ -3242,6 +3259,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /*package*/Perspective [] getOpenInternalPerspectives() {
         return perspList.getOpenedPerspectives();
     }
+	
+    /**
+     * Returns the perspectives in activation order (oldest first).
+     * 
+     * @return all open Perspective objects
+     * @since 3.1
+     */
+    /*package*/Perspective [] getSortedInternalPerspectives() {
+        return perspList.getSortedPerspectives();
+    }
+		
+	/**
+	 * Checks perspectives in the order they were activiated
+	 * for the specfied part.  The first sorted perspective 
+	 * that contains the specified part is returned.
+	 * 
+	 * @param part specified part to search for
+	 * @return the first sorted perspespective containing the part
+	 * @since 3.1
+	 */
+	/*package*/Perspective getFirstPerspectiveWithView(IViewPart part) {
+		Perspective [] perspectives = perspList.getSortedPerspectives();
+		for (int i=0; i<perspectives.length; i++)
+			if (perspectives[i].containsView(part))
+				return perspectives[i];
+		// we should never get here
+		return null;
+	}
 
     /**
      * Returns the perspectives in activation order (oldest first).

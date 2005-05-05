@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -38,6 +39,7 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
      * against which this class has outstanding property listeners registered.
      */
     private List partsWithListeners = new ArrayList(1);
+	private IWorkbenchPart openPart;
 
     /**
      * The default constructor.
@@ -79,7 +81,7 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
      */
     public void partClosed(IWorkbenchPart part) {
         super.partClosed(part);
-        if (part instanceof IEditorPart) {
+        if (part instanceof ISaveablePart) {
             part.removePropertyListener(this);
             partsWithListeners.remove(part);
             updateState();
@@ -91,10 +93,19 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
      */
     public void partOpened(IWorkbenchPart part) {
         super.partOpened(part);
-        if (part instanceof IEditorPart) {
+        if (part instanceof ISaveablePart) {
             part.addPropertyListener(this);
             partsWithListeners.add(part);
+			// We need to temporarily cache the opened part 
+			// because saveable views are not registered 
+			// with a perspective until after this method 
+			// is called.  We can't pass it through to
+			// update because it's protected. An async
+			// call to update may be a better approach.
+            // See bug 93784 [WorkbenchParts] View not yet added to perspective when partOpened sent
+			openPart = part;
             updateState();
+			openPart = null;
         }
     }
 
@@ -128,8 +139,16 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
      * targets that need saving.
      */
     protected void updateState() {
-        IWorkbenchPage page = getActivePage();
-        setEnabled(page != null && page.getDirtyEditors().length > 0);
+        // Workaround for bug 93784 [WorkbenchParts] View not yet added to perspective when partOpened sent
+		if (openPart != null && openPart.getSite().getPage().equals(getActivePage()) && ((ISaveablePart) openPart).isDirty()) {
+			setEnabled(true);
+		}
+		else {
+			WorkbenchPage page = (WorkbenchPage) getActivePage();
+			setEnabled(page != null	&&
+					(page.getDirtyEditors().length > 0 || 
+					 page.getDirtyViews().length > 0));
+		}
     }
 
     /* (non-Javadoc)

@@ -77,7 +77,9 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -556,33 +558,49 @@ public final class Workbench implements IWorkbench {
 
 		Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
 			public void run() {
-				// Collect dirtyEditors
-				ArrayList dirtyEditors = new ArrayList();
+				// Collect dirtyParts
+				ArrayList dirtyParts = new ArrayList();
 				ArrayList dirtyEditorsInput = new ArrayList();
 				IWorkbenchWindow windows[] = getWorkbenchWindows();
 				for (int i = 0; i < windows.length; i++) {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
 						WorkbenchPage page = (WorkbenchPage) pages[j];
+						
+						// add all editors to the list
 						IEditorPart editors[] = page.getDirtyEditors();
 						for (int k = 0; k < editors.length; k++) {
 							IEditorPart editor = editors[k];
 							if (editor.isSaveOnCloseNeeded()) {
 								if (!dirtyEditorsInput.contains(editor
 										.getEditorInput())) {
-									dirtyEditors.add(editor);
+									dirtyParts.add(editor);
 									dirtyEditorsInput.add(editor
 											.getEditorInput());
 								}
 							}
 						}
+						
+						// add all the saveable views to the list
+						IViewPart[] viewParts = page.getDirtyViews();
+						for (int m=0; m<viewParts.length; m++) {
+							IViewPart view = viewParts[m];
+							if (view instanceof ISaveablePart) {
+								ISaveablePart saveable = (ISaveablePart)view;
+								if (saveable.isSaveOnCloseNeeded()) {
+									if (!dirtyParts.contains(saveable)) {
+										dirtyParts.add(saveable);
+									}
+								}
+							}
+						}
 					}
 				}
-				if (dirtyEditors.size() > 0) {
+				if (dirtyParts.size() > 0) {
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if (w == null)
 						w = windows[0];
-					result[0] = EditorManager.saveAll(dirtyEditors,
+					result[0] = EditorManager.saveAll(dirtyParts,
 							finalConfirm, w);
 				}
 			}
