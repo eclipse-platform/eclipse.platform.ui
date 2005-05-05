@@ -26,9 +26,11 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.layout.SizeCache;
 import org.eclipse.ui.internal.presentations.util.AbstractTabFolder;
 import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
 import org.eclipse.ui.internal.presentations.util.PartInfo;
+import org.eclipse.ui.internal.presentations.util.ProxyControl;
 import org.eclipse.ui.internal.presentations.util.StandardSystemToolbar;
 import org.eclipse.ui.internal.presentations.util.TabFolderEvent;
 import org.eclipse.ui.internal.util.Util;
@@ -42,6 +44,8 @@ public class NativeTabFolder extends AbstractTabFolder {
     private ViewForm viewForm;
     private StandardSystemToolbar systemToolbar;
     private CLabel title;
+    private ProxyControl topCenter;
+    private SizeCache topCenterCache;
     
     private static final String FULL_TITLE = "part_title"; //$NON-NLS-1$
     
@@ -77,6 +81,9 @@ public class NativeTabFolder extends AbstractTabFolder {
         systemToolbar = new StandardSystemToolbar(viewForm, true, false, true, true, true);
         systemToolbar.addListener(systemToolbarListener);
         viewForm.setTopRight(systemToolbar.getControl());
+        
+        topCenter = new ProxyControl(viewForm);
+        topCenterCache = new SizeCache();
         
         title = new CLabel(viewForm, SWT.LEFT);
         attachListeners(title, false);
@@ -219,7 +226,16 @@ public class NativeTabFolder extends AbstractTabFolder {
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setToolbar(org.eclipse.swt.widgets.Control)
      */
     public void setToolbar(Control toolbarControl) {
-        viewForm.setTopCenter(toolbarControl);
+        
+        if (toolbarControl != null) { 
+            topCenterCache.setControl(toolbarControl);
+            topCenter.setTarget(topCenterCache);
+            viewForm.setTopCenter(topCenter.getControl());
+        } else {
+            topCenterCache.setControl(null);
+            topCenter.setTarget(null);
+            viewForm.setTopCenter(null);
+        }
         
         super.setToolbar(toolbarControl);
     }
