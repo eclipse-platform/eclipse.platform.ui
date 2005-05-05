@@ -248,7 +248,7 @@
          <action
                label="%KeyBindingActionSet.showKeyAssist.label"
                class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler"
-               menubarPath="help/group.main"
+               menubarPath="help/group.assist"
                id="org.eclipse.ui.actions.showKeyAssistHandler"
                definitionId="org.eclipse.ui.window.showKeyAssist">
          </action>

@@ -727,7 +727,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(helpContentsAction);
         menu.add(helpSearchAction);
 		menu.add(dynamicHelpAction);
-        
+		addSeparatorOrGroupMarker(menu, "group.assist"); //$NON-NLS-1$
 		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);

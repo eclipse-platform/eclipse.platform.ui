@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
 
@@ -49,6 +50,13 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
                 IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		node.put(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
                 IDEInternalPreferences.PSPM_PROMPT);
-
+		
+		// Turning some Help Menu separators on
+		node.putBoolean(getHelpSeparatorKey("group.main"), true); //$NON-NLS-1$
+		node.putBoolean(getHelpSeparatorKey("group.assist"), true); //$NON-NLS-1$
+		node.putBoolean(getHelpSeparatorKey("group.updates"), true); //$NON-NLS-1$
+	}
+	private String getHelpSeparatorKey(String groupId) {
+		return "useSeparator."+IWorkbenchActionConstants.M_HELP+"."+groupId; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
