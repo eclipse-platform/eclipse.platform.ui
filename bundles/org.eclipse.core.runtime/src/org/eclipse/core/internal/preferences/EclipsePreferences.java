@@ -190,9 +190,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		final ArrayList result = new ArrayList();
 		final String extension = '.' + PREFS_FILE_EXTENSION;
 		File file = dir.toFile();
-		File [] totalFiles = file.listFiles();
+		File[] totalFiles = file.listFiles();
 		if (totalFiles != null) {
-			for (int i=0; i<totalFiles.length; i++) {
+			for (int i = 0; i < totalFiles.length; i++) {
 				if (totalFiles[i].isFile()) {
 					String filename = totalFiles[i].getName();
 					if (filename.endsWith(extension)) {
@@ -204,7 +204,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
 	}
-	
+
 	protected IPath computeLocation(IPath root, String qualifier) {
 		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
@@ -970,6 +970,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		table.put(VERSION_KEY, VERSION_VALUE);
 		OutputStream output = null;
+		FileOutputStream fos = null;
 		try {
 			// create the parent dirs if they don't exist
 			File parentFile = location.toFile().getParentFile();
@@ -977,8 +978,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				return;
 			parentFile.mkdirs();
 			// set append to be false so we overwrite current settings.
-			output = new BufferedOutputStream(new FileOutputStream(location.toOSString(), false));
+			fos = new FileOutputStream(location.toOSString(), false);
+			output = new BufferedOutputStream(fos);
 			table.store(output, null);
+			output.flush();
+			fos.getFD().sync();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.preferences_saveException, location);
 			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
@@ -992,7 +996,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				}
 		}
 	}
-	
+
 	/**
 	 * Traverses the preference hierarchy rooted at this node, and adds
 	 * all preference key and value strings to the provided pool.  If an added
@@ -1011,7 +1015,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		IEclipsePreferences[] myChildren = getChildren(false);
 		for (int i = 0; i < myChildren.length; i++)
 			if (myChildren[i] instanceof EclipsePreferences)
-				((EclipsePreferences)myChildren[i]).shareStrings(pool);
+				((EclipsePreferences) myChildren[i]).shareStrings(pool);
 	}
 
 	/*

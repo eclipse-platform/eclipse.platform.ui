@@ -165,6 +165,8 @@ public abstract class PlatformURLConnection extends URLConnection {
 
 			srcis.close();
 			srcis = null;
+			tgtos.flush();
+			tgtos.getFD().sync();
 			tgtos.close();
 			tgtos = null;
 
@@ -386,6 +388,8 @@ public abstract class PlatformURLConnection extends URLConnection {
 				fos = new FileOutputStream(cacheLocation + indexName);
 				try {
 					cacheIndex.store(fos, null);
+					fos.flush();
+					fos.getFD().sync();
 				} finally {
 					fos.close();
 				}
@@ -448,6 +452,8 @@ public abstract class PlatformURLConnection extends URLConnection {
 				fos = new FileOutputStream(cachePropFile);
 				try {
 					props.store(fos, null);
+					fos.flush();
+					fos.getFD().sync();
 				} finally {
 					fos.close();
 				}

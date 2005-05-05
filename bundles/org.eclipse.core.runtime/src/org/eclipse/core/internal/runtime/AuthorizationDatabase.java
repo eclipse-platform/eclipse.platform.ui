@@ -309,6 +309,8 @@ public class AuthorizationDatabase {
 			FileOutputStream out = new FileOutputStream(file);
 			try {
 				save(out);
+				out.flush();
+				out.getFD().sync();
 			} finally {
 				out.close();
 			}

@@ -320,11 +320,15 @@ public class Preferences {
 		file.getParentFile().mkdirs();
 		IPreferencesService service = Platform.getPreferencesService();
 		OutputStream output = null;
+		FileOutputStream fos = null;
 		try {
-			output = new BufferedOutputStream(new FileOutputStream(file));
+			fos = new FileOutputStream(file);
+			output = new BufferedOutputStream(fos);
 			IEclipsePreferences node = (IEclipsePreferences) service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
 			service.exportPreferences(node, output, (String[]) null);
-		} catch (FileNotFoundException e) {
+			output.flush();
+			fos.getFD().sync();
+		} catch (IOException e) {
 			String message = NLS.bind(Messages.preferences_errorWriting, file, e.getMessage());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			throw new CoreException(status);

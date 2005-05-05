@@ -47,6 +47,8 @@ public class TableWriter {
 
 	DataOutputStream mainOutput;
 	DataOutputStream extraOutput;
+	FileOutputStream mainFileOutput = null;
+	FileOutputStream extraFileOutput = null;
 
 	private HashtableOfInt offsets;
 
@@ -57,7 +59,7 @@ public class TableWriter {
 	public boolean saveCache(RegistryObjectManager objectManager, long timestamp) {
 		try {
 			if (!openFiles())
-				return false;		
+				return false;
 			try {
 				saveExtensionRegistry(objectManager, timestamp);
 			} catch (IOException io) {
@@ -72,9 +74,18 @@ public class TableWriter {
 
 	private boolean openFiles() {
 		try {
-			mainOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(mainDataFile)));
-			extraOutput = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(extraDataFile)));
+			mainFileOutput = new FileOutputStream(mainDataFile);
+			mainOutput = new DataOutputStream(new BufferedOutputStream(mainFileOutput));
+			extraFileOutput = new FileOutputStream(extraDataFile);
+			extraOutput = new DataOutputStream(new BufferedOutputStream(extraFileOutput));
 		} catch (FileNotFoundException e) {
+			if (mainFileOutput != null)
+				try {
+					mainFileOutput.close();
+				} catch (IOException e1) {
+					//Ignore
+				}
+
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToCreateCache, e));
 			return false;
 		}
@@ -83,10 +94,25 @@ public class TableWriter {
 
 	private void closeFiles() {
 		try {
-			if (mainOutput != null)
+			if (mainOutput != null) {
+				mainOutput.flush();
+				if (mainFileOutput.getFD().valid()) {
+					mainFileOutput.getFD().sync();
+				}
 				mainOutput.close();
-			if (extraOutput != null)
+			}
+		} catch (IOException e) {
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheWriteProblems, e));
+			e.printStackTrace();
+		}
+		try {
+			if (extraOutput != null) {
+				extraOutput.flush();
+				if (extraFileOutput.getFD().valid()) {
+					extraFileOutput.getFD().sync();
+				}
 				extraOutput.close();
+			}
 		} catch (IOException e) {
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_registryCacheWriteProblems, e));
 			e.printStackTrace();
@@ -101,12 +127,13 @@ public class TableWriter {
 		}
 		saveOrphans(objectManager);
 		saveNamespaces(objectManager.getContributions());
-		closeFiles();	//Close the files here so we can write the appropriate size information in the table file.
+		closeFiles(); //Close the files here so we can write the appropriate size information in the table file.
 		saveTables(objectManager, timestamp); //Write the table last so if that is something went wrong we can know
 	}
 
 	private void saveNamespaces(KeyedHashSet[] contributions) throws IOException {
-		DataOutputStream outputNamespace = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(contributionsFile)));
+		FileOutputStream fosNamespace = new FileOutputStream(contributionsFile);
+		DataOutputStream outputNamespace = new DataOutputStream(new BufferedOutputStream(fosNamespace));
 		KeyedElement[] newElements = contributions[0].elements();
 		KeyedElement[] formerElements = contributions[1].elements();
 		outputNamespace.writeInt(newElements.length + formerElements.length);
@@ -120,15 +147,20 @@ public class TableWriter {
 			outputNamespace.writeLong(elt.getContributingBundle().getBundleId());
 			saveArray(elt.getRawChildren(), outputNamespace);
 		}
+		outputNamespace.flush();
+		fosNamespace.getFD().sync();
 		outputNamespace.close();
 	}
 
 	private void saveTables(RegistryObjectManager objectManager, long registryTimeStamp) throws IOException {
-		DataOutputStream outputTable = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tableFile)));
+		FileOutputStream fosTable = new FileOutputStream(tableFile);
+		DataOutputStream outputTable = new DataOutputStream(new BufferedOutputStream(fosTable));
 		writeCacheHeader(outputTable, registryTimeStamp);
 		outputTable.writeInt(objectManager.getNextId());
 		offsets.save(outputTable);
 		objectManager.getExtensionPoints().save(outputTable);
+		outputTable.flush();
+		fosTable.getFD().sync();
 		outputTable.close();
 	}
 
@@ -251,7 +283,8 @@ public class TableWriter {
 
 	private void saveOrphans(RegistryObjectManager objectManager) throws IOException {
 		Map orphans = objectManager.getOrphanExtensions();
-		DataOutputStream outputOrphan = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(orphansFile)));
+		FileOutputStream fosOrphan = new FileOutputStream(orphansFile);
+		DataOutputStream outputOrphan = new DataOutputStream(new BufferedOutputStream(fosOrphan));
 		outputOrphan.writeInt(orphans.size());
 		Set elements = orphans.entrySet();
 		for (Iterator iter = elements.iterator(); iter.hasNext();) {
@@ -264,6 +297,8 @@ public class TableWriter {
 			mainOutput.writeInt(((int[]) entry.getValue()).length);
 			saveExtensions((IExtension[]) objectManager.getHandles((int[]) entry.getValue(), RegistryObjectManager.EXTENSION), mainOutput);
 		}
+		outputOrphan.flush();
+		fosOrphan.getFD().sync();
 		outputOrphan.close();
 	}
 }
