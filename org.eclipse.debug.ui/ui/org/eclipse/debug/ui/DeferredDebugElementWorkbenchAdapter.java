@@ -12,6 +12,8 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.internal.ui.elements.adapters.SerializeSchedulingRule;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
@@ -45,6 +47,9 @@ public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementW
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
      */
     public ISchedulingRule getRule(Object object) {
+        if (object instanceof IDebugElement) {
+            return new SerializeSchedulingRule((IDebugElement) object);
+        }
         return null;
     }
 
