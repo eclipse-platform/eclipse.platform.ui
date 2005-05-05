@@ -1873,11 +1873,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Reverts this resource's modification stamp to a previous value.  This is
-	 * intended to be used by a client that is rolling back or undoing a previous 
-	 * change to this resource.  It is the caller's responsibility to ensure that the 
-	 * value of the reverted modification stamp matches this resource's modification 
-	 * stamp prior to the change that has been rolled back.
+	 * Reverts this resource's modification stamp.  This is intended to be used by 
+	 * a client that is rolling back or undoing a previous change to this resource.  
+	 * <p>
+	 * It is the caller's responsibility to ensure that the value of the reverted 
+	 * modification stamp matches this resource's modification stamp prior to the 
+	 * change that has been rolled back.  More generally, the caller must ensure
+	 * that the specification of modification stamps outlined in 
+	 * <code>getModificationStamp</code> is honored; the modification stamp
+	 * of two distinct resource states should be different if and only if one or more
+	 * of the attributes listed in the specification as affecting the modification
+	 * stamp have changed.
 	 * <p>
 	 * Reverting the modification stamp will <b>not</b> be reported in a 
 	 * subsequent resource change event.
