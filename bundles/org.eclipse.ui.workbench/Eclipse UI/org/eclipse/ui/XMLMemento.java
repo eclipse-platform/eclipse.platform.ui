@@ -384,7 +384,8 @@ public final class XMLMemento implements IMemento {
         Text textNode = getTextNode();
         if (textNode == null) {
             textNode = factory.createTextNode(data);
-            element.appendChild(textNode);
+			// Always add the text node as the first child (fixes bug 93718) 
+			element.insertBefore(textNode, element.getFirstChild());
         } else {
             textNode.setData(data);
         }
