@@ -39,14 +39,16 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parent) {
-        try {
-        	IVariable variable = (IVariable) parent;
-            IValue value = variable.getValue();
-            if (value != null) {
-                return getValueChildren(variable, value);
-            }
-        } catch (DebugException e) {
-        }
+	    if (parent instanceof IVariable) {
+	        try {
+	            IVariable variable = (IVariable) parent;
+	            IValue value = variable.getValue();
+	            if (value != null) {
+	                return getValueChildren(variable, value);
+	            }
+	        } catch (DebugException e) {
+	        }
+	    }
         return EMPTY;
 	}
 	
