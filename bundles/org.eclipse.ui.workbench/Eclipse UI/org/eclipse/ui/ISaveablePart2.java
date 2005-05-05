@@ -17,7 +17,13 @@ package org.eclipse.ui;
  * what to do with unsaved data when the part is closed or the Workbench
  * is shut down.
  * <p>
- * 
+ * Note that if a part implements this interface, it is excluded from the
+ * common "prompt to save" dialog, and instead opens its own dialog.  This may
+ * cause multiple prompts to the end user during a single user operation.
+ * Implementors should be aware that this may lead to a less than optimal
+ * user experience.
+ * </p>
+ *  
  * @since 3.1
  */
 public interface ISaveablePart2 extends ISaveablePart {
