@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.browser;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
@@ -54,7 +56,11 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 	 */
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
-		url = config.getAttribute("url"); //$NON-NLS-1$
+		if (data != null && data instanceof Hashtable) {
+			url = (String) ((Hashtable) data).get("url"); //$NON-NLS-1$
+		}
+		if (url == null || url.length() == 0)
+			url = config.getAttribute("url"); //$NON-NLS-1$
 	}
 
 	/**
