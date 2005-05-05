@@ -700,9 +700,14 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                     }
                     
                     if (dragDetected == false) {
-                        // only synchronize with editor when the selection is not the result 
-                        // of a drag. Fixes bug 22274.
-                        linkToEditor();
+                        ISelection sel = viewer.getSelection();
+                        if (sel instanceof IStructuredSelection) {
+                            IStructuredSelection selection = (StructuredSelection)sel;
+                        
+                            // only synchronize with editor when the selection is not the result 
+                            // of a drag. Fixes bug 22274.
+                            linkToEditor(selection);
+                        }
                     }
                 }
             });
@@ -832,22 +837,18 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * 
      * @since 2.0
      */
-    protected void linkToEditor() {
+    protected void linkToEditor(IStructuredSelection selection) {
 
-        ISelection sel = viewer.getSelection();
-        if (sel instanceof StructuredSelection) {
-            StructuredSelection selection = (StructuredSelection)sel;
-            Object obj = selection.getFirstElement();
-            if (obj instanceof IFile && selection.size() == 1) {
-                IFile file = (IFile) obj;
-                IWorkbenchPage page = getSite().getPage();
-                IEditorPart editor = ResourceUtil.findEditor(page, file);
-                if (editor != null) {
-                    page.bringToTop(editor);
-                    return;
-                }
-            }   
-        }
+        Object obj = selection.getFirstElement();
+        if (obj instanceof IFile && selection.size() == 1) {
+            IFile file = (IFile) obj;
+            IWorkbenchPage page = getSite().getPage();
+            IEditorPart editor = ResourceUtil.findEditor(page, file);
+            if (editor != null) {
+                page.bringToTop(editor);
+                return;
+            }
+        }   
     }
 
     /**
