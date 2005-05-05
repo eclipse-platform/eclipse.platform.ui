@@ -837,9 +837,11 @@ public class ActionContributionItem extends ContributionItem {
 
                 if (textChanged) {
                     String text = action.getText();
-
-                    if (text != null)
-                        button.setText(text);
+                    if (text == null)
+                        text = ""; //$NON-NLS-1$
+                    else
+                        text = Action.removeAcceleratorText(text);
+                    button.setText(text);
                 }
 
                 if (tooltipTextChanged)
