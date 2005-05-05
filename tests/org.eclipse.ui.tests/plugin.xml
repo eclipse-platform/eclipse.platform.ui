@@ -212,7 +212,7 @@
             allowMultiple="true"
             name="Mock View Mult"
             icon="icons\view.gif"
-            class="org.eclipse.ui.tests.api.MockViewPart"
+            class="org.eclipse.ui.tests.api.MockViewPartMult"
             id="org.eclipse.ui.tests.api.MockViewPartMult">
       </view>
       <view
