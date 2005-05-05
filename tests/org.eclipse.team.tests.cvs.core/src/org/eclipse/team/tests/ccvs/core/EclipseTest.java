@@ -1213,6 +1213,10 @@ public class EclipseTest extends ResourceTest {
      * @see junit.framework.TestCase#runTest()
      */
     protected void runTest() throws Throwable {
+        if (!CVSTestSetup.RECORD_PROTOCOL_TRAFFIC) {
+            super.runTest();
+            return;
+        }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         Policy.recorder = new PrintStream(os);
         try {
