@@ -1769,8 +1769,10 @@ public class CustomizePerspectiveDialog extends Dialog {
                 }
             }
         }
-        StructuredSelection sel = new StructuredSelection(item);
-        actionSetsViewer.setSelection(sel, true);
+        if (item != null) {
+        	StructuredSelection sel = new StructuredSelection(item);
+        	actionSetsViewer.setSelection(sel, true);
+        }
 
         if (showShortcutTab()) {
             menusCombo.select(lastSelectedMenuIndex);
