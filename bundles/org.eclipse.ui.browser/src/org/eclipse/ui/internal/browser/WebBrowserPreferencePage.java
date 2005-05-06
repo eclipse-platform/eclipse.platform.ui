@@ -357,6 +357,10 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				if (dialog.open() == Window.CANCEL)
 					return;
 				tableViewer.refresh();
+				IBrowserDescriptor cbrowser = BrowserManager.getInstance()
+					.getCurrentWebBrowser();
+				if (cbrowser != null)
+					tableViewer.setChecked(cbrowser, true);
 			}
 		});
 
@@ -475,6 +479,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					browser2.save();
 				}
 				tableViewer.refresh();
+				
+				IBrowserDescriptor cbrowser = BrowserManager.getInstance()
+					.getCurrentWebBrowser();
+				if (cbrowser != null)
+					tableViewer.setChecked(cbrowser, true);
 			}
 		});
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(search,
