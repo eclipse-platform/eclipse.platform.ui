@@ -55,7 +55,9 @@ class LightweightDecoratorManager {
             IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
                     .getMessage(), exception);
             WorkbenchPlugin.log("Exception in Decorator", status); //$NON-NLS-1$
-            decorator.crashDisable();
+            if (decorator != null) {
+            	decorator.crashDisable();
+            }
         }
 
         /*
