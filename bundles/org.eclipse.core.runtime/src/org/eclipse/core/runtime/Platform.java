@@ -109,6 +109,15 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static final String PREF_PLATFORM_PERFORMANCE = "runtime.performance"; //$NON-NLS-1$
+	
+	/**
+	 * Constant (value "line.separator") name of the preference used for storing 
+	 * the line separator. 
+	 * 
+	 * @see #knownPlatformLineSeparators
+	 * @since 3.1
+	 */
+	public static final String PREF_LINE_SEPARATOR = "line.separator"; //$NON-NLS-1$
 
 	/** 
 	 * Constant (value 1) indicating the minimum allowed value for the 
@@ -382,6 +391,15 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
+
+	// private constants for platform line separators and their associated platform names
+	private static final String LINE_SEPARATOR_KEY_MAC_OS_9 = Messages.line_separator_platform_mac_os_9;
+	private static final String LINE_SEPARATOR_KEY_UNIX = Messages.line_separator_platform_unix;
+	private static final String LINE_SEPARATOR_KEY_WINDOWS = Messages.line_separator_platform_windows;
+	
+	private static final String LINE_SEPARATOR_VALUE_CR = "\r"; //$NON-NLS-1$
+	private static final String LINE_SEPARATOR_VALUE_LF = "\n"; //$NON-NLS-1$
+	private static final String LINE_SEPARATOR_VALUE_CRLF = "\r\n"; //$NON-NLS-1$
 
 	/**
 	 * Private constructor to block instance creation.
@@ -871,7 +889,7 @@ public final class Platform {
 	public static IPath getStateLocation(Bundle bundle) {
 		return InternalPlatform.getDefault().getStateLocation(bundle);
 	}
-
+	
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
@@ -1275,6 +1293,22 @@ public final class Platform {
 	 */
 	public static String[] knownOSValues() {
 		return InternalPlatform.getDefault().knownOSValues();
+	}
+
+	/**
+	 * Returns a map of known platform line separators. The keys are 
+	 * translated names of platforms and the values are their associated 
+	 * line separator strings.
+	 * 
+	 * @return a map of platform to their line separator string
+	 * @since 3.1
+	 */
+	public static Map knownPlatformLineSeparators() {
+		Map result = new HashMap();
+		result.put(LINE_SEPARATOR_KEY_MAC_OS_9, LINE_SEPARATOR_VALUE_CR);
+		result.put(LINE_SEPARATOR_KEY_UNIX, LINE_SEPARATOR_VALUE_LF);
+		result.put(LINE_SEPARATOR_KEY_WINDOWS, LINE_SEPARATOR_VALUE_CRLF);
+		return result;
 	}
 
 	/**
