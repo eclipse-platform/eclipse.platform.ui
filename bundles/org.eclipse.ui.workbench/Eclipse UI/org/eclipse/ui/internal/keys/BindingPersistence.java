@@ -46,6 +46,8 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
@@ -522,118 +524,131 @@ public final class BindingPersistence {
 	}
 
 	/**
-	 * Reads all of the binding information from the registry and from the
-	 * preference store.
-	 * 
-	 * @param bindingManager
-	 *            The binding manager which should be populated with the values
-	 *            from the registry and preference store; must not be
-	 *            <code>null</code>.
-	 * @param commandService
-	 *            The command service for the workbench; must not be
-	 *            <code>null</code>.
-	 */
-	static final void read(final BindingManager bindingManager,
-			final ICommandService commandService) {
-		// Create the extension registry mementos.
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		int activeSchemeElementCount = 0;
-		int bindingDefinitionCount = 0;
-		int schemeDefinitionCount = 0;
-		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
+     * Reads all of the binding information from the registry and from the
+     * preference store.
+     * 
+     * @param bindingManager
+     *            The binding manager which should be populated with the values
+     *            from the registry and preference store; must not be
+     *            <code>null</code>.
+     * @param commandService
+     *            The command service for the workbench; must not be
+     *            <code>null</code>.
+     */
+    static final void read(final BindingManager bindingManager,
+            final ICommandService commandService) {
+        // Create the extension registry mementos.
+        final IExtensionRegistry registry = Platform.getExtensionRegistry();
+        int activeSchemeElementCount = 0;
+        int bindingDefinitionCount = 0;
+        int schemeDefinitionCount = 0;
+        final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[3][];
 
-		// Sort the bindings extension point based on element name.
-		final IConfigurationElement[] bindingsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_BINDINGS);
-		for (int i = 0; i < bindingsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
-			final String name = configurationElement.getName();
+        // Sort the bindings extension point based on element name.
+        final IConfigurationElement[] bindingsExtensionPoint = registry
+                .getConfigurationElementsFor(EXTENSION_BINDINGS);
+        for (int i = 0; i < bindingsExtensionPoint.length; i++) {
+            final IConfigurationElement configurationElement = bindingsExtensionPoint[i];
+            final String name = configurationElement.getName();
 
-			// Check if it is a binding definition.
-			if (ELEMENT_KEY.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
-			} else
-			// Check to see if it is a scheme definition.
-			if (ELEMENT_SCHEME.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-						schemeDefinitionCount++);
-			}
+            // Check if it is a binding definition.
+            if (ELEMENT_KEY.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements,
+                        INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+            } else
+            // Check to see if it is a scheme definition.
+            if (ELEMENT_SCHEME.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+                        schemeDefinitionCount++);
+            }
 
-		}
+        }
 
-		// Sort the commands extension point based on element name.
-		final IConfigurationElement[] commandsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_COMMANDS);
-		for (int i = 0; i < commandsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
-			final String name = configurationElement.getName();
+        // Sort the commands extension point based on element name.
+        final IConfigurationElement[] commandsExtensionPoint = registry
+                .getConfigurationElementsFor(EXTENSION_COMMANDS);
+        for (int i = 0; i < commandsExtensionPoint.length; i++) {
+            final IConfigurationElement configurationElement = commandsExtensionPoint[i];
+            final String name = configurationElement.getName();
 
-			// Check if it is a binding definition.
-			if (ELEMENT_KEY_BINDING.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements,
-						INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
+            // Check if it is a binding definition.
+            if (ELEMENT_KEY_BINDING.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements,
+                        INDEX_BINDING_DEFINITIONS, bindingDefinitionCount++);
 
-				// Check if it is a scheme defintion.
-			} else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-						schemeDefinitionCount++);
+                // Check if it is a scheme defintion.
+            } else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+                        schemeDefinitionCount++);
 
-				// Check if it is an active scheme identifier.
-			} else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
-						activeSchemeElementCount++);
-			}
-		}
+                // Check if it is an active scheme identifier.
+            } else if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
+                        activeSchemeElementCount++);
+            }
+        }
 
-		/*
-		 * Sort the accelerator configuration extension point into the scheme
-		 * definitions.
-		 */
-		final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
-				.getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
-		for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
-			final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
-			final String name = configurationElement.getName();
+        /*
+         * Sort the accelerator configuration extension point into the scheme
+         * definitions.
+         */
+        final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
+                .getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
+        for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
+            final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
+            final String name = configurationElement.getName();
 
-			// Check if the name matches the accelerator configuration element
-			if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
-				addElementToIndexedArray(configurationElement,
-						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
-						schemeDefinitionCount++);
-			}
-		}
+            // Check if the name matches the accelerator configuration element
+            if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
+                addElementToIndexedArray(configurationElement,
+                        indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+                        schemeDefinitionCount++);
+            }
+        }
 
-		// Create the preference memento.
-		final IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		final String preferenceString = store.getString(EXTENSION_COMMANDS);
-		IMemento preferenceMemento = null;
-		if ((preferenceString != null) && (preferenceString.length() > 0)) {
-			final Reader reader = new StringReader(preferenceString);
-			try {
-				preferenceMemento = XMLMemento.createReadRoot(reader);
-			} catch (final WorkbenchException e) {
-				// Could not initialize the preference memento.
-			}
-		}
+        // Create the preference memento.
+        final IPreferenceStore store = WorkbenchPlugin.getDefault()
+                .getPreferenceStore();
+        final String preferenceString = store.getString(EXTENSION_COMMANDS);
+        IMemento preferenceMemento = null;
+        if ((preferenceString != null) && (preferenceString.length() > 0)) {
+            final Reader reader = new StringReader(preferenceString);
+            try {
+                preferenceMemento = XMLMemento.createReadRoot(reader);
+            } catch (final WorkbenchException e) {
+                // Could not initialize the preference memento.
+            }
+        }
 
-		// Read the scheme definitions.
-		readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
-				schemeDefinitionCount, bindingManager);
-		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
-				activeSchemeElementCount, preferenceMemento, bindingManager);
-		readBindingsFromRegistry(
-				indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
-				bindingDefinitionCount, bindingManager, commandService);
-		readBindingsFromPreferences(preferenceMemento, bindingManager,
-				commandService);
-	}
+        // Read the scheme definitions.
+        readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
+                schemeDefinitionCount, bindingManager);
+        readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
+                activeSchemeElementCount, preferenceMemento, bindingManager);
+        readBindingsFromRegistry(
+                indexedConfigurationElements[INDEX_BINDING_DEFINITIONS],
+                bindingDefinitionCount, bindingManager, commandService);
+        readBindingsFromPreferences(preferenceMemento, bindingManager,
+                commandService);
+
+        /*
+         * Add a listener so that future preference changes trigger an update of
+         * the binding manager automatically.
+         */
+        store.addPropertyChangeListener(new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                if (EXTENSION_COMMANDS.equals(event.getProperty())) {
+                    read(bindingManager, commandService);
+                }
+            }
+        });
+    }
+
 
 	/**
 	 * <p>
