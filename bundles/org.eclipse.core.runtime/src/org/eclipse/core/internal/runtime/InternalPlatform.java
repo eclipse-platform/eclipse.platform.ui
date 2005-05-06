@@ -661,10 +661,8 @@ public final class InternalPlatform {
 	}
 
 	public long getStateTimeStamp() {
-		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
-		if (platformAdminReference == null)
-			return -1;
-		return ((PlatformAdmin) context.getService(platformAdminReference)).getState(false).getTimeStamp();
+		PlatformAdmin admin = getPlatformAdmin();
+		return admin == null ? -1 : admin.getState(false).getTimeStamp();
 	}
 
 	public URLConverter getURLConverter() {
