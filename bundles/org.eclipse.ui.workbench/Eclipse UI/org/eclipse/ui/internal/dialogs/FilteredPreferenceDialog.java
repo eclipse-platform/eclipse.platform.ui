@@ -28,10 +28,12 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -117,6 +119,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
+		
+		//if the tree has only one or zero pages, make the combo area disable
+		if(hasAtMostOnePage(tree)){
+			filteredTree.getFilterCombo().setEnabled(false);
+			filteredTree.getFilterCombo().setSelection(new Point(0,0));
+		}
+		
+		
 		tree.addFilter(new CapabilityFilter());
 
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -135,6 +145,23 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	}
 
 
+	/**
+	 * Return whether or not there are less than two pages.
+	 * @param tree
+	 * @return <code>true</code> if there are less than two
+	 * pages.
+	 */
+	private boolean hasAtMostOnePage(TreeViewer tree){
+		ITreeContentProvider contentProvider = (ITreeContentProvider ) tree.getContentProvider();
+		Object[] children= contentProvider.getElements(tree.getInput());
+		
+		if(children.length <= 1){
+			if(children.length == 0)
+				return true;
+			return !contentProvider.hasChildren(children[0]);				
+		}
+		return false;
+	}
 	/**
 	 * Set the content and label providers for the treeViewer
 	 * 
