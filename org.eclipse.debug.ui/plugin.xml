@@ -97,30 +97,35 @@
             name="%DebugPreferencePage.name"
             class="org.eclipse.debug.internal.ui.preferences.DebugPreferencePage"
             id="org.eclipse.debug.ui.DebugPreferencePage">
+         <keywordReference id="org.eclipse.debug.ui.general"/>
       </page>
       <page
             name="%LaunchingPreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.LaunchingPreferencePage"
             id="org.eclipse.debug.ui.LaunchingPreferencePage">
+         <keywordReference id="org.eclipse.debug.ui.launching"/>
       </page>
       <page
             name="%ViewManagementPreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.ViewManagementPreferencePage"
             id="org.eclipse.debug.ui.ViewManagementPreferencePage">
+         <keywordReference id="org.eclipse.debug.ui.viewManagement"/>
       </page>
       <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage"
             id="org.eclipse.debug.ui.ConsolePreferencePage">
+         <keywordReference id="org.eclipse.debug.ui.console"/>
       </page>
       <page
             name="%StringVariablePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
+         <keywordReference id="org.eclipse.debug.ui.stringSubstitution"/>
       </page>
    </extension>
    <extension
@@ -2399,6 +2404,24 @@ M4 = Platform-specific fourth key
              name="%BreakpointWorkingSet.name"
              pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"
              id="org.eclipse.debug.ui.breakpointWorkingSet"/>
+    </extension>
+    <extension
+          point="org.eclipse.ui.keywords">
+       <keyword
+             id="org.eclipse.debug.ui.general"
+             label="%preferenceKeywords.general"/>
+       <keyword
+             id="org.eclipse.debug.ui.console"
+             label="%preferenceKeywords.console"/>
+       <keyword
+             id="org.eclipse.debug.ui.launching"
+             label="%preferenceKeywords.launching"/>
+       <keyword
+             id="org.eclipse.debug.ui.stringSubstitution"
+             label="%preferenceKeywords.stringSubstitution"/>
+       <keyword
+             id="org.eclipse.debug.ui.viewManagement"
+             label="%preferenceKeywords.viewManagement"/>
     </extension>
 
 </plugin>
