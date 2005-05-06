@@ -51,69 +51,6 @@
    </extension>
 <!-- **************** TESTS ******************* -->
    <extension
-         point="org.eclipse.core.tests.harness.tests">
-      <test
-            id="cvs.all">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.AllTests">
-         </run>
-      </test>
-      <test
-            id="cvs.provider">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider">
-         </run>
-      </test>
-      <test
-            id="cvs.compatibility">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.compatible.AllTestsCompatibility">
-         </run>
-      </test>
-      <test
-            id="cvs.resources">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources">
-         </run>
-      </test>
-      <test
-            id="cvs.sync">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.provider.SyncElementTest">
-         </run>
-      </test>
-      <test
-            id="cvs.remote">
-         <run
-               class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest">
-         </run>
-      </test>
-      <test
-            id="cvsui.benchmark.all">
-         <run
-               class="org.eclipse.team.tests.ccvs.ui.benchmark.AllTests">
-         </run>
-      </test>
-      <test
-            id="cvsui.benchmark.sync">
-         <run
-               class="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests">
-         </run>
-      </test>
-      <test
-            id="cvsui.benchmark.workflow">
-         <run
-               class="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests">
-         </run>
-      </test>
-      <test
-            id="cvsui.benchmark.command">
-         <run
-               class="org.eclipse.team.tests.ccvs.ui.benchmark.CommandTests">
-         </run>
-      </test>
-   </extension>
-   <extension
          id="harness"
          point="org.eclipse.core.runtime.applications">
       <application>
