@@ -226,6 +226,17 @@ public abstract class Bucket {
 	protected abstract Entry createEntry(IPath path, Object value);
 
 	/**
+	 * Flushes this bucket so it has no contents and is not associated to any 
+	 * location. Any uncommitted changes are lost.
+	 */
+	public void flush() {
+		projectName = null;
+		location = null;
+		entries.clear();
+		needSaving = false;
+	}
+
+	/**
 	 * Returns how many entries there are in this bucket.
 	 */
 	public final int getEntryCount() {

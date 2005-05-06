@@ -65,7 +65,7 @@ public class HistoryStore2 implements IHistoryStore {
 	private Set blobsToRemove = new HashSet();
 	BucketTree tree;
 	private Workspace workspace;
-	
+
 	public HistoryStore2(Workspace workspace, IPath location, int limit) {
 		this.workspace = workspace;
 		location.toFile().mkdirs();
@@ -139,7 +139,7 @@ public class HistoryStore2 implements IHistoryStore {
 		tree.getCurrent().save();
 	}
 
-	public synchronized  void clean(IProgressMonitor monitor) {
+	public synchronized void clean(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
 			IWorkspaceDescription description = workspace.internalGetDescription();
@@ -193,9 +193,11 @@ public class HistoryStore2 implements IHistoryStore {
 		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
 		// special case: we are moving a project
-		if (moving && sourceResource.getType() == IResource.PROJECT)
-			// nothing to be done!
+		if (moving && sourceResource.getType() == IResource.PROJECT) {
+			// flush the tree to avoid confusion if another project is created with the same name
+			tree.getCurrent().flush();
 			return;
+		}
 
 		try {
 			// copy history by visiting the source tree
@@ -211,7 +213,7 @@ public class HistoryStore2 implements IHistoryStore {
 	public boolean exists(IFileState target) {
 		return blobStore.fileFor(((FileState) target).getUUID()).exists();
 	}
-	
+
 	public InputStream getContents(IFileState target) throws CoreException {
 		if (!target.exists()) {
 			String message = Messages.history_notValid;
@@ -223,7 +225,7 @@ public class HistoryStore2 implements IHistoryStore {
 	public File getFileFor(IFileState state) {
 		return blobStore.fileFor(((FileState) state).getUUID());
 	}
-	
+
 	public synchronized IFileState[] getStates(IPath filePath, IProgressMonitor monitor) {
 		try {
 			tree.loadBucketFor(filePath);

@@ -212,7 +212,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		IResource destFile = destFolder.getFile(sourceFile.getName());
 		QualifiedName propName = new QualifiedName("test", "prop");
 		String propValue = "this is the property value";
-		
+
 		ensureExistsInWorkspace(new IResource[] {source, sourceFolder, sourceFile}, true);
 
 		/* 
@@ -457,4 +457,31 @@ public class PropertyManagerTest extends LocalStoreTest {
 			fail("20.0", e);
 		}
 	}
+
+	public void testBug93849() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project1a = root.getProject("proj1");
+		ensureExistsInWorkspace(project1a, true);
+		QualifiedName key = new QualifiedName(PI_RESOURCES_TESTS, "key");
+		try {
+			project1a.setPersistentProperty(key, "value");
+		} catch (CoreException e) {
+			fail("0.5", e);
+		}
+		try {
+			project1a.move(new Path("proj2"), true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.6", e);
+		}
+		IProject project1b = root.getProject("proj1");
+		ensureExistsInWorkspace(project1b, true);
+		String value = null;
+		try {
+			value = project1b.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("0.8", e);
+		}
+		assertNull("1.0", value);
+	}
+
 }

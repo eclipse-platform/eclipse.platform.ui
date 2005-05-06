@@ -72,7 +72,11 @@ public class PropertyManager2 implements IPropertyManager {
 	}
 
 	public void closePropertyStore(IResource target) throws CoreException {
+		// ensure any uncommitted are written to disk
 		tree.getCurrent().save();
+		// flush in-memory state to avoid confusion if another project is later
+		// created with the same name
+		tree.getCurrent().flush();
 	}
 
 	public synchronized void copy(IResource source, IResource destination, int depth) throws CoreException {
@@ -141,7 +145,7 @@ public class PropertyManager2 implements IPropertyManager {
 	public synchronized void setProperty(IResource target, QualifiedName name, String value) throws CoreException {
 		//resource may have been deleted concurrently
 		//must check for existence within synchronized method
-		Resource resource = (Resource)target;
+		Resource resource = (Resource) target;
 		ResourceInfo info = resource.getResourceInfo(false, false);
 		int flags = resource.getFlags(info);
 		resource.checkAccessible(flags);
