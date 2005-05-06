@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.variables.RemoteVariableContentManager;
 import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 public class DeferredRegisterGroup extends DeferredDebugElementWorkbenchAdapter {
 
@@ -32,6 +37,38 @@ public class DeferredRegisterGroup extends DeferredDebugElementWorkbenchAdapter 
 	 */
 	public Object getParent(Object element) {
 		return null;
-	}   
+	} 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
+	    Object[] children = getChildren(object);
+	    if (children.length > 0) {
+	        if (collector instanceof RemoteVariableContentManager.VariableCollector) {
+	            RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
+	            for (int i = 0; i < children.length; i++) {
+                    Object child = children[i];
+                    remoteCollector.setHasChildren(child, hasChildren(child));
+	            }	    	
+	        }	    	
+	        collector.add(children, monitor);
+	    }
+	    collector.done();
+	}		
 
+    protected boolean hasChildren(Object child) {
+        if (child instanceof IVariable) {
+            IVariable var = (IVariable) child;
+            try {
+                IValue value = var.getValue();
+                return value.hasVariables();
+            } catch (DebugException e) {
+            }
+        }
+        return false;
+    }	
 }
