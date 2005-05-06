@@ -41,6 +41,12 @@ public class Messages extends NLS {
 	public static String jobs_internalError;
 	public static String jobs_waitFamSub;
 
+	// line separator platforms
+	public static String line_separator_platform_mac_os_9;
+	public static String line_separator_platform_unix;
+	public static String line_separator_platform_windows;
+
+	
 	// metadata
 	public static String meta_appNotInit;
 	public static String meta_authFormatChanged;
