@@ -13,6 +13,8 @@ package org.eclipse.debug.ui.console;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -123,7 +125,7 @@ public class FileLink implements IConsoleHyperlink {
 		if (fEditorId == null) {
 			IWorkbench workbench= DebugUIPlugin.getDefault().getWorkbench();
 			// If there is a registered editor for the file use it.
-			IEditorDescriptor desc =  workbench.getEditorRegistry().getDefaultEditor(fFile.getName());
+			IEditorDescriptor desc = workbench.getEditorRegistry().getDefaultEditor(fFile.getName(), getFileContentType());
 			if (desc == null) {
 				//default editor
 				desc= workbench.getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
@@ -132,4 +134,15 @@ public class FileLink implements IConsoleHyperlink {
 		}
 		return fEditorId;
 	}
+
+    private IContentType getFileContentType() {
+        try {
+            IContentDescription description= fFile.getContentDescription();
+            if (description != null) {
+                return description.getContentType();
+            }
+        } catch (CoreException e) {
+        }
+        return null;
+    }
 }
