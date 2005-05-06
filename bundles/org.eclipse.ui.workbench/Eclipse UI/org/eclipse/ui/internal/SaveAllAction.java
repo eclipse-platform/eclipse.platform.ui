@@ -146,8 +146,7 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
 		else {
 			WorkbenchPage page = (WorkbenchPage) getActivePage();
 			setEnabled(page != null	&&
-					(page.getDirtyEditors().length > 0 || 
-					 page.getDirtyViews().length > 0));
+					(page.getDirtyParts().length > 0));
 		}
     }
 

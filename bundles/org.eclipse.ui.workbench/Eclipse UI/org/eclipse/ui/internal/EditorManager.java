@@ -273,28 +273,8 @@ public class EditorManager implements IExtensionChangeHandler {
         }
         return result;
     }
+    
 
-    /**
-     * Answer a list of dirty views.
-     */
-	private List collectDirtyViews() {
-        List result = new ArrayList(3);
-		// add all the saveable views to the list
-		Perspective[] perspectives = page.getSortedInternalPerspectives();
-		for (int l=0; l<perspectives.length; l++) {
-			IViewPart[] viewParts = page.getViews(perspectives[l], false);
-			for (int m=0; m<viewParts.length; m++) {
-				IViewPart view = viewParts[m];
-				if (view instanceof ISaveablePart) {
-					ISaveablePart saveable = (ISaveablePart)view;
-					if (saveable.isDirty() && !result.contains(saveable)) {
-							result.add(saveable);
-					}
-				}
-			}
-		}
-		return result;
-	}
     /**
      * Returns whether the manager contains an editor.
      */
@@ -470,15 +450,6 @@ public class EditorManager implements IExtensionChangeHandler {
         List dirtyEditors = collectDirtyEditors();
         return (IEditorPart[]) dirtyEditors
                 .toArray(new IEditorPart[dirtyEditors.size()]);
-    }
-	
-    /**
-     * Returns the dirty views in the page (across all perspectives in the page).
-     */
-    public IViewPart[] getDirtyViews() {
-        List dirtyViews = collectDirtyViews();
-        return (IViewPart[]) dirtyViews
-                .toArray(new IViewPart[dirtyViews.size()]);
     }
 
     /*
@@ -945,10 +916,14 @@ public class EditorManager implements IExtensionChangeHandler {
     public boolean saveAll(boolean confirm, boolean closing) {
         // Get the list of dirty editors and views.  If it is
         // empty just return.
-        List dirtyParts = collectDirtyEditors();
-		dirtyParts.addAll(collectDirtyViews());
-        if (dirtyParts.size() == 0)
-            return true;
+        ISaveablePart[] parts = page.getDirtyParts();
+        if (parts.length == 0)
+        	return true;
+        // saveAll below expects a mutable list
+        List dirtyParts = new ArrayList(parts.length);
+        for (int i = 0; i < parts.length; i++) {
+            dirtyParts.add(parts[i]);
+        }
 
         // If confirmation is required ..
         return saveAll(dirtyParts, confirm, window); //$NON-NLS-1$

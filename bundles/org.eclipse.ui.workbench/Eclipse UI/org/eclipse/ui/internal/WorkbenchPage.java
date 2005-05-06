@@ -1670,9 +1670,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return getEditorManager().getDirtyEditors();
     }
 	
-    public IViewPart[] getDirtyViews() {
-        return getEditorManager().getDirtyViews();
+    public ISaveablePart[] getDirtyParts() {
+        List result = new ArrayList(3);
+        IWorkbenchPartReference[] allParts = getAllParts();
+        for (int i = 0; i < allParts.length; i++) {
+            IWorkbenchPartReference reference = allParts[i];
+            
+            IWorkbenchPart part = reference.getPart(false);
+            if (part != null && part instanceof ISaveablePart) {
+                ISaveablePart saveable = (ISaveablePart)part;
+                if (saveable.isDirty()) {
+                    result.add(saveable);
+                }
+            }
+        }
+        
+        return (ISaveablePart[]) result.toArray(new ISaveablePart[result.size()]);
     }
+  
 
     public IEditorPart findEditor(IEditorInput input) {
         return getEditorManager().findEditor(input);
