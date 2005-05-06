@@ -42,51 +42,77 @@ public final class CommandManager implements ICategoryListener,
 	 */
 	private final class ExecutionListener implements IExecutionListener {
 
-		public void notHandled(String commandId, NotHandledException exception) {
-			if ((executionListeners != null) && (executionListeners.size() > 0)) {
-				final Iterator listenerItr = executionListeners.iterator();
-				while (listenerItr.hasNext()) {
-					final IExecutionListener listener = (IExecutionListener) listenerItr
-							.next();
-					listener.notHandled(commandId, exception);
-				}
-			}
-		}
+		public final void notHandled(final String commandId,
+                final NotHandledException exception) {
+            final int executionListenersSize = executionListeners.size();
+            if ((executionListeners != null) && (executionListenersSize > 0)) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.notHandled(commandId, exception);
+                }
+            }
+        }
 
-		public void postExecuteFailure(String commandId,
-				ExecutionException exception) {
-			if ((executionListeners != null) && (executionListeners.size() > 0)) {
-				final Iterator listenerItr = executionListeners.iterator();
-				while (listenerItr.hasNext()) {
-					final IExecutionListener listener = (IExecutionListener) listenerItr
-							.next();
-					listener.postExecuteFailure(commandId, exception);
-				}
-			}
-		}
+        public final void postExecuteFailure(final String commandId,
+                final ExecutionException exception) {
+            final int executionListenersSize = executionListeners.size();
+            if ((executionListeners != null) && (executionListenersSize > 0)) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.postExecuteFailure(commandId, exception);
+                }
+            }
+        }
 
-		public void postExecuteSuccess(String commandId, Object returnValue) {
-			if ((executionListeners != null) && (executionListeners.size() > 0)) {
-				final Iterator listenerItr = executionListeners.iterator();
-				while (listenerItr.hasNext()) {
-					final IExecutionListener listener = (IExecutionListener) listenerItr
-							.next();
-					listener.postExecuteSuccess(commandId, returnValue);
-				}
-			}
-		}
+        public final void postExecuteSuccess(final String commandId,
+                final Object returnValue) {
+            final int executionListenersSize = executionListeners.size();
+            if ((executionListeners != null) && (executionListenersSize > 0)) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.postExecuteSuccess(commandId, returnValue);
+                }
+            }
+        }
 
-		public final void preExecute(final String commandId,
-				final ExecutionEvent event) {
-			if ((executionListeners != null) && (executionListeners.size() > 0)) {
-				final Iterator listenerItr = executionListeners.iterator();
-				while (listenerItr.hasNext()) {
-					final IExecutionListener listener = (IExecutionListener) listenerItr
-							.next();
-					listener.preExecute(commandId, event);
-				}
-			}
-		}
+        public final void preExecute(final String commandId,
+                final ExecutionEvent event) {
+            final int executionListenersSize = executionListeners.size();
+            if ((executionListeners != null) && (executionListenersSize > 0)) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.preExecute(commandId, event);
+                }
+            }
+        }
 	}
 
 	/**
@@ -242,15 +268,22 @@ public final class CommandManager implements ICategoryListener,
 			final CommandManagerEvent commandManagerEvent) {
 		if (commandManagerEvent == null)
 			throw new NullPointerException();
-
-		if (commandManagerListeners != null) {
-			final Iterator listenerItr = commandManagerListeners.iterator();
-			while (listenerItr.hasNext()) {
-				final ICommandManagerListener listener = (ICommandManagerListener) listenerItr
-						.next();
-				listener.commandManagerChanged(commandManagerEvent);
-			}
-		}
+    
+        final int commandManagerListenersSize = commandManagerListeners.size();
+        if ((commandManagerListeners != null)
+                && (commandManagerListenersSize > 0)) {
+            /*
+             * Bug 88629. Copying to an array avoids a
+             * ConcurrentModificationException if someone tries to remove the
+             * listener while handling the event.
+             */
+            final ICommandManagerListener[] listeners = (ICommandManagerListener[]) commandManagerListeners
+                    .toArray(new ICommandManagerListener[commandManagerListenersSize]);
+            for (int i = 0; i < commandManagerListenersSize; i++) {
+                final ICommandManagerListener listener = listeners[i];
+                listener.commandManagerChanged(commandManagerEvent);
+            }
+        }
 	}
 
 	/**
