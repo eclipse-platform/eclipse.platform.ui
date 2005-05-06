@@ -35,13 +35,13 @@ import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIDialogsAuto extends TestCase {
     private static final String PROJECT_SELECTION_MESSAGE ="Select Other Projects";
 
-    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessagesCopy
-            .getString("FilterSelection.message");
+    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.FilterSelection_message;
 
     public UIDialogsAuto(String name) {
         super(name);

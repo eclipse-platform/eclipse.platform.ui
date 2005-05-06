@@ -21,10 +21,6 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class DeprecatedUIDialogs extends TestCase {
-    private static final String PROJECT_SELECTION_MESSAGE = "BuildOrderPreference_selectOtherProjects";
-
-    private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessagesCopy
-            .getString("FilterSelection.message");
 
     public DeprecatedUIDialogs(String name) {
         super(name);

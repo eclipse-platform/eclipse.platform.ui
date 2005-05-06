@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 import org.eclipse.ui.tests.util.DialogCheck;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
@@ -193,10 +194,8 @@ public class DeprecatedUIWizards extends TestCase {
 
         WizardNewProjectReferencePage page = new WizardNewProjectReferencePage(
                 "basicReferenceProjectPage");//$NON-NLS-1$
-        page.setTitle(ResourceMessagesCopy
-                .getString("NewProject.refeerenceTitle")); //$NON-NLS-1$
-        page.setDescription(ResourceMessagesCopy
-                .getString("NewProject.referenceDescription")); //$NON-NLS-1$				
+        page.setTitle(ResourceMessages.NewProject_referenceTitle);
+        page.setDescription(ResourceMessages.NewProject_referenceDescription);
         page.setWizard(wizard);
 
         WizardDialog dialog = new WizardDialog(getShell(), wizard);

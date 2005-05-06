@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import java.text.MessageFormat;
+
 import junit.framework.TestCase;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -19,6 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIMessageDialogs extends TestCase {
@@ -127,9 +130,8 @@ public class UIMessageDialogs extends TestCase {
     public void testDropOverwrite() {
         Dialog dialog = new MessageDialog(
                 getShell(),
-                ResourceNavigatorMessagesCopy.getString("DropAdapter.question"),
-                null, ResourceNavigatorMessagesCopy.format(
-                        "DropAdapter.overwriteQuery",
+                ResourceNavigatorMessages.DropAdapter_question,
+                null, MessageFormat.format(ResourceNavigatorMessages.DropAdapter_overwriteQuery, 
                         new Object[] { DUMMY_RELATIVE_PATH }),
                 MessageDialog.QUESTION, new String[] {
                         IDialogConstants.YES_LABEL,
