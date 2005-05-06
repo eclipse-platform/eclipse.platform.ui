@@ -324,107 +324,115 @@ public final class Command extends NamedHandleObject implements Comparable {
 	}
 
 	/**
-	 * Notifies the listeners for this command that it has changed in some way.
-	 * 
-	 * @param commandEvent
-	 *            The event to send to all of the listener; must not be
-	 *            <code>null</code>.
-	 */
-	private final void fireCommandChanged(final CommandEvent commandEvent) {
-		if (commandEvent == null) {
-			throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
-		}
+     * Notifies the listeners for this command that it has changed in some way.
+     * 
+     * @param commandEvent
+     *            The event to send to all of the listener; must not be
+     *            <code>null</code>.
+     */
+    private final void fireCommandChanged(final CommandEvent commandEvent) {
+        if (commandEvent == null) {
+            throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
+        }
 
-        final int commandListenersSize = commandListeners.size();
-        if ((commandListeners != null) && (commandListenersSize > 0)) {
-            /*
-             * Bug 88629. Copying to an array avoids a
-             * ConcurrentModificationException if someone tries to remove the
-             * listener while handling the event.
-             */
-            final ICommandListener[] listeners = (ICommandListener[]) commandListeners
-                    .toArray(new ICommandListener[commandListenersSize]);
-            for (int i = 0; i < commandListenersSize; i++) {
-                final ICommandListener listener = listeners[i];
-                listener.commandChanged(commandEvent);
+        if (commandListeners != null) {
+            final int commandListenersSize = commandListeners.size();
+            if (commandListenersSize > 0) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final ICommandListener[] listeners = (ICommandListener[]) commandListeners
+                        .toArray(new ICommandListener[commandListenersSize]);
+                for (int i = 0; i < commandListenersSize; i++) {
+                    final ICommandListener listener = listeners[i];
+                    listener.commandChanged(commandEvent);
+                }
             }
         }
-	}
+    }
 
-	/**
-	 * Notifies the execution listeners for this command that an attempt to
-	 * execute has failed because there is no handler.
-	 * 
-	 * @param e
-	 *            The exception that is about to be thrown; never
-	 *            <code>null</code>.
-	 */
-	private final void fireNotHandled(final NotHandledException e) {
-        final int executionListenersSize = executionListeners.size();
-        if ((executionListeners != null) && (executionListenersSize > 0)) {
-            /*
-             * Bug 88629. Copying to an array avoids a
-             * ConcurrentModificationException if someone tries to remove the
-             * listener while handling the event.
-             */
-            final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                    .toArray(new IExecutionListener[executionListenersSize]);
-            for (int i = 0; i < executionListenersSize; i++) {
-                final IExecutionListener listener = listeners[i];
-                listener.notHandled(getId(), e);
+    /**
+     * Notifies the execution listeners for this command that an attempt to
+     * execute has failed because there is no handler.
+     * 
+     * @param e
+     *            The exception that is about to be thrown; never
+     *            <code>null</code>.
+     */
+    private final void fireNotHandled(final NotHandledException e) {
+        if (executionListeners != null) {
+            final int executionListenersSize = executionListeners.size();
+            if (executionListenersSize > 0) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.notHandled(getId(), e);
+                }
             }
         }
-	}
+    }
 
-	/**
-	 * Notifies the execution listeners for this command that an attempt to
-	 * execute has failed during the execution.
-	 * 
-	 * @param e
-	 *            The exception that has been thrown; never <code>null</code>.
-	 *            After this method completes, the exception will be thrown
-	 *            again.
-	 */
-	private final void firePostExecuteFailure(final ExecutionException e) {
-        final int executionListenersSize = executionListeners.size();
-        if ((executionListeners != null) && (executionListenersSize > 0)) {
-            /*
-             * Bug 88629. Copying to an array avoids a
-             * ConcurrentModificationException if someone tries to remove the
-             * listener while handling the event.
-             */
-            final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                    .toArray(new IExecutionListener[executionListenersSize]);
-            for (int i = 0; i < executionListenersSize; i++) {
-                final IExecutionListener listener = listeners[i];
-                listener.postExecuteFailure(getId(), e);
+    /**
+     * Notifies the execution listeners for this command that an attempt to
+     * execute has failed during the execution.
+     * 
+     * @param e
+     *            The exception that has been thrown; never <code>null</code>.
+     *            After this method completes, the exception will be thrown
+     *            again.
+     */
+    private final void firePostExecuteFailure(final ExecutionException e) {
+        if (executionListeners != null) {
+            final int executionListenersSize = executionListeners.size();
+            if (executionListenersSize > 0) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.postExecuteFailure(getId(), e);
+                }
             }
         }
-	}
+    }
 
-	/**
-	 * Notifies the execution listeners for this command that an execution has
-	 * completed successfully.
-	 * 
-	 * @param returnValue
-	 *            The return value from the command; may be <code>null</code>.
-	 */
-	private final void firePostExecuteSuccess(final Object returnValue) {
-        final int executionListenersSize = executionListeners.size();
-        if ((executionListeners != null) && (executionListenersSize > 0)) {
-            /*
-             * Bug 88629. Copying to an array avoids a
-             * ConcurrentModificationException if someone tries to remove the
-             * listener while handling the event.
-             */
-            final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                    .toArray(new IExecutionListener[executionListenersSize]);
-            for (int i = 0; i < executionListenersSize; i++) {
-                final IExecutionListener listener = listeners[i];
-                listener.postExecuteSuccess(getId(), returnValue);
+    /**
+     * Notifies the execution listeners for this command that an execution has
+     * completed successfully.
+     * 
+     * @param returnValue
+     *            The return value from the command; may be <code>null</code>.
+     */
+    private final void firePostExecuteSuccess(final Object returnValue) {
+        if (executionListeners != null) {
+            final int executionListenersSize = executionListeners.size();
+            if (executionListenersSize > 0) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.postExecuteSuccess(getId(), returnValue);
+                }
             }
         }
-	}
+    }
 
 	/**
 	 * Notifies the execution listeners for this command that an attempt to
