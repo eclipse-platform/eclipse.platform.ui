@@ -250,7 +250,7 @@ public abstract class AbstractTableInformationControl {
          * TODO: remove this code once bug 62405 is fixed for the mainstream GTK
          * version
          */
-        final int ignoreEventCount = Platform.getWS().equals(Platform.WS_GTK) ? 4 : 0;
+        final int ignoreEventCount = Platform.getWS().equals(Platform.WS_GTK) ? 4 : 1;
     
         table.addMouseMoveListener(new MouseMoveListener() {
             TableItem fLastItem = null;
