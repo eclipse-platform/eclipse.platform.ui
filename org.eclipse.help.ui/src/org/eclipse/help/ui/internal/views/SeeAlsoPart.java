@@ -10,23 +10,33 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIResources;
-import org.eclipse.jface.action.*;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	private Composite container;
-	private ReusableHelpPart parent;
-	private FormText text;
+	private Composite linkContainer;
+	private ReusableHelpPart helpPart;
 	private String id;
 
 	/**
@@ -45,82 +55,80 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 1;
 		sep.setLayoutData(gd);
+		
+		Composite innerContainer = toolkit.createComposite(container);
+		innerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		layout = new GridLayout();
+		innerContainer.setLayout(layout);
+		Label label = toolkit.createLabel(innerContainer, Messages.SeeAlsoPart_goto);
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		linkContainer = toolkit.createComposite(innerContainer);
+		linkContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		RowLayout rlayout = new RowLayout();
+		rlayout.marginBottom = 0;
+		rlayout.marginTop = 0;
+		rlayout.marginLeft = 0;
+		rlayout.marginRight = 0;
+		rlayout.justify = false;
+		rlayout.wrap = true;
+		linkContainer.setLayout(rlayout);
+	}
+	
+	private void reloadLinks(String href) {
+		Control [] children = linkContainer.getChildren();
+		for (int i=0; i<children.length; i++) {
+			ImageHyperlink link = (ImageHyperlink)children[i];
+			RowData data = (RowData)link.getLayoutData();
+			data.exclude = link.getHref().equals(href);
+			link.setVisible(!data.exclude);
+		}
+		linkContainer.layout();
+		helpPart.reflow();
+	}
 
-		text = toolkit.createFormText(container, true);
-		text.setWhitespaceNormalized(false);
-		text.setLayoutData(new GridData(GridData.FILL_BOTH));
-		text.marginWidth = 5;
-		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
-				FormColors.TITLE));
-		text.addHyperlinkListener(new HyperlinkAdapter() {
+	private void addLinks(final Composite container, FormToolkit toolkit) {
+		IHyperlinkListener listener = new HyperlinkAdapter() {
 			public void linkActivated(final HyperlinkEvent e) {
 				container.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						SeeAlsoPart.this.parent.showPage((String) e.getHref(), true);
+						SeeAlsoPart.this.helpPart.showPage((String) e.getHref(), true);
 					}
 				});
 			}
-		});
-	}
-
-	private void hookImage(String key) {
-		text.setImage(key, HelpUIResources.getImage(key));
-	}
-
-	private void loadText() {
-		StringBuffer buf = new StringBuffer();
-		buf.append("<form>"); //$NON-NLS-1$
-		buf.append("<p><span color=\""); //$NON-NLS-1$
-		buf.append(FormColors.TITLE);
-		buf.append("\">"); //$NON-NLS-1$
-		buf.append(Messages.SeeAlsoPart_goto); 
-		buf.append("</span></p>"); //$NON-NLS-1$
-		buf.append("<p>"); //$NON-NLS-1$
-		int [] counter = new int[1];
-		if ((parent.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
-			addPageLink(buf, counter, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE, 
-				IHelpUIConstants.IMAGE_TOC_OPEN);
-		if ((parent.getStyle() & ReusableHelpPart.SEARCH) != 0) {
-			addPageLink(buf, counter, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE, 
-				IHelpUIConstants.IMAGE_HELP_SEARCH);
+		};
+		if ((helpPart.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE, 
+				IHelpUIConstants.IMAGE_TOC_OPEN, listener);
+		if ((helpPart.getStyle() & ReusableHelpPart.SEARCH) != 0) {
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE, 
+				IHelpUIConstants.IMAGE_HELP_SEARCH, listener);
 		}
-		if ((parent.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
-			addPageLink(buf, counter, Messages.SeeAlsoPart_contextHelp, 
+		if ((helpPart.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_contextHelp, 
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
-				IHelpUIConstants.IMAGE_CONTAINER);
+				IHelpUIConstants.IMAGE_CONTAINER, listener);
 		}
-		if ((parent.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
-			addPageLink(buf, counter, Messages.SeeAlsoPart_bookmarks, 
+		if ((helpPart.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
+			addPageLink(container, toolkit, Messages.SeeAlsoPart_bookmarks, 
 				IHelpUIConstants.HV_BOOKMARKS_PAGE,
-				IHelpUIConstants.IMAGE_BOOKMARKS);
-		}
-		buf.append("</p>"); //$NON-NLS-1$
-		buf.append("</form>"); //$NON-NLS-1$
-		text.setText(buf.toString(), true, false);
-	}
-	
-	private void addSpace(StringBuffer buf, int count) {
-		for (int i=0; i<count; i++) {
-			buf.append(" "); //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_BOOKMARKS, listener);
 		}
 	}
 
-	private void addPageLink(StringBuffer buf, int [] counter, String text, String id,
-			String imgRef) {
-		String cid = parent.getCurrentPageId();
+	private void addPageLink(Composite container, FormToolkit toolkit, String text, String id,
+			String imgRef, IHyperlinkListener listener) {
+		String cid = helpPart.getCurrentPageId();
 		if (cid!=null && cid.equals(id))
 			return;
-		if (counter[0]>0) addSpace(buf, 3);		
-		buf.append("<a href=\""); //$NON-NLS-1$
-		buf.append(id);
-		buf.append("\">"); //$NON-NLS-1$
-		buf.append("<img href=\""); //$NON-NLS-1$
-		buf.append(imgRef);
-		buf.append("\"/>"); //$NON-NLS-1$
-		addSpace(buf, 1);	
-		buf.append(text);
-		buf.append("</a>"); //$NON-NLS-1$
-		counter[0]++;
+		ImageHyperlink link = toolkit.createImageHyperlink(container, SWT.WRAP);
+		link.setImage(HelpUIResources.getImage(imgRef));
+		link.setText(text);
+		link.setHref(id);
+		link.addHyperlinkListener(listener);
+		link.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		RowData data = new RowData();
+		data.exclude = false;
+		link.setLayoutData(data);
 	}
 
 	/*
@@ -138,13 +146,9 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
 	 */
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		this.parent = parent;
+		this.helpPart = parent;
 		this.id = id;
-		hookImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
-		hookImage(IHelpUIConstants.IMAGE_TOC_OPEN);
-		hookImage(IHelpUIConstants.IMAGE_CONTAINER);
-		hookImage(IHelpUIConstants.IMAGE_BOOKMARKS);
-		loadText();	
+		addLinks(linkContainer, helpPart.getForm().getToolkit());
 	}
 
 	public String getId() {
@@ -177,19 +181,19 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
 	 */
 	public boolean hasFocusControl(Control control) {
-		return text.equals(control);
+		return control.getParent() == linkContainer;
 	}
 
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
-			return parent.getCopyAction();
+			return helpPart.getCopyAction();
 		return null;
 	}
 	public void stop() {
 	}
 	public void refresh() {
-		if (text!=null && parent.getCurrentPageId()!=null)
-			loadText();
+		if (linkContainer!=null && helpPart.getCurrentPageId()!=null)
+			reloadLinks(helpPart.getCurrentPageId());
 		super.refresh();
 	}
 
