@@ -34,7 +34,7 @@ public class ActivitiesPerformanceSuite extends TestSuite {
      */
     public ActivitiesPerformanceSuite() {
         super();
-        addTest(new GenerateIdentifiersTest(1000));
+        addTest(new GenerateIdentifiersTest(10000));
     }
 
 }
