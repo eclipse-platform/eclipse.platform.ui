@@ -278,6 +278,11 @@ public final class BindingPersistence {
 	 * <code>keyBinding</code> element.
 	 */
 	private static final Map r2_1KeysByName = new HashMap();
+    
+    /**
+     * Whether the property change listener has been attached yet.
+     */
+    private static boolean propertyChangeListenerAttached = false;
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();
@@ -640,13 +645,16 @@ public final class BindingPersistence {
          * Add a listener so that future preference changes trigger an update of
          * the binding manager automatically.
          */
-        store.addPropertyChangeListener(new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
-                if (EXTENSION_COMMANDS.equals(event.getProperty())) {
-                    read(bindingManager, commandService);
+        if (!propertyChangeListenerAttached) {
+            store.addPropertyChangeListener(new IPropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent event) {
+                    if (EXTENSION_COMMANDS.equals(event.getProperty())) {
+                        read(bindingManager, commandService);
+                    }
                 }
-            }
-        });
+            });
+            propertyChangeListenerAttached = true;
+        }
     }
 
 
