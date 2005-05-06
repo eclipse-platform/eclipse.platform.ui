@@ -107,7 +107,6 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		// Create default contents
 		Label label = new Label(top, SWT.WRAP);
 		label.setText(CVSUIMessages.CVSAnnotateView_viewInstructions); //$NON-NLS-1$
-		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 		top.layout();
 	}
 
