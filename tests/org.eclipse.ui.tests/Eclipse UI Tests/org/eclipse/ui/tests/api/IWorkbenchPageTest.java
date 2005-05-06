@@ -788,16 +788,6 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
 
 		try {
-			SaveableHelper.testSetAutomatedResponse(0);  // Yes
-			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
-			view.setDirty(true);
-			fActivePage.hideView(view);
-			callTrace = view.getCallHistory();
-			assertTrue(callTrace.contains("isDirty"));		
-			assertTrue(callTrace.contains("doSave"));
-			assertTrue(callTrace.contains("dispose"));
-			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
-
 			SaveableHelper.testSetAutomatedResponse(1);  // No
 			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
 			view.setDirty(true);
@@ -817,6 +807,18 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertFalse(callTrace.contains("doSave"));		
 			assertFalse(callTrace.contains("dispose"));
 			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), view);
+
+			SaveableHelper.testSetAutomatedResponse(0);  // Yes
+			view = (SaveableMockViewPart) fActivePage.showView(SaveableMockViewPart.ID);
+			view.setDirty(true);
+			fActivePage.hideView(view);
+			callTrace = view.getCallHistory();
+			assertTrue(callTrace.contains("isDirty"));		
+			assertTrue(callTrace.contains("doSave"));
+			assertTrue(callTrace.contains("dispose"));
+			assertEquals(fActivePage.findView(SaveableMockViewPart.ID), null);
+
+			// don't leave the view showing, or the UI will block on window close
 		}
 		finally {
 			SaveableHelper.testSetAutomatedResponse(-1);  // restore default (prompt)
