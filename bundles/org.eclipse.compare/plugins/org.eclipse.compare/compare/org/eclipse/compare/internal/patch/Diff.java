@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 
-/* package */ class Diff {
+public class Diff {
 		
 	IPath fOldPath, fNewPath;
 	long fOldDate, fNewDate;	// if 0: no file

@@ -15,7 +15,7 @@ import java.util.*;
 
 import org.eclipse.jface.util.Assert;
 
-/* package */ class LineReader {
+public class LineReader {
 
 	private boolean fHaveChar= false;
 	private int fLastChar;
@@ -24,7 +24,7 @@ import org.eclipse.jface.util.Assert;
 	private boolean fIgnoreSingleCR= false;
 	
 	
-	/* package */ LineReader(BufferedReader reader) {
+	public LineReader(BufferedReader reader) {
 		fReader= reader;
 		Assert.isNotNull(reader);
 	}
@@ -88,7 +88,7 @@ import org.eclipse.jface.util.Assert;
 		}
 	}
 	
-	/* package */ List readLines() {
+	public List readLines() {
 		try {
 			List lines= new ArrayList();
 			String line;

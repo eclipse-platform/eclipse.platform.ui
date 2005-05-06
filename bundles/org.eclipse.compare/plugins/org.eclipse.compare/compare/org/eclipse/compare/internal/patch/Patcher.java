@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Martin Burger <m@rtin-burger.de> patch for #93810
+ *     Martin Burger <m@rtin-burger.de> patch for #93810 and #93901
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -67,7 +67,7 @@ public class Patcher {
 	private boolean fAdjustShift= true;
 	
 	
-	Patcher() {
+	public Patcher() {
 		// nothing to do
 	}
 	
@@ -85,7 +85,7 @@ public class Patcher {
 	 * Returns an array of Diffs after a sucessfull call to <code>parse</code>.
 	 * If <code>parse</code> hasn't been called returns <code>null</code>.
 	 */
-	Diff[] getDiffs() {
+	public Diff[] getDiffs() {
 		return fDiffs;
 	}
 	
@@ -150,7 +150,7 @@ public class Patcher {
 		
 	//---- parsing patch files
 		
-	/* package */ void parse(BufferedReader reader) throws IOException {
+	public void parse(BufferedReader reader) throws IOException {
 		List diffs= new ArrayList();
 		String line= null;
 		boolean reread= false;
@@ -597,7 +597,7 @@ public class Patcher {
 	 * Tries to patch the given lines with the specified Diff.
 	 * Any hunk that couldn't be applied is returned in the list failedHunks.
 	 */
-	/* package */ void patch(Diff diff, List lines, List failedHunks) {
+	public void patch(Diff diff, List lines, List failedHunks) {
 		
 		int shift= 0;
 		Iterator iter= diff.fHunks.iterator();
@@ -729,7 +729,10 @@ public class Patcher {
 				lines.remove(pos);
 			} else if (controlChar == '+') {
 				// added lines
-				lines.add(pos, line);
+				if (hunk.fOldLength == 0)
+					lines.add(pos+1, line);
+				else
+					lines.add(pos, line);
 				pos++;
 			} else
 				Assert.isTrue(false, "doPatch: unknown control character: " + controlChar); //$NON-NLS-1$
