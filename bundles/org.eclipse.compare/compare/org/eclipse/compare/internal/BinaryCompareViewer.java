@@ -16,8 +16,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -39,7 +38,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 	
 	public BinaryCompareViewer(Composite parent, CompareConfiguration cc) {
 		
-		WorkbenchHelp.setHelp(parent, ICompareContextIds.BINARY_COMPARE_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICompareContextIds.BINARY_COMPARE_VIEW);
 
 		fBundle= ResourceBundle.getBundle(BUNDLE_NAME);
 

@@ -21,7 +21,6 @@ import org.eclipse.jface.util.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -162,7 +161,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput) {
 			fControl= ((CompareEditorInput) input).createContents(parent);
-			WorkbenchHelp.setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
 		}
 	}
 	

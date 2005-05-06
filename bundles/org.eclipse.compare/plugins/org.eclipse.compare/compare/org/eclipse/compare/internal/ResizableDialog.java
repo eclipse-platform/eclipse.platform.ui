@@ -16,8 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
-
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.DialogSettings;
@@ -60,7 +59,7 @@ public abstract class ResizableDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (fContextId != null)
-			WorkbenchHelp.setHelp(newShell, fContextId);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, fContextId);
 	}
 	
 	protected Point getInitialSize() {

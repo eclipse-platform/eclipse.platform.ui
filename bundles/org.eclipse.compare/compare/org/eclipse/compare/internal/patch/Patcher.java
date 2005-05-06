@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Burger <m@rtin-burger.de> patch for #93810
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -563,8 +564,7 @@ public class Patcher {
 	 * The parsing of the line starts at the position after
 	 * the first occurrence of the given character start an ends
 	 * at the first blank (or the end of the line).
-	 * If only a single number is found this is assumed to be the length of the range.
-	 * In this case the start of the range is set to 1.
+	 * If only a single number is found this is assumed to be the start of a one line range.
 	 * If an error occurs the range -1,-1 is returned.
 	 */
 	private void extractPair(String line, char start, int[] pair) {
@@ -585,9 +585,9 @@ public class Patcher {
 		if (comma >= 0) {
 			pair[0]= Integer.parseInt(line.substring(0, comma));
 			pair[1]= Integer.parseInt(line.substring(comma+1));
-		} else {
-			pair[0]= 1;
-			pair[1]= Integer.parseInt(line.substring(comma+1));
+		} else {	// abbreviated form for one line patch
+			pair[0]= Integer.parseInt(line);
+			pair[1]= 1;
 		}
 	}
 	
@@ -729,7 +729,7 @@ public class Patcher {
 				lines.remove(pos);
 			} else if (controlChar == '+') {
 				// added lines
-				lines.add(pos,  line);
+				lines.add(pos, line);
 				pos++;
 			} else
 				Assert.isTrue(false, "doPatch: unknown control character: " + controlChar); //$NON-NLS-1$

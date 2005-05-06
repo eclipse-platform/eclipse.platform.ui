@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.*;
 
 import org.eclipse.compare.internal.ICompareContextIds;
@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.*;
 
 
 	InputPatchPage(PatchWizard pw) {
-		super("InputPatchPage", PatchMessages.InputPatchPage_title, null); 
+		super("InputPatchPage", PatchMessages.InputPatchPage_title, null);  //$NON-NLS-1$
 		fPatchWizard= pw;
 		setMessage(PatchMessages.InputPatchPage_message); 
 	}
@@ -98,7 +98,7 @@ import org.eclipse.core.runtime.*;
 		updateWidgetEnablements();
 		
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
 	}
 	
 	/* (non-JavaDoc)

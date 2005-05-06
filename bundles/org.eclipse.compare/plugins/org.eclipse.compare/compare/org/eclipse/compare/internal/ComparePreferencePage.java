@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.swt.SWT;
@@ -195,7 +194,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	protected Control createContents(Composite parent) {
 		
-		WorkbenchHelp.setHelp(parent, ICompareContextIds.COMPARE_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICompareContextIds.COMPARE_PREFERENCE_PAGE);
 		
 		fOverlayStore.load();
 		fOverlayStore.start();

@@ -331,8 +331,10 @@ public final class CompareUI {
 	}
 	
 	/**
-	 * @param input
-	 * @return
+	 * Retrieve a document for the given input or return <code>null</code> if
+	 * no document has been registered for the input.
+	 * @param input the object for which to retrieve a document
+	 * @return a document or <code>null</code> if no document was registered for the input
 	 * @since 3.1
 	 */
 	public static IDocument getDocument(Object input) {
@@ -340,8 +342,9 @@ public final class CompareUI {
 	}
 
 	/**
-	 * @param input
-	 * @param document
+	 * Register a document for the given input.
+	 * @param input the object for which to register a document
+	 * @param document the document to register
 	 * @since 3.1
 	 */
 	public static void registerDocument(Object input, IDocument document) {
@@ -349,7 +352,8 @@ public final class CompareUI {
 	}
 
 	/**
-	 * @param document
+	 * Unregister the given document.
+	 * @param document the document to unregister
 	 * @since 3.1
 	 */
 	public static void unregisterDocument(IDocument document) {

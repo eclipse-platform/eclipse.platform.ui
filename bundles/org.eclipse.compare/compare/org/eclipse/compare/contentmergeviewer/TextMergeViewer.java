@@ -53,7 +53,6 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.progress.IProgressService;
 
 import org.eclipse.compare.*;
@@ -961,7 +960,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void createControls(Composite composite) {
 		
-		WorkbenchHelp.setHelp(composite, ICompareContextIds.TEXT_MERGE_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.TEXT_MERGE_VIEW);
 		
 		// 1st row
 		if (fMarginWidth > 0) {

@@ -23,8 +23,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.dialogs.Dialog;
@@ -165,7 +163,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		WorkbenchHelp.setHelp(composite, ICompareContextIds.PATCH_PREVIEW_WIZARD_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_PREVIEW_WIZARD_PAGE);
 
 		setControl(composite);
 		
@@ -593,7 +591,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 			ArrayList failedHunks= new ArrayList();
 			Patcher patcher= fPatchWizard.getPatcher();
 			patcher.setFuzz(getFuzzFactor());
-			patcher.apply(diff, file, create, failedHunks);
+			if (error == null)
+				patcher.apply(diff, file, create, failedHunks);
 
 			if (failedHunks.size() > 0)
 				diff.fRejected= fPatchWizard.getPatcher().getRejected(failedHunks);
