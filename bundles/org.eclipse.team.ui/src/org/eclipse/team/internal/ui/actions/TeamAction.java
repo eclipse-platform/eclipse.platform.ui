@@ -424,5 +424,6 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		if(window != null) {
 			window.getSelectionService().removePostSelectionListener(selectionListener);
 		}
+        selection = null;
 	}
 }

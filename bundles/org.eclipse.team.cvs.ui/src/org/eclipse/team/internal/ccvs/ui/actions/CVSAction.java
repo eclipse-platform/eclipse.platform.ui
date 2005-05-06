@@ -579,7 +579,11 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
 	protected IResource[] getSelectedResources() {
-		return Utils.getResources(selection.toArray());
+        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
+        if (props == null) {
+            return Utils.getResources(selection.toArray());
+        }
+        return props.getSelectedResources();
 	}
 	
 	/* (non-Javadoc)
@@ -661,4 +665,12 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	}
 	public void addHandlerListener(IHandlerListener handlerListener) {
 	}
+    
+    protected final ICVSResource getCVSResourceFor(IResource resource) {
+        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
+        if (props == null) {
+            return CVSWorkspaceRoot.getCVSResourceFor(resource);
+        }
+        return props.getCVSResourceFor(resource);
+    }
 }

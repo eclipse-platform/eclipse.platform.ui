@@ -17,7 +17,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
@@ -47,7 +46,7 @@ public class AddAction extends WorkspaceTraversalAction {
 		IResource[] resources = getSelectedResourcesWithOverlap();
 		boolean prompt = false;
 		for (int i = 0; i < resources.length; i++) {
-			ICVSResource resource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+			ICVSResource resource = getCVSResourceFor(resources[i]);
 			try {
 				if (resource.isIgnored()) {
 					prompt = true;

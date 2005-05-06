@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.team.internal.ui.dialogs.PromptingDialog;
 
@@ -322,7 +323,7 @@ public abstract class WorkspaceAction extends CVSAction {
 			}
 			
 			// ensure that resource management state matches what the action requires
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			ICVSResource cvsResource = getCVSResourceFor(resource);
 			if (!isEnabledForCVSResource(cvsResource)) {
 				return false;
 			}
@@ -342,8 +343,8 @@ public abstract class WorkspaceAction extends CVSAction {
 		}
 		return true;
 	}
-	
-	/**
+
+    /**
 	 * Return all the selected resources even if some overlap with others.
      * @return all the selected resources even if some overlap with others.
      */
@@ -426,57 +427,17 @@ public abstract class WorkspaceAction extends CVSAction {
 	}
 	
 	/**
-	 * Method getNonOverlapping ensures that a resource is not covered more than once.
-	 * @param resources
-	 * @return IResource[]
-	 */
-	public static IResource[] getNonOverlapping(IResource[] resources) {
-		// Sort the resources so the shortest paths are first
-		List sorted = new ArrayList();
-		sorted.addAll(Arrays.asList(resources));
-		Collections.sort(sorted, new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				IResource resource0 = (IResource) arg0;
-				IResource resource1 = (IResource) arg1;
-				return resource0.getFullPath().segmentCount() - resource1.getFullPath().segmentCount();
-			}
-			public boolean equals(Object arg0) {
-				return false;
-			}
-		});
-		// Collect all non-overlapping resources
-		List coveredPaths = new ArrayList();
-		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			IPath resourceFullPath = resource.getFullPath();
-			boolean covered = false;
-			for (Iterator it = coveredPaths.iterator(); it.hasNext();) {
-				IPath path = (IPath) it.next();
-				if(path.isPrefixOf(resourceFullPath)) {
-					covered = true;
-				}
-			}
-			if (covered) {
-				// if the resource is covered by a parent, remove it
-				iter.remove();
-			} else {
-				// if the resource is a non-covered folder, add it to the covered paths
-				if (resource.getType() == IResource.FOLDER) {
-					coveredPaths.add(resource.getFullPath());
-				}
-			}
-		}
-		return (IResource[]) sorted.toArray(new IResource[sorted.size()]);
-	}
-	
-	/**
 	 * Override to ensure that the selected resources so not overlap.
 	 * This method assumes that all actions are deep.
 	 * 
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
 	 */
 	protected final IResource[] getSelectedResources() {
-		return getNonOverlapping(getSelectedResourcesWithOverlap());
+        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
+        if (props == null) {
+            return CVSActionSelectionProperties.getNonOverlapping(getSelectedResourcesWithOverlap());
+        }
+        return props.getNonoverlappingSelectedResources();
 	}
 
 	protected void executeProviderAction(IProviderAction action, IResource[] resources, IProgressMonitor monitor) throws InvocationTargetException {
@@ -516,7 +477,7 @@ public abstract class WorkspaceAction extends CVSAction {
 			boolean multipleSameNames = true;
 			
 			for (int i = 0; i < resources.length; i++) {
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+				ICVSResource cvsResource = getCVSResourceFor(resources[i]);
 				CVSTag tag = null;
 				if(cvsResource.isFolder()) {
 					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
@@ -585,7 +546,7 @@ public abstract class WorkspaceAction extends CVSAction {
 			monitor.setTaskName(CVSUIMessages.ReplaceWithAction_calculatingDirtyResources); //$NON-NLS-1$
 			for (int i = 0; i < selectedResources.length; i++) {
 				IResource resource = selectedResources[i];
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				ICVSResource cvsResource = getCVSResourceFor(resource);
 				if(cvsResource.isModified(Policy.subMonitorFor(monitor, 100))) {
 					dirtyResources.add(resource);
 				}			

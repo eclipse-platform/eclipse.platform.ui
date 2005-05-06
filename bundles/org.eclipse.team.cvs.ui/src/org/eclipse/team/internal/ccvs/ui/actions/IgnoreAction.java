@@ -21,9 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -59,7 +57,7 @@ public class IgnoreAction extends WorkspaceTraversalAction {
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
 					String pattern = dialog.getIgnorePatternFor(resource);
-					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					ICVSResource cvsResource = getCVSResourceFor(resource);
 					cvsResource.setIgnoredAs(pattern);
 					monitor.worked(1);
 				}

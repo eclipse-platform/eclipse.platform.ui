@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -104,7 +103,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		// Selected from a Resource Navigator
 		final IResource[] resources = getSelectedResources();
 		if (resources.length == 1) {
-			return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
+			return getCVSResourceFor(resources[0]);
 		}
 		return null;
 	}

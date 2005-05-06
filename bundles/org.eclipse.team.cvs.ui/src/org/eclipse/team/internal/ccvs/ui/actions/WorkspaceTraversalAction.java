@@ -34,6 +34,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 
+    private static final String SELECTED_RESOURCES_WITH_OVERLAP = "selectedResourcesWithOverlap"; //$NON-NLS-1$
+    
     /**
      * Override to use the roots of the traversals as the selected resources.
      * On it's own, this would be enough to make the actions work but all the operations
@@ -42,11 +44,21 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
      * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#getSelectedResources()
      */
     protected IResource[] getSelectedResourcesWithOverlap() {
+        // First, look in the cache for the selection
+        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
+        if (props != null) {
+            IResource[] resources = (IResource[])props.get(SELECTED_RESOURCES_WITH_OVERLAP);
+            if (resources != null)
+                return resources;
+        }
         try {
             // Get all the traversals since enablement may be based on entire selection
             ResourceTraversal[] traversals = getSelectedTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
             if (traversals.length == 0 && selection != null) {
-                return Utils.getResources(selection.toArray());
+                if (props == null) {
+                    return Utils.getResources(selection.toArray());
+                }
+                return props.getSelectedResources();
             }
             Set resources = new HashSet();
             for (int i = 0; i < traversals.length; i++) {
@@ -60,7 +72,11 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
                     }
                 }
             }
-            return (IResource[]) resources.toArray(new IResource[resources.size()]);
+            IResource[] result = (IResource[]) resources.toArray(new IResource[resources.size()]);
+            if (props != null) {
+                props.put(SELECTED_RESOURCES_WITH_OVERLAP, result);
+            }
+            return result;
         } catch (TeamException e) {
             CVSUIPlugin.log(e);
             return new IResource[0];
