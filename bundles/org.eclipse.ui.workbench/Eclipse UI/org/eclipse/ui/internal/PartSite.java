@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -327,17 +326,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
     public String[] getContextMenuIds() {
         if (menuExtenders == null)
             return new String[0];
-        String[] menuIds = new String[menuExtenders.size()];
-        int index = 0;
+        ArrayList menuIds = new ArrayList(menuExtenders.size());
         for (Iterator iter = menuExtenders.iterator(); iter.hasNext();) {
             final PopupMenuExtender extender = (PopupMenuExtender) iter.next();
-            final Set extenderMenuIds = extender.getMenuIds();
-            final Iterator menuIdItr = extenderMenuIds.iterator();
-            while (menuIdItr.hasNext()) {
-                menuIds[index++] = (String) menuIdItr.next();
-            }
+            menuIds.addAll(extender.getMenuIds());
         }
-        return menuIds;
+        return (String[]) menuIds.toArray(new String[menuIds.size()]);
     }
 
     /**
