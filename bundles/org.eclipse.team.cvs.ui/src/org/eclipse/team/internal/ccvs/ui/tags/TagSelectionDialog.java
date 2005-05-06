@@ -54,8 +54,8 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 	private boolean recurse = true;
 	
 	// constants
-	private static final int SIZING_DIALOG_WIDTH = 400;
-	private static final int SIZING_DIALOG_HEIGHT = 400;
+	private static final int SIZING_DIALOG_WIDTH = 80;
+	private static final int SIZING_DIALOG_HEIGHT = 25;
 
     private CVSTag selection;
 
@@ -98,7 +98,7 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 		this.helpContext = helpContext;
 		this.showRecurse = showRecurse;
 		this.title = title;
-		setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 	
 	/* (non-Javadoc)
@@ -113,7 +113,10 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
      * @see org.eclipse.jface.window.Window#getInitialSize()
      */
     protected Point getInitialSize() {
-        return new Point(SIZING_DIALOG_WIDTH, SIZING_DIALOG_HEIGHT);
+        final Point size= super.getInitialSize();
+        size.x= convertWidthInCharsToPixels(SIZING_DIALOG_WIDTH);
+        size.y= convertHeightInCharsToPixels(SIZING_DIALOG_HEIGHT);
+        return size;
     }
 	
 	/**
