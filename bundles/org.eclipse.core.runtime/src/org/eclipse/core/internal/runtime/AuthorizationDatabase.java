@@ -309,8 +309,6 @@ public class AuthorizationDatabase {
 			FileOutputStream out = new FileOutputStream(file);
 			try {
 				save(out);
-				out.flush();
-				out.getFD().sync();
 			} finally {
 				out.close();
 			}
@@ -340,7 +338,7 @@ public class AuthorizationDatabase {
 		return true;
 	}
 
-	private void save(OutputStream os) throws IOException {
+	private void save(FileOutputStream os) throws IOException {
 		//write the version number
 		os.write(KEYRING_FILE_VERSION);
 
@@ -350,6 +348,8 @@ public class AuthorizationDatabase {
 		try {
 			oos.writeObject(authorizationInfo);
 			oos.writeObject(protectionSpace);
+			os.flush();
+			os.getFD().sync();
 		} finally {
 			oos.close();
 		}
