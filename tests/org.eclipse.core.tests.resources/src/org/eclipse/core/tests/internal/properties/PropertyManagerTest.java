@@ -41,6 +41,13 @@ public class PropertyManagerTest extends LocalStoreTest {
 		}
 	}
 
+	public static Test suite() {
+		//			TestSuite suite = new TestSuite();
+		//			suite.addTest(new PropertyManagerTest("testDeleteProperties"));
+		//			return suite;
+		return new TestSuite(PropertyManagerTest.class);
+	}
+
 	public PropertyManagerTest() {
 		super(null);
 	}
@@ -49,11 +56,72 @@ public class PropertyManagerTest extends LocalStoreTest {
 		super(name);
 	}
 
-	public static Test suite() {
-		//			TestSuite suite = new TestSuite();
-		//			suite.addTest(new PropertyManagerTest("testDeleteProperties"));
-		//			return suite;
-		return new TestSuite(PropertyManagerTest.class);
+	private void createProperties(IFile target, QualifiedName[] names, String[] values) {
+		for (int i = 0; i < names.length; i++) {
+			names[i] = new QualifiedName("org.eclipse.core.tests", "prop" + i);
+			values[i] = "property value" + i;
+		}
+		// create properties
+		for (int i = 0; i < names.length; i++) {
+			try {
+				target.setPersistentProperty(names[i], values[i]);
+			} catch (CoreException e) {
+				fail("1." + i, e);
+			}
+		}
+	}
+
+	private Thread[] createThreads(final IFile target, final QualifiedName[] names, final String[] values, final CoreException[] errorPointer) {
+		final int THREAD_COUNT = 3;
+		Thread[] threads = new Thread[THREAD_COUNT];
+		for (int j = 0; j < THREAD_COUNT; j++) {
+			final String id = "GetSetProperty" + j;
+			threads[j] = new Thread(new Runnable() {
+				public void run() {
+					try {
+						doGetSetProperties(target, id, names, values);
+					} catch (CoreException e) {
+						//ignore failure if the project has been deleted
+						if (target.exists()) {
+							e.printStackTrace();
+							errorPointer[0] = e;
+							return;
+						}
+					}
+				}
+			}, id);
+			threads[j].start();
+		}
+		return threads;
+	}
+
+	protected void doGetSetProperties(IFile target, String threadID, QualifiedName[] names, String[] values) throws CoreException {
+		final int N = names.length;
+		for (int j = 0; j < 10; j++) {
+			for (int i = 0; i < N; i++) {
+				target.getPersistentProperty(names[i]);
+			}
+			// change properties
+			for (int i = 0; i < N; i++) {
+				//			values[i] = values[i] + " - changed (" + threadID + ")";
+				target.setPersistentProperty(names[i], values[i]);
+			}
+			// verify
+			for (int i = 0; i < N; i++) {
+				target.getPersistentProperty(names[i]);
+			}
+		}
+	}
+
+	private void join(Thread[] threads) {
+		//wait for all threads to finish
+		for (int j = 0; j < threads.length; j++) {
+			try {
+				threads[j].join();
+			} catch (InterruptedException e) {
+				fail("#join", e);
+			}
+		}
 	}
 
 	/**
@@ -131,74 +199,6 @@ public class PropertyManagerTest extends LocalStoreTest {
 			target.delete(true, getMonitor());
 		} catch (CoreException e) {
 			fail("20.0", e);
-		}
-	}
-
-	private void join(Thread[] threads) {
-		//wait for all threads to finish
-		for (int j = 0; j < threads.length; j++) {
-			try {
-				threads[j].join();
-			} catch (InterruptedException e) {
-				fail("#join", e);
-			}
-		}
-	}
-
-	private Thread[] createThreads(final IFile target, final QualifiedName[] names, final String[] values, final CoreException[] errorPointer) {
-		final int THREAD_COUNT = 3;
-		Thread[] threads = new Thread[THREAD_COUNT];
-		for (int j = 0; j < THREAD_COUNT; j++) {
-			final String id = "GetSetProperty" + j;
-			threads[j] = new Thread(new Runnable() {
-				public void run() {
-					try {
-						doGetSetProperties(target, id, names, values);
-					} catch (CoreException e) {
-						//ignore failure if the project has been deleted
-						if (target.exists()) {
-							e.printStackTrace();
-							errorPointer[0] = e;
-							return;
-						}
-					}
-				}
-			}, id);
-			threads[j].start();
-		}
-		return threads;
-	}
-
-	private void createProperties(IFile target, QualifiedName[] names, String[] values) {
-		for (int i = 0; i < names.length; i++) {
-			names[i] = new QualifiedName("org.eclipse.core.tests", "prop" + i);
-			values[i] = "property value" + i;
-		}
-		// create properties
-		for (int i = 0; i < names.length; i++) {
-			try {
-				target.setPersistentProperty(names[i], values[i]);
-			} catch (CoreException e) {
-				fail("1." + i, e);
-			}
-		}
-	}
-
-	protected void doGetSetProperties(IFile target, String threadID, QualifiedName[] names, String[] values) throws CoreException {
-		final int N = names.length;
-		for (int j = 0; j < 10; j++) {
-			for (int i = 0; i < N; i++) {
-				target.getPersistentProperty(names[i]);
-			}
-			// change properties
-			for (int i = 0; i < N; i++) {
-				//			values[i] = values[i] + " - changed (" + threadID + ")";
-				target.setPersistentProperty(names[i], values[i]);
-			}
-			// verify
-			for (int i = 0; i < N; i++) {
-				target.getPersistentProperty(names[i]);
-			}
 		}
 	}
 
@@ -317,6 +317,83 @@ public class PropertyManagerTest extends LocalStoreTest {
 	}
 
 	/**
+	 * See bug 93849.
+	 */
+	public void testFileRename() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("proj");
+		IFolder folder = project.getFolder("folder");
+		IFile file1a = folder.getFile("file1");
+		ensureExistsInWorkspace(file1a, true);
+		QualifiedName key = new QualifiedName(PI_RESOURCES_TESTS, "key");
+		try {
+			file1a.setPersistentProperty(key, "value");
+		} catch (CoreException e) {
+			fail("0.5", e);
+		}
+		try {
+			file1a.move(new Path("file2"), true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.6", e);
+		}
+		IFile file1b = folder.getFile("file1");
+		ensureExistsInWorkspace(file1b, true);
+		String value = null;
+		try {
+			value = file1b.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("0.8", e);
+		}
+		assertNull("1.0", value);
+		file1a = folder.getFile("file2");
+		try {
+			value = file1a.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("1.9", e);
+		}
+		assertEquals("2.0", "value", value);
+
+	}
+
+	/**
+	 * See bug 93849.
+	 */
+	public void testFolderRename() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("proj");
+		IFolder folder1a = project.getFolder("folder1");
+		ensureExistsInWorkspace(folder1a, true);
+		QualifiedName key = new QualifiedName(PI_RESOURCES_TESTS, "key");
+		try {
+			folder1a.setPersistentProperty(key, "value");
+		} catch (CoreException e) {
+			fail("0.5", e);
+		}
+		try {
+			folder1a.move(new Path("folder2"), true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.6", e);
+		}
+		IFolder folder1b = project.getFolder("folder1");
+		ensureExistsInWorkspace(folder1b, true);
+		String value = null;
+		try {
+			value = folder1b.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("0.8", e);
+		}
+		assertNull("1.0", value);
+		folder1a = project.getFolder("folder2");
+		try {
+			value = folder1a.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("1.9", e);
+		}
+		assertEquals("2.0", "value", value);
+
+	}
+
+	/**
 	 * Do a stress test by adding a very large property to the store.
 	 */
 	public void testLargeProperty() {
@@ -349,6 +426,43 @@ public class PropertyManagerTest extends LocalStoreTest {
 		} catch (CoreException e) {
 			fail("20.0", e);
 		}
+	}
+
+	/**
+	 * See bug 93849.
+	 */
+	public void testProjectRename() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project1a = root.getProject("proj1");
+		ensureExistsInWorkspace(project1a, true);
+		QualifiedName key = new QualifiedName(PI_RESOURCES_TESTS, "key");
+		try {
+			project1a.setPersistentProperty(key, "value");
+		} catch (CoreException e) {
+			fail("0.5", e);
+		}
+		try {
+			project1a.move(new Path("proj2"), true, getMonitor());
+		} catch (CoreException e) {
+			fail("0.6", e);
+		}
+		IProject project1b = root.getProject("proj1");
+		ensureExistsInWorkspace(project1b, true);
+		String value = null;
+		try {
+			value = project1b.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("0.8", e);
+		}
+		assertNull("1.0", value);
+
+		project1a = root.getProject("proj2");
+		try {
+			value = project1a.getPersistentProperty(key);
+		} catch (CoreException e) {
+			fail("1.9", e);
+		}
+		assertEquals("2.0", "value", value);
 	}
 
 	public void testProperties() throws Throwable {
@@ -456,32 +570,6 @@ public class PropertyManagerTest extends LocalStoreTest {
 		} catch (CoreException e) {
 			fail("20.0", e);
 		}
-	}
-
-	public void testBug93849() {
-		IWorkspaceRoot root = getWorkspace().getRoot();
-		IProject project1a = root.getProject("proj1");
-		ensureExistsInWorkspace(project1a, true);
-		QualifiedName key = new QualifiedName(PI_RESOURCES_TESTS, "key");
-		try {
-			project1a.setPersistentProperty(key, "value");
-		} catch (CoreException e) {
-			fail("0.5", e);
-		}
-		try {
-			project1a.move(new Path("proj2"), true, getMonitor());
-		} catch (CoreException e) {
-			fail("0.6", e);
-		}
-		IProject project1b = root.getProject("proj1");
-		ensureExistsInWorkspace(project1b, true);
-		String value = null;
-		try {
-			value = project1b.getPersistentProperty(key);
-		} catch (CoreException e) {
-			fail("0.8", e);
-		}
-		assertNull("1.0", value);
 	}
 
 }
