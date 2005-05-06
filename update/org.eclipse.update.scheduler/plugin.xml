@@ -17,7 +17,14 @@
             category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             class="org.eclipse.update.internal.scheduler.preferences.AutomaticUpdatesPreferencePage"
             id="org.eclipse.update.scheduler.AutomaticUpdatesPreferencePage">
+            <keywordReference id="org.eclipse.update.scheduler.general"/>
       </page>
    </extension>
 
+      <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="org.eclipse.update.scheduler.general"/>
+      </extension>
 </plugin>

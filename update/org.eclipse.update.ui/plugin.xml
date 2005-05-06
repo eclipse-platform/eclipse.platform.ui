@@ -47,7 +47,14 @@
             name="%mainPreference.name"
             class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
+            <keywordReference id="org.eclipse.update.ui.general"/>
       </page>
    </extension>
 
+      <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="org.eclipse.update.ui.general"/>
+      </extension>
 </plugin>
