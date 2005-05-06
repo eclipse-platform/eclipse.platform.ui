@@ -837,12 +837,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             return null;
         }
         Item[] siblings = getItems(parent);
-        if (siblings != null && siblings.length <= 1) {
-            return getNextItem(parent, false);
-        }
-        for (int i = 0; i < siblings.length; i++) {
-            if (siblings[i] == item && i < (siblings.length - 1)) {
-                return siblings[i + 1];
+        if (siblings != null){
+        	if(siblings.length <= 1) 
+        		return getNextItem(parent, false);
+        	
+        	for (int i = 0; i < siblings.length; i++) {
+                if (siblings[i] == item && i < (siblings.length - 1)) {
+                    return siblings[i + 1];
+                }
             }
         }
         return getNextItem(parent, false);

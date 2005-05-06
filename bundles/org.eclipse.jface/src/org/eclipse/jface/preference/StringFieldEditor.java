@@ -184,9 +184,6 @@ public class StringFieldEditor extends FieldEditor {
 
         String txt = textField.getText();
 
-        if (txt == null)
-            result = false;
-
         result = (txt.trim().length() > 0) || emptyStringAllowed;
 
         // call hook for subclasses
