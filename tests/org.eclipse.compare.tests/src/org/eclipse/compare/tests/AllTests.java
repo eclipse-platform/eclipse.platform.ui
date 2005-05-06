@@ -26,6 +26,7 @@ public class AllTests {
 		suite.addTestSuite(StreamMergerTest.class);
 		suite.addTestSuite(DocLineComparatorTest.class);
 		suite.addTestSuite(FilterTest.class);
+		suite.addTestSuite(PatchTest.class);
 		//$JUnit-END$
 		return suite;
 	}
