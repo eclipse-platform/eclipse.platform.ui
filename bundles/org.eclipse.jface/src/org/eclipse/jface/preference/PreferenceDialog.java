@@ -63,7 +63,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -345,15 +344,33 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected Control createDialogArea(Composite parent) {
 		final Composite composite = (Composite) super.createDialogArea(parent);
-		((GridLayout) composite.getLayout()).numColumns = 3;
+		GridLayout parentLayout = ((GridLayout) composite.getLayout());
+		parentLayout.numColumns = 4;
+		parentLayout.marginHeight = 0;
+		parentLayout.marginWidth = 0;
+		parentLayout.verticalSpacing = 0;
+		parentLayout.horizontalSpacing = 0;
+		
+		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		
 		Control treeControl = createTreeAreaContents(composite);
 		createSash(composite,treeControl);
+		
+		Label versep = new Label(composite, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData verGd = new GridData(GridData.FILL_VERTICAL | GridData.GRAB_VERTICAL);
+	
+		versep.setLayoutData(verGd);
+		versep.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		
 		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
 		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = IDialogConstants.HORIZONTAL_MARGIN;
 		pageAreaComposite.setLayout(layout);
+		
+	
+		
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
 		layout = new GridLayout();
@@ -364,14 +381,18 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		titleComposite.setLayout(layout);
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createTitleArea(titleComposite);
+		
+		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+		
+		
 		// Build the Page container
 		pageContainer = createPageContainer(pageAreaComposite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Build the separator line
-		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL
-				| SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
+		Label bottomSeparator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		bottomSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		return composite;
 	}
 
@@ -388,6 +409,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected Sash createSash(final Composite composite, final Control rightControl) {
 		final Sash sash = new Sash(composite, SWT.VERTICAL);
 		sash.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		sash.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		// the following listener resizes the tree control based on sash deltas.
 		// If necessary, it will also grow/shrink the dialog.
 		sash.addListener(SWT.Selection, new Listener() {
@@ -435,8 +457,24 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @return Composite
 	 */
 	protected Composite createPageContainer(Composite parent) {
-		Composite result = new Composite(parent, SWT.NULL);
+		
+		//Create an oter composite for spacing
+		Composite outer = new Composite(parent, SWT.NONE);
+		
+		GridData outerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL);
+				
+		outer.setLayout(new GridLayout());
+		outer.setLayoutData(outerData);
+
+		Composite result = new Composite(outer, SWT.NONE);
+		
+		GridData resultData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL);
+				
 		result.setLayout(getPageLayout());
+		result.setLayoutData(resultData);
+		
 		return result;
 	}
 
@@ -464,11 +502,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		int margins = 2;
 		titleArea = new Composite(parent, SWT.NONE);
 		FormLayout layout = new FormLayout();
-		layout.marginHeight = margins;
+		layout.marginHeight = 0;
 		layout.marginWidth = margins;
 		titleArea.setLayout(layout);
-		// Get the background color for the title area
-		Display display = parent.getDisplay();
+
 		
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.heightHint = JFaceResources.getImage(PREF_DLG_TITLE_IMG).getBounds().height
@@ -511,7 +548,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		JFaceResources.getFontRegistry().addListener(fontListener);
 		messageArea.setTitleLayoutData(createMessageAreaData());
 		messageArea.setMessageLayoutData(createMessageAreaData());
-
 		return titleArea;
 	}
 
@@ -553,7 +589,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @since 3.0
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		final TreeViewer viewer = new TreeViewer(parent, SWT.BORDER);
+		final TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
 		addListeners(viewer);
 		viewer.setLabelProvider(new PreferenceLabelProvider());
 		viewer.setContentProvider(new PreferenceContentProvider());

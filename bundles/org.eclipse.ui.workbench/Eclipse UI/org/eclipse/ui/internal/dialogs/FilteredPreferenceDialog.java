@@ -36,8 +36,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -64,7 +62,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	
 	private Collection updateJobs = new ArrayList();
 	
-	Composite toolBarComposite;
+	//Composite toolBarComposite;
 
 	
 	/**
@@ -155,8 +153,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		//Do nothing by default
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeAreaContents(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createTreeAreaContents(Composite parent) {
-		Composite leftArea = new Composite(parent, SWT.BORDER);
+		Composite leftArea = new Composite(parent, SWT.NONE);
 		leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		GridLayout leftLayout = new GridLayout();
@@ -298,144 +299,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		updateJobs.add(job);
 	}
 
-	protected Control createDialogArea(Composite parent) {
-	
-		// create a composite with standard margins and spacing
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 0;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-	
-		toolBarComposite = new Composite(composite, SWT.NONE);
-		GridLayout toolBarLayout = new GridLayout();
-		toolBarLayout.marginHeight = 0;
-		toolBarLayout.marginWidth = 0;
-		toolBarComposite.setLayout(toolBarLayout);
-		toolBarComposite.setBackground(composite.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
-	
-		createDialogContents(composite);
-	
-		applyDialogFont(composite);
-	
-		return composite;
-	
-	}
-
-	/**
-	 * Create the contents area of the dialog
-	 * 
-	 * @param parent
-	 */
-	void createDialogContents(Composite parent) {
-	
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		layout.horizontalSpacing = 0;
-		int columns = 3;
-		layout.numColumns = columns;
-		composite.setLayout(layout);
-		GridData compositeData = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(compositeData);
-		applyDialogFont(composite);
-		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-	
-		Control treeControl = createTreeAreaContents(composite);
-		createSash(composite, treeControl);
-	
-		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
-		pageAreaComposite.setBackground(composite.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-	
-		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout pageAreaLayout = new GridLayout();
-		pageAreaLayout.marginHeight = 0;
-		pageAreaLayout.marginWidth = 0;
-		pageAreaLayout.horizontalSpacing = 0;
-		pageAreaLayout.numColumns = 2;
-		pageAreaComposite.setLayout(pageAreaLayout);
-		
-		Label versep = new Label(pageAreaComposite, SWT.SEPARATOR | SWT.VERTICAL);
-		GridData verGd = new GridData(GridData.FILL_VERTICAL | GridData.GRAB_VERTICAL);
-		verGd.horizontalSpan = columns;
-		versep.setLayoutData(verGd);
-		versep.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		
-		// Build the Page container
-		setPageContainer(createPageContainer(pageAreaComposite));
-		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		gd.horizontalSpan = columns;
-		separator.setLayoutData(gd);
-	}
-
-	public Composite createPageContainer(Composite parent) {
-	
-		Composite outer=new Composite(parent, SWT.NONE);
-		GridData compositeData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL);
-		outer.setLayoutData(compositeData);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		outer.setLayout(layout);
-		
-		Composite top=new Composite(outer, SWT.NONE);
-		GridData topLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-		top.setLayoutData(topLayoutData);
-		GridLayout topLayout = new GridLayout();
-		topLayout.marginHeight =0;
-		topLayout.verticalSpacing = 0;
-				
-		int columns = 2;
-		topLayout.numColumns = columns;
-		top.setLayout(topLayout);
-		
-		createTitleArea(top);
-		
-		Composite toolbarArea=new Composite(top, SWT.NONE);
-		GridLayout toolbarLayout = new GridLayout();
-		toolbarArea.setLayout(toolbarLayout);
-		toolbarArea.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
-		Control topBar = getContainerToolBar(toolbarArea);
-		topBar.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
-				
-		Label separator = new Label(outer, SWT.HORIZONTAL | SWT.SEPARATOR);
-		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		gd.horizontalSpan = columns;
-		separator.setLayoutData(gd);
-		
-		Composite bottom = new Composite(outer, SWT.NULL);
-		GridLayout bottomLayout = new GridLayout();
-		bottom.setLayout(bottomLayout);
-		bottom.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL));
-		Composite result = new Composite(bottom, SWT.NULL);
-		
-		GridData resultData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL);
-				
-		result.setLayout(getPageLayout());
-		result.setLayoutData(resultData);
-		
-		return result;
-	}
-
-
 	/**
 	 * Get the toolbar for the container
 	 * 
@@ -468,20 +331,32 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createSash(org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.Control)
-	 */
-	protected Sash createSash(Composite composite, Control rightControl) {
-		Sash sash = super.createSash(composite, rightControl);
-		sash.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		return sash;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
 		history.dispose();
 		return super.close();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTitleArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Composite createTitleArea(Composite parent) {
+				
+		GridLayout parentLayout = (GridLayout) parent.getLayout();
+		parentLayout.numColumns = 2;
+		parent.setLayout(parentLayout);
+		
+		Composite titleComposite = super.createTitleArea(parent);
+		
+		Composite toolbarArea=new Composite(parent, SWT.NONE);
+		GridLayout toolbarLayout = new GridLayout();
+		toolbarArea.setLayout(toolbarLayout);
+		toolbarArea.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
+		Control topBar = getContainerToolBar(toolbarArea);
+		topBar.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
+		
+		return titleComposite;
 	}
 
 	protected void selectSavedItem() {
