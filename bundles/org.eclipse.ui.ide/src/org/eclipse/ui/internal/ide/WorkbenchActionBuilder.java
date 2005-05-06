@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -30,6 +31,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
@@ -1266,25 +1268,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         deleteAction = ActionFactory.DELETE.create(window);
         register(deleteAction);
 
-        AboutInfo[] infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
-        // See if a welcome page is specified
-        for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getWelcomePageURL() != null) {
-                quickStartAction = IDEActionFactory.QUICK_START
-                        .create(window);
-                register(quickStartAction);
-                break;
-            }
-        }
-        // See if a tips and tricks page is specified
-        for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getTipsAndTricksHref() != null) {
-                tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS
-                        .create(window);
-                register(tipsAndTricksAction);
-                break;
-            }
-        }
+        makeFeatureDependentActions(window);
 
         // Actions for invisible accelerators
         showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(window);
@@ -1448,6 +1432,103 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     }
 
     /**
+     * Creates the feature-dependent actions for the menu bar.
+     */
+    private void makeFeatureDependentActions(IWorkbenchWindow window) {
+        AboutInfo[] infos = null;
+        
+        IPreferenceStore prefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+
+        // Optimization: avoid obtaining the about infos if the platform state is
+        // unchanged from last time.  See bug 75130 for details.
+        String stateKey = "platformState"; //$NON-NLS-1$
+        String prevState = prefs.getString(stateKey);
+        String currentState = String.valueOf(Platform.getPlatformAdmin().getState().getTimeStamp());
+        boolean sameState = currentState.equals(prevState);
+        if (!sameState) {
+        	prefs.putValue(stateKey, currentState);
+        }
+        
+        // See if a welcome page is specified.
+        // Optimization: if welcome pages were found on a previous run, then just add the action.
+        String quickStartKey = IDEActionFactory.QUICK_START.getId(); 
+        String showQuickStart = prefs.getString(quickStartKey);
+        if (sameState && "true".equals(showQuickStart)) { //$NON-NLS-1$
+            quickStartAction = IDEActionFactory.QUICK_START.create(window);
+			register(quickStartAction);
+        }
+        else if (sameState && "false".equals(showQuickStart)) { //$NON-NLS-1$
+        	// do nothing
+        }
+        else {
+        	// do the work
+    		infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
+        	boolean found = hasWelcomePage(infos);
+            prefs.setValue(quickStartKey, found);
+            if (found) {
+                quickStartAction = IDEActionFactory.QUICK_START.create(window);
+                register(quickStartAction);
+	        }
+        }
+        
+        // See if a tips and tricks page is specified.
+        // Optimization: if tips and tricks were found on a previous run, then just add the action.
+        String tipsAndTricksKey = IDEActionFactory.TIPS_AND_TRICKS.getId();
+        String showTipsAndTricks = prefs.getString(tipsAndTricksKey);
+        if (sameState && "true".equals(showTipsAndTricks)) { //$NON-NLS-1$
+            tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS
+					.create(window);
+			register(tipsAndTricksAction);
+        }
+        else if (sameState && "false".equals(showTipsAndTricks)) { //$NON-NLS-1$
+        	// do nothing
+        }
+        else {
+        	// do the work
+	    	if (infos == null) {
+	    		infos = IDEWorkbenchPlugin.getDefault().getFeatureInfos();
+	    	}
+	    	boolean found = hasTipsAndTricks(infos);
+	    	prefs.setValue(tipsAndTricksKey, found);
+	    	if (found) {
+	            tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS
+						.create(window);
+				register(tipsAndTricksAction);
+		    }
+        }
+    }
+
+    /**
+     * Returns whether any of the given infos have a welcome page.
+     * 
+     * @param infos the infos
+     * @return <code>true</code> if a welcome page was found, <code>false</code> if not
+     */
+    private boolean hasWelcomePage(AboutInfo[] infos) {
+        for (int i = 0; i < infos.length; i++) {
+            if (infos[i].getWelcomePageURL() != null) {
+            	return true;
+            }
+        }
+        return false;
+	}
+
+    /**
+     * Returns whether any of the given infos have tips and tricks.
+     * 
+     * @param infos the infos
+     * @return <code>true</code> if tips and tricks were found, <code>false</code> if not
+     */
+    private boolean hasTipsAndTricks(AboutInfo[] infos) {
+        for (int i = 0; i < infos.length; i++) {
+            if (infos[i].getTipsAndTricksHref() != null) {
+            	return true;
+            }
+        }
+        return false;
+	}
+
+	/**
      * Update the build actions on the toolbar and menu bar based on the 
      * current state of autobuild.  This method can be called from any thread.
      */
