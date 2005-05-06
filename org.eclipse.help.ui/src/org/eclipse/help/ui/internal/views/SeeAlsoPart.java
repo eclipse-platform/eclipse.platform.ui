@@ -125,7 +125,6 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		link.setText(text);
 		link.setHref(id);
 		link.addHyperlinkListener(listener);
-		link.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		RowData data = new RowData();
 		data.exclude = false;
 		link.setLayoutData(data);
