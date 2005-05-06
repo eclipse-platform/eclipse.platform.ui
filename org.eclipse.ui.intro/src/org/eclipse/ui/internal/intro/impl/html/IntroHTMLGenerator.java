@@ -23,16 +23,17 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.AbstractBaseIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
-import org.eclipse.ui.internal.intro.impl.model.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
 import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
 import org.eclipse.ui.internal.intro.impl.model.IntroHead;
 import org.eclipse.ui.internal.intro.impl.model.IntroImage;
+import org.eclipse.ui.internal.intro.impl.model.IntroInjectedIFrame;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroPageTitle;
 import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
@@ -40,6 +41,7 @@ import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 public class IntroHTMLGenerator {
 
     private AbstractIntroPage introPage;
+
     private IIntroContentProviderSite providerSite;
 
     /**
@@ -78,14 +80,32 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;HTML&gt;
-     *          &lt;HEAD&gt;
-     *          head content
-     *          &lt;/HEAD&gt;
-     *          &lt;BODY&gt;
-     *          body content
-     *          &lt;/BODY&gt;
-     *          &lt;/HTML&gt;
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *           
+     *                   &lt;HTML&gt;
+     *                   &lt;HEAD&gt;
+     *                   head content
+     *                   &lt;/HEAD&gt;
+     *                   &lt;BODY&gt;
+     *                   body content
+     *                   &lt;/BODY&gt;
+     *                   &lt;/HTML&gt;
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -109,14 +129,32 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;HEAD&gt;
-     *          &lt;BASE href=&quot;base_plugin_location&gt;
-     *          &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-     *          &lt;TITLE&gt;page title &lt;/TITLE&gt;
-     *          &lt;LINK href=&quot;style sheet&quot;&gt;
-     *          additional head content, if specified
-     *          &lt;/HEAD&gt;
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
      *          
+     *           
+     *                   &lt;HEAD&gt;
+     *                   &lt;BASE href=&quot;base_plugin_location&gt;
+     *                   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *                   &lt;TITLE&gt;page title &lt;/TITLE&gt;
+     *                   &lt;LINK href=&quot;style sheet&quot;&gt;
+     *                   additional head content, if specified
+     *                   &lt;/HEAD&gt;
+     *                   
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -190,11 +228,29 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *          &lt;BODY&gt;
-     *          &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
-     *          page content
-     *          &lt;/DIV&gt;
-     *          &lt;/BODY&gt;
+     *  
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *                   &lt;BODY&gt;
+     *                   &lt;DIV id=&quot;pageId&quot; class=&quot;pageClass&quot;&gt;
+     *                   page content
+     *                   &lt;/DIV&gt;
+     *                   &lt;/BODY&gt;
+     *            
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
      *   
      *  
      * </pre>
@@ -263,6 +319,9 @@ public class IntroHTMLGenerator {
             return generateIntroText((IntroText) element, indentLevel);
         case AbstractIntroElement.PAGE_TITLE:
             return generateIntroTitle((IntroPageTitle) element, indentLevel);
+        case AbstractIntroElement.INJECTED_IFRAME:
+            return generateIntroInjectedIFrame((IntroInjectedIFrame) element,
+                indentLevel);
         default:
             return null;
         }
@@ -273,12 +332,30 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
+     *  
+     *   
+     *    
+     *     
      *      
-     *          &lt;div id=&quot;attrvalue&quot;&gt;
-     *          &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
-     *          any defined divs, links, html, images, text, includes
-     *          &lt;/div&gt;
      *       
+     *        
+     *         
+     *          
+     *               
+     *                   &lt;div id=&quot;attrvalue&quot;&gt;
+     *                   &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
+     *                   any defined divs, links, html, images, text, includes
+     *                   &lt;/div&gt;
+     *                
+     *             
+     *            
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
      *    
      *   
      *  
@@ -324,12 +401,30 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
+     *  
+     *   
+     *    
+     *     
      *      
-     *          &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
-     *          &lt;IMG src=&quot;blank.gif&quot;&gt;
-     *          &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
-     *          &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
-     *          &lt;/A&gt;
+     *       
+     *        
+     *         
+     *          
+     *               
+     *                   &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
+     *                   &lt;IMG src=&quot;blank.gif&quot;&gt;
+     *                   &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
+     *                   &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
+     *                   &lt;/A&gt;
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -398,7 +493,8 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *          &lt;IMG src=imageSrc id=imageId&gt;
+     *                   &lt;IMG src=imageSrc id=imageId&gt;
+     *    
      *   
      *  
      * </pre>
@@ -427,7 +523,25 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
-     *          &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+     *  
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *                   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+     *            
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
      *   
      *  
      * </pre>
@@ -453,6 +567,17 @@ public class IntroHTMLGenerator {
      * @param indentLevel
      * @return
      */
+    private HTMLElement generateIntroInjectedIFrame(
+            IntroInjectedIFrame element, int indentLevel) {
+        HTMLElement iframe = generateIFrameElement(element.getIFrameURL(), "0", "auto", indentLevel);
+        return iframe;
+    }
+
+    /**
+     * @param element
+     * @param indentLevel
+     * @return
+     */
     private HTMLElement generateIntroTitle(IntroPageTitle element,
             int indentLevel) {
         HTMLElement titleElement = generateHeaderDiv(element.getId(), element
@@ -468,10 +593,28 @@ public class IntroHTMLGenerator {
      * 
      * <pre>
      * 
+     *  
+     *   
+     *    
+     *     
      *      
-     *          &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
-     *          content from file specified in src attribute
-     *          &lt;/div&gt;
+     *       
+     *        
+     *         
+     *          
+     *               
+     *                   &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
+     *                   content from file specified in src attribute
+     *                   &lt;/div&gt;
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -560,11 +703,23 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
-     *          alternative text in case the object can not be rendered
-     *          &lt;/OBJECT&gt; 
-     *       
+     *   
+     *    
      *     
+     *      
+     *       
+     *           
+     *                   &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
+     *                   alternative text in case the object can not be rendered
+     *                   &lt;/OBJECT&gt; 
+     *        
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -591,7 +746,7 @@ public class IntroHTMLGenerator {
             objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
                 element.getStyleId());
         // The alternative content is added in case the browser can not render
-        // the specified content
+        // the specified content.
         IntroText htmlText = element.getIntroText();
         if (htmlText != null && htmlText.getText() != null) {
             String textClass = (htmlText.getStyleId() != null) ? htmlText
@@ -618,9 +773,27 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *        	&lt;BASE href=baseURL&gt;
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *           
+     *                 	&lt;BASE href=baseURL&gt;
+     *               
+     *              
+     *           
+     *          
+     *         
+     *        
+     *       
      *      
      *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -642,8 +815,26 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *   
+     *    
      *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *           
+     *                   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+     *              
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -667,8 +858,26 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+     *   
+     *    
+     *     
+     *      
      *       
+     *        
+     *         
+     *          
+     *           
+     *                   &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+     *                
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -693,9 +902,27 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
+     *   
+     *    
+     *     
      *      
-     *          &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
      *       
+     *        
+     *         
+     *          
+     *           
+     *               
+     *                   &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
+     *                
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -724,9 +951,27 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
+     *   
+     *    
+     *     
      *      
-     *          &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
      *       
+     *        
+     *         
+     *          
+     *           
+     *               
+     *                   &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
+     *                
+     *            
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
      *   
      *  
      * </pre>
@@ -762,12 +1007,30 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
+     *   
+     *    
+     *     
+     *      
+     *       
      *        
-     *          &lt;DIV id=divId&gt;
-     *          &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
-     *          &lt;/DIV&gt;
+     *         
+     *          
+     *           
+     *                 
+     *                   &lt;DIV id=divId&gt;
+     *                   &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
+     *                   &lt;/DIV&gt;
+     *                
+     *               
+     *           
+     *          
+     *         
+     *        
      *       
      *      
+     *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -803,9 +1066,27 @@ public class IntroHTMLGenerator {
      * <pre>
      * 
      *  
-     *          &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+     *   
+     *    
+     *     
+     *      
+     *       
+     *        
+     *         
+     *          
+     *           
+     *                   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+     *               
+     *              
+     *           
+     *          
+     *         
+     *        
+     *       
      *      
      *     
+     *    
+     *   
      *  
      * </pre>
      * 
@@ -882,9 +1163,27 @@ public class IntroHTMLGenerator {
      * 
      *  
      *   
-     *        
-     *          &lt;IMG src=imageSrc alt=altText&gt;
+     *    
+     *     
+     *      
      *       
+     *        
+     *         
+     *          
+     *           
+     *            
+     *                 
+     *                   &lt;IMG src=imageSrc alt=altText&gt;
+     *                
+     *            
+     *           
+     *          
+     *         
+     *        
+     *       
+     *      
+     *     
+     *    
      *   
      *  
      * </pre>
@@ -913,12 +1212,7 @@ public class IntroHTMLGenerator {
      * Generate a span element
      * 
      * <pre>
-     * 
-     *  
-     *      
-     *          &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
-     *       
-     *  
+     *                   &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
      * </pre>
      * 
      * @param spanClass
@@ -934,6 +1228,36 @@ public class IntroHTMLGenerator {
         span.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, spanClass);
         return span;
     }
+    
+    /**
+     * Generate a span element
+     * 
+     * <pre>
+     *                &lt;iframe src="localPage1.xhtml" frameborder="1" scrolling="auto" longdesc="localPage1.xhtml"&gt;
+     * </pre>
+     * 
+     * @param spanClass
+     *            the value to be supplied to the class attribute
+     * @param indentLevel
+     *            the number of indents to insert before the element when it is
+     *            printed
+     * @return a span HTMLElement
+     */
+    private HTMLElement generateIFrameElement(String src, String frameborder, String scrolling,
+            int indentLevel) {
+        HTMLElement iframe = new FormattedHTMLElement(
+            IIntroHTMLConstants.ELEMENT_IFrame, indentLevel, false);
+        if(src!=null)
+            iframe.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, src);
+        if(frameborder!=null)
+            iframe.addAttribute(IIntroHTMLConstants.ATTRIBUTE_FRAMEBORDER, frameborder);
+        if(scrolling!=null)
+            iframe.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SCROLLING, scrolling);
+        return iframe;
+    }
+    
+    
+    
 
     private boolean filteredFromPresentation(AbstractIntroElement element) {
         if (element.isOfType(AbstractIntroElement.BASE_ELEMENT))
@@ -941,7 +1265,6 @@ public class IntroHTMLGenerator {
 
         return false;
     }
-
 
     /**
      * Reads the content of the file referred to by the <code>src</code>
@@ -1037,11 +1360,15 @@ public class IntroHTMLGenerator {
      */
     private static class PluginIdParser {
         private BufferedReader reader;
+
         private static final char SUBSTITUTION_BEGIN = '$';
+
         private static final char SUBSTITUTION_END = '$';
+
         // tokenContent will contain all characters read by the parser, starting
         // with and including the initial $ token.
         private StringBuffer tokenContent;
+
         // pluginId will contain the content between the "$plugin:" segment
         // and the closing "$" token
         private StringBuffer pluginId;
@@ -1102,7 +1429,6 @@ public class IntroHTMLGenerator {
                 // so we can continue reading character by character.
                 reader.reset();
                 return tokenContent.toString();
-
 
             } catch (IOException exception) {
                 Log.error("Error reading from file", exception); //$NON-NLS-1$
@@ -1212,6 +1538,5 @@ public class IntroHTMLGenerator {
             }
         }
     }
-
 
 }

@@ -34,7 +34,7 @@ public class Log implements IIntroConstants {
      * Used to compile out developement debug messages. <br>
      * Compiler compiles out code warpped wit this flag as an optimization.
      */
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
 
     // Use these flags to filter out code that may be a performance hit.

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Vector;
 
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 

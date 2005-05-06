@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.intro.impl.model;
+package org.eclipse.ui.internal.intro.impl.model.url;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +32,6 @@ public class IntroURLParser {
      * Constructor that gets the URL to parse.
      */
     public IntroURLParser(String url) {
-        // url_string = url;
         // create a URL instance, and parser it for parameters.
         parseUrl(url);
     }
@@ -51,7 +50,7 @@ public class IntroURLParser {
         if (url_inst.getProtocol() != null) {
             // URL has some valid protocol. Check to see if it is an intro url.
             hasProtocol = true;
-            isIntroUrl = isIntoUrl(url_inst);
+            isIntroUrl = isIntroUrl(url_inst);
             return;
         }
 
@@ -83,7 +82,7 @@ public class IntroURLParser {
      * @param url
      * @return true if url is an intro URL.
      */
-    private boolean isIntoUrl(URL url) {
+    private boolean isIntroUrl(URL url) {
         if (!url.getProtocol().equalsIgnoreCase(IntroURL.INTRO_PROTOCOL))
             // quick exit. If it is not http, url is not an Intro url.
             return false;

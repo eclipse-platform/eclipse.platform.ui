@@ -42,6 +42,7 @@ public interface IIntroHTMLConstants {
     String ELEMENT_H4 = "H4"; //$NON-NLS-1$
     String ELEMENT_PARAGRAPH = "P"; //$NON-NLS-1$
     String ELEMENT_STYLE = "STYLE"; //$NON-NLS-1$
+    String ELEMENT_IFrame = "iFrame"; //$NON-NLS-1$
 
     /* HTML attribute names */
     String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -53,6 +54,8 @@ public interface IIntroHTMLConstants {
     String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
     String ATTRIBUTE_DATA = "data"; //$NON-NLS-1$
     String ATTRIBUTE_ALT = "alt"; //$NON-NLS-1$
+    String ATTRIBUTE_FRAMEBORDER = "frameborder"; //$NON-NLS-1$
+    String ATTRIBUTE_SCROLLING = "scrolling"; //$NON-NLS-1$
 
     /* HTML attribute values */
     String LINK_REL = "stylesheet"; //$NON-NLS-1$

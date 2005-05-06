@@ -21,6 +21,8 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -35,6 +37,13 @@ import org.w3c.dom.NodeList;
  * <li>support for page styles, and style inheritance</li>
  * <li>support for XHTML via a DOM instance var. Resolving the page is also
  * handled here.</li>
+ * <li>a pge has the concept of being an IFramePage. This is indicated by the
+ * isIFrame flag. A page is an IFramePage when it is not defined in any content
+ * file, but instead is actually created at runtime. This is done to display a
+ * Help System topic embedded in any given div. The current page is cloned, its
+ * id is mangled with "_embedDivId", the content of the div pointed to by
+ * embedDivId is replaced with an IFrame that loads the Help System topic.</li>
+ * </ul>
  */
 public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
@@ -48,6 +57,15 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private String altStyle;
     private IntroPageTitle title;
     private String content;
+
+    // if true, indicates that this page was cloned at runtime from another page
+    // with id=originalId.
+    private boolean isIFramePage;
+
+    private IntroInjectedIFrame iframe;
+
+    // id of page from which this page was cloned.
+    private String originalId;
 
     // DOM representing XHTML content. DOM is only cached in the case of XHTML
     // content.
@@ -705,5 +723,67 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             clone.altStyles = (Hashtable) altStyles.clone();
         return clone;
     }
+
+    /**
+     * Used when cloning pages to assign a unique id. Cache original id before
+     * setting.
+     * 
+     * @param id
+     */
+    public void setId(String id) {
+        this.originalId = this.id;
+        this.id = id;
+    }
+
+    /*
+     * Creates an IFrame and injects it as the only child of the specified path.
+     */
+    public boolean injectIFrame(String url, String embedTarget) {
+        // embed url as IFrame in target div. We need to find target div in
+        // this cloned page not in the original page.
+        IntroGroup divToReplace = (IntroGroup) findTarget(embedTarget);
+        if (divToReplace == null) {
+            // we failed to find embed div, log and exit.
+            Log.warning("Failed to find embedTarget: " + embedTarget
+                    + " in page " + getId());
+            return false;
+        }
+
+        this.iframe = new IntroInjectedIFrame(getElement(), getBundle());
+        this.iframe.setParent(divToReplace);
+        this.iframe.setIFrameURL(url);
+        divToReplace.clearChildren();
+        divToReplace.addChild(iframe);
+        return true;
+    }
+
+    /**
+     * Return true if this page is a cloned page that has an IFrame.
+     * 
+     * @return
+     */
+    public boolean isIFramePage() {
+        return (iframe != null) ? true : false;
+    }
+
+
+    public String getUnmangledId() {
+        if (isIFramePage)
+            return originalId;
+        return id;
+    }
+
+
+    /**
+     * Set the url of the embedded IFrame, if this page is an IFrame page.
+     * 
+     * @param url
+     */
+    public void setIFrameURL(String url) {
+        if (!isIFramePage())
+            return;
+        this.iframe.setIFrameURL(url);
+    }
+
 
 }

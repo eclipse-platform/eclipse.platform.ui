@@ -24,13 +24,13 @@ public class LaunchBarShortcutElement extends AbstractIntroElement {
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$
     private static final String ATT_URL = "url"; //$NON-NLS-1$
 
-    public LaunchBarShortcutElement(IConfigurationElement element) {
+    LaunchBarShortcutElement(IConfigurationElement element) {
         super(element);
     }
 
 
     public int getType() {
-        return LAUNCH_BAR_SHORTCUT;
+        return AbstractIntroElement.LAUNCH_BAR_SHORTCUT;
     }
 
     /**

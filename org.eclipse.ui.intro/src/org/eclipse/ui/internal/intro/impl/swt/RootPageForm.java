@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
 import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
-import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
+import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;

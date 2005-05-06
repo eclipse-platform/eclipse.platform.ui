@@ -38,7 +38,7 @@ public class LaunchBarElement extends AbstractIntroElement {
 
     private ArrayList shortcuts;
 
-    public LaunchBarElement(IConfigurationElement element) {
+    LaunchBarElement(IConfigurationElement element) {
         super(element);
     }
 
@@ -47,7 +47,7 @@ public class LaunchBarElement extends AbstractIntroElement {
      * Returns LAUNCH_BAR.
      */
     public int getType() {
-        return LAUNCH_BAR;
+        return AbstractIntroElement.LAUNCH_BAR;
     }
 
     /**

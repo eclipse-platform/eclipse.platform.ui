@@ -21,6 +21,8 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;

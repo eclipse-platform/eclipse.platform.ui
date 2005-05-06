@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import org.eclipse.ui.internal.intro.impl.model.url.IntroURL;
+import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

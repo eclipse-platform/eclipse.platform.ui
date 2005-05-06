@@ -20,6 +20,7 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.TextIntroPartImplementation;
@@ -63,8 +64,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
     protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id"; //$NON-NLS-1$
 
-    protected static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
-    protected static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
+    public static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
+    public static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
     // this implementation kind if not public api. Only used internally for
     // debugging.
     private static final String TEXT_IMPL_KIND = "text"; //$NON-NLS-1$

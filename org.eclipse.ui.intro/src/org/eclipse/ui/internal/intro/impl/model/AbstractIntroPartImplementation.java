@@ -25,6 +25,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
+import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelLabelProvider;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;

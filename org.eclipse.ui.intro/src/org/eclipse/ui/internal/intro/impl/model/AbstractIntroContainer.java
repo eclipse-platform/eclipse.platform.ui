@@ -365,22 +365,24 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
     /**
      * Finds the child element that corresponds to the given path in the passed
-     * model.
+     * model.<br>
+     * ps: This method could be a static method, but left as instance for model
+     * enhancements.
      * 
      * @param model
      * @param path
      * @return
      */
-    public AbstractIntroElement findTarget(IntroModelRoot model, String path) {
+    public AbstractIntroElement findTarget(AbstractIntroContainer container,
+            String path) {
         // extract path segments. Get first segment to start search.
         String[] pathSegments = path.split("/"); //$NON-NLS-1$
-        if (model == null)
-            // if the target config was not found, return.
+        if (container == null)
             return null;
 
-        AbstractIntroElement target = model.findChild(pathSegments[0]);
+        AbstractIntroElement target = container.findChild(pathSegments[0]);
         if (target == null)
-            // there is no element with the specified path.
+            // there is no direct child with the specified first path segment.
             return null;
 
         // found parent segment. now find each child segment.
@@ -396,6 +398,12 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         }
         return target;
     }
+
+
+    public AbstractIntroElement findTarget(String path) {
+        return findTarget(this, path);
+    }
+
 
 
     /*
@@ -570,5 +578,26 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     public String getBase() {
         return base;
     }
+
+
+    /*
+     * Clears this container. This means emptying the children, and resetting
+     * flags.
+     */
+    public void clearChildren() {
+        this.children.clear();
+    }
+
+
+    /**
+     * Adds a model element as a child. Caller is responsible for inserting
+     * model elements that rea valid as children.
+     * 
+     * @param child
+     */
+    public void addChild(AbstractIntroElement child) {
+        children.add(child);
+    }
+
 
 }

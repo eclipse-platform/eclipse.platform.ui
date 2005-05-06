@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.intro.impl.model;
+package org.eclipse.ui.internal.intro.impl.model.util;
 
 import java.net.URL;
 import java.util.Vector;
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.internal.intro.impl.util.Util;
@@ -62,7 +63,7 @@ public class ModelUtil {
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
      */
-    protected static String resolveURL(String url, String pluginId) {
+    public static String resolveURL(String url, String pluginId) {
         Bundle bundle = null;
         if (pluginId != null)
             // if pluginId is not null, use it.
@@ -82,7 +83,7 @@ public class ModelUtil {
      * @param pluginDesc
      * @return returns the URL as is if it had a protocol.
      */
-    protected static String resolveURL(String url, IConfigurationElement element) {
+    public static String resolveURL(String url, IConfigurationElement element) {
         Bundle bundle = BundleUtil.getBundleFromConfigurationElement(element);
         return resolveURL("", url, bundle); //$NON-NLS-1$
     }
@@ -92,7 +93,7 @@ public class ModelUtil {
     /**
      * @see resolveURL(String url, IConfigurationElement element)
      */
-    protected static String resolveURL(String base, String url, Bundle bundle) {
+    public static String resolveURL(String base, String url, Bundle bundle) {
         // quick exit
         if (url == null)
             return null;
@@ -111,7 +112,7 @@ public class ModelUtil {
      * 
      * @param resource
      */
-    protected static void extractParentFolder(Bundle bundle, String contentFile) {
+    public static void extractParentFolder(Bundle bundle, String contentFile) {
         try {
             long start = 0;
             if (Log.logPerformance)

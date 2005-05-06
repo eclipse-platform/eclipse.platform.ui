@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.intro.impl.model;
+package org.eclipse.ui.internal.intro.impl.model.util;
 
 import java.io.IOException;
 import java.net.URL;
@@ -186,7 +186,7 @@ public class BundleUtil {
 
     /** *** used by Intro parser ***** */
     /*
-     * Uti method to return an URL to a plugin relative resource.
+     * Util method to return an URL to a plugin relative resource.
      */
     public static URL getResourceAsURL(String resource, String pluginId) {
         Bundle bundle = Platform.getBundle(pluginId);

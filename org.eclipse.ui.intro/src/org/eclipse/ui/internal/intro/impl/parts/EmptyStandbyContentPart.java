@@ -41,11 +41,14 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
     public void createPartControl(Composite parent, FormToolkit toolkit) {
         contentComposite = toolkit.createComposite(parent);
         contentComposite.setLayout(new GridLayout());
+        // Util.highlight(contentComposite, SWT.COLOR_YELLOW);
+
         String text = Messages.EmptyStandbyContentPart_text;
-        Label label = toolkit.createLabel(contentComposite, text, SWT.NULL);
+        Label label = toolkit.createLabel(contentComposite, text, SWT.WRAP);
         label.setFont(PageStyleManager.getBannerFont());
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(gd);
+
         contentText = toolkit.createText(contentComposite, " ", SWT.MULTI
                 | SWT.WRAP);
         GridData textGd = new GridData(GridData.FILL_BOTH);

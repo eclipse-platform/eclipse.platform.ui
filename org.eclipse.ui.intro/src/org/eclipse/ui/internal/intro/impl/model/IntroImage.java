@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 

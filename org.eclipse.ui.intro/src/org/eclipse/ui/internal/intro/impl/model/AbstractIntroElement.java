@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -134,6 +135,13 @@ public abstract class AbstractIntroElement implements Cloneable {
     public static final int LAUNCH_BAR_SHORTCUT = 1 << 16;
 
     /**
+     * Type constant which identifies am injected IFrame model element.
+     */
+    public static final int INJECTED_IFRAME = 1 << 17;
+
+
+
+    /**
      * Type constant which identifies the AbstractText element.
      */
     public static final int ABSTRACT_TEXT = HTML | LINK | CONTENT_PROVIDER;
@@ -155,7 +163,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Type constant which identifies any element in the Intro Model.
      */
     public static final int ELEMENT = ID_ELEMENT | CONTAINER_EXTENSION | HEAD
-            | INCLUDE | PRESENTATION;
+            | INCLUDE | PRESENTATION | LAUNCH_BAR | LAUNCH_BAR_SHORTCUT;
 
 
 
@@ -192,8 +200,8 @@ public abstract class AbstractIntroElement implements Cloneable {
      * resources relative to the xml content file. The base is set to point to
      * the relative location of the parent folder that holds the content file.
      * In the case of a configExtension, it is set to point to the relative
-     * position of the parent folder that holds the extension. The base field is
-     * not stored in each model element to save memory.
+     * position of the parent folder that holds the extension. Only when needed,
+     * the base field is stored in a model element. This saves memory.
      * 
      * @param element
      * @param pd

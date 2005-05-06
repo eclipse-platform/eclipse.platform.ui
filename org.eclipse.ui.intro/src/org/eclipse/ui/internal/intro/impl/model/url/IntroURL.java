@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.intro.impl.model;
+package org.eclipse.ui.internal.intro.impl.model.url;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -31,13 +31,22 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.Messages;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
+import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
+import org.eclipse.ui.internal.intro.impl.model.IntroURLAction;
+import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
@@ -89,6 +98,7 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_URL = "url"; //$NON-NLS-1$
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
     public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
+    public static final String KEY_EMBED_TARGET = "embedTarget"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
@@ -129,6 +139,11 @@ public class IntroURL implements IIntroURL {
     }
 
     protected boolean doExecute() {
+        if (Log.logInfo) {
+            String msg = StringUtil.concat("Running Introl URL with Action: ",
+                action, " and Parameters: ", parameters.toString()).toString();
+            Log.info(msg);
+        }
 
         // check for all supported Intro actions first.
         if (action.equals(CLOSE))
@@ -151,7 +166,8 @@ public class IntroURL implements IIntroURL {
             // display a Help System Topic. It can be displayed in the Help
             // system window, or embedded as an intro page.
             // return showHelpTopic(getParameter(KEY_ID));
-            return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED));
+            return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED),
+                getParameter(KEY_EMBED_TARGET));
 
         else if (action.equals(OPEN_BROWSER))
             // display url in external browser
@@ -180,6 +196,7 @@ public class IntroURL implements IIntroURL {
 
         else if (action.equals(SWITCH_TO_LAUNCH_BAR))
             return switchToLaunchBar();
+
         else
             return handleCustomAction();
     }
@@ -282,39 +299,15 @@ public class IntroURL implements IIntroURL {
 
     /**
      * Open a help topic. If embed="true", open the help href as an intro page.
-     * If false, open the href in the Help system window. In the case of SWT
-     * presentation, embedd flag is ignored and the topic is opened in the Help
-     * system window.
+     * If false, open the href in the Help system window. If embedTarget is set,
+     * then the Help System topic is embedded instead of the content of the
+     * specified div.<br>
+     * In the case of SWT presentation, embedd flag is ignored and the topic is
+     * opened in the Help system window.
      */
-    private boolean showHelpTopic(String href, String embed) {
-        if (href == null)
-            return false;
-
-        boolean isEmbedded = (embed != null && embed.equals(VALUE_TRUE)) ? true
-                : false;
-        IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
-        String presentationStyle = model.getPresentation()
-            .getImplementationKind();
-
-        if (isEmbedded
-                && presentationStyle
-                    .equals(IntroPartPresentation.BROWSER_IMPL_KIND)) {
-            // we want embedded and we have HTML presentation, show href
-            // embedded.
-            BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) model
-                .getPresentation().getIntroParttImplementation();
-            // INTRO: maybe add support for navigation
-            href = PlatformUI.getWorkbench().getHelpSystem()
-                .resolve(href, true).toExternalForm();
-            impl.getBrowser().setUrl(href);
-            return true;
-        }
-
-        // show href in Help window. SWT presentation is handled here.
-        // WorkbenchHelp takes care of error handling.
-        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-        return true;
-
+    private boolean showHelpTopic(String href, String embed, String embedTarget) {
+        return new ShowHelpActionHandler(this).showHelpTopic(href, embed,
+            embedTarget);
     }
 
 
@@ -386,7 +379,7 @@ public class IntroURL implements IIntroURL {
      * <p>
      * INTRO: revisit picking first page.
      */
-    private boolean showPage(String pageId, String standbyState) {
+    boolean showPage(String pageId, String standbyState) {
         // set the current page id in the model. This will triger appropriate
         // listener event to the UI. If setting the page in the model fails (ie:
         // the page was not found in the current model, look for it in loaded
@@ -459,7 +452,7 @@ public class IntroURL implements IIntroURL {
         if (targetSharedStyle != null)
             // add target model shared style.
             clonedPage.insertStyle(targetSharedStyle, 0);
-        model.children.add(clonedPage);
+        model.addChild(clonedPage);
         return model.setCurrentPageId(clonedPage.getId());
     }
 
@@ -533,7 +526,8 @@ public class IntroURL implements IIntroURL {
         IntroURLAction command = ExtensionPointManager.getInst()
             .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
-            DialogUtil.displayInfoMessage(null, "IntroURL.badCommand", //$NON-NLS-1$
+            String message = Messages.IntroURL_badCommand;
+            DialogUtil.displayInfoMessage(null, message,
                 new Object[] { action });
             return false;
         }

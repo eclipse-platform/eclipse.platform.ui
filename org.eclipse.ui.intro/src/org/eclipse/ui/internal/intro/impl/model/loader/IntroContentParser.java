@@ -28,7 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
-import org.eclipse.ui.internal.intro.impl.model.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
