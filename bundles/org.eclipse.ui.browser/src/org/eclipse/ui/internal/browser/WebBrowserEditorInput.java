@@ -230,6 +230,15 @@ public class WebBrowserEditorInput implements IEditorInput,
 		return ImageResource
 				.getImageDescriptor(ImageResource.IMG_INTERNAL_BROWSER);
 	}
+	
+	/**
+	 * Returns true if the name is locked and cannot be changed.
+	 * 
+	 * @return <code>true</code> if the name of the browser should not change
+	 */
+	protected boolean isNameLocked() {
+		return (name != null);
+	}
 
 	/**
 	 * Returns the name of this editor input for display purposes.
@@ -241,7 +250,10 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 * @return the file name string
 	 */
 	public String getName() {
-		return name;
+		if (name != null)
+			return name;
+
+		return Messages.viewWebBrowserTitle;
 	}
 
 	/*

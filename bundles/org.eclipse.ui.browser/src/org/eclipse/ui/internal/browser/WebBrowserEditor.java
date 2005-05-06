@@ -205,13 +205,9 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 				site.getWorkbenchWindow().getActivePage().bringToTop(this);
 			}
 	
-			if (wbei.getName() == null)
-				setPartName(Messages.viewWebBrowserTitle);
-			else {
-				setPartName(wbei.getName());
-				lockName = true;
-			}
+			setPartName(wbei.getName());
 			setTitleToolTip(wbei.getToolTipText());
+			lockName = wbei.isNameLocked();
 
 			Image oldImage = image;
 			ImageDescriptor id = wbei.getImageDescriptor();
