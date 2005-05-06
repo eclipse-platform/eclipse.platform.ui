@@ -205,13 +205,20 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		fPinAction.dispose();
 		// Remember the last active participant
 		if(activeParticipantRef != null) {
-			IDialogSettings section = getDialogSettings();
-			section.put(KEY_LAST_ACTIVE_PARTICIPANT_ID, activeParticipantRef.getId());
-            section.put(KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID, activeParticipantRef.getSecondaryId());
+			rememberCurrentParticipant();
 		}			
 		fParticipantToPart = null;
 		fPartToParticipant = null;	
 	}
+
+    /**
+     * 
+     */
+    private void rememberCurrentParticipant() {
+        IDialogSettings section = getDialogSettings();
+        section.put(KEY_LAST_ACTIVE_PARTICIPANT_ID, activeParticipantRef.getId());
+        section.put(KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID, activeParticipantRef.getSecondaryId());
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
@@ -330,6 +337,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if (part != null) {
 			partActivated(part);
 			fPageDropDown.update();
+            rememberCurrentParticipant();
 		}
 	}
 	
