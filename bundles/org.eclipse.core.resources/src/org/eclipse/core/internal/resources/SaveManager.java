@@ -47,6 +47,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected static final int SAVING = 2;
 	protected ElementTree lastSnap;
 	protected Properties masterTable;
+	
+	/**
+	 * A flag indicating that a save operation is occurring.  This is a signal
+	 * that snapshot should not be scheduled if a nested operation occurs during
+	 * save.
+	 */
+	private boolean isSaving = false;
 
 	/**
 	 * The number of empty (non-changing) operations since the last snapshot.
@@ -926,6 +933,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
+			isSaving = true;
 			String message = Messages.resources_saving_0;
 			monitor.beginTask(message, 7);
 			message = Messages.resources_saveWarnings;
@@ -1018,6 +1026,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				workspace.endOperation(rule, false, Policy.monitorFor(null));
 			}
 		} finally {
+			isSaving = false;
 			monitor.done();
 		}
 	}
@@ -1156,6 +1165,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * This should be called at the end of every top level operation.
 	 */
 	public void snapshotIfNeeded(boolean hasTreeChanges) {
+		// never schedule a snapshot while save is occurring.
+		if (isSaving)
+			return;
 		if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
 			if (snapshotJob.getState() == Job.NONE)
 				snapshotJob.schedule();
@@ -1171,7 +1183,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					snapshotJob.schedule(Math.max(interval, MIN_SNAPSHOT_DELAY));
 				}
 			} else {
-				//increment the operation count if we've had a sufficient number of no-ops
+				//only increment the operation count if we've had a sufficient number of no-ops
 				if (++noopCount > NO_OP_THRESHOLD) {
 					operationCount++;
 					noopCount = 0;
