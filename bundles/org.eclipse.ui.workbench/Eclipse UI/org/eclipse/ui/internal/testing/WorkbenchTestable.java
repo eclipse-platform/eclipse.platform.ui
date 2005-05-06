@@ -10,19 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.testing;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.testing.ITestHarness;
 import org.eclipse.ui.testing.TestableObject;
 
 /**
@@ -59,17 +54,15 @@ public class WorkbenchTestable extends TestableObject {
         Assert.isNotNull(workbench);
         this.display = display;
         this.workbench = workbench;
-        final ITestHarness harness = getTestHarness();
-        if (harness != null) {
-        	Job job = new Job("Workbench test runner") {  //$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor) {
-					waitForEarlyStartup();
-                    harness.runTests();
-					return Status.OK_STATUS;
-				}
+        if (getTestHarness() != null) {
+        	// don't use a job, since tests often wait for all jobs to complete before proceeding
+            Runnable runnable = new Runnable() {
+                public void run() {
+                	waitForEarlyStartup();
+                    getTestHarness().runTests();
+                }
             };
-            job.setSystem(true);
-            job.schedule();
+            new Thread(runnable, "WorkbenchTestable").start(); //$NON-NLS-1$
         }
     }
 
