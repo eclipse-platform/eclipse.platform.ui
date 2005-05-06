@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="browsers" name="%browser_extension_point_name" schema="schema/browsers.exsd"/>
+   <extension-point id="browsers" name="%browser_extension_point_name" schema="schema/browsers.exsd"/>
 
    <extension point="org.eclipse.ui.preferencePages">
       <page
@@ -42,6 +42,23 @@
             launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
             name="%viewWebBrowserSupportTitle"/>
   </extension>
+
+<!--
+  <extension point="org.eclipse.ui.actionSets">
+    <actionSet
+      id="org.eclipse.ui.browser.actionSet"
+      label="%actionSetWebBrowserTitle"
+      visible="true">
+      <action
+        id="org.eclipse.ui.browser.action.open"
+        toolbarPath="browser"
+        label="%actionSetOpenWebBrowser"
+        tooltip="%actionSetOpenWebBrowser"
+        icon="icons/obj16/internal_browser.gif"
+        class="org.eclipse.ui.internal.browser.OpenBrowserWorkbenchAction"/>
+    </actionSet>
+  </extension>
+-->
 
    <!-- Web Browsers -->
    <extension point="org.eclipse.ui.browser.browsers">
