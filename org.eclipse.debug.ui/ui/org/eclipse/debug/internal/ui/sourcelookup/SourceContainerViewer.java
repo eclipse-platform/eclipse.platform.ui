@@ -154,7 +154,7 @@ public class SourceContainerViewer extends TreeViewer {
 		if (sel.isEmpty()) {
 			for (int i = 0; i < entries.length; i++) {
 				if (!fEntries.contains(entries[i])) {
-					fEntries.add(entries[i]);
+					fEntries.add(i, entries[i]);
 				}
 			}
 		} 
@@ -168,9 +168,9 @@ public class SourceContainerViewer extends TreeViewer {
 			}
 		}		
 		
-		if(!fEntries.isEmpty() && fEntries.get(0)!=null)
-			setSelection(new StructuredSelection(fEntries.get(0)));
 		refresh();
+		if(entries.length > 0)
+			setSelection(new StructuredSelection(entries));
 		fPanel.setDirty(true);
 		fPanel.updateLaunchConfigurationDialog();
 	}	
