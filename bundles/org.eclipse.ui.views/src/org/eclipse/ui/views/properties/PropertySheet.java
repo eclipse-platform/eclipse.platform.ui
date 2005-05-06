@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
@@ -115,6 +116,12 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
         // Try to get a custom property sheet page.
         IPropertySheetPage page = (IPropertySheetPage) part
                 .getAdapter(IPropertySheetPage.class);
+        if (page == null) {
+        	// Look for a declaratively-contributed adapter.
+        	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
+			page = (IPropertySheetPage) Platform.getAdapterManager()
+					.loadAdapter(part, IPropertySheetPage.class.getName());
+		}
         if (page != null) {
             if (page instanceof IPageBookViewPage)
                 initPage((IPageBookViewPage) page);
