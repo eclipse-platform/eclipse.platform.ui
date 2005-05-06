@@ -66,8 +66,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	
 	Composite toolBarComposite;
 
-    //The title for pageContent area
-	Label title;
 	
 	/**
 	 * The preference page history.
@@ -384,7 +382,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 	public Composite createPageContainer(Composite parent) {
 	
-		Composite outer=new Composite(parent, SWT.NULL);
+		Composite outer=new Composite(parent, SWT.NONE);
 		GridData compositeData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL);
 		outer.setLayoutData(compositeData);
@@ -395,7 +393,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		layout.verticalSpacing = 0;
 		outer.setLayout(layout);
 		
-		Composite top=new Composite(outer, SWT.NULL);
+		Composite top=new Composite(outer, SWT.NONE);
 		GridData topLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		top.setLayoutData(topLayoutData);
 		GridLayout topLayout = new GridLayout();
@@ -406,18 +404,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		topLayout.numColumns = columns;
 		top.setLayout(topLayout);
 		
-		Composite titleArea = new Composite(top, SWT.NULL);
-		title=new Label(titleArea, SWT.NONE);
-		GridLayout titleLayout = new GridLayout();
-		titleLayout.marginWidth = 0;
-		titleLayout.verticalSpacing = 0;
-		titleArea.setLayout(titleLayout);
-	    GridData titleData =new GridData(SWT.FILL, SWT.FILL, true, false);
-	    titleArea.setLayoutData(titleData);
-	    title.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		title.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		createTitleArea(top);
 		
-		Composite toolbarArea=new Composite(top, SWT.NULL);
+		Composite toolbarArea=new Composite(top, SWT.NONE);
 		GridLayout toolbarLayout = new GridLayout();
 		toolbarArea.setLayout(toolbarLayout);
 		toolbarArea.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
@@ -446,10 +435,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		return result;
 	}
 
-	public void updateTitle() {
-		title.setText(getCurrentPage().getTitle());
-		title.setImage(getCurrentPage().getImage());
-	}
 
 	/**
 	 * Get the toolbar for the container
@@ -468,12 +453,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		return historyBar;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
-	 */
-	public void updateMessage() {
-		// No longer required as the pages do this.
-	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)

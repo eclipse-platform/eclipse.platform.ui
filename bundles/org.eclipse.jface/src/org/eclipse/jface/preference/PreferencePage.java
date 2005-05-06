@@ -15,9 +15,7 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,11 +24,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,7 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * Abstract base implementation for all preference page implementations.
@@ -63,171 +57,6 @@ import org.eclipse.swt.widgets.Text;
  */
 public abstract class PreferencePage extends DialogPage implements
         IPreferencePage {
-	
-	/**
-	 * The MessageRegion is the optional area to
-	 * show messages in the page.
-	 */
-	private class MessageRegion{
-
-		private Text messageText;
-
-		private Label messageImageLabel;
-
-		private Composite messageComposite;
-
-		private String lastMessageText = "";//$NON-NLS-1$
-
-		private int lastMessageType;
-
-		/**
-		 * Create a new instance of the receiver.
-		 */
-		public MessageRegion() {
-			//No initial behaviour
-		}
-
-		/**
-		 * Create the contents for the receiver.
-		 * 
-		 * @param parent
-		 *            the Composite that the children will be created in
-		 */
-		public void createContents(Composite parent) {
-			messageComposite = new Composite(parent, SWT.NONE);
-			GridLayout messageLayout = new GridLayout();
-			messageLayout.numColumns = 2;
-			messageLayout.marginWidth = 0;
-			messageLayout.marginHeight = 0;
-			messageLayout.makeColumnsEqualWidth = false;
-			messageComposite.setLayout(messageLayout);
-			messageImageLabel = new Label(messageComposite, SWT.NONE);
-
-			GridData imageData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-			Image sizingImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-			Rectangle imageBounds;
-			if(sizingImage == null)
-				imageBounds = new Rectangle(0,0,IDialogConstants.VERTICAL_MARGIN * 2,IDialogConstants.VERTICAL_MARGIN * 2);
-			else
-				imageBounds = sizingImage.getBounds();
-			imageData.heightHint = imageBounds.height + IDialogConstants.VERTICAL_SPACING;
-			imageData.widthHint = imageBounds.width + IDialogConstants.HORIZONTAL_SPACING;
-			messageImageLabel.setLayoutData(imageData);
-
-			messageText = new Text(messageComposite, SWT.NONE);
-			messageText.setEditable(false);
-			messageText.setBackground(parent.getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_BACKGROUND));
-
-			GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
-					| GridData.VERTICAL_ALIGN_CENTER);
-			messageText.setLayoutData(textData);
-			hideRegion();
-
-		}
-
-		/**
-		 * Set the layoutData for the messageArea. In most cases this will be a copy
-		 * of the layoutData used in setTitleLayoutData.
-		 * 
-		 * @param layoutData
-		 *            the layoutData for the message area composite.
-		 */
-		public void setMessageLayoutData(Object layoutData) {
-			messageComposite.setLayoutData(layoutData);
-		}
-
-		/**
-		 * Show the new message in the message text and update the image. Base the
-		 * background color on whether or not there are errors.
-		 * 
-		 * @param newMessage
-		 *            The new value for the message
-		 * @param newType
-		 *            One of the IMessageProvider constants. If newType is
-		 *            IMessageProvider.NONE show the title.
-		 * @see IMessageProvider
-		 */
-		public void updateText(String newMessage, int newType) {
-			Image newImage = null;
-			boolean showingError = false;
-			switch (newType) {
-			case IMessageProvider.NONE:
-				hideRegion();
-				return;
-			case IMessageProvider.INFORMATION:
-				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-				break;
-			case IMessageProvider.WARNING:
-				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-				break;
-			case IMessageProvider.ERROR:
-				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-				showingError = true;
-				break;
-			}
-			
-			if(newMessage == null){//No message so clear the area
-				hideRegion();
-				return;
-			}
-			showRegion();
-			// Any more updates required
-			if (newMessage.equals(messageText.getText())
-					&& newImage == messageImageLabel.getImage())
-				return;
-			messageImageLabel.setImage(newImage);
-			if (newMessage == null)
-				messageText.setText("");//$NON-NLS-1$
-			else
-				messageText.setText(newMessage);
-			if (showingError)
-				setMessageColors(JFaceColors.getErrorBackground(messageComposite.getDisplay()));
-			else {
-				lastMessageText = newMessage;
-				setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
-			}
-
-		}
-
-		/**
-		 * Show and enable the widgets in the message region
-		 */
-		private void showRegion() {
-			messageComposite.setVisible(true);
-		}
-
-		/**
-		 * Hide the message region and clear out the caches.
-		 */
-		private void hideRegion() {
-			messageComposite.setVisible(false);
-			lastMessageText = null;
-			lastMessageType = IMessageProvider.NONE;
-		}
-
-		/**
-		 * Set the colors of the message area.
-		 * 
-		 * @param color
-		 *            The color to be use in the message area.
-		 */
-		private void setMessageColors(Color color) {
-			messageText.setBackground(color);
-			messageComposite.setBackground(color);
-			messageImageLabel.setBackground(color);
-		}
-
-		/**
-		 * Clear the error message. Restore the previously displayed message if
-		 * there is one, if not restore the title label.
-		 *  
-		 */
-		public void clearErrorMessage() {
-			updateText(lastMessageText, lastMessageType);
-		}
-
-	}
 
     /**
      * Preference store, or <code>null</code>.
@@ -284,12 +113,7 @@ public abstract class PreferencePage extends DialogPage implements
      */
     private Point size = null;
 
-    /**
-     * The message area for displaying the messages.
-     * If this is <code>null</code> messages are forwarded
-     * to the parent.
-     */
-	private MessageRegion messageArea;
+   
     /**
      * Creates a new preference page with an empty title and no image.
      */
@@ -385,20 +209,6 @@ public abstract class PreferencePage extends DialogPage implements
      * it is expected to set the margins of this <code>Layout</code> to 0 pixels.
      */
     public void createControl(Composite parent){
-    	createControl(parent,true);
-    }
-    
-    /**
-     * Create the contents of the receiver with an
-     * optional message area.
-     * 
-     * @param parent
-     * @param createMessageArea Create a MessageRegion
-     * for the receiver if this is true.
-     * 
-     * @since 3.1
-     */
-    public void createControl(Composite parent, boolean createMessageArea) {
 
         GridData gd;
         Composite content = new Composite(parent, SWT.NONE);
@@ -432,13 +242,7 @@ public abstract class PreferencePage extends DialogPage implements
         layout.makeColumnsEqualWidth = false;
         buttonBar.setLayout(layout);
         
-        if(createMessageArea){
-        	layout.numColumns = layout.numColumns + 1;
-        	createMessageArea(buttonBar);
-        	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-        }    
-        else
-        	 gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+        gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
         
         buttonBar.setLayoutData(gd);
 
@@ -488,19 +292,7 @@ public abstract class PreferencePage extends DialogPage implements
         }
     }
 
-	/**
-	 * Create a message area for the receiver.
-	 * @param content
-	 */
-	private void createMessageArea(Composite content) {
-		
-		messageArea = new MessageRegion();
-		messageArea.createContents(content);
-		GridData messageData = 
-			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		messageArea.setMessageLayoutData(messageData);
-		
-	}
+	
 
 	/**
      * Apply the dialog font to the composite and it's children
@@ -676,37 +468,6 @@ public abstract class PreferencePage extends DialogPage implements
     }
 
     /**
-     * The <code>PreferencePage</code> implementation of this method 
-     * declared on <code>DialogPage</code> updates the container.
-     */
-    public void setErrorMessage(String newMessage) {
-        super.setErrorMessage(newMessage);
-        if(messageArea == null){
-        	if (getContainer() != null) 
-        		getContainer().updateMessage();
-        }
-        else 
-        	messageArea.updateText(
-					PreferenceDialog.getShortenedString(
-							newMessage,messageArea.messageText),IMessageProvider.ERROR);
-    }
-
-    /**
-     * The <code>PreferencePage</code> implementation of this method 
-     * declared on <code>DialogPage</code> updates the container.
-     */
-    public void setMessage(String newMessage, int newType) {
-        super.setMessage(newMessage, newType);
-        if(messageArea == null){
-        	if (getContainer() != null) 
-        		getContainer().updateMessage();
-        }
-        else 
-        	messageArea.updateText(newMessage, IMessageProvider.NONE);
-    }
-
- 
-    /**
      * Sets the preference store for this preference page.
      * <p>
      * If preferenceStore is set to null, getPreferenceStore
@@ -861,5 +622,24 @@ public abstract class PreferencePage extends DialogPage implements
 	public void applyData(Object data) {
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setErrorMessage(java.lang.String)
+	 */
+	public void setErrorMessage(String newMessage) {
+		super.setErrorMessage(newMessage);
+		if (getContainer() != null) {
+			getContainer().updateMessage();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setMessage(java.lang.String, int)
+	 */
+	public void setMessage(String newMessage, int newType) {
+		super.setMessage(newMessage, newType);
+		if (getContainer() != null) 
+			getContainer().updateMessage();
+	}	
 
 }

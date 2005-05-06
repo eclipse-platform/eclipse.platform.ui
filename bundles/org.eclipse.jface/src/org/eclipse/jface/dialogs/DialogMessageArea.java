@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -60,12 +57,9 @@ public class DialogMessageArea extends Object {
      *            the Composite that the children will be created in
      */
     public void createContents(Composite parent) {
-        Display display = parent.getDisplay();
-        Color background = JFaceColors.getBannerBackground(display);
-        Color foreground = JFaceColors.getBannerForeground(display);
+       
         // Message label
         titleLabel = new CLabel(parent, SWT.NONE);
-        JFaceColors.setColors(titleLabel, foreground, background);
         titleLabel.setFont(JFaceResources.getBannerFont());
         messageComposite = new Composite(parent, SWT.NONE);
         GridLayout messageLayout = new GridLayout();
@@ -79,17 +73,14 @@ public class DialogMessageArea extends Object {
                 .getImage(Dialog.DLG_IMG_MESSAGE_INFO));
         messageImageLabel.setLayoutData(new GridData(
                 GridData.VERTICAL_ALIGN_CENTER));
-        messageImageLabel.setBackground(parent.getDisplay().getSystemColor(
-                SWT.COLOR_YELLOW));
+  
         messageText = new Text(messageComposite, SWT.NONE);
         messageText.setEditable(false);
-        messageText.setBackground(parent.getDisplay().getSystemColor(
-                SWT.COLOR_RED));
+  
         GridData textData = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
         messageText.setLayoutData(textData);
-        setMessageColors(JFaceColors.getBannerBackground(messageComposite
-                .getDisplay()));
+  
     }
 
     /**
@@ -154,7 +145,6 @@ public class DialogMessageArea extends Object {
      */
     public void updateText(String newMessage, int newType) {
         Image newImage = null;
-        boolean showingError = false;
         switch (newType) {
         case IMessageProvider.NONE:
             if (newMessage == null)
@@ -170,7 +160,7 @@ public class DialogMessageArea extends Object {
             break;
         case IMessageProvider.ERROR:
             newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-            showingError = true;
+
             break;
         }
         messageComposite.setVisible(true);
@@ -180,28 +170,11 @@ public class DialogMessageArea extends Object {
                 && newImage == messageImageLabel.getImage())
             return;
         messageImageLabel.setImage(newImage);
-        messageText.setText(newMessage);
-        if (showingError)
-            setMessageColors(JFaceColors.getErrorBackground(messageComposite
-                    .getDisplay()));
-        else {
-            lastMessageText = newMessage;
-            setMessageColors(JFaceColors.getBannerBackground(messageComposite
-                    .getDisplay()));
-        }
+        messageText.setText(Dialog.shortenText(newMessage,messageText));
+        lastMessageText = newMessage;
+ 
     }
 
-    /**
-     * Set the colors of the message area.
-     * 
-     * @param color
-     *            The color to be use in the message area.
-     */
-    private void setMessageColors(Color color) {
-        messageText.setBackground(color);
-        messageComposite.setBackground(color);
-        messageImageLabel.setBackground(color);
-    }
 
     /**
      * Clear the error message. Restore the previously displayed message if

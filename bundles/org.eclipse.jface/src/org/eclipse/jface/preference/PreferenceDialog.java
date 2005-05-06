@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -49,15 +48,11 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
@@ -190,8 +185,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private IPreferenceStore preferenceStore;
 
 	private Composite titleArea;
-
-	private Label titleImage;
 
 	/**
 	 * The tree viewer.
@@ -476,23 +469,11 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		titleArea.setLayout(layout);
 		// Get the background color for the title area
 		Display display = parent.getDisplay();
-		Color background = JFaceColors.getBannerBackground(display);
+		
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.heightHint = JFaceResources.getImage(PREF_DLG_TITLE_IMG).getBounds().height
 				+ (margins * 3);
 		titleArea.setLayoutData(layoutData);
-		titleArea.setBackground(background);
-
-		titleArea.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				e.gc.setForeground(titleArea.getDisplay().getSystemColor(
-						SWT.COLOR_WIDGET_NORMAL_SHADOW));
-				Rectangle bounds = titleArea.getClientArea();
-				bounds.height = bounds.height - 2;
-				bounds.width = bounds.width - 1;
-				e.gc.drawRectangle(bounds);
-			}
-		});
 
 		// Message label
 		messageArea = new DialogMessageArea();
@@ -528,15 +509,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		});
 		JFaceResources.getFontRegistry().addListener(fontListener);
-		// Title image
-		titleImage = new Label(titleArea, SWT.LEFT);
-		titleImage.setBackground(background);
-		titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
-		FormData imageData = new FormData();
-		imageData.right = new FormAttachment(100);
-		imageData.top = new FormAttachment(0);
-		imageData.bottom = new FormAttachment(100);
-		titleImage.setLayoutData(imageData);
 		messageArea.setTitleLayoutData(createMessageAreaData());
 		messageArea.setMessageLayoutData(createMessageAreaData());
 
@@ -551,8 +523,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	private FormData createMessageAreaData() {
 		FormData messageData = new FormData();
 		messageData.top = new FormAttachment(0);
-		messageData.bottom = new FormAttachment(titleImage, 0, SWT.BOTTOM);
-		messageData.right = new FormAttachment(titleImage, 0);
+		messageData.bottom = new FormAttachment(100);
+		messageData.right = new FormAttachment(100);
 		messageData.left = new FormAttachment(0);
 		return messageData;
 	}
@@ -1255,72 +1227,21 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		if (message != null && currentPage instanceof IMessageProvider)
 			messageType = ((IMessageProvider) currentPage).getMessageType();
 
-		if (errorMessage != null) {
+		if (errorMessage == null){
+			if (showingError) {
+				// we were previously showing an error
+				showingError = false;
+			}
+		}
+		else {
 			message = errorMessage;
 			messageType = IMessageProvider.ERROR;
 			if (!showingError) {
 				// we were not previously showing an error
 				showingError = true;
-				titleImage.setImage(null);
-				titleImage.setBackground(JFaceColors.getErrorBackground(titleImage.getDisplay()));
-				titleImage.setSize(0, 0);
-				titleImage.getParent().layout();
 			}
-		} else {
-			if (showingError) {
-				// we were previously showing an error
-				showingError = false;
-				titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
-				titleImage.computeSize(SWT.NULL, SWT.NULL);
-				titleImage.getParent().layout();
-			}
-		}
-		messageArea.updateText(getShortenedString(message,titleArea), messageType);
-	}
-
-	private static final String ellipsis = "..."; //$NON-NLS-1$
-
-	/**
-	 * Shortened the message if too long.
-	 * 
-	 * @param textValue
-	 *            The messgae value.
-	 * @param control
-	 * 			  The control that the resulting String will be
-	 * 			   displayed on.
-	 * @return The shortened string.
-	 */
-	static String getShortenedString(String textValue, Control control) {
-		if (textValue == null)
-			return null;
-		Display display = control.getDisplay();
-		GC gc = new GC(display);
-		
-		//Add in 5 pixels for readability
-		int maxWidth = control.getBounds().width - 5;
-		if (gc.textExtent(textValue).x < maxWidth) {
-			gc.dispose();
-			return textValue;
-		}
-		int length = textValue.length();
-		int ellipsisWidth = gc.textExtent(ellipsis).x;
-		int pivot = length / 2;
-		int start = pivot;
-		int end = pivot + 1;
-		while (start >= 0 && end < length) {
-			String s1 = textValue.substring(0, start);
-			String s2 = textValue.substring(end, length);
-			int l1 = gc.textExtent(s1).x;
-			int l2 = gc.textExtent(s2).x;
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
-				gc.dispose();
-				return s1 + ellipsis + s2;
-			}
-			start--;
-			end++;
-		}
-		gc.dispose();
-		return textValue;
+		}  
+		messageArea.updateText(message,messageType);
 	}
 
 	/*
