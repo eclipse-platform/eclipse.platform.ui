@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -238,41 +239,56 @@ public abstract class AbstractTableInformationControl {
             }
         });
 
+        /*
+         * Bug in GTK, see SWT bug: 62405 Editor drop down performance slow on
+         * Linux-GTK on mouse move.
+         * Rather then removing the support altogether this feature has been 
+         * worked around for GTK only as we expect that newer versions of GTK 
+         * will no longer exhibit this quality and we will be able to have the 
+         * desired support running on all platforms. See
+         * comment https://bugs.eclipse.org/bugs/show_bug.cgi?id=62405#c22 
+         * TODO: remove this code once bug 62405 is fixed for the mainstream GTK
+         * version
+         */
+        final int ignoreEventCount = Platform.getWS().equals(Platform.WS_GTK) ? 4 : 0;
+    
         table.addMouseMoveListener(new MouseMoveListener() {
             TableItem fLastItem = null;
-
+            int lastY = 0;
+            int lastX = 0;
+            int itemHeightdiv4 = table.getItemHeight() / 4;
+            int tableHeight = table.getBounds().height;
+            Point tableLoc = table.toDisplay(0,0);
+            int divCount = 0;
             public void mouseMove(MouseEvent e) {
-                if (table.equals(e.getSource())) {
+                if (divCount == ignoreEventCount) divCount = 0;
+                if (table.equals(e.getSource()) & ++divCount == ignoreEventCount) {
                     Object o = table.getItem(new Point(e.x, e.y));
-                    if (o instanceof TableItem) {
+                    if (o instanceof TableItem && lastY != e.y) {
+                        lastY = e.y;
                         if (!o.equals(fLastItem)) {
                             fLastItem = (TableItem) o;
                             table.setSelection(new TableItem[] { fLastItem });
-                        } else if (e.y < table.getItemHeight() / 4) {
+                        } else if (e.y < itemHeightdiv4) {
                             // Scroll up
-                            Point p = table.toDisplay(e.x, e.y);
-                            Item item = fTableViewer.scrollUp(p.x, p.y);
+                            Item item = fTableViewer.scrollUp(e.x + tableLoc.x, e.y + tableLoc.y);
                             if (item instanceof TableItem) {
                                 fLastItem = (TableItem) item;
-                                table
-                                        .setSelection(new TableItem[] { fLastItem });
+                                table.setSelection(new TableItem[] { fLastItem });
                             }
-                        } else if (e.y > table.getBounds().height
-                                - table.getItemHeight() / 4) {
+                        } else if (e.y > tableHeight - itemHeightdiv4) {
                             // Scroll down
-                            Point p = table.toDisplay(e.x, e.y);
-                            Item item = fTableViewer.scrollDown(p.x, p.y);
+                            Item item = fTableViewer.scrollDown(e.x + tableLoc.x, e.y + tableLoc.y);
                             if (item instanceof TableItem) {
                                 fLastItem = (TableItem) item;
-                                table
-                                        .setSelection(new TableItem[] { fLastItem });
+                                table.setSelection(new TableItem[] { fLastItem });
                             }
                         }
                     }
                 }
             }
         });
-
+    
         table.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
                 if (table.getSelectionCount() < 1)
