@@ -222,28 +222,6 @@ import org.eclipse.ui.views.IViewRegistry;
     }
 
     /**
-     * Returns whether a view with the same id(s) as the
-     * given view reference exists.
-     */
-    public boolean hasView(IViewReference viewRef) {
-        return hasView(viewRef.getId(), viewRef.getSecondaryId());
-    }
-
-    /**
-     * Returns whether a view with the given id exists.
-     */
-    public boolean hasView(String id) {
-        return hasView(id, null);
-    }
-
-    /**
-     * Returns whether a view with the given ids exists.
-     */
-    public boolean hasView(String id, String secondaryId) {
-        return getView(id, secondaryId) != null;
-    }
-
-    /**
      * Releases an instance of a view.
      *
      * This factory does reference counting.  For more info see

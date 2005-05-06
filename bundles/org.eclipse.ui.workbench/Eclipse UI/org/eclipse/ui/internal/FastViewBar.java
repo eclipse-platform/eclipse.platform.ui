@@ -39,10 +39,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -190,16 +191,75 @@ public class FastViewBar implements IWindowTrim {
      */
     public FastViewBar(WorkbenchWindow theWindow) {
         window = theWindow;
-        window.addPerspectiveListener(new IPerspectiveListener() {
-            public void perspectiveActivated(IWorkbenchPage page,
-                    IPerspectiveDescriptor perspective) {
-                update(true);
-            }
 
-            public void perspectiveChanged(IWorkbenchPage page,
-                    IPerspectiveDescriptor perspective, String changeId) {
-                update(true);
-            }
+        window.addPerspectiveListener(new IPerspectiveListener2() {
+           public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+               update(true);
+           }
+           
+           public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+               if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
+                    
+                   ToolBar bar = fastViewBar.getControl();
+                   
+                   // Handle removals immediately just in case the part (and its image) is about to be disposed
+                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE) 
+                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
+                          
+                       ToolItem item = null;
+                       
+                       if (bar != null) {
+                           item = ShowFastViewContribution.getItem(bar, partRef);
+                       }
+                       
+                       if (item != null) {
+                           item.dispose();
+                           return;
+                       }
+                   }
+                   
+                   // Ignore changes to non-fastviews
+                   if (page instanceof WorkbenchPage && partRef instanceof IViewReference) {
+                       if (!((WorkbenchPage)page).isFastView((IViewReference)partRef)) {
+                           return;
+                       }
+                   }
+
+                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW) 
+                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_ADD)) {
+                       
+                       ToolItem item = null;
+                       
+                       if (bar != null) {
+                           item = ShowFastViewContribution.getItem(bar, partRef);
+                       }
+                       
+                       if (item != null) {
+                           // If this part is already in the fast view bar, there is nothing to do
+                           return;
+                       }
+                       fastViewBar.markDirty();
+                   }
+               } 
+           }
+           
+           public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+               if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE) 
+                       || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
+                   
+                   // In these cases, we've aleady updated the fast view bar in the pre-change
+                   // listener
+                   return;
+               }
+               
+               // Ignore changes to anything but the active perspective
+               if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
+                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW) 
+                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_ADD)) {
+                       update(false);
+                   }
+               }
+           }
         });
     }
 

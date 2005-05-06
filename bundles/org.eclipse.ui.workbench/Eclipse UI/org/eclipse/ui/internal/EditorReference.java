@@ -240,7 +240,7 @@ public class EditorReference extends WorkbenchPartReference implements
         return this.manager.page;
     }
 
-    public void dispose() {
+    public void doDisposePart() {
         if (part != null) {
             EditorSite site = (EditorSite) ((IEditorPart)part).getEditorSite();
             manager.disposeEditorActionBars((EditorActionBars) site.getActionBars());
@@ -249,7 +249,7 @@ public class EditorReference extends WorkbenchPartReference implements
         
         this.manager.checkDeleteEditorResources();
 
-        super.dispose();
+        super.doDisposePart();
         editorMemento = null;
     }
 
@@ -387,6 +387,7 @@ public class EditorReference extends WorkbenchPartReference implements
             pane.createControl((Composite) manager.page.getEditorPresentation().getLayoutPart().getControl());
             
             EditorDescriptor descr = getDescriptor();
+            
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
             site.setActionBars(new EditorActionBars(new NullActionBars(), getId()));
@@ -438,6 +439,7 @@ public class EditorReference extends WorkbenchPartReference implements
      * @return true iff the input was actually changed
      */
     public boolean setInput(IEditorInput input) {
+        checkReference();
         if (part != null) {
             if (part instanceof IReusableEditor) {
                 IReusableEditor editor = (IReusableEditor) part;

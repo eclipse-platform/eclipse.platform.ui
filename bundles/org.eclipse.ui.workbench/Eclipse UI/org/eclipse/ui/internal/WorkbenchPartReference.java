@@ -75,6 +75,35 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      */
     public static final int INTERNAL_PROPERTY_BROUGHT_TO_TOP = 0x217;
     
+    // State constants //////////////////////////////
+    
+    /**
+     * State constant indicating that the part is not created yet
+     */
+    public static int STATE_LAZY = 0;
+     
+    /**
+     * State constant indicating that the part is in the process of being created
+     */
+    public static int STATE_CREATION_IN_PROGRESS = 1;
+    
+    /**
+     * State constant indicating that the part has been created
+     */
+    public static int STATE_CREATED = 2;
+    
+    /**
+     * State constant indicating that the reference has been disposed (the reference shouldn't be
+     * used anymore)
+     */
+    public static int STATE_DISPOSED = 3;
+  
+    /**
+     * Current state of the reference. Used to detect recursive creation errors, disposed
+     * references, etc. 
+     */
+    private int state = STATE_LAZY;
+   
     protected IWorkbenchPart part;
 
     private String id;
@@ -135,11 +164,19 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             partPropertyChanged(source, propId);
         }
     };
-
-    private boolean creationInProgress = false;
-
+    
     public WorkbenchPartReference() {
         //no-op
+    }
+    
+    public boolean isDisposed() {
+        return state == STATE_DISPOSED;
+    }
+    
+    protected void checkReference() {
+        if (state == STATE_DISPOSED) {
+            throw new RuntimeException("Error: IWorkbenchPartReference disposed"); //$NON-NLS-1$
+        }
     }
     
     /**
@@ -319,6 +356,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @see IWorkbenchPart
      */
     public void addPropertyListener(IPropertyListener listener) {
+        checkReference();
         propChangeListeners.add(listener);
     }
 
@@ -326,10 +364,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @see IWorkbenchPart
      */
     public void removePropertyListener(IPropertyListener listener) {
+        // Currently I'm not calling checkReference here for fear of breaking things late in 3.1, but it may
+        // make sense to do so later. For now we just turn it into a NOP if the reference is disposed.
+        if (state == STATE_DISPOSED) {
+            return;
+        }
         propChangeListeners.remove(listener);
     }
 
     public final String getId() {
+        checkReference();
         if (part != null) {
             IWorkbenchPartSite site = part.getSite();
             if (site != null)
@@ -339,6 +383,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public String getTitleToolTip() {
+        checkReference();
         return Util.safeString(tooltip);
     }
 
@@ -352,6 +397,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @return the pane name for the part
      */
     public String getPartName() {
+        checkReference();
         return Util.safeString(partName);
     }
     
@@ -383,6 +429,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @return the pane name for the part
      */
     public String getContentDescription() {
+        checkReference();
         return Util.safeString(contentDescription);
     }
 
@@ -416,6 +463,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public String getTitle() {
+        checkReference();
         return Util.safeString(title);
     }
 
@@ -438,6 +486,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public final Image getTitleImage() {
+        checkReference();
         if (image == null) {        
             image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
         }
@@ -445,6 +494,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public ImageDescriptor getTitleImageDescriptor() {
+        checkReference();
         return imageDescriptor;
     }
     
@@ -457,10 +507,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public boolean getVisible() {
+        checkReference();
         return getPane().getVisible();
     }
     
     public void setVisible(boolean isVisible) {
+        checkReference();
         getPane().setVisible(isVisible);
     }
     
@@ -485,9 +537,15 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public final IWorkbenchPart getPart(boolean restore) {
+        if (restore) {
+            // allow this method to be called with restore == false even when the part has been disposed.
+            // This is sometimes used as poor man's isDisposed() method.
+            checkReference();
+        }
+        
         if (part == null && restore) {
             
-            if (creationInProgress) {
+            if (state == STATE_CREATION_IN_PROGRESS) {
                 IStatus result = WorkbenchPlugin.getStatus(
                         new PartInitException(NLS.bind("Warning: Detected recursive attempt by part {0} to create itself (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
                                 getId())));
@@ -496,7 +554,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             }
             
             try {
-                creationInProgress = true;
+                state = STATE_CREATION_IN_PROGRESS;
                 
                 IWorkbenchPart newPart = createPart();
                 if (newPart != null) {
@@ -513,7 +571,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
                     fireInternalPropertyChange(INTERNAL_PROPERTY_OPENED);
                 }
             } finally {
-                creationInProgress = false;
+                state = STATE_CREATED;
             }
         }        
         
@@ -531,7 +589,20 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         return pane;
     }
 
-    public void dispose() {
+    public final void dispose() {
+        
+        if (state == STATE_DISPOSED) {
+            return;
+        }
+        
+        if (state == STATE_CREATION_IN_PROGRESS) {
+            IStatus result = WorkbenchPlugin.getStatus(
+                    new PartInitException(NLS.bind("Warning: Blocked recursive attempt by part {0} to dispose itself during creation",  //$NON-NLS-1$
+                            getId())));
+            WorkbenchPlugin.log(result);
+            return;
+        }
+        
     	// Disposing the pane disposes the part's widgets. The part's widgets need to be disposed before the part itself.
         if (pane != null) {
             // Remove the dispose listener since this is the correct place for the widgets to get disposed
@@ -541,6 +612,22 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             }
             pane.dispose();
         }
+        
+        doDisposePart();
+        propChangeListeners.clear();
+        internalPropChangeListeners.clear();
+        if (image != null) {
+            JFaceResources.getResources().destroy(imageDescriptor);
+            image = null;
+        }
+        
+        state = STATE_DISPOSED;
+    }
+
+    /**
+     * 
+     */
+    protected void doDisposePart() {
         if (part != null) {
             fireInternalPropertyChange(INTERNAL_PROPERTY_CLOSED);
             // Don't let exceptions in client code bring us down. Log them and continue.
@@ -552,15 +639,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             }
             part = null;
         }
-        propChangeListeners.clear();
-        internalPropChangeListeners.clear();
-        if (image != null) {
-            JFaceResources.getResources().destroy(imageDescriptor);
-            image = null;
-        }
     }
 
     public void setPinned(boolean newPinned) {
+        checkReference();
         if (newPinned == pinned) {
             return;
         }
@@ -573,6 +655,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public boolean isPinned() {
+        checkReference();
         return pinned;
     }
 

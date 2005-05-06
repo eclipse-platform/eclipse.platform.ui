@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
@@ -49,7 +50,21 @@ public class ShowFastViewContribution extends ContributionItem {
             item.setToolTipText(ref.getTitle());
         }
     }
-
+    
+    public static ToolItem getItem(ToolBar toSearch, IWorkbenchPartReference ref) {
+        ToolItem[] items = toSearch.getItems();
+        
+        for (int i = 0; i < items.length; i++) {
+            ToolItem item = items[i];
+            
+            if (item.getData(FAST_VIEW) == ref) {
+                return item;
+            }
+        }
+        
+        return null;
+    }
+    
     /**
      * The default implementation of this <code>IContributionItem</code>
      * method does nothing. Subclasses may override.

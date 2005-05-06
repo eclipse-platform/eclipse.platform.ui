@@ -573,7 +573,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // If it is active then deactivate it.
 
         // Notify listeners.
-        window.updateFastViewBar();
         window.firePerspectiveChanged(this, getPerspective(), ref,
                 CHANGE_FAST_VIEW_ADD);
         window.firePerspectiveChanged(this, getPerspective(),
@@ -912,8 +911,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     getReference(view), CHANGE_VIEW_SHOW);
             window.firePerspectiveChanged(this, getPerspective(),
                     CHANGE_VIEW_SHOW);
-            // Just in case view was fast.
-            window.updateFastViewBar();
         }
         return view;
     }
@@ -1444,26 +1441,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Dispose a perspective.
      */
     private void disposePerspective(Perspective persp) {
-        // Get views.
-        IViewReference refs[] = persp.getViewReferences();
-
         // Get rid of perspective.
         perspList.remove(persp);
         window.firePerspectiveClosed(this, persp.getDesc());
         persp.dispose();
 
-        // Loop through the views.
-        for (int i = 0; i < refs.length; i++) {
-            IViewReference ref = refs[i];
-
-            //If the part is no longer reference then dispose it.
-            boolean exists = viewFactory.hasView(ref);
-            if (!exists) {
-                partList.removePart((WorkbenchPartReference)ref);
-                activationList.remove(ref);
-                ((WorkbenchPartReference)ref).dispose();
-            }
-        }
         stickyPerspectives.remove(persp.getDesc());
     }
 
@@ -1935,9 +1917,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Hide the part.
         persp.hideView(ref);
 
-        // Just in case view was fast.
-        window.updateFastViewBar();
-
         // Notify interested listeners after the hide
         window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
     }
@@ -2333,7 +2312,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         persp.removeFastView(ref);
 
         // Notify listeners.
-        window.updateFastViewBar();
         window.firePerspectiveChanged(this, getPerspective(), ref,
                 CHANGE_FAST_VIEW_REMOVE);
         window.firePerspectiveChanged(this, getPerspective(),
@@ -2840,7 +2818,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	        // Update the window
 	        window.updateActionSets();
-	        window.updateFastViewBar();
 	
 	        updateVisibility(oldPersp, newPersp);
 	
@@ -3207,18 +3184,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     .getEditorArea();
             ea.updateTabList();
             getClientComposite().setTabList(new Control[] { ea.getParent() });
-        }
-    }
-
-    /**
-     * The title of the given part has changed. For views, updates the fast
-     * view button if necessary.
-     */
-    public void updateTitle(IViewReference ref) {
-        if (isFastView(ref)) {
-            // Would be more efficient to just update label of single tool item
-            // but we don't have access to it from here.
-            window.updateFastViewBar();
         }
     }
 

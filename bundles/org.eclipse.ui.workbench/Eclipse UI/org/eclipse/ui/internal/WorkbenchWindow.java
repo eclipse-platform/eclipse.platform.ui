@@ -2369,6 +2369,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 	parent.layout();
                 }
 
+                updateFastViewBar();
+                
                 if (isClosing())
                     return;
 

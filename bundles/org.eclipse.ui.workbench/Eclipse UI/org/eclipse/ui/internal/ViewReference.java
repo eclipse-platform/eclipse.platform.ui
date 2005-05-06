@@ -83,8 +83,8 @@ class ViewReference extends WorkbenchPartReference implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.WorkbenchPartReference#dispose()
      */
-    public void dispose() {
-        IViewPart view = getView(false);
+    public void doDisposePart() {
+        IViewPart view = (IViewPart)part;
         if (view != null) {
             // Free action bars, pane, etc.
             PartSite site = (PartSite) view.getSite();
@@ -95,7 +95,7 @@ class ViewReference extends WorkbenchPartReference implements
             site.dispose();
         }
         
-        super.dispose();
+        super.doDisposePart();
         create = false;
     }
     
