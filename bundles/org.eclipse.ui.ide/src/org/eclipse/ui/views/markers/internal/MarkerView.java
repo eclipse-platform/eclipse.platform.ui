@@ -58,6 +58,7 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -882,8 +883,13 @@ public abstract class MarkerView extends TableView {
                 .getString("MarkerView.refreshProgress")) { //$NON-NLS-1$
 
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                updateStatusMessage();
-                updateTitle();
+                // Ensure that the view hasn't been disposed
+                Table table = getTable();
+                
+                if (table != null && !table.isDisposed()) {
+                    updateStatusMessage();
+                    updateTitle();
+                }
                 return Status.OK_STATUS;
             }
         };
