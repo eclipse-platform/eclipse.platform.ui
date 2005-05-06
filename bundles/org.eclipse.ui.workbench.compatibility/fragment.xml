@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<fragment>
-
-    <!-- N.B. This plug-in fragment contributes compatibility.jar
-     which is declared as a library in the plug-in manifest. -->
-
-</fragment>

@@ -241,28 +241,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 			// cannot happen for controls
 		}
 	}
-	
-	/**
-	 * Tests whether the editor is dirty by checking all the
-	 * pages that implement <code>IFormPage</code>. If none of
-	 * them is dirty, the method delegates further processing
-	 * to <code>super.isDirty()</code>.
-	 * @return <code>true</code> if any of the pages in the editor
-	 * are dirty, <code>false</code> otherwise.
-	 * @since 3.1
-	 */
-	
-	public boolean isDirty() {
-		for (int i = 0; i < pages.size(); i++) {
-			Object page = pages.get(i);
-			if (page instanceof IFormPage) {
-				IFormPage fpage = (IFormPage) page;
-				if (fpage.isDirty())
-					return true;
-			}
-		}
-		return super.isDirty();
-	}
 
 	/**
 	 * Adds a complete editor part to the multi-page editor.
