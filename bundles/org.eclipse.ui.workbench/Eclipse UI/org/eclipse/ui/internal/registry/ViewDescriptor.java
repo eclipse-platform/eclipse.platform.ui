@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -143,12 +144,15 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         if (imageDescriptor != null)
             return imageDescriptor;
         String iconName = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+        // If the icon attribute was omitted, use the default one
         if (iconName == null)
-            return ImageDescriptor.getMissingImageDescriptor();
+            return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                    ISharedImages.IMG_DEF_VIEW);
         IExtension extension = configElement.getDeclaringExtension();
         String extendingPluginId = extension.getNamespace();
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 extendingPluginId, iconName);
+        // If the icon attribute was invalid, use the error icon
         if (imageDescriptor == null) {
             imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
         }
