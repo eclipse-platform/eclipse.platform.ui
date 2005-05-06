@@ -957,17 +957,26 @@ public class ReviewPage	extends BannerPage {
 		
 		while (requiredFeaturesIterator.hasNext()) {
 			IImport requiredFeature = ((InternalImport)requiredFeaturesIterator.next()).getImport();
-			//System.out.println("feature required: " + requiredFeature.getVersionedIdentifier()
-			//		.toString());
+
 			IInstallFeatureOperation currentFeatureSelected = null;
 			TreeItem[] items = treeViewer.getTree().getItems();
 			for (int i = 0; i < items.length; i++) {
 				TreeItem[] siteRootContent = items[i].getItems();
 				for (int j = 0; j < siteRootContent.length; j++) {
 					if (siteRootContent[j].getData() instanceof SiteCategory) {
-						if ( !treeViewer.getChecked(siteRootContent[j]))
+						
+						if ( !treeViewer.getChecked(siteRootContent[j].getData())) {
+							// this category has not been checked at all so we have to create its features
 							treeViewer.createChildren(siteRootContent[j]);
+						}
 						TreeItem[] features = siteRootContent[j].getItems();
+						if ((features.length > 0) && (features[0].getData() == null)) {
+							// this category has been checked but not visited yet so restore the features in it
+							treeViewer.createChildren(siteRootContent[j]);
+							treeViewer.updateChildrenItems(siteRootContent[j]);
+							features = siteRootContent[j].getItems();
+						}
+						
 						for (int k = 0; k < features.length; k++) {
 							currentFeatureSelected = decideOnFeatureSelection(
 									requiredFeature,
@@ -1013,30 +1022,9 @@ public class ReviewPage	extends BannerPage {
 
 			updateWizardMessage();
 			
-			/*ArrayList checked = new ArrayList();
-			TreeItem[] sites = treeViewer.getTree().getItems();
-			for( int siteCount = 0; siteCount < sites.length; siteCount++) {
-				TreeItem[] categories = sites[siteCount].getItems();
-				for ( int categoryCount = 0; categoryCount < categories.length; categoryCount++) {
-					System.out.println(categories[categoryCount].getItemCount());
-					TreeItem[] features = categories[categoryCount].getItems();
-					for ( int featureCount = 0; featureCount < features.length; featureCount++) {
-						if (features[featureCount].getChecked()) {
-							checked.add(features[featureCount]);
-						}
-					}
-				}
-			}
-			treeViewer.update(checked.toArray(), null);*/
 			treeViewer.update(getSelectedJobs(), null);
 			statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
-			/*Object site = getSite(event.getElement());
-            ArrayList descendants = new ArrayList();
-            collectDescendants(site, descendants);
-            Object[] nodes = new Object[descendants.size()];
-            for (int i=0; i<nodes.length; i++)
-                nodes[i] = descendants.get(i);
-            treeViewer.update(nodes, null);*/
+
 			//System.out.println("# of jobs selected: " + getSelectedJobs().length);
 			return validationStatus;
 		}
