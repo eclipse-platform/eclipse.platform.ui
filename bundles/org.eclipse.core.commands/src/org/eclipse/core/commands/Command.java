@@ -442,18 +442,20 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *            The execution event that will be used; never <code>null</code>.
 	 */
 	private final void firePreExecute(final ExecutionEvent event) {
-        final int executionListenersSize = executionListeners.size();
-        if ((executionListeners != null) && (executionListenersSize > 0)) {
-            /*
-             * Bug 88629. Copying to an array avoids a
-             * ConcurrentModificationException if someone tries to remove the
-             * listener while handling the event.
-             */
-            final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
-                    .toArray(new IExecutionListener[executionListenersSize]);
-            for (int i = 0; i < executionListenersSize; i++) {
-                final IExecutionListener listener = listeners[i];
-                listener.preExecute(getId(), event);
+        if (executionListeners != null) {
+            final int executionListenersSize = executionListeners.size();
+            if (executionListenersSize > 0) {
+                /*
+                 * Bug 88629. Copying to an array avoids a
+                 * ConcurrentModificationException if someone tries to remove
+                 * the listener while handling the event.
+                 */
+                final IExecutionListener[] listeners = (IExecutionListener[]) executionListeners
+                        .toArray(new IExecutionListener[executionListenersSize]);
+                for (int i = 0; i < executionListenersSize; i++) {
+                    final IExecutionListener listener = listeners[i];
+                    listener.preExecute(getId(), event);
+                }
             }
         }
 	}
