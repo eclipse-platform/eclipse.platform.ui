@@ -43,10 +43,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -261,9 +258,9 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		getRevisionAction = new Action(CVSUIMessages.HistoryView_getRevisionAction) { //$NON-NLS-1$
 			public void run() {
 				try {
-					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation(null) {
+				    final IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+					new ProgressMonitorDialog(shell).run(true, true, new WorkspaceModifyOperation(null) {
 						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;
 							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
 							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
@@ -299,7 +296,11 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 				TypedBufferedContent left = (TypedBufferedContent)node.getLeft();
 				left.fireChange();
 				// recompute the labels on the viewer
-				viewer.refresh();
+                Display.getCurrent().syncExec(new Runnable() {
+                    public void run() {
+                        viewer.refresh();
+                    }
+                });
 			}
 		};
 		getContentsAction = new Action(CVSUIMessages.HistoryView_getContentsAction) { //$NON-NLS-1$
