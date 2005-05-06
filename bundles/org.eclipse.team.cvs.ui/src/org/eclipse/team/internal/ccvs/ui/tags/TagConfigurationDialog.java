@@ -264,8 +264,8 @@ public class TagConfigurationDialog extends Dialog {
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		cvsResourceTree.getTree().setLayoutData(data);
-		cvsResourceTree.setInput(TagSourceResourceAdapter.getViewerInput(tagSource));
 		cvsResourceTree.setSorter(new FileSorter());
+		cvsResourceTree.setInput(TagSourceResourceAdapter.getViewerInput(tagSource));
 		cvsResourceTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateShownTags();
