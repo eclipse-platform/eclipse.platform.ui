@@ -12,6 +12,9 @@
     <keyword
             label="%PreferenceKeywords.Team"
             id="org.eclipse.team.ui.team"/>
+    <keyword
+            label="%PreferenceKeywords.FileContent"
+            id="org.eclipse.team.ui.team.fileContent"/>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -26,7 +29,7 @@
             category="org.eclipse.team.ui.TeamPreferences"
             class="org.eclipse.team.internal.ui.preferences.TextPreferencePage"
             id="org.eclipse.team.ui.TextPreferences">
-            <keywordReference id="org.eclipse.team.ui.team"/>
+            <keywordReference id="org.eclipse.team.ui.team.fileContent"/>
       </page>
       <page
             name="%IgnorePreferencePage.name"

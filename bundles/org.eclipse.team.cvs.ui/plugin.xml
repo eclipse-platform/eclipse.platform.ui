@@ -650,6 +650,12 @@
     <keyword
             label="%PreferenceKeywords.CVS"
             id="org.eclipse.team.cvs.ui.cvs"/>
+    <keyword
+            label="%PreferenceKeywords.EXT"
+            id="org.eclipse.team.cvs.ui.cvs.ext"/>
+    <keyword
+            label="%PreferenceKeywords.Console"
+            id="org.eclipse.team.cvs.ui.cvs.console"/>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -678,7 +684,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.console.ConsolePreferencesPage"
             id="org.eclipse.team.cvs.ui.ConsolePreferences">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.console"/>
       </page>
    </extension>
    <extension
@@ -698,7 +704,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.ExtMethodPreferencePage"
             id="org.eclipse.team.cvs.ui.ExtMethodPreferencePage">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
       </page>
    </extension>
    <extension
@@ -718,7 +724,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.PasswordManagementPreferencePage"
             id="org.eclipse.team.cvs.ui.PasswordManagementPreferencePage">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
       </page>
    </extension>
 <!-- **************** Decorator ******************* -->

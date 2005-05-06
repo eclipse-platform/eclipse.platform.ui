@@ -33,7 +33,7 @@
 		category="org.eclipse.team.cvs.ui.CVSPreferences"
 		class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2PreferencePage"
 		id="org.eclipse.team.cvs.ssh2.CVSSSH2Preferences">
-		<keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+		<keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
 	</page>
 </extension>
 
