@@ -75,7 +75,7 @@ public class EditorActionBars extends SubActionBars2 {
 
     private IEditorActionBarContributor editorContributor;
 
-    private boolean enabledAllowed = true;
+    private boolean enabledAllowed = false;
 
     private IEditorActionBarContributor extensionContributor;
 
