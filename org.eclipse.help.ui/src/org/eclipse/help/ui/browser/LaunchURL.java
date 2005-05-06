@@ -26,12 +26,21 @@ import org.eclipse.ui.*;
  * <p>
  * This class is intended to be specified as a value of a class attribute of an
  * action element in plugin.xml for extensions of org.eclipse.ui.actionSets
- * extension point.
+ * extension point.  The URL to launch must be specified in the markup in one
+ * of two ways.
  * </p>
  * </p>
- * The action element must have an attribute named url, in addition to markup
+ * The action element can have an attribute named url, in addition to markup
  * required by org.eclipse.ui.actionSets extension point specification. The
  * value of the url attribute should specify a URL to be opened in a browser.
+ * </p>
+ * </p>
+ * Alternatively, since 3.1, instead of a class attribute on the action element,
+ * the extension can specify a nested class element with a class attribute
+ * and URL specified in a parameter sub-element.  For example:
+ * <pre>         &lt;class class="org.eclipse.help.ui.browser.LaunchURL"&gt;
+ *              &lt;parameter name="url" value="http://eclipse.org/" /&gt;
+ *          &lt;/class&gt;</pre>
  * </p>
  */
 public class LaunchURL implements IWorkbenchWindowActionDelegate,
