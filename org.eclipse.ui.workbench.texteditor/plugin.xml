@@ -477,11 +477,12 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+F10"/>
+	  <!-- Command+SPACE is spot light on panther, so use Ctrl+SPACE everywhere -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1+SPACE"/>
+	        sequence="Ctrl+SPACE"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
