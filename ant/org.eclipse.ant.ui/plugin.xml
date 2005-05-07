@@ -14,7 +14,6 @@
                contentTypeId="org.eclipse.ant.core.antBuildFile"/> 
       </editor>
    </extension>
-
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
@@ -251,36 +250,42 @@ M4 = Platform-specific fourth key -->
             name="%PreferencePage.antPreferences"
             class="org.eclipse.ant.internal.ui.preferences.AntPreferencePage"
             id="org.eclipse.ant.ui.AntPreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.general"/>
       </page>
       <page
             name="%PreferencePage.antRuntimePreferences"
             category="org.eclipse.ant.ui.AntPreferencePage"
             class="org.eclipse.ant.internal.ui.preferences.AntRuntimePreferencePage"
             id="org.eclipse.ant.ui.AntRuntimePreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.runtime"/>
       </page>
       <page
             name="%PreferencePage.antEditorPreferences"
             category="org.eclipse.ant.ui.AntPreferencePage"
             class="org.eclipse.ant.internal.ui.preferences.AntEditorPreferencePage"
             id="org.eclipse.ant.ui.AntEditorPreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.editor"/>
       </page>
       <page
             name="%PreferencePage.antCodeFormatterPreferences"
             category="org.eclipse.ant.ui.AntEditorPreferencePage"
             class="org.eclipse.ant.internal.ui.preferences.AntCodeFormatterPreferencePage"
             id="org.eclipse.ant.ui.AntCodeFormatterPreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.formatter"/>
       </page>
        <page
             name="%PreferencePage.antCodeAssistPreferences"
             category="org.eclipse.ant.ui.AntEditorPreferencePage"
             class="org.eclipse.ant.internal.ui.preferences.AntCodeAssistPreferencePage"
             id="org.eclipse.ant.ui.AntCodeAssistPreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.codeAssist"/>
       </page>
       <page
             name="%PreferencePage.antTemplatePreferences"
             category="org.eclipse.ant.ui.AntEditorPreferencePage"
             class="org.eclipse.ant.internal.ui.editor.templates.AntTemplatePreferencePage"
             id="org.eclipse.ant.ui.TemplatesPreferencePage">
+            <keywordReference id="org.eclipse.ant.ui.template"/>
       </page>
    </extension>
    <extension
@@ -749,11 +754,26 @@ M4 = Platform-specific fourth key -->
 	      </actionSetPartAssociation>
       </extension>
 
-      <!-- bug 78752 <extension
-      	 point="org.eclipse.ant.core.antProperties">
-      <antProperty
-            name="eclipse.target"
-            class="org.eclipse.ant.internal.ui.AntPropertyValueProvider">
-      </antProperty>
-    </extension> -->
+         <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="org.eclipse.ant.ui.general"/>
+      <keyword
+            label="%preferenceKeywords.runtime"
+            id="org.eclipse.ant.ui.runtime"/>
+      <keyword
+            label="%preferenceKeywords.editor"
+            id="org.eclipse.ant.ui.editor"/>
+      <keyword
+            label="%preferenceKeywords.formatter"
+            id="org.eclipse.ant.ui.formatter"/>
+      <keyword
+            label="%preferenceKeywords.codeAssist"
+            id="org.eclipse.ant.ui.codeAssist"/>
+      <keyword
+            label="%preferenceKeywords.template"
+            id="org.eclipse.ant.ui.template"/>      
+   </extension> 
+
 </plugin>
