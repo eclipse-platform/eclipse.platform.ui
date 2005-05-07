@@ -30,7 +30,7 @@ public class BenchmarkTestSetup extends CVSTestSetup {
 	// Static initializer for constants
 	static {
 	    try {
-			LOOP_COUNT = Integer.valueOf(System.getProperty("eclipse.cvs.loopCount", "5")).intValue();
+			LOOP_COUNT = Integer.valueOf(System.getProperty("eclipse.cvs.loopCount", "3")).intValue();
 		} catch (NumberFormatException e1) {
 			LOOP_COUNT = 1;
 		}
