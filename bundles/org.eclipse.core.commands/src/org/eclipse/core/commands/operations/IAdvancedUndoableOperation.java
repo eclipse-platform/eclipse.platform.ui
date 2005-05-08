@@ -18,7 +18,9 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * IAdvancedUndoableOperation defines an interface for undoable operations that
  * modify one or more elements in a model and attempt to keep model listeners up
- * to date with changes that result from undoing and redoing those operations.
+ * to date with changes involving the elements that occur in the undo and redo
+ * history. It also defines methods for computing the validity of an operation
+ * for undo or redo before attempting to perform the undo or redo.
  * </p>
  * <p>
  * This interface is intended to be used by legacy frameworks that are adapting
@@ -54,8 +56,8 @@ public interface IAdvancedUndoableOperation {
 
 	/**
 	 * <p>
-	 * Return an array of objects that are affected by executing, undoing,
-	 * or redoing this operation. If it cannot be determined which objects are
+	 * Return an array of objects that are affected by executing, undoing, or
+	 * redoing this operation. If it cannot be determined which objects are
 	 * affected, return null.
 	 * </p>
 	 * 
@@ -70,8 +72,14 @@ public interface IAdvancedUndoableOperation {
 	 * This method should be used to report the possible outcome of an undo and
 	 * is used when computing the validity of an undo is too expensive to
 	 * perform in {@link IUndoableOperation#canUndo()}. It is not called by the
-	 * operation history, but instead is used by clients who have a need to 
-	 * prevalidate an operation before undoing it.
+	 * operation history, but instead is used by clients (such as implementers
+	 * of {@linkIOperationApprover} who wish to perform advanced validation of
+	 * an operation before attempting to undo it.
+	 * 
+	 * If the result of this method is the discovery that an operation can in
+	 * fact not be undone, then the operation is expected to correctly answer
+	 * <code>false</code> on subsequent calls to
+	 * {@link IUndoableOperation#canUndo()}.
 	 * 
 	 * @param monitor -
 	 *            the progress monitor (or <code>null</code>) to use for
@@ -94,8 +102,14 @@ public interface IAdvancedUndoableOperation {
 	 * This method should be used to report the possible outcome of a redo and
 	 * is used when computing the validity of a redo is too expensive to perform
 	 * in {@link IUndoableOperation#canRedo()}. It is not called by the
-	 * operation history, but instead is used by clients who have a need to prevalidate
-	 * an operation before redoing it.
+	 * operation history, but instead is used by clients (such as implementers
+	 * of {@linkIOperationApprover} who wish to perform advanced validation of
+	 * an operation before attempting to redo it.
+	 * 
+	 * If the result of this method is the discovery that an operation can in
+	 * fact not be redone, then the operation is expected to correctly answer
+	 * <code>false</code> on subsequent calls to
+	 * {@link IUndoableOperation#canRedo()}.
 	 * 
 	 * @param monitor -
 	 *            the progress monitor (or <code>null</code>) to use for
