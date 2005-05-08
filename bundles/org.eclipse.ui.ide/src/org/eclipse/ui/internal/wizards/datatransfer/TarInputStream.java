@@ -68,11 +68,9 @@ public class TarInputStream extends FilterInputStream
 	 */
 	private long headerChecksum(byte[] header) {
 		long sum = 0;
-
 		for(int i = 0; i < 512; i++) {
 			sum += header[i] & 0xff;
 		}
-
 		return sum;
 	}
 
@@ -193,21 +191,16 @@ public class TarInputStream extends FilterInputStream
 			throw new TarException("not in tar format"); //$NON-NLS-1$
 		}
 
-		StringBuffer name = new StringBuffer();
-		while(pos < 100 && header[pos] != 0) {
-			name.append((char) (header[pos] & 0xff));
+		while (pos < 100 && header[pos] != 0)
 			pos++;
-		}
+		String name = new String(header, 0, pos, "UTF8"); //$NON-NLS-1$
 		// Prepend the prefix here.
 		pos = 345;
 		if(header[pos] != 0) {
-			StringBuffer prefix = new StringBuffer();
-			while(pos < 500 && header[pos] != 0) {
-				prefix.append((char) (header[pos] & 0xff));
+			while (pos < 500 && header[pos] != 0)
 				pos++;
-			}
-			prefix.append('/');
-			name.insert(0, prefix);
+			String prefix = new String(header, 345, pos - 345, "UTF8"); //$NON-NLS-1$
+			name = prefix + "/" + name; //$NON-NLS-1$
 		}
 		
 		TarEntry entry;
@@ -215,7 +208,7 @@ public class TarInputStream extends FilterInputStream
 			entry = new TarEntry(longLinkName, filepos);
 			longLinkName = null;
 		} else {
-			entry = new TarEntry(name.toString(), filepos);
+			entry = new TarEntry(name, filepos);
 		}
 		if(header[156] != 0) {
 			entry.setFileType(header[156]);
@@ -278,14 +271,10 @@ public class TarInputStream extends FilterInputStream
 			byte[] longNameData = new byte[(int) entry.getSize()];
 			read(longNameData, 0, longNameData.length);
 
-			StringBuffer filename = new StringBuffer();
 			int pos = 0;
-			
-			while(pos < longNameData.length && longNameData[pos] != 0) {
-				filename.append((char) (longNameData[pos] & 0xff));
+			while (pos < longNameData.length && longNameData[pos] != 0)
 				pos++;
-			}
-			longLinkName = filename.toString();
+			longLinkName = new String(longNameData, 0, pos, "UTF8"); //$NON-NLS-1$
 			return getNextEntryInternal();
 		}
 		return entry;

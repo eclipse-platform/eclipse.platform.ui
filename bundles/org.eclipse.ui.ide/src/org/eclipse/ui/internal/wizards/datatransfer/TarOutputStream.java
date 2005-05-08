@@ -80,7 +80,7 @@ public class TarOutputStream extends FilterOutputStream {
 	private long headerChecksum(byte[] header) {
 		long sum = 0;
 		for(int i = 0; i < 512; i++) {
-			sum += header[i];
+			sum += header[i] & 0xff;
 		}
 		return sum;
 	}
@@ -98,19 +98,20 @@ public class TarOutputStream extends FilterOutputStream {
 		int pos, i;
 		
 		/* Split filename into name and prefix if necessary. */
-		if(filename.length() > 99 ) {
+		byte[] filenameBytes = filename.getBytes("UTF8"); //$NON-NLS-1$
+		if (filenameBytes.length > 99) {
 			int seppos = filename.lastIndexOf('/');
 			if(seppos == -1) throw new IOException("filename too long"); //$NON-NLS-1$
 			prefix = filename.substring(0, seppos);
 			filename = filename.substring(seppos + 1);
-			if(filename.length() > 99) throw new IOException("filename too long"); //$NON-NLS-1$
+			filenameBytes = filename.getBytes("UTF8"); //$NON-NLS-1$
+			if (filenameBytes.length > 99)
+				throw new IOException("filename too long"); //$NON-NLS-1$
 		}
 		
 		/* Filename. */
 		pos = 0;
-		for(i = 0; i < filename.length(); i++) {
-			header[pos + i] = (byte) filename.charAt(i);
-		}
+		System.arraycopy(filenameBytes, 0, header, 0, filenameBytes.length);
 		pos += 100;
 		
 		/* File mode. */
@@ -187,10 +188,10 @@ public class TarOutputStream extends FilterOutputStream {
 
 		/* File prefix. */
 		if(prefix != null) {
-			if(prefix.length() > 155) throw new IOException("prefix too large"); //$NON-NLS-1$
-			for(i = 0; i < prefix.length(); i++) {
-				header[pos + i] = (byte) prefix.charAt(i);
-			}
+			byte[] prefixBytes = prefix.getBytes("UTF8"); //$NON-NLS-1$
+			if (prefixBytes.length > 155)
+				throw new IOException("prefix too large"); //$NON-NLS-1$
+			System.arraycopy(prefixBytes, 0, header, pos, prefixBytes.length);
 		}
 
 		long sum = headerChecksum(header);
