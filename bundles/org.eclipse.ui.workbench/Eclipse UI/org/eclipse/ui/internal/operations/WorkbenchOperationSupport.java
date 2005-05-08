@@ -9,21 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.operations;
+package org.eclipse.ui.internal.operations;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 
 /**
  * <p>
- * Provides undoable operation support for the workbench. This includes
- * providing access to the default operation history and creating a
- * workbench-wide undo context.
+ * Provides undoable operation support for the workbench.  This includes  providing access to the default 
+ * operation history and installing a workbench-specific operation approver that enforces a linear
+ * undo strategy.
  * </p>
  * 
  * @since 3.1
@@ -31,18 +33,15 @@ import org.eclipse.ui.internal.misc.Policy;
 public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 
 	private ObjectUndoContext undoContext;
-
-	private IOperationHistory history;
-
+	private IOperationApprover approver;
+	
 	// initialize debug options
 	static {
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_UNEXPECTED = Policy.DEBUG_OPERATIONS;
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_OPENOPERATION = Policy.DEBUG_OPERATIONS;
 		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_APPROVAL = Policy.DEBUG_OPERATIONS;
-		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_NOTIFICATION = Policy.DEBUG_OPERATIONS
-				&& Policy.DEBUG_OPERATIONS_VERBOSE;
-		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_DISPOSE = Policy.DEBUG_OPERATIONS
-				&& Policy.DEBUG_OPERATIONS_VERBOSE;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_NOTIFICATION = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
+		DefaultOperationHistory.DEBUG_OPERATION_HISTORY_DISPOSE = Policy.DEBUG_OPERATIONS && Policy.DEBUG_OPERATIONS_VERBOSE;
 	}
 
 	/**
@@ -50,15 +49,19 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 */
 	public void dispose() {
 		/*
+		 * uninstall the operation approver that we added to the operation history
+		 */ 
+		getOperationHistory().removeOperationApprover(approver);
+		/*
 		 * dispose of all operations using our context
 		 */
 		getOperationHistory().dispose(getUndoContext(), true, true, true);
 	}
 
 	/**
-	 * Returns the undo context for workbench operations. The workbench
-	 * configures an undo context with the appropriate policies for the
-	 * workbench undo model.
+	 * Returns the undo context for workbench operations.
+	 * The workbench configures an undo context with the appropriate policies
+	 * for the workbench undo model.  
 	 * 
 	 * @return the workbench operation context.
 	 * @since 3.1
@@ -78,8 +81,17 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 * @since 3.1
 	 */
 	public IOperationHistory getOperationHistory() {
-		if (history == null) {
-			history = OperationHistoryFactory.getOperationHistory();
+		IOperationHistory history = OperationHistoryFactory.getOperationHistory();
+		/*
+		 * Set up the history if we have not done so before.
+		 */
+		if (approver == null) {
+			/*
+			 * install an operation approver that prevents linear undo violations
+			 * in any context
+			 */
+			approver = new AdvancedValidationUserApprover(getUndoContext());
+			history.addOperationApprover(approver);
 			/*
 			 * set a limit for the workbench undo context
 			 */
