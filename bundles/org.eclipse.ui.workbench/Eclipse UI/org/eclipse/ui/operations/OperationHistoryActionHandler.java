@@ -60,7 +60,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.1
  */
 public abstract class OperationHistoryActionHandler extends Action implements
-		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
+		ActionFactory.IWorkbenchAction, IAdaptable {
 
 	private class PartListener implements IPartListener {
 		/**
@@ -97,14 +97,52 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		}
 
 	}
-
+	private class HistoryListener implements IOperationHistoryListener {
+		public void historyNotification(OperationHistoryEvent event) {
+			Display display = getWorkbenchWindow().getWorkbench().getDisplay();
+			switch (event.getEventType()) {
+			case OperationHistoryEvent.OPERATION_ADDED:
+			case OperationHistoryEvent.OPERATION_REMOVED:
+			case OperationHistoryEvent.UNDONE:
+			case OperationHistoryEvent.REDONE:
+				if (display != null && event.getOperation().hasContext(undoContext)) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							update();
+						}
+					});
+				}
+				break;
+			case OperationHistoryEvent.OPERATION_NOT_OK:
+				if (display != null && event.getOperation().hasContext(undoContext)) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							if (pruning)
+								flush();
+							else
+								update();
+						}
+					});
+				}
+				break;
+			case OperationHistoryEvent.OPERATION_CHANGED:
+				if (display != null && event.getOperation() == getOperation()) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							update();
+						}
+					});
+				}
+				break;
+			}
+		}
+	}
 	IUndoContext undoContext = null;
+	IWorkbenchPartSite site;
 
 	private boolean pruning = false;
-
 	private IPartListener partListener = new PartListener();
-
-	IWorkbenchPartSite site;
+	private IOperationHistoryListener historyListener = new HistoryListener();
 
 	private static final int MAX_LABEL_LENGTH = 32;
 
@@ -123,17 +161,18 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		this.site = site;
 		undoContext = context;
 		site.getPage().addPartListener(partListener);
-		getHistory().addOperationHistoryListener(this);
+		getHistory().addOperationHistoryListener(historyListener);
 		// An update must be forced in case the undo limit is 0.
 		// see bug #89707
 		update();
 	}
 
-	/**
-	 * Dispose of any resources allocated by this action.
-	 */
+    /*
+     * (non-Javadoc) 
+     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+     */
 	public void dispose() {
-		getHistory().removeOperationHistoryListener(this);
+		getHistory().removeOperationHistoryListener(historyListener);
 		site.getPage().removePartListener(partListener);
 		// we do not do anything to the history for our context because it may
 		// be used elsewhere.
@@ -246,52 +285,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	public void setPruneHistory(boolean prune) {
 		pruning = prune;
-	}
-
-	/**
-	 * Something has changed in the operation history. Check to see if it
-	 * involves this context.
-	 * 
-	 * @param event -
-	 *            the event that has occurred.
-	 */
-	public void historyNotification(OperationHistoryEvent event) {
-		Display display = getWorkbenchWindow().getWorkbench().getDisplay();
-		switch (event.getEventType()) {
-		case OperationHistoryEvent.OPERATION_ADDED:
-		case OperationHistoryEvent.OPERATION_REMOVED:
-		case OperationHistoryEvent.UNDONE:
-		case OperationHistoryEvent.REDONE:
-			if (display != null && event.getOperation().hasContext(undoContext)) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						update();
-					}
-				});
-			}
-			break;
-		case OperationHistoryEvent.OPERATION_NOT_OK:
-			if (display != null && event.getOperation().hasContext(undoContext)) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						if (pruning)
-							flush();
-						else
-							update();
-					}
-				});
-			}
-			break;
-		case OperationHistoryEvent.OPERATION_CHANGED:
-			if (display != null && event.getOperation() == getOperation()) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						update();
-					}
-				});
-			}
-			break;
-		}
 	}
 
 	/**
