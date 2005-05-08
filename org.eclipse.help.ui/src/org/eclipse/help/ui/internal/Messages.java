@@ -168,4 +168,10 @@ public final class Messages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+
+	public static String BrowsersPreferencePage_openModeGroup;
+	public static String BrowsersPreferencePage_openInPlace;
+	public static String BrowsersPreferencePage_openInEditor;
+	public static String ReusableHelpPart_internalBrowserTitle;
+	public static String ReusableHelpPart_internalWebBrowserError;
 }

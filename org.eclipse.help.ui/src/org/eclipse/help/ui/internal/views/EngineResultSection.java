@@ -137,9 +137,7 @@ public class EngineResultSection {
         searchResults.addHyperlinkListener(new IHyperlinkListener() {
             public void linkActivated(HyperlinkEvent e) {
                 Object href = e.getHref();
-                if ("nw:".equals(href)) { //$NON-NLS-1$
-                    part.doOpenLink(e.getHref());
-                } else if (HREF_PROGRESS.equals(href)) {
+                if (HREF_PROGRESS.equals(href)) {
                     showProgressView();
                 } else if (((String) href).startsWith("bmk:")) { //$NON-NLS-1$
                     doBookmark(e.getLabel(), (String) href);

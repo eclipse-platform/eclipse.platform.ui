@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
@@ -29,6 +30,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
@@ -104,8 +106,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private static final String PROMPT_KEY = "askShowAll"; //$NON-NLS-1$
 
 	private static final int STATE_START = 1;
+
 	private static final int STATE_LT = 2;
+
 	private static final int STATE_LT_B = 3;
+
 	private static final int STATE_LT_BR = 4;
 
 	private RoleFilter roleFilter;
@@ -141,7 +146,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private HelpPartPage currentPage;
 
 	private int style;
-	
+
 	private IMemento memento;
 
 	private boolean showDocumentsInPlace = true;
@@ -1064,28 +1069,47 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			url = url.substring(3);
 		}
 		if (replace) {
-			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
-			BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
-			if (bpart != null) {
-				//boolean enabled = HelpBasePlugin.getActivitySupport()
-						//.isEnabled(url);
-				bpart.showURL(BaseHelpSystem
-						.resolve(url, "/help/ntopic").toString()); //$NON-NLS-1$
+			if (openInternalBrowser(url))
 				return;
-			}
-		}
-		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-		if (support.isInternalWebBrowserAvailable()) {
-			try {
-				IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "org.eclipse.help.ui", "Help", url);
-				browser.openURL(BaseHelpSystem.resolve(url, "/help/ntopic"));
-				return;
-			}
-			catch (PartInitException e) {
-				HelpUIPlugin.logError("Error while opening internal web browser", e);
-			}
 		}
 		showExternalURL(url);
+	}
+
+	private boolean openInternalBrowser(String url) {
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
+		boolean openInEditor = pref
+				.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+		if (openInEditor)
+			return showInWorkbenchBrowser(url, true);
+		showPage(IHelpUIConstants.HV_BROWSER_PAGE);
+		BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
+		if (bpart != null) {
+			bpart.showURL(BaseHelpSystem
+					.resolve(url, "/help/ntopic").toString()); //$NON-NLS-1$
+			return true;
+		}
+		return false;
+	}
+
+	private boolean showInWorkbenchBrowser(String url, boolean onlyInternal) {
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
+				.getBrowserSupport();
+		if (!onlyInternal || support.isInternalWebBrowserAvailable()) {
+			try {
+				IWebBrowser browser = support
+						.createBrowser(
+								IWorkbenchBrowserSupport.AS_EDITOR
+										| IWorkbenchBrowserSupport.NAVIGATION_BAR
+										| IWorkbenchBrowserSupport.STATUS,
+								"org.eclipse.help.ui", Messages.ReusableHelpPart_internalBrowserTitle, url); //$NON-NLS-1$
+				browser.openURL(BaseHelpSystem.resolve(url, "/help/nftopic")); //$NON-NLS-1$
+				return true;
+			} catch (PartInitException e) {
+				HelpUIPlugin.logError(
+						Messages.ReusableHelpPart_internalWebBrowserError, e);
+			}
+		}
+		return false;
 	}
 
 	public void showExternalURL(String url) {
@@ -1096,7 +1120,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				String aurl = BaseHelpSystem.resolve(url, true).toString();
 				if (aurl.endsWith("&noframes=true") || aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
 					aurl = aurl.substring(0, aurl.length() - 14);
-				BaseHelpSystem.getHelpBrowser(true).displayURL(aurl);
+				showInWorkbenchBrowser(aurl, false);
 			} catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
 			}
@@ -1148,7 +1172,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private void addPageAction(IMenuManager manager, final String pageId) {
-		//String cid = getCurrentPageId();
+		// String cid = getCurrentPageId();
 		HelpPartPage page = findPage(pageId);
 		if (page == null)
 			return;
@@ -1286,13 +1310,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					res.getLabel());
 		}
 	}
-/*
-	private void doOpen(Object target) {
-		String href = getHref(target);
-		if (href != null)
-			showURL(href, getShowDocumentsInPlace());
-	}
-*/
+
+	/*
+	 * private void doOpen(Object target) { String href = getHref(target); if
+	 * (href != null) showURL(href, getShowDocumentsInPlace()); }
+	 */
 
 	private void doOpen(Object target, boolean replace) {
 		String href = getHref(target);
@@ -1471,31 +1493,32 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private String getShowAllMessage() {
-		String message = HelpBasePlugin.getActivitySupport().getShowAllMessage();
-		if (message==null)
+		String message = HelpBasePlugin.getActivitySupport()
+				.getShowAllMessage();
+		if (message == null)
 			return Messages.AskShowAll_message;
 		StringBuffer buff = new StringBuffer();
 		int state = STATE_START;
 
-		for (int i=0; i<message.length(); i++) {
+		for (int i = 0; i < message.length(); i++) {
 			char c = message.charAt(i);
 			switch (state) {
 			case STATE_START:
-				if (c=='<')
+				if (c == '<')
 					state = STATE_LT;
 				else
 					buff.append(c);
 				break;
 			case STATE_LT:
-				if (c=='b' || c=='B')
+				if (c == 'b' || c == 'B')
 					state = STATE_LT_B;
 				break;
 			case STATE_LT_B:
-				if (c=='r' || c=='R')
+				if (c == 'r' || c == 'R')
 					state = STATE_LT_BR;
 				break;
 			case STATE_LT_BR:
-				if (c=='>') {
+				if (c == '>') {
 					buff.append('\n');
 				}
 				state = STATE_START;

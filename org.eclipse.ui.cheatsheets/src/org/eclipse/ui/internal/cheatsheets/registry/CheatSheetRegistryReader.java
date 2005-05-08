@@ -245,8 +245,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 					// category will be dropped and any cheatsheet within the category
 					// will be added to the "Other" category.
 					return;
-				} else
-					parent = tempElement;
+				}
+				parent = tempElement;
 			}
 		}
 
@@ -282,8 +282,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			if (tempCollectionElement == null) { // can't find the path; bump it to uncategorized
 				moveToOther = true;
 				break;
-			} else
-				currentCollectionElement = tempCollectionElement;
+			}
+			currentCollectionElement = tempCollectionElement;
 		}
 
 		if (moveToOther)

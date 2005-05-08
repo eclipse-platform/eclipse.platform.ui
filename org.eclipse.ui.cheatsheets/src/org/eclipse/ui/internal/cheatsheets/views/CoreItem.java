@@ -516,9 +516,8 @@ public class CoreItem extends ViewItem {
 		if (listenerFired[0]) {
 			if (listenerResult[0]) {
 				return VIEWITEM_ADVANCE;
-			} else {
-				return VIEWITEM_DONOT_ADVANCE;
 			}
+			return VIEWITEM_DONOT_ADVANCE;
 		}
 
 		return VIEWITEM_ADVANCE;

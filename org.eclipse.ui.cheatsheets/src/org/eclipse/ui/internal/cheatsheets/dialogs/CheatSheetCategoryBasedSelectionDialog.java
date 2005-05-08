@@ -64,8 +64,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			if (obj instanceof CheatSheetElement)
 				return CheatSheetPlugin.getPlugin().getImageRegistry().get(
 						ICheatSheetResource.CHEATSHEET_OBJ);
-			else
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
+			return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_FOLDER);
 		}
 	}

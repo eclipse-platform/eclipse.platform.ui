@@ -229,9 +229,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			SubItemCompositeHolder s = (SubItemCompositeHolder) list.get(i);
 			if (s.isCompleted() || s.isSkipped()) {
 				continue;
-			} else {
-				return false;
 			}
+			return false;
 		}
 		return true;
 	}

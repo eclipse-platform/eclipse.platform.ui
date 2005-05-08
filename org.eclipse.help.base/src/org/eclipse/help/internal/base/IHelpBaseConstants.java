@@ -14,7 +14,8 @@ package org.eclipse.help.internal.base;
  */
 public interface IHelpBaseConstants {
 	// Preference ids
-	public static final String P_KEY_WINDOW_INFOPOP = "window_infopop";//$NON-NLS-1$
-	public static final String P_KEY_DIALOG_INFOPOP = "dialog_infopop";//$NON-NLS-1$		
-	public static final String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
+	String P_KEY_WINDOW_INFOPOP = "window_infopop";//$NON-NLS-1$
+	String P_KEY_DIALOG_INFOPOP = "dialog_infopop";//$NON-NLS-1$
+	String P_KEY_OPEN_IN_EDITOR = "open_in_browser"; //$NON-NLS-1$
+	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
 }

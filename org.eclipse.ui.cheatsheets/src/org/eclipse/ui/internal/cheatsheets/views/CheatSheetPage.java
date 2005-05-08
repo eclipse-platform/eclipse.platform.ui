@@ -86,8 +86,7 @@ public class CheatSheetPage extends Page {
 	protected String getTitle() {
 		if (cheatSheet != null && cheatSheet.getTitle() != null)
 			return cheatSheet.getTitle();
-		else
-			return ICheatSheetResource.EMPTY_STRING;
+		return ICheatSheetResource.EMPTY_STRING;
 	}
 
 	public void dispose() {

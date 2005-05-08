@@ -851,9 +851,8 @@ public class CheatSheetParser {
 			handleItems(cheatSheet, document);
 			
 			return cheatSheet;
-		} else {
-			throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
-		}
+		} 
+		throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
 	}
 /*
 	private String getNormalizedText(String text) {

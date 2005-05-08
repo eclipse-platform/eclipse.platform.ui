@@ -59,6 +59,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		Composite innerContainer = toolkit.createComposite(container);
 		innerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		layout = new GridLayout();
+		layout.marginHeight = 0;
 		innerContainer.setLayout(layout);
 		Label label = toolkit.createLabel(innerContainer, Messages.SeeAlsoPart_goto);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
@@ -74,7 +75,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		linkContainer.setLayout(rlayout);
 	}
 	
-	private void reloadLinks(String href) {
+	private void updateLinks(String href) {
 		Control [] children = linkContainer.getChildren();
 		for (int i=0; i<children.length; i++) {
 			ImageHyperlink link = (ImageHyperlink)children[i];
@@ -192,7 +193,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	}
 	public void refresh() {
 		if (linkContainer!=null && helpPart.getCurrentPageId()!=null)
-			reloadLinks(helpPart.getCurrentPageId());
+			updateLinks(helpPart.getCurrentPageId());
 		super.refresh();
 	}
 
@@ -203,7 +204,5 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}	
 }

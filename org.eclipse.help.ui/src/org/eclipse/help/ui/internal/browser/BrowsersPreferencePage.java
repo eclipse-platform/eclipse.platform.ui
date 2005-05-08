@@ -54,6 +54,9 @@ public class BrowsersPreferencePage extends PreferencePage
 	private Button dhelpAsWindowButton;
 	private Button dhelpAsInfopopButton;
 	
+	private Button openInPlaceButton; 
+	private Button openInEditorButton;
+	
 	/**
 	 * Creates preference page controls on demand.
 	 * 
@@ -177,7 +180,7 @@ public class BrowsersPreferencePage extends PreferencePage
 		whelpAsViewButton.setSelection(!winfopop);
 		whelpAsInfopopButton.setSelection(winfopop);
 		
-		
+		createSpacer(parent);
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		group = new Group(parent, SWT.NONE);
@@ -192,6 +195,22 @@ public class BrowsersPreferencePage extends PreferencePage
 		.getPluginPreferences().getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);
+		
+		createSpacer(parent);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		group = new Group(parent, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		group.setLayout(layout);
+		group.setText(Messages.BrowsersPreferencePage_openModeGroup);
+		openInPlaceButton = new Button(group, SWT.RADIO);
+		openInPlaceButton.setText(Messages.BrowsersPreferencePage_openInPlace); 
+		openInEditorButton = new Button(group, SWT.RADIO);
+		openInEditorButton.setText(Messages.BrowsersPreferencePage_openInEditor); 
+		boolean openInBrowser = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+		openInPlaceButton.setSelection(!openInBrowser);
+		openInEditorButton.setSelection(openInBrowser);
 	}
 	
     private IPreferenceNode getPreferenceNode(String pageId) {
@@ -303,6 +322,11 @@ public class BrowsersPreferencePage extends PreferencePage
 		dhelpAsWindowButton.setSelection(!dinfopop);
 		dhelpAsInfopopButton.setSelection(dinfopop);		
 		
+		boolean openInEditor = HelpBasePlugin.getDefault()
+		.getPluginPreferences().getDefaultBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+		openInPlaceButton.setSelection(!openInEditor);
+		openInEditorButton.setSelection(openInEditor);
+		
 		super.performDefaults();
 	}
 	/**
@@ -332,7 +356,8 @@ public class BrowsersPreferencePage extends PreferencePage
 					alwaysExternal.getSelection());
 		}
 		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP, whelpAsInfopopButton.getSelection());
-		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, dhelpAsInfopopButton.getSelection());		
+		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP, dhelpAsInfopopButton.getSelection());
+		pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR, openInEditorButton.getSelection());
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
