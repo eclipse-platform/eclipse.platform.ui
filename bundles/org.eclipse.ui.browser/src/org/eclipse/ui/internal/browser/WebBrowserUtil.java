@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Utility class for the Web browser tooling.
@@ -126,8 +127,10 @@ public class WebBrowserUtil {
 		}
 
 		// try loading it
+		Shell shell=null;
 		try {
-			new Browser(new Shell(Display.getCurrent()), SWT.NONE);
+			shell = new Shell(PlatformUI.getWorkbench().getDisplay());
+			new Browser(shell, SWT.NONE);
 			isInternalBrowserOperational = new Boolean(true);
 			return true;
 		} catch (Throwable t) {
@@ -136,6 +139,10 @@ public class WebBrowserUtil {
 							0, "Internal browser is not operational", t)); //$NON-NLS-1$
 			isInternalBrowserOperational = new Boolean(false);
 			return false;
+		}
+		finally {
+			if (shell!=null)
+				shell.dispose();
 		}
 	}
 
