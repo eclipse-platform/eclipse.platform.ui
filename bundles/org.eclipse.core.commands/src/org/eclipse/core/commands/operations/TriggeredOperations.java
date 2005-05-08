@@ -29,10 +29,13 @@ import org.eclipse.core.runtime.Status;
  * triggered operation is executed, undone, or redone if it is still present. If
  * the trigger is no longer present, than the operation is invalid.
  * </p>
+ * <p>
+ * This class may be instantiated by clients.
+ * </p>
  * 
  * @since 3.1
  */
-public class TriggeredOperations extends AbstractOperation implements
+public final class TriggeredOperations extends AbstractOperation implements
 		ICompositeOperation, IAdvancedUndoableOperation {
 
 	private IUndoableOperation triggeringOperation;
@@ -46,9 +49,9 @@ public class TriggeredOperations extends AbstractOperation implements
 	 * operation as the trigger. Use the label of this trigger as the label of
 	 * the operation.
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation triggering other operations.
-	 * @param history -
+	 * @param history 
 	 *            the operation history containing the triggered operations
 	 */
 	public TriggeredOperations(IUndoableOperation operation,
@@ -99,7 +102,7 @@ public class TriggeredOperations extends AbstractOperation implements
 	 * is being removed, then the triggering operation must be replaced with 
 	 * the atomic operations that it triggered.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the undo context being removed from the receiver.
 	 */
 	public void removeContext(IUndoContext context) {
