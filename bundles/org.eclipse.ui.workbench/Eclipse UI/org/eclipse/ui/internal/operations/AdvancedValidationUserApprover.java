@@ -228,13 +228,11 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			if (proceed)
 				reportedStatus = Status.OK_STATUS;
 		} else {
-			String command, title, stopped;
+			String title, stopped;
 			if (undoing) {
-				command = WorkbenchMessages.Workbench_undo;
 				title = WorkbenchMessages.Operations_undoProblem;
 				stopped = WorkbenchMessages.Operations_stoppedOnUndoErrorStatus;
 			} else {
-				command = WorkbenchMessages.Workbench_redo;
 				title = WorkbenchMessages.Operations_redoProblem;
 				stopped = WorkbenchMessages.Operations_stoppedOnRedoErrorStatus;
 			}
