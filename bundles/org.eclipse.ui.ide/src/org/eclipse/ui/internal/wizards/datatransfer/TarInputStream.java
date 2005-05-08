@@ -303,4 +303,15 @@ public class TarInputStream extends FilterInputStream
 		bytesread += size;
 		return size;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.io.FilterInputStream#read()
+	 */
+	public int read() throws IOException {
+		byte[] data = new byte[1];
+		int size = read(data, 0, 1);
+		if (size < 0)
+			return size;
+		return data[0];
+	}
 }
