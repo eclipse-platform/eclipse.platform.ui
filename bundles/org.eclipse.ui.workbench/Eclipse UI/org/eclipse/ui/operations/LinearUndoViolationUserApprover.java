@@ -28,12 +28,15 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * An operation approver that prompts the user to see if linear undo violations
  * are permitted. A linear undo violation is detected when an operation being
  * undone or redone shares a context with another operation appearing more
- * recently in the history.
+ * recently in the history.  
+ * </p>
+ * <p>
+ * This class may be instantiated by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class LinearUndoViolationUserApprover extends
+public final class LinearUndoViolationUserApprover extends
 		LinearUndoViolationDetector {
 
 	private IEditorPart part;

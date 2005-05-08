@@ -153,7 +153,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
     private IntroRegistry introRegistry;
     
-    private IWorkbenchOperationSupport operationSupport;
+    private WorkbenchOperationSupport operationSupport;
         
     
     /**

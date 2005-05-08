@@ -38,10 +38,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * approver will attempt to retrieve an adapter of the preferred comparison
  * class to be used for the comparison.
  * </p>
+ * <p>
+ * This class may be instantiated by clients.
+ * </p>
+
  * 
  * @since 3.1
  */
-public class NonLocalUndoUserApprover implements IOperationApprover {
+public final class NonLocalUndoUserApprover implements IOperationApprover {
 
 	private IUndoContext context;
 

@@ -23,14 +23,10 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * </p>
  * 
  * @since 3.1
+ * 
+ * @see org.eclipse.ui.IWorkbench#getOperationSupport()
  */
 public interface IWorkbenchOperationSupport {
-
-	/**
-	 * Dispose of any state kept by the operations support, including the
-	 * history and contained operations.
-	 */
-	public void dispose();
 
 	/**
 	 * Returns the undo context for workbench-wide operations.
