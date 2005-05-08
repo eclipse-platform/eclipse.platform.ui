@@ -45,7 +45,6 @@ import org.eclipse.ui.PartInitException;
  * This interface is not intended to be implemented by clients.
  * 
  * @see IWebBrowser
- * 
  * @since 3.1
  */
 
@@ -67,7 +66,6 @@ public interface IWorkbenchBrowserSupport {
 	/**
 	 * Style constant (value 1&lt;&lt;3) indicating that status will be tracked
 	 * and shown for the browser (page loading progress, text messages etc.).
-	 * 
 	 */
 	int STATUS = 1 << 3;
 
@@ -75,7 +73,6 @@ public interface IWorkbenchBrowserSupport {
 	 * Style constant (value 1&lt;&lt;4) indicating that the internal web
 	 * browser will reopen after restarting the workbench (if used). In
 	 * addition, the URLs will appear in the MRU list.
-	 * 
 	 */
 	int PERSISTENT = 1 << 4;
 
@@ -128,7 +125,6 @@ public interface IWorkbenchBrowserSupport {
 	 *            a name used for the presentation of the internal browser
 	 * @param tooltip
 	 *            a tooltip used for the presentation of the internal browser
-	 * 
 	 * @return the browser instance that can be used to open the URL. Clients
 	 *         intending to reuse the instance for all the URLs should cache the
 	 *         instance and call IWebBrowser#openURL() on it. Clients are
@@ -151,7 +147,6 @@ public interface IWorkbenchBrowserSupport {
 	 *            opened, it will be returned instead of creating a new one.
 	 *            Passing <code>null</code> will create a new instance with a
 	 *            generated id every time.
-	 * 
 	 * @return the browser instance that can be used to open the URL. Clients
 	 *         intending to reuse the instance for all the URLs should cache the
 	 *         instance and call IWebBrowser#openURL() on it. Clients are
@@ -175,4 +170,16 @@ public interface IWorkbenchBrowserSupport {
 	 *                if the operation failed for some reason
 	 */
 	IWebBrowser getExternalBrowser() throws PartInitException;
+
+	/**
+	 * Tests whether web browser as an SWT widget can be created in this
+	 * workbench instance. If this method returns <code>false</code>,
+	 * <code>createBrowser</code> would ignore browser styles
+	 * <code>AS_EDITOR</code> and <code>AS_VIEW</code> and always create an
+	 * external browser.
+	 * 
+	 * @return <code>true</code> if internal web browser can be created on
+	 *         this platform, <code>false</code> otherwise.
+	 */
+	boolean isInternalWebBrowserAvailable();
 }

@@ -39,4 +39,11 @@ public abstract class AbstractWorkbenchBrowserSupport implements
 		return createBrowser(AS_EXTERNAL, SHARED_EXTERNAL_BROWSER_ID, null,
 				null);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
+	 */
+	public boolean isInternalWebBrowserAvailable() {
+		return false;
+	}
 }

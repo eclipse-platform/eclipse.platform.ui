@@ -58,6 +58,9 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
 		if (browserId == null)
@@ -108,8 +111,18 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		return webBrowser;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
+	 */
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return createBrowser(0, browserId, null, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
+	 */
+	public boolean isInternalWebBrowserAvailable() {
+		return WebBrowserUtil.canUseInternalWebBrowser();
 	}
 
 	protected void removeBrowser(String id) {

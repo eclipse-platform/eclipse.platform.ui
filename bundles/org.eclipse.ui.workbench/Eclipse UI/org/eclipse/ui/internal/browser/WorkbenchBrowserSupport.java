@@ -72,7 +72,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	};
 
 	/**
-	 * 
+	 * Cannot be instantiated from outside.
 	 */
 	private WorkbenchBrowserSupport() {
 	}
@@ -89,14 +89,27 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		return instance;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
 		return getActiveSupport()
 				.createBrowser(style, browserId, name, tooltip);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
+	 */
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return getActiveSupport().createBrowser(browserId);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
+	 */
+	public boolean isInternalWebBrowserAvailable() {
+		return getActiveSupport().isInternalWebBrowserAvailable();
 	}
 
 	private IWorkbenchBrowserSupport getActiveSupport() {
