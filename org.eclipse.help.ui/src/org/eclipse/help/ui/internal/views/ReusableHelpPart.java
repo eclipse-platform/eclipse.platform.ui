@@ -73,11 +73,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -1071,15 +1074,17 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				return;
 			}
 		}
-		// fallback - open in help resource
-
-		// try {
-		// URL fullURL = new URL(toAbsoluteURL(url));
-		// WebBrowser.openURL(fullURL, 0, "org.eclipse.help");
-
-		// }
-		// catch (MalformedURLException e) {
-		// }
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		if (support.isInternalWebBrowserAvailable()) {
+			try {
+				IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "org.eclipse.help.ui", "Help", url);
+				browser.openURL(BaseHelpSystem.resolve(url, "/help/ntopic"));
+				return;
+			}
+			catch (PartInitException e) {
+				HelpUIPlugin.logError("Error while opening internal web browser", e);
+			}
+		}
 		showExternalURL(url);
 	}
 
