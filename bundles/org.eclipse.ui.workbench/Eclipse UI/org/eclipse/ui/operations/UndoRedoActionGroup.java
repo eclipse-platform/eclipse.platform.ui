@@ -25,12 +25,12 @@ import org.eclipse.ui.operations.UndoActionHandler;
  * workbench part site. It supports filtering of undo or redo on a particular
  * undo context. The undo context can be optionally pruned, which means the
  * context will be flushed actively whenever an invalid operation is found on
- * top of its history.
+ * top of its history.  This class may be instantiated by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class UndoRedoActionGroup extends ActionGroup {
+public final class UndoRedoActionGroup extends ActionGroup {
 
 	private UndoActionHandler undoActionHandler;
 
