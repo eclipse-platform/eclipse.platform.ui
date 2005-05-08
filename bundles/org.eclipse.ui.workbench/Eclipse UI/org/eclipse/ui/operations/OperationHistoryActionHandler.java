@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
@@ -24,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
@@ -36,30 +35,30 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
- * OperationHistoryActionHandler implements common behavior for the undo and redo
- * actions. It supports filtering of undo or redo on a particular context. (A
- * null context will cause undo and redo to be disabled.)  
+ * OperationHistoryActionHandler implements common behavior for the undo and
+ * redo actions. It supports filtering of undo or redo on a particular context.
+ * (A null context will cause undo and redo to be disabled.)
  * </p>
  * <p>
- * OperationHistoryActionHandler provides an adapter in the info parameter of the
- * IOperationHistory undo and redo methods that is used to get UI info for prompting
- * the user during operations or operation approval.  Adapters are provided for
- * org.eclipse.ui.IWorkbenchWindow, org.eclipse.swt.widgets.Shell, and 
- * org.eclipse.ui.IWorkbenchPart.
+ * OperationHistoryActionHandler provides an adapter in the info parameter of
+ * the IOperationHistory undo and redo methods that is used to get UI info for
+ * prompting the user during operations or operation approval. Adapters are
+ * provided for org.eclipse.ui.IWorkbenchWindow, org.eclipse.swt.widgets.Shell,
+ * and org.eclipse.ui.IWorkbenchPart.
  * </p>
  * <p>
  * OperationHistoryActionHandler assumes a linear undo/redo model. When the
  * handler is run, the operation history is asked to perform the most recent
  * undo for the handler's context. The handler can be configured (using
  * #setPruneHistory(true) to flush the operation undo or redo history for its
- * context when there is no valid operation on top of the history.  This avoids
- * keeping a stale history of invalid operations.  By default, pruning does not 
- * occur and it is assumed that clients of the particular undo context are pruning 
- * the history when necessary.
+ * context when there is no valid operation on top of the history. This avoids
+ * keeping a stale history of invalid operations. By default, pruning does not
+ * occur and it is assumed that clients of the particular undo context are
+ * pruning the history when necessary.
  * </p>
  * 
  * @since 3.1
-  */
+ */
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
 
@@ -96,14 +95,19 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		 */
 		public void partOpened(IWorkbenchPart part) {
 		}
-		
+
 	}
+
 	IUndoContext undoContext = null;
+
 	private boolean pruning = false;
 
 	private IPartListener partListener = new PartListener();
+
 	IWorkbenchPartSite site;
-	
+
+	private static final int MAX_LABEL_LENGTH = 32;
+
 	/**
 	 * Construct an operation history action for the specified workbench window
 	 * with the specified undo context.
@@ -113,17 +117,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @param context -
 	 *            the undo context to be used
 	 */
-	OperationHistoryActionHandler(IWorkbenchPartSite site,
-			IUndoContext context) {
+	OperationHistoryActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		// string will be reset inside action
 		super(""); //$NON-NLS-1$
 		this.site = site;
 		undoContext = context;
 		site.getPage().addPartListener(partListener);
 		getHistory().addOperationHistoryListener(this);
-        // An update must be forced in case the undo limit is 0.
-        // see bug #89707
-        update();
+		// An update must be forced in case the undo limit is 0.
+		// see bug #89707
+		update();
 	}
 
 	/**
@@ -160,8 +163,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	abstract IUndoableOperation getOperation();
 
 	/**
-	 * Run the action. Provide common error handling and let the subclasses do the
-	 * real work.
+	 * Run the action. Provide common error handling and let the subclasses do
+	 * the real work.
 	 */
 	public final void run() {
 		try {
@@ -173,7 +176,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		}
 
 	}
-	
+
 	abstract IStatus runCommand() throws ExecutionException;
 
 	/*
@@ -203,7 +206,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	IProgressMonitor getProgressMonitor() {
 		return null;
 	}
-	
+
 	/*
 	 * Return the workbench window for this action handler
 	 */
@@ -219,8 +222,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	abstract boolean shouldBeEnabled();
 
 	/**
-	 * Set the context shown by the handler. Normally the context is set up
-	 * when the action handler is created, but the context can also be changed
+	 * Set the context shown by the handler. Normally the context is set up when
+	 * the action handler is created, but the context can also be changed
 	 * dynamically.
 	 * 
 	 * @param context -
@@ -260,32 +263,32 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
 			if (display != null && event.getOperation().hasContext(undoContext)) {
-		        display.asyncExec(new Runnable() {
-		            public void run() {
-		                update();
-		            }
-		        });
+				display.asyncExec(new Runnable() {
+					public void run() {
+						update();
+					}
+				});
 			}
 			break;
 		case OperationHistoryEvent.OPERATION_NOT_OK:
 			if (display != null && event.getOperation().hasContext(undoContext)) {
-		        display.asyncExec(new Runnable() {
-		            public void run() {
-		                if (pruning)
-		                	flush();
-		                else
-		                	update();
-		            }
-		        });
+				display.asyncExec(new Runnable() {
+					public void run() {
+						if (pruning)
+							flush();
+						else
+							update();
+					}
+				});
 			}
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
-			if (display != null && event.getOperation() == getOperation()){
-		        display.asyncExec(new Runnable() {
-		            public void run() {
-		                update();
-		            }
-		        });
+			if (display != null && event.getOperation() == getOperation()) {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						update();
+					}
+				});
 			}
 			break;
 		}
@@ -299,9 +302,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
 		if (enabled) {
-			text = MessageFormat
-					.format(
-							"{0} {1}", new Object[] { text, getOperation().getLabel() }); //$NON-NLS-1$
+			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
+					shortenText(getOperation().getLabel()));
 		} else {
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
@@ -310,8 +312,24 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			if (undoContext != null && pruning)
 				flush();
 		}
-		setText(text.toString());
+		setText(text);
 		setEnabled(enabled);
+	}
+
+	/*
+	 * Shorten the specified command label if it is too long
+	 */
+	private String shortenText(String message) {
+		int length = message.length();
+		if (length > MAX_LABEL_LENGTH) {
+			StringBuffer result = new StringBuffer();
+			int mid = MAX_LABEL_LENGTH / 2;
+			result.append(message.substring(0, mid));
+			result.append("..."); //$NON-NLS-1$
+			result.append(message.substring(length - mid));
+			return result.toString();
+		}
+		return message;
 	}
 
 	/*

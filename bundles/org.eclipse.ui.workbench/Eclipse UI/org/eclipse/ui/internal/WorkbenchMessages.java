@@ -810,10 +810,28 @@ public class WorkbenchMessages extends NLS {
 	public static String Dynamic_resetPerspectiveTitle;
 
 	//==============================================================
-	// Undo/Redo Support
+	// Part Support
 
 	public static String PartSite_needsWidgetsError;
 	public static String PartFactory_wrongtype;
+
+	//==============================================================
+	// Undo/Redo Support
+	
+	public static String Operations_undoRedoCommand;
+	public static String Operations_undoProblem;
+	public static String Operations_redoProblem;
+	public static String Operations_undoInfo;
+	public static String Operations_redoInfo;
+	public static String Operations_undoWarning;
+	public static String Operations_redoWarning;
+	public static String Operations_linearUndoViolation;
+	public static String Operations_linearRedoViolation;
+	public static String Operations_nonLocalUndoWarning;
+	public static String Operations_nonLocalRedoWarning;
+	public static String Operations_proceedWithNonOKStatus;
+	public static String Operations_stoppedOnUndoErrorStatus;
+	public static String Operations_stoppedOnRedoErrorStatus;
 
 	//==============================================================
 	// Heap Status

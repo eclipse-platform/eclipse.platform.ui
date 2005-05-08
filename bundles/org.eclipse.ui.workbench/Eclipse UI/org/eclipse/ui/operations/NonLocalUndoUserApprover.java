@@ -10,25 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
@@ -42,12 +37,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * instances of {@link org.eclipse.core.runtime.IAdaptable}, then the operation
  * approver will attempt to retrieve an adapter of the preferred comparison
  * class to be used for the comparison.
- * 
- * The operation approver also rechecks the validity of the operation (using
- * {@link IAdvancedUndoableOperation#computeUndoableStatus(IProgressMonitor)} or
- * {@link IAdvancedUndoableOperation#computeRedoableStatus(IProgressMonitor)}
- * before any prompting occurs, so that the user is not prompted if the
- * operation will fail anyway.
  * </p>
  * 
  * @since 3.1
@@ -113,10 +102,10 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		if (!requiresApproval(operation, uiInfo))
 			return Status.OK_STATUS;
 
-		String message = MessageFormat
-				.format(
-						"Redoing {0} affects elements outside of {1}.  Continue with redoing {0}?", new Object[] { operation.getLabel(), part.getEditorInput().getName() }); //$NON-NLS-1$
-		return proceedWithOperation(operation, history, uiInfo, message, false);
+		String message = NLS.bind(
+				WorkbenchMessages.Operations_nonLocalRedoWarning, operation
+						.getLabel(), part.getEditorInput().getName());
+		return proceedWithOperation(operation, message);
 	}
 
 	/*
@@ -133,10 +122,10 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		if (!requiresApproval(operation, uiInfo))
 			return Status.OK_STATUS;
 
-		String message = MessageFormat
-				.format(
-						"Undoing {0} affects elements outside of {1}.  Continue with undoing {0}?", new Object[] { operation.getLabel(), part.getEditorInput().getName() }); //$NON-NLS-1$
-		return proceedWithOperation(operation, history, uiInfo, message, true);
+		String message = NLS.bind(
+				WorkbenchMessages.Operations_nonLocalUndoWarning, operation
+						.getLabel(), part.getEditorInput().getName());
+		return proceedWithOperation(operation, message);
 
 	}
 
@@ -146,49 +135,12 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 	 * prompt the user as to whether the operation should proceed.
 	 */
 	private IStatus proceedWithOperation(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo, String message,
-			boolean undoing) {
+			String message) {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
 		if (!(operation instanceof IAdvancedUndoableOperation))
 			return Status.OK_STATUS;
-
-		// see if the operation is still valid. Some advanced model operations
-		// cannot compute their validity in canUndo() or canRedo() and true
-		// validity cannot be determined until it is time to perform the
-		// operation.
-		IStatus status;
-		try {
-			if (undoing)
-				status = ((IAdvancedUndoableOperation) operation)
-						.computeUndoableStatus(getProgressMonitor());
-			else
-				status = ((IAdvancedUndoableOperation) operation)
-						.computeRedoableStatus(getProgressMonitor());
-		} catch (OperationCanceledException e) {
-			status = Status.CANCEL_STATUS;
-		} catch (ExecutionException e) {
-			status = IOperationHistory.OPERATION_INVALID_STATUS;
-			reportException(e);
-		}
-
-		if (status.getSeverity() == IStatus.ERROR) {
-			// report failure to the user.
-			reportErrorStatus(status);
-		}
-
-		if (!status.isOK()) {
-			// inform listeners of the change in status of the operation since
-			// it was previously
-			// believed to be valid. We rely here on the ability of an
-			// implementer of IAdvancedUndoableOperation
-			// to correctly answer canUndo() and canRedo() once the undoable and
-			// redoable status have
-			// been computed.
-			history.operationChanged(operation);
-			return status;
-		}
 
 		// Obtain the operation's affected objects.
 		Object[] modifiedElements = ((IAdvancedUndoableOperation) operation)
@@ -205,8 +157,9 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 			// Consider the operation non-local.
 			local = false;
 		} else {
-			// The operation answered some array of affected objects.  Consider
-			// the operation local until a non-match is found.  Note that an empty
+			// The operation answered some array of affected objects. Consider
+			// the operation local until a non-match is found. Note that an
+			// empty
 			// array of affected objects is considered a local change.
 			local = true;
 			for (int i = 0; i < modifiedElements.length; i++) {
@@ -214,7 +167,8 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 				if (!elementsContains(modifiedElement)) {
 					// the modified element is not known by the editor
 					local = false;
-					// one last try - try to adapt the modified element if a preferred 
+					// one last try - try to adapt the modified element if a
+					// preferred
 					// comparison class has been provided.
 					if (affectedObjectsClass != null
 							&& modifiedElement instanceof IAdaptable) {
@@ -222,8 +176,9 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 								.getAdapter(affectedObjectsClass))) {
 							local = true;
 						}
-					} 
-					// if the element did not match the affected objects, no need to check any others.
+					}
+					// if the element did not match the affected objects, no
+					// need to check any others.
 					if (!local)
 						break;
 				}
@@ -270,42 +225,6 @@ public class NonLocalUndoUserApprover implements IOperationApprover {
 		}
 
 		return true;
-	}
-
-	/*
-	 * Return the progress monitor that should be used for computing validity
-	 * checks for undo and redo.
-	 */
-	private IProgressMonitor getProgressMonitor() {
-		// temporary implementation
-		return null;
-	}
-
-	/*
-	 * Report the specified execution exception to the log and to the user.
-	 */
-	private void reportException(ExecutionException e) {
-		Throwable nestedException = e.getCause();
-		Throwable exception = (nestedException == null) ? e : nestedException;
-		String title = WorkbenchMessages.Error;
-		String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
-		String exceptionMessage = exception.getMessage();
-		if (exceptionMessage == null) {
-			exceptionMessage = message;
-		}
-		IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog
-				.openError(part.getSite().getShell(), title, message, status);
-	}
-
-	/*
-	 * Report a failed status to the user
-	 */
-	private void reportErrorStatus(IStatus status) {
-		ErrorDialog.openError(part.getSite().getShell(),
-				WorkbenchMessages.Error, null, status);
 	}
 
 	/*

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -21,7 +19,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * <p>
@@ -71,9 +71,9 @@ public class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		}
 
-		String message = MessageFormat
-				.format(
-						"Local edits in {0} have been undone since {1} was undone.  They must be redone before proceeding.  Continue with redoing {1}?", new Object[] { part.getEditorInput().getName(), operation.getLabel() }); //$NON-NLS-1$
+		String message = NLS.bind(
+				WorkbenchMessages.Operations_linearRedoViolation, part
+						.getEditorInput().getName(), operation.getLabel());
 		// Show a dialog.
 		part.setFocus();
 		boolean proceed = MessageDialog.openQuestion(part.getSite().getShell(),
@@ -110,9 +110,9 @@ public class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		}
 
-		String message = MessageFormat
-				.format(
-						"There have been local changes in {0} since {1} was performed.  These changes must be undone before proceeding.  Proceed anyway?", new Object[] { part.getEditorInput().getName(), operation.getLabel() }); //$NON-NLS-1$
+		String message = NLS.bind(
+				WorkbenchMessages.Operations_linearUndoViolation, part
+						.getEditorInput().getName(), operation.getLabel());
 		// Show a dialog.
 		part.setFocus();
 		boolean proceed = MessageDialog.openQuestion(part.getSite().getShell(),
