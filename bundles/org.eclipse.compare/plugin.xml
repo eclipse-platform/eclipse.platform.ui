@@ -84,6 +84,7 @@
             id="org.eclipse.compare.CompareEditor">
       </editor>
    </extension>
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -91,8 +92,16 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.compare.internal.ComparePreferencePage"
             id="org.eclipse.compare.internal.ComparePreferencePage">
+            <keywordReference id="org.eclipse.compare.general"/>
       </page>
    </extension>
+   
+	<extension
+		point="org.eclipse.ui.keywords">
+		<keyword
+			label="%preferenceKeywords.general"
+			id="org.eclipse.compare.general"/>
+	</extension>
    
 <!-- commands and their bindings -->
    <extension
