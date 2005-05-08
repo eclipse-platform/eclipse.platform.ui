@@ -21,7 +21,8 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}" 
+		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" 
+			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/bin;
 			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			${basedir}/../org.eclipse.ant.core/bin
