@@ -198,15 +198,15 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 		// that allows the user to proceed or to cancel out of the operation.
 
 		if (!(status.getSeverity() == IStatus.ERROR)) {
-			String command, title;
+			String warning, title;
 			if (undoing) {
-				command = WorkbenchMessages.Workbench_undo;
+				warning = WorkbenchMessages.Operations_proceedWithNonOKUndoStatus;
 				if (status.getSeverity() == IStatus.INFO)
 					title = WorkbenchMessages.Operations_undoInfo;
 				else
 					title = WorkbenchMessages.Operations_undoWarning;
 			} else {
-				command = WorkbenchMessages.Workbench_redo;
+				warning = WorkbenchMessages.Operations_proceedWithNonOKUndoStatus;
 				if (status.getSeverity() == IStatus.INFO)
 					title = WorkbenchMessages.Operations_redoInfo;
 				else
@@ -214,9 +214,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			}
 
 			String message = NLS.bind(
-					WorkbenchMessages.Operations_proceedWithNonOKStatus,
-					new String[] { status.getMessage(), command,
-							operation.getLabel() });
+					warning, status.getMessage(), operation.getLabel());
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
