@@ -737,8 +737,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		};
 		openAction.setText(Messages.ReusableHelpPart_openAction_label); //$NON-NLS-1$
-		openInHelpAction = new OpenHrefAction(
-				Messages.ReusableHelpPart_openInHelpAction_label) { //$NON-NLS-1$
+		openInHelpAction = new OpenHrefAction("") {//$NON-NLS-1$
 			protected void busyRun() {
 				doOpenInHelp(getTarget());
 			}
