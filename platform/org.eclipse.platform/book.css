@@ -65,7 +65,7 @@ EM.CodeName {
 	font-family:"Courier New";
 }
 
-
+body, html { border: 0px }
 
 
 /* following font face declarations need to be removed for DBCS */
