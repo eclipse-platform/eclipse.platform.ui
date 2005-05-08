@@ -47,7 +47,7 @@ public interface IAdvancedUndoableOperation {
 	 * are notified about changes to the operation should implement this
 	 * interface.
 	 * 
-	 * @param event -
+	 * @param event 
 	 *            the event that is about to be sent with the pending
 	 *            notification
 	 * 
@@ -81,7 +81,7 @@ public interface IAdvancedUndoableOperation {
 	 * <code>false</code> on subsequent calls to
 	 * {@link IUndoableOperation#canUndo()}.
 	 * 
-	 * @param monitor -
+	 * @param monitor 
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user while computing the validity.
 	 * 
@@ -111,7 +111,7 @@ public interface IAdvancedUndoableOperation {
 	 * <code>false</code> on subsequent calls to
 	 * {@link IUndoableOperation#canRedo()}.
 	 * 
-	 * @param monitor -
+	 * @param monitor 
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user while computing the validity.
 	 * 

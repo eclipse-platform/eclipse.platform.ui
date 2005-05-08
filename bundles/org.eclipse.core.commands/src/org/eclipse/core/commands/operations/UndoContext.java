@@ -13,7 +13,8 @@ package org.eclipse.core.commands.operations;
 /**
  * <p>
  * A simple, lightweight undo context that can be used to tag any
- * operation. It does not provided a specialized label.
+ * operation. It does not provided a specialized label.  This class
+ * may be instantiated by clients.  This class may also be subclassed.
  * </p>
  * 
  * @since 3.1
@@ -22,6 +23,10 @@ public class UndoContext implements IUndoContext {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
+	 * 
+	 * <p>
+	 * Default implementation.  Clients may override.
+	 * </p>
 	 */
 	public String getLabel() {
 		return ""; //$NON-NLS-1$
@@ -29,6 +34,9 @@ public class UndoContext implements IUndoContext {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
+	 * <p>
+	 * Default implementation.  Clients may override.
+	 * </p>
 	 */
 	public boolean matches(IUndoContext context) {
 		return context == this;

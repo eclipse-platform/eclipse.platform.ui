@@ -24,22 +24,30 @@ import org.eclipse.core.runtime.Status;
 public class OperationStatus extends Status {
 	/**
 	 * NOTHING_TO_REDO indicates there was no operation available for redo.
+	 * 
+	 * (value is 1).
 	 */
 	public static final int NOTHING_TO_REDO = 1;
 
 	/**
 	 * NOTHING_TO_UNDO indicates there was no operation available for undo.
+	 * 
+	 * (value is 2).
 	 */
 	public static final int NOTHING_TO_UNDO = 2;
 
 	/**
 	 * OPERATION_INVALID indicates that the operation available for undo or redo
 	 * is not in a state to perform the undo or redo.
+	 * 
+	 * (value is 3).
 	 */
 	public static final int OPERATION_INVALID = 3;
 
 	/**
 	 * PLUGIN_ID identifies the plugin reporting the status.
+	 * 
+	 * (value is "org.eclipse.core.commands").
 	 */
 	public static String PLUGIN_ID = "org.eclipse.core.commands"; //$NON-NLS-1$
 

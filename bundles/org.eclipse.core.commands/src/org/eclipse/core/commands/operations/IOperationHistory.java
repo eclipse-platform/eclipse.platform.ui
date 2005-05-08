@@ -66,19 +66,19 @@ import org.eclipse.core.runtime.IStatus;
 public interface IOperationHistory {
 
 	/**
-	 * An operation is to be opened or closed for execution.
+	 * An operation is to be opened or closed for execution. (value is 1).
 	 */
-	public static final int EXECUTE = 0x0001;
+	public static final int EXECUTE = 1;
 
 	/**
-	 * An operation is to be opened for undo.
+	 * An operation is to be opened for undo. (value is 2).
 	 */
-	public static final int UNDO = 0x0002;
+	public static final int UNDO = 2;
 
 	/**
-	 * An operation is to be opened for redo.
+	 * An operation is to be opened for redo. (value is 3).
 	 */
-	public static final int REDO = 0x0004;
+	public static final int REDO = 3;
 
 	/**
 	 * An undo context that can be used to query the global undo history. This
@@ -121,7 +121,7 @@ public interface IOperationHistory {
 	 * the history (<code>OPERATION_ADDED</code>).
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation
 	 *            the operation to be added to the history
 	 */
 	void add(IUndoableOperation operation);
@@ -132,8 +132,11 @@ public interface IOperationHistory {
 	 * by the operation history before an undo or redo is allowed to proceed.
 	 * </p>
 	 * 
-	 * @param approver -
-	 *            the IOperationApprover to be added as an approver.
+	 * @param approver
+	 *            the IOperationApprover to be added as an approver.the instance
+	 *            to remove. Must not be <code>null</code>. If an attempt is
+	 *            made to register an instance which is already registered with
+	 *            this instance, no operation is performed.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationApprover
 	 */
@@ -146,8 +149,11 @@ public interface IOperationHistory {
 	 * executed, undone, or redone.
 	 * </p>
 	 * 
-	 * @param listener -
-	 *            the IOperationHistoryListener to be added as a listener.
+	 * @param listener
+	 *            the IOperationHistoryListener to be added as a listener. Must
+	 *            not be <code>null</code>. If an attempt is made to register
+	 *            an instance which is already registered with this instance, no
+	 *            operation is performed.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
 	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
@@ -172,19 +178,19 @@ public interface IOperationHistory {
 	 * {@link #openOperation}.
 	 * </p>
 	 * 
-	 * @param operationOK -
+	 * @param operationOK
 	 *            <code>true</code> if the operation successfully completed.
 	 *            Listeners should be notified with <code>DONE</code>,
 	 *            <code>UNDONE</code>, or <code>REDONE</code>.
 	 *            <code>false</code> if the operation did not successfully
 	 *            complete. Listeners should be notified with
 	 *            <code>OPERATION_NOT_OK</code>.
-	 * @param addToHistory -
+	 * @param addToHistory
 	 *            <code>true</code> if the operation should be added to the
 	 *            history, <code>false</code> if it should not. If the
 	 *            <code>operationOK</code> parameter is <code>false</code>,
 	 *            the operation will never be added to the history.
-	 * @param mode -
+	 * @param mode
 	 *            the mode the operation was opened in. Can be one of
 	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
 	 *            <code>REDO</code>. This determines what notifications are
@@ -198,7 +204,7 @@ public interface IOperationHistory {
 	 * context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be checked
 	 * @return <code>true</code> if there is a redoable operation,
 	 *         <code>false</code> otherwise.
@@ -212,7 +218,7 @@ public interface IOperationHistory {
 	 * context
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be checked
 	 * @return <code>true</code> if there is an undoable operation,
 	 *         <code>false</code> otherwise.
@@ -223,20 +229,20 @@ public interface IOperationHistory {
 	 * <p>
 	 * Dispose of the specified context in the history. All operations that have
 	 * only the given context will be disposed. References to the context in
-	 * operations that have more than one context will also be removed.
-	 * A history notification for the removal of each operation being
-	 * disposed will be sent.  
+	 * operations that have more than one context will also be removed. A
+	 * history notification for the removal of each operation being disposed
+	 * will be sent.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be disposed
-	 * @param flushUndo -
+	 * @param flushUndo
 	 *            <code>true</code> if the context should be flushed from the
 	 *            undo history, <code>false</code> if it should not
-	 * @param flushRedo -
+	 * @param flushRedo
 	 *            <code>true</code> if the context should be flushed from the
 	 *            redo history, <code>false</code> if it should not.
-	 * @param flushContext -
+	 * @param flushContext
 	 *            <code>true</code> if the context is no longer in use and
 	 *            references to it should be flushed.
 	 */
@@ -258,14 +264,14 @@ public interface IOperationHistory {
 	 * will be sent.
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation
 	 *            the operation to be executed and then added to the history
 	 * 
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor to be used (or <code>null</code>)
 	 *            during the operation.
 	 * 
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -306,11 +312,10 @@ public interface IOperationHistory {
 	 * Return the limit on the undo and redo history for a particular context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context whose limit is requested
 	 * 
-	 * @return limit - the undo and redo history limit for the specified
-	 *         context.
+	 * @return limit the undo and redo history limit for the specified context.
 	 */
 	int getLimit(IUndoContext context);
 
@@ -321,7 +326,7 @@ public interface IOperationHistory {
 	 * "Redo" commands were invoked.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context for the redo
 	 * @return the array of operations in the history
 	 */
@@ -332,7 +337,7 @@ public interface IOperationHistory {
 	 * Get the operation that will next be redone in the given context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context for the redo
 	 * @return the operation to be redone or <code>null</code> if there is no
 	 *         operation available. There is no guarantee that the returned
@@ -347,7 +352,7 @@ public interface IOperationHistory {
 	 * "Undo" commands were invoked.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context for the undo
 	 * @return the array of operations in the history
 	 */
@@ -359,12 +364,12 @@ public interface IOperationHistory {
 	 * other related operations. Consider all operations that are subsequently
 	 * executed or added to be part of this operation. When an operation is
 	 * opened, listeners will immediately receive a notification for the opened
-	 * operation.  The specific notification depends on
-	 * the mode in which the operation is opened (<code>ABOUT_TO_EXECUTE</code>,
+	 * operation. The specific notification depends on the mode in which the
+	 * operation is opened (<code>ABOUT_TO_EXECUTE</code>,
 	 * <code>ABOUT_TO_UNDO</code>, <code>ABOUT_TO_REDO</code>).
-	 * Notifications for any other execute or add while this
-	 * operation is open will not occur. Instead, those operations will be added
-	 * to the current operation.
+	 * Notifications for any other execute or add while this operation is open
+	 * will not occur. Instead, those operations will be added to the current
+	 * operation.
 	 * </p>
 	 * <p>
 	 * Note: This method is intended to be used by legacy undo frameworks that
@@ -382,14 +387,15 @@ public interface IOperationHistory {
 	 * to the composite.
 	 * </p>
 	 * <p>
-	 * Open operations cannot be nested. If this method is called when a different
-	 * operation is open, it is presumed to be an application coding error and
-	 * this method will throw an IllegalStateException.
+	 * Open operations cannot be nested. If this method is called when a
+	 * different operation is open, it is presumed to be an application coding
+	 * error and this method will throw an IllegalStateException.
 	 * </p>
-	 * @param operation -
+	 * 
+	 * @param operation
 	 *            the composite operation to be considered as the parent for all
 	 *            subsequent operations.
-	 * @param mode -
+	 * @param mode
 	 *            the mode the operation is executing in. Can be one of
 	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
 	 *            <code>REDO</code>. This determines what notifications are
@@ -403,7 +409,7 @@ public interface IOperationHistory {
 	 * operation history. Notify listeners with an OPERATION_CHANGED event.
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation
 	 *            the operation that has changed.
 	 * 
 	 */
@@ -414,7 +420,7 @@ public interface IOperationHistory {
 	 * Get the operation that will next be undone in the given context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context for the undo
 	 * @return the operation to be undone or <code>null</code> if there is no
 	 *         operation available. There is no guarantee that the available
@@ -427,12 +433,12 @@ public interface IOperationHistory {
 	 * Redo the most recently undone operation in the given context
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be redone
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor to be used for the redo, or
 	 *            <code>null</code> if no progress monitor is provided.
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -458,7 +464,7 @@ public interface IOperationHistory {
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
-	 * 
+	 *
 	 */
 	IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException;
@@ -468,12 +474,12 @@ public interface IOperationHistory {
 	 * Redo the specified operation
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation
 	 *            the operation to be redone
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor to be used for the redo, or code>null</code>
 	 *            if no progress monitor is provided
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not <code>null</code>,
@@ -514,8 +520,11 @@ public interface IOperationHistory {
 	 * approvers that are consulted before an operation is undone or redone.
 	 * </p>
 	 * 
-	 * @param approver -
-	 *            the IOperationApprover to be removed
+	 * @param approver
+	 *            the IOperationApprover to be removed. Must not be
+	 *            <code>null</code>. If an attempt is made to remove an
+	 *            instance which is not already registered with this instance,
+	 *            no operation is performed.
 	 */
 	void removeOperationApprover(IOperationApprover approver);
 
@@ -525,8 +534,11 @@ public interface IOperationHistory {
 	 * listeners.
 	 * </p>
 	 * 
-	 * @param listener -
-	 *            The IOperationHistoryListener to be removed
+	 * @param listener
+	 *            The IOperationHistoryListener to be removed. Must not be
+	 *            <code>null</code>. If an attempt is made to remove an
+	 *            instance which is not already registered with this instance,
+	 *            no operation is performed.
 	 */
 	void removeOperationHistoryListener(IOperationHistoryListener listener);
 
@@ -540,9 +552,9 @@ public interface IOperationHistory {
 	 * removal of the replaced element and the addition of each replacement.
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            The IUndoableOperation to be replaced
-	 * @param replacements -
+	 * @param replacements 
 	 *            the array of IUndoableOperation to replace the first operation
 	 */
 	void replaceOperation(IUndoableOperation operation,
@@ -553,10 +565,10 @@ public interface IOperationHistory {
 	 * Set the limit on the undo and redo history for a particular context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context whose limit is being set.
 	 * 
-	 * @param limit -
+	 * @param limit 
 	 *            the maximum number of operations that should be kept in the
 	 *            undo or redo history for the specified context. Must not be
 	 *            negative.
@@ -568,12 +580,12 @@ public interface IOperationHistory {
 	 * Undo the most recently executed operation in the given context
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context to be undone
-	 * @param monitor -
+	 * @param monitor 
 	 *            the progress monitor to be used for the undo, or
 	 *            <code>null</code> if no progress monitor is provided.
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -610,12 +622,12 @@ public interface IOperationHistory {
 	 * Undo the specified operation
 	 * </p>
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation to be undone
-	 * @param monitor -
+	 * @param monitor 
 	 *            the progress monitor to be used for the undo, or
 	 *            <code>null</code> if no progress monitor is provided
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not

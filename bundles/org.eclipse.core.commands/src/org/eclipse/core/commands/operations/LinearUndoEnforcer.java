@@ -18,12 +18,18 @@ import org.eclipse.core.runtime.Status;
  * <p>
  * An operation approver that enforces a strict linear undo. It does not allow
  * the undo or redo of any operation that is not the latest available operation
- * in all of its undo contexts.
+ * in all of its undo contexts.  This class may be instantiated by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class LinearUndoEnforcer extends LinearUndoViolationDetector {
+public final class LinearUndoEnforcer extends LinearUndoViolationDetector {
+	/**
+	 * Create an instance of LinearUndoEnforcer.
+	 */
+	public LinearUndoEnforcer() {
+		super();
+	}
 
 	/*
 	 * Return whether a linear redo violation is allowable.  A linear redo violation

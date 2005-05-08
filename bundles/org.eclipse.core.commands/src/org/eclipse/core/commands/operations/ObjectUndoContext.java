@@ -16,12 +16,13 @@ import java.util.List;
 /**
  * <p>
  * An undo context that can be used to represent any given object. Clients
- * can add matching contexts to this context. 
+ * can add matching contexts to this context.  This class may be instantiated
+ * by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class ObjectUndoContext extends UndoContext {
+public final class ObjectUndoContext extends UndoContext {
 
 	private Object object;
 
@@ -32,7 +33,7 @@ public class ObjectUndoContext extends UndoContext {
 	/**
 	 * Construct an operation context that represents the given object.
 	 * 
-	 * @param object -
+	 * @param object 
 	 *            the object to be represented.
 	 */
 	public ObjectUndoContext(Object object) {
@@ -43,9 +44,9 @@ public class ObjectUndoContext extends UndoContext {
 	 * Construct an operation context that represents the given object and has a
 	 * specialized label.
 	 * 
-	 * @param object -
+	 * @param object 
 	 *            the object to be represented.
-	 * @param label -
+	 * @param label 
 	 *            the label for the context
 	 */
 	public ObjectUndoContext(Object object, String label) {
@@ -68,7 +69,7 @@ public class ObjectUndoContext extends UndoContext {
 	/**
 	 * Return the object that is represented by this context.
 	 * 
-	 * @return - the object represented by this context.
+	 * @return the object represented by this context.
 	 */
 	public Object getObject() {
 		return object;
@@ -82,7 +83,7 @@ public class ObjectUndoContext extends UndoContext {
 	 * specialized behavior, yet have their operations appear in a more
 	 * global context.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context to be added as a match of this context
 	 */
 	public void addMatch(IUndoContext context) {
@@ -95,7 +96,7 @@ public class ObjectUndoContext extends UndoContext {
 	 * filtered for a particular context. This method has no effect if the
 	 * specified context was never previously added as a match.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context to be removed from the list of matches for this
 	 *            context
 	 */

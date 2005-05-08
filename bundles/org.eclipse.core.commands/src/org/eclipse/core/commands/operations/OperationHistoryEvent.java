@@ -39,6 +39,8 @@ public final class OperationHistoryEvent {
 	 * 
 	 * If the operation successfully executes, clients will also receive a
 	 * notification that it has been added to the history.
+	 * 
+	 * (value is 1).
 	 */
 
 	public static final int ABOUT_TO_EXECUTE = 1;
@@ -49,6 +51,8 @@ public final class OperationHistoryEvent {
 	 * receive a REDONE notification if the operation is successful, or an
 	 * OPERATION_NOT_OK notification if the redo is cancelled or otherwise
 	 * fails.
+	 * 
+	 * (value is 2).
 	 */
 	public static final int ABOUT_TO_REDO = 2;
 
@@ -58,6 +62,8 @@ public final class OperationHistoryEvent {
 	 * receive an UNDONE notification if the operation is successful, or an
 	 * OPERATION_NOT_OK notification if the undo is cancelled or otherwise
 	 * fails.
+	 * 
+	 * (value is 3).
 	 */
 	public static final int ABOUT_TO_UNDO = 3;
 
@@ -70,6 +76,8 @@ public final class OperationHistoryEvent {
 	 * 
 	 * Clients will also receive a notification that the operation has been
 	 * added to the history.
+	 * 
+	 * (value is 4).
 	 */
 	public static final int DONE = 4;
 
@@ -77,12 +85,16 @@ public final class OperationHistoryEvent {
 	 * OPERATION_ADDED indicates an operation was added to the history.
 	 * Listeners typically use this to add their context to a new operation as
 	 * appropriate or otherwise record the operation.
+	 * 
+	 * (value is 5).
 	 */
 	public static final int OPERATION_ADDED = 5;
 
 	/**
 	 * OPERATION_CHANGED indicates that an operation has changed in some way
 	 * since it was added to the operations history.
+	 * 
+	 * (value is 6).
 	 */
 	public static final int OPERATION_CHANGED = 6;
 
@@ -94,6 +106,8 @@ public final class OperationHistoryEvent {
 	 * an operation is undone would turn redraw on when the operation completes,
 	 * or when this notification is received, since there will be no
 	 * notification of the completion.
+	 * 
+	 * (value is 7).
 	 */
 	public static final int OPERATION_NOT_OK = 7;
 
@@ -102,18 +116,24 @@ public final class OperationHistoryEvent {
 	 * Listeners typically remove any record of the operation that they may have
 	 * kept in their own state. The operation has been disposed by the time
 	 * listeners receive this notification.
+	 * 
+	 * (value is 8).
 	 */
 	public static final int OPERATION_REMOVED = 8;
 
 	/**
 	 * REDONE indicates that an operation was redone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
+	 * 
+	 * (value is 9).
 	 */
 	public static final int REDONE = 9;
 
 	/**
 	 * UNDONE indicates that an operation was undone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
+	 * 
+	 * (value is 10).
 	 */
 	public static final int UNDONE = 10;
 
@@ -126,11 +146,11 @@ public final class OperationHistoryEvent {
 	/**
 	 * Construct an event for the specified operation history.
 	 * 
-	 * @param code -
+	 * @param code 
 	 *            the event code to be used.
-	 * @param history -
+	 * @param history 
 	 *            the history triggering the event.
-	 * @param operation -
+	 * @param operation 
 	 *            the operation involved in the event.
 	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,

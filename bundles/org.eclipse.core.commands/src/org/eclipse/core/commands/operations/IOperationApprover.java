@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.IStatus;
  * </p>
  * <p>
  * By the time an IOperationApprover is consulted, the undo has already been
- * requested. Approvers should return <code>true</code> if the operation
- * should proceed, and <code>false</code> if it should not. When an operation
- * is not approved, it is expected that the object not allowing the operation
- * has already consulted the user if necessary or otherwise provided any
- * necessary information to the user about the fact that operation is not
- * approved.
+ * requested. Approvers should return an <code>IStatus</code> object with
+ * severity <code>OK</code> if the operation should proceed, and any other
+ * severity if it should not. When an operation is not approved, it is expected
+ * that the object not allowing the operation has already consulted the user if
+ * necessary or otherwise provided any necessary information to the user about
+ * the fact that operation is not approved.
  * </p>
  * <p>
  * Operation approvers must be prepared to receive the approval messages from a
@@ -47,11 +47,11 @@ public interface IOperationApprover {
 	 * be performed when the status is <code>OK</code>, since other operation
 	 * approvers may veto the redo.
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation to be redone
-	 * @param history -
+	 * @param history 
 	 *            the history redoing the operation
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -77,16 +77,16 @@ public interface IOperationApprover {
 	 * be performed when the status is <code>OK</code>, since other operation
 	 * approvers can veto the undo.
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation to be undone
-	 * @param history -
+	 * @param history 
 	 *            the history undoing the operation
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it should minimally contain an adapter
-	 *            for the org.eclipse.swt.widgets.Shell.class.  Even if UI
+	 *            for the org.eclipse.swt.widgets.Shell.class. Even if UI
 	 *            information is provided, the implementation of this method
 	 *            must be prepared for being called from a background thread.
 	 *            Any UI access must be properly synchronized using the

@@ -45,7 +45,7 @@ public interface IUndoContext {
 	 * receiving context. When a context matches another context, operations
 	 * that have the context are considered to also have the matching context.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context to be checked against the receiving context.
 	 * 
 	 * @return <code>true</code> if the receiving context can be considered a

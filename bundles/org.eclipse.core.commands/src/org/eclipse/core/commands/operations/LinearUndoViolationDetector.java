@@ -26,18 +26,25 @@ import org.eclipse.core.runtime.Status;
 public abstract class LinearUndoViolationDetector implements IOperationApprover {
 
 	/**
+	 * Create an instance of LinearUndoViolationDetector.
+	 */
+	public LinearUndoViolationDetector() {
+		super();
+	}
+
+	/**
 	 * Return whether a linear redo violation is allowable. A linear redo
 	 * violation is defined as a request to redo a particular operation even if
 	 * it is not the most recently added operation to the redo history.
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation for which a linear redo violation has been
 	 *            detected.
-	 * @param context -
+	 * @param context 
 	 *            the undo context in which the linear redo violation exists
-	 * @param history -
+	 * @param history 
 	 *            the operation history containing the operation
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -53,14 +60,14 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 	 * violation is defined as a request to undo a particular operation even if
 	 * it is not the most recently added operation to the undo history.
 	 * 
-	 * @param operation -
+	 * @param operation 
 	 *            the operation for which a linear undo violation has been
 	 *            detected.
-	 * @param context -
+	 * @param context 
 	 *            the undo context in which the linear undo violation exists
-	 * @param history -
+	 * @param history 
 	 *            the operation history containing the operation
-	 * @param info -
+	 * @param info 
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -78,7 +85,7 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 	 *      org.eclipse.core.commands.operations.IOperationHistory,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus proceedRedoing(IUndoableOperation operation,
+	public final IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
 		IUndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
@@ -101,7 +108,7 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 
-	public IStatus proceedUndoing(IUndoableOperation operation,
+	public final IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
 		IUndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {

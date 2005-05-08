@@ -62,47 +62,50 @@ import org.eclipse.core.runtime.Status;
  * 
  * @since 3.1
  */
-public class DefaultOperationHistory implements IOperationHistory {
+public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever notifications about
-	 * changes to the history occur.
+	 * changes to the history occur.  This flag should be used for debug purposes only.
+
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_NOTIFICATION = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an unexpected condition
-	 * arises.
+	 * arises.  This flag should be used for debug purposes only.
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_UNEXPECTED = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an undo context is
-	 * disposed.
+	 * disposed.  This flag should be used for debug purposes only.
+
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_DISPOSE = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> during the open/close sequence.
+	 * This flag should be used for debug purposes only.
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_OPENOPERATION = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an operation is not
-	 * approved.
+	 * approved.  This flag should be used for debug purposes only.
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_APPROVAL = false;
 
-	protected static final int DEFAULT_LIMIT = 20;
+	static final int DEFAULT_LIMIT = 20;
 
 	/**
 	 * the list of {@link IOperationApprover}s
 	 */
-	protected List approvers = Collections.synchronizedList(new ArrayList());
+	List approvers = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * a map of undo limits per context
@@ -112,7 +115,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationHistoryListener}s
 	 */
-	protected List listeners = Collections.synchronizedList(new ArrayList());
+	List listeners = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * the list of operations available for redo, LIFO
@@ -132,6 +135,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private ICompositeOperation openComposite = null;
 
+	/**
+	 * Create an instance of DefaultOperationHistory.
+	 */
+	public DefaultOperationHistory() {
+		super();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -177,7 +186,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * techniques specified by the client's widget library.
 	 * </p>
 	 * 
-	 * @param approver -
+	 * @param approver 
 	 *            the IOperationApprover to be added as an approver.
 	 * 
 	 */
@@ -199,7 +208,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * specified by the client's widget library.
 	 * </p>
 	 * 
-	 * @param listener -
+	 * @param listener 
 	 *            the IOperationHistoryListener to be added as a listener.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener

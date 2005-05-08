@@ -47,7 +47,7 @@ public final class OperationHistoryFactory {
 	 * be ignored after it has been already set, or after a default one has 
 	 * been created.
 	 * 
-	 * @param history -
+	 * @param history 
 	 *            the operation history to be used for executing, undoing, and
 	 *            redoing operations.
 	 */
@@ -56,6 +56,10 @@ public final class OperationHistoryFactory {
 		if (operationHistory == null) {
 			operationHistory = history;
 		}
+	}
+	
+	private OperationHistoryFactory() {
+		// may not be instantiated
 	}
 
 }

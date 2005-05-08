@@ -29,7 +29,7 @@ public interface IOperationHistoryListener {
 	 * Something of note has happened in the IOperationHistory. Listeners should
 	 * check the supplied event for details.
 	 * 
-	 * @param event -
+	 * @param event 
 	 *            the OperationHistoryEvent that describes the particular
 	 *            notification.
 	 */

@@ -35,11 +35,14 @@ public interface IUndoableOperation {
 
 	/**
 	 * <p>
-	 * Add the specified context to the operation. If the context is already
-	 * present, do not add it again.
+	 * Add the specified context to the operation. If a context equal to the
+	 * specified context is already present, do not add it again. Note that
+	 * determining whether a context is already present is based on equality,
+	 * not whether the context matches (@see IUndoContext#matches(IUndoContext))
+	 * another context.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be added
 	 */
 	void addContext(IUndoContext context);
@@ -53,9 +56,8 @@ public interface IUndoableOperation {
 	 * Note: The computation for this method must be fast, as it is called
 	 * frequently. If necessary, this method can be optimistic in its
 	 * computation (returning true) and later perform more time-consuming
-	 * computations during the actual execution of the operation, returning
-	 * the appropriate status if the operation cannot actually execute at
-	 * that time.
+	 * computations during the actual execution of the operation, returning the
+	 * appropriate status if the operation cannot actually execute at that time.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if the operation can be executed;
@@ -72,9 +74,9 @@ public interface IUndoableOperation {
 	 * Note: The computation for this method must be fast, as it is called
 	 * frequently. If necessary, this method can be optimistic in its
 	 * computation (returning true) and later perform more time-consuming
-	 * computations during the actual redo of the operation, returning
-	 * the appropriate status if the operation cannot actually be redone at
-	 * that time.
+	 * computations during the actual redo of the operation, returning the
+	 * appropriate status if the operation cannot actually be redone at that
+	 * time.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if the operation can be redone;
@@ -91,9 +93,9 @@ public interface IUndoableOperation {
 	 * Note: The computation for this method must be fast, as it is called
 	 * frequently. If necessary, this method can be optimistic in its
 	 * computation (returning true) and later perform more time-consuming
-	 * computations during the actual undo of the operation, returning
-	 * the appropriate status if the operation cannot actually be undone at
-	 * that time.
+	 * computations during the actual undo of the operation, returning the
+	 * appropriate status if the operation cannot actually be undone at that
+	 * time.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if the operation can be undone;
@@ -113,10 +115,10 @@ public interface IUndoableOperation {
 	 * Execute the operation. This method should only be called the first time
 	 * that an operation is executed.
 	 * 
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -139,10 +141,10 @@ public interface IUndoableOperation {
 	 * </p>
 	 * <p>
 	 * This method may be called from inside a synchronized block. To avoid
-	 * deadlock conditions, implementers of this method must avoid waiting on locks
-	 * during this method.
+	 * deadlock conditions, implementers of this method must avoid waiting on
+	 * locks during this method.
 	 * </p>
-
+	 * 
 	 * @return the array of contexts
 	 */
 	IUndoContext[] getContexts();
@@ -158,15 +160,18 @@ public interface IUndoableOperation {
 
 	/**
 	 * <p>
-	 * Returns whether the operation has the specified context.
+	 * Returns whether the operation has a matching context for the specified
+	 * context.
 	 * </p>
 	 * <p>
 	 * This method may be called from inside a synchronized block. To avoid
-	 * deadlock conditions, implementers of this method must avoid waiting on locks
-	 * during this method.
+	 * deadlock conditions, implementers of this method must avoid waiting on
+	 * locks during this method.
 	 * </p>
 	 * 
-	 * @param context -
+	 * @see IUndoContext#matches(IUndoContext)
+	 * 
+	 * @param context
 	 *            the context in question
 	 * @return <code>true</code> if the context is present, <code>false</code>
 	 *         if it is not.
@@ -177,10 +182,10 @@ public interface IUndoableOperation {
 	 * Redo the operation. This method should only be called after an operation
 	 * has been undone.
 	 * 
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -199,9 +204,12 @@ public interface IUndoableOperation {
 
 	/**
 	 * Remove the specified context from the operation. This method has no
-	 * effect if the context is not present.
+	 * effect if the context is not equal to another context in the context
+	 * list. Note that determining whether a context is present when removing it
+	 * is based on equality, not whether the context matches (@see
+	 * IUndoContext#matches(IUndoContext)) another context.
 	 * 
-	 * @param context -
+	 * @param context
 	 *            the context to be removed
 	 */
 	void removeContext(IUndoContext context);
@@ -210,10 +218,10 @@ public interface IUndoableOperation {
 	 * Undo the operation. This method should only be called after an operation
 	 * has been executed.
 	 * 
-	 * @param monitor -
+	 * @param monitor
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
-	 * @param info -
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
