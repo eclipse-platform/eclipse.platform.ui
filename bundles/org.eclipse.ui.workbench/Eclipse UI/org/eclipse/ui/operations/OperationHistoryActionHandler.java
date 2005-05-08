@@ -201,10 +201,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	abstract IUndoableOperation getOperation();
 
-	/**
-	 * Run the action. Provide common error handling and let the subclasses do
-	 * the real work.
-	 */
+    /*
+     * (non-Javadoc) 
+     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
+     */
 	public final void run() {
 		try {
 			runCommand();
@@ -265,7 +265,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * the action handler is created, but the context can also be changed
 	 * dynamically.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context to be used for the undo history
 	 */
 	public void setContext(IUndoContext context) {
@@ -278,7 +278,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * history when invalid operations are encountered. The default value is
 	 * <code>false</code>.
 	 * 
-	 * @param prune -
+	 * @param prune 
 	 *            <code>true</code> if the history should be pruned by the
 	 *            handler, and <code>false</code> if it should not.
 	 * 
@@ -289,7 +289,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 	/**
 	 * Update enabling and labels according to the current status of the
-	 * history.
+	 * operation history.
 	 */
 	public void update() {
 		boolean enabled = shouldBeEnabled();

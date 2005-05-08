@@ -47,9 +47,9 @@ public final class LinearUndoViolationUserApprover extends
 	 * Create a LinearUndoViolationUserApprover associated with the specified
 	 * workbench part.
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the context with the linear undo violation
-	 * @param part -
+	 * @param part 
 	 *            the part that should be used for prompting the user.
 	 */
 	public LinearUndoViolationUserApprover(IUndoContext context,

@@ -16,7 +16,9 @@ with the workbench operation history.  The <b>workbench operation support</b> pr
 access to the operation history used by the workbench and a context that should
 be used to identify operations global to the workbench.  The workbench history is used 
 to maintain all undoable operations that occur in the workbench.  Standard action 
-handlers are provided so that any view or editor can easily add undo/redo support that 
-works with the workbench operations history.  
+handlers and an associated action group are provided so that any view or editor 
+can easily add undo/redo support that works with the workbench operations history. 
+Specialized <b>operation approvers</b> can be used by clients to get user approval
+for unexpected conditions in the operation history. 
 </body>
 </html>

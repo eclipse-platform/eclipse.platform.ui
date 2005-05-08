@@ -25,7 +25,7 @@ import org.eclipse.ui.operations.UndoActionHandler;
  * workbench part site. It supports filtering of undo or redo on a particular
  * undo context. The undo context can be optionally pruned, which means the
  * context will be flushed actively whenever an invalid operation is found on
- * top of its history.  This class may be instantiated by clients.
+ * top of its history. This class may be instantiated by clients.
  * </p>
  * 
  * @since 3.1
@@ -40,12 +40,12 @@ public final class UndoRedoActionGroup extends ActionGroup {
 	 * Construct an undo redo action group for the specified workbench part
 	 * site, using the specified undo context.
 	 * 
-	 * @param site -
+	 * @param site
 	 *            the workbench part site that is creating the action group
-	 * @param undoContext -
+	 * @param undoContext
 	 *            the undo context to be used for filtering the operation
 	 *            history
-	 * @param pruneHistory -
+	 * @param pruneHistory
 	 *            a boolean that indicates whether the history for the specified
 	 *            context should be pruned whenever an invalid operation is
 	 *            encountered.
@@ -62,9 +62,11 @@ public final class UndoRedoActionGroup extends ActionGroup {
 		redoActionHandler.setPruneHistory(pruneHistory);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+	 */
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		if (undoActionHandler != null) {

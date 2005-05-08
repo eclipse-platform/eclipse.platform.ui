@@ -35,9 +35,9 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	 * Construct an action handler that handles the labelling and enabling of
 	 * the undo action for a specified operation context.
 	 * 
-	 * @param site -
+	 * @param site 
 	 *            the workbench part site that created the action.
-	 * @param context -
+	 * @param context 
 	 *            the context to be used for the undo
 	 */
 	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {

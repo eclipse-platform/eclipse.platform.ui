@@ -61,17 +61,17 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * Create a NonLocalUndoUserApprover associated with the specified editor
 	 * and undo context
 	 * 
-	 * @param context -
+	 * @param context 
 	 *            the undo context of operations in question.
-	 * @param part -
+	 * @param part 
 	 *            the editor part that is displaying the element
-	 * @param affectedObjects -
+	 * @param affectedObjects 
 	 *            the objects that are affected by the editor and considered to
 	 *            be objects local to the editor. The objects are typically
 	 *            instances of the preferredComparison or else provide adapters
 	 *            for the preferredComparisonClass, although this is not
 	 *            required.
-	 * @param preferredComparisonClass -
+	 * @param preferredComparisonClass 
 	 *            the preferred class to be used when comparing the editor's
 	 *            affectedObjects with those provided by the undoable operation
 	 *            using
