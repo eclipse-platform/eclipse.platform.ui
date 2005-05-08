@@ -61,8 +61,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
     		private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
     		private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
  
-    		private HashMap fIdMap;
-    		private HashMap fExtensionMap;
+    		private HashMap fIdMap;					// maps ids to datas
+    		private HashMap fExtensionMap;			// maps extensions to datas
     		private HashMap fContentTypeBindings;		// maps content type bindings to datas
         
  
@@ -109,17 +109,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	    	}
 
 	    	Object search(IContentType type) {
-	    	    if (type != null && fContentTypeBindings != null) {
-		    	    Object b= fContentTypeBindings.get(type);
-		    	    if (b != null)
-		    	        return b;
-	            Iterator iter= fContentTypeBindings.keySet().iterator();
-	            while (iter.hasNext()) {
-	                IContentType ct= (IContentType) iter.next();
-	                if (type.isKindOf(ct)) {
-	                    return fContentTypeBindings.get(ct);
-	                }
-	            }
+	    	    if (fContentTypeBindings != null) {
+	    	    		for (; type != null; type= type.getBaseType()) {
+	    	    			Object data= fContentTypeBindings.get(type);
+	    	    			if (data != null)
+	    	    				return data;
+	    	    		}
 	    	    }
 	    	    return null;
 	    	}
@@ -690,12 +685,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return null;
 					
 		// content type search
-		IContentType ctype= getCommonType(getContentTypes(input));
+		IContentType ctype= getCommonType(input);
 		if (ctype != null) {
 			initializeRegistries();
-		    Viewer viewer= getViewer(fStructureMergeViewers.search(ctype), oldViewer, parent, configuration);
-		    if (viewer != null)
-		        return viewer;
+			Viewer viewer= getViewer(fStructureMergeViewers.search(ctype), oldViewer, parent, configuration);
+			if (viewer != null)
+				return viewer;
 		}
 		
 		// old style search
@@ -782,7 +777,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			
 		ICompareInput input= (ICompareInput) in;
 		
-		IContentType ctype= getCommonType(getContentTypes(input));
+		IContentType ctype= getCommonType(input);
 		if (ctype != null) {
 			initializeRegistries();
 			Viewer viewer= getViewer(fContentMergeViewers.search(ctype), oldViewer, parent, cc);
@@ -867,55 +862,43 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return (String[]) tmp.toArray(new String[tmp.size()]);
 	}
 		
-	private static IContentType[] getContentTypes(ICompareInput input) {
-		ITypedElement ancestor= input.getAncestor();
-		ITypedElement left= input.getLeft();
-		ITypedElement right= input.getRight();
-		
-		ArrayList tmp= new ArrayList();				
-	    IContentType type= getContentType(ancestor);
-		if (type != null)
-		    tmp.add(type);
-	    type= getContentType(left);
-		if (type != null)
-		    tmp.add(type);
-		type= getContentType(right);
-		if (type != null)
-		    tmp.add(type);
-		
-		return (IContentType[]) tmp.toArray(new IContentType[tmp.size()]);
-	}
-	
 	private static IContentType getContentType(ITypedElement element) {
 	    if (element == null)
 	        return null;
 	    String name= element.getName();
-		IContentType[] associated= fgContentTypeManager.findContentTypesFor(name);
-		if (associated.length > 0)
-		    return associated[0];
-        IContentType ct= null;
-		if (element instanceof IStreamContentAccessor) {
-		    IStreamContentAccessor isa= (IStreamContentAccessor) element;
-            try {
-                InputStream is= isa.getContents();
-                if (is != null) {
-	    		        InputStream bis= new BufferedInputStream(is);
-	    		        try {
-	    		            ct= fgContentTypeManager.findContentTypeFor(is, name);
-                    } catch (IOException e) {
+	    IContentType ct= null;
+    		if (element instanceof IStreamContentAccessor) {
+    			IStreamContentAccessor isa= (IStreamContentAccessor) element;
+    			try {
+    				InputStream is= isa.getContents();
+    				if (	is != null) {
+    					InputStream bis= new BufferedInputStream(is);
+    					try {
+    						ct= fgContentTypeManager.findContentTypeFor(is, name);
+    					} catch (IOException e) {
                     		// silently ignored
-                    }
-	    		        try {
-	    		            	bis.close();
-                    } catch (IOException e2) {
-                			// silently ignored
-                    }
+    					} finally {
+	    					try {
+		    		            	bis.close();
+	    					} catch (IOException e2) {
+	                			// silently ignored
+	    					}
+    					}
     		    		}
             } catch (CoreException e1) {
             		// silently ignored
             }
 		}
-        return ct;
+    		if (ct == null)
+    			ct= fgContentTypeManager.findContentTypeFor(name);
+
+    		if (ct == null) {
+    			// try to guess type
+    			String t= guessType(element);
+    			if (ITypedElement.TEXT_TYPE.equals(t))
+    				return Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+    		}
+    		return ct;
 	}
 	
 	/*
@@ -936,44 +919,73 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	/*
 	 * Returns the most specific content type that is common to the given inputs or null.
 	 */
-	private static IContentType getCommonType(IContentType[] types) {
-	    Set s= null;
-	    ArrayList l= null;
-	    	switch (types.length) {
+	private static IContentType getCommonType(ICompareInput input) {
+
+		ITypedElement ancestor= input.getAncestor();
+		ITypedElement left= input.getLeft();
+		ITypedElement right= input.getRight();
+		
+		int n= 0;
+		IContentType[] types= new IContentType[3];
+		IContentType type= null;
+		
+		if (ancestor != null) {
+			type= getContentType(ancestor);
+			if (type != null)
+				types[n++]= type;
+		}
+	    type= getContentType(left);
+		if (type != null)
+			types[n++]= type;
+		else
+			return null;
+		type= getContentType(right);
+		if (type != null)
+			types[n++]= type;
+		else
+			return null;
+				
+		IContentType result= null;
+		IContentType[] s0, s1, s2;
+	    	switch (n) {
+	    	case 0:
+	    		return null;
 		case 1:
 			return types[0];
 		case 2:
-		    l= new ArrayList();
-		    s= toSet(l, types[0]);
-		    s.retainAll(toSet(l, types[1]));
-			break;
+			if (types[0].equals(types[1]))
+				return types[0];
+			s0= toFullPath(types[0]);
+			s1= toFullPath(types[1]);
+			for (int i= 0; i < Math.min(s0.length, s1.length); i++) {
+				if (!s0[i].equals(s1[i]))
+					break;
+				result= s0[i];
+			}
+			return result;
 		case 3:
-		    l= new ArrayList();
-		    s= toSet(l, types[0]);
-		    s.retainAll(toSet(l, types[1]));
-		    s.retainAll(toSet(l, types[2]));
-			break;
-		}
-		if (s != null && !s.isEmpty()) {
-		    Iterator iter= l.iterator();
-		    while (iter.hasNext()) {
-		        IContentType ct= (IContentType) iter.next();
-		        if (s.contains(ct))
-		            return ct;
-		    }
+			if (types[0].equals(types[1]) && types[1].equals(types[2]))
+				return types[0];
+			s0= toFullPath(types[0]);
+			s1= toFullPath(types[1]);
+			s2= toFullPath(types[2]);
+			for (int i= 0; i < Math.min(Math.min(s0.length, s1.length), s2.length); i++) {
+				if (!s0[i].equals(s1[i]) || !s1[i].equals(s2[i]))
+					break;
+				result= s0[i];
+			}
+			return result;
 		}
 		return null;
 	}
 	
-	private static Set toSet(ArrayList l, IContentType ct) {
-	    Set set= new HashSet();
-	    for (; ct != null; ct= ct.getBaseType()) {
-	        l.add(ct);
-	        set.add(ct);
-	    }
-	    return set;
+	private static IContentType[] toFullPath(IContentType ct) {
+		List l= new ArrayList();
+		for (; ct != null; ct= ct.getBaseType())
+			l.add(0, ct);
+		return (IContentType[]) l.toArray(new IContentType[l.size()]);
 	}
-	
+		
 	/*
 	 * Guesses the file type of the given input.
 	 * Returns ITypedElement.TEXT_TYPE if none of the first 10 lines is longer than 1000 bytes.
