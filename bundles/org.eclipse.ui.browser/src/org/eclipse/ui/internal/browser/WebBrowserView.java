@@ -24,13 +24,10 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class WebBrowserView extends ViewPart implements IBrowserViewerContainer {
 	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view"; //$NON-NLS-1$
-    private static final int DEFAULT_STYLE = BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR;
-    private static final char STYLE_SEP = '-';
-
-	protected BrowserViewer viewer;
+    protected BrowserViewer viewer;
 
 	public void createPartControl(Composite parent) {
-        int style = decodeStyle(getViewSite().getSecondaryId());
+        int style = WebBrowserUtil.decodeStyle(getViewSite().getSecondaryId());
         viewer = new BrowserViewer(parent, style);
         viewer.setContainer(this);
 		  
@@ -44,32 +41,7 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
 		  viewer.addPropertyChangeListener(propertyChangeListener);*/
 	}
     
-    /**
-     * Encodes browser style in the secondary id as id-style
-     * @param browserId
-     * @param style
-     * @return
-     */
-    public static String encodeStyle(String browserId, int style) {
-        return browserId+STYLE_SEP+style;
-    }
-    
-    private int decodeStyle(String secondaryId) {
-        if (secondaryId!=null) {
-            int sep = secondaryId.lastIndexOf(STYLE_SEP);
-            if (sep!= -1) {
-                String stoken = secondaryId.substring(sep+1);
-                try {
-                    return Integer.parseInt(stoken);
-                }
-                catch (NumberFormatException e) {
-                }
-            }
-        }
-        return DEFAULT_STYLE;
-    }
-
-	public void setURL(String url) {
+    public void setURL(String url) {
 		if (viewer != null)
 			viewer.setURL(url);
 	}

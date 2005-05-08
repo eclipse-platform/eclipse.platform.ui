@@ -70,7 +70,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		}
 
 		try {
-			Trace.trace(Trace.FINEST, "Launching " + location + " " + params);  //$NON-NLS-1$//$NON-NLS-2$
+			Trace.trace(Trace.FINEST, "Launching " + location + " " + params); //$NON-NLS-1$//$NON-NLS-2$
 			if (params == null || params.length() == 0)
 				process = Runtime.getRuntime().exec(location);
 			else
@@ -85,7 +85,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 				try {
 					process.waitFor();
 					DefaultBrowserSupport.getInstance().removeBrowser(
-							ExternalBrowserInstance.this.getId());
+							ExternalBrowserInstance.this);
 				} catch (Exception e) {
 					// ignore
 				}

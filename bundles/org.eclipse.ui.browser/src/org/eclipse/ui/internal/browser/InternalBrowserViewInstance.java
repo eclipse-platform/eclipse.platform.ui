@@ -20,7 +20,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class InternalBrowserViewInstance extends InternalBrowserInstance {
 	public InternalBrowserViewInstance(String id, int style, String name, String tooltip) {
-		super(WebBrowserView.encodeStyle(id, style), style, name, tooltip);
+		super(WebBrowserUtil.encodeStyle(id, style), style, name, tooltip);
 	}
 
 	public void openURL(URL url) throws PartInitException {

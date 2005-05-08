@@ -13,19 +13,28 @@ package org.eclipse.ui.internal.browser;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.browser.AbstractWebBrowser;
+
 /**
  * An instance of a running Web browser.
  */
 public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 	protected int style;
-	protected String name;
-	protected String tooltip;
-	protected IWorkbenchPart part;
-	protected IPartListener listener;
 
-	public InternalBrowserInstance(String id, int style, String name, String tooltip) {
-		super(WebBrowserView.encodeStyle(id, style));
+	protected String name;
+
+	protected String tooltip;
+
+	protected IWorkbenchPart part;
+
+	protected IPartListener listener;
+	
+	private Integer windowKey;
+
+	public InternalBrowserInstance(String id, int style, String name,
+			String tooltip) {
+		super(WebBrowserUtil.encodeStyle(id, style));
 		this.style = style;
 		this.name = name;
 		this.tooltip = tooltip;
@@ -34,38 +43,45 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
 	}
 
-    protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part) {
-        this.part = part;
-        listener = new IPartListener() {
-            public void partActivated(IWorkbenchPart part) {
-                // ignore
-            }
+	protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part) {
+		this.part = part;
+		listener = new IPartListener() {
+			public void partActivated(IWorkbenchPart part) {
+				// ignore
+			}
 
-            public void partBroughtToTop(IWorkbenchPart part) {
-                // ignore
-            }
+			public void partBroughtToTop(IWorkbenchPart part) {
+				// ignore
+			}
 
-            public void partClosed(IWorkbenchPart part) {
-                if (part.equals(InternalBrowserInstance.this.part)) {
-                    InternalBrowserInstance.this.part = null;
-                    page.removePartListener(listener);
-                    DefaultBrowserSupport.getInstance().removeBrowser(getId());
-                }
-            }
+			public void partClosed(IWorkbenchPart part) {
+				if (part.equals(InternalBrowserInstance.this.part)) {
+					InternalBrowserInstance.this.part = null;
+					page.removePartListener(listener);
+					DefaultBrowserSupport.getInstance().removeBrowser(
+							InternalBrowserInstance.this);
+				}
+			}
 
-            public void partDeactivated(IWorkbenchPart part) {
-                // ignore
-            }
+			public void partDeactivated(IWorkbenchPart part) {
+				// ignore
+			}
 
-            public void partOpened(IWorkbenchPart part) {
-                // ignore
-            }
-        };
-        page.addPartListener(listener);        
-    }
+			public void partOpened(IWorkbenchPart part) {
+				// ignore
+			}
+		};
+		page.addPartListener(listener);
+		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
+		windowKey = new Integer(window.hashCode());
+	}
+
+	public Integer getWindowKey() {
+		return windowKey;
+	}
 }

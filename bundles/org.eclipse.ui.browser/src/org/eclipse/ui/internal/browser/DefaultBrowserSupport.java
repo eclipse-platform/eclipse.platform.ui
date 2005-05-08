@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -49,7 +51,18 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	protected IWebBrowser getExistingWebBrowser(String browserId) {
 		try {
-			IWebBrowser browser = (IWebBrowser) browserIdMap.get(browserId);
+			Object obj = browserIdMap.get(browserId);
+			IWebBrowser browser = null;
+			if (obj instanceof IWebBrowser)
+				browser = (IWebBrowser) obj;
+			else if (obj instanceof HashMap) {
+				HashMap wmap = (HashMap) obj;
+				IWorkbenchWindow window = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow();
+				if (window != null) {
+					browser = (IWebBrowser) wmap.get(getWindowKey(window));
+				}
+			}
 			if (browser != null)
 				return browser;
 		} catch (Exception e) {
@@ -58,8 +71,15 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int, java.lang.String, java.lang.String, java.lang.String)
+	private Integer getWindowKey(IWorkbenchWindow window) {
+		return new Integer(window.hashCode());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int,
+	 *      java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
@@ -88,7 +108,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 						.getCurrentWebBrowser();
 				if (ewb == null)
 					throw new PartInitException(Messages.errorNoBrowser);
-				
+
 				IBrowserExt ext = null;
 				if (ewb != null)
 					ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
@@ -107,25 +127,58 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 						style, name, tooltip);
 		}
 
-		browserIdMap.put(browserId, webBrowser);
+		if (webBrowser instanceof InternalBrowserInstance) {
+			// we should only share internal browsers within one
+			// workbench window. Each workbench window can have
+			// a shared browser with the same id.
+			IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			Integer key = getWindowKey(window);
+			HashMap wmap = (HashMap) browserIdMap.get(browserId);
+			if (wmap == null) {
+				wmap = new HashMap();
+				browserIdMap.put(browserId, wmap);
+			}
+			wmap.put(key, webBrowser);
+		} else {
+			// External and system browsers are shared
+			// for the entire workbench
+			browserIdMap.put(browserId, webBrowser);
+		}
 		return webBrowser;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
 	 */
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return createBrowser(0, browserId, null, null);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
 	 */
 	public boolean isInternalWebBrowserAvailable() {
 		return WebBrowserUtil.canUseInternalWebBrowser();
 	}
 
-	protected void removeBrowser(String id) {
-		browserIdMap.remove(id);
+	protected void removeBrowser(IWebBrowser browser) {
+		String baseId = WebBrowserUtil.decodeId(browser.getId());
+		if (browser instanceof InternalBrowserInstance) {
+			// Remove it from the window map and
+			// also remove the window map itself if it is empty.
+			Integer key = ((InternalBrowserInstance) browser).getWindowKey();
+			HashMap wmap = (HashMap) browserIdMap.get(baseId);
+			if (wmap != null) {
+				wmap.remove(key);
+				if (wmap.isEmpty())
+					browserIdMap.remove(baseId);
+			}
+		} else
+			browserIdMap.remove(baseId);
 	}
 }

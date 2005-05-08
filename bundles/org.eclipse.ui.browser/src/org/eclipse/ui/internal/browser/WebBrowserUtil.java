@@ -34,6 +34,11 @@ public class WebBrowserUtil {
 
 	public static Boolean isInternalBrowserOperational;
 
+	private static final char STYLE_SEP = '-';
+
+	private static final int DEFAULT_STYLE = BrowserViewer.BUTTON_BAR
+			| BrowserViewer.LOCATION_BAR;
+
 	/**
 	 * WebBrowserUtil constructor comment.
 	 */
@@ -101,15 +106,14 @@ public class WebBrowserUtil {
 	 * based on whether or not the org.eclipse.swt.Browser class can be
 	 * found/loaded. If it can it means is is supported on the platform in which
 	 * this plugin is running. If not, disable the ability to use the internal
-	 * browser.
-	 * 
-	 * This method checks to see if it can new up a new ExternalBrowserInstance.
-	 * If the SWT widget can not be bound to the particular operating system it
-	 * throws an SWTException. We catch that and set a boolean flag which
-	 * represents whether or not we were successfully able to create a
-	 * ExternalBrowserInstance instance or not. If not, don't bother adding the
-	 * Internal Web ExternalBrowserInstance that uses this widget. Designed to
-	 * be attemped only once and the flag set used throughout.
+	 * browser. This method checks to see if it can new up a new
+	 * ExternalBrowserInstance. If the SWT widget can not be bound to the
+	 * particular operating system it throws an SWTException. We catch that and
+	 * set a boolean flag which represents whether or not we were successfully
+	 * able to create a ExternalBrowserInstance instance or not. If not, don't
+	 * bother adding the Internal Web ExternalBrowserInstance that uses this
+	 * widget. Designed to be attemped only once and the flag set used
+	 * throughout.
 	 * 
 	 * @return boolean
 	 */
@@ -127,7 +131,7 @@ public class WebBrowserUtil {
 		}
 
 		// try loading it
-		Shell shell=null;
+		Shell shell = null;
 		try {
 			shell = new Shell(PlatformUI.getWorkbench().getDisplay());
 			new Browser(shell, SWT.NONE);
@@ -139,9 +143,8 @@ public class WebBrowserUtil {
 							0, "Internal browser is not operational", t)); //$NON-NLS-1$
 			isInternalBrowserOperational = new Boolean(false);
 			return false;
-		}
-		finally {
-			if (shell!=null)
+		} finally {
+			if (shell != null)
 				shell.dispose();
 		}
 	}
@@ -246,5 +249,38 @@ public class WebBrowserUtil {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Encodes browser style in the secondary id as id-style
+	 * 
+	 * @param browserId
+	 * @param style
+	 * @return
+	 */
+	public static String encodeStyle(String browserId, int style) {
+		return browserId + STYLE_SEP + style;
+	}
+
+	public static int decodeStyle(String secondaryId) {
+		if (secondaryId != null) {
+			int sep = secondaryId.lastIndexOf(STYLE_SEP);
+			if (sep != -1) {
+				String stoken = secondaryId.substring(sep + 1);
+				try {
+					return Integer.parseInt(stoken);
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+		return DEFAULT_STYLE;
+	}
+
+	public static String decodeId(String encodedId) {
+		int sep = encodedId.lastIndexOf(STYLE_SEP);
+		if (sep != -1) {
+			return encodedId.substring(0, sep);
+		}
+		return encodedId;
 	}
 }
