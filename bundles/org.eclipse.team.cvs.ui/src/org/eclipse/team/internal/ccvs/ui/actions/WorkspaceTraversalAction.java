@@ -31,8 +31,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 
-    private static final String SELECTED_RESOURCES_WITH_OVERLAP = "selectedResourcesWithOverlap"; //$NON-NLS-1$
-
     /**
      * Return the selected mappings that contain resources 
      * within a CVS managed project.

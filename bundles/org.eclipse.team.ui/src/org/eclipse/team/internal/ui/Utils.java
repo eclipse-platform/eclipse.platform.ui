@@ -18,11 +18,13 @@ import java.util.List;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.internal.resources.mapping.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -393,18 +395,37 @@ public class Utils {
 		List resources = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
-			IResource resource = null;
+			boolean isResource = false;
 			if (element instanceof IResource) {
-				resource = (IResource)element;
+				resources.add(element);
+                isResource = true;
 			} else if (element instanceof ISynchronizeModelElement){
-				resource = ((ISynchronizeModelElement) element).getResource();
+                resources.add(((ISynchronizeModelElement) element).getResource());
+                isResource = true;
+            } else if (element instanceof ResourceMapping) {
+                try {
+                    ResourceTraversal[] traversals = ((ResourceMapping)element).getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+                    for (int k = 0; k < traversals.length; k++) {
+                        ResourceTraversal traversal = traversals[k];
+                        IResource[] resourceArray = traversal.getResources();
+                        for (int j = 0; j < resourceArray.length; j++) {
+                            IResource resource = resourceArray[j];
+                            resources.add(resource);
+                            isResource = true;
+                        }
+                    }
+                } catch (CoreException e) {
+                    TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, "Error traversing resource mapping", e)); //$NON-NLS-1$
+                }
 			} else {
-				resource = (IResource)getAdapter(element, IResource.class);
-				if(resource != null && resource.getType() == IResource.ROOT) continue;
+				IResource resource = (IResource)getAdapter(element, IResource.class);
+				if(resource != null) {
+                    if (resource.getType() == IResource.ROOT) continue;
+                    resources.add(resource);
+                    isResource = true;
+                }
 			}
-			if (resource != null) {
-				resources.add(resource);
-			} else {
+			if (!isResource) {
 				if(nonResources != null)
 					nonResources.add(element);
 			}
