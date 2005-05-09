@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 
 /**
@@ -349,7 +350,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Report the specified execution exception to the log and to the user.
 	 */
 	final void reportException(Exception e) {
-		Throwable nestedException = e.getCause();
+		Throwable nestedException = StatusUtil.getCause(e);
 		Throwable exception = (nestedException == null) ? e : nestedException;
 		String title = WorkbenchMessages.Error;
 		String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;

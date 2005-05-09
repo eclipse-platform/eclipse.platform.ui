@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * <p>
@@ -193,7 +194,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 	 * Report the specified execution exception to the log and to the user.
 	 */
 	private void reportException(Exception e, IAdaptable uiInfo) {
-		Throwable nestedException = e.getCause();
+		Throwable nestedException = StatusUtil.getCause(e);
 		Throwable exception = (nestedException == null) ? e : nestedException;
 		String title = WorkbenchMessages.Error;
 		String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
