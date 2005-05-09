@@ -38,16 +38,24 @@ public class PatchTest extends TestCase {
 		super.tearDown();
 	}
 	
+	public void testCreatePatch() {
+		patch("addition.txt", "patch_addition.txt", "exp_addition.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public void testUnterminatedCreatePatch() {
+		patch("addition.txt", "patch_addition2.txt", "exp_addition2.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
 	public void testContext0Patch() {
-		patch("patch0.txt"); //$NON-NLS-1$
+		patch("context.txt", "patch_context0.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void testContext1Patch() {
-		patch("patch1.txt"); //$NON-NLS-1$
+		patch("context.txt", "patch_context1.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void testContext3Patch() {
-		patch("patch3.txt"); //$NON-NLS-1$
+		patch("context.txt", "patch_context3.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	private BufferedReader getReader(String name) {
@@ -56,9 +64,9 @@ public class PatchTest extends TestCase {
 		return new BufferedReader(reader2);
 	}
 
-	private void patch(String patch) {
+	private void patch(String old, String patch, String expt) {
 		
-		LineReader lr= new LineReader(getReader("old.txt")); //$NON-NLS-1$
+		LineReader lr= new LineReader(getReader(old));
 		List inLines= lr.readLines();
 
 		Patcher patcher= new Patcher();
@@ -74,7 +82,7 @@ public class PatchTest extends TestCase {
 		List failedHunks= new ArrayList();
 		patcher.patch(diffs[0], inLines, failedHunks);
 		
-		LineReader expectedContents= new LineReader(getReader("new.txt")); //$NON-NLS-1$
+		LineReader expectedContents= new LineReader(getReader(expt));
 		List expectedLines= expectedContents.readLines();
 		
 		Object[] expected= expectedLines.toArray();

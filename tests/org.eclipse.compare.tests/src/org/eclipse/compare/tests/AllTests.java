@@ -23,6 +23,7 @@ public class AllTests {
 		TestSuite suite= new TestSuite("Test for org.eclipse.compare.tests"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		//suite.addTestSuite(UITest.class);
+		suite.addTestSuite(LineReaderTest.class);
 		suite.addTestSuite(StreamMergerTest.class);
 		suite.addTestSuite(DocLineComparatorTest.class);
 		suite.addTestSuite(FilterTest.class);
