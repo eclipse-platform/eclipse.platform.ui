@@ -65,7 +65,7 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		super(parent);
 		setShellStyle(SWT.CLOSE | SWT.RESIZE);
 		if (Platform.getWS().equals(Platform.WS_GTK))
-			busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
+			busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_NO);
 		parentListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 				maintainRelativePosition();
