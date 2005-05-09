@@ -34,7 +34,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -289,7 +288,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             public void propertyChange(Preferences.PropertyChangeEvent event) {
                 if (event.getProperty().equals(
                         ResourcesPlugin.PREF_AUTO_BUILDING)) {
-                   	updateBuildActions();
+                   	updateBuildActions(false);
                 }
             }
         };
@@ -335,7 +334,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 					//affected by projects being opened/closed or description changes
 					boolean changed = (projectDeltas[i].getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
 					if (kind != IResourceDelta.CHANGED || changed) {
-						updateBuildActions();
+						updateBuildActions(false);
 						return;
 					}
 				}
@@ -347,7 +346,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     public void fillActionBars(int flags) {
         super.fillActionBars(flags);
         if ((flags & FILL_PROXY) == 0) {
-            updateBuildActions();
+            updateBuildActions(true);
             hookListeners();
         }
     }
@@ -1532,10 +1531,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	}
 
 	/**
-     * Update the build actions on the toolbar and menu bar based on the 
-     * current state of autobuild.  This method can be called from any thread.
-     */
-    void updateBuildActions() {
+	 * Update the build actions on the toolbar and menu bar based on the current
+	 * state of autobuild. This method can be called from any thread.
+	 * 
+	 * @param immediately
+	 *            <code>true</code> to update the actions immediately,
+	 *            <code>false</code> to queue the update to be run in the
+	 *            event loop
+	 */
+    void updateBuildActions(boolean immediately) {
         // this can be triggered by property or resource change notifications
         Runnable update = new Runnable() {
             public void run() {
@@ -1581,14 +1585,16 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		        }
             }
         };
-        //run the update immediately if we are in the UI thread
-        if (Display.getCurrent() != null) {
+        if (immediately) {
         	update.run();
-        } else {
-	        //dispatch the update to the UI thread
+        }
+        else {
+	        // Dispatch the update to be run later in the UI thread.
+	        // This helps to reduce flicker if autobuild is being temporarily disabled programmatically.
 	        Shell shell = window.getShell();
-	        if (shell != null && !shell.isDisposed())
-	        	shell.getDisplay().asyncExec(update);
+	        if (shell != null && !shell.isDisposed()) {
+        		shell.getDisplay().asyncExec(update);
+	        }
         }
     }
 
