@@ -400,8 +400,11 @@ public class Utils {
 				resources.add(element);
                 isResource = true;
 			} else if (element instanceof ISynchronizeModelElement){
-                resources.add(((ISynchronizeModelElement) element).getResource());
-                isResource = true;
+                IResource resource = ((ISynchronizeModelElement) element).getResource();
+                if (resource != null) {
+                    resources.add(resource);
+                    isResource = true;
+                }
             } else if (element instanceof ResourceMapping) {
                 try {
                     ResourceTraversal[] traversals = ((ResourceMapping)element).getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
