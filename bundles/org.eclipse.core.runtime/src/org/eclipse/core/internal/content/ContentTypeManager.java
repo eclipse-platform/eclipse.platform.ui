@@ -92,7 +92,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public ContentTypeManager() {
-		super(null);
+		super(null, new InstanceScope());
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {
@@ -135,12 +135,15 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy, final IScopeContext context) {
-		//TODO should honor context parameter
-		return new ContentTypeMatcher(customPolicy);
+		return new ContentTypeMatcher(customPolicy, context == null ? getContext() : context);
 	}
 
 	IEclipsePreferences getPreferences() {
-		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
+		return getPreferences(getContext());
+	}
+
+	IEclipsePreferences getPreferences(IScopeContext context) {
+		return context.getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
 	public void registryChanged(IRegistryChangeEvent event) {
@@ -190,5 +193,10 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 			};
 			Platform.run(job);
 		}
+	}
+
+	public IContentDescription getSpecificDescription(BasicDescription description) {
+		// this is the platform content type manager, no specificities
+		return description;
 	}
 }

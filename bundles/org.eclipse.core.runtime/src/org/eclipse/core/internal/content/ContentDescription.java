@@ -12,21 +12,19 @@ package org.eclipse.core.internal.content;
 
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
 
-public final class ContentDescription implements IContentDescription {
+public final class ContentDescription extends BasicDescription {
 
 	private static final String CHARSET_UTF_16 = "UTF-16"; //$NON-NLS-1$
 	private static final String CHARSET_UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final byte FLAG_ALL_OPTIONS = 0x01;
 	private static final byte FLAG_IMMUTABLE = 0x02;
-	private ContentType contentType;
 	private byte flags;
 	private Object keys;
 	private Object values;
 
-	public ContentDescription(QualifiedName[] requested, ContentType contentType) {
-		this.contentType = contentType;
+	public ContentDescription(QualifiedName[] requested, IContentTypeInfo contentTypeInfo) {
+		super(contentTypeInfo);
 		if (requested == IContentDescription.ALL) {
 			flags |= FLAG_ALL_OPTIONS;
 			return;
@@ -57,24 +55,6 @@ public final class ContentDescription implements IContentDescription {
 		return (String) getProperty(CHARSET);
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
-	public IContentType getContentType() {
-		//TODO performance: potential creation of garbage
-		return new ContentTypeHandler(contentType, contentType.getCatalog().getGeneration());
-	}
-
-	/**
-	 * @see IContentDescription
-	 */
-	public Object getProperty(QualifiedName key) {
-		Object describedProperty = getDescribedProperty(key);
-		if (describedProperty != null)
-			return describedProperty;
-		return contentType.getDefaultProperty(key);
-	}
-
 	private Object getDescribedProperty(QualifiedName key) {
 		// no values have been set
 		if (values == null)
@@ -88,6 +68,16 @@ public final class ContentDescription implements IContentDescription {
 			if (tmpKeys[i].equals(key))
 				return ((Object[]) values)[i];
 		return null;
+	}
+
+	/**
+	 * @see IContentDescription
+	 */
+	public Object getProperty(QualifiedName key) {
+		Object describedProperty = getDescribedProperty(key);
+		if (describedProperty != null)
+			return describedProperty;
+		return contentTypeInfo.getDefaultProperty(key);
 	}
 
 	/**
@@ -126,6 +116,11 @@ public final class ContentDescription implements IContentDescription {
 	public void markImmutable() {
 		assertMutable();
 		flags |= FLAG_IMMUTABLE;
+	}
+
+	/** Overrides content type info object. */
+	void setContentTypeInfo(IContentTypeInfo info) {
+		this.contentTypeInfo = info;
 	}
 
 	/**
@@ -190,7 +185,7 @@ public final class ContentDescription implements IContentDescription {
 					result.deleteCharAt(result.length() - 1);
 			}
 		result.append("} : "); //$NON-NLS-1$
-		result.append(contentType);
+		result.append(contentTypeInfo.getContentType());
 		return result.toString();
 	}
 }

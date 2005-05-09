@@ -23,7 +23,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * @see IContentType
  */
-public final class ContentType implements IContentType {
+public final class ContentType implements IContentType, IContentTypeInfo {
 
 	/* A placeholder for missing/invalid binary/text describers. */
 	private class InvalidDescriber implements IContentDescriber, ITextContentDescriber {
@@ -63,7 +63,7 @@ public final class ContentType implements IContentType {
 	private boolean builtInAssociations = false;
 	private ContentTypeCatalog catalog;
 	private IConfigurationElement contentTypeElement;
-	private IContentDescription defaultDescription;
+	private DefaultDescription defaultDescription;
 	private Map defaultProperties;
 	private Object describer;
 	private List fileSpecs;
@@ -104,7 +104,7 @@ public final class ContentType implements IContentType {
 		return new FileSpec(fileSpec, type);
 	}
 
-	private static String getPreferenceKey(int flags) {
+	static String getPreferenceKey(int flags) {
 		if ((flags & FILE_EXTENSION_SPEC) != 0)
 			return PREF_FILE_EXTENSIONS;
 		if ((flags & FILE_NAME_SPEC) != 0)
@@ -212,6 +212,10 @@ public final class ContentType implements IContentType {
 		return catalog;
 	}
 
+	public ContentType getContentType() {
+		return this;
+	}
+
 	/**
 	 * @see IContentType
 	 */
@@ -229,7 +233,7 @@ public final class ContentType implements IContentType {
 	/**
 	 * Returns the default value for the given property in this content type, or <code>null</code>. 
 	 */
-	String getDefaultProperty(QualifiedName key) {
+	public String getDefaultProperty(QualifiedName key) {
 		String propertyValue = internalGetDefaultProperty(key);
 		if ("".equals(propertyValue)) //$NON-NLS-1$
 			return null;
@@ -341,9 +345,10 @@ public final class ContentType implements IContentType {
 		return priority;
 	}
 
-	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException {
-		//TODO should honor context
-		return this;
+	public IContentTypeSettings getSettings(IScopeContext context) {
+		if (context == null || context.equals(manager.getContext()))
+			return this;
+		return new ContentTypeSettings(this, context);
 	}
 
 	/*
@@ -359,6 +364,17 @@ public final class ContentType implements IContentType {
 
 	boolean hasBuiltInAssociations() {
 		return builtInAssociations;
+	}
+
+	boolean hasFileSpec(IScopeContext context, String text, int typeMask) {
+		if (context.equals(manager.getContext()) || (typeMask & IGNORE_USER_DEFINED) != 0)
+			return hasFileSpec(text, typeMask);
+		String[] fileSpecs = ContentTypeSettings.getFileSpecs(context, id, typeMask);
+		for (int i = 0; i < fileSpecs.length; i++)
+			if (text.equalsIgnoreCase(fileSpecs[i]))
+				return true;
+		// no user defined association... try built-in
+		return hasFileSpec(text, typeMask | IGNORE_PRE_DEFINED);
 	}
 
 	/**
@@ -385,7 +401,6 @@ public final class ContentType implements IContentType {
 	 * Adds a user-defined or pre-defined file spec.
 	 */
 	boolean internalAddFileSpec(String fileSpec, int typeMask) {
-		// XXX shouldn't this be done *after* we check for aliasing?
 		if (hasFileSpec(fileSpec, typeMask))
 			return false;
 		if (fileSpecs == null)
@@ -400,18 +415,25 @@ public final class ContentType implements IContentType {
 	/**
 	 * Returns the default value for a property, recursively if necessary.  
 	 */
-	private String internalGetDefaultProperty(QualifiedName key) {
+	String internalGetDefaultProperty(QualifiedName key) {
 		// a special case for charset - users can override
 		if (userCharset != null && key.equals(IContentDescription.CHARSET))
 			return userCharset;
-		String defaultValue = defaultProperties == null ? null : (String) defaultProperties.get(key);
+		String defaultValue = basicGetDefaultProperty(key);
 		if (defaultValue != null)
 			return defaultValue;
 		// not defined here, try base type
 		return baseType == null ? null : baseType.internalGetDefaultProperty(key);
 	}
 
-	IContentDescription internalGetDescriptionFor(ILazySource buffer, QualifiedName[] options) throws IOException {
+	/**
+	 * Returns the value of a built-in property defined for this content type.
+	 */
+	String basicGetDefaultProperty(QualifiedName key) {
+		return defaultProperties == null ? null : (String) defaultProperties.get(key);
+	}
+
+	BasicDescription internalGetDescriptionFor(ILazySource buffer, QualifiedName[] options) throws IOException {
 		if (buffer == null)
 			return defaultDescription;
 		// use temporary local var to avoid sync'ing

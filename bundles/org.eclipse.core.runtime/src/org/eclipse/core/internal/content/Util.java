@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Util {
 	public static String[] parseItems(String string) {
@@ -51,6 +50,46 @@ public class Util {
 			// trailing separator
 			items.add(""); //$NON-NLS-1$
 		return (String[]) items.toArray(new String[items.size()]);
+	}
+
+	public static List parseItemsIntoList(String string) {
+		return parseItemsIntoList(string, ","); //$NON-NLS-1$
+	}
+
+	public static List parseItemsIntoList(String string, String separator) {
+		List items = new ArrayList(5);
+		if (string == null)
+			return items;
+		StringTokenizer tokenizer = new StringTokenizer(string, separator, true); //$NON-NLS-1$
+		if (!tokenizer.hasMoreTokens()) {
+			items.add(string.trim());
+			return items;
+		}
+		String first = tokenizer.nextToken().trim();
+		boolean wasSeparator = false;
+		if (first.equals(separator)) {
+			// leading separator
+			first = ""; //$NON-NLS-1$
+			wasSeparator = true;
+		}
+		items.add(first);
+		if (!tokenizer.hasMoreTokens())
+			return items;
+		String current;
+		do {
+			current = tokenizer.nextToken().trim();
+			boolean isSeparator = current.equals(separator);
+			if (isSeparator) {
+				if (wasSeparator)
+					items.add(""); //$NON-NLS-1$
+			} else
+				items.add(current);
+			wasSeparator = isSeparator;
+		} while (tokenizer.hasMoreTokens());
+		if (wasSeparator)
+			// trailing separator
+			items.add(""); //$NON-NLS-1$	
+		return items;
 	}
 
 	public static String toListString(Object[] list) {

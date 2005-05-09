@@ -15,6 +15,8 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 public final class ContentTypeCatalog {
 	private static final IContentType[] NO_CONTENT_TYPES = new IContentType[0];
@@ -26,9 +28,9 @@ public final class ContentTypeCatalog {
 
 	private Map fileNames = new HashMap();
 
-	private ContentTypeManager manager;
-
 	private int generation;
+
+	private ContentTypeManager manager;
 
 	/**
 	 * A sorting policy where the more generic content type wins. Lexicographical comparison is done
@@ -195,38 +197,6 @@ public final class ContentTypeCatalog {
 		return valid;
 	}
 
-	/**
-	 * Processes all content types in source, adding those matching the given file spec to the
-	 * destination collection.
-	 */
-	private Set selectMatchingByName(Collection source, final Collection existing, final String fileSpecText, final int fileSpecType) {
-		if (source == null || source.isEmpty())
-			return Collections.EMPTY_SET;
-		final Set destination = new HashSet(5);
-		// process all content types in the given collection
-		for (Iterator i = source.iterator(); i.hasNext();) {
-			final ContentType root = (ContentType) i.next();
-			// From a given content type, check if it matches, and 
-			// include any children that match as well.
-			internalAccept(new ContentTypeVisitor() {
-				public int visit(ContentType type) {
-					if (type != root && type.hasBuiltInAssociations())
-						// this content type has built-in associations - visit it later as root						
-						return RETURN;
-					if (type == root && !type.hasFileSpec(fileSpecText, fileSpecType))
-						// it is the root and does not match the file name - do not add it nor look into its children						
-						return RETURN;
-					// either the content type is the root and matches the file name or 
-					// is a sub content type and does not have built-in files specs
-					if (!existing.contains(type))
-						destination.add(type);
-					return CONTINUE;
-				}
-			}, root);
-		}
-		return destination;
-	}
-
 	void dissociate(ContentType contentType, String text, int type) {
 		Map fileSpecMap = ((type & IContentType.FILE_NAME_SPEC) != 0) ? fileNames : fileExtensions;
 		String mappingKey = FileSpec.getMappingKeyFor(text);
@@ -279,18 +249,20 @@ public final class ContentTypeCatalog {
 		return true;
 	}
 
-	IContentType[] findContentTypesFor(InputStream contents, String fileName, IContentTypeManager.ISelectionPolicy policy) throws IOException {
+	IContentType[] findContentTypesFor(ContentTypeMatcher matcher, InputStream contents, String fileName) throws IOException {
 		final ILazySource buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(buffer, fileName);
+		IContentType[] selected = internalFindContentTypesFor(matcher, buffer, fileName);
 		// give the policy a chance to change the results
+		ISelectionPolicy policy = matcher.getPolicy();
 		if (policy != null)
 			selected = applyPolicy(policy, selected, fileName != null, true);
 		return selected;
 	}
 
-	IContentType[] findContentTypesFor(final String fileName, IContentTypeManager.ISelectionPolicy policy) {
-		IContentType[] selected = concat(internalFindContentTypesFor(fileName, policyConstantGeneralIsBetter));
+	IContentType[] findContentTypesFor(ContentTypeMatcher matcher, final String fileName) {
+		IContentType[] selected = concat(internalFindContentTypesFor(matcher, fileName, policyConstantGeneralIsBetter));
 		// give the policy a chance to change the results
+		ISelectionPolicy policy = matcher.getPolicy();
 		if (policy != null)
 			selected = applyPolicy(policy, selected, true, false);
 		return selected;
@@ -326,33 +298,34 @@ public final class ContentTypeCatalog {
 		return (type != null && type.isValid() && !type.isAlias()) ? type : null;
 	}
 
-	private IContentDescription getDescriptionFor(ILazySource contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		IContentType[] selected = internalFindContentTypesFor(contents, fileName);
+	private IContentDescription getDescriptionFor(ContentTypeMatcher matcher, ILazySource contents, String fileName, QualifiedName[] options) throws IOException {
+		IContentType[] selected = internalFindContentTypesFor(matcher, contents, fileName);
 		if (selected.length == 0)
 			return null;
 		// give the policy a chance to change the results
+		ISelectionPolicy policy = matcher.getPolicy();
 		if (policy != null) {
 			selected = applyPolicy(policy, selected, fileName != null, true);
 			if (selected.length == 0)
 				return null;
 		}
-		return ((ContentType) selected[0]).internalGetDescriptionFor(contents, options);
+		return matcher.getSpecificDescription(((ContentType) selected[0]).internalGetDescriptionFor(contents, options));
 	}
 
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		return getDescriptionFor(ContentTypeManager.readBuffer(contents), fileName, options, policy);
+	public IContentDescription getDescriptionFor(ContentTypeMatcher matcher, InputStream contents, String fileName, QualifiedName[] options) throws IOException {
+		return getDescriptionFor(matcher, ContentTypeManager.readBuffer(contents), fileName, options);
 	}
 
-	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
-		return getDescriptionFor(ContentTypeManager.readBuffer(contents), fileName, options, policy);
-	}
-
-	public ContentTypeManager getManager() {
-		return manager;
+	public IContentDescription getDescriptionFor(ContentTypeMatcher matcher, Reader contents, String fileName, QualifiedName[] options) throws IOException {
+		return getDescriptionFor(matcher, ContentTypeManager.readBuffer(contents), fileName, options);
 	}
 
 	public int getGeneration() {
 		return generation;
+	}
+
+	public ContentTypeManager getManager() {
+		return manager;
 	}
 
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
@@ -396,7 +369,7 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(ILazySource buffer, String fileName) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName) throws IOException {
 		final IContentType[][] subset;
 		final Comparator validPolicy;
 		Comparator indeterminatePolicy;
@@ -406,7 +379,7 @@ public final class ContentTypeCatalog {
 			indeterminatePolicy = policyConstantGeneralIsBetter;
 			validPolicy = policyConstantSpecificIsBetter;
 		} else {
-			subset = internalFindContentTypesFor(fileName, policyLexicographical);
+			subset = internalFindContentTypesFor(matcher, fileName, policyLexicographical);
 			indeterminatePolicy = policyGeneralIsBetter;
 			validPolicy = policySpecificIsBetter;
 		}
@@ -419,15 +392,30 @@ public final class ContentTypeCatalog {
 	 * @return all matching content types in the preferred order 
 	 * @see IContentTypeManager#findContentTypesFor(String)
 	 */
-	public IContentType[][] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
+	public IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator sortingPolicy) {
+		IScopeContext context = matcher.getContext();
 		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
-		final Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
-		Set selectedByName = selectMatchingByName(allByFileName, Collections.EMPTY_SET, fileName, IContentType.FILE_NAME_SPEC);
+
+		final Set allByFileName;
+
+		if (context.equals(manager.getContext()))
+			allByFileName = getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC);
+		else {
+			allByFileName = new HashSet(getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED));
+			allByFileName.addAll(matcher.getDirectlyAssociated(this, fileName, IContentTypeSettings.FILE_NAME_SPEC));
+		}
+		Set selectedByName = selectMatchingByName(context, allByFileName, Collections.EMPTY_SET, fileName, IContentType.FILE_NAME_SPEC);
 		result[0] = (IContentType[]) selectedByName.toArray(new IContentType[selectedByName.size()]);
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
-			final Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
-			Set selectedByExtension = selectMatchingByName(allByFileExtension, selectedByName, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+			final Set allByFileExtension;
+			if (context.equals(manager.getContext()))
+				allByFileExtension = getDirectlyAssociated(fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC);
+			else {
+				allByFileExtension = new HashSet(getDirectlyAssociated(fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED));
+				allByFileExtension.addAll(matcher.getDirectlyAssociated(this, fileExtension, IContentTypeSettings.FILE_EXTENSION_SPEC));
+			}
+			Set selectedByExtension = selectMatchingByName(context, allByFileExtension, selectedByName, fileExtension, IContentType.FILE_EXTENSION_SPEC);
 			if (!selectedByExtension.isEmpty())
 				result[1] = (IContentType[]) selectedByExtension.toArray(new IContentType[selectedByExtension.size()]);
 		}
@@ -436,6 +424,25 @@ public final class ContentTypeCatalog {
 		if (result[1].length > 1)
 			Arrays.sort(result[1], sortingPolicy);
 		return result;
+	}
+
+	public Set getDirectlyAssociated(String text, int typeMask) {
+		Map associations = (typeMask & IContentTypeSettings.FILE_NAME_SPEC) != 0 ? fileNames : fileExtensions;
+		Set result = null;
+		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) == 0)
+			// no restrictions, get everything
+			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
+		else {
+			// only those specs satisfying the the type mask should be included
+			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
+			if (result != null)
+				for (Iterator i = result.iterator(); i.hasNext();) {
+					ContentType contentType = (ContentType) i.next();
+					if (!contentType.hasFileSpec(text, typeMask))
+						i.remove();
+				}
+		}
+		return result == null ? Collections.EMPTY_SET : result;
 	}
 
 	ContentType internalGetContentType(String contentTypeIdentifier) {
@@ -473,5 +480,37 @@ public final class ContentTypeCatalog {
 				if (!type.isValid())
 					Policy.debug("Invalid: " + type); //$NON-NLS-1$
 			}
+	}
+
+	/**
+	 * Processes all content types in source, adding those matching the given file spec to the
+	 * destination collection.
+	 */
+	private Set selectMatchingByName(final IScopeContext context, Collection source, final Collection existing, final String fileSpecText, final int fileSpecType) {
+		if (source == null || source.isEmpty())
+			return Collections.EMPTY_SET;
+		final Set destination = new HashSet(5);
+		// process all content types in the given collection
+		for (Iterator i = source.iterator(); i.hasNext();) {
+			final ContentType root = (ContentType) i.next();
+			// From a given content type, check if it matches, and 
+			// include any children that match as well.
+			internalAccept(new ContentTypeVisitor() {
+				public int visit(ContentType type) {
+					if (type != root && type.hasBuiltInAssociations())
+						// this content type has built-in associations - visit it later as root						
+						return RETURN;
+					if (type == root && !type.hasFileSpec(context, fileSpecText, fileSpecType))
+						// it is the root and does not match the file name - do not add it nor look into its children						
+						return RETURN;
+					// either the content type is the root and matches the file name or 
+					// is a sub content type and does not have built-in files specs
+					if (!existing.contains(type))
+						destination.add(type);
+					return CONTINUE;
+				}
+			}, root);
+		}
+		return destination;
 	}
 }
