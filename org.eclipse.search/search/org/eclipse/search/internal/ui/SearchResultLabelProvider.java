@@ -22,7 +22,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 
 class SearchResultLabelProvider extends LabelProvider {
 	
-	private static final String MATCHES_POSTFIX= " " + SearchMessages.SearchResultView_matches + ")"; 
+	private static final String MATCHES_POSTFIX= " " + SearchMessages.SearchResultView_matches + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 
 	private ILabelProvider fLabelProvider;
 
