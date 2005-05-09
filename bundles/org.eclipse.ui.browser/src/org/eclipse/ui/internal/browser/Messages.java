@@ -26,7 +26,7 @@ public class Messages extends NLS {
 	public static String BrowserText_text;
 	public static String BrowserText_button_collapse;
 	public static String BrowserText_button_expand;
-	 
+
 	public static String errorCouldNotLaunchInternalWebBrowser;
 	public static String actionWebBrowserGo;
 	public static String viewWebBrowserTitle;
