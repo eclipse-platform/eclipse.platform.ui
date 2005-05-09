@@ -12,31 +12,42 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * A simple, lightweight undo context that can be used to tag any
- * operation. It does not provided a specialized label.  This class
- * may be instantiated by clients.  This class may also be subclassed.
+ * A simple, lightweight undo context that can be used to tag any operation. It
+ * does not provided a specialized label. This class may be instantiated by
+ * clients. This class may also be subclassed.
  * </p>
  * 
  * @since 3.1
  */
 public class UndoContext implements IUndoContext {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
-	 * 
+	/**
 	 * <p>
-	 * Default implementation.  Clients may override.
+	 * Get the label that describes the undo context. The default implementation
+	 * returns the empty String. Subclasses may override.
 	 * </p>
+	 * 
+	 * @return the label for the context.
 	 */
 	public String getLabel() {
 		return ""; //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
+
+	/**
 	 * <p>
-	 * Default implementation.  Clients may override.
+	 * Return whether the specified context is considered a match for the
+	 * receiving context. When a context matches another context, operations
+	 * that have the context are considered to also have the matching context.
+	 * The default implementation checks whether the supplied context is
+	 * identical to this context. Subclasses may override.
 	 * </p>
+	 * 
+	 * @param context
+	 *            the context to be checked against the receiving context.
+	 * 
+	 * @return <code>true</code> if the receiving context can be considered a
+	 *         match for the specified context, and <code>false</code> if it
+	 *         cannot.
 	 */
 	public boolean matches(IUndoContext context) {
 		return context == this;

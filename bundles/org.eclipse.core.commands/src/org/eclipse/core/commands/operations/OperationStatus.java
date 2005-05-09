@@ -16,12 +16,12 @@ import org.eclipse.core.runtime.Status;
 /**
  * <p>
  * OperationStatus describes the status of a request to execute, undo, or redo
- * an operation.
+ * an operation.  This class may be instantiated by clients.
  * </p>
  * 
  * @since 3.1
  */
-public class OperationStatus extends Status {
+public final class OperationStatus extends Status {
 	/**
 	 * NOTHING_TO_REDO indicates there was no operation available for redo.
 	 * 
@@ -45,11 +45,11 @@ public class OperationStatus extends Status {
 	public static final int OPERATION_INVALID = 3;
 
 	/**
-	 * PLUGIN_ID identifies the plugin reporting the status.
+	 * DEFAULT_PLUGIN_ID identifies the default plugin reporting the status.
 	 * 
 	 * (value is "org.eclipse.core.commands").
 	 */
-	public static String PLUGIN_ID = "org.eclipse.core.commands"; //$NON-NLS-1$
+	private static String DEFAULT_PLUGIN_ID = "org.eclipse.core.commands"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new operation status, assigning the severity.
@@ -62,7 +62,26 @@ public class OperationStatus extends Status {
 	 *            a human-readable message, localized to the current locale
 	 */
 	public OperationStatus(int severity, int code, String message) {
-		super(severity, PLUGIN_ID, code, message, null);
+		super(severity, DEFAULT_PLUGIN_ID, code, message, null);
+	}
+	
+	/**
+	 * Creates a new operation status, specifying all properties.
+	 * 
+	 * @param severity
+	 *            the severity for the status
+	 * @param pluginId 
+	 *            the unique identifier of the relevant plug-in
+	 * @param code
+	 *            the informational code for the status
+	 * @param message
+	 *            a human-readable message, localized to the current locale
+	 * @param exception
+	 *            a low-level exception, or <code>null</code> if not
+	 *            applicable
+	 */
+	public OperationStatus(int severity, String pluginId, int code, String message, Throwable exception) {
+		super(severity, pluginId, code, message, exception);
 	}
 
 	/**
@@ -77,6 +96,6 @@ public class OperationStatus extends Status {
 	 *            applicable
 	 */
 	public OperationStatus(int code, String message, Throwable exception) {
-		super(IStatus.ERROR, PLUGIN_ID, code, message, exception);
+		super(IStatus.ERROR, DEFAULT_PLUGIN_ID, code, message, exception);
 	}
 }
