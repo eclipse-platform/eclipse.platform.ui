@@ -45,8 +45,12 @@ import org.eclipse.core.runtime.Status;
  * </p>
  * <p>
  * The data structures used by the DefaultOperationHistory are synchronized, and
- * therefore threadsafe. Clients may use DefaultOperationHistory API from any
- * thread. Listeners or operation approvers that receive notifications from the
+ * entry points that modify the undo and redo history concurrently are also
+ * synchronized. This means that the DefaultOperationHistory is relatively
+ * "thread-friendly" in its implementation.  Outbound notifications or operation
+ * approval requests will occur on the thread that initiated the request.
+ * Clients may use DefaultOperationHistory API from any thread; however,
+ * listeners or operation approvers that receive notifications from the
  * DefaultOperationHistory must be prepared to receive these notifications from
  * a background thread. Any UI access occurring inside these notifications must
  * be properly synchronized using the techniques specified by the client's
@@ -66,23 +70,24 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever notifications about
-	 * changes to the history occur.  This flag should be used for debug purposes only.
-
+	 * changes to the history occur. This flag should be used for debug purposes
+	 * only.
+	 * 
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_NOTIFICATION = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an unexpected condition
-	 * arises.  This flag should be used for debug purposes only.
+	 * arises. This flag should be used for debug purposes only.
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_UNEXPECTED = false;
 
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an undo context is
-	 * disposed.  This flag should be used for debug purposes only.
-
+	 * disposed. This flag should be used for debug purposes only.
+	 * 
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_DISPOSE = false;
 
@@ -96,7 +101,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an operation is not
-	 * approved.  This flag should be used for debug purposes only.
+	 * approved. This flag should be used for debug purposes only.
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_APPROVAL = false;
 
@@ -128,6 +133,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	private List undoList = Collections.synchronizedList(new ArrayList());
 
 	/**
+	 * a key that is used to synchronize access between the undo and redo
+	 * history
+	 */
+	final Object undoRedoHistoryKey = new Object();
+
+	/**
 	 * An operation that is "absorbing" all other operations while it is open.
 	 * When this is not null, other operations added or executed are added to
 	 * this composite.
@@ -141,6 +152,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	public DefaultOperationHistory() {
 		super();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -163,7 +175,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		if (checkUndoLimit(operation)) {
-			undoList.add(operation);
+			synchronized (undoRedoHistoryKey) {
+				undoList.add(operation);
+			}
 			notifyAdd(operation);
 
 			// flush redo stack for related contexts
@@ -178,6 +192,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * <p>
 	 * Add the specified approver to the list of operation approvers consulted
 	 * by the operation history before an undo or redo is allowed to proceed.
+	 * This method has no effect if the instance being added is already in the
+	 * list.
 	 * </p>
 	 * <p>
 	 * Operation approvers must be prepared to receive these the operation
@@ -186,7 +202,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * techniques specified by the client's widget library.
 	 * </p>
 	 * 
-	 * @param approver 
+	 * @param approver
 	 *            the IOperationApprover to be added as an approver.
 	 * 
 	 */
@@ -199,7 +215,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * <p>
 	 * Add the specified listener to the list of operation history listeners
 	 * that are notified about changes in the history or operations that are
-	 * executed, undone, or redone.
+	 * executed, undone, or redone. This method has no effect if the instance
+	 * being added is already in the list.
 	 * </p>
 	 * <p>
 	 * Operation history listeners must be prepared to receive notifications
@@ -208,7 +225,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * specified by the client's widget library.
 	 * </p>
 	 * 
-	 * @param listener 
+	 * @param listener
 	 *            the IOperationHistoryListener to be added as a listener.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
@@ -295,9 +312,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				System.out.print(context);
 				System.out.println();
 			}
-			limits.remove(context);
 			flushUndo(context);
 			flushRedo(context);
+			limits.remove(context);
 			return;
 		}
 		if (flushUndo)
@@ -348,17 +365,20 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// if successful, the operation is removed from the redo history and
 		// placed back in the undo history.
 		if (status.isOK()) {
-			redoList.remove(operation);
-			// Only add the operation to the undo stack if it can indeed be
-			// undone.
-			// This conservatism is added to support the integration of existing
-			// frameworks (such as Refactoring) that produce undo and redo
-			// behavior
-			// on the fly and cannot guarantee that a successful redo means a
-			// successful undo will be available.
+			// We will only add the operation to the undo stack if it can indeed
+			// be
+			// undone. This conservatism is added to support the integration
+			// of existing frameworks (such as Refactoring) that produce
+			// undo and redo behavior on the fly and cannot guarantee that a
+			// successful redo means a successful undo will be available.
+			// We check this condition outside of the synchronized block.
 			// See bug #84444
-			if (operation.canUndo() && checkUndoLimit(operation)) {
-				undoList.add(operation);
+			boolean addToUndoStack = operation.canUndo();
+			synchronized (undoRedoHistoryKey) {
+				redoList.remove(operation);
+				if (addToUndoStack && checkUndoLimit(operation)) {
+					undoList.add(operation);
+				}
 			}
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
@@ -408,17 +428,19 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// if successful, the operation is removed from the undo history and
 		// placed in the redo history.
 		if (status.isOK()) {
-			undoList.remove(operation);
 			// Only add the operation to the redo stack if it can indeed be
-			// redone.
-			// This conservatism is added to support the integration of existing
-			// frameworks (such as Refactoring) that produce undo and redo
-			// behavior
-			// on the fly and cannot guarantee that a successful undo means a
-			// successful redo will be available.
+			// redone. This conservatism is added to support the integration
+			// of existing frameworks (such as Refactoring) that produce
+			// undo and redo behavior on the fly and cannot guarantee that
+			// a successful undo means a successful redo will be available.
+			// We check this outside of the synchronized block.
 			// See bug #84444
-			if (operation.canRedo() && checkRedoLimit(operation)) {
-				redoList.add(operation);
+			boolean addToRedoStack = operation.canRedo();
+			synchronized (undoRedoHistoryKey) {
+				undoList.remove(operation);
+				if (addToRedoStack && checkRedoLimit(operation)) {
+					redoList.add(operation);
+				}
 			}
 			// notification occurs after the undo and redo histories are
 			// adjusted
@@ -528,9 +550,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		List filtered = new ArrayList();
 		Iterator iterator = list.iterator();
-		synchronized(list) {
+		synchronized (undoRedoHistoryKey) {
 			while (iterator.hasNext()) {
-				IUndoableOperation operation = (IUndoableOperation) iterator.next();
+				IUndoableOperation operation = (IUndoableOperation) iterator
+						.next();
 				if (operation.hasContext(context)) {
 					filtered.add(operation);
 				}
@@ -539,7 +562,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		return (IUndoableOperation[]) filtered
 				.toArray(new IUndoableOperation[filtered.size()]);
 	}
-	
+
 	/*
 	 * Flush the redo stack of all operations that have the given context.
 	 */
@@ -693,8 +716,15 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getRedoApproval(IUndoableOperation operation,
 			IAdaptable info) {
-		for (int i = 0; i < approvers.size(); i++) {
-			IOperationApprover approver = (IOperationApprover) approvers.get(i);
+		// copying operation approver list to array to prevent concurrent
+		// modification of the list. See
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
+
+		final IOperationApprover[] approverArray = (IOperationApprover[]) approvers
+				.toArray(new IOperationApprover[approvers.size()]);
+
+		for (int i = 0; i < approverArray.length; i++) {
+			IOperationApprover approver = approverArray[i];
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -729,9 +759,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getRedoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		synchronized (redoList) {
+		synchronized (undoRedoHistoryKey) {
 			for (int i = redoList.size() - 1; i >= 0; i--) {
-				IUndoableOperation operation = (IUndoableOperation) redoList.get(i);
+				IUndoableOperation operation = (IUndoableOperation) redoList
+						.get(i);
 				if (operation.hasContext(context)) {
 					return operation;
 				}
@@ -746,8 +777,16 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getUndoApproval(IUndoableOperation operation,
 			IAdaptable info) {
-		for (int i = 0; i < approvers.size(); i++) {
-			IOperationApprover approver = (IOperationApprover) approvers.get(i);
+
+		// copying operation approver list to array to prevent concurrent
+		// modification of the list. See
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
+
+		final IOperationApprover[] approverArray = (IOperationApprover[]) approvers
+				.toArray(new IOperationApprover[approvers.size()]);
+
+		for (int i = 0; i < approverArray.length; i++) {
+			IOperationApprover approver = approverArray[i];
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -783,9 +822,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getUndoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		synchronized(undoList) {
+		synchronized (undoRedoHistoryKey) {
 			for (int i = undoList.size() - 1; i >= 0; i--) {
-				IUndoableOperation operation = (IUndoableOperation) undoList.get(i);
+				IUndoableOperation operation = (IUndoableOperation) undoList
+						.get(i);
 				if (operation.hasContext(context)) {
 					return operation;
 				}
@@ -803,8 +843,26 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	/*
-	 * Notify listeners that an operation is about to execute.
+	 * Notify listeners of an operation event.
 	 */
+	private void notifyListeners(OperationHistoryEvent event) {
+		preNotifyOperation(event.getOperation(), event);
+
+		// copying listener list to array to prevent concurrent
+		// modification of the list. See
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
+
+		final IOperationHistoryListener[] listenerArray = (IOperationHistoryListener[]) listeners
+				.toArray(new IOperationHistoryListener[listeners.size()]);
+
+		for (int i = 0; i < listenerArray.length; i++)
+			try {
+				listenerArray[i].historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
+	}
+
 	private void notifyAboutToExecute(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
 			System.out.print("OPERATIONHISTORY >>> ABOUT_TO_EXECUTE "); //$NON-NLS-1$ 
@@ -812,16 +870,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation));
 	}
 
 	/*
@@ -834,16 +884,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_REDO, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.ABOUT_TO_REDO, this, operation));
 	}
 
 	/*
@@ -856,17 +898,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
-
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation));
 	}
 
 	/*
@@ -879,16 +912,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_ADDED, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.OPERATION_ADDED, this, operation));
 	}
 
 	/*
@@ -901,16 +926,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.DONE, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.DONE,
+				this, operation));
 	}
 
 	/*
@@ -924,16 +941,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_NOT_OK, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.OPERATION_NOT_OK, this, operation));
 	}
 
 	/*
@@ -946,16 +955,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.REDONE, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.REDONE,
+				this, operation));
 	}
 
 	/*
@@ -968,16 +969,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_REMOVED, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.OPERATION_REMOVED, this, operation));
 	}
 
 	/*
@@ -990,16 +983,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.UNDONE, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.UNDONE,
+				this, operation));
 	}
 
 	/*
@@ -1012,16 +997,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			System.out.println();
 		}
 
-		OperationHistoryEvent event = new OperationHistoryEvent(
-				OperationHistoryEvent.OPERATION_CHANGED, this, operation);
-		preNotifyOperation(operation, event);
-		for (int i = 0; i < listeners.size(); i++)
-			try {
-				((IOperationHistoryListener) listeners.get(i))
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+		notifyListeners(new OperationHistoryEvent(
+				OperationHistoryEvent.OPERATION_CHANGED, this, operation));
 	}
 
 	/*
@@ -1137,7 +1114,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// check the undo history first.
 		int index = undoList.indexOf(operation);
 		if (index > -1) {
-			synchronized (undoList) {
+			synchronized (undoRedoHistoryKey) {
 				undoList.remove(operation);
 				// notify listeners after the lock on undoList is released
 				ArrayList allContexts = new ArrayList(replacements.length);
@@ -1160,9 +1137,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			internalRemove(operation);
 			for (int i = 0; i < replacements.length; i++)
 				notifyAdd(replacements[i]);
-		// look in the redo history
+			// look in the redo history
 		} else {
-			synchronized (redoList) {
+			synchronized (undoRedoHistoryKey) {
 				index = redoList.indexOf(operation);
 				if (index == -1)
 					return;
