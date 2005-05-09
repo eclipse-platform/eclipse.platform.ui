@@ -59,14 +59,4 @@ public class AntAntNode extends AntTaskNode {
         }
         return null;
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.internal.ui.model.AntTaskNode#checkAttributeAgainstModifiedIdentifier(java.lang.String)
-	 */
-	protected boolean checkAttributeAgainstModifiedIdentifier(String key) {
-		if (key.equals("target")) { //$NON-NLS-1$
-			return false;
-		}
-		return true;
-	}
 }
