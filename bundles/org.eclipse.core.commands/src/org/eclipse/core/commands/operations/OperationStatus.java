@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -49,22 +48,8 @@ public final class OperationStatus extends Status {
 	 * 
 	 * (value is "org.eclipse.core.commands").
 	 */
-	private static String DEFAULT_PLUGIN_ID = "org.eclipse.core.commands"; //$NON-NLS-1$
+	static String DEFAULT_PLUGIN_ID = "org.eclipse.core.commands"; //$NON-NLS-1$
 
-	/**
-	 * Creates a new operation status, assigning the severity.
-	 * 
-	 * @param severity
-	 *            the severity for the status
-	 * @param code
-	 *            the informational code for the status
-	 * @param message
-	 *            a human-readable message, localized to the current locale
-	 */
-	public OperationStatus(int severity, int code, String message) {
-		super(severity, DEFAULT_PLUGIN_ID, code, message, null);
-	}
-	
 	/**
 	 * Creates a new operation status, specifying all properties.
 	 * 
@@ -82,20 +67,5 @@ public final class OperationStatus extends Status {
 	 */
 	public OperationStatus(int severity, String pluginId, int code, String message, Throwable exception) {
 		super(severity, pluginId, code, message, exception);
-	}
-
-	/**
-	 * Creates a new operation status for errors.
-	 * 
-	 * @param code
-	 *            the error code for the status
-	 * @param message
-	 *            a human-readable message, localized to the current locale
-	 * @param exception
-	 *            a low-level exception, or <code>null</code> if not
-	 *            applicable
-	 */
-	public OperationStatus(int code, String message, Throwable exception) {
-		super(IStatus.ERROR, DEFAULT_PLUGIN_ID, code, message, exception);
 	}
 }

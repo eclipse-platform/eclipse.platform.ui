@@ -93,16 +93,16 @@ public interface IOperationHistory {
 	 * available operation for redo.
 	 */
 	public static final IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
-			IStatus.INFO, OperationStatus.NOTHING_TO_REDO,
-			"No operation to redo"); //$NON-NLS-1$
+			IStatus.INFO, OperationStatus.DEFAULT_PLUGIN_ID, OperationStatus.NOTHING_TO_REDO, 
+			"No operation to redo", null); //$NON-NLS-1$
 
 	/**
 	 * An operation info status describing the condition that there is no
 	 * available operation for undo.
 	 */
 	public static final IStatus NOTHING_TO_UNDO_STATUS = new OperationStatus(
-			IStatus.INFO, OperationStatus.NOTHING_TO_UNDO,
-			"No operation to undo"); //$NON-NLS-1$
+			IStatus.INFO, OperationStatus.DEFAULT_PLUGIN_ID, OperationStatus.NOTHING_TO_UNDO,
+			"No operation to undo", null); //$NON-NLS-1$
 
 	/**
 	 * An operation error status describing the condition that the operation
@@ -110,8 +110,8 @@ public interface IOperationHistory {
 	 * action to be performed.
 	 */
 	public static final IStatus OPERATION_INVALID_STATUS = new OperationStatus(
-			IStatus.ERROR, OperationStatus.OPERATION_INVALID,
-			"Operation is not valid"); //$NON-NLS-1$
+			IStatus.ERROR, OperationStatus.DEFAULT_PLUGIN_ID, OperationStatus.OPERATION_INVALID,
+			"Operation is not valid", null); //$NON-NLS-1$
 
 	/**
 	 * <p>
