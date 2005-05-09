@@ -51,7 +51,7 @@ public class AdvancedTestOperation extends TestOperation implements
 		case ERROR:
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		case WARNING:
-			return new OperationStatus(IStatus.WARNING, 0, "Undo warning message"); //$NON-NLS-1$
+			return new OperationStatus(IStatus.WARNING, "org.eclipse.ui.tests", 0, "Undo warning message", null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}
@@ -63,7 +63,7 @@ public class AdvancedTestOperation extends TestOperation implements
 		case ERROR:
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		case WARNING:
-			return new OperationStatus(IStatus.WARNING, 0, "Redo warning message"); //$NON-NLS-1$
+			return new OperationStatus(IStatus.WARNING, "org.eclipse.ui.tests", 0, "Redo warning message", null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}

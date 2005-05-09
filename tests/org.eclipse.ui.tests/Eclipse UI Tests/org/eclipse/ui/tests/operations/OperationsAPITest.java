@@ -345,7 +345,7 @@ public class OperationsAPITest extends TestCase {
 				if (o == op6)
 					return Status.CANCEL_STATUS;
 				if (o == op5)
-					return new OperationStatus(0, "Error", null);
+					return new OperationStatus(IStatus.ERROR, "org.eclipse.ui.tests", 0, "Error", null);
 				return Status.OK_STATUS;
 			}
 		});
