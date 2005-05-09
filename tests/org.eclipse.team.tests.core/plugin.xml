@@ -32,34 +32,6 @@
       <import plugin="org.eclipse.core.tests.resources"/>
    </requires>
 
-
-   <extension
-         point="org.eclipse.core.tests.harness.tests">
-      <test
-            id="team.all">
-         <run
-               class="org.eclipse.team.tests.core.RepositoryProviderTests">
-         </run>
-      </test>
-   </extension>
-   <extension
-         point="org.eclipse.core.tests.harness.tests">
-      <test
-            id="target.all">
-         <run
-               class="org.eclipse.team.tests.core.TargetProviderTests">
-         </run>
-      </test>
-   </extension>
-   <extension
-         point="org.eclipse.core.tests.harness.tests">
-      <test
-            id="team.ftp">
-         <run
-               class="org.eclipse.team.tests.ftp.ClientTest">
-         </run>
-      </test>
-   </extension>
 <!-- *************** Repository Providers **************** -->
    <extension
          point="org.eclipse.team.core.repository">
