@@ -255,7 +255,7 @@ public class Patcher {
 					lines.add(line);
 					continue;
 				case '\\':
-					if (line.startsWith("No newline at end of file", 2)) { //$NON-NLS-1$
+					if (line.indexOf("newline at end") > 0) { //$NON-NLS-1$
 						int lastIndex= lines.size();
 						if (lastIndex > 0) {
 							line= (String) lines.get(lastIndex-1);
@@ -268,7 +268,7 @@ public class Patcher {
 							} else if (lc == '\r') {
 								end--;
 							}
-							line= line.substring(0, end);
+							line= line.substring(0, end+1);
 							lines.set(lastIndex-1, line);
 						}
 						continue;
