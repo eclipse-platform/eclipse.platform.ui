@@ -20,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -117,6 +116,8 @@ public class TitleAreaDialog extends Dialog {
     private boolean showingError = false;
 
     private boolean titleImageLargest = true;
+    
+    private int messageLabelHeight;
 
     /**
      * Instantiate a new title area dialog.
@@ -250,6 +251,7 @@ public class TitleAreaDialog extends Dialog {
         JFaceColors.setColors(messageLabel, foreground, background);
         messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
         messageLabel.setFont(JFaceResources.getDialogFont());
+        messageLabelHeight = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         // Filler labels
         leftFillerLabel = new Label(parent, SWT.CENTER);
         leftFillerLabel.setBackground(background);
@@ -268,10 +270,11 @@ public class TitleAreaDialog extends Dialog {
      */
     private void determineTitleImageLargest() {
         int titleY = titleImage.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         int labelY = titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        labelY += messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        FontData[] data = messageLabel.getFont().getFontData();
-        labelY += data[0].getHeight();
+        labelY += verticalSpacing;
+        labelY += messageLabelHeight;
+        labelY += verticalSpacing;
         titleImageLargest = titleY > labelY;
     }
 
@@ -295,6 +298,7 @@ public class TitleAreaDialog extends Dialog {
         messageLabelData.right = new FormAttachment(titleImage);
         messageLabelData.left = new FormAttachment(messageImageLabel,
                 horizontalSpacing);
+        messageLabelData.height = messageLabelHeight;
         if (titleImageLargest)
             messageLabelData.bottom = new FormAttachment(titleImage, 0,
                     SWT.BOTTOM);
@@ -445,6 +449,7 @@ public class TitleAreaDialog extends Dialog {
                     verticalSpacing);
             messageLabelData.right = new FormAttachment(titleImage);
             messageLabelData.left = new FormAttachment(messageImageLabel, 0);
+            messageLabelData.height = messageLabelHeight;
             if (titleImageLargest)
                 messageLabelData.bottom = new FormAttachment(titleImage, 0,
                         SWT.BOTTOM);
@@ -547,9 +552,6 @@ public class TitleAreaDialog extends Dialog {
      *            the message to use
      */
     private void updateMessage(String newMessage) {
-        //Be sure there are always 2 lines for layout purposes
-        if (newMessage != null && newMessage.indexOf('\n') == -1)
-            newMessage = newMessage + "\n "; //$NON-NLS-1$
         messageLabel.setText(newMessage);
     }
 
