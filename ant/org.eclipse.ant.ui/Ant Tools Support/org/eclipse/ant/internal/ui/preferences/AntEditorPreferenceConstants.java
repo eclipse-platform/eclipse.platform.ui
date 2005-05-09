@@ -280,6 +280,16 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_MARK_OCCURRENCES= "editor_mark_occurrences"; //$NON-NLS-1$
+    
+    /**
+     * A named preference that controls if background reconciling is triggered by the user
+     * typing in the editor
+     * <p>
+     * Value is of type <code>Boolean</code>.
+     * </p>
+     * @since 3.1
+     */
+    public static final String EDITOR_RECONCILE= "editor_reconcile"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that controls whether occurrences are sticky in the editor.
@@ -328,5 +338,7 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(EDITOR_STICKY_OCCURRENCES, true);
 		
 		store.setDefault(BUILDFILE_IGNORE_ALL, false);
+        
+        store.setDefault(EDITOR_RECONCILE, true);
 	}
 }

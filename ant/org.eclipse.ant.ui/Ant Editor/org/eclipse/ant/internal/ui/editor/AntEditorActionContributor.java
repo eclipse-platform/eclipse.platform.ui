@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.ant.internal.ui.editor.actions.OpenExternalDocAction;
+import org.eclipse.ant.internal.ui.editor.actions.ToggleAutoReconcileAction;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleMarkOccurrencesAction;
 import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -46,6 +47,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	private TogglePresentationAction fTogglePresentation;
 	private OpenExternalDocAction fOpenExternalDocAction;
 	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
+    private ToggleAutoReconcileAction fToggleAutoReconcileAction;
 
 	public AntEditorActionContributor() {
 		super();
@@ -54,6 +56,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		fContentFormat = new RetargetTextEditorAction(bundle, "ContentFormat."); //$NON-NLS-1$
 		fTogglePresentation= new TogglePresentationAction();
 		fToggleMarkOccurrencesAction= new ToggleMarkOccurrencesAction();
+        fToggleAutoReconcileAction= new ToggleAutoReconcileAction();
 		
 	}
 	
@@ -98,6 +101,9 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		if (fToggleMarkOccurrencesAction != null) {
 			fToggleMarkOccurrencesAction.setEditor(editor);
 		}
+        if (fToggleAutoReconcileAction != null) {
+            fToggleAutoReconcileAction.setEditor(editor);
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -154,5 +160,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
         super.init(bars, page);
         bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 		bars.setGlobalActionHandler(TOGGLE_MARK_OCCURRENCES_ID, fToggleMarkOccurrencesAction);
+        bars.setGlobalActionHandler("org.eclipse.ant.ui.toggleAutoReconcile", fToggleAutoReconcileAction); //$NON-NLS-1$
     }
 }
