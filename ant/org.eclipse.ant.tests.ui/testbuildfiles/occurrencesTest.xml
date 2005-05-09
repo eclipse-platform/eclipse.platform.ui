@@ -44,5 +44,5 @@
 		<antcall target="default"></antcall>
 	</target>
 	
-	<target name="sameNameAsProp"></target>
+	<target name="sameNameAsProp" unless="extendsDestBase" if="destBase"></target>
 </project>
