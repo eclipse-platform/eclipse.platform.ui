@@ -61,16 +61,17 @@ import org.eclipse.jface.text.IDocumentListener;
 			Assert.isTrue(false, "Can't happen"); //$NON-NLS-1$
 		}
 		
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=93634
-		// If the same string is replaced on many documents (e.g. rename
-		// package), the size of the undo can be reduced by using the same
-		// String instance in all edits, instead of using the unique String
-		// returned from IDocument.get(int, int).
-		if (fLastCurrentText != null && fLastCurrentText.equals(currentText)) {
+		/*
+		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=93634
+		 * If the same string is replaced on many documents (e.g. rename
+		 * package), the size of the undo can be reduced by using the same
+		 * String instance in all edits, instead of using the unique String
+		 * returned from IDocument.get(int, int).
+		 */
+		if (fLastCurrentText != null && fLastCurrentText.equals(currentText))
 			currentText= fLastCurrentText;
-		} else {
+		else
 			fLastCurrentText= currentText;
-		}
 
 		String newText = event.getText();
 		undo.add(new ReplaceEdit(offset, newText != null ? newText.length() : 0, currentText));
