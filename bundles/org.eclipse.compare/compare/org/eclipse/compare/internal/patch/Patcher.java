@@ -729,7 +729,7 @@ public class Patcher {
 				lines.remove(pos);
 			} else if (controlChar == '+') {
 				// added lines
-				if (hunk.fOldLength == 0)
+				if (hunk.fOldLength == 0 && pos+1 < lines.size())
 					lines.add(pos+1, line);
 				else
 					lines.add(pos, line);
