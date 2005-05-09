@@ -20,6 +20,12 @@ import org.eclipse.test.performance.PerformanceMeter;
  * and commiting performance timers.
  */
 public abstract class PerformanceTestRunner {
+	
+	private String regressionReason;
+	
+	public void setRegressionReason(String comment) {
+		this.regressionReason = comment;
+	}
 
 	/**
 	 * Implemented by subclasses to perform the work to be measured.
@@ -40,6 +46,8 @@ public abstract class PerformanceTestRunner {
 	public final void run(TestCase testCase, int outer, int inner) {
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
+		if (regressionReason != null)
+			perf.setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, regressionReason);
 		try {
 			for (int i = 0; i < outer; i++) {
 				setUp();
