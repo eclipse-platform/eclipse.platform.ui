@@ -935,10 +935,19 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
+			// If the double-clicked element can be obtained from the event, use it
+			// otherwise get it from the control.  Some controls like List do
+			// not have the notion of item.
+			// For details, see bug 90161 [Navigator] DefaultSelecting folders shouldn't always expand first one
+			ISelection selection;
 			if (event.item != null && event.item.getData() != null) {
-				ISelection selection = new StructuredSelection(event.item.getData());
-				fireDoubleClick(new DoubleClickEvent(this, selection));
+				selection = new StructuredSelection(event.item.getData());
 			}
+			else {
+				selection = getSelection();
+				updateSelection(selection);
+			}
+			fireDoubleClick(new DoubleClickEvent(this, selection));
 		}
 	}
 
