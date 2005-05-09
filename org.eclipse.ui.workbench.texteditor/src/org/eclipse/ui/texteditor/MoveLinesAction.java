@@ -22,6 +22,11 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.NotHandledException;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -34,6 +39,9 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 
 /**
  * Action for moving selected lines in an editor.
@@ -51,7 +59,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * <li>the underlying document gets changed due to anything but this action</li>
 	 * </ul>
 	 */
-	private class ExitStrategy implements VerifyKeyListener, MouseListener, FocusListener, IDocumentListener {
+	private class ExitStrategy implements VerifyKeyListener, MouseListener, FocusListener, IDocumentListener, IExecutionListener {
 
 		/**
 		 * The widget this instance is registered with for <code>VerifyKey</code>-, <code>Mouse</code>-
@@ -92,6 +100,10 @@ public class MoveLinesAction extends TextEditorAction {
 			fDocumentEventSource= viewer.getDocument();
 			if (fDocumentEventSource != null)
 				fDocumentEventSource.addDocumentListener(this);
+			
+			ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+			if (commandService != null)
+				commandService.addExecutionListener(this);
 		}
 
 		/**
@@ -108,6 +120,11 @@ public class MoveLinesAction extends TextEditorAction {
 				fDocumentEventSource.removeDocumentListener(this);
 				fDocumentEventSource= null;
 			}
+			
+			ICommandService commandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+			if (commandService != null)
+				commandService.removeExecutionListener(this);
+			
 			fIsInstalled= false;
 		}
 
@@ -139,6 +156,21 @@ public class MoveLinesAction extends TextEditorAction {
 		}
 
 		public void documentChanged(DocumentEvent event) {}
+
+		public void notHandled(String commandId, NotHandledException exception) {
+		}
+
+		public void postExecuteFailure(String commandId, ExecutionException exception) {
+		}
+
+		public void postExecuteSuccess(String commandId, Object returnValue) {
+		}
+
+		public void preExecute(String commandId, ExecutionEvent event) {
+			if (!fCopy && !(ITextEditorActionDefinitionIds.MOVE_LINES_UP.equals(commandId) || ITextEditorActionDefinitionIds.MOVE_LINES_DOWN.equals(commandId))
+					|| fCopy && !(ITextEditorActionDefinitionIds.COPY_LINES_UP.equals(commandId) || ITextEditorActionDefinitionIds.COPY_LINES_DOWN.equals(commandId)))
+				endCompoundEdit();
+		}
 	}
 
 	/* keys */
