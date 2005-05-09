@@ -27,9 +27,9 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.html.HTMLElement;
 import org.eclipse.ui.internal.intro.impl.html.IntroHTMLGenerator;
-import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.model.History;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -66,8 +66,8 @@ public class BrowserIntroPartImplementation extends
 
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
-            forwardAction.setEnabled(canNavigateForward());
-            backAction.setEnabled(canNavigateBackward());
+            forwardAction.setEnabled(history.canNavigateForward());
+            backAction.setEnabled(history.canNavigateBackward());
             return;
         }
 
@@ -102,7 +102,7 @@ public class BrowserIntroPartImplementation extends
             }
 
             public void completed(ProgressEvent event) {
-                browser.setData("frameNavigation", null); //$NON-NLS-1$
+                flagEndOfNavigation();
                 if (!getModel().isDynamic())
                     updateNavigationActionsState();
             }
@@ -146,7 +146,7 @@ public class BrowserIntroPartImplementation extends
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null) {
             // we have a cached state. handle appropriately
-            if (isURL(cachedPage)) {
+            if (History.isURL(cachedPage)) {
                 // set the URL the browser should display
                 boolean success = browser.setUrl(cachedPage);
                 if (!success) {
@@ -154,18 +154,19 @@ public class BrowserIntroPartImplementation extends
                             + cachedPage, null);
                     return;
                 }
+                history.updateHistory(cachedPage);
             } else {
                 // Generate HTML for the cached page, and set it on the browser.
                 getModel().setCurrentPageId(cachedPage, false);
                 // generateDynamicContentForPage(getModel().getCurrentPage());
+                history.updateHistory(getModel().getCurrentPage());
             }
-            updateHistory(cachedPage);
 
         } else {
             // No cached page. Generate HTML for the home page, and set it
             // on the browser.
             // generateDynamicContentForPage(homePage);
-            updateHistory(homePage.getId());
+            history.updateHistory(homePage);
         }
         // INTRO: all setText calls above are commented out because calling
         // setText twice causes problems. revisit when swt bug is fixed.
@@ -426,20 +427,24 @@ public class BrowserIntroPartImplementation extends
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
-            if (canNavigateBackward()) {
-                navigateHistoryBackward();
-                if (isURL(getCurrentLocation())) {
-                    success = browser.setUrl(getCurrentLocation());
+            if (history.canNavigateBackward()) {
+                history.navigateHistoryBackward();
+                if (history.currentLocationIsUrl()) {
+                    success = browser.setUrl(history.getCurrentLocationAsUrl());
                 } else {
                     // we need to regen HTML. We can not use setting current
                     // page to trigger regen for one case: navigating back from
-                    // an url will trigger regen since current page would be the
-                    // same.
-                    AbstractIntroPage page = (AbstractIntroPage) getModel()
-                        .findChild(getCurrentLocation(),
-                            AbstractIntroElement.ABSTRACT_PAGE);
+                    // a url will not trigger regen since current page would be
+                    // the same.
+                    AbstractIntroPage page = history.getCurrentLocationAsPage();
+                    if (page.isIFramePage())
+                        // if page is a cloned IFrame page, guard against Iframe
+                        // navigations. The returned page has the correct Iframe
+                        // set.
+                        flagStartOfNavigation();
+
                     success = generateDynamicContentForPage(page);
-                    getModel().setCurrentPageId(getCurrentLocation(), false);
+                    getModel().setCurrentPageId(page.getId(), false);
                 }
             } else
                 success = false;
@@ -462,16 +467,16 @@ public class BrowserIntroPartImplementation extends
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
-            if (canNavigateForward()) {
-                navigateHistoryForward();
-                if (isURL(getCurrentLocation())) {
-                    success = browser.setUrl(getCurrentLocation());
+            if (history.canNavigateForward()) {
+                history.navigateHistoryForward();
+                if (history.currentLocationIsUrl()) {
+                    success = browser.setUrl(history.getCurrentLocationAsUrl());
                 } else {
-                    AbstractIntroPage page = (AbstractIntroPage) getModel()
-                        .findChild(getCurrentLocation(),
-                            AbstractIntroElement.ABSTRACT_PAGE);
+                    AbstractIntroPage page = history.getCurrentLocationAsPage();
+                    if (page.isIFramePage())
+                        flagStartOfNavigation();
                     success = generateDynamicContentForPage(page);
-                    getModel().setCurrentPageId(getCurrentLocation(), false);
+                    getModel().setCurrentPageId(page.getId(), false);
                 }
             } else
                 success = false;
@@ -493,16 +498,16 @@ public class BrowserIntroPartImplementation extends
         // Home is URL of root page in static case, and root page in
         // dynamic.
         IntroHomePage rootPage = getModel().getHomePage();
-        String location = null;
         boolean success = false;
         if (getModel().isDynamic()) {
-            location = rootPage.getId();
-            success = getModel().setCurrentPageId(location);
+            success = getModel().setCurrentPageId(rootPage.getId());
+            updateHistory(rootPage);
         } else {
-            location = rootPage.getUrl();
+            String location = rootPage.getUrl();
             success = browser.setUrl(location);
+            updateHistory(location);
         }
-        updateHistory(location);
+
         return success;
     }
 
@@ -553,7 +558,7 @@ public class BrowserIntroPartImplementation extends
         // defined in the root page. But first check memento if we can
         // restore last visited page.
         String url = getCachedCurrentPage();
-        if (!isURL(url))
+        if (!History.isURL(url))
             // no cached state, or invalid state.
             url = getModel().getHomePage().getUrl();
 
@@ -581,11 +586,23 @@ public class BrowserIntroPartImplementation extends
             browser.setUrl(standbyPage.getUrl());
         else
             browser.setUrl(homePage.getUrl());
-
     }
 
 
     public Browser getBrowser() {
         return browser;
     }
+
+    public void flagStartOfNavigation() {
+        if (browser.getData("frameNavigation") == null) //$NON-NLS-1$
+            browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public void flagEndOfNavigation() {
+        browser.setData("frameNavigation", null); //$NON-NLS-1$
+    }
+
+
+
+
 }

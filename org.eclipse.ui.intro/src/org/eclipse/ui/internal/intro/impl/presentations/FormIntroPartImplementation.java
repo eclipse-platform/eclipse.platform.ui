@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
+import org.eclipse.ui.internal.intro.impl.model.History;
 import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
@@ -79,8 +80,8 @@ public class FormIntroPartImplementation extends
 
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
-            forwardAction.setEnabled(canNavigateForward());
-            backAction.setEnabled(canNavigateBackward());
+            forwardAction.setEnabled(history.canNavigateForward());
+            backAction.setEnabled(history.canNavigateBackward());
             return;
         }
         // no actions are added in static swt.
@@ -179,7 +180,7 @@ public class FormIntroPartImplementation extends
         // if the cached page is a URL ignore it. We do not want to launch a
         // browser on startup.
         String cachedPage = getCachedCurrentPage();
-        if (cachedPage != null & !isURL(cachedPage))
+        if (cachedPage != null & !History.isURL(cachedPage))
             // this will create the page in the page form.
             model.setCurrentPageId(cachedPage);
 
@@ -210,7 +211,7 @@ public class FormIntroPartImplementation extends
                     pageBook.showPage(PageForm.PAGE_FORM_ID);
                 }
             }
-            updateHistory(pageToShow.getId());
+            updateHistory(pageToShow);
         }
 
         return pageBook;
@@ -392,16 +393,18 @@ public class FormIntroPartImplementation extends
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
-            if (canNavigateBackward()) {
-                navigateHistoryBackward();
-                if (isURL(getCurrentLocation()))
-                    success = Util.openBrowser(getCurrentLocation());
+            if (history.canNavigateBackward()) {
+                history.navigateHistoryBackward();
+                if (history.currentLocationIsUrl())
+                    success = Util.openBrowser(history
+                        .getCurrentLocationAsUrl());
                 else {
                     // Set current page, and this will triger regen.
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                         .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
-                    success = getModel().setCurrentPageId(getCurrentLocation());
+                    success = getModel().setCurrentPageId(
+                        history.getCurrentLocationAsPage().getId());
                     currentIntroPart.getControl().setRedraw(true);
                 }
             }
@@ -422,16 +425,18 @@ public class FormIntroPartImplementation extends
 
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
-            if (canNavigateForward()) {
-                navigateHistoryForward();
-                if (isURL(getCurrentLocation()))
-                    success = Util.openBrowser(getCurrentLocation());
+            if (history.canNavigateForward()) {
+                history.navigateHistoryForward();
+                if (history.currentLocationIsUrl())
+                    success = Util.openBrowser(history
+                        .getCurrentLocationAsUrl());
                 else {
                     // Set current page, and this will triger regen.
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                         .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
-                    success = getModel().setCurrentPageId(getCurrentLocation());
+                    success = getModel().setCurrentPageId(
+                        history.getCurrentLocationAsPage().getId());
                     currentIntroPart.getControl().setRedraw(true);
                 }
             }
@@ -448,7 +453,7 @@ public class FormIntroPartImplementation extends
             currentIntroPart.getControl().setRedraw(false);
             boolean success = false;
             success = getModel().setCurrentPageId(rootPage.getId());
-            updateHistory(rootPage.getId());
+            updateHistory(rootPage);
             currentIntroPart.getControl().setRedraw(true);
             return success;
         }

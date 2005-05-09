@@ -306,7 +306,7 @@ public class IntroURL implements IIntroURL {
      * opened in the Help system window.
      */
     private boolean showHelpTopic(String href, String embed, String embedTarget) {
-        return new ShowHelpActionHandler(this).showHelpTopic(href, embed,
+        return new ShowHelpURLHandler(this).showHelpTopic(href, embed,
             embedTarget);
     }
 

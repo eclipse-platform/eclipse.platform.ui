@@ -21,10 +21,10 @@ import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 
-public class ShowHelpActionHandler {
+public class ShowHelpURLHandler {
     private IntroURL introURL = null;
 
-    ShowHelpActionHandler(IntroURL url) {
+    ShowHelpURLHandler(IntroURL url) {
         this.introURL = url;
     }
 
