@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
+import org.eclipse.core.tests.session.SetupManager.SetupException;
+
 /**
  * TODO It should live in the UI tests instead.
  */
@@ -35,4 +37,13 @@ public class UIPerformanceSessionTestSuite extends PerformanceSessionTestSuite {
 		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);
 	}
 
+	/**
+	 * Ensures setup uses this suite's instance location.
+	 * @throws SetupException
+	 */
+	protected Setup newSetup() throws SetupException {
+		Setup base = super.newSetup();
+		base.setSystemProperty("org.eclipse.ui.testWaitForEarlyStartup", "false");
+		return base;
+	}
 }
