@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
 
 public class AntTargetNode extends AntElementNode {
 
@@ -150,6 +151,14 @@ public class AntTargetNode extends AntElementNode {
 			 	return true;
 			 }
 		}
+		String ifString= fTarget.getIf();
+		if (ifString != null && ifString.endsWith(identifier.substring(2, identifier.length() - 1))) {
+			return true;
+		}
+		String unlessString= fTarget.getUnless();
+		if (unlessString != null && unlessString.endsWith(identifier.substring(2, identifier.length() - 1))) {
+			return true;
+		}
 		return false;
 	}
 
@@ -170,24 +179,76 @@ public class AntTargetNode extends AntElementNode {
             int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
             nameOffset= textToSearch.indexOf(identifier, nameOffset);
             results.add(new Integer(getOffset() + nameOffset));
-        }
-        int dependsOffset= textToSearch.indexOf("depends"); //$NON-NLS-1$
-		while (dependsOffset > 0 && !Character.isWhitespace(textToSearch.charAt(dependsOffset - 1))) {
-			dependsOffset= textToSearch.indexOf("depends", dependsOffset + 1); //$NON-NLS-1$
-		}
-        if (dependsOffset != -1) {
-			dependsOffset+= 7;
-            int dependsOffsetEnd= textToSearch.indexOf('"', dependsOffset);
-            dependsOffsetEnd= textToSearch.indexOf('"', dependsOffsetEnd+1);
-            while(dependsOffset < dependsOffsetEnd) {
-                dependsOffset= textToSearch.indexOf(identifier, dependsOffset);
-                if (dependsOffset == -1 || dependsOffset > dependsOffsetEnd) {
-                    break;
-                }
-                results.add(new Integer(getOffset() + dependsOffset));
-                dependsOffset+= identifier.length();
-            }
+        } else {
+        	String ifString= fTarget.getIf();
+    		if (ifString != null && ifString.endsWith(identifier)) {
+    			int ifOffset= textToSearch.indexOf("if"); //$NON-NLS-1$
+                ifOffset= textToSearch.indexOf(identifier, ifOffset);
+                results.add(new Integer(getOffset() + ifOffset));
+    		} else {
+    			String unlessString= fTarget.getUnless();
+    			if (unlessString != null && unlessString.endsWith(identifier)) {
+    				int unlessOffset= textToSearch.indexOf("unless"); //$NON-NLS-1$
+    	            unlessOffset= textToSearch.indexOf(identifier, unlessOffset);
+    	            results.add(new Integer(getOffset() + unlessOffset));
+    			} else {	
+			        int dependsOffset= textToSearch.indexOf("depends"); //$NON-NLS-1$
+					while (dependsOffset > 0 && !Character.isWhitespace(textToSearch.charAt(dependsOffset - 1))) {
+						dependsOffset= textToSearch.indexOf("depends", dependsOffset + 1); //$NON-NLS-1$
+					}
+			        if (dependsOffset != -1) {
+						dependsOffset+= 7;
+			            int dependsOffsetEnd= textToSearch.indexOf('"', dependsOffset);
+			            dependsOffsetEnd= textToSearch.indexOf('"', dependsOffsetEnd+1);
+			            while (dependsOffset < dependsOffsetEnd) {
+			                dependsOffset= textToSearch.indexOf(identifier, dependsOffset);
+			                if (dependsOffset == -1 || dependsOffset > dependsOffsetEnd) {
+			                    break;
+			                }
+			                char delimiter= textToSearch.charAt(dependsOffset - 1);
+			                if (delimiter == ',' || delimiter == '"' || delimiter == ' ') {
+			                	results.add(new Integer(getOffset() + dependsOffset));
+			                }
+			            	dependsOffset+= identifier.length();
+			            }
+			        }
+    			}
+    		}
         }
         return results;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
+	 */
+	public boolean isRegionPotentialReference(IRegion region) {
+		boolean superOK= super.isRegionPotentialReference(region);
+		if (!superOK) {
+			return false;
+		}
+		
+		String textToSearch= getAntModel().getText(getOffset(), getLength());
+		if (textToSearch == null) {
+			return false;
+		}
+		if (checkReferenceRegion(region, textToSearch, "depends")) { //$NON-NLS-1$
+			return true;
+		} else if (checkReferenceRegion(region, textToSearch, "name")) { //$NON-NLS-1$
+			return true;
+		} else if (checkReferenceRegion(region, textToSearch, "if")) { //$NON-NLS-1$
+			return true;
+		} 
+		return checkReferenceRegion(region, textToSearch, "unless"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.model.AntElementNode#isFromDeclaration(org.eclipse.jface.text.IRegion)
+     */
+    public boolean isFromDeclaration(IRegion region) {
+    	 String textToSearch= getAntModel().getText(getOffset(), getLength());
+         if (textToSearch == null || textToSearch.length() == 0) {
+         	return false;
+         }
+         return checkReferenceRegion(region, textToSearch, "name"); //$NON-NLS-1$
+	}
 }
