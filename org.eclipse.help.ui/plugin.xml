@@ -18,13 +18,24 @@
             name="%help_preferences_page_name"
             class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
             id="org.eclipse.help.ui.browsersPreferencePage">
+            <keywordReference id="org.eclipse.help.ui.browsersPreferencePage"/>
       </page>
       <page
             name="%appserver_preferences_page_name"
             category="org.eclipse.help.ui.browsersPreferencePage"
             class="org.eclipse.help.ui.internal.AppserverPreferencePage"
             id="org.eclipse.help.ui.appserverPreferencePage">
+            <keywordReference id="org.eclipse.help.ui.appserverPreferencePage"/>
       </page>
+   </extension>
+   <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.browsersPreferencePage"
+            id="org.eclipse.help.ui.browsersPreferencePage"/>
+      <keyword
+            label="%preferenceKeywords.appserverPreferencePage"
+            id="org.eclipse.help.ui.appserverPreferencePage"/>
    </extension>
 <!-- Context Help contribution -->
    <extension
