@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
-import org.eclipse.core.internal.runtime.Messages;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
-import org.eclipse.osgi.util.NLS;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.0
@@ -64,21 +61,6 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ExportedPreferences(nodeParent, nodeName);
-	}
-
-	/*
-	 * @see org.osgi.service.prefs.Preferences#remove(java.lang.String)
-	 */
-	public void remove(String key) {
-		super.remove(key);
-		if (properties == null)
-			try {
-				removeNode();
-			} catch (BackingStoreException e) {
-				String message = NLS.bind(Messages.preferences_removeExported, absolutePath());
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
-				log(status);
-			}
 	}
 
 	/*

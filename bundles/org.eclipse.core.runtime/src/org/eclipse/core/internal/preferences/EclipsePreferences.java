@@ -213,7 +213,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Version 1 (current version)
 	 * path/key=value
 	 */
-	protected void convertFromProperties(Properties table, boolean notify) {
+	protected static void convertFromProperties(EclipsePreferences node, Properties table, boolean notify) {
 		String version = table.getProperty(VERSION_KEY);
 		if (version == null || !VERSION_VALUE.equals(version)) {
 			// ignore for now
@@ -230,11 +230,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				if (InternalPlatform.DEBUG_PREFERENCE_SET)
 					Policy.debug("Setting preference: " + path + '/' + key + '=' + value); //$NON-NLS-1$
 				//use internal methods to avoid notifying listeners
-				EclipsePreferences childNode = (EclipsePreferences) internalNode(path, false, null);
+				EclipsePreferences childNode = (EclipsePreferences) node.internalNode(path, false, null);
 				String oldValue = childNode.internalPut(key, value);
 				// notify listeners if applicable
 				if (notify && !value.equals(oldValue))
-					firePreferenceEvent(key, oldValue, value);
+					node.firePreferenceEvent(key, oldValue, value);
 			}
 		}
 		PreferencesService.getDefault().shareStrings();
@@ -611,24 +611,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		load(getLocation());
 	}
 
-	protected void load(IPath location) throws BackingStoreException {
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
+	protected static Properties loadProperties(IPath location) throws BackingStoreException {
 		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 			Policy.debug("Loading preferences from file: " + location); //$NON-NLS-1$
 		InputStream input = null;
-		Properties fromDisk = new Properties();
+		Properties result = new Properties();
 		try {
 			input = new BufferedInputStream(new FileInputStream(location.toFile()));
-			fromDisk.load(input);
+			result.load(input);
 		} catch (FileNotFoundException e) {
 			// file doesn't exist but that's ok.
 			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
 				Policy.debug("Preference file does not exist: " + location); //$NON-NLS-1$
-			return;
+			return result;
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.preferences_loadException, location);
 			log(new Status(IStatus.INFO, Platform.PI_RUNTIME, IStatus.INFO, message, e));
@@ -641,7 +636,17 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					// ignore
 				}
 		}
-		convertFromProperties(fromDisk, false);
+		return result;
+	}
+
+	protected void load(IPath location) throws BackingStoreException {
+		if (location == null) {
+			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		Properties fromDisk = loadProperties(location);
+		convertFromProperties(this, fromDisk, false);
 	}
 
 	protected void loaded() {
@@ -652,7 +657,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// sub-classes to over-ride if necessary
 	}
 
-	protected void log(IStatus status) {
+	protected static void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
 	}
 
