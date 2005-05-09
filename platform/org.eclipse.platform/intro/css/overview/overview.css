@@ -40,7 +40,6 @@ iframe {
 	margin-top : 5px;
 	margin-bottom : -20px;
 	vertical-align : top;
-		border:1px red dotted;
 }
 
 #overview-links > a { vertical-align : middle; }
@@ -58,7 +57,6 @@ iframe {
 	position : relative;
 	top : -50px;
 	left : 60px;
-	border:1px green dotted;
 }
 
 #overview-links a p .text {
@@ -67,7 +65,6 @@ iframe {
 	position : relative;
 	top : -45px;
 	left : 53px;
-		border:1px green dotted;
 }
 
 /* Special case for Mozilla, because the links are displayed
