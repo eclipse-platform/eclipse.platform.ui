@@ -100,12 +100,12 @@ public class ProjectPreferences extends EclipsePreferences {
 		// cache the qualifier
 		if (segmentCount > 2)
 			qualifier = getSegment(path, 2);
-		
+
 		if (segmentCount != 2)
 			return;
 
 		// else segmentCount == 2 so we initialize the children
-		if (initialized) 
+		if (initialized)
 			return;
 		try {
 			synchronized (this) {
@@ -415,11 +415,17 @@ public class ProjectPreferences extends EclipsePreferences {
 			// make sure that we generate the appropriate resource change events
 			// if encoding settings have changed
 			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))
-				((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(file.getProject());
+				preferencesChanged(file.getProject());
 		} catch (BackingStoreException e) {
 			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 			throw new CoreException(status);
 		}
+	}
+
+	private static void preferencesChanged(IProject project) {
+		Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
+		workspace.getCharsetManager().projectPreferencesChanged(project);
+		workspace.getContentDescriptionManager().projectPreferencesChanged(project);
 	}
 
 	static void removeNode(Preferences node) throws CoreException {
@@ -454,7 +460,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		removeNode(projectNode);
 		// notifies the CharsetManager 		
 		if (hasResourcesSettings)
-			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(project);
+			preferencesChanged(project);
 	}
 
 	static void deleted(IFile file) throws CoreException {
@@ -479,7 +485,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		removeNode(projectNode.node(qualifier));
 		// notifies the CharsetManager if needed
 		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
-			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(file.getProject());
+			preferencesChanged(file.getProject());
 	}
 
 	static void deleted(IResource resource) throws CoreException {
@@ -515,7 +521,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		removeNode(projectNode);
 		// notifies the CharsetManager 		
 		if (hasResourcesSettings)
-			((Workspace) ResourcesPlugin.getWorkspace()).getCharsetManager().charsetPreferencesChanged(folder.getProject());
+			preferencesChanged(folder.getProject());
 	}
 
 	public void flush() throws BackingStoreException {

@@ -12,11 +12,15 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 import org.eclipse.core.internal.utils.Cache;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
+import org.eclipse.core.runtime.preferences.*;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Manages project-specific content type behavior.
@@ -28,29 +32,137 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 public class ProjectContentTypes {
 
 	/**
-	 * A project-aware content type selection policy.   
+	 * A project-aware content type selection policy.
+	 * This class is also a dynamic scope context that will delegate to either 
+	 * project or instance scope depending on whether project specific settings were enabled
+	 * for the project in question.    
 	 */
-	private class ProjectContentTypeSelectionPolicy implements ISelectionPolicy {
-
+	private class ProjectContentTypeSelectionPolicy implements ISelectionPolicy, IScopeContext {
+		// corresponding project
 		private Project project;
+		// cached project scope
+		private IScopeContext projectScope;
 
 		public ProjectContentTypeSelectionPolicy(Project project) {
 			this.project = project;
+			this.projectScope = new ProjectScope(project);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!(obj instanceof IScopeContext))
+				return false;
+			IScopeContext other = (IScopeContext) obj;
+			if (!getName().equals(other.getName()))
+				return false;
+			IPath location = getLocation();
+			return location == null ? other.getLocation() == null : location.equals(other.getLocation());
+		}
+
+		private IScopeContext getDelegate() {
+			if (!usesContentTypePreferences(project.getName()))
+				return ProjectContentTypes.INSTANCE_SCOPE;
+			return projectScope;
+		}
+
+		public IPath getLocation() {
+			return getDelegate().getLocation();
+		}
+
+		public String getName() {
+			return getDelegate().getName();
+		}
+
+		public IEclipsePreferences getNode(String qualifier) {
+			return getDelegate().getNode(qualifier);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return getName().hashCode();
 		}
 
 		public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
 			return ProjectContentTypes.this.select(project, candidates, fileName, content);
 		}
-
 	}
 
+	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
+
+	static final InstanceScope INSTANCE_SCOPE = new InstanceScope();
+
+	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
+	private static final Preferences PROJECT_SCOPE = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 	private Cache contentTypesPerProject;
 	private Workspace workspace;
+
+	static boolean usesContentTypePreferences(String projectName) {
+		try {
+			// be careful looking up for our node so not to create any nodes as side effect
+			Preferences node = PROJECT_SCOPE;
+			//TODO once bug 90500 is fixed, should be simpler
+			// for now, take the long way
+			if (!node.nodeExists(projectName))
+				return false;
+			node = node.node(projectName);
+			if (!node.nodeExists(Platform.PI_RUNTIME))
+				return false;
+			node = node.node(Platform.PI_RUNTIME);
+			if (!node.nodeExists(CONTENT_TYPE_PREF_NODE))
+				return false;
+			node = node.node(CONTENT_TYPE_PREF_NODE);
+			return node.getBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
+		} catch (BackingStoreException e) {
+			// exception treated when retrieving the project preferences
+		}
+		return false;
+	}
 
 	public ProjectContentTypes(Workspace workspace) {
 		this.workspace = workspace;
 		// keep cache small
 		this.contentTypesPerProject = new Cache(5, 30, 0.4);
+	}
+
+	/**
+	 * Collect content types associated to the natures configured for the given project.
+	 */
+	private Set collectAssociatedContentTypes(Project project) {
+		String[] enabledNatures = workspace.getNatureManager().getEnabledNatures(project);
+		if (enabledNatures.length == 0)
+			return Collections.EMPTY_SET;
+		Set related = new HashSet(enabledNatures.length);
+		for (int i = 0; i < enabledNatures.length; i++) {
+			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNatures[i]);
+			if (descriptor == null)
+				// no descriptor found for the nature, skip it
+				continue;
+			String[] natureContentTypes = descriptor.getContentTypeIds();
+			for (int j = 0; j < natureContentTypes.length; j++)
+				// collect associate content types
+				related.add(natureContentTypes[j]);
+		}
+		return related;
+	}
+
+	public void contentTypePreferencesChanged(IProject project) {
+		final ProjectInfo info = (ProjectInfo) ((Project) project).getResourceInfo(false, false);
+		if (info != null)
+			info.setMatcher(null);
+	}
+
+	/**
+	 * Creates a content type matcher for the given project. Takes natures and user settings into account.
+	 */
+	private IContentTypeMatcher createMatcher(Project project) {
+		ProjectContentTypeSelectionPolicy projectContentTypeSelectionPolicy = new ProjectContentTypeSelectionPolicy(project);
+		return Platform.getContentTypeManager().getMatcher(projectContentTypeSelectionPolicy, projectContentTypeSelectionPolicy);
 	}
 
 	private Set getAssociatedContentTypes(Project project) {
@@ -80,7 +192,7 @@ public class ProjectContentTypes {
 		}
 	}
 
-	IContentTypeMatcher getMatcherFor(Project project) throws CoreException {
+	public IContentTypeMatcher getMatcherFor(Project project) throws CoreException {
 		ProjectInfo info = (ProjectInfo) project.getResourceInfo(false, false);
 		//fail if project has been deleted concurrently
 		if (info == null)
@@ -88,30 +200,9 @@ public class ProjectContentTypes {
 		IContentTypeMatcher matcher = info.getMatcher();
 		if (matcher != null)
 			return matcher;
-		matcher = Platform.getContentTypeManager().getMatcher(new ProjectContentTypeSelectionPolicy(project), null);
+		matcher = createMatcher(project);
 		info.setMatcher(matcher);
 		return matcher;
-	}
-
-	/**
-	 * Collect content types associated to the natures configured for the given project.
-	 */
-	private Set collectAssociatedContentTypes(Project project) {
-		String[] enabledNatures = workspace.getNatureManager().getEnabledNatures(project);
-		if (enabledNatures.length == 0)
-			return Collections.EMPTY_SET;
-		Set related = new HashSet(enabledNatures.length);
-		for (int i = 0; i < enabledNatures.length; i++) {
-			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNatures[i]);
-			if (descriptor == null)
-				// no descriptor found for the nature, skip it
-				continue;
-			String[] natureContentTypes = descriptor.getContentTypeIds();
-			for (int j = 0; j < natureContentTypes.length; j++)
-				// collect associate content types
-				related.add(natureContentTypes[j]);
-		}
-		return related;
 	}
 
 	/**

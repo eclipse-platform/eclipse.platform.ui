@@ -26,8 +26,6 @@ import org.osgi.service.prefs.Preferences;
  * @since 3.0
  */
 public class CharsetManager implements IManager {
-	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-
 	/**
 	 * This job implementation is used to allow the resource change listener
 	 * to schedule operations that need to modify the workspace. 
@@ -178,9 +176,10 @@ public class CharsetManager implements IManager {
 
 	public static final String ENCODING_PREF_NODE = "encoding"; //$NON-NLS-1$		
 	private static final String PROJECT_KEY = "<project>"; //$NON-NLS-1$
+	private CharsetDeltaJob charsetListener;
 	CharsetManagerJob job;
 	private IResourceChangeListener listener;
-	private CharsetDeltaJob charsetListener;
+	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	Workspace workspace;
 
 	public CharsetManager(Workspace workspace) {
@@ -206,18 +205,6 @@ public class CharsetManager implements IManager {
 			// lookup by falling back to workspace's default setting			
 			return recurse ? ResourcesPlugin.getEncoding() : null;
 		return internalGetCharsetFor(resourcePath, encodingSettings, recurse);
-	}
-
-	private String internalGetCharsetFor(IPath resourcePath, Preferences encodingSettings, boolean recurse) {
-		String charset = encodingSettings.get(getKeyFor(resourcePath), null);
-		if (!recurse)
-			return charset;
-		while (charset == null && resourcePath.segmentCount() > 1) {
-			resourcePath = resourcePath.removeLastSegments(1);
-			charset = encodingSettings.get(getKeyFor(resourcePath), null);
-		}
-		// ensure we default to the workspace encoding if none is found
-		return charset == null ? ResourcesPlugin.getEncoding() : charset;
 	}
 
 	String getKeyFor(IPath resourcePath) {
@@ -250,6 +237,22 @@ public class CharsetManager implements IManager {
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 		}
 		return null;
+	}
+
+	private String internalGetCharsetFor(IPath resourcePath, Preferences encodingSettings, boolean recurse) {
+		String charset = encodingSettings.get(getKeyFor(resourcePath), null);
+		if (!recurse)
+			return charset;
+		while (charset == null && resourcePath.segmentCount() > 1) {
+			resourcePath = resourcePath.removeLastSegments(1);
+			charset = encodingSettings.get(getKeyFor(resourcePath), null);
+		}
+		// ensure we default to the workspace encoding if none is found
+		return charset == null ? ResourcesPlugin.getEncoding() : charset;
+	}
+
+	public void projectPreferencesChanged(IProject project) {
+		charsetListener.charsetPreferencesChanged(project);
 	}
 
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
@@ -296,9 +299,5 @@ public class CharsetManager implements IManager {
 		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 		charsetListener = new CharsetDeltaJob(workspace);
 		charsetListener.startup();
-	}
-
-	public void charsetPreferencesChanged(IProject project) {
-		charsetListener.charsetPreferencesChanged(project);
 	}
 }

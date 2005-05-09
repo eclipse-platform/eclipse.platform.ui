@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.utils.messages"; //$NON-NLS-1$
-	
+
 	// dtree
 	public static String dtree_immutable;
 	public static String dtree_malformedTree;
@@ -123,9 +123,9 @@ public class Messages extends NLS {
 	public static String projRead_whichValue;
 
 	public static String properties_couldNotClose;
-	public static String properties_qualifierIsNull;	
-	public static String properties_readProperties;	
-	public static String properties_valueTooLong;	
+	public static String properties_qualifierIsNull;
+	public static String properties_readProperties;
+	public static String properties_valueTooLong;
 
 	// auto-refresh
 	public static String refresh_installError;
@@ -146,6 +146,7 @@ public class Messages extends NLS {
 	public static String resources_copyNotMet;
 	public static String resources_copyProblem;
 	public static String resources_couldnotDelete;
+	public static String resources_couldnotReadUserSettings;
 	public static String resources_create;
 	public static String resources_creating;
 	public static String resources_deleteMeta;
@@ -176,7 +177,7 @@ public class Messages extends NLS {
 	public static String resources_exSaveProjectLocation;
 	public static String resources_fileExists;
 	public static String resources_fileToProj;
-	public static String resources_flushingContentDescriptionCache;	
+	public static String resources_flushingContentDescriptionCache;
 	public static String resources_folderOverFile;
 	public static String resources_format;
 	public static String resources_getResourceAttributesFailed;

@@ -391,9 +391,8 @@ public class Project extends Container implements IProject {
 	 *  (non-Javadoc)
 	 * @see IProject#getContentTypeMatcher
 	 */
-	public IContentTypeMatcher getContentTypeMatcher() {
-		//TODO support project specific content type matcher
-		return Platform.getContentTypeManager();
+	public IContentTypeMatcher getContentTypeMatcher() throws CoreException {
+		return workspace.getContentDescriptionManager().getContentTypeMatcher(this);
 	}
 
 	/*

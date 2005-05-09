@@ -188,12 +188,14 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	private ProjectContentTypes projectContentTypes;
 
 	Workspace workspace;
-	final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
 	/**
 	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(ContentTypeChangeEvent)
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
+		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			Policy.debug("Content type settings changed for " + event.getContentType()); //$NON-NLS-1$
 		invalidateCache(true, null);
 	}
 
@@ -275,9 +277,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		return cacheState;
 	}
 
-	/*
-	 * public for testing purposes.
-	 */
 	public long getCacheTimestamp() throws CoreException {
 		try {
 			return Long.parseLong(workspace.getRoot().getPersistentProperty(CACHE_TIMESTAMP));
@@ -286,7 +285,14 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		}
 	}
 
+	public IContentTypeMatcher getContentTypeMatcher(Project project) throws CoreException {
+		return projectContentTypes.getMatcherFor(project);
+	}
+
 	public IContentDescription getDescriptionFor(File file, ResourceInfo info) throws CoreException {
+		if (ProjectContentTypes.usesContentTypePreferences(file.getFullPath().segment(0)))
+			// caching for project containing project specific settings is not supported
+			return readDescription(file);
 		switch (getCacheState()) {
 			case INVALID_CACHE :
 				// the cache is not good, flush it
@@ -386,7 +392,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		// tries to obtain a description for this file contents
 		InputStream contents = new LazyFileInputStream(file.getLocation());
 		try {
-			IContentTypeMatcher matcher = projectContentTypes.getMatcherFor((Project) file.getProject());
+			IContentTypeMatcher matcher = getContentTypeMatcher((Project) file.getProject());
 			return matcher.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
@@ -464,5 +470,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		Platform.getContentTypeManager().addContentTypeChangeListener(this);
 		// register a registry change listener		
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
+	}
+
+	public void projectPreferencesChanged(IProject project) {
+		projectContentTypes.contentTypePreferencesChanged(project);
 	}
 }
