@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
@@ -214,8 +213,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
      */
 	public final void run() {
 		Shell parent= getWorkbenchWindow().getShell();
-		if (progressDialog == null)
-			progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
+		progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
 		IRunnableWithProgress runnable= new IRunnableWithProgress(){
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
@@ -236,6 +234,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			// Do nothing.
 		} catch (OperationCanceledException e) {
 			// the operation was cancelled.  Do nothing.
+		} finally {
+			progressDialog = null;
 		}
 	}
 	
@@ -263,11 +263,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			if (progressDialog != null)
 				return progressDialog.getProgressMonitor();
 		}
-		if (adapter.equals(IRunnableContext.class)) {
-			if (progressDialog != null)
-				return progressDialog;
-		}
-
 		return null;
 	}
 

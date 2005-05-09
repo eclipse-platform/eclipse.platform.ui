@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -172,18 +171,10 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 		try {
 			StatusReportingRunnable runnable = new StatusReportingRunnable(
 					operation, history, uiInfo, undoing);
-			// If a runnable context has already been provided in the caller's
-			// uiInfo, use it. Otherwise create a progress monitor dialog to run
-			// the runnable.
-			IRunnableContext runnableContext = (IRunnableContext) uiInfo
-					.getAdapter(IRunnableContext.class);
-			if (runnableContext == null) {
-				TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(
+			TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(
 						getShell(uiInfo), PlatformUI.getWorkbench()
 								.getProgressService().getLongOperationTime());
-				progressDialog.run(false, true, runnable);
-			} else
-				runnableContext.run(false, true, runnable);
+			progressDialog.run(false, true, runnable);
 			return runnable.getStatus();
 		} catch (OperationCanceledException e) {
 			return Status.CANCEL_STATUS;
