@@ -17,6 +17,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.testing.TestableObject;
 
@@ -58,7 +59,12 @@ public class WorkbenchTestable extends TestableObject {
         	// don't use a job, since tests often wait for all jobs to complete before proceeding
             Runnable runnable = new Runnable() {
                 public void run() {
-                	waitForEarlyStartup();
+                	// Some tests (notably the startup performance tests) do not want to wait for early startup.
+                	// Allow this to be disabled by specifying the system property: org.eclipse.ui.testWaitForEarlyStartup=false
+                	// For details, see bug 94129 [Workbench] Performance test regression caused by workbench harness change
+                	if (!"false".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsWaitForEarlyStartup"))) {  //$NON-NLS-1$ //$NON-NLS-2$
+                		waitForEarlyStartup();
+                	}
                     getTestHarness().runTests();
                 }
             };
