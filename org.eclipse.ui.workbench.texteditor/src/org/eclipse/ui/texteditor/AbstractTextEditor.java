@@ -4241,17 +4241,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			setAction(ITextEditorActionConstants.REDO, action);
 		}
 	}
-	
+
 	/**
 	 * Return an {@link IOperationApprover} appropriate for approving the undo and
 	 * redo of operations that have the specified undo context.
-	 * 
-	 * @param undoContext - the IUndoContext of operations that should be examined by
-	 * the operation approver
-	 * 
-	 * @return the IOperationApprover appropriate for approving undo and redo operations
-	 * inside this editor, or <code>null</code> if no approval is needed.
-	 * 
+	 * <p>
+	 * Subclasses may override.
+	 * </p>
+	 * @param undoContext	the IUndoContext of operations that should be examined
+	 * 						by the operation approver
+	 * @return	the <code>IOperationApprover</code> appropriate for approving undo
+	 * 			and redo operations inside this editor, or <code>null</code> if no
+	 * 			approval is needed
 	 * @since 3.1
 	 */
 	protected IOperationApprover getUndoRedoOperationApprover(IUndoContext undoContext) {
