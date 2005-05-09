@@ -971,8 +971,15 @@ public class EditorManager implements IExtensionChangeHandler {
 								page.setPerspective(perspective.getDesc());
 							}
 						}
+						// show the window containing the page?
+						IWorkbenchWindow partsWindow = page.getWorkbenchWindow();
+						if (partsWindow != partsWindow.getWorkbench().getActiveWorkbenchWindow()) {
+							Shell shell = partsWindow.getShell();
+							if (shell.getMinimized())
+								shell.setMinimized(false);
+							shell.setActive();
+						}
 						page.bringToTop(part);
-        				// show the window containing the page?
                 	}
 					// try to save the part
 					if (!SaveableHelper.savePart((ISaveablePart2) part, part, page.getWorkbenchWindow(), confirm)) {
