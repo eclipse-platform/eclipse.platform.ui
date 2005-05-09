@@ -40,26 +40,19 @@ import org.eclipse.ui.part.*;
  * that key bindings, selection service etc. is compatible with the one for the
  * standalone case. The other method adds classes that implement
  * <code>IFormPage</code> interface. These pages will be created lazily and
- * they will share the common key binding and selection service. Since 3.1,
- * FormEditor is a page change provider. It allows listeners to attach to it and
- * get notified when pages are changed. This new API in JFace allows dynamic
- * help to update on page changes.
+ * they will share the common key binding and selection service.
+ * 
+ * Since 3.1, FormEditor is a page change provider. It allows listeners
+ * to attach to it and get notified when pages are changed. This new
+ * API in JFace allows dynamic help to update on page changes.
  * 
  * @since 3.0
  */
 public abstract class FormEditor extends MultiPageEditorPart implements
 		IPageChangeProvider {
-
-	/**
-	 * An array of pages currently in the editor. Page objects are not limited
-	 * to those that implement <code>IFormPage</code>, hence the size of this
-	 * array matches the number of pages as viewed by the user.
-	 * <p>
-	 * Subclasses can access this field but should not modify it.
-	 */
-	protected Vector pages = new Vector();
-
 	private FormToolkit toolkit;
+
+	protected Vector pages = pages = new Vector();
 
 	private int currentPage = -1;
 
@@ -247,17 +240,17 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 			// cannot happen for controls
 		}
 	}
-
+	
 	/**
-	 * Tests whether the editor is dirty by checking all the pages that
-	 * implement <code>IFormPage</code>. If none of them is dirty, the method
-	 * delegates further processing to <code>super.isDirty()</code>.
-	 * 
-	 * @return <code>true</code> if any of the pages in the editor are dirty,
-	 *         <code>false</code> otherwise.
+	 * Tests whether the editor is dirty by checking all the
+	 * pages that implement <code>IFormPage</code>. If none of
+	 * them is dirty, the method delegates further processing
+	 * to <code>super.isDirty()</code>.
+	 * @return <code>true</code> if any of the pages in the editor
+	 * are dirty, <code>false</code> otherwise.
 	 * @since 3.1
 	 */
-
+	
 	public boolean isDirty() {
 		for (int i = 0; i < pages.size(); i++) {
 			Object page = pages.get(i);
@@ -462,7 +455,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		super.pageChange(newPageIndex);
 		this.currentPage = newPageIndex;
 		IFormPage newPage = getActivePageInstance();
-		if (newPage != null)
+		if (newPage!=null)
 			firePageChanged(new PageChangedEvent(this, newPage));
 	}
 
@@ -631,16 +624,16 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 				fpage.init(getEditorSite(), getEditorInput());
 		}
 	}
-
-	private void firePageChanged(final PageChangedEvent event) {
-		Object[] listeners = pageListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final IPageChangedListener l = (IPageChangedListener) listeners[i];
-			SafeRunnable.run(new SafeRunnable() {
-				public void run() {
-					l.pageChanged(event);
-				}
-			});
-		}
-	}
+	
+    private void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = pageListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
+    }
 }
