@@ -7,7 +7,46 @@ Actions
 	Verify that "Undo <name of refactoring op>" appears in action bar edit menu of Package Explorer and Navigator after performing a refactoring from anywhere.
 
 Preferences
-
+	Set different text undo limits (including 0) in the text editor preferences (General>Editors>TextEditors>Undo history size) and verify they work as expected.
 Integrated Scenarios
+  <setup>
+	For the following text-refactoring integrated scenarios, do the following first:
+	a.  Create a Java project "Undo Scenarios".
+	b.  Create a package "xxx".
+	c.  Copy the java files provided in org.eclipse.ui.tests/ManualComponentTests/Undo test files to "xxx".
+  <simple refactoring undo>
+  	a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "bar" and choose Refactor>Rename
+  	c.  Rename "bar" to "bar2"
+  	d.  Verify that "Undo Rename method bar to bar2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
+  	e.  Select "Undo Rename method bar to bar2" from any of these locations
+  	f.  Operation is undone without prompting or warning
+  	g.  Verify that "Redo Rename method bar to bar2" appears in Edit>Undo pulldown menu for the editor, Navigator, and Package Explorer.
+  	h.  Select "Redo Rename method bar to bar2" from any of these locations
+  	i.  Operation is redone without prompting or warning
+  	j.  Undo again to revert files to original state and close editors.
+  <prompt on non-local undo>
+    a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "foo" and choose Refactor>Rename
+  	c.  Rename "foo" to "foo2"
+  	d.  Verify that "Undo Rename method bar to bar2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
+  	e.  Select "Undo Rename method bar to bar2" from A's edit menu.
+  	f.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+  	g.  Select "yes" and operation is undone.
+  	h.  Select "Redo Rename method bar to bar2" from package explorer.
+  	i.  Operation is redone without prompting or warning.
+  	j.  Undo again to revert files to original state and close editors.
+  <detection of changed file>
+    a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "foo" and choose Refactor>Rename
+  	c.  Rename "foo" to "foo2"
+  	d.  In B, type some text anywhere.
+  	e.  Go back to A and Select "Undo Rename method bar to bar2" from A's edit menu.
+  	f.  Operation informs you that it cannot be completed since B has changed.
+  	g.  Select OK
+  	h.  Choose "Undo Typing" from A to revert the text part of the refactoring
+  	i.  Go to B and choose "Undo Typing" to revert the typed changes followed by the text part of the refactoring change.
+  
+    
 
 Manual Testing of Examples
