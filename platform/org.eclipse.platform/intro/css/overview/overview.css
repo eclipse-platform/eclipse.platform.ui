@@ -7,6 +7,18 @@ body {
 /* show the "selected" image for this page */
 #navigation-links a#overview img, #navigation-links a#overview:hover img { background-image : url(../graphics/icons/ctool/overview48sel.gif); }
 
+
+#page-content {
+
+}
+
+iframe {
+	position:relative;
+	top:16px;
+	width=100%;
+	height=100%;	padding-left:10px;}
+
+
 /* 
  * Set up the Overview links to be displayed in two columns
  * that are centered in the middle of the page.
@@ -17,6 +29,7 @@ body {
 	width : 760px;
 	/* To center in Moz (have to use text-align for IE) */
 	margin : 0px auto;
+
 }
 
 #overview-links a { 
@@ -27,6 +40,7 @@ body {
 	margin-top : 5px;
 	margin-bottom : -20px;
 	vertical-align : top;
+		border:1px red dotted;
 }
 
 #overview-links > a { vertical-align : middle; }
@@ -35,6 +49,7 @@ body {
 	height : 57px;
 	width : 57px;
 	vertical-align : middle;
+		
 }	
 
 #overview-links a .link-label {
@@ -43,6 +58,7 @@ body {
 	position : relative;
 	top : -50px;
 	left : 60px;
+	border:1px green dotted;
 }
 
 #overview-links a p .text {
@@ -51,6 +67,7 @@ body {
 	position : relative;
 	top : -45px;
 	left : 53px;
+		border:1px green dotted;
 }
 
 /* Special case for Mozilla, because the links are displayed
