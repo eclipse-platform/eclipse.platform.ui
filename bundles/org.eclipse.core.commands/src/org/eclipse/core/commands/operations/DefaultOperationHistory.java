@@ -72,7 +72,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * information to <code>System.out</code> whenever notifications about
 	 * changes to the history occur. This flag should be used for debug purposes
 	 * only.
-	 * 
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_NOTIFICATION = false;
 
@@ -87,7 +86,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * This flag can be set to <code>true</code> if the history should print
 	 * information to <code>System.out</code> whenever an undo context is
 	 * disposed. This flag should be used for debug purposes only.
-	 * 
 	 */
 	public static boolean DEBUG_OPERATION_HISTORY_DISPOSE = false;
 
