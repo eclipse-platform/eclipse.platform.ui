@@ -23,9 +23,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class UIStats {
 	
-	public static final String PERFORMANCE_VIEW = "org.eclipse.ui.ide.performanceView";//$NON-NLS-1$
-
-    private static HashMap operations = new HashMap();
+	 private static HashMap operations = new HashMap();
 
     public static final int CREATE_PART = 0;
 

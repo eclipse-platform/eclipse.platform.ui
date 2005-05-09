@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.internal.misc.UIStats;
 
 /**
  */
@@ -91,7 +89,6 @@ public class ResourcePerspective implements IPerspectiveFactory {
                 editorArea);
 		
 		bottomRight.addView(IPageLayout.ID_TASK_LIST);
-		if(PerformanceStats.ENABLED)
-			bottomRight.addView(UIStats.PERFORMANCE_VIEW);
+		
     }
 }

@@ -458,11 +458,7 @@
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
-      <view
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.performance.PerformanceView"
-            id="org.eclipse.ui.ide.performanceView"
-            name="%Views.Performance"/>
+    
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
