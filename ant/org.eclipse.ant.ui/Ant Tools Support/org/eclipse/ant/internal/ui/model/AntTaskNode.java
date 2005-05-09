@@ -142,39 +142,21 @@ public class AntTaskNode extends AntElementNode {
 		RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
 		Map attributeMap= wrapper.getAttributeMap();
 		Set keys= attributeMap.keySet();
-		String modifiedIdentifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
 		for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
 			String key= (String) iter.next();
-			String checkIdentifier= modifiedIdentifier;
 			String value= (String) attributeMap.get(key);
-			if (!checkAttributeAgainstModifiedIdentifier(key)) {
-				checkIdentifier= identifier;
-			}
-			if (value.indexOf(checkIdentifier) != -1) {
+			if (value.indexOf(identifier) != -1) {
 				return true;
 			}
 		}
 		StringBuffer text= wrapper.getText();
 		if (text.length() > 0) {
-			if (text.indexOf(modifiedIdentifier) != -1) {
-				return true;
+			if (identifier.startsWith("${") && text.indexOf(identifier) != -1) { //$NON-NLS-1$
+				return true; //property ref in text
 			}
 		}
 	
 		return false;
-	}
-
-	/**
-	 * Generally we only search for property references ${identifier} but here tasks can 
-	 * specifically set to check against the true identifier for attributes such as target names.
-	 * @param key The name of the attribute
-	 * @return whether to check against the modified identifier for occurrence matching
-	 */
-	protected boolean checkAttributeAgainstModifiedIdentifier(String key) {
-		if (fBaseLabel != null && fBaseLabel.startsWith("antcall") && key.equals("target")) { //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
-		}
-		return true;
 	}
 
 	public List computeIdentifierOffsets(String identifier) {
@@ -186,19 +168,12 @@ public class AntTaskNode extends AntElementNode {
         RuntimeConfigurable wrapper= getTask().getRuntimeConfigurableWrapper();
         Map attributeMap= wrapper.getAttributeMap();
         Set keys= attributeMap.keySet();
-        String modifiedIdentifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
 		String lineSep= System.getProperty("line.separator"); //$NON-NLS-1$
         for (Iterator iter = keys.iterator(); iter.hasNext(); ) {
             String key = (String) iter.next();
             String value= (String) attributeMap.get(key);
-			String checkIdentifier= modifiedIdentifier;
-			int identifierCorrection= 2;
-			if (!checkAttributeAgainstModifiedIdentifier(key)) {
-				checkIdentifier= identifier;
-				identifierCorrection= 1;
-			}
-			
-            if (value.indexOf(checkIdentifier) != -1) {
+			int identifierCorrection= 1;
+            if (value.indexOf(identifier) != -1) {
                 int keyOffset= textToSearch.indexOf(key);
 				while (keyOffset > 0 && !Character.isWhitespace(textToSearch.charAt(keyOffset - 1))) {
 					keyOffset= textToSearch.indexOf(key, keyOffset + 1);
@@ -206,25 +181,25 @@ public class AntTaskNode extends AntElementNode {
                 int valueOffset= textToSearch.indexOf('"', keyOffset);
 				int valueLine= ((AntModel)getAntModel()).getLine(getOffset() + valueOffset);
 				
-                int withinValueOffset= value.indexOf(checkIdentifier);
+                int withinValueOffset= value.indexOf(identifier);
                 while (withinValueOffset != -1) {
 					int resultLine= ((AntModel)getAntModel()).getLine(getOffset() + valueOffset + withinValueOffset);
 					//the value stored in the attribute map seems to be modified to not contain control charactes
 					//new lines, carriage returns and these are replaced with spaces
 					//so if the line separator is greater than 1 in length we need to correct for this
-					int resultOffset= getOffset() + valueOffset + withinValueOffset + identifierCorrection + ((resultLine- valueLine) * (lineSep.length() - 1));
+					int resultOffset= getOffset() + valueOffset + withinValueOffset + identifierCorrection + ((resultLine - valueLine) * (lineSep.length() - 1));
                     results.add(new Integer(resultOffset));
-                    withinValueOffset= value.indexOf(checkIdentifier, withinValueOffset + 1);
+                    withinValueOffset= value.indexOf(identifier, withinValueOffset + 1);
                 }
             }
         }
         
-        String text= wrapper.getText().toString().trim();
-        if (text.length() > 0) {
-            int offset= textToSearch.indexOf(text.toString());
-            offset= textToSearch.indexOf(modifiedIdentifier, offset);
-            results.add(new Integer(offset + getOffset() + 1));
-        }
+    	String text= wrapper.getText().toString().trim();
+    	if (text.length() > 0) {
+    		int offset= textToSearch.indexOf(text.toString());
+    		offset= textToSearch.indexOf(identifier, offset);
+    		results.add(new Integer(offset + getOffset()));
+    	}
         return results;
     }
 }

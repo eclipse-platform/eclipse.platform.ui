@@ -40,8 +40,8 @@ public class OccurrencesFinder {
 		if (fOffset == 0 || fAntModel == null) {
 			return null;
 		}
+		
 		AntElementNode container= fAntModel.getNode(fOffset, false);
-	
 		if (container == null) {
 			return null;
 		}
@@ -51,21 +51,28 @@ public class OccurrencesFinder {
 				return null;
 			}
 		}
-		Object node= fEditor.findTarget(region);
-		if (!(node instanceof AntElementNode)) {
-			return null;
+		AntElementNode node;
+		if (container.isFromDeclaration(region)) {
+			node= container;
+		} else {
+			Object potentialNode= fEditor.findTarget(region);
+			if (!(potentialNode instanceof AntElementNode)) {
+				return null;
+			} 
+			node= (AntElementNode) potentialNode;
 		}
-		String occurrencesIdentifier= ((AntElementNode) node).getOccurrencesIdentifier();
+		String occurrencesIdentifier= node.getOccurrencesIdentifier();
 		if (occurrencesIdentifier == null) {
 			return null;
 		}
 		List nodes= new ArrayList(1);
 		nodes.add(fAntModel.getProjectNode());
         List usages= new ArrayList();
+        usages.add(node);
 		scanNodesForOccurrences(nodes, usages, occurrencesIdentifier);
 		String identifier;
 		try {
-			identifier = fDocument.get(region.getOffset(), region.getLength());
+			identifier= fDocument.get(region.getOffset(), region.getLength());
 		} catch (BadLocationException e) {
 			return null;
 		}
@@ -88,7 +95,7 @@ public class OccurrencesFinder {
 		Iterator iter= nodes.iterator();
 		while (iter.hasNext()) {
 			AntElementNode node = (AntElementNode) iter.next();
-			if (node.containsOccurrence(identifier)) {
+			if (!usages.contains(node) && node.containsOccurrence(identifier)) {
 				usages.add(node);	
 			}
 			if (node.hasChildren()) {

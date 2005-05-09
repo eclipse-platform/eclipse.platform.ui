@@ -647,4 +647,29 @@ public class AntElementNode implements IAdaptable {
     public List computeIdentifierOffsets(String identifier) {
         return null;
     }
+    
+	/**
+	 * Returns whether the supplied region is from within this node's 
+	 * declaration identifier area
+	 * @param region The region to check
+	 * @return whether the region is from within this node and is
+	 * 			the declaration of a reference.
+	 */
+	public boolean isFromDeclaration(IRegion region) {
+		return false;
+	}
+
+	protected boolean checkReferenceRegion(IRegion region, String textToSearch, String attributeName) {
+		int attributeOffset= textToSearch.indexOf(attributeName); //$NON-NLS-1$
+		while (attributeOffset > 0 && !Character.isWhitespace(textToSearch.charAt(attributeOffset - 1))) {
+			attributeOffset= textToSearch.indexOf(attributeName, attributeOffset + 1); //$NON-NLS-1$
+		}
+		if (attributeOffset != -1) {
+			attributeOffset+= attributeName.length();
+			int attributeOffsetEnd = textToSearch.indexOf('"', attributeOffset);
+			attributeOffsetEnd = textToSearch.indexOf('"', attributeOffsetEnd + 1);
+			return region.getOffset() >= getOffset() + attributeOffset && (region.getOffset() + region.getLength()) <= getOffset() + attributeOffsetEnd;
+		}
+		return false;
+	}
 }

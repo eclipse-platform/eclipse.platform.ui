@@ -19,6 +19,7 @@ import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
 
 
 public class AntProjectNode extends AntElementNode {
@@ -134,4 +135,20 @@ public class AntProjectNode extends AntElementNode {
     	results.add(new Integer(getOffset() + defaultTargetNameOffset + 1));
         return results;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
+	 */
+	public boolean isRegionPotentialReference(IRegion region) {
+		if (!super.isRegionPotentialReference(region)) {
+    		return false;
+    	}
+		
+		String textToSearch= getAntModel().getText(getOffset(), getLength());
+		if (textToSearch == null) {
+			return false;
+		}
+		
+		return checkReferenceRegion(region, textToSearch, "default"); //$NON-NLS-1$
+	}
 }

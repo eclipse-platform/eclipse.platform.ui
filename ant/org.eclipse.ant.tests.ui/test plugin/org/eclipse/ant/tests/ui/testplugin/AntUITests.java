@@ -26,6 +26,7 @@ import org.eclipse.ant.tests.ui.debug.SteppingTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
+import org.eclipse.ant.tests.ui.editor.OccurrencesFinderTests;
 import org.eclipse.ant.tests.ui.editor.TaskDescriptionProviderTest;
 import org.eclipse.ant.tests.ui.editor.formatter.FormattingPreferencesTest;
 import org.eclipse.ant.tests.ui.editor.formatter.XmlDocumentFormatterTest;
@@ -60,6 +61,7 @@ public class AntUITests extends TestSuite {
 		suite.addTest(new TestSuite(RunToLineTests.class));
         suite.addTest(new TestSuite(SteppingTests.class));
 		suite.addTest(new TestSuite(PropertyTests.class));
+		suite.addTest(new TestSuite(OccurrencesFinderTests.class));
         return suite;
     }
 }

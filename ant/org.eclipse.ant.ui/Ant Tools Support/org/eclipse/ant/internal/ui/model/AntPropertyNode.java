@@ -32,6 +32,7 @@ public class AntPropertyNode extends AntTaskNode {
 	private String fValue= null;
 	private String fReferencedName;
     private String fOccurrencesStartingPoint= IAntModelConstants.ATTR_VALUE;
+    private String fOccurrencesIdentifier;
     
 	/*
 	 * The set of properties defined by this node
@@ -145,16 +146,12 @@ public class AntPropertyNode extends AntTaskNode {
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
 	 */
 	public boolean containsOccurrence(String identifier) {
-	    if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
-	        return super.containsOccurrence(identifier);
-	    }
-		if (fBaseLabel != null) {
-			if (fBaseLabel.equals(identifier)) {
-				return true;
-			}
-		}
+		if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
+    		return super.containsOccurrence(identifier);
+    	}
+
 		if (fValue != null) {
-			return fValue.indexOf('{' + identifier + '}') != -1;
+			return fValue.indexOf(identifier) != -1;
 		}
 		return false;
 	}
@@ -163,44 +160,47 @@ public class AntPropertyNode extends AntTaskNode {
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencesIdentifier()
 	 */
 	public String getOccurrencesIdentifier() {
-		return fBaseLabel;
+		if (fOccurrencesIdentifier == null) {
+			fOccurrencesIdentifier= new StringBuffer("${").append(fBaseLabel).append('}').toString(); //$NON-NLS-1$
+		}
+		return fOccurrencesIdentifier;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
 	 */
 	public boolean isRegionPotentialReference(IRegion region) {
-        if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
-            return super.isRegionPotentialReference(region);
-        }
-		if (super.isRegionPotentialReference(region)) {
-			String textToSearch= getAntModel().getText(getOffset(), getLength());
-			if (textToSearch == null) {
-				return false;
-			}
-			int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
-			if (valueOffset > -1) {
-				valueOffset= textToSearch.indexOf('"', valueOffset);
-				if (valueOffset > -1) {			
-					boolean inValue= region.getOffset() >= (getOffset() + valueOffset);
-					if (inValue) {
-						if ("{".equals(getAntModel().getText(region.getOffset() - 1, 1)) || "}".equals(getAntModel().getText(region.getOffset() + region.getLength(), 1))) { //$NON-NLS-1$ //$NON-NLS-2$
-							return true;
-						}
-						//reference is not in the value and not within a property de-reference
-						return false;
-					} 
-					return true;
-				}
+		boolean superOK= super.isRegionPotentialReference(region);
+		if (!getTask().getTaskName().equals("property") || !superOK) { //$NON-NLS-1$
+    		return superOK;
+    	}
+		
+		String textToSearch= getAntModel().getText(getOffset(), getLength());
+		if (textToSearch == null) {
+			return false;
+		}
+		int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
+		if (valueOffset > -1) {
+			valueOffset= textToSearch.indexOf('"', valueOffset);
+			if (valueOffset > -1) {			
+				boolean inValue= region.getOffset() >= (getOffset() + valueOffset);
+				if (inValue) {
+					if ("{".equals(getAntModel().getText(region.getOffset() - 1, 1)) || "}".equals(getAntModel().getText(region.getOffset() + region.getLength(), 1))) { //$NON-NLS-1$ //$NON-NLS-2$
+						return true;
+					}
+					//reference is not in the value and not within a property de-reference
+					return false;
+				} 
+				return true;
 			}
 		}
 		return false;
 	}
     
     public List computeIdentifierOffsets(String identifier) {
-         if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
-            return super.computeIdentifierOffsets(identifier);
-        }
+    	if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
+    		return super.computeIdentifierOffsets(identifier);
+    	}
         String textToSearch= getAntModel().getText(getOffset(), getLength());
         if (textToSearch == null || textToSearch.length() == 0) {
         	return null;
@@ -216,16 +216,38 @@ public class AntPropertyNode extends AntTaskNode {
         if (fValue != null) {
             int valueOffset= textToSearch.indexOf(fOccurrencesStartingPoint); //$NON-NLS-1$
             int endOffset= getOffset() + getLength();
-            identifier= new StringBuffer("{").append(identifier).append('}').toString(); //$NON-NLS-1$
-            while(valueOffset < endOffset) {
+            while (valueOffset < endOffset) {
                 valueOffset= textToSearch.indexOf(identifier, valueOffset);
                 if (valueOffset == -1 || valueOffset > endOffset) {
                     break;
                 }
-                results.add(new Integer(getOffset() + valueOffset + 1));
+                results.add(new Integer(getOffset() + valueOffset));
                 valueOffset+= identifier.length();
             }
         }
         return results;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.model.AntElementNode#isFromDeclaration(org.eclipse.jface.text.IRegion)
+     */
+    public boolean isFromDeclaration(IRegion region) {
+    	if (fBaseLabel == null) {
+    		return false;
+    	}
+    	if (fBaseLabel.length() != region.getLength()) {
+    		return false;
+    	}
+    	int offset= getOffset();
+    	 String textToSearch= getAntModel().getText(getOffset(), getLength());
+         if (textToSearch == null || textToSearch.length() == 0) {
+         	return false;
+         }
+         int nameStartOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+         nameStartOffset= textToSearch.indexOf("\"", nameStartOffset); //$NON-NLS-1$
+         int nameEndOffset= textToSearch.indexOf("\"", nameStartOffset + 1); //$NON-NLS-1$
+         nameEndOffset+=offset;
+         nameStartOffset+=offset;
+         return nameStartOffset <= region.getOffset() && region.getOffset() + region.getLength() <= nameEndOffset;
+	}
 }
