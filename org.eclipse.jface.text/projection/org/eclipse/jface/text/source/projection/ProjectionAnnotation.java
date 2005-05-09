@@ -104,7 +104,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		/* cap the height - at least on GTK, large numbers are converted to
 		 * negatives at some point */
 		int height= Math.min(r.y + r.height - MARGIN, canvas.getSize().y);
-		gc.drawLine(r.x + 4, r.y + 12, r.x + 4, height);
+		gc.drawLine(r.x + 4, r.y + 15, r.x + 4, height);
 		gc.drawLine(r.x + 4, height, r.x + r.width - MARGIN, height);
 		gc.setForeground(fg);
 	}
