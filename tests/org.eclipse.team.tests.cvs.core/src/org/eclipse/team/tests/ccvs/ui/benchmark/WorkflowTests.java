@@ -17,7 +17,6 @@ import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
-import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 
 public class WorkflowTests extends BenchmarkTest {
 	private int FILE_SIZE_MEAN = 16384;
@@ -52,10 +51,6 @@ public class WorkflowTests extends BenchmarkTest {
 
 	public static Test suite() {
 		return suite(WorkflowTests.class);
-	}
-
-	public void testBigWorkflow() throws Exception {
-		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false, new SynchronizeViewTestAdapter());
 	}
     
     public void testBigWorkflowNoUI() throws Exception {

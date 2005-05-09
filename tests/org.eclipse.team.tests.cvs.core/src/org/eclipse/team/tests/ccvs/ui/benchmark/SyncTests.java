@@ -16,7 +16,6 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
-import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 
 public class SyncTests extends BenchmarkTest {
 	private static final int FILE_SIZE_MEAN = 16384;
@@ -38,14 +37,6 @@ public class SyncTests extends BenchmarkTest {
 
 	public static Test suite() {
 		return suite(SyncTests.class);
-	}
-    
-	public void testSync10() throws Exception {
-		runTestSync(10, "CVS Synchronize 10", false, new SynchronizeViewTestAdapter());
-	}
-
-	public void testSync100() throws Exception {
-		runTestSync(100, "CVS Synchronize 100", false, new SynchronizeViewTestAdapter());
 	}
     
     public void testSync100NoUI() throws Exception {
