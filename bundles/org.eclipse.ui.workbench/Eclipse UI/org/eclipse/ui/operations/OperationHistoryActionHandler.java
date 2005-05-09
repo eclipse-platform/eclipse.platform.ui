@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
@@ -66,6 +67,8 @@ import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
  */
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable {
+
+	private static final int MAX_LABEL_LENGTH = 32;
 
 	private class PartListener implements IPartListener {
 		/**
@@ -142,14 +145,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 		}
 	}
-	IUndoContext undoContext = null;
-	IWorkbenchPartSite site;
-
 	private boolean pruning = false;
 	private IPartListener partListener = new PartListener();
 	private IOperationHistoryListener historyListener = new HistoryListener();
-
-	private static final int MAX_LABEL_LENGTH = 32;
+	private TimeTriggeredProgressMonitorDialog progressDialog;
+	IUndoContext undoContext = null;
+	IWorkbenchPartSite site;
 
 	/**
 	 * Construct an operation history action for the specified workbench window
@@ -179,6 +180,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	public void dispose() {
 		getHistory().removeOperationHistoryListener(historyListener);
 		site.getPage().removePartListener(partListener);
+		progressDialog = null;
 		// we do not do anything to the history for our context because it may
 		// be used elsewhere.
 	}
@@ -212,7 +214,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
      */
 	public final void run() {
 		Shell parent= getWorkbenchWindow().getShell();
-		TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
+		if (progressDialog == null)
+			progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
 		IRunnableWithProgress runnable= new IRunnableWithProgress(){
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
@@ -256,6 +259,15 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (adapter.equals(IUndoContext.class)) {
 			return undoContext;
 		}
+		if (adapter.equals(IProgressMonitor.class)) {
+			if (progressDialog != null)
+				return progressDialog.getProgressMonitor();
+		}
+		if (adapter.equals(IRunnableContext.class)) {
+			if (progressDialog != null)
+				return progressDialog;
+		}
+
 		return null;
 	}
 

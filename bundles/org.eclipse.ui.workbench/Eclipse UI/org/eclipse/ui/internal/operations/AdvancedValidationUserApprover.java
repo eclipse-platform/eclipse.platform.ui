@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.operations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
@@ -24,8 +26,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -46,6 +51,45 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class AdvancedValidationUserApprover implements IOperationApprover {
 
 	private IUndoContext context;
+
+	private class StatusReportingRunnable implements IRunnableWithProgress {
+		IStatus status;
+
+		boolean undoing;
+
+		IUndoableOperation operation;
+
+		IOperationHistory history;
+
+		IAdaptable uiInfo;
+
+		StatusReportingRunnable(IUndoableOperation operation,
+				IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
+			super();
+			this.operation = operation;
+			this.history = history;
+			this.undoing = undoing;
+			this.uiInfo = uiInfo;
+		}
+
+		public void run(IProgressMonitor pm) {
+			try {
+				if (undoing)
+					status = ((IAdvancedUndoableOperation) operation)
+							.computeUndoableStatus(pm);
+				else
+					status = ((IAdvancedUndoableOperation) operation)
+							.computeRedoableStatus(pm);
+			} catch (ExecutionException e) {
+				reportException(e, uiInfo);
+				status = IOperationHistory.OPERATION_INVALID_STATUS;
+			}
+		}
+
+		IStatus getStatus() {
+			return status;
+		}
+	}
 
 	/**
 	 * Create an AdvancedValidationUserApprover that performs advanced
@@ -101,22 +145,8 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			return Status.OK_STATUS;
 
 		// Compute the undoable or redoable status
-		IStatus status;
-		try {
-			if (undoing)
-				status = ((IAdvancedUndoableOperation) operation)
-						.computeUndoableStatus(getProgressMonitor());
-			else
-				status = ((IAdvancedUndoableOperation) operation)
-						.computeRedoableStatus(getProgressMonitor());
-		} catch (OperationCanceledException e) {
-			status = Status.CANCEL_STATUS;
-		} catch (ExecutionException e) {
-			status = IOperationHistory.OPERATION_INVALID_STATUS;
-			reportException(e, uiInfo);
-			// return immediately since error is already reported.
-			return status;
-		}
+		IStatus status = computeOperationStatus(operation, history, uiInfo,
+				undoing);
 
 		// Report non-OK statuses to the user. In some cases, the user may
 		// choose to proceed, and the returned status will be different than
@@ -137,19 +167,41 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 		return status;
 	}
 
-	/*
-	 * Return the progress monitor that should be used for computing validity
-	 * checks for undo and redo.
-	 */
-	private IProgressMonitor getProgressMonitor() {
-		// temporary implementation
-		return null;
+	private IStatus computeOperationStatus(IUndoableOperation operation,
+			IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
+		try {
+			StatusReportingRunnable runnable = new StatusReportingRunnable(
+					operation, history, uiInfo, undoing);
+			// If a runnable context has already been provided in the caller's
+			// uiInfo, use it. Otherwise create a progress monitor dialog to run
+			// the runnable.
+			IRunnableContext runnableContext = (IRunnableContext) uiInfo
+					.getAdapter(IRunnableContext.class);
+			if (runnableContext == null) {
+				TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(
+						getShell(uiInfo), PlatformUI.getWorkbench()
+								.getProgressService().getLongOperationTime());
+				progressDialog.run(false, true, runnable);
+			} else
+				runnableContext.run(false, true, runnable);
+			return runnable.getStatus();
+		} catch (OperationCanceledException e) {
+			return Status.CANCEL_STATUS;
+		} catch (InvocationTargetException e) {
+			reportException(e, uiInfo);
+			return IOperationHistory.OPERATION_INVALID_STATUS;
+		} catch (InterruptedException e) {
+			// Operation was cancelled and acknowledged by runnable with this
+			// exception.
+			// Do nothing.
+			return Status.CANCEL_STATUS;
+		}
 	}
 
 	/*
 	 * Report the specified execution exception to the log and to the user.
 	 */
-	private void reportException(ExecutionException e, IAdaptable uiInfo) {
+	private void reportException(Exception e, IAdaptable uiInfo) {
 		Throwable nestedException = e.getCause();
 		Throwable exception = (nestedException == null) ? e : nestedException;
 		String title = WorkbenchMessages.Error;
@@ -213,8 +265,8 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 					title = WorkbenchMessages.Operations_redoWarning;
 			}
 
-			String message = NLS.bind(
-					warning, status.getMessage(), operation.getLabel());
+			String message = NLS.bind(warning, status.getMessage(), operation
+					.getLabel());
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
