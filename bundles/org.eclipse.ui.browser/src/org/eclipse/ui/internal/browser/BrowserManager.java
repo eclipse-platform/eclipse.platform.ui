@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 /**
@@ -156,8 +157,25 @@ public class BrowserManager extends Observable {
 		WebBrowserUtil.addFoundBrowsers(browsers);
 		
 		// by default, if internal is there, that is current, else set the first external one
-		if (!browsers.isEmpty())
-			currentBrowser = (IBrowserDescriptor) browsers.get(0);
+		if (!browsers.isEmpty()) {
+			Program program = Program.findProgram("html"); //$NON-NLS-1$
+			if (program == null)
+				Program.findProgram("htm"); //$NON-NLS-1$
+			if (program != null) {
+				String programName = program.getName();
+				if (programName != null) {
+					Iterator iterator = browsers.iterator();
+					while (iterator.hasNext()) {
+						IBrowserDescriptor descr = (IBrowserDescriptor) iterator.next();
+						if (programName.equals(descr.getName())) {
+							currentBrowser = descr;
+						}
+					}
+				}
+			}
+			if (currentBrowser == null)
+				currentBrowser = (IBrowserDescriptor) browsers.get(0);
+		}
 	}
 
 	protected void addBrowser(IBrowserDescriptor browser) {
