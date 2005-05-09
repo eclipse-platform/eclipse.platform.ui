@@ -40,9 +40,9 @@ public class MultiThreadedOperationsTests extends UITestCase {
 			}
 
 			public IStatus run(IProgressMonitor monitor) {
-				System.out.println("Running OperationsAPITest from background job");
+				// System.out.println("Running OperationsAPITest from background job");
 				new TestSuite(OperationsAPITest.class).run(new TestResult());
-				System.out.println("Running WorkbenchOperationHistoryTests from background job");
+				// System.out.println("Running WorkbenchOperationHistoryTests from background job");
 				new TestSuite(WorkbenchOperationHistoryTests.class).run(new TestResult());
 				return Status.OK_STATUS;
 			}
