@@ -24,17 +24,17 @@ import org.eclipse.ui.internal.dialogs.DialogUtil;
  * 
  * @since 3.1
  */
-public class OpenAgainAction extends ActiveEditorAction {
+public class NewEditorAction extends ActiveEditorAction {
 
 	/**
-	 * Creates a new <code>OpenAnotherEditorAction</code>.
+	 * Creates a new <code>NewEditorAction</code>.
 	 * 
 	 * @param window the window in which the action will appear
 	 */
-	public OpenAgainAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.OpenAgainAction_text, window);
-		setId("openAgainAction"); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.OpenAgainAction_tooltip);
+	public NewEditorAction(IWorkbenchWindow window) {
+		super(WorkbenchMessages.NewEditorAction_text, window);
+		setId("newEditorAction"); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
 	}
 
 	/* (non-Javadoc)

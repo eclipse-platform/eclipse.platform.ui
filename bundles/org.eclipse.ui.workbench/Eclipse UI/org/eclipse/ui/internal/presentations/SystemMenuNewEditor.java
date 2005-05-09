@@ -23,13 +23,13 @@ import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
- * This convenience class provides an "Open Again" system menu item that 
+ * This convenience class provides a "New Editor" system menu item that 
  * opens another editor of the same type as the current editor, on the same input.
- * Presentations can use this to add an "Open Again" item to their system menu.
+ * Presentations can use this to add a "New Editor" item to their system menu.
  *  
  * @since 3.1
  */
-public final class SystemMenuOpenAgain extends Action implements ISelfUpdatingAction {
+public final class SystemMenuNewEditor extends Action implements ISelfUpdatingAction {
 
     private IStackPresentationSite site;
     private IPresentablePart part;
@@ -39,9 +39,9 @@ public final class SystemMenuOpenAgain extends Action implements ISelfUpdatingAc
 	 * 
 	 * @param site the presentation site
 	 */
-    public SystemMenuOpenAgain(IStackPresentationSite site) {
+    public SystemMenuNewEditor(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.PartPane_openAgain);
+        setText(WorkbenchMessages.PartPane_newEditor);
     }
 
 	/**

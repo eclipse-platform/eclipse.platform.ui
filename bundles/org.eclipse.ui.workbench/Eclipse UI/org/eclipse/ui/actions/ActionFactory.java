@@ -51,6 +51,7 @@ import org.eclipse.ui.internal.about.AboutAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
+import org.eclipse.ui.internal.actions.NewEditorAction;
 import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
 
 /**
@@ -1427,6 +1428,28 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             IWorkbenchAction action = new OpenPerspectiveDialogAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+    
+    /**
+     * Workbench action (id "newEditor"): Open a new editor on the active editor's input. 
+     * This action maintains its enablement state.
+     *
+     * @since 3.1
+     */
+    public static final ActionFactory NEW_EDITOR = new ActionFactory(
+            "newEditor") {//$NON-NLS-1$
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new NewEditorAction(window);
             action.setId(getId());
             return action;
         }
