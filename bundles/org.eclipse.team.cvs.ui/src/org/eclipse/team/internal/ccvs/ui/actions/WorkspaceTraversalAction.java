@@ -19,12 +19,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.SubscriberResourceMappingContext;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -35,54 +32,6 @@ import org.eclipse.ui.PlatformUI;
 public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 
     private static final String SELECTED_RESOURCES_WITH_OVERLAP = "selectedResourcesWithOverlap"; //$NON-NLS-1$
-    
-    /**
-     * Override to use the roots of the traversals as the selected resources.
-     * On it's own, this would be enough to make the actions work but all the operations
-     * would be deep (which is bad) so subclasses will need to look for traversals
-     * when executed.
-     * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#getSelectedResources()
-     */
-    protected IResource[] getSelectedResourcesWithOverlap() {
-        // First, look in the cache for the selection
-        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
-        if (props != null) {
-            IResource[] resources = (IResource[])props.get(SELECTED_RESOURCES_WITH_OVERLAP);
-            if (resources != null)
-                return resources;
-        }
-        try {
-            // Get all the traversals since enablement may be based on entire selection
-            ResourceTraversal[] traversals = getSelectedTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-            if (traversals.length == 0 && selection != null) {
-                if (props == null) {
-                    return Utils.getResources(selection.toArray());
-                }
-                return props.getSelectedResources();
-            }
-            Set resources = new HashSet();
-            for (int i = 0; i < traversals.length; i++) {
-                ResourceTraversal traversal = traversals[i];
-                IResource[] resourceArray = traversal.getResources();
-                for (int j = 0; j < resourceArray.length; j++) {
-                    IResource resource = resourceArray[j];
-                    // Only include resources in projects that are shared with CVS
-                    if (RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) != null) {
-                        resources.add(resource);
-                    }
-                }
-            }
-            IResource[] result = (IResource[]) resources.toArray(new IResource[resources.size()]);
-            if (props != null) {
-                props.put(SELECTED_RESOURCES_WITH_OVERLAP, result);
-            }
-            return result;
-        } catch (TeamException e) {
-            CVSUIPlugin.log(e);
-            return new IResource[0];
-        }
-    }
-    
 
     /**
      * Return the selected mappings that contain resources 

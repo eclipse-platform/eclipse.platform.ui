@@ -575,15 +575,27 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		return CVSUIPlugin.getPlugin().getRepositoryManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
-	 */
-	protected IResource[] getSelectedResources() {
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+     */
+    protected final IResource[] getSelectedResourcesWithOverlap() {
         CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
         if (props == null) {
             return Utils.getResources(selection.toArray());
         }
-        return props.getSelectedResources();
+        return props.getAllSelectedResources();
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+	 */
+	protected final IResource[] getSelectedResources() {
+        if (selection == null) return new IResource[0];
+        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
+        if (props == null) {
+            return CVSActionSelectionProperties.getNonOverlapping(Utils.getResources(selection.toArray()));
+        }
+        return props.getNonoverlappingSelectedResources();
 	}
 	
 	/* (non-Javadoc)

@@ -60,7 +60,7 @@ public class CVSActionSelectionProperties {
         return properties.get(key);
     }
     
-    public IResource[] getSelectedResources() {
+    public IResource[] getAllSelectedResources() {
         IResource[] resources = (IResource[])get(SELECTED_RESOURCES);
         if (resources == null) {
             resources = Utils.getResources(selection.toArray());
@@ -72,7 +72,7 @@ public class CVSActionSelectionProperties {
    public IResource[] getNonoverlappingSelectedResources() {
         IResource[] resources = (IResource[])get(NONOVERLAPPING_SELECTED_RESOURCES);
         if (resources == null) {
-            resources = getNonOverlapping(getSelectedResources());
+            resources = getNonOverlapping(getAllSelectedResources());
             put (NONOVERLAPPING_SELECTED_RESOURCES, resources);
         }
         return resources;
@@ -98,6 +98,9 @@ public class CVSActionSelectionProperties {
      * @return IResource[]
      */
     public static IResource[] getNonOverlapping(IResource[] resources) {
+        if (resources == null || resources.length == 0 || resources.length == 1) {
+            return resources;
+        }
         // Sort the resources so the shortest paths are first
         List sorted = new ArrayList();
         sorted.addAll(Arrays.asList(resources));

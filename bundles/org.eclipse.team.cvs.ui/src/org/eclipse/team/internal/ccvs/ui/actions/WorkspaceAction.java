@@ -345,14 +345,6 @@ public abstract class WorkspaceAction extends CVSAction {
 	}
 
     /**
-	 * Return all the selected resources even if some overlap with others.
-     * @return all the selected resources even if some overlap with others.
-     */
-    protected IResource[] getSelectedResourcesWithOverlap() {
-        return super.getSelectedResources();
-    }
-
-    /**
 	 * Method isEnabledForCVSResource.
 	 * @param cvsResource
 	 * @return boolean
@@ -424,20 +416,6 @@ public abstract class WorkspaceAction extends CVSAction {
 	 */
 	protected boolean isEnabledForNonExistantResources() {
 		return false;
-	}
-	
-	/**
-	 * Override to ensure that the selected resources so not overlap.
-	 * This method assumes that all actions are deep.
-	 * 
-	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
-	 */
-	protected final IResource[] getSelectedResources() {
-        CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
-        if (props == null) {
-            return CVSActionSelectionProperties.getNonOverlapping(getSelectedResourcesWithOverlap());
-        }
-        return props.getNonoverlappingSelectedResources();
 	}
 
 	protected void executeProviderAction(IProviderAction action, IResource[] resources, IProgressMonitor monitor) throws InvocationTargetException {
