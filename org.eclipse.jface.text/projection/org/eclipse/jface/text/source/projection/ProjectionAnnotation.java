@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source.projection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -104,7 +105,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		/* cap the height - at least on GTK, large numbers are converted to
 		 * negatives at some point */
 		int height= Math.min(r.y + r.height - MARGIN, canvas.getSize().y);
-		gc.drawLine(r.x + 4, r.y + 15, r.x + 4, height);
+		gc.drawLine(r.x + 4, r.y + 12, r.x + 4, height);
 		gc.drawLine(r.x + 4, height, r.x + r.width - MARGIN, height);
 		gc.setForeground(fg);
 	}
@@ -116,8 +117,11 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		Image image= getImage(canvas.getDisplay());
 		if (image != null) {
 			ImageUtilities.drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
-			if (fIsRangeIndication)
+			if (fIsRangeIndication) {
+				FontMetrics fontMetrics= gc.getFontMetrics();
+				rectangle.y += (fontMetrics.getHeight() - image.getBounds().height)/2;
 				drawRangeIndication(gc, canvas, rectangle);
+			}
 		}
 	}
 
