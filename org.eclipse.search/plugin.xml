@@ -211,7 +211,9 @@
 			id="org.eclipse.search.preferences.SearchPreferencePage"
 			class="org.eclipse.search.internal.ui.SearchPreferencePage"
 			category="org.eclipse.ui.preferencePages.Workbench">
+		    <keywordReference id="org.eclipse.search.ui"/>			
 		</page>
+
 <!---
 		<page name="%WorkInProgressPreferencePage.label"
 			id="org.eclipse.search.preferences.WorkInProgressPreferencePage"
@@ -219,6 +221,13 @@
 			category="org.eclipse.search.preferences.SearchPreferencePage">
 		</page>
 -->
+	</extension>
+	
+    <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="org.eclipse.search.ui"/>
 	</extension>
 	
 	<extension
