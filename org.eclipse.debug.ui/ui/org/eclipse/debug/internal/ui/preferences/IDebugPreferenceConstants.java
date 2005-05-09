@@ -162,6 +162,30 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String DEFAULT_EBCDIC_CP = "CP037"; //$NON-NLS-1$
+	
+	/**
+	 * Preference to determine if table rendering should dynamically load
+	 * memory as the user scrolls
+	 * 
+	 * @since 3.1
+	 */
+	public static final String PREF_DYNAMIC_LOAD_MEM = "org.eclpise.debug.ui.memory.dynamicLoad"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Size of buffer in a table rendering when dynamic loading mode is off.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String PREF_TABLE_RENDERING_PAGE_SIZE = "org.eclispe.debug.ui.memory.pageSize"; //$NON-NLS-1$
+	
+	/**
+	 * Default page size when dynamic loading mode is off.  This preference is stored
+	 * in number of lines.
+	 * 
+	 * @since 3.1
+	 */
+	public static final int DEFAULT_PAGE_SIZE = 20;
 }
 
 

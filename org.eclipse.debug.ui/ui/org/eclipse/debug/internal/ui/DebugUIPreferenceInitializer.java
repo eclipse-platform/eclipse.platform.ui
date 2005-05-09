@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -102,5 +103,12 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 				IDebugPreferenceConstants.DEFAULT_ASCII_CP);
 		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_EBCDIC_CODE_PAGE, 
 				IDebugPreferenceConstants.DEFAULT_EBCDIC_CP);
+		
+		if (MemoryViewUtil.isLinuxGTK())
+			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, false);
+		else
+			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, true);
+		
+		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE, IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
 	}
 }

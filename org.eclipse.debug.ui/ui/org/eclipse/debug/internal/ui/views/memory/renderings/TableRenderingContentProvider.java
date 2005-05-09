@@ -28,6 +28,8 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.memory.IMemoryRenderingUpdater;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -51,6 +53,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	private TableRenderingContentInput fInput;
 	private BigInteger fBufferEndAddress;
 	
+	private boolean fDynamicLoad;
+	
 	/**
 	 * @param memoryBlock
 	 * @param newTab
@@ -59,6 +63,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	{
 		lineCache = new Vector();
 		contentCache = new Hashtable();
+		initializeDynamicLoad();
 			
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -93,11 +98,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	}
 
 	public void dispose() {
-
-		// fTabItem disposed by view tab
-		
 		DebugPlugin.getDefault().removeDebugEventListener(this);		
-		
 		super.dispose();
 	}
 
@@ -133,7 +134,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	/**
 	 * @throws DebugException
 	 */
-	private void loadContentForSimpleMemoryBlock() throws DebugException {
+	public void loadContentForSimpleMemoryBlock() throws DebugException {
 		// get as much memory as the memory block can handle
 		fInput.setPreBuffer(0);
 		fInput.setPostBuffer(0);
@@ -148,7 +149,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	/**
 	 * @throws DebugException
 	 */
-	private void loadContentForExtendedMemoryBlock() throws DebugException {
+	public void loadContentForExtendedMemoryBlock() throws DebugException {
+		
 		// calculate top buffered address
 		BigInteger loadAddress = fInput.getLoadAddress();
 		if (loadAddress == null)
@@ -162,17 +164,34 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		int addressableUnitsPerLine = fInput.getMemoryRendering().getAddressableUnitPerLine();
 		BigInteger bufferStart = loadAddress.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
 		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(fInput.getPostBuffer()*addressableUnitsPerLine));
-		bufferEnd = bufferEnd.add(BigInteger.valueOf(fInput.getNumVisibleLines()*addressableUnitsPerLine));
+		bufferEnd = bufferEnd.add(BigInteger.valueOf(fInput.getNumLines()*addressableUnitsPerLine));
 		
-		if (bufferStart.compareTo(mbStart) < 0)
-			bufferStart = mbStart;
-		
-		if (bufferEnd.compareTo(mbEnd) > 0)
-			bufferEnd = mbEnd;
-		
-		int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
-		// get stoarage to fit the memory view tab size
-		getMemoryToFitTable(bufferStart, numLines, fInput.isUpdateDelta());
+		if (isDynamicLoad())
+		{
+			if (bufferStart.compareTo(mbStart) < 0)
+				bufferStart = mbStart;
+			
+			if (bufferEnd.compareTo(mbEnd) > 0)
+				bufferEnd = mbEnd;
+			
+			int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;		
+			// get stoarage to fit the memory view tab size
+			getMemoryToFitTable(bufferStart, numLines, fInput.isUpdateDelta());
+		}
+		else
+		{
+			if (bufferStart.compareTo(mbStart) < 0)
+				bufferStart = mbStart;
+			
+			if (bufferEnd.compareTo(mbEnd) > 0)
+			{
+				bufferStart = mbEnd.subtract(BigInteger.valueOf((fInput.getNumLines()-1)*addressableUnitsPerLine));
+			}
+			
+			int numLines = fInput.getNumLines();	
+			// get stoarage to fit the memory view tab size
+			getMemoryToFitTable(bufferStart, numLines, fInput.isUpdateDelta());
+		}
 	}
 	
 	/**
@@ -523,6 +542,15 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
 		
+		if (fInput.getMemoryRendering().isVisible())
+		{
+			// only do this if it's visible
+			// still need to clear content cache if the rendering
+			// is not visible
+			if (isUpdateManagedByMB())
+				return;
+		}
+		
 		// do nothing if the debug event did not come from a debug element comes from non-debug element
 		if (!(event.getSource() instanceof IDebugElement))
 			return;
@@ -546,7 +574,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			}
 		}
 		
-		// if the suspend evnet happens from the debug target that the blocked
+		// if the suspend evnet happens from the debug target that the 
 		// memory block belongs to
 		if (event.getKind() == DebugEvent.SUSPEND && src.getDebugTarget() == fInput.getMemoryBlock().getDebugTarget())
 		{	
@@ -559,7 +587,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 * Update content of the view tab if the content of the memory block has changed
 	 * or if its base address has changed
 	 * Update will not be performed if the memory block has not been changed or
-	 * if the view tab is disabled.
+	 * if the rendering is not visible
 	 */
 	public void updateContent()
 	{
@@ -571,6 +599,21 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			return;
 		}
 		
+		takeContentSnapshot();
+		
+		//do not handle event if the rendering is not visible
+		if (!fInput.getMemoryRendering().isVisible())
+			 return;
+		
+		fInput.getMemoryRendering().refresh();
+		
+	}
+	
+	/**
+	 *  Take a snapshot on the content, marking the lines as monitored
+	 */
+	public void takeContentSnapshot()
+	{
 		// cache content before getting new ones
 		TableRenderingLine[] lines =(TableRenderingLine[]) lineCache.toArray(new TableRenderingLine[lineCache.size()]);
 		if (contentCache != null)
@@ -598,8 +641,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// This will ensure that changes will be recomputed when user scrolls
 		// up or down the memory view.		
 		resetDeltas();
-		fInput.getMemoryRendering().refresh();
-		
 	}
 
 	/**
@@ -702,5 +743,44 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	public void clearContentCache()
 	{
 		contentCache.clear();
+	}
+	
+	/**
+	 * @return if the memory block would manage its own update.
+	 */
+	private boolean isUpdateManagedByMB()
+	{
+		IMemoryBlock memoryBlock = getMemoryBlock();
+		
+		IMemoryRenderingUpdater managedMB = null;
+		if (memoryBlock instanceof IMemoryRenderingUpdater)
+		{
+			managedMB = (IMemoryRenderingUpdater)memoryBlock;
+		}
+		
+		if (managedMB == null)
+			managedMB = (IMemoryRenderingUpdater)memoryBlock.getAdapter(IMemoryRenderingUpdater.class);
+		
+		// do not handle event if if the memory block wants to do its
+		// own update
+		if (managedMB != null && managedMB.supportsManagedUpdate(fInput.getMemoryRendering()))
+			return true;
+		
+		return false;
+	}
+	
+	public boolean isDynamicLoad()
+	{
+		return fDynamicLoad;
+	}
+	
+	private void initializeDynamicLoad()
+	{
+		fDynamicLoad = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);
+	}
+	
+	public void setDynamicLoad(boolean dynamicLoad)
+	{
+		fDynamicLoad = dynamicLoad;
 	}
 }

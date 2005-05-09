@@ -98,8 +98,6 @@ public class DebugUIMessages extends NLS {
 	public static String MonitorMemoryBlockDialog_NumberOfBytes;
 	public static String GoToAddressDialog_Address;
 	public static String GoToAddressDialog_GoToAddress;
-	public static String DefaultColumnSizeDialog_DefaultColumnSize;
-	public static String DefaultColumnSizeDialog_ColumnSize;
 	public static String CodePagesPrefDialog_1;
 	public static String CodePagesPrefDialog_2;
 	public static String CodePagesPrefDialog_3;
@@ -161,7 +159,9 @@ public class DebugUIMessages extends NLS {
 	public static String AbstractTableRendering_1;
 	public static String AbstractTableRendering_2;
 	public static String AbstractTableRendering_3;
+	public static String AbstractTableRendering_4;
 	public static String AbstractTableRendering_5;
+	public static String AbstractTableRendering_6;
 	public static String AbstractTableRendering_8;
 	public static String AbstractTableRendering_9;
 	public static String AbstractTableRendering_10;
@@ -198,11 +198,18 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingPropertiesPage_23;
 	public static String TableRenderingPropertiesPage_25;
 	public static String TableRenderingPropertiesPage_26;
+	public static String TableRenderingPrefAction_0;
+	public static String TableRenderingPreferencePage_0;
+	public static String TableRenderingPreferencePage_1;
+	public static String TableRenderingPreferencePage_2;
+	public static String TableRenderingPreferencePage_3;
+	public static String TableRenderingPreferencePage_4;
 	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugUIMessages.class);
 	}
+
 
 
 }

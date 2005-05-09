@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
@@ -183,11 +184,16 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private KeyAdapter fEditorKeyListener;
 	private SelectionAdapter fCursorSelectionListener;
 	private IWorkbenchAdapter fWorkbenchAdapter;
+	private IMemoryBlockConnection fConnection;
 	
 	private boolean fIsShowAddressColumn = true;
 	private SelectionAdapter fScrollbarSelectionListener;
 
 	private PropertyDialogAction fPropertiesAction;
+	
+	private int fPageSize;
+	private NextPageAction fNextAction;
+	private PrevPageAction fPrevAction;
 	
 	private class EventHandleLock
 	{
@@ -252,6 +258,39 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 	}
 	
+	
+	private class NextPageAction extends Action
+	{
+		private NextPageAction()
+		{
+			super();
+			setText(DebugUIMessages.AbstractTableRendering_4);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".NextPageAction_context"); //$NON-NLS-1$ 
+		}
+
+		public void run() {
+			BigInteger address = fContentInput.getLoadAddress();
+			address = address.add(BigInteger.valueOf(getPageSizeInUnits()));
+			handlePageStartAddressChanged(address);
+		}
+	}
+	
+	private class PrevPageAction extends Action
+	{
+		private PrevPageAction()
+		{
+			super();
+			setText(DebugUIMessages.AbstractTableRendering_6);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".PrevPageAction_context"); //$NON-NLS-1$
+		}
+
+		public void run() {
+			BigInteger address = fContentInput.getLoadAddress();
+			address = address.subtract(BigInteger.valueOf(getPageSizeInUnits()));
+			handlePageStartAddressChanged(address);
+		}
+	}
+	
 	/**
 	 * Constructs a new table rendering of the specified type.
 	 * 
@@ -288,6 +327,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		Object evtSrc = event.getSource();
 		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
+			// always update page size, only refresh if the table is visible
+			getPageSizeFromPreference();
+		}
+		
 		// do not handle event if the rendering is displaying an error
 		if (isDisplayingError())
 			return;
@@ -295,6 +339,20 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		// do not handle property change event if the rendering is not visible
 		if (!isVisible())
 			return;
+		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM)) {
+			handleDyanicLoadChanged();
+			return;
+		}
+		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
+			if (!isDynamicLoad())
+			{
+				// only refresh if in non-autoload mode
+				refresh();
+			}
+			return;
+		}
 		
 		if (evtSrc == this)
 			return;
@@ -324,9 +382,62 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		{
 			if (needMoreLines())
 			{
-				reloadTable(getTopVisibleAddress(), false);
+				if (isDynamicLoad())
+					reloadTable(getTopVisibleAddress(), false);
 			}
 			topVisibleAddressChanged((BigInteger)value);
+		}
+		else if (propertyName.equals(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS) && value instanceof BigInteger)
+		{
+			handlePageStartAddressChanged((BigInteger)value);
+		}
+	}
+
+	private void handleDyanicLoadChanged() {
+		
+		// if currently in dynamic load mode, update page
+		// start address
+		updateSyncPageStartAddress();
+		
+		updateDynamicLoadProperty();
+		if (isDynamicLoad())
+		{
+			refresh();
+		}
+		else
+		{
+			BigInteger pageStart = (BigInteger)getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
+			if (pageStart == null)
+				pageStart = fTopRowAddress;
+			handlePageStartAddressChanged(pageStart);
+		}
+	}
+
+	private void updateDynamicLoadProperty() {
+		
+		boolean value = DebugUIPlugin
+				.getDefault()
+				.getPreferenceStore()
+				.getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);
+		
+		if (value != isDynamicLoad())
+		{
+			fContentProvider.setDynamicLoad(value);
+		
+			if (!fIsDisposed) {
+				if (isDynamicLoad()) {
+					fContentInput.setPostBuffer(20);
+					fContentInput.setPreBuffer(20);
+					fContentInput.setDefaultBufferSize(20);
+					fContentInput.setNumLines(getNumberOfVisibleLines());
+	
+				} else {
+					fContentInput.setPostBuffer(0);
+					fContentInput.setPreBuffer(0);
+					fContentInput.setDefaultBufferSize(0);
+					fContentInput.setNumLines(fPageSize);
+				}	
+			}
 		}
 	}
 
@@ -338,6 +449,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	{
 		// do not handle event if view tab is disabled
 		if (!isVisible())
+			return;
+		
+		// do not handle event if the base address of the memory
+		// block has changed, wait for debug event to update to
+		// new location
+		if (isBaseAddressChanged())
 			return;
 	
 		if (!address.equals(fTopRowAddress))
@@ -406,12 +523,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					}
 					else
 					{
-						reloadTable(address, false);
+						if (isDynamicLoad())
+							reloadTable(address, false);
+						else
+							setTopIndex(table, index);
 					}
 				}
 				else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
 				{
-					if (!isAtBottomLimit())
+					if (!isAtBottomLimit() && isDynamicLoad())
 						reloadTable(address, false);
 					else
 						setTopIndex(table, index);
@@ -440,10 +560,87 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 */
 	private void selectedAddressChanged(BigInteger value) {
 		
+		// do not handle event if the base address of the memory
+		// block has changed, wait for debug event to update to
+		// new location
+		if (isBaseAddressChanged())
+			return;
+		
 		try {
-			goToAddress(value);
+			// do not handle event if the event is out of range and the 
+			// rendering is in non-dynamic-load mode, otherwise, will
+			// cause rendering to continue to scroll when it shouldn't
+			if (isDynamicLoad())
+				goToAddress(value);
+			else if (!isAddressOutOfRange(value))
+				goToAddress(value);
 		} catch (DebugException e) {
 			// do nothing
+		}
+	}
+	
+	private void handlePageStartAddressChanged(BigInteger address)
+	{
+		// do not handle if in dynamic mode
+		if (isDynamicLoad())
+			return;
+		
+		if (fContentInput == null)
+			return;
+		
+		if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
+			return;
+		
+		// do not handle event if the base address of the memory
+		// block has changed, wait for debug event to update to
+		// new location
+		if (isBaseAddressChanged())
+			return;
+		
+		if(fContentProvider.getBufferTopAddress().equals(address))
+			return;
+	
+		BigInteger start = fContentInput.getStartAddress();
+		BigInteger end = fContentInput.getEndAddress();
+		
+		// smaller than start address, load at start address
+		if (address.compareTo(start) < 0)
+		{
+			if (isAtTopLimit())
+				return;
+			
+			address = start;
+		}
+		
+		// bigger than end address, no need to load, alread at top
+		if (address.compareTo(end) > 0)
+		{
+			if (isAtBottomLimit())
+				return;
+			
+			address = end.subtract(BigInteger.valueOf(getPageSizeInUnits()));
+		}
+		
+		fContentInput.setLoadAddress(address);
+		refresh();
+		updateSyncPageStartAddress();
+		setTopIndex(fTableViewer.getTable(), 0);
+		fTopRowAddress = address;
+		updateSyncTopAddress();
+		
+		BigInteger selectedAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
+		if (selectedAddress != null)
+		{
+			fSelectedAddress = selectedAddress;
+			if (!isAddressOutOfRange(fSelectedAddress))
+			{
+				setCursorAtAddress(fSelectedAddress);
+				fTableCursor.setVisible(true);
+			}
+			else
+			{
+				fTableCursor.setVisible(false);
+			}
 		}
 	}
 
@@ -480,6 +677,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fTableViewer.setLabelProvider(labelProvider);
 		
 		fContentProvider = new TableRenderingContentProvider();
+		fContentProvider.setDynamicLoad(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM));
+		
 		fTableViewer.setContentProvider(fContentProvider);		
 		fContentProvider.setViewer(fTableViewer);
 		
@@ -557,7 +756,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				selectedAddress = BigInteger.valueOf(address);
 			}
 		}
-		fSelectedAddress = selectedAddress;
+		setSelectedAddress(selectedAddress);
 		// figure out top visible address
 		BigInteger topVisibleAddress = (BigInteger) getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
 		if (topVisibleAddress == null)
@@ -575,7 +774,23 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				topVisibleAddress = BigInteger.valueOf(getMemoryBlock().getStartAddress());
 			}
 		}
-		fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+		
+		getPageSizeFromPreference();
+		if (isDynamicLoad())
+			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false);
+		else
+		{
+			BigInteger addressToLoad = topVisibleAddress;
+			
+			// check synchronization service to see if we need to sync with another rendering
+			Object obj = getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
+			if (obj != null && obj instanceof BigInteger)
+			{
+				addressToLoad = (BigInteger)obj;
+			}
+			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false);
+		}
+		
 		fTableViewer.setInput(fContentInput);
 		fCellModifier = new TableRenderingCellModifier(this);
 		fTableViewer.setCellModifier(fCellModifier);
@@ -635,6 +850,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			}};
 		scroll.addSelectionListener(fScrollbarSelectionListener);
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
+	
+	private void getPageSizeFromPreference()
+	{
+		fPageSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE);
 	}
 	
 	private void createCursor(Table table, BigInteger address)
@@ -758,7 +978,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		// when the cursor is moved, the selected address is changed
 		if (selectedAddress != null && !selectedAddress.equals(fSelectedAddress))
 		{
-			fSelectedAddress = selectedAddress;
+			setSelectedAddress(selectedAddress);
 			updateSyncSelectedAddress();
 		}
 		
@@ -773,21 +993,25 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			if (row < 3)
 			{
-				
 				if (!isAtTopLimit())
 				{
-					refresh();
-					setCursorAtAddress(fSelectedAddress);
+					if (isDynamicLoad())
+					{
+						refresh();
+						setCursorAtAddress(fSelectedAddress);
+					}
 				}
 			}
 			else if (row >= fTableViewer.getTable().getItemCount() - 3)
 			{
 				if (!isAtBottomLimit())
 				{
-					refresh();
-					setCursorAtAddress(fSelectedAddress);
+					if (isDynamicLoad())
+					{
+						refresh();
+						setCursorAtAddress(fSelectedAddress);
+					}
 				}
-	
 			}
 		}
 		
@@ -1190,7 +1414,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	private static void  setTopIndex(Table table, int index)
 	{
-		MemoryViewUtil.linuxWorkAround(table);
 		table.setTopIndex(index);
 	}
 
@@ -1213,6 +1436,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			Object size =getSynchronizedProperty( AbstractTableRendering.PROPERTY_COL_SIZE);
 			Object topAddress =getSynchronizedProperty( AbstractTableRendering.PROPERTY_TOP_ADDRESS);
 			
+			if (!isDynamicLoad())
+			{
+				Object pageStartAddress = getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
+				if (pageStartAddress == null)
+					updateSyncPageStartAddress();
+			}
+			
 			// if info is available, some other view tab has already been
 			// created
 			// do not overwirte info int he synchronizer if that's the case
@@ -1233,7 +1463,21 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * Get properties from synchronizer and synchronize settings
 	 */
 	private void synchronize()
-	{	
+	{			
+		if (!isDynamicLoad())
+		{
+			BigInteger pageStart = (BigInteger)getSynchronizedProperty(IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS);
+			if (pageStart != null && fContentInput != null && fContentInput.getLoadAddress() != null)
+			{
+				if (!fContentInput.getLoadAddress().equals(pageStart))
+					handlePageStartAddressChanged(pageStart);
+			}
+			else if (pageStart != null)
+			{
+				handlePageStartAddressChanged(pageStart);
+			}
+		}
+		
 		Integer columnSize = (Integer) getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
 		BigInteger selectedAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_SELECTED_ADDRESS);
 		BigInteger topAddress = (BigInteger)getSynchronizedProperty(AbstractTableRendering.PROPERTY_TOP_ADDRESS);
@@ -1315,6 +1559,31 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		firePropertyChangedEvent(event);
 	}
 	
+	private void updateSyncPageStartAddress() {
+	
+		if (!fIsCreated)
+			return;
+		
+		if (isBaseAddressChanged())
+			return;
+		
+		BigInteger pageStart;
+		if (isDynamicLoad())
+		{
+			// if dynamic loading, the page address should be the top
+			// row address
+			pageStart = fTopRowAddress;
+		}
+		else
+		{
+			// otherwise, the address is the buffer's start address
+			pageStart = fContentProvider.getBufferTopAddress();
+		}
+		
+		PropertyChangeEvent event = new PropertyChangeEvent(this, IInternalDebugUIConstants.PROPERTY_PAGE_START_ADDRESS, null, pageStart);
+		firePropertyChangedEvent(event);
+	}
+	
 	/**
 	 * Fills the context menu for this rendering
 	 * 
@@ -1354,6 +1623,12 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				}
 			}
 		}
+		if (!isDynamicLoad())
+		{		
+			menu.add(new Separator());
+			menu.add(fPrevAction);
+			menu.add(fNextAction);
+		}
 		
 		menu.add(new Separator());
 		menu.add(fReformatAction);
@@ -1366,6 +1641,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			menu.add(new Separator());
 			menu.add(fPropertiesAction);
 		}
+		
 	}
 	
 	/**
@@ -1539,11 +1815,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				if (address.compareTo(fContentProvider.getContentBaseAddress()) != 0)
 				{
 					// get to new address
-					fSelectedAddress = address;
+					setSelectedAddress(address);
 					updateSyncSelectedAddress();
+					
 					reloadTable(address, true);
 					
-					fTopRowAddress = address;
+					if (!isDynamicLoad())
+					{
+						updateSyncPageStartAddress();
+						setTopIndex(fTableViewer.getTable(), 0);
+					}
+					
+					fTopRowAddress = getTopVisibleAddress();
 					updateSyncTopAddress();
 					
 					fContentInput.updateContentBaseAddress();
@@ -1551,7 +1834,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				else
 				{
 					// reload at top of table
-					address = getTopVisibleAddress();
+					if (isDynamicLoad())
+						address = getTopVisibleAddress();
+					else
+						address = fContentInput.getLoadAddress();
 					reloadTable(address, true);
 				}
 			} catch (DebugException e) {
@@ -1575,25 +1861,43 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		{
 			Table table = (Table)fTableViewer.getControl();	
 			
-			TableRenderingContentInput input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, getNumberOfVisibleLines(), updateDelta);
+			TableRenderingContentInput input;
+			if (isDynamicLoad())
+				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, getNumberOfVisibleLines(), updateDelta);
+			else
+				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, fPageSize, updateDelta);
+			
 			fContentInput = input;
 			fTableViewer.setInput(fContentInput);
 	
-			if (getMemoryBlock() instanceof IMemoryBlockExtension)
+			if (isDynamicLoad())
 			{
-				int topIdx = findAddressIndex(topAddress);
-				
-				if (topIdx != -1)
+				if (getMemoryBlock() instanceof IMemoryBlockExtension)
 				{
-					setTopIndex(table, topIdx);
+					int topIdx = findAddressIndex(topAddress);
+					
+					if (topIdx != -1)
+					{
+						setTopIndex(table, topIdx);
+					}
+				}
+				
+				// cursor needs to be refreshed after reload
+				if (isAddressVisible(fSelectedAddress))
+					setCursorAtAddress(fSelectedAddress);
+			}
+			else
+			{
+				if (!isAddressOutOfRange(fSelectedAddress))
+				{
+					setCursorAtAddress(fSelectedAddress);
+					fTableCursor.setVisible(true);
+				}
+				else
+				{
+					fTableCursor.setVisible(false);
 				}
 			}
-			
-			// cursor needs to be refreshed after reload
-			if (isAddressVisible(fSelectedAddress))
-				setCursorAtAddress(fSelectedAddress);
-			
-			MemoryViewUtil.linuxWorkAround(fTableViewer.getTable());
 		}
 		finally
 		{
@@ -1657,15 +1961,19 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	private static int getTopVisibleIndex(Table table)
 	{
-		MemoryViewUtil.linuxWorkAround(table);
 		int index = table.getTopIndex();
 		
 		TableItem item = table.getItem(index);
+		int cnt = table.getItemCount();
 		
-		MemoryViewUtil.linuxWorkAround(table);
 		while (item.getBounds(0).y < 0)
 		{
 			index++;
+			if (index >= cnt)
+			{
+				index--;
+				break;
+			}
 			item = table.getItem(index);
 		}
 		
@@ -1778,7 +2086,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			// if address is within the range, highlight			
 			if (!isAddressOutOfRange(address))
 			{
-				fSelectedAddress = address;
+				setSelectedAddress(address);
 				updateSyncSelectedAddress();
 				setCursorAtAddress(fSelectedAddress);
 				
@@ -1817,11 +2125,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					throw e;
 				}
 				
-				fSelectedAddress = address;
+				setSelectedAddress(address);
 				updateSyncSelectedAddress();
 				
-				//otherwise, reload at the address
-				reloadTable(address,false);
+				reloadTable(address, false);
+				
+				if (!isDynamicLoad())
+				{						
+					updateSyncPageStartAddress();
+				}
 				
 				// if the table is reloaded, the top address is chagned in this case
 				fTopRowAddress = address;
@@ -1900,6 +2212,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		{
 			fPropertiesAction = new PropertyDialogAction(site.getSite(),site.getSite().getSelectionProvider()); 
 		}
+		
+		fNextAction = new NextPageAction();
+		fPrevAction = new PrevPageAction();
 	}
 	
 	/**
@@ -1927,32 +2242,36 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				if (!isAddressOutOfRange(address))
+
+				if (isDynamicLoad())
 				{
-					Table table = fTableViewer.getTable();
-					int numInBuffer = table.getItemCount();
-					int index = findAddressIndex(address);
-					if (index < 3)
+					if (!isAddressOutOfRange(address))
 					{
-						if (isAtTopLimit())
+						Table table = fTableViewer.getTable();
+						int numInBuffer = table.getItemCount();
+						int index = findAddressIndex(address);
+						if (index < 3)
 						{
-							setTopIndex(table, index);
+							if (isAtTopLimit())
+							{
+								setTopIndex(table, index);
+							}
+							else
+							{
+								reloadTable(address, false);
+							}
 						}
-						else
+						else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
 						{
-							reloadTable(address, false);
+							if (!isAtBottomLimit())
+								reloadTable(address, false);
 						}
 					}
-					else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
-					{
-						if (!isAtBottomLimit())
-							reloadTable(address, false);
+					else
+					{	
+						// approaching limit, reload table
+						reloadTable(address, false);
 					}
-				}
-				else
-				{	
-					// approaching limit, reload table
-					reloadTable(address, false);
 				}
 				
 				if (isAddressVisible(fSelectedAddress))
@@ -1971,10 +2290,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private boolean isAtTopLimit()
 	{	
 		BigInteger startAddress = fContentInput.getStartAddress();
-		startAddress = alignDoubleWordBoundary(startAddress);
+		startAddress = MemoryViewUtil.alignDoubleWordBoundary(startAddress);
 		
 		BigInteger startBufferAddress = fContentProvider.getBufferTopAddress();
-		startBufferAddress = alignDoubleWordBoundary(startBufferAddress);
+		startBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(startBufferAddress);
 		
 		if (startAddress.compareTo(startBufferAddress) == 0)
 			return true;
@@ -1985,28 +2304,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	private boolean isAtBottomLimit()
 	{
 		BigInteger endAddress = fContentInput.getEndAddress();
-		endAddress = alignDoubleWordBoundary(endAddress);
+		endAddress = MemoryViewUtil.alignDoubleWordBoundary(endAddress);
 		
 		BigInteger endBufferAddress = fContentProvider.getBufferEndAddress();
-		endBufferAddress = alignDoubleWordBoundary(endBufferAddress);
+		endBufferAddress = MemoryViewUtil.alignDoubleWordBoundary(endBufferAddress);
 		
 		if (endAddress.compareTo(endBufferAddress) == 0)
 			return true;
 		
 		return false;		
-	}
-	
-	private BigInteger alignDoubleWordBoundary(BigInteger integer)
-	{
-		String str =integer.toString(16);
-		if (!str.endsWith("0")) //$NON-NLS-1$
-		{
-			str = str.substring(0, str.length() - 1);
-			str += "0"; //$NON-NLS-1$
-			integer = new BigInteger(str, 16);
-		}		
-		
-		return integer;
 	}
 	
 	private boolean needMoreLines()
@@ -2501,10 +2807,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		}
 		
 		super.becomesVisible();
-
-		refresh();
-		synchronize();
 		
+		boolean value = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM);
+		if (value != isDynamicLoad())
+			// this call will cause a reload
+			handleDyanicLoadChanged();
+		else
+			refresh();
+		
+		synchronize();
 		updateRenderingLabel(true);
 	}
 	
@@ -2674,15 +2985,15 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 					public Object[] getChildren(Object o) {
 						return new Object[0];
 					}
-
+	
 					public ImageDescriptor getImageDescriptor(Object object) {
 						return null;
 					}
-
+	
 					public String getLabel(Object o) {
 						return getInstance().getLabel();
 					}
-
+	
 					public Object getParent(Object o) {
 						return null;
 					}
@@ -2690,6 +3001,69 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			}
 			return fWorkbenchAdapter;
 		}
+		
+		if (adapter == IMemoryBlockConnection.class) {
+			if (fConnection == null) {
+				fConnection = new IMemoryBlockConnection() {
+					public void update() {
+						try {
+							fContentProvider.takeContentSnapshot();
+							if (getMemoryBlock() instanceof IMemoryBlockExtension)
+							{
+								BigInteger address = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
+								if (address.compareTo(fContentProvider.getContentBaseAddress()) != 0)
+								{
+									// get to new address
+									setSelectedAddress(address);
+									updateSyncSelectedAddress();
+									fTopRowAddress = address;
+									fContentInput.updateContentBaseAddress();
+									fContentInput.setLoadAddress(address);
+								}
+								fContentProvider.loadContentForExtendedMemoryBlock();
+							}
+							else
+								fContentProvider.loadContentForSimpleMemoryBlock();
+	
+							// update UI asynchrounously
+							Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+							display.asyncExec(new Runnable() {
+								public void run() {
+									updateLabels();
+									
+									if (getMemoryBlock() instanceof IMemoryBlockExtension) {
+										int topIdx = findAddressIndex(fTopRowAddress);
+										if (topIdx != -1) {
+											setTopIndex(fTableViewer.getTable(),topIdx);
+										}
+									}
+									
+									// cursor needs to be refreshed after reload
+									if (isAddressVisible(fSelectedAddress))
+									{
+										setCursorAtAddress(fSelectedAddress);
+										fTableCursor.setVisible(true);
+										fTableCursor.redraw();
+									}
+									else
+									{
+										fTableCursor.setVisible(false);
+									}
+									
+									if (!isDynamicLoad())
+										updateSyncPageStartAddress();
+									
+									updateSyncTopAddress();
+								}
+							});
+						} catch (DebugException e) {
+							displayError(e);
+						}
+					}
+				};
+			}
+			return fConnection;
+		}	
 		
 		return super.getAdapter(adapter);
 	}
@@ -2706,6 +3080,25 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			getLabelProviderAdapter() == null)
 			return false;
 		return true;
+	}
+	
+	private boolean isBaseAddressChanged()
+	{
+		try {
+			IMemoryBlock mb = getMemoryBlock();
+			if (mb instanceof IMemoryBlockExtension)
+			{
+				BigInteger baseAddress = ((IMemoryBlockExtension)mb).getBigBaseAddress();
+				if (baseAddress != null)
+				{
+					if (!baseAddress.equals(fContentInput.getContentBaseAddress()))
+						return true;
+				}
+			}
+		} catch (DebugException e1) {
+			return false;
+		}
+		return false;
 	}
 	
 	/**
@@ -2773,6 +3166,22 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	{
 		return (IMemoryBlockTablePresentation)getMemoryBlock().getAdapter(IMemoryBlockTablePresentation.class);
 	}
+	
+	private boolean isDynamicLoad()
+	{
+		return fContentProvider.isDynamicLoad();
+	}
+	
+	private int getPageSizeInUnits()
+	{
+		return fPageSize * getAddressableUnitPerLine();
+	}
+	
+	private void setSelectedAddress(BigInteger address)
+	{
+		fSelectedAddress = address;
+	}
+
 	
 	/**
 	 * Returns text for the given memory bytes at the specified address for the specified

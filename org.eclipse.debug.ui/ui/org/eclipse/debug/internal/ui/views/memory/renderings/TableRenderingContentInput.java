@@ -29,7 +29,7 @@ public class TableRenderingContentInput {
 	private int fPostBuffer;				// number of lines after thes last visible line
 	private int fDefaultBufferSize;
 	private BigInteger fLoadAddress;		// Top address to load at the table
-	private int fNumVisibleLines;			// number of visible lines
+	private int fNumLines;			// number of visible lines
 	private boolean fUpdateDelta;			// should the content provider calculate delta info
 	private BigInteger fMemoryBlockBaseAddress;		// base address of the memory block when this input is set
 	private BigInteger fStartAddress;
@@ -41,7 +41,7 @@ public class TableRenderingContentInput {
 		fPreBuffer = preBuffer;
 		fPostBuffer = postBuffer;
 		fLoadAddress = loadAddress;
-		fNumVisibleLines = numOfLines;
+		fNumLines = numOfLines;
 		fDefaultBufferSize = defaultBufferSize;
 		fUpdateDelta = updateDelta;
 
@@ -52,9 +52,7 @@ public class TableRenderingContentInput {
 			DebugUIPlugin.log(e);
 		}
 	}
-	public int getNumVisibleLines() {
-		return fNumVisibleLines;
-	}
+
 	public int getPostBuffer() {
 		return fPostBuffer;
 	}
@@ -175,5 +173,15 @@ public class TableRenderingContentInput {
 				fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
 		}
 		return fEndAddress;
+	}
+	
+	public int getNumLines()
+	{
+		return fNumLines;
+	}
+	
+	public void setNumLines(int numLines)
+	{
+		fNumLines = numLines;
 	}
 }

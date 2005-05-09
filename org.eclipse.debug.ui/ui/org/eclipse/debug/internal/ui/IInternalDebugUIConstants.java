@@ -274,4 +274,11 @@ public interface IInternalDebugUIConstants {
      * @since 3.1
      */
 	public static final String ID_BREAKPOINT_WORKINGSET = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Address at the beginning of a page in a table rendering.
+	 * @since 3.1
+	 */
+	public static final String PROPERTY_PAGE_START_ADDRESS = "pageStart"; //$NON-NLS-1$
 }

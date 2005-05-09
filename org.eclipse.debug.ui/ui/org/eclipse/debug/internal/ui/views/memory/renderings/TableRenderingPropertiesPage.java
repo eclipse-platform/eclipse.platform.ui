@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -161,9 +161,9 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 	
 	private void addProperty(Composite composite, String labelStr, String contentStr)
 	{
-		Text label = new Text(composite, SWT.READ_ONLY);
+		Label label = new Label(composite, SWT.NONE);
 		label.setText(labelStr);
-		Text text = new Text(composite, SWT.READ_ONLY | SWT.WRAP );
+		Label text = new Label(composite, SWT.WRAP );
 		text.setText(contentStr);
 	}
 

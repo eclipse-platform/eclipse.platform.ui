@@ -79,6 +79,12 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 */
 	public void dispose()
 	{
+		// disconnect from memory block when rendering is disposed
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
+		{
+			((IMemoryBlockExtension)fMemoryBlock).disconnect(this);
+		}
+		
 		if (fPropertyListeners != null)
 			fPropertyListeners.clear();
 	}

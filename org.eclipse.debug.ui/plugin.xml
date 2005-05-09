@@ -883,6 +883,14 @@
                style="toggle"
                id="org.eclipse.debug.ui.linkrenderingpanes"/>
          <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPrefAction"
+               helpContextId="TableRenderingPrefAction_context"
+               id="org.eclipse.debug.ui.tablerendering.preferencesaction"
+               label="%TableRenderingPrefActionName"
+               menubarPath="additions"
+               style="push"
+               tooltip="%TableRenderingPrefActionName"/>
+         <action
                disabledIcon="icons/full/dlcl16/det_pane_right.gif"
                hoverIcon="icons/full/elcl16/det_pane_right.gif"
                toolbarPath="RenderingPanesGroup"
@@ -892,14 +900,6 @@
                class="org.eclipse.debug.internal.ui.views.memory.ToggleSplitPaneAction"
                style="toggle"
                id="org.eclipse.debug.ui.togglesplitpane"/>
-         <action
-               helpContextId="DefaultColumnSizePrefAction_context"
-               label="%SetDefaultColumnSizeActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.SetDefaultColumnSizePrefAction"
-               tooltip="%SetDefaultColumnSizeActionName"
-               style="push"
-               menubarPath="additions"
-               id="org.eclipse.debug.ui.setDefaultColumnSize"/>
          <action
                helpContextId="SetPaddedStrAction_context"
                label="%SetPaddedStrActionName"
