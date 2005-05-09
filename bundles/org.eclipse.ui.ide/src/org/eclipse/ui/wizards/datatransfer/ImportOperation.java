@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -42,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 
@@ -538,6 +540,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         IResource.KEEP_HISTORY, null);
             else
                 targetResource.create(contentStream, false, null);
+            setResourceAttributes(targetResource,fileObject);
             
             if (provider instanceof TarLeveledStructureProvider) {
             	try {
@@ -564,6 +567,23 @@ public class ImportOperation extends WorkspaceModifyOperation {
     }
 
     /**
+     * Reuse the file atttributes set in the import.
+     * @param targetResource
+     * @param fileObject
+     */
+    private void setResourceAttributes(IFile targetResource, Object fileObject) {
+    	
+    	if(fileObject instanceof File)
+			try {
+				targetResource.setResourceAttributes(ResourceAttributes.fromFile((File) fileObject));
+			} catch (CoreException e) {
+				//Inform the log that the attributes reading failed
+				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+			}
+		
+	}
+
+	/**
      * Imports the specified file system objects into the workspace.
      * If the import fails, adds a status object to the list to be returned by
      * <code>getStatus</code>.
