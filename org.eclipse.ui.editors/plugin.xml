@@ -166,30 +166,54 @@
             category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage"
             id="org.eclipse.ui.preferencePages.GeneralTextEditor">
+            <keywordReference id="org.eclipse.ui.editors.general"/>
       </page>
       <page
             name="%PreferencePages.Annotations"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.AnnotationsPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Annotations">
+            <keywordReference id="org.eclipse.ui.editors.annotations"/>
       </page>
       <page
             name="%PreferencePages.QuickDiff"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.QuickDiffPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.QuickDiff">
+            <keywordReference id="org.eclipse.ui.editors.quickdiff"/>
       </page>
       <page
             name="%PreferencePages.Accessibility"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage"
             id="org.eclipse.ui.editors.preferencePages.Accessibility">
+            <keywordReference id="org.eclipse.ui.editors.accessibility"/>
       </page>
       <page
             name="%PreferencePages.Spelling"
             class="org.eclipse.ui.internal.editors.text.SpellingPreferencePage"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
-            id="org.eclipse.ui.editors.preferencePages.Spelling"/>
+            id="org.eclipse.ui.editors.preferencePages.Spelling">
+            <keywordReference id="org.eclipse.ui.editors.spelling"/>
+      </page>
+   </extension>
+   <extension
+      point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="org.eclipse.ui.editors.general"/>
+      <keyword
+            label="%preferenceKeywords.annotations"
+            id="org.eclipse.ui.editors.annotations"/>
+      <keyword
+            label="%preferenceKeywords.accessibility"
+            id="org.eclipse.ui.editors.accessibility"/>
+      <keyword
+            label="%preferenceKeywords.quickdiff"
+            id="org.eclipse.ui.editors.quickdiff"/>
+      <keyword
+            label="%preferenceKeywords.spelling"
+            id="org.eclipse.ui.editors.spelling"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">
