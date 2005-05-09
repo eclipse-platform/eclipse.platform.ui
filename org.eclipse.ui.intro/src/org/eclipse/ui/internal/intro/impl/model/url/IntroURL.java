@@ -321,7 +321,7 @@ public class IntroURL implements IIntroURL {
     }
 
     /**
-     * Launch external browser
+     * Launch external browser.
      */
     private boolean openBrowser(String url, String pluginId) {
         // no need to decode url because we will create another url from this
@@ -398,8 +398,9 @@ public class IntroURL implements IIntroURL {
         currentIntroPart.getControl().setRedraw(true);
 
         if (success) {
-            // found page
-            modelRoot.getPresentation().updateHistory(pageId);
+            // found page. Set the history
+            modelRoot.getPresentation().updateHistory(
+                modelRoot.getCurrentPage());
             // ran action successfully. Now set intro intro standby if needed.
             if (standbyState == null)
                 return true;

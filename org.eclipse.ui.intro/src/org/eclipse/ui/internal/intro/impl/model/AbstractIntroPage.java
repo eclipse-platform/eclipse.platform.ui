@@ -58,10 +58,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private IntroPageTitle title;
     private String content;
 
-    // if true, indicates that this page was cloned at runtime from another page
-    // with id=originalId.
-    private boolean isIFramePage;
-
+    // if iframe is not null, this indicates that this page was cloned at
+    // runtime from another page whose id was "originalId".
     private IntroInjectedIFrame iframe;
 
     // id of page from which this page was cloned.
@@ -768,7 +766,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
 
     public String getUnmangledId() {
-        if (isIFramePage)
+        if (isIFramePage())
             return originalId;
         return id;
     }
@@ -785,5 +783,15 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         this.iframe.setIFrameURL(url);
     }
 
+    /**
+     * Return the url of the embedded IFrame, if this page is an IFrame page.
+     * 
+     * @param url
+     */
+    public String getIFrameURL() {
+        if (!isIFramePage())
+            return null;
+        return this.iframe.getIFrameURL();
+    }
 
 }

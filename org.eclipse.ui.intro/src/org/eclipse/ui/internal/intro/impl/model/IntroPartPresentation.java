@@ -428,10 +428,12 @@ public class IntroPartPresentation extends AbstractIntroElement {
             implementation.standbyStateChanged(standby, isStandbyPartNeeded);
     }
 
-    public void updateHistory(String location) {
+    public void updateHistory(AbstractIntroPage page) {
         if (implementation != null)
-            implementation.updateHistory(location);
+            implementation.updateHistory(page);
     }
+    
+  
 
     public boolean navigateForward() {
         if (implementation != null)

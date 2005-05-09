@@ -23,7 +23,7 @@ public class IntroInjectedIFrame extends AbstractIntroIdElement {
 
     private String url;
 
-    public IntroInjectedIFrame(Element element, Bundle bundle) {
+    IntroInjectedIFrame(Element element, Bundle bundle) {
         super(element, bundle);
     }
 

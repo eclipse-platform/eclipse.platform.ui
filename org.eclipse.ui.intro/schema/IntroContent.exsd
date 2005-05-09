@@ -280,14 +280,14 @@ no parameters required&lt;br&gt;
 &lt;i&gt;direction = (&quot;backward&quot; | &quot;forward&quot; | &quot;home&quot;)&lt;/i&gt; - specifies the direction to navigate&lt;br&gt;
 &lt;br&gt;
 
-&lt;b&gt;openBrowser&lt;/b&gt; - open the url in an external browser, using the workbench Browser support.&lt;br&gt;
-&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a static HTML file&lt;br&gt;
-&lt;i&gt;pluginId (optional)&lt;/i&gt; - only required if the url is a relative to a static HTML file is specified. This is the id of the plug-in containing the file.&lt;br&gt;
+&lt;b&gt;openBrowser&lt;/b&gt; - open the url in an external browser, using the workbench Browser support. since 3.1&lt;br&gt;
+&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a local HTML file&lt;br&gt;
+&lt;i&gt;pluginId (optional)&lt;/i&gt; - if the url is relative, then it is relative to a plugin. Specify here the id of the plug-in containing the file.&lt;br&gt;
 &lt;br&gt;
 
-&lt;b&gt;openURL&lt;/b&gt; - open the url embedded in the current welcome page. The page pointed to by the url occupies the full size of the intro page.&lt;br&gt;
-&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a static HTML file&lt;br&gt;
-&lt;i&gt;pluginId (optional)&lt;/i&gt; - only required if the url is a relative to a static HTML file is specified. This is the id of the plug-in containing the file.&lt;br&gt;
+&lt;b&gt;openURL&lt;/b&gt; - open the url embedded in the current welcome page. The page pointed to by the url occupies the full size of the intro page. since 3.1&lt;br&gt;
+&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a local HTML file&lt;br&gt;
+&lt;i&gt;pluginId (optional)&lt;/i&gt; - if the url is relative, then it is relative to a plugin. Specify here the id of the plug-in containing the file.&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;runAction&lt;/b&gt; - runs the specified action&lt;br&gt;
@@ -308,8 +308,8 @@ no parameters required&lt;br&gt;
 
 &lt;b&gt;showHelpTopic&lt;/b&gt; - Open a help topic.&lt;br&gt;
 &lt;i&gt;id&lt;/i&gt; - the URL of the help resource. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource&lt;/code&gt;&lt;br&gt;
-&lt;i&gt;embed&lt;/i&gt; - if true, indicates that the Help topic needs to be displayed embedded in the current page. This is equivalent to openURL() command, but for Help System topics. The embedded URL occupies the full real-estate of the current page.&lt;br&gt;
-&lt;i&gt;embedTarget&lt;/i&gt; - if specified, then &lt;i&gt;embed&lt;/i&gt; is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target.&lt;br&gt;
+&lt;i&gt;embed&lt;/i&gt; - if true, indicates that the Help topic needs to be displayed embedded in the current page. This is equivalent to openURL() command, but for Help System topics. The embedded URL occupies the full real-estate of the current page. since 3.1&lt;br&gt;
+&lt;i&gt;embedTarget&lt;/i&gt; - if specified, then &lt;i&gt;embed&lt;/i&gt; is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target. since 3.1&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;showMessage&lt;/b&gt; - Displays a message to the user using a standard information dialog.&lt;br&gt;

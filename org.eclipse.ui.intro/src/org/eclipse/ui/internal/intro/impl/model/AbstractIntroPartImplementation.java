@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jface.action.Action;
@@ -25,7 +22,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
-import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.viewer.IntroModelLabelProvider;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
@@ -48,8 +44,8 @@ public abstract class AbstractIntroPartImplementation {
 
     // IMemento for restoring state.
     private IMemento memento;
-    private Vector history = new Vector();
-    private int navigationLocation = 0;
+
+    protected History history = new History();
 
     // flag used to enable logging of perf data for full UI creation only once.
     // Since standbyStateChanged is called several times, flag is used in method
@@ -153,88 +149,27 @@ public abstract class AbstractIntroPartImplementation {
         return introPart;
     }
 
+
     /**
-     * Updates the UI navigation history with either a real URL, or a page ID.
-     * If the navigation state is true, it is assumed that we need no updates to
-     * the history, and so a call to this method does nothing.
+     * Updates the UI navigation history with either a real URL.
      * 
-     * @param pageId
+     * @param location
      */
     public void updateHistory(String location) {
-        // quick exit.
-        if (!history.isEmpty() && getCurrentLocation().equals(location))
-            // resetting the same location is useless.
-            return;
-
-        doUpdateHistory(location);
+        history.updateHistory(location);
         updateNavigationActionsState();
     }
 
-    private void doUpdateHistory(String location) {
-        // we got here due to an intro URL listener or an SWT Form hyperlink
-        // listener.
-        if (navigationLocation == getHistoryEndPosition())
-            // we are at the end of the vector, just push.
-            pushToHistory(location);
-        else
-            // we already navigated. add item at current location, and clear
-            // rest of history. (Same as browser behavior.)
-            trimHistory(location);
-    }
-
-    private void pushToHistory(String location) {
-        history.add(location);
-        // point the nav location to the end of the vector, and watch out if
-        navigationLocation = getHistoryEndPosition();
-    }
-
-    private void trimHistory(String location) {
-        List newHistory = history.subList(0, navigationLocation + 1);
-        history = new Vector(newHistory);
-        history.add(location);
-        // point the nav location to the end of the vector.
-        navigationLocation = getHistoryEndPosition();
-    }
-
     /**
-     * Return the position of the last element in the navigation history. If
-     * vector is empty, return 0.
+     * Updates the UI navigation history with a page ID.
      * 
-     * @param vector
-     * @return
+     * @param pageId
      */
-    private int getHistoryEndPosition() {
-        if (history.isEmpty())
-            return 0;
-        return history.size() - 1;
+    public void updateHistory(AbstractIntroPage page) {
+        history.updateHistory(page);
+        updateNavigationActionsState();
     }
 
-    protected void navigateHistoryBackward() {
-        if (badNavigationLocation(navigationLocation - 1))
-            // do nothing. We are at the begining.
-            return;
-        --navigationLocation;
-    }
-
-    /**
-     * Navigate forward in the history.
-     * 
-     * @return
-     */
-    protected void navigateHistoryForward() {
-        if (badNavigationLocation(navigationLocation + 1))
-            // do nothing. We are at the begining.
-            return;
-        ++navigationLocation;
-    }
-
-
-    private boolean badNavigationLocation(int navigationLocation) {
-        if (navigationLocation < 0 || navigationLocation >= history.size())
-            // bad nav location.
-            return true;
-        return false;
-    }
 
     /**
      * Subclasses must implement to set the state of the navigation actions in
@@ -268,24 +203,6 @@ public abstract class AbstractIntroPartImplementation {
         // no-op
     }
 
-
-    /**
-     * Returns true if the current location in the navigation history represents
-     * a URL. False if the location is an Intro Page id.
-     * 
-     * @return Returns the locationIsURL.
-     */
-    public String getCurrentLocation() {
-        return (String) history.elementAt(navigationLocation);
-    }
-
-    public boolean canNavigateForward() {
-        return navigationLocation != getHistoryEndPosition() ? true : false;
-    }
-
-    public boolean canNavigateBackward() {
-        return navigationLocation == 0 ? false : true;
-    }
 
     /*
      * Add the Intro Model Viewer as an action to all implementations.
@@ -372,12 +289,12 @@ public abstract class AbstractIntroPartImplementation {
 
 
 
-
     /*
      * Subclasses must implement the actual logic for the method.
      */
     protected abstract void doStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded);
+
 
     /**
      * Save the current state of the intro. Currently, we only store information
@@ -395,6 +312,7 @@ public abstract class AbstractIntroPartImplementation {
     public void saveState(IMemento memento) {
         saveCurrentPage(memento);
     }
+
 
     /**
      * This method saves the most recently visited dynamic intro page in the
@@ -416,6 +334,7 @@ public abstract class AbstractIntroPartImplementation {
         }
     }
 
+
     /**
      * get the last page if it was stored in memento. This page is the last
      * visited intro page. It can be a intro page id, in the case of dynamic
@@ -430,12 +349,6 @@ public abstract class AbstractIntroPartImplementation {
         return memento.getString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT);
     }
 
-    protected boolean isURL(String aString) {
-        IntroURLParser parser = new IntroURLParser(aString);
-        if (parser.hasProtocol())
-            return true;
-        return false;
-    }
 
     /**
      * @return Returns the memento passed on creation.
@@ -452,7 +365,6 @@ public abstract class AbstractIntroPartImplementation {
      */
     public void registryChanged(IRegistryChangeEvent event) {
         history.clear();
-        navigationLocation = 0;
         // give implementation a chance to react to change.
         handleRegistryChanged(event);
     }
