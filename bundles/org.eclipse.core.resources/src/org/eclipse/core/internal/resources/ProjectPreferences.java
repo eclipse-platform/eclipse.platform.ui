@@ -13,12 +13,14 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.preferences.ExportedPreferences;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -191,13 +193,34 @@ public class ProjectPreferences extends EclipsePreferences {
 		return file;
 	}
 
+	/*
+	 * Return the preferences file for the given project and qualifier.
+	 */
 	static IFile getFile(IProject project, String qualifier) {
 		return project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
 	}
 
+	/*
+	 * Return the preferences file for the given folder and qualifier.
+	 */
 	static IFile getFile(IFolder folder, String qualifier) {
 		Assert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
 		return folder.getFile(new Path(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	}
+	
+	/*
+	 * Return the corresponding IFile for the given preference node, or null
+	 * if it cannot be calculated.
+	 */
+	static IFile getFile(IEclipsePreferences node) {
+		String path = node.absolutePath();
+		String projectName = getSegment(path, 2);
+		if (projectName == null)
+			return null;
+		String qualifier = getSegment(path, 3);
+		if (qualifier == null)
+			return null;
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(projectName).append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
 	}
 
 	protected void save() throws BackingStoreException {
@@ -278,9 +301,14 @@ public class ProjectPreferences extends EclipsePreferences {
 					}
 				}
 			};
-			// we might: create the .settings folder, create the file, or modify the file.
-			ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
-			workspace.run(operation, rule, IResource.NONE, null);
+			//don't bother with scheduling rules if we are already inside an operation
+			if (((Workspace)workspace).getWorkManager().isLockAlreadyAcquired()) {
+				operation.run(null);
+			} else {
+				// we might: create the .settings folder, create the file, or modify the file.
+				ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
+				workspace.run(operation, rule, IResource.NONE, null);
+			}
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
@@ -318,7 +346,50 @@ public class ProjectPreferences extends EclipsePreferences {
 					// ignore
 				}
 		}
-		convertFromProperties(fromDisk, true);
+		convertFromProperties(this, fromDisk, true);
+	}
+
+	private static Properties loadProperties(IFile file) throws BackingStoreException {
+		if (Policy.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences from file: " + file.getFullPath()); //$NON-NLS-1$
+		Properties result = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(file.getContents(true));
+			result.load(input);
+		} catch (CoreException e) {
+			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		return result;
+	}
+
+	private static void read(ProjectPreferences node, IFile file) throws BackingStoreException, CoreException {
+		if (file == null || !file.exists()) {
+			if (Policy.DEBUG_PREFERENCES)
+				Policy.debug("Unable to determine preference file or file does not exist for node: " + node.absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		Properties fromDisk = loadProperties(file);
+		// no work to do
+		if (fromDisk.isEmpty())
+			return;
+		// create a new node to store the preferences in.
+		IExportedPreferences myNode = (IExportedPreferences) ExportedPreferences.newRoot().node(node.absolutePath());
+		convertFromProperties((EclipsePreferences) myNode, fromDisk, false);
+		Platform.getPreferencesService().applyPreferences(myNode);
 	}
 
 	public static void updatePreferences(IFile file) throws CoreException {
@@ -340,7 +411,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			ProjectPreferences projectPrefs = (ProjectPreferences) node;
 			if (projectPrefs.isWriting)
 				return;
-			projectPrefs.load();
+			read(projectPrefs, file);
 			// make sure that we generate the appropriate resource change events
 			// if encoding settings have changed
 			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))

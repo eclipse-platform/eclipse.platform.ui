@@ -37,6 +37,7 @@ public class AllTests extends TestCase {
 		suite.addTest(WorkspaceDescriptionTest.suite());
 		suite.addTest(TestBug30015.suite());
 		suite.addTest(TestMasterTableCleanup.suite());
+		suite.addTest(ProjectPreferenceSessionTest.suite());
 		// this one comes from org.eclipse.core.tests.resources.saveparticipant
 		// comment this out until we have a better solution for running these tests
 		// (keeping their contents inside this plugin as subdirs and dynamically installing
