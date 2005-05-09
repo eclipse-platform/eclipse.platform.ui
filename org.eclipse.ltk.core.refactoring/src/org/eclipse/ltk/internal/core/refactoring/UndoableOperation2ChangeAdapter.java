@@ -39,6 +39,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdvancedUndoableOperation  {
 	
 	private String fLabel;
+	private String fDescription;
 	private Change fExecuteChange;
 	private Change fUndoChange;
 	private Change fRedoChange;
@@ -97,6 +98,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	}
 
 	public String getDescription() {
+		if (fDescription != null)
+			return fDescription;
 		return fActiveChange.getName();
 	}
 
@@ -189,7 +192,18 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		try {
 			if (monitor == null)
 				monitor= new NullProgressMonitor();
-			return asStatus(fUndoChange.isValid(monitor));
+			RefactoringStatus status= fUndoChange.isValid(monitor);
+			if (status.hasFatalError()) {
+				// The operation can no longer be undo.
+				fUndoChange= null;
+				clearActiveChange();
+				return asStatus(status);
+			} else {
+				// return OK in all other cases. This by passes the dialog shown
+				// in the operation approver and allows refactoring to show its
+				// own dialog again inside the runnable.
+				return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			}
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
@@ -228,7 +242,18 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		try {
 			if (monitor == null)
 				monitor= new NullProgressMonitor();
-			return asStatus(fRedoChange.isValid(monitor));
+			RefactoringStatus status= fRedoChange.isValid(monitor);
+			if (status.hasFatalError()) {
+				// The operation can no longer be redone.
+				fRedoChange= null;
+				clearActiveChange();
+				return asStatus(status);
+			} else {
+				// return OK in all other cases. This by passes the dialog shown
+				// in the operation approver and allows refactoring to show its
+				// own dialog again inside the runnable.
+				return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			}
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
@@ -249,7 +274,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	}
 
 	public void dispose() {
-		fActiveChange.dispose();
+		// the active change could be cleared.
+		if (fActiveChange != null)
+			fActiveChange.dispose();
 	}
 	
 	private ExecuteResult executeChange(final IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
@@ -354,5 +381,16 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 			return result;
 		ContextAdapter context= new ContextAdapter(info, title);
 		return RefactoringCore.getQueryFactory().create(context);
+	}
+	
+	private void clearActiveChange() {
+		if (fLabel == null) {
+			fLabel= fActiveChange.getName();
+		}
+		if (fDescription == null) {
+			fDescription= fActiveChange.getName();
+		}
+		fActiveChange.dispose();
+		fActiveChange= null;
 	}
 }
