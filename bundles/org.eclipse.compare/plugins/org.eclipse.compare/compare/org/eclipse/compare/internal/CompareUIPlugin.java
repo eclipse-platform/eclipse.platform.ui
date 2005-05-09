@@ -892,12 +892,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
     		if (ct == null)
     			ct= fgContentTypeManager.findContentTypeFor(name);
 
-    		if (ct == null) {
-    			// try to guess type
-    			String t= guessType(element);
-    			if (ITypedElement.TEXT_TYPE.equals(t))
-    				return Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-    		}
+//    		if (ct == null) {
+//    			// try to guess type
+//    			String t= guessType(element);
+//    			if (ITypedElement.TEXT_TYPE.equals(t))
+//    				return Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+//    		}
     		return ct;
 	}
 	
