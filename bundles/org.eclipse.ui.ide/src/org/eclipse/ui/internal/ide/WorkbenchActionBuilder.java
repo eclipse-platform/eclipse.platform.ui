@@ -51,7 +51,6 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.actions.OpenAgainAction;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
@@ -75,7 +74,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction saveAllAction;
 
-    private IWorkbenchAction openAgainAction;
+    private IWorkbenchAction newWindowAction;
+    
+    private IWorkbenchAction newEditorAction;
 
     private IWorkbenchAction helpContentsAction;
 
@@ -474,7 +475,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(closeAction);
         menu.add(closeAllAction);
-		menu.add(openAgainAction);
         //		menu.add(closeAllSavedAction);
         menu.add(new GroupMarker(IWorkbenchActionConstants.CLOSE_EXT));
         menu.add(new Separator());
@@ -634,10 +634,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         MenuManager menu = new MenuManager(
                 IDEWorkbenchMessages.Workbench_window, IWorkbenchActionConstants.M_WINDOW);
 
-        IWorkbenchAction action = ActionFactory.OPEN_NEW_WINDOW
-                .create(getWindow());
-        action.setText(IDEWorkbenchMessages.Workbench_openNewWindow);
-        menu.add(action);
+        menu.add(newWindowAction);
+		menu.add(newEditorAction);
         menu.add(new Separator());
         addPerspectiveActions(menu);
         menu.add(new Separator());
@@ -1049,7 +1047,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeAllSavedAction = null;
         saveAction = null;
         saveAllAction = null;
-		openAgainAction = null;
+        newWindowAction = null;
+		newEditorAction = null;
         helpContentsAction = null;
         helpSearchAction = null;
 		dynamicHelpAction = null;
@@ -1205,8 +1204,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         saveAllAction = ActionFactory.SAVE_ALL.create(window);
         register(saveAllAction);
 		
-		openAgainAction = new OpenAgainAction(window);
-		register(openAgainAction);
+        newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
+        newWindowAction.setText(IDEWorkbenchMessages.Workbench_openNewWindow);
+        register(newWindowAction);
+
+		newEditorAction = ActionFactory.NEW_EDITOR.create(window);
+		register(newEditorAction);
 
         undoAction = ActionFactory.UNDO.create(window);
         register(undoAction);
