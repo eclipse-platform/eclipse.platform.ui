@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
@@ -19,9 +21,11 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -32,6 +36,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 
 /**
  * <p>
@@ -206,17 +211,32 @@ public abstract class OperationHistoryActionHandler extends Action implements
      * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
      */
 	public final void run() {
+		Shell parent= getWorkbenchWindow().getShell();
+		TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(parent, getWorkbenchWindow().getWorkbench().getProgressService().getLongOperationTime());
+		IRunnableWithProgress runnable= new IRunnableWithProgress(){
+			public void run(IProgressMonitor pm) throws InvocationTargetException {
+				try {
+					runCommand(pm);
+				} catch (ExecutionException e) {
+					if (pruning)
+						flush();
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
 		try {
-			runCommand();
-		} catch (ExecutionException e) {
+			progressDialog.run(false, true, runnable);
+		} catch (InvocationTargetException e) {
 			reportException(e);
-			if (pruning)
-				flush();
+		} catch (InterruptedException e) {
+			// Operation was cancelled and acknowledged by runnable with this exception.
+			// Do nothing.
+		} catch (OperationCanceledException e) {
+			// the operation was cancelled.  Do nothing.
 		}
-
 	}
-
-	abstract IStatus runCommand() throws ExecutionException;
+	
+	abstract IStatus runCommand(IProgressMonitor pm) throws ExecutionException;
 
 	/*
 	 * (non-Javadoc)
@@ -236,13 +256,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (adapter.equals(IUndoContext.class)) {
 			return undoContext;
 		}
-		return null;
-	}
-
-	/*
-	 * Return the progress monitor that should be used for operations
-	 */
-	IProgressMonitor getProgressMonitor() {
 		return null;
 	}
 
@@ -328,7 +341,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/*
 	 * Report the specified execution exception to the log and to the user.
 	 */
-	final void reportException(ExecutionException e) {
+	final void reportException(Exception e) {
 		Throwable nestedException = e.getCause();
 		Throwable exception = (nestedException == null) ? e : nestedException;
 		String title = WorkbenchMessages.Error;
