@@ -301,7 +301,7 @@
             id="org.eclipse.compare.TextMergeViewerCreator">
       </viewer>
       <viewer
-            extensions="gif,jpg"
+            extensions="gif,jpg,jpeg,png,bmp,ico,tif,tiff"
             class="org.eclipse.compare.internal.ImageMergeViewerCreator"
             id="org.eclipse.compare.ImageMergeViewerCreator">
       </viewer>
