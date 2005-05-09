@@ -52,7 +52,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		IPageChangeProvider {
 	private FormToolkit toolkit;
 
-	protected Vector pages;
+	protected Vector pages = pages = new Vector();
 
 	private int currentPage = -1;
 
@@ -104,7 +104,6 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 * The constructor.
 	 */
 	public FormEditor() {
-		pages = new Vector();
 	}
 
 	/**
