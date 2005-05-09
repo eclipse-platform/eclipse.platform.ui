@@ -259,12 +259,14 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 */
 
 	public boolean isDirty() {
-		for (int i = 0; i < pages.size(); i++) {
-			Object page = pages.get(i);
-			if (page instanceof IFormPage) {
-				IFormPage fpage = (IFormPage) page;
-				if (fpage.isDirty())
-					return true;
+		if (pages != null) {
+			for (int i = 0; i < pages.size(); i++) {
+				Object page = pages.get(i);
+				if (page instanceof IFormPage) {
+					IFormPage fpage = (IFormPage) page;
+					if (fpage.isDirty())
+						return true;
+				}
 			}
 		}
 		return super.isDirty();

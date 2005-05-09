@@ -346,12 +346,12 @@ public final class FormText extends Canvas {
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				if (DEBUG_FOCUS) {
-					System.out.println("FormText: new focus - hasFocus="+hasFocus+", mouseFocus="+mouseFocus);
+					System.out.println("FormText: new focus - hasFocus="+hasFocus+", mouseFocus="+mouseFocus+", handleFocusGained="+handleFocusGained);
 				}
 				if (!hasFocus) {
 					hasFocus = true;
 					if (!mouseFocus || handleFocusGained)
-						handleFocusChange();
+					   handleFocusChange();
 				}
 			}
 
@@ -1297,6 +1297,9 @@ public final class FormText extends Canvas {
 	}
 
 	private void handleFocusChange() {
+		if (DEBUG_FOCUS) {
+			System.out.println("Handle focus change: hasFocus="+hasFocus+", mouseFocus="+mouseFocus);
+		}
 		if (hasFocus) {
 			boolean advance=true;
 			if (!mouseFocus) {
