@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -22,6 +23,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,11 +57,15 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 
 	private Rectangle savedBounds;
 	
+	private Cursor busyCursor;
+	
 	private boolean parentResizeBlocked = false;
 
 	public ContextHelpWindow(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.CLOSE | SWT.RESIZE);
+		if (Platform.getWS().equals(Platform.WS_GTK))
+			busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
 		parentListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 				maintainRelativePosition();
@@ -155,6 +161,8 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		hookListeners();
 		helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		if (busyCursor!=null)
+			getParentShell().setCursor(busyCursor);
 		return container;
 	}
 
@@ -172,6 +180,11 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		unhookPageChangeListener(shell.getParent(), listener);
 		shell.removeListener(SWT.Move, listener);
 		shell.removeListener(SWT.Resize, listener);
+		if (busyCursor!=null) {
+			shell.getParent().setCursor(null);
+			busyCursor.dispose();
+			busyCursor=null;
+		}
 	}
 
 	private void hookPageChangeListener(Composite parent, Listener listener) {
