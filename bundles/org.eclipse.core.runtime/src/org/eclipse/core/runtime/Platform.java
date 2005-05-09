@@ -617,16 +617,16 @@ public final class Platform {
 	/**
 	 * Returns the location of the platform log file.  This file may contain information
 	 * about errors that have previously occurred during this invocation of the Platform.
-	 * 
+	 * <p>
 	 * It is recommended not to keep this value, as the log location may vary when an instance
-	 * location is being set.
-	 * s
+	 * location is being set.</p>
+	 * <p>
 	 * Note: it is very important that users of this method do not leave the log
 	 * file open for extended periods of time.  Doing so may prevent others
 	 * from writing to the log file, which could result in important error messages
 	 * being lost.  It is strongly recommended that clients wanting to read the
 	 * log file for extended periods should copy the log file contents elsewhere,
-	 * and immediately close the original file.
+	 * and immediately close the original file.</p>
 	 * 
 	 * @return the path of the log file on disk.
 	 */
