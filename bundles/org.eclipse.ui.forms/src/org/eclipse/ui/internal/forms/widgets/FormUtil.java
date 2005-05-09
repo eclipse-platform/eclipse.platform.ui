@@ -31,6 +31,7 @@ public class FormUtil {
 	public static final String DEBUG = PLUGIN_ID + "/debug";
 
 	public static final String DEBUG_TEXT = DEBUG + "/text";
+	public static final String DEBUG_FOCUS = DEBUG + "/focus";
 
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {

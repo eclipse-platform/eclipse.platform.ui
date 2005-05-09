@@ -132,7 +132,8 @@ public final class FormText extends Canvas {
 	 */
 	public int marginHeight = 1;
 
-	private static final boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$//$NON-NLS-2$	
+	private static final boolean DEBUG_TEXT = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$//$NON-NLS-2$
+	private static final boolean DEBUG_FOCUS = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$//$NON-NLS-2$		
 
 	// private fields
 	private boolean hasFocus;
@@ -181,7 +182,7 @@ public final class FormText extends Canvas {
 				boolean changed) {
 			long start = 0;
 
-			if (DEBUG)
+			if (DEBUG_TEXT)
 				start = System.currentTimeMillis();
 			int innerWidth = wHint;
 			if (innerWidth != SWT.DEFAULT)
@@ -190,7 +191,7 @@ public final class FormText extends Canvas {
 			int textWidth = textSize.x + 2 * marginWidth;
 			int textHeight = textSize.y + 2 * marginHeight;
 			Point result = new Point(textWidth, textHeight);
-			if (DEBUG) {
+			if (DEBUG_TEXT) {
 				long stop = System.currentTimeMillis();
 				System.out.println("FormText computeSize: " + (stop - start)
 						+ "ms");
@@ -249,7 +250,7 @@ public final class FormText extends Canvas {
 		protected void layout(Composite composite, boolean flushCache) {
 			long start = 0;
 
-			if (DEBUG) {
+			if (DEBUG_TEXT) {
 				start = System.currentTimeMillis();
 			}
 			selData = null;
@@ -281,7 +282,7 @@ public final class FormText extends Canvas {
 						selectedLink);
 			}
 			gc.dispose();
-			if (DEBUG) {
+			if (DEBUG_TEXT) {
 				long stop = System.currentTimeMillis();
 				System.out.println("FormText.layout: " + (stop - start) + "ms");
 			}
@@ -344,8 +345,8 @@ public final class FormText extends Canvas {
 		});
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				if (DEBUG) {
-					System.out.println("FormText: new focus - hasFocus="+hasFocus);
+				if (DEBUG_FOCUS) {
+					System.out.println("FormText: new focus - hasFocus="+hasFocus+", mouseFocus="+mouseFocus);
 				}
 				if (!hasFocus) {
 					hasFocus = true;
@@ -355,6 +356,9 @@ public final class FormText extends Canvas {
 			}
 
 			public void focusLost(FocusEvent e) {
+				if (DEBUG_FOCUS) {
+					System.out.println("FormText: focus lost");
+				}
 				if (hasFocus) {
 					hasFocus = false;
 					handleFocusChange();
@@ -1187,7 +1191,7 @@ public final class FormText extends Canvas {
 	}
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
-		if (DEBUG)
+		if (DEBUG_FOCUS)
 			System.out.println("FormText: mouse click("+down+")");
 		if (down) {
 			// select a hyperlink
@@ -1535,6 +1539,8 @@ public final class FormText extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
+		if (DEBUG_FOCUS)
+			System.out.println("Programmatic setFocus");
 		handleFocusGained = true;
 		boolean value = super.setFocus();
 		handleFocusGained = false;
