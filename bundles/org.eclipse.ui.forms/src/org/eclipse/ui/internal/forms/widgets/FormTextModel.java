@@ -639,6 +639,18 @@ public class FormTextModel {
 		return selectedSegmentIndex != -1;
 	}
 	
+	public IFocusSelectable getNextFocusSegment(boolean next) {
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		if (selectables == null)
+			return null;
+		int nextIndex = next?selectedSegmentIndex+1:selectedSegmentIndex-1;
+
+		if (nextIndex < 0 || nextIndex > selectables.length - 1) {
+			return null;
+		}
+		return selectables[nextIndex];
+	}
+	
 	public boolean restoreSavedLink() {
 		if (savedSelectedLinkIndex!= -1) {
 			selectedSegmentIndex = savedSelectedLinkIndex;

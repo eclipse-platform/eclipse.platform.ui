@@ -194,6 +194,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 		return true;
 	}
 
-	public void setFocus(Hashtable resourceTable, boolean direction) {
+	public boolean setFocus(Hashtable resourceTable, boolean direction) {
+		return true;
 	}
 }

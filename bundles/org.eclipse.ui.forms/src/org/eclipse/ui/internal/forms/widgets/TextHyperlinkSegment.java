@@ -80,6 +80,7 @@ public class TextHyperlinkSegment extends TextSegment implements
 		return true;
 	}
 
-	public void setFocus(Hashtable resourceTable, boolean direction) {
+	public boolean setFocus(Hashtable resourceTable, boolean direction) {
+		return true;
 	}
 }

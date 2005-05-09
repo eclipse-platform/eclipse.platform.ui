@@ -16,6 +16,6 @@ import org.eclipse.swt.graphics.Rectangle;
 
 public interface IFocusSelectable {
 	boolean isFocusSelectable(Hashtable resourceTable);
-	void setFocus(Hashtable resourceTable, boolean direction);
+	boolean setFocus(Hashtable resourceTable, boolean direction);
 	Rectangle getBounds();
 }

@@ -56,11 +56,12 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 			control.setBounds(getBounds());
 	}
 
-	public void setFocus(Hashtable resourceTable, boolean next) {
+	public boolean setFocus(Hashtable resourceTable, boolean next) {
 		Control c = getControl(resourceTable);
 		if (c!=null) {
-			setFocus(c, next);
+			return setFocus(c, next);
 		}
+		return false;
 	}
 	
 	private boolean setFocus(Control c, boolean direction) {
