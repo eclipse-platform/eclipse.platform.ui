@@ -399,6 +399,8 @@ public final class ObjectContributionTest extends UITestCase {
          */
         extender.menuAboutToShow(fakeMenuManager);
 
+        extender.dispose();
+        
         // Check to see if the appropriate object contributions are present.
         final IContributionItem[] items = fakeMenuManager.getItems();
         Set seenCommands = new HashSet(Arrays.asList(commandIds));
