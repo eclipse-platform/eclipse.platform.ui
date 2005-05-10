@@ -1497,8 +1497,14 @@ public class AntModel implements IAntModel {
     }
 
     public void updateMarkers() {
-        reconcile();
-        fMarkerUpdater.updateMarkers();
+        boolean temp= fShouldReconcile;
+        try {
+            fShouldReconcile= true;
+            reconcile();
+            fMarkerUpdater.updateMarkers();
+        } finally {
+            fShouldReconcile= temp;
+        }
     }
 
     public AntElementNode getReferenceNode(String text) {
