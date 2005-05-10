@@ -3,6 +3,7 @@ This is a test list for the integrated undo/redo framework
 Actions
 	Verify that "Undo Typing" appears in action bar edit menu and editor popup menu once text has been typed.
 	Verify that "Redo Typing" appears in action bar edit menu immediately after an undo has been performed.
+	Move between different editors and verify that the undo/redo state matches the current editor and that the undo performs the expected operation.
 	Verify that "Undo <name of refactoring op>" appears in action bar edit menu and editor popup menu immediately after performing a refactoring from that editor.
 	Verify that "Undo <name of refactoring op>" appears in action bar edit menu of Package Explorer and Navigator after performing a refactoring from anywhere.
 
