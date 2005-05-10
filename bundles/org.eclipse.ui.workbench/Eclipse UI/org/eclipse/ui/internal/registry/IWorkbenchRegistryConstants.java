@@ -268,6 +268,16 @@ public interface IWorkbenchRegistryConstants {
      */
     public final static String TAG_PRIMARYWIZARD = "primaryWizard"; //$NON-NLS-1$
     
+    /**
+     * Attribute that specifies whether a wizard is immediately capable of finishing.  Value <code>canFinishEarly</code>.
+     */
+    public final static String ATT_CAN_FINISH_EARLY = "canFinishEarly"; //$NON-NLS-1$
+    
+    /**
+     * Attribute that specifies whether a wizard has any pages.  Value <code>hasPages</code>.
+     */
+    public final static String ATT_HAS_PAGES = "hasPages"; //$NON-NLS-1$
+    
 /* ***** org.eclipse.ui.actionSetPartAssociations ***** */    
 
     /**

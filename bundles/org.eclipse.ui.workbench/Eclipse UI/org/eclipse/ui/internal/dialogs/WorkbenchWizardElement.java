@@ -336,4 +336,22 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	public void setParent(WizardCollectionElement parent) {
 		parentCategory = parent;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.IWizardDescriptor#canFinishEarly()
+	 */
+	public boolean canFinishEarly() {
+		return Boolean.valueOf(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CAN_FINISH_EARLY)).booleanValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.wizards.IWizardDescriptor#hasPages()
+	 */
+	public boolean hasPages() {
+		String hasPagesString = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HAS_PAGES);
+		// default value is true
+		if (hasPagesString == null)
+			return true;
+		return Boolean.valueOf(hasPagesString).booleanValue();
+	}
 }

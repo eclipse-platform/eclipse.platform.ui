@@ -92,14 +92,22 @@ public class NewWizardShortcutAction extends Action implements
             }
         }
 
-        wizard.init(window.getWorkbench(), selectionToPass);
+        // even tho we MAY finish early without showing a dialog, prep the
+		// wizard with a dialog and such in case it's logic requires it
+		// - yes, it wastes a dialog but they are plentiful...
+		wizard.init(window.getWorkbench(), selectionToPass);
 
         Shell parent = window.getShell();
         WizardDialog dialog = new WizardDialog(parent, wizard);
         dialog.create();
         window.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 				IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
-        dialog.open();
+        
+        // if the wizard can finish early and doesn't have any pages, just finish it.
+        if (wizardElement.canFinishEarly() && !wizardElement.hasPages())
+        		wizard.performFinish();
+        else
+        		dialog.open();
     }
 
     /* (non-Javadoc)

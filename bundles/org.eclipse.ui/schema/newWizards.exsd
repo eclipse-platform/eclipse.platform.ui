@@ -189,6 +189,20 @@ Since 3.0
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="canFinishEarly" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the wizard is capable of finishing without ever showing pages to the user.  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="hasPages" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the wizard provides any pages.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -564,6 +564,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
             updateWizardSelection((IWizardDescriptor) selectedObject);
         } else {
             selectedElement = null;
+            page.setHasPages(false);
+            page.setCanFinishEarly(false);
             page.selectWizardNode(null);
             updateDescription(null);
         }
@@ -735,6 +737,8 @@ class NewWizardNewPage implements ISelectionChangedListener,
             selectedWizards.put(selectedObject, selectedNode);
         }
 
+        page.setCanFinishEarly(selectedObject.canFinishEarly());
+        page.setHasPages(selectedObject.hasPages());
         page.selectWizardNode(selectedNode);
 
         updateDescription(selectedObject);

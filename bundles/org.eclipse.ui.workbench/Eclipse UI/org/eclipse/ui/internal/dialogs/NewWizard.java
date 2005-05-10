@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -119,6 +120,14 @@ public class NewWizard extends Wizard {
     public boolean performFinish() {
         //save our selection state
         mainPage.saveWidgetValues();
+        // if we're finishing from the main page then perform finish on the selected wizard.
+        if (getContainer().getCurrentPage() == mainPage) {
+			if (mainPage.canFinishEarly()) {
+				IWizard wizard = mainPage.getSelectedNode().getWizard();
+				wizard.setContainer(getContainer());
+				return wizard.performFinish();
+			}
+		}
         return true;
     }
 
@@ -140,5 +149,17 @@ public class NewWizard extends Wizard {
      */
     public void setProjectsOnly(boolean b) {
         projectsOnly = b;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizard#canFinish()
+     */
+    public boolean canFinish() {
+         // we can finish if the first page is current and the the page can finish early.
+	    	if (getContainer().getCurrentPage() == mainPage) {
+	    		if (mainPage.canFinishEarly()) 
+	    			return true;
+	    	}
+	    	return super.canFinish();
     }
 }

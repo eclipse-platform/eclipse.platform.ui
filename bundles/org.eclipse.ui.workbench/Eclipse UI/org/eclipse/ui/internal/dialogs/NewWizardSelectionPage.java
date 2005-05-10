@@ -39,6 +39,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     private IWizardDescriptor [] primaryWizards;
 
 	private boolean projectsOnly;
+	
+	private boolean canFinishEarly = false, hasPages = true;
     
     /**
      * Create an instance of this class.
@@ -89,4 +91,44 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     protected void saveWidgetValues() {
         newResourcePage.saveWidgetValues();
     }
+        
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
+     */
+    public boolean canFlipToNextPage() {
+        // if the current page advertises that it does have pages then ask it via the super call
+    		if (hasPages)
+    			return super.canFlipToNextPage();
+    		return false;
+    }
+
+    /**
+     * Sets whether the selected wizard advertises that it does provide pages.
+     * 
+     * @param newValue whether the selected wizard has pages
+     * @since 3.1
+     */
+	public void setHasPages(boolean newValue) {
+		hasPages = newValue;
+	}
+
+	/**
+	 * Sets whether the selected wizard advertises that it can finish early.
+	 * 
+	 * @param newValue whether the selected wizard can finish early
+	 * @since 3.1
+	 */
+	public void setCanFinishEarly(boolean newValue) {
+		canFinishEarly = newValue;
+	}
+
+	/**
+	 * Answers whether the currently selected page, if any, advertises that it may finish early.
+	 * 
+	 * @return whether the page can finish early
+	 * @since 3.1
+	 */
+	public boolean canFinishEarly() {
+		return canFinishEarly;
+	}
 }
