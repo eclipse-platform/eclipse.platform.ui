@@ -47,6 +47,38 @@ Integrated Scenarios
   	h.  Choose "Undo Typing" from A to revert the text part of the refactoring
   	i.  Go to B and choose "Undo Typing" to revert the typed changes followed by the text part of the refactoring change.
   
-    
 
 Manual Testing of Examples
+
+An unreleased example app is used to manually test certain user operations and to watch the undo
+history using an OperationsLogView.  To do the testing below, you must have access to the Ottawa
+CVS repository (host: ottcvs1.ott.oti.com, repository path: /home/cvs/desktop).
+Check out the project org.eclipse.ui.operations.examples from HEAD and then run a workbench.  There
+must be at least some *.xml file in the workspace (create a plug-in project if your workspace is empty).
+The scenarios are designed to be run sequentially, as the example operations cycle through three
+statuses - INFO, WARNING, ERROR.
+
+  1 - <correct handling of long label names>
+  	a.  Select a *.xml file in the navigator or package explorer.
+  	b.  Popup the menu and choose Operations>Perform Example Operation
+  	c.  Check the undo menu and verify that the long name has ellipsis (...) in the middle of it
+  2 - <correct handling of INFO, WARNING status from AdvancedValidatingOperationApprover>
+	<progress monitor provided by action handlers>
+    d.  Select "Undo A very long str...
+    e.  You should immediately see a dialog titled "Undo Information" and be asked whether to proceed.
+    f.  Choose yes.
+    g.  You should see a progress dialog and then a prompt when the operation is complete
+    h.  At this point you should see the Redo Action available
+    i.  Repeat steps (a) through (h).  The only difference should be that the
+        dialog in (e) is titled "Undo Warning" with a slightly different message.
+        If you are fast enough, cancel the progress dialog to verify it stops the operation
+        (no prompt at the end).
+  3 - <progress monitor provided by AdvancedValidationUserApprover>
+  	  <correct handling of ERROR status from AdvancedValidatingOperationApprover>
+	j.  Repeat steps (a) through (c).
+	k.  Select "Undo A very long str...
+	l.  You should first see a progress dialog while the operation computes validity
+	m.  You should then see a dialog titled "Undo Problem" informing you the operation cannot undo
+	n.  Undo and Redo should no longer be available in the menu.
+  
+	
