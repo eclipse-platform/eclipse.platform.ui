@@ -59,8 +59,7 @@ public class ViewPerformanceSuite extends TestSuite {
 			// Do not change this as this is an empty view
 			// and not dependant on other components
 			addTest(new OpenCloseViewTest(id,
-					id.equals(BASIC_VIEW) ? BasicPerformanceTest.LOCAL
-							& BasicPerformanceTest.GLOBAL
+					id.equals(BASIC_VIEW) ? BasicPerformanceTest.GLOBAL | BasicPerformanceTest.LOCAL
 							: BasicPerformanceTest.NONE));
 		}
 	}
