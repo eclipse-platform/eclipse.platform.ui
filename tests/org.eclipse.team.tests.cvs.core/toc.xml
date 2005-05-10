@@ -159,4 +159,10 @@
             <topic label="Tag Caching" href="html/tags00003.html">
             </topic>
         </topic>
+        <topic label="Logical Resource Support" href="html/logical00001.html">
+            <topic label="Java Packages" href="html/logical00002.html">
+            </topic>
+            <topic label="Working Sets" href="html/logical00003.html">
+            </topic>
+        </topic>
 </toc>
