@@ -18,7 +18,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * A settable IStatus.
- * Can be an error, warning, info or ok. For error, info and warning states,
+ * Can be an error, warning, info or OKk. For error, info and warning states,
  * a message describes the problem.
  *
  * @since 3.0
