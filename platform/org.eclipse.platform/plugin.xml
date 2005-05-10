@@ -36,13 +36,13 @@
             <implementation
                   style="$nl$/intro/css/shared.css"
                   kind="html"
-                  os="win32,linux">
+                  os="win32,linux,macosx">
             </implementation>
             <implementation
                   kind="swt">
             </implementation>
             <!--
-            fg="#7269d2"
+            fg="#7269d2" 
             -->
             <launchBar 	
             	location="right" 
