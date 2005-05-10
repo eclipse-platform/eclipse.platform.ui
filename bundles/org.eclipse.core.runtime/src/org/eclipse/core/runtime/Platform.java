@@ -891,6 +891,18 @@ public final class Platform {
 	}
 	
 	/**
+	 * Returns a number that changes whenever the set of installed plug-ins
+	 * changes. This can be used for invalidating caches that are based on 
+	 * the set of currently installed plug-ins. (e.g. extensions)
+	 * 
+	 * @return a number related to the set of installed plug-ins
+	 * @since 3.1
+	 */
+	public static long getStateStamp() {
+		return InternalPlatform.getDefault().getStateTimeStamp();
+	}
+	
+	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
 	 * @param bundle the bundle whose log is returned
@@ -1055,14 +1067,17 @@ public final class Platform {
 	/**
 	 * Returns the platform administrator for this running Eclipse.  
 	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been full
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs are likely to change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0).
+	 * Note: This is an internal method and <em>must not</em> 
+	 * be used by clients which are not part of the Eclipse Platform.
+	 * This method allows access to classes which are not Eclipse 
+	 * Platform API but are part of the OSGi runtime that the Eclipse
+	 * Platform is built on. Even as the Eclipse Platform evolves 
+	 * in compatible ways from release to release, the details of 
+	 * the OSGi implementation might not. 
 	 * </p>
+	 * 
 	 * @return the platform admin for this instance of Eclipse
+	 * @since 3.0
 	 */
 	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
