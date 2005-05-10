@@ -37,7 +37,6 @@ public class ScopeSetDialog extends ListDialog {
 	private static final int EDIT_ID = IDialogConstants.CLIENT_ID + 2;
 	private static final int RENAME_ID = IDialogConstants.CLIENT_ID +3;
 	private static final int REMOVE_ID = IDialogConstants.CLIENT_ID + 4;
-	//private Button newButton;
 	private Button editButton;
 	private Button renameButton;
 	private Button removeButton;
@@ -179,7 +178,7 @@ public class ScopeSetDialog extends ListDialog {
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace= true;
 		composite.setData(data);
-    	//newButton = createButton(buttonComposite, NEW_ID, Messages.ScopeSetDialog_new, false); 
+    	createButton(buttonComposite, NEW_ID, Messages.ScopeSetDialog_new, false); 
        	renameButton = createButton(buttonComposite, RENAME_ID, Messages.ScopeSetDialog_rename, false); 
        	editButton = createButton(buttonComposite, EDIT_ID, Messages.ScopeSetDialog_edit, false); 
        	removeButton = createButton(buttonComposite, REMOVE_ID, Messages.ScopeSetDialog_remove, false); 
