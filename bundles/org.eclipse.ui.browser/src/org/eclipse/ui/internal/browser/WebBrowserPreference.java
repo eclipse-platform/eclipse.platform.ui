@@ -138,7 +138,12 @@ public class WebBrowserPreference {
 	 *         <code>SYSTEM</code>.
 	 */
 	public static int getBrowserChoice() {
-		return getPreferenceStore().getInt(PREF_BROWSER_CHOICE);
+		int choice = getPreferenceStore().getInt(PREF_BROWSER_CHOICE);
+		if (choice == INTERNAL && !WebBrowserUtil.canUseInternalWebBrowser())
+			choice = SYSTEM;
+		if (choice == SYSTEM && !WebBrowserUtil.canUseSystemBrowser())
+			choice = EXTERNAL;
+		return choice;
 	}
 
 	/**
