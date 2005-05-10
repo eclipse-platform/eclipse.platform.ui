@@ -132,7 +132,7 @@ public abstract class BenchmarkTest extends EclipseTest {
                 try {
                     for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
                         PerformanceMeter meter = (PerformanceMeter) iter.next();
-                        perf.assertPerformance(meter);
+                        perf.assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -20, 100);
                     }
                 } finally {
                     for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
