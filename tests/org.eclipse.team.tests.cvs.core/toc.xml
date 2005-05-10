@@ -57,6 +57,16 @@
             <topic label="Scenarios" href="html/sync00001.html">
             </topic>
         </topic>
+        <topic label="Commit" href="html/commit00001.html">
+            <topic label="Committing Changes" href="html/commit00002.html">
+            </topic>
+        </topic>
+        <topic label="Tags" href="html/tags00001.html">
+            <topic label="Tag Selection in Dialogs" href="html/tags00002.html">
+            </topic>
+            <topic label="Tag Caching" href="html/tags00003.html">
+            </topic>
+        </topic>
         <topic label="Branch/Merge" href="html/00012.html">
             <topic label="Performing a Merge" href="html/00022.html">
             </topic>
@@ -147,16 +157,6 @@
             <topic label="Editing Files" href="html/validate_edit_editing_files00001.html">
             </topic>
             <topic label="Refactoring" href="html/validate_edit_refactoring00001.html">
-            </topic>
-        </topic>
-        <topic label="Commit" href="html/commit00001.html">
-            <topic label="Committing Changes" href="html/commit00002.html">
-            </topic>
-        </topic>
-        <topic label="Tags" href="html/tags00001.html">
-            <topic label="Tag Selection in Dialogs" href="html/tags00002.html">
-            </topic>
-            <topic label="Tag Caching" href="html/tags00003.html">
             </topic>
         </topic>
         <topic label="Logical Resource Support" href="html/logical00001.html">

@@ -1,7 +1,7 @@
 <html><head><title>Team/CVS Test Plan</title><style type='text/css'>h1 {color: white;background-color: #0080C0;padding-left: 1ex;padding-right: 1ex;}h1 {font-weight: bold;padding-top: 0.5ex;padding-bottom: 0.5ex;margin-top: 0;}</style></head><body>
 
 <!-- KEEP START -->
-<h1>Eclipse Team and CVS 3.0 Test Plan</h1>
+<h1>Eclipse Team and CVS 3.1 Test Plan</h1>
 This plan contains a detailed listing of the features available in the
 Eclipse CVS plug-in. There are some items that don't have many steps
 but are meant as a reminder that the features exist and should be
@@ -16,9 +16,9 @@ however sniff test the latest developer *nix server and the cvsnt
 server. In addition, we will run our automated tests on all three
 flavours. The current server lineup is:<br>
 <br>
-Latest Stable: <span style="font-weight: bold;">1.11.16</span><br>
-Latest Development: <span style="font-weight: bold;">1.12.8</span><br>
-CVS NT: <strong>2.0.41a</strong>
+Latest Stable: <span style="font-weight: bold;">1.11.20</span><br>
+Latest Development: <span style="font-weight: bold;">1.12.12</span><br>
+CVS NT: <strong>2.5.01.1927</strong>
 <h2>Testing Tips</h2>
 <ul>
   <li><font color="#000000">test corner cases</font></li>
@@ -69,7 +69,7 @@ Platforms</font></b> </div>
       <td width="205">Microsoft Windows XP</td>
       <td width="76">Intel x86</td>
       <td width="59">Win32</td>
-      <td width="453">Jean-Michel Lemieux<br>
+      <td width="453">Michael Valenta<br>
       </td>
     </tr>
     <tr>
@@ -83,6 +83,7 @@ Platforms</font></b> </div>
 </table>
 <h2>Tests</h2>
 <!-- KEEP END -->
+
 <ul>
 <li><a href="#00004.html">Repositories View</a>
 <ul>
@@ -168,12 +169,30 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 </ul>
-<li><a href="#00012.html">Merging</a>
+<li><a href="#commit00001.html">Commit</a>
+<ul>
+<li><a href="#commit00002.html">Committing Changes</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#tags00001.html">Tags</a>
+<ul>
+<li><a href="#tags00002.html">Tag Selection in Dialogs</a>
+<ul>
+</ul>
+<li><a href="#tags00003.html">Tag Caching</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#00012.html">Branch/Merge</a>
 <ul>
 <li><a href="#00022.html">Performing a Merge</a>
 <ul>
 </ul>
 <li><a href="#00013.html">Synchronize View</a>
+<ul>
+</ul>
+<li><a href="#branch00001.html">Branching</a>
 <ul>
 </ul>
 </ul>
@@ -290,6 +309,9 @@ Platforms</font></b> </div>
 <li><a href="#ext_connection_method00001.html">EXT</a>
 <ul>
 </ul>
+<li><a href="#keys00001.html">Key Bindings</a>
+<ul>
+</ul>
 </ul>
 <li><a href="#validate_edit00001.html">Validate Edit</a>
 <ul>
@@ -297,6 +319,15 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 <li><a href="#validate_edit_refactoring00001.html">Refactoring</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#logical00001.html">Logical Resource Support</a>
+<ul>
+<li><a href="#logical00002.html">Java Packages</a>
+<ul>
+</ul>
+<li><a href="#logical00003.html">Working Sets</a>
 <ul>
 </ul>
 </ul>
@@ -606,7 +637,7 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <a name="00046.html">
 <h2>With another branch of version</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
 <p>Check the following for all cases of replace:
 <ul>
@@ -614,6 +645,9 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <li>if a version is loaded that you can't commit to it
 <li>if a branch is loaded, that you can commit to it.
 </ul>
+
+<p>
+Also ensure that the tag filtering in the dialog works properly.
 
 
 <a name="00047.html">
@@ -1018,10 +1052,68 @@ from the sync view the branch name should appear.
 
 
 <a name="commit_stes00001.html">
-<h2>Commit Sets Layout</h2>
-<p>Since: 3.0 M9<br>
-Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+<h2>Change Sets Layout</h2>
+<p>Since: 3.1 M2<br>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
+<h3>Change Sets for incoming changes</h3>
+
+To perform these scenarios you will need to get one or more projects 
+in your workspace that have many incoming changes. Perferably
+all the changes will have commit comments and some files will share
+a comment. Once you have this setup, you can perform the following sub-scenarios.
+
+<h4>Enabling/disabling Change Sets</h4>
+<ol>
+<li>Synchronize the projects with HEAD, enable change set mode and
+ensure that the files appear in the proper change sets. Also ensure that 
+the proper sub-layout is used by expanding some of the nodes in the tree.
+<p>
+<li>With some nodes expanded and additionally one or more selected, 
+disable Change Sets. The same nodes should remain expanded and selected.
+<p>
+<li>With the same nodes selected and expanded, re-enable change sets.
+The expansion should remain. There may be more expanded if the same
+expanded project or folder appears in multiple change sets. The selection
+will remain unless there are two entries for the same resource (i.e. if a project
+was selected and it apears in multiple sets, it will no longer be expanded).
+</ol>
+You should also confirm that markers and conflicts are properly propogated to
+parent nodes.
+<h4>Change Set Layouts</h4>
+Now try the various sub-layouts (Flat, Tree and Compressed) and ensure that switching
+is performant and that the resulting tree nodes are correct.
+
+<h4>Change Set Modes</h4>
+<ol>
+<li>Switch between the various modes and ensure that the displayed nodes are correct.
+Also ensure that expansion and seleciton is maintained.
+<li>Only Incomign and Outgoing mode shw change sets.
+</ol>
+
+<h4>Updating</h4>
+With several nodes expanded, perform an update on one or more files
+that are incoming changes.
+Ensure that the updated files are removed from the view and that 
+other expanded nodes remain expanded.
+
+<h3>Outgoing  Sets</h3>
+
+The following aspects of outgoing change sets should be tested.
+<ol>
+<li>Modified files can be added to a new or existing change set. Ensure that
+when they are added, he file remains visible in the Sync view.
+<li>Files in a change set can be transfered to another change set
+<li>If there is a default change set, any modified file that is not already
+part of a change set is placed in the default set. Files that are already
+in a set should stay in that set if more changes are made to the files.
+<li>The title and comment of a  change set can be changed.
+<li>Layout and modes changes work properly for outgoing change sets in the
+Synchronize view.
+<li>ing one or more files in a change set will result in a commit 
+dialog that is primed with the comment from the set.
+<li>change sets (including which is the default), are preserved accross restarts.
+</ol>
 
 
 <a name="sync00001.html">
@@ -1061,11 +1153,103 @@ have  developer 1 perform a sync. In this case developer 1 should not see
 the incoming  change.</p>
 
 
-<h1>Merging</h1>
+<h1>Commit</h1>
+<a name="commit00002.html">
+<h2>Committing Changes</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
+
+<h3>Commiting changes to existing files</h3>
+<ol>
+	<li>Edit some existing files in a CVS project
+	<li>Choose Team>Commit on the project from the Navigator
+	<li>The commit dialog should show a preview of the files that are to be committed and allow a commit comment to be entered.
+</ol>
+<p>
+Some things to try:
+<ul>
+	<li>Committing a project (or selected resources) that contain no changes will prompt to indicate this.
+	<li>Files can be removed from the preview area and these will be excluded from the commit.
+	<li>Clicking OK without entering a comment should prompt.
+	<li>Emptying the preview area will disable the Finish and show a "no changes" message.
+	<li>Try different page layouts (compressed, tree and flat)
+</ul>
+
+<h3>Commiting new files</h3>
+<ol>
+	<li>Add a few new files to a project including some with unknown extensions and some with no extensions.
+	<li>Choose Team>Commit on the project from the Navigator
+	<li>The first page of the commit wizard will allow you to configure the file types for any new files whose content type
+	cannot be determined.
+		<ul>
+		<li>Configure some to be remembered and others to be only applied to this commit (verify after that this was done properly)
+		</ul>
+	<li>Click Next and verify that the content type was determined properly.
+	<li>Choose to ignore one of the files and verify that the file is removed and the .cvsignore appears.
+</ol>
+
+<h3>Commiting files contained in a Change Set</h3>
+<ol>
+	<li>From the Synchronize view, select all the changes from the same Change Set.
+	<li>Choose Commit and verify that the comment in the commit dialog is the one from the change Set.
+</ol>
+
+
+<h1>Tags</h1>
+<a name="tags00002.html">
+<h2>Tag Selection in Dialogs</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
+
+Tag lists appear in many dialogs:
+<ul>
+<li>Replace with Branch or Version
+<li>Compare with Branch or Version
+<li>Share of existing project
+<li>Switch to Another Branch or Versions
+<li>Tag with Existing
+<li>Tag as Version
+</ul>
+
+<p>
+In each of these places, typing in the tag text field will filter the list of shown tags. 
+The option to Refresh and Configure tags should also be present. Refreshing behavior should be as follows:
+
+<ol>
+	<li>If an auto-refresh file (.project by default) exists and has tags, the tags are obtained from the file.
+	<li>If there is no auto-refresh file, the log command is used to determine if there are any tags in the files
+	that are direct children of the remote folder.
+	<li>If no tags are found, the user is prompted to either perform a deep log to find any tags or configure the
+	tags manually.
+</ol>
+
+
+<a name="tags00003.html">
+<h2>Tag Caching</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
+
+Discovered tags are cached locally to improve performance. Caching is done in the following ways:
+
+<ol>
+<li>Tags discovered for local resources are cached with the rmeote folder that the resource's project is mapped to.
+<li>Tags discovered for remote resources are cached with the resource if it is a folder or the resource's parent if it is a file.
+</ol>
+
+To test this, you can try one or more of the following:
+<ol>
+<li>Perform Compare With on folders and subfolders in the repositories view. The first time, you will need to perform a Refresh \
+but subsequent times, the tags should be cached.
+<li>Load non-root folders as projects and ensure tags are cached and obtained properly.
+<li>Perform Tag with Existing in the History view and ensure that tags are obtained from the file
+</ol>
+
+
+<h1>Branch/Merge</h1>
 <a name="00022.html">
 <h2>Performing a Merge</h2>
-<p>Since: M8<br>
-Last Modified: $Date: 2004/06/01 19:14:48 $</p>
+<p>Since: 3.1<br>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
 
 <h3>Scenario 1: One Time Merge</h3>
@@ -1076,12 +1260,24 @@ update the incoming changes, resolve any conflicts and ensure they worked, After
 redo the same merge. A no-changes dialog should be 
 presented since the local contents match the end-point.
 
+<p>
+Things to try:
+<ul>
+<li>Use content assist to select an existing branch for the end tag. A root versions should ne automatically found if it exists.
+<li>Choose to perform the merge into the local workspace. Ensure it works with and without a start tag.
+</ul>
+
 <h3>Scenario 2: Ongoing Merge</h3>
 
 After performing a one-time merge, pin the entry in the synchronize view. 
 Release changes to the end point (branch) and synchronize the merge.
 The new changes should appear in the synchronize view. Update to these
 changes as appropriate.
+
+<h3>Scenario 3: Direct Merge</h3>
+
+Perform a Team>Merge and choose to merge directly intro the workspace. Try both the
+case with a base tag and without it.
  
 <h3>Removing a Merge</h3>
 
@@ -1096,6 +1292,28 @@ Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 <li>Same scenarios as <a href="00011.html">CVS Synchronize View</a> except you can't commit.
 <li>Test mark as merged (ensure that it can work on large data sets)
 </ul>
+
+<a name="branch00001.html">
+<h2>Branching</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
+
+<ol>
+<li>Choose Team>Branch from the context menu of the Navigator.
+<li>Enter a branch tag.
+<li>Verify that a version tag is proposed for the branch
+<li>Click OK and verify that the tags are applied and the local project is mapped to the branch
+</ol>
+<p>
+Some things to try:
+<ul>
+	<li>Uncheck the "start working on branch" option and verify that the local project is not moved to the branch.
+	<li>Branch a loaded version and verify that the tag from the project is used as the root.
+	<li>Ensure that the content assist on the branch text widget shows branches from other projects in the workspace
+	that do not exist on the project being branched.
+	<li>Branch with local changes and ensurethat they remain and can be committed to the branch
+</ul>
+
 
 <h1>Patching</h1>
 <a name="00030.html">
@@ -1339,13 +1557,17 @@ Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <a name="00037.html">
 <h2>Customizations</h2>
-<p>Since: 2.0 <br>
-Last Modified: $Date: 2004/06/02 18:01:36 $</p>
+<p>Since: 3.1 <br>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
-<p>You should be able to customize the label decorations via the preference page. The customizations will
+<p>You can customize the label decorations via the preference page. 
+The customizations will
 take effect when apply is pressed. Resetting the defaults should work.
-
 </p>
+<p>
+You can also configure the font and color used for various resources states.
+There should be a link from the CVs label decorations preference page to the
+general colors and fonts preference page.
 
 
 <a name="00038.html">
@@ -1767,11 +1989,20 @@ Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <h3>Ext connection method</h3>
 
 
+<a name="keys00001.html">
+<h2>Key Bindings</h2>
+<p>Since: 3.1<br>
+Last Modified: $Date$</p>
+
+<p>Activate the CVS menu and assign keybindings to the various CVS commands.
+Ensure that they work as expected.
+
+
 <h1>Validate Edit</h1>
 <a name="validate_edit_editing_files00001.html">
 <h2>Editing Files</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p>
+Last Modified: $Date: 2004/06/14 20:44:55 $</p>
 <p>
 These tests are to sanity check editors behavior relating to calling validateEdit. The tests will
 try to cover all cases where files are changed by the validateEdit handler and changes are made
@@ -1799,7 +2030,7 @@ These tests should be run against the following combinations of tools:
 <li>Different repository providers
 <li>Single file editors (java, text)
 <li>Multiple file editors (manifest editor, ...)
-</il>
+</ul>
 <!-- ------------------------------------------------------------------------------ -->
 <h3>S1: Repository provider enabled and files are readable</h3>
 <ol>
@@ -1949,7 +2180,58 @@ Suggestion:
 <a name="validate_edit_refactoring00001.html">
 
 
-Answer comes here.
+These tests are a sanity check that workbench, JDT and other tools refactorings behave 
+properly with respect to validate Edit. For a repository providers that supports
+a pessimistic workflow, the following scenarios should result in the invocation
+of the validate edit callback and should include a UI context which allows prompting.
+<p>
+The following scenarios are stated in terms of the Navigator view and JDT. Other tools
+should translate them to a set of scenarios that make sense for the tool.
+
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S1: Search and Replace</h3>
+<ol>
+<li>Select one or more projects or folders and choose Search/File.
+<li>Enter a string known to exist in multiple files and click Replace
+<li>Enter a new string that differs from the one searched for.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S2: Single file content modification</h3>
+<ol>
+<li>Open a Java file that is read-only
+<li>Perform any of the Java Source operations (e.g. toggle comment)
+<li>Ensure that validate edit is invoked
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S3: Multiple file content modification</h3>
+<ol>
+<li>Ensure all files in your workspace are read-only
+<li>Perform a Java/Refactoring such as a method or class rename.
+<li>Ensure that validate edit is invoked at most once per project involved.
+</ol>
+
+
+<h1>Logical Resource Support</h1>
+<a name="logical00002.html">
+<h2>Java Packages</h2>
+<p>Since: 3.1<br>
+Last Modified: $Date$</p>
+
+<p>Ensure that CVS operations such as Update and Commit are performed only
+on the files in a Java package and not on the subpackages when the operations
+are launched from the Java Packages Explorer.
+
+
+<a name="logical00003.html">
+<h2>Working Sets</h2>
+<p>Since: 3.1<br>
+Last Modified: $Date$</p>
+
+<p>
+Configure the Java Packages Explorer to show Working Sets. Populate the
+working sets with various combinations of shared and unshared projects and
+ensure that CVS operations can be performed directly on the working sets if they
+contain at least one shared project.
 
 
 </body></html>
