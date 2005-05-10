@@ -52,8 +52,8 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
-import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
-import org.eclipse.ui.internal.intro.impl.model.LaunchBarShortcutElement;
+import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
+import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarShortcut;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroPart;
@@ -88,7 +88,7 @@ public class IntroLaunchBar implements IWindowTrim {
 
     protected Action closeAction;
 
-    private LaunchBarElement element;
+    private IntroLaunchBarElement element;
 
     protected boolean simple;
 
@@ -126,9 +126,9 @@ public class IntroLaunchBar implements IWindowTrim {
     static final int BUTTON_FG = SWT.COLOR_WIDGET_DARK_SHADOW;
 
     static final String S_STORED_LOCATION = "introLaunchBar.location";
+    private final static String LAUNCH_COMMAND_BASE = "http://org.eclipse.ui.intro/showPage?id=";
 
     private Color fg;
-
     private Color bg;
 
     class CloseButton extends Composite implements MouseListener,
@@ -303,11 +303,12 @@ public class IntroLaunchBar implements IWindowTrim {
     private static final int CLOSE_SPACING = 1;
 
     public IntroLaunchBar(int orientation, String lastPageId,
-            LaunchBarElement element) {
+            IntroLaunchBarElement element) {
         this.orientation = orientation;
         this.location = element.getLocation();
         this.lastPageId = lastPageId;
         this.element = element;
+
         /*
          * simple = PlatformUI.getPreferenceStore().getBoolean(
          * IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
@@ -320,14 +321,14 @@ public class IntroLaunchBar implements IWindowTrim {
 
     private void loadStoredLocation() {
         IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
-       	try {
-       		int storedLocation = settings.getInt(S_STORED_LOCATION);
-       		if (storedLocation > 0)
-       			setLocation(storedLocation);
-       	} catch (NumberFormatException e) {
-       		// The stored value either does not exist or
-       		// is corrupted - just pick the default silently.
-       	}
+        try {
+            int storedLocation = settings.getInt(S_STORED_LOCATION);
+            if (storedLocation > 0)
+                setLocation(storedLocation);
+        } catch (NumberFormatException e) {
+            // The stored value either does not exist or
+            // is corrupted - just pick the default silently.
+        }
     }
 
     private void storeLocation() {
@@ -629,14 +630,14 @@ public class IntroLaunchBar implements IWindowTrim {
         toolBarManager.add(new Separator());
         if (element == null)
             return;
-        LaunchBarShortcutElement[] shortcuts = element.getShortcuts();
+        IntroLaunchBarShortcut[] shortcuts = element.getShortcuts();
         for (int i = 0; i < shortcuts.length; i++) {
-            LaunchBarShortcutElement shortcut = shortcuts[i];
+            IntroLaunchBarShortcut shortcut = shortcuts[i];
             addShortcut(shortcut, toolBarManager);
         }
     }
 
-    private void addShortcut(final LaunchBarShortcutElement shortcut,
+    private void addShortcut(final IntroLaunchBarShortcut shortcut,
             IToolBarManager toolBarManager) {
         Action action = new Action(shortcut.getToolTip()) {
             public void run() {
@@ -660,8 +661,6 @@ public class IntroLaunchBar implements IWindowTrim {
         if (restore) {
             intro = PlatformUI.getWorkbench().getIntroManager().showIntro(
                 window, false);
-        }
-        if (restore) {
             CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
             Rectangle startBounds = Geometry.toDisplay(
                 getControl().getParent(), getControl().getBounds());
@@ -692,7 +691,7 @@ public class IntroLaunchBar implements IWindowTrim {
         if (intro == null)
             return;
         StringBuffer url = new StringBuffer();
-        url.append(Messages.IntroLaunchBar_commandBase);
+        url.append(LAUNCH_COMMAND_BASE);
         url.append(id);
         IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
         if (introURL != null)

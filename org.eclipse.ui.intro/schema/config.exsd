@@ -164,7 +164,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="launchBar">
       <annotation>
          <documentation>
-            Launch bar works in conjuction with &apos;switchToLaunchBar&apos; command. When executed, the command will close intro and create a launch bar in one of the trim areas of the main window. The launch bar will contain at least one button that would allow users to return to the last intro page. Optionally, it can contain additional buttons defined using &lt;code&gt;shortcut&lt;/code&gt; elements. These buttons can be used to quickly go to a certain intro page.
+            Launch bar works in conjuction with &apos;switchToLaunchBar&apos; command. When executed, the command will close intro and create a launch bar in one of the trim areas of the main window. The launch bar will contain at least one button that would allow users to return to the last intro page. Optionally, it can contain additional buttons defined using &lt;code&gt;shortcut&lt;/code&gt; elements. These buttons can be used to quickly go to a certain intro page. since 3.1
          </documentation>
       </annotation>
       <complexType>
@@ -212,7 +212,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <meta.element labelAttribute="tooltip" icon="icon"/>
          </appInfo>
          <documentation>
-            a button will be created in the intro launch bar for each shortcut element. The URL defined in the shortcut will be executed when the button is pressed.
+            a button will be created in the intro launch bar for each shortcut element. The URL defined in the shortcut will be executed when the button is pressed. since 3.1
          </documentation>
       </annotation>
       <complexType>
@@ -246,7 +246,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="handle">
       <annotation>
          <documentation>
-            an optional element that controls how launch bar handle is rendered.
+            an optional element that controls how launch bar handle is rendered. since 3.1
          </documentation>
       </annotation>
       <complexType>

@@ -192,6 +192,9 @@ public class PageStyleManager extends SharedStyleManager {
     private int getIntProperty(String key, int defaulValue) {
         int intValue = defaulValue;
         String value = getProperty(key);
+        if (value == null)
+            return intValue;
+
         try {
             intValue = Integer.parseInt(value);
         } catch (NumberFormatException e) {

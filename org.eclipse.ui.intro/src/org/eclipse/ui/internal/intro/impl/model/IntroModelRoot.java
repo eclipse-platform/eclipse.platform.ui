@@ -639,7 +639,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      *         last state.
      */
     public boolean setCurrentPageId(String pageId, boolean fireEvent) {
-        if (pageId == currentPageId)
+        if (pageId.equals(currentPageId))
             // setting to the same page does nothing. Return true because we did
             // not actually fail. just a no op.
             return true;

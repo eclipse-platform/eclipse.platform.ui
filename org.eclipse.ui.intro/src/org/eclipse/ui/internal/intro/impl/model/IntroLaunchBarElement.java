@@ -18,14 +18,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 
 /**
- * An Intro Config component that has captures launch bar information.
+ * An Intro Config component captures launch bar information. It can have
+ * shortcuts and one handle. <br>
+ * ps: Handles are not modeled in a dedicated class, but are handled here.
  * 
  * @since 3.1
  */
-public class LaunchBarElement extends AbstractIntroElement {
-    private static final String LOC_LEFT = "left"; //$NON-NLS-1$
-    private static final String LOC_BOTTOM = "bottom"; //$NON-NLS-1$
-    // private static final String LOC_RIGHT = "right"; //$NON-NLS-1$
+public class IntroLaunchBarElement extends AbstractIntroElement {
+    protected static final String TAG_LAUNCH_BAR = "launchBar"; //$NON-NLS-1$    
+    private static final String TAG_HANDLE = "handle"; //$NON-NLS-1$
 
     private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
     private static final String ATT_BG = "bg"; //$NON-NLS-1$
@@ -33,12 +34,13 @@ public class LaunchBarElement extends AbstractIntroElement {
     private static final String ATT_CLOSE = "close"; //$NON-NLS-1$
     private static final String ATT_IMAGE = "image"; //$NON-NLS-1$
 
-    private static final String TAG_SHORTCUT = "shortcut"; //$NON-NLS-1$
-    private static final String TAG_HANDLE = "handle"; //$NON-NLS-1$
+    private static final String LOC_LEFT = "left"; //$NON-NLS-1$
+    private static final String LOC_BOTTOM = "bottom"; //$NON-NLS-1$
+
 
     private ArrayList shortcuts;
 
-    LaunchBarElement(IConfigurationElement element) {
+    IntroLaunchBarElement(IConfigurationElement element) {
         super(element);
     }
 
@@ -141,12 +143,12 @@ public class LaunchBarElement extends AbstractIntroElement {
      * 
      * @return
      */
-    public LaunchBarShortcutElement[] getShortcuts() {
+    public IntroLaunchBarShortcut[] getShortcuts() {
         if (shortcuts == null) {
             createShortcuts();
         }
-        return (LaunchBarShortcutElement[]) shortcuts
-            .toArray(new LaunchBarShortcutElement[shortcuts.size()]);
+        return (IntroLaunchBarShortcut[]) shortcuts
+            .toArray(new IntroLaunchBarShortcut[shortcuts.size()]);
     }
 
     /**
@@ -156,11 +158,10 @@ public class LaunchBarElement extends AbstractIntroElement {
     private void createShortcuts() {
         shortcuts = new ArrayList();
         IConfigurationElement[] children = getCfgElement().getChildren(
-            TAG_SHORTCUT);
+            IntroLaunchBarShortcut.TAG_SHORTCUT);
         for (int i = 0; i < children.length; i++) {
             IConfigurationElement child = children[i];
-            LaunchBarShortcutElement shortcut = new LaunchBarShortcutElement(
-                child);
+            IntroLaunchBarShortcut shortcut = new IntroLaunchBarShortcut(child);
             shortcuts.add(shortcut);
         }
     }

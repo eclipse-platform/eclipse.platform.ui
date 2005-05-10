@@ -55,7 +55,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
     private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
-    private static final String TAG_LAUNCH_BAR = "launchBar"; //$NON-NLS-1$    
 
     private static final String ATT_KIND = "kind"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
@@ -83,7 +82,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     private AbstractIntroPartImplementation implementation;
 
-    private LaunchBarElement launchBar;
+    private IntroLaunchBarElement launchBar;
 
     // CustomizableIntroPart and memento instances. Passed to the Implementation
     // classes.
@@ -172,13 +171,16 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * @return
      */
 
-    public LaunchBarElement getLaunchBar() {
+    public IntroLaunchBarElement getLaunchBarElement() {
         if (launchBar != null)
             return launchBar;
         IConfigurationElement[] children = getCfgElement().getChildren(
-            TAG_LAUNCH_BAR);
+            IntroLaunchBarElement.TAG_LAUNCH_BAR);
         if (children.length > 0) {
-            launchBar = new LaunchBarElement(children[0]);
+            launchBar = new IntroLaunchBarElement(children[0]);
+            if (children.length > 1)
+                Log
+                    .warning("Mutiple Intro Launch bars defined when only one is allowed. Only first one was loaded. ");
         }
         return launchBar;
     }
@@ -342,7 +344,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * Util method to load shared style from given kind.
      */
     public String getSharedStyle(String kind) {
-
         // There can be more than one implementation contribution.
         IConfigurationElement[] implementationElements = getCfgElement()
             .getChildren(TAG_IMPLEMENTATION);
@@ -432,8 +433,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
         if (implementation != null)
             implementation.updateHistory(page);
     }
-    
-  
+
+
 
     public boolean navigateForward() {
         if (implementation != null)

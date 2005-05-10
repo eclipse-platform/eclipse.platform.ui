@@ -34,10 +34,10 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPartPresentation;
 import org.eclipse.ui.internal.intro.impl.model.IntroURLAction;
-import org.eclipse.ui.internal.intro.impl.model.LaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
@@ -570,6 +570,7 @@ public class IntroURL implements IIntroURL {
         return query.toString();
     }
 
+
     private boolean switchToLaunchBar() {
         IIntroPart intro = PlatformUI.getWorkbench().getIntroManager()
             .getIntro();
@@ -586,8 +587,8 @@ public class IntroURL implements IIntroURL {
 
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
-        LaunchBarElement launchBarElement = modelRoot.getPresentation()
-            .getLaunchBar();
+        IntroLaunchBarElement launchBarElement = modelRoot.getPresentation()
+            .getLaunchBarElement();
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement);
         launchBar.createInActiveWindow();

@@ -19,12 +19,15 @@ import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
  * 
  * @since 3.1
  */
-public class LaunchBarShortcutElement extends AbstractIntroElement {
+public class IntroLaunchBarShortcut extends AbstractIntroElement {
+
+    protected static final String TAG_SHORTCUT = "shortcut"; //$NON-NLS-1$
+
     private static final String ATT_TOOLTIP = "tooltip"; //$NON-NLS-1$
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$
     private static final String ATT_URL = "url"; //$NON-NLS-1$
 
-    LaunchBarShortcutElement(IConfigurationElement element) {
+    IntroLaunchBarShortcut(IConfigurationElement element) {
         super(element);
     }
 

@@ -44,7 +44,6 @@ public class Messages extends NLS {
     public static String HTML_embeddedLink;
     public static String StaticHTML_welcome;
 
-    public static String IntroLaunchBar_commandBase;
     public static String IntroLaunchBar_close_label;
     public static String IntroLaunchBar_close_tooltip;
     public static String IntroLaunchBar_restore_tooltip;
