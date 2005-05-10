@@ -96,7 +96,7 @@ public interface IWizardDescriptor extends IWorkbenchPartDescriptor, IAdaptable 
 	boolean canFinishEarly();
 
 	/**
-	 * Answer <code>true</code> if this wizard is has any pages. This is a
+	 * Answer <code>true</code> if this wizard has any pages. This is a
 	 * hint to any {@link org.eclipse.jface.wizard.WizardSelectionPage} or
 	 * container that may contain this wizard that they should enable the "Next"
 	 * button, if appropriate.
