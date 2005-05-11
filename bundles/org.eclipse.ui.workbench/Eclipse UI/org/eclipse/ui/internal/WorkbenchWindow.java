@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
@@ -1018,10 +1017,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return <code>true</code> to show the heap status indicator, <code>false</code> otherwise
 	 */
 	private boolean getShowHeapStatus() {
-		return PerformanceStats.ENABLED
-				&& Boolean.valueOf(
-						Platform.getDebugOption(PlatformUI.PLUGIN_ID
-								+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
+		return Boolean.valueOf(
+				Platform.getDebugOption(PlatformUI.PLUGIN_ID
+						+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
 	}
 
 	/**
