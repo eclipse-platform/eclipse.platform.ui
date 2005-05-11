@@ -402,20 +402,32 @@ public final class Section extends ExpandableComposite {
 				marginHeight, bounds.width - marginWidth - 1, marginHeight,
 				bounds.width - marginWidth - 1, marginHeight + 2 });
 		gc.setForeground(border);
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
-				+ theight - 1);
+		// top left curve
 		gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
 				marginHeight);
+		// top edge
 		gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth
 				- 3, marginHeight);
+		// top right curve
 		gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width
 				- marginWidth - 1, marginHeight + 2);
-		gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-				bounds.width - marginWidth - 1, marginHeight + theight - 1);
 		if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
 				&& !isExpanded()) {
+			// left vertical edge
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
+					+ theight - 1);
+			// right vertical edge
+			gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
+				bounds.width - marginWidth - 1, marginHeight + theight - 1);
+			// bottom edge (if closed)
 			gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
 					- marginWidth - 1, marginHeight + theight - 1);
+		}
+		else {
+			// left vertical edge gradient
+			gc.fillGradientRectangle(marginWidth, marginHeight+2, 1, theight-2, true);
+			// right vertical edge gradient
+			gc.fillGradientRectangle(bounds.width-marginWidth-1, marginHeight+2, 1, theight-2, true);
 		}
 	}
 }
