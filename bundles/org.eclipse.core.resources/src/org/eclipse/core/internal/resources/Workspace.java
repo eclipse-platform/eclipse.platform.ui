@@ -1864,13 +1864,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			markerManager = new MarkerManager(this);
 			markerManager.startup(null);
 			synchronizer = new Synchronizer(this);
+			refreshManager = new RefreshManager(this);
 			saveManager = new SaveManager(this);
 			saveManager.startup(null);
 			//must start after save manager, because (read) access to tree is needed
+			refreshManager.startup(null);
 			aliasManager = new AliasManager(this);
 			aliasManager.startup(null);
-			refreshManager = new RefreshManager(this);
-			refreshManager.startup(null);
 			propertyManager = ResourcesCompatibilityHelper.createPropertyManager();
 			propertyManager.startup(monitor);
 			charsetManager = new CharsetManager(this);
