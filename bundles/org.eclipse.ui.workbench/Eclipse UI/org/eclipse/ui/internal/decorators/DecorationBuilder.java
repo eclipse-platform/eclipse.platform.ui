@@ -147,7 +147,7 @@ class DecorationBuilder implements IDecoration {
 		}
 		
 		setForegroundColor(result.getForegroundColor());
-		setBackgroundColor(result.getForegroundColor());
+		setBackgroundColor(result.getBackgroundColor());
 		setFont(result.getFont());
 		valueSet = true;
 	}
