@@ -103,14 +103,9 @@ public class ConfigurationElement extends RegistryObject {
 					if (!initParms.isEmpty())
 						initData = initParms;
 				}
-			}
-
-			// specified name is not a simple attribute nor child element
-			else {
-				String message = NLS.bind(Messages.plugin_extDefNotFound, attributeName);
-				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); 
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); 
-				throw new CoreException(status);
+			} else {
+				// specified name is not a simple attribute nor child element
+				throwException(NLS.bind(Messages.plugin_extDefNotFound, attributeName), null);
 			}
 		} else {
 			// simple property or element value, parse it into its components
@@ -129,13 +124,8 @@ public class ConfigurationElement extends RegistryObject {
 				className = executable;
 		}
 
-		if (className == null || className.equals("")) { //$NON-NLS-1$
-			String message = NLS.bind(Messages.plugin_extDefNoClass, attributeName);
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null);
-			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
-			throw new CoreException(status);
-		}
-
+		if (className == null || className.equals("")) //$NON-NLS-1$
+			throwException(NLS.bind(Messages.plugin_extDefNoClass, attributeName), null);
 		return createExecutableExtension(pluginName, className, initData, this, attributeName);
 	}
 
@@ -183,8 +173,7 @@ public class ConfigurationElement extends RegistryObject {
 				((IExecutableExtension) result).setInitializationData(cfigHandle, propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(ce.getStatus());
-				throw new CoreException(ce.getStatus());
+				throw ce;
 			} catch (Exception te) {
 				// user code caused exception
 				throwException(NLS.bind(Messages.plugin_initObjectError, bundle.getSymbolicName(), className), te);
@@ -200,9 +189,7 @@ public class ConfigurationElement extends RegistryObject {
 	}
     
 	private void throwException(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
-		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
-		throw new CoreException(status);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, exception));
 	}
 
 	String getValue() {
