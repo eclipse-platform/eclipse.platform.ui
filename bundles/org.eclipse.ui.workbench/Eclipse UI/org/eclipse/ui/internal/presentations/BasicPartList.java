@@ -100,7 +100,7 @@ public class BasicPartList extends AbstractTableInformationControl {
             // if in single tab mode, do not use the bold font for non-visible tabs
             // if in multiple tab mode, use the bold for non-visible tabs only
             if (item.isShowing() || !hiddenTabsBold)
-                return null;
+                return folder.getTabFolder().getControl().getFont();
 
             if (boldFont == null) {
                 Control control = folder.getTabFolder().getControl();
