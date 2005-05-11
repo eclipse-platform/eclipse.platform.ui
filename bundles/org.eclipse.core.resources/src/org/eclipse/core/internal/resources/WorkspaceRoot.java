@@ -76,7 +76,8 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	public String getDefaultCharset(boolean checkImplicit) {
 		if (checkImplicit)
 			return ResourcesPlugin.getEncoding();
-		return ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		String enc = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+		return enc == null || enc.length() == 0 ? null : enc;
 	}
 
 	/**

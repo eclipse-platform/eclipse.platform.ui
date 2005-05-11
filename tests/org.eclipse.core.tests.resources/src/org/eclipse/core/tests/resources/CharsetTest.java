@@ -76,7 +76,7 @@ public class CharsetTest extends ResourceTest {
 		//		suite.addTest(new CharsetTest("testFileCreation"));
 		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
 		//		return suite;
-//		return new CharsetTest("testMovingProject");
+		//		return new CharsetTest("testMovingProject");
 
 		return new TestSuite(CharsetTest.class);
 
@@ -246,6 +246,18 @@ public class CharsetTest extends ResourceTest {
 			fail("1.2 - should have failed");
 		} catch (CoreException ce) {
 			// ok, the resource does not exist
+		}
+	}
+
+	public void testBug94279() throws CoreException {
+		final IWorkspaceRoot root = getWorkspace().getRoot();
+		String originalUserCharset = root.getDefaultCharset(false);
+		try {
+			root.setDefaultCharset(null);
+			assertNull("1.0", root.getDefaultCharset(false));
+		} finally {
+			if (originalUserCharset != null)
+				root.setDefaultCharset(originalUserCharset);
 		}
 	}
 
