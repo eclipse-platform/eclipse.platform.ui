@@ -119,7 +119,9 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 			ImageUtilities.drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
 			if (fIsRangeIndication) {
 				FontMetrics fontMetrics= gc.getFontMetrics();
-				rectangle.y += (fontMetrics.getHeight() - image.getBounds().height)/2;
+				int delta= (fontMetrics.getHeight() - image.getBounds().height)/2;
+				rectangle.y += delta;
+				rectangle.height -= delta; 
 				drawRangeIndication(gc, canvas, rectangle);
 			}
 		}
