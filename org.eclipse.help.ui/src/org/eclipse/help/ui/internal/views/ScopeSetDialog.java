@@ -134,7 +134,7 @@ public class ScopeSetDialog extends ListDialog {
 			return null;
 		}
 		public Image getImage(Object obj) {
-			return HelpUIResources.getImage(IHelpUIConstants.IMAGE_CONTAINER);
+			return HelpUIResources.getImage(IHelpUIConstants.IMAGE_SCOPE_SET);
 		}
 	}
 

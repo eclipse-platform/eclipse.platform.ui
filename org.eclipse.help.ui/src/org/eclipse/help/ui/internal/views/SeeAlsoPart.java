@@ -99,7 +99,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		};
 		if ((helpPart.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
 			addPageLink(container, toolkit, Messages.SeeAlsoPart_allTopics, IHelpUIConstants.HV_ALL_TOPICS_PAGE, 
-				IHelpUIConstants.IMAGE_TOC_OPEN, listener);
+				IHelpUIConstants.IMAGE_ALL_TOPICS, listener);
 		if ((helpPart.getStyle() & ReusableHelpPart.SEARCH) != 0) {
 			addPageLink(container, toolkit, Messages.SeeAlsoPart_search, IHelpUIConstants.HV_FSEARCH_PAGE, 
 				IHelpUIConstants.IMAGE_HELP_SEARCH, listener);
@@ -107,7 +107,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		if ((helpPart.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
 			addPageLink(container, toolkit, Messages.SeeAlsoPart_contextHelp, 
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
-				IHelpUIConstants.IMAGE_CONTAINER, listener);
+				IHelpUIConstants.IMAGE_RELATED_TOPICS, listener);
 		}
 		if ((helpPart.getStyle() & ReusableHelpPart.BOOKMARKS) != 0) {
 			addPageLink(container, toolkit, Messages.SeeAlsoPart_bookmarks, 

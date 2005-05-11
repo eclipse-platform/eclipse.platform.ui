@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.wizard.Wizard;
 
 public class NewEngineWizard extends Wizard {
-	private EngineTypeDescriptor [] engineTypes;
+	private EngineTypeDescriptor[] engineTypes;
+
 	private EngineTypeWizardPage selectionPage;
 
-	public NewEngineWizard(EngineTypeDescriptor [] engineTypes) {
-		setWindowTitle(Messages.NewEngineWizard_wtitle); 
+	public NewEngineWizard(EngineTypeDescriptor[] engineTypes) {
+		setWindowTitle(Messages.NewEngineWizard_wtitle);
+		setDefaultPageImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_SEARCH_WIZ));
 		this.engineTypes = engineTypes;
 	}
 

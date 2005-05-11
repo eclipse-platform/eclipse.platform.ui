@@ -320,7 +320,7 @@ public class ContextHelpDialog {
 
 	private Control createDynamicHelpLink(Composite parent) {
 		Label image = new Label(parent, SWT.NONE);
-		Image img = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP);
+		Image img = HelpUIResources.getImage(IHelpUIConstants.IMAGE_DHELP);
 		image.setImage(img);
 		image.setBackground(backgroundColour);
 		GridData data = new GridData();
