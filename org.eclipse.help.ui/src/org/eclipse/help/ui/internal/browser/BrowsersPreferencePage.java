@@ -136,10 +136,10 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		 * .computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		 * createCustomBrowserPathPart(mainComposite);
 		 */
-		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
 		createLinkArea(mainComposite);
 		createSpacer(mainComposite);
 		createDynamicHelpArea(mainComposite);
+		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
 	}
 

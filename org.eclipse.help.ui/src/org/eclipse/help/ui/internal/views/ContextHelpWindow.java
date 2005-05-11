@@ -89,11 +89,6 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 				case SWT.Resize:
 					onWindowResize();
 					break;
-				case SWT.MouseDown:
-				case SWT.MouseMove:
-				case SWT.MouseUp:
-					System.out.println(e);
-					break;
 				}
 			}
 		};
