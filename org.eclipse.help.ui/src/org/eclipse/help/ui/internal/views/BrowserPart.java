@@ -406,5 +406,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
+		if (url!=null) {
+			String href = BaseHelpSystem.unresolve(url);
+			memento.putString("BrowserPart.url", href); //$NON-NLS-1$
+		}
 	}
 }
