@@ -260,9 +260,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		protected void stop() {
-			if (fThread != null && fThread.isAlive()) {
-				fThread.interrupt();
-			}
+			Thread threadToStop= fThread;
+			if (threadToStop != null && threadToStop.isAlive())
+				threadToStop.interrupt();
 		}
 
 		private boolean contains(char[] characters, char character) {
