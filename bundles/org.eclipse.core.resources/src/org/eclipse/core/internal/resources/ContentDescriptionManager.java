@@ -358,10 +358,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		}
 	}
 
-	private long getPlatformTimeStamp() {
-		return Platform.getPlatformAdmin().getState(false).getTimeStamp();
-	}
-
 	/**
 	 * Marks the cache as invalid. Does not do anything if the cache is new.
 	 * Optionally causes the cached information to be actually flushed.
@@ -444,7 +440,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (getCacheState() != INVALID_CACHE)
 			// remember the platform timestamp for which we have a valid cache 
-			setCacheTimeStamp(getPlatformTimeStamp());
+			setCacheTimeStamp(Platform.getStateStamp());
 		Platform.getContentTypeManager().removeContentTypeChangeListener(this);
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		cache.dispose();
@@ -464,7 +460,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			setCacheState(INVALID_CACHE);
 		flushJob = new FlushJob();
 		// the cache is stale (plug-ins that might be contributing content types were added/removed)
-		if (getCacheTimestamp() != getPlatformTimeStamp())
+		if (getCacheTimestamp() != Platform.getStateStamp())
 			invalidateCache(false, null);
 		// register a lifecycle listener
 		workspace.addLifecycleListener(this);
