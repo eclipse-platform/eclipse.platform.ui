@@ -293,8 +293,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	}
 
 	/**
-	 * Returns true if a notification is needed. This happens if s
-	 * ufficient time has elapsed since the last notification
+	 * Returns true if a notification is needed. This happens if
+	 * sufficient time has elapsed since the last notification
 	 * @return true if a notification is needed, and false otherwise
 	 */
 	public boolean shouldNotify() {
