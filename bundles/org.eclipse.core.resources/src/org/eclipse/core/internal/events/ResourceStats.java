@@ -18,21 +18,22 @@ import org.eclipse.core.runtime.PerformanceStats;
  * a builder running, an editor opening, etc.
  */
 public class ResourceStats {
+	/**
+	 * The event that is currently occurring, maybe <code>null</code>
+	 */
+	private static PerformanceStats currentStats;
 	//performance event names
-	public static final String EVENT_LISTENERS = ResourcesPlugin.PI_RESOURCES + "/perf/listeners"; //$NON-NLS-1$
 	public static final String EVENT_BUILDERS = ResourcesPlugin.PI_RESOURCES + "/perf/builders"; //$NON-NLS-1$
+	public static final String EVENT_LISTENERS = ResourcesPlugin.PI_RESOURCES + "/perf/listeners"; //$NON-NLS-1$
+	public static final String EVENT_SAVE_PARTICIPANTS = ResourcesPlugin.PI_RESOURCES + "/perf/save.participants"; //$NON-NLS-1$
 	public static final String EVENT_SNAPSHOT = ResourcesPlugin.PI_RESOURCES + "/perf/snapshot"; //$NON-NLS-1$
 
 	//performance event enablement
 	public static boolean TRACE_BUILDERS = PerformanceStats.isEnabled(ResourceStats.EVENT_BUILDERS);
 	public static boolean TRACE_LISTENERS = PerformanceStats.isEnabled(ResourceStats.EVENT_LISTENERS);
+	public static boolean TRACE_SAVE_PARTICIPANTS = PerformanceStats.isEnabled(ResourceStats.EVENT_SAVE_PARTICIPANTS);
 	public static boolean TRACE_SNAPSHOT = PerformanceStats.isEnabled(ResourceStats.EVENT_SNAPSHOT);
 
-	/**
-	 * The event that is currently occurring, maybe <code>null</code>
-	 */
-	private static PerformanceStats currentStats;
-	
 	public static void endBuild() {
 		if (currentStats != null)
 			currentStats.endRun();
@@ -40,6 +41,12 @@ public class ResourceStats {
 	}
 
 	public static void endNotify() {
+		if (currentStats != null)
+			currentStats.endRun();
+		currentStats = null;
+	}
+
+	public static void endSave() {
 		if (currentStats != null)
 			currentStats.endRun();
 		currentStats = null;
@@ -79,6 +86,11 @@ public class ResourceStats {
 
 	public static void startSnapshot() {
 		currentStats = PerformanceStats.getStats(EVENT_SNAPSHOT, ResourcesPlugin.getWorkspace());
+		currentStats.startRun();
+	}
+
+	public static void startSave(ISaveParticipant participant) {
+		currentStats = PerformanceStats.getStats(EVENT_SAVE_PARTICIPANTS, participant);
 		currentStats.startRun();
 	}
 }

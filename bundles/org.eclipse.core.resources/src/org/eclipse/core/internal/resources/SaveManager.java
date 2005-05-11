@@ -318,7 +318,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				participant.prepareToSave(context);
 				break;
 			case SAVING :
-				participant.saving(context);
+				try {
+					if (ResourceStats.TRACE_SAVE_PARTICIPANTS)
+						ResourceStats.startSave(participant);
+					participant.saving(context);
+				} finally {
+					if (ResourceStats.TRACE_SAVE_PARTICIPANTS)
+						ResourceStats.endSave();
+				}
 				break;
 			case DONE_SAVING :
 				participant.doneSaving(context);
