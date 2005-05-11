@@ -388,7 +388,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		public void stop() {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
-				rec.part.stop();
+				if (rec.part!=null)
+					rec.part.stop();
+			}
+		}
+		
+		public void saveState(IMemento memento) {
+			for (int i = 0; i < partRecs.size(); i++) {
+				PartRec rec = (PartRec) partRecs.get(i);
+				if (rec.part!=null)
+					rec.part.saveState(memento);
 			}
 		}
 
@@ -1490,6 +1499,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			page.toggleRoleFilter();
 		}
 	}
+	
+	public void saveState(IMemento memento) {
+		for (int i = 0; i < pages.size(); i++) {
+			HelpPartPage page = (HelpPartPage) pages.get(i);
+			page.saveState(memento);
+		}
+	}
 
 	private String getShowAllMessage() {
 		String message = HelpBasePlugin.getActivitySupport()
@@ -1529,3 +1545,4 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		return buff.toString();
 	}
 }
+

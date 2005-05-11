@@ -108,6 +108,7 @@ public class HelpView extends ViewPart implements IPartListener2,
     		String pageId = reusableHelpPart.getCurrentPageId();
     		if (pageId!=null)
     			memento.putString("pageId", pageId); //$NON-NLS-1$
+    		reusableHelpPart.saveState(memento);
     	}
     }
 
