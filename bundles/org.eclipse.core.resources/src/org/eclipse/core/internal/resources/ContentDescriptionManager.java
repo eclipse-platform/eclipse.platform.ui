@@ -105,7 +105,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		 * @param project project to flush, or null for a full flush
 		 */
 		void flush(IProject project) {
-			if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 				Policy.debug("Scheduling flushing of content type cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$
 			synchronized (toFlush) {
 				if (!fullFlush)
@@ -194,7 +194,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(ContentTypeChangeEvent)
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
-		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+		if (Policy.DEBUG_CONTENT_TYPE)
 			Policy.debug("Content type settings changed for " + event.getContentType()); //$NON-NLS-1$
 		invalidateCache(true, null);
 	}
@@ -202,7 +202,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	synchronized void doFlushCache(final IProgressMonitor monitor, IPath[] toClean) throws CoreException {
 		// nothing to be done if no information cached
 		if (getCacheState() != INVALID_CACHE) {
-			if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+			if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 				Policy.debug("Content type cache flush not performed"); //$NON-NLS-1$
 			return;
 		}
@@ -231,7 +231,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 */
 	private void clearContentFlags(IPath root, final IProgressMonitor monitor) {
 		long flushStart = System.currentTimeMillis();
-		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$		
 		// discard content type related flags for all files in the tree 
 		IElementContentVisitor visitor = new IElementContentVisitor() {
@@ -251,7 +251,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			}
 		};
 		new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
-		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Content type cache for " + root + " flushed in " + (System.currentTimeMillis() - flushStart) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -379,7 +379,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		if (Policy.DEBUG_FLUSH_CONTENT_TYPE_CACHE)
+		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$		
 		if (flush)
 			flushJob.flush(project);
@@ -389,6 +389,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * Tries to obtain a content description for the given file.  
 	 */
 	private IContentDescription readDescription(File file) throws CoreException {
+		if (Policy.DEBUG_CONTENT_TYPE)
+			Policy.debug("reading contents of " + file); //$NON-NLS-1$		
 		// tries to obtain a description for this file contents
 		InputStream contents = new LazyFileInputStream(file.getLocation());
 		try {
@@ -473,6 +475,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	}
 
 	public void projectPreferencesChanged(IProject project) {
+		if (Policy.DEBUG_CONTENT_TYPE)
+			Policy.debug("Project preferences changed for " + project); //$NON-NLS-1$		
 		projectContentTypes.contentTypePreferencesChanged(project);
 	}
 }

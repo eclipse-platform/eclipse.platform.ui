@@ -53,7 +53,9 @@ public class Policy {
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 
 	public static boolean DEBUG_AUTO_REFRESH = false;
-	public static boolean DEBUG_FLUSH_CONTENT_TYPE_CACHE = false;
+	public static boolean DEBUG_CONTENT_TYPE = false;
+	public static boolean DEBUG_CONTENT_TYPE_CACHE = false;
+	
 	static {
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
@@ -85,7 +87,8 @@ public class Policy {
 
 			DEBUG_AUTO_REFRESH = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/refresh")); //$NON-NLS-1$
 			
-			DEBUG_FLUSH_CONTENT_TYPE_CACHE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/contenttypes/flushcache")); //$NON-NLS-1$ 
+			DEBUG_CONTENT_TYPE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/contenttype")); //$NON-NLS-1$
+			DEBUG_CONTENT_TYPE_CACHE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/contenttype/cache")); //$NON-NLS-1$ 
 		}
 	}
 

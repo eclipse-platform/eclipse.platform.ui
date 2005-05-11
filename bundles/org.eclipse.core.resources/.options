@@ -61,4 +61,5 @@ org.eclipse.core.resources/save/mastertable=false
 org.eclipse.core.resources/refresh=false
 
 # Prints debug information on resource content description 
-org.eclipse.core.resources/contenttypes/flushcache=false
+org.eclipse.core.resources/contenttype=false
+org.eclipse.core.resources/contenttype/cache=false
