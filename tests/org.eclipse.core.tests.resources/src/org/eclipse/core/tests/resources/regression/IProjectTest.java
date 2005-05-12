@@ -163,6 +163,44 @@ public class IProjectTest extends AbstractBuilderTest {
 		assertTrue("3.2", projectTWObuilder.wasExecuted());
 	}
 
+	/*
+	 * Create a project with resources already existing on disk and ensure
+	 * that the resources are automatically discovered and brought into the workspace.
+	 */
+	public void testBug78711() {
+		String name = getUniqueString();
+		IProject project = getWorkspace().getRoot().getProject(name);
+		IFolder folder = project.getFolder("folder");
+		IFile file1 = project.getFile("file1.txt");
+		IFile file2 = folder.getFile("file2.txt");
+
+		IPath location = Platform.getLocation().append(project.getFullPath());
+		location.toFile().mkdirs();
+
+		// create in file-system
+		try {
+			location.append(folder.getName()).toFile().mkdirs();
+			createFileInFileSystem(location.append(folder.getName()).append(file2.getName()));
+			createFileInFileSystem(location.append(file1.getName()));
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
+
+		// create
+		try {
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		// verify discovery
+		assertTrue("2.0", project.isAccessible());
+		assertTrue("2.1", folder.exists());
+		assertTrue("2.2", file1.exists());
+		assertTrue("2.3", file2.exists());
+	}
+
 	/**
 	 * 1G5FYZM: ITPCORE:WIN - Project.deleteWithoutForce does not look for out of sync children
 	 */
@@ -241,41 +279,30 @@ public class IProjectTest extends AbstractBuilderTest {
 		}
 	}
 
-	/*
-	 * Create a project with resources already existing on disk and ensure
-	 * that the resources are automatically discovered and brought into the workspace.
-	 */
-	public void testBug78711() {
+	public void testRefreshDotProject() {
 		String name = getUniqueString();
 		IProject project = getWorkspace().getRoot().getProject(name);
-		IFolder folder = project.getFolder("folder");
-		IFile file1 = project.getFile("file1.txt");
-		IFile file2 = folder.getFile("file2.txt");
-
-		IPath location = Platform.getLocation().append(project.getFullPath());
-		location.toFile().mkdirs();
-
-		// create in file-system
+		IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		try {
-			location.append(folder.getName()).toFile().mkdirs();
-			createFileInFileSystem(location.append(folder.getName()).append(file2.getName()));
-			createFileInFileSystem(location.append(file1.getName()));
+			project.create(null);
+			project.open(null);
+			while (dotProject.isSynchronized(IResource.DEPTH_ZERO)) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+				dotProject.getLocation().toFile().setLastModified(System.currentTimeMillis());
+			}
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
-			fail("0.0", e);
+			fail("0.99", e);
 		}
-		
-		// create
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			IProjectDescription description = project.getDescription();
+			description.setComment("Changed description");
+			project.setDescription(description, IResource.NONE, null);
 		} catch (CoreException e) {
-			fail("1.0", e);
+			fail("1.99", e);
 		}
-		
-		// verify discovery
-		assertTrue("2.0", project.isAccessible());
-		assertTrue("2.1", folder.exists());
-		assertTrue("2.2", file1.exists());
-		assertTrue("2.3", file2.exists());
 	}
 }
