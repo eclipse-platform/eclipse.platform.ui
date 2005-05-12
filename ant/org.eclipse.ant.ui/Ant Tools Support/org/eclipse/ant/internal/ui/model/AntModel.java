@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1385,17 +1386,23 @@ public class AntModel implements IAntModel {
             return;
         }
         Iterator iter= fDefinerNodeIdentifierToDefinedTasks.keySet().iterator();
+        ComponentHelper helper= ComponentHelper.getComponentHelper(fProjectNode.getProject());
         while (iter.hasNext()) {
             String key = (String) iter.next();
             if (fCurrentNodeIdentifiers.get(key) == null) {
-                ComponentHelper helper= ComponentHelper.getComponentHelper(fProjectNode.getProject());
-                List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(key);
-                Iterator iterator= tasks.iterator();
-                while (iterator.hasNext()) {
-                    String taskName = (String) iterator.next();
-                    helper.getAntTypeTable().remove(taskName);    
-                }
+                removeDefinerTasks(key, helper.getAntTypeTable());
             }
+        }
+    }
+
+    protected void removeDefinerTasks(String definerIdentifier, Hashtable typeTable) {
+        if (fDefinerNodeIdentifierToDefinedTasks == null) {
+            return;
+        }
+        List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(definerIdentifier);
+        Iterator iterator= tasks.iterator();
+        while (iterator.hasNext()) {
+            typeTable.remove(iterator.next());    
         }
     }
 

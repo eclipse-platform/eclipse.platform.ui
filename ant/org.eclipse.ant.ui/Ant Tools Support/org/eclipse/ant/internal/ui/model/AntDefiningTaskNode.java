@@ -81,6 +81,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		if (enabled) {
 			try {
                 ComponentHelper helper= ComponentHelper.getComponentHelper(getProjectNode().getProject());
+                ((AntModel) getAntModel()).removeDefinerTasks(getIdentifier(), helper.getAntTypeTable());
                 Hashtable old= new Hashtable(helper.getAntTypeTable());
 				getTask().maybeConfigure();
 				getTask().execute();
