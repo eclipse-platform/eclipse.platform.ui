@@ -60,7 +60,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
-	public IVariable[] getVariables() {
+	public IVariable[] getVariables() throws DebugException {
 	   return fThread.getVariables();
 	}
 
@@ -294,17 +294,20 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
      * @return a property, or <code>null</code> if none
      */
     public AntProperty findProperty(String propertyName) {
-        IVariable[] groups= getVariables();
-        for (int i = 0; i < groups.length; i++) {
-            AntProperties propertiesGrouping = (AntProperties) groups[i];
-            AntPropertiesValue value= (AntPropertiesValue) propertiesGrouping.getValue();
-            IVariable[] properties= value.getVariables();
-            for (int j = 0; j < properties.length; j++) {
-                AntProperty property = (AntProperty) properties[j];
-                if (property.getName().equals(propertyName)) {
-                    return property;
+        try {
+            IVariable[] groups= getVariables();
+            for (int i = 0; i < groups.length; i++) {
+                AntProperties propertiesGrouping = (AntProperties) groups[i];
+                AntPropertiesValue value= (AntPropertiesValue) propertiesGrouping.getValue();
+                IVariable[] properties= value.getVariables();
+                for (int j = 0; j < properties.length; j++) {
+                    AntProperty property = (AntProperty) properties[j];
+                    if (property.getName().equals(propertyName)) {
+                        return property;
+                    }
                 }
             }
+        } catch (DebugException e) {
         }
         return null;
     } 

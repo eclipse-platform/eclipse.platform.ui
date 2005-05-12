@@ -14,6 +14,7 @@ import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 
@@ -102,7 +103,7 @@ public class SteppingTests extends AbstractAntDebugTest {
 		}
 	}
 	
-    private AntStackFrame assertFrame(AntThread thread, String frameName, int lineNumber) {
+    private AntStackFrame assertFrame(AntThread thread, String frameName, int lineNumber) throws DebugException {
         AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
         String actualFrameName= frame.getName();
         int actualLineNumber= frame.getLineNumber();

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -27,12 +28,17 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
-	public synchronized IValue getValue() {
-        while (!fValid) {
+	public synchronized IValue getValue() throws DebugException {
+        int attempts= 0;
+        while (!fValid && !getDebugTarget().isTerminated()) {
             try {
-                wait();
+                wait(50);
             } catch (InterruptedException e) {
             }
+            if (attempts == 20 && !fValid && !getDebugTarget().isTerminated()) {
+                throwDebugException(DebugModelMessages.AntProperties_1);
+            }
+            attempts++;
         }
  		return fValue;
 	}

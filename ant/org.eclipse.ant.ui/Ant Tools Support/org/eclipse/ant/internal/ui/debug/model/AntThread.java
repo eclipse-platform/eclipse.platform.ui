@@ -75,7 +75,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
-	public synchronized IStackFrame[] getStackFrames() {
+	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
@@ -86,19 +86,25 @@ public class AntThread extends AntDebugElement implements IThread {
 	}
 	
 	/**
-	 * Returns the current stack frames in the thread
+	 * Retrieves the current stack frames in the thread
 	 * possibly waiting until the frames are populated
      * 
-	 * @return the current stack frames in the thread
 	 */
-	private synchronized void getStackFrames0() {
+	private synchronized void getStackFrames0() throws DebugException {
 		getAntDebugTarget().getStackFrames();
         if (fFrames.size() > 0) {
             //frames set..no need to wait
             return;
         }
+        int attempts= 0;
 		try {
-		    wait();
+            while (fFrames.size() == 0 && !isTerminated()) {
+                wait(50);
+                if (attempts == 20 && fFrames.size() == 0 && !isTerminated()) {
+                    throwDebugException(DebugModelMessages.AntThread_3);
+                }
+                attempts++;
+            }
 		} catch (InterruptedException e) {
 		}
 	}
@@ -120,7 +126,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
-	public synchronized IStackFrame getTopStackFrame() {
+	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
@@ -437,13 +443,20 @@ public class AntThread extends AntDebugElement implements IThread {
 		fRuntimeProperties.setValue(new AntPropertiesValue(target));
 	}
     
-    protected synchronized IVariable[] getVariables() {
+    protected synchronized IVariable[] getVariables() throws DebugException {
         if (fRefreshProperties) {
             getAntDebugTarget().getProperties();
             if (fRefreshProperties) { 
-            //properties have not been set; need to wait
+                //properties have not been set; need to wait
                 try {
-                    wait();
+                    int attempts= 0;
+                    while (fRefreshProperties && !isTerminated()) {
+                        wait(50);
+                        if (attempts == 20 && fRefreshProperties && !isTerminated()) {
+                            throwDebugException(DebugModelMessages.AntThread_4);
+                        }
+                        attempts++;
+                    }
                 } catch (InterruptedException ie) {
                 }
             }

@@ -16,6 +16,7 @@ import org.eclipse.ant.internal.ui.debug.model.AntThread;
 import org.eclipse.ant.internal.ui.debug.model.AntValue;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -141,7 +142,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 		}
 	}
 
-	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue) {
+	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue) throws DebugException {
 		AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 		AntProperty property= frame.findProperty(propertyName);
 		assertNotNull("Did not find property: " + propertyName, property);

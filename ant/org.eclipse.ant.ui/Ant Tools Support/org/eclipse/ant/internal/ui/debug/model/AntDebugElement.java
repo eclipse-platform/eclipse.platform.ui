@@ -45,6 +45,15 @@ public abstract class AntDebugElement extends DebugElement {
 				DebugPlugin.INTERNAL_ERROR, message, e));
 	}
     
+	/**
+     * Throws a debug exception with the given message, error code, and underlying
+     * exception.
+     */
+    protected void throwDebugException(String message) throws DebugException {
+        throw new DebugException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(),
+            DebugException.TARGET_REQUEST_FAILED, message, null));
+    }
+    
     protected AntDebugTarget getAntDebugTarget() {
         return (AntDebugTarget)super.getDebugTarget();
     }
