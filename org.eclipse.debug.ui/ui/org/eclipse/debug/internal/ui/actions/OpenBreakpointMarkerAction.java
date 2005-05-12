@@ -18,13 +18,13 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 
@@ -35,8 +35,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, ActionMessages.OpenBreakpointMarkerAction__Go_to_File_1); //$NON-NLS-1$
 		setToolTipText(ActionMessages.OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2); //$NON-NLS-1$
-		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
-		setImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_OPEN_MARKER));
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui", "icons/full/elcl16/gotoobj_tsk.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			IDebugHelpContextIds.OPEN_BREAKPOINT_ACTION);
