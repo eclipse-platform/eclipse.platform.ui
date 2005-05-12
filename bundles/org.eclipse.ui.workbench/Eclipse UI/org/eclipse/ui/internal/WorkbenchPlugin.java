@@ -201,8 +201,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
         productInfo = null;
         introRegistry = null;
+        
+        if (operationSupport != null) {
+        	operationSupport.dispose();
+        	operationSupport = null;
+        }
 
         DEBUG = false;
+         
     }
 
     /**
@@ -888,12 +894,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         if (workingSetManager != null) {
         	workingSetManager.dispose();
         	workingSetManager= null;
-        }
-        if (operationSupport != null) {
-        	operationSupport.dispose();
-        	operationSupport = null;
-        }
-        
+        }       
         SWTResourceUtil.shutdown();
     } 
     
