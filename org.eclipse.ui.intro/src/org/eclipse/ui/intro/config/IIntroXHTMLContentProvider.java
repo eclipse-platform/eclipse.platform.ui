@@ -13,7 +13,7 @@ package org.eclipse.ui.intro.config;
 import org.w3c.dom.Element;
 
 /**
- * A content provider for dynamic XHTML intro content. When an XHTML intro page
+ * A content provider for dynamic XHTML Intro content. When an XHTML intro page
  * is parsed and a contentProvider element is detected, it is used to create
  * dynamic XHTML content in the page.
  * 
@@ -26,19 +26,17 @@ public interface IIntroXHTMLContentProvider extends IIntroContentProvider {
      * for this method would be: <br>
      * 
      * <br>
-     * &ltdiv id=myContentProviderDivId> <br>
+     * <code>
      * &lt;contentProvider id=&quot;contentProviderId&quot;
      * class=&quot;xx.yy.IntroContentProvider&quot;
-     * pluginId=&quot;xx.yy.id&quot;&gt; <br>
-     * &lt;contentProvider&gt; <br>
-     * &lt/div&gt;
+     * pluginId=&quot;xx.yy.id&quot;/&gt; <br></code> <br>
      * 
-     * <br>
-     * The parent Element will be passed to allow for adding dynamic content by
-     * manipulating the Java XML DOM for the XHTML file. In the above example,
-     * the DOM element representing the div with id=myContentProviderDivId would
-     * be the parent passed.
-     * 
+     * A parent DOM Element will be passed to allow for adding dynamic content
+     * by manipulating the Java XML DOM for the XHTML file. A div is created
+     * with an id equal to the id specified in the contentProvider element, and
+     * is passed as the parent. In the above example, the DOM element
+     * representing a div with id=myContentProviderDivId would be the parent
+     * passed.
      * 
      * @param id
      *            the unique identifier of the content element. The same content

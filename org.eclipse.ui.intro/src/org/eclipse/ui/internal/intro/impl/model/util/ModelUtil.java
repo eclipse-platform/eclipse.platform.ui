@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.intro.impl.model.util;
 
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -208,6 +210,32 @@ public class ModelUtil {
     }
 
 
+
+    public static Element createElement(Document dom, String elementName,
+            Properties attributes) {
+
+        Element element = dom.createElement(elementName);
+        if (attributes != null) {
+            Enumeration e = attributes.keys();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                element.setAttribute(key, attributes.getProperty(key));
+            }
+        }
+        return element;
+    }
+
+    public static Element createAndAppendChild(Element parentElement,
+            String elementName, Properties attributes) {
+
+        Element element = createElement(parentElement.getOwnerDocument(),
+            elementName, attributes);
+        parentElement.appendChild(element);
+        return element;
+    }
+
+
+
     /**
      * Returns an Element array of all first level descendant Elements with a
      * given tag name, in the order in which they are encountered in the DOM.
@@ -251,6 +279,31 @@ public class ModelUtil {
         vector.copyInto(filteredElements);
         return filteredElements;
     }
+
+
+    /*
+     * Util method similar to DOM getElementById() method, but it works without
+     * an id attribute being specified. Deep searches all children in this
+     * container's DOM for the first child with the given id. The element
+     * retrieved must have the passed local name. Note that in an XHTML file
+     * (aka DOM) elements should have a unique id within the scope of a
+     * document. We use local name because this allows for finding intro
+     * anchors, includes and dynamic content element regardless of whether or
+     * not an xmlns was used in the xml.
+     */
+    public static Element getElementById(Document dom, String id,
+            String localElementName) {
+        NodeList children = dom.getElementsByTagNameNS("*", "*");
+        for (int i = 0; i < children.getLength(); i++) {
+            Element element = (Element) children.item(i);
+            if (element.getAttribute("id").equals(id)) //$NON-NLS-1$
+                return element;
+        }
+        // non found.
+        return null;
+
+    }
+
 
 
 
@@ -323,18 +376,18 @@ public class ModelUtil {
 
 
     /**
-     * Remove all anchors from this page.
+     * Remove all instances of the element from the DOM.
      * 
      */
-    public static void removeElement(Document dom, String elementLocalName) {
+    public static void removeAllElements(Document dom, String elementLocalName) {
         // get all elements in DOM and remove them.
-        NodeList anchors = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+        NodeList elements = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
             elementLocalName);
         // get the array version of the nodelist to work around DOM api design.
-        Node[] anchorArray = ModelUtil.getArray(anchors);
-        for (int i = 0; i < anchorArray.length; i++) {
-            Node anchor = anchorArray[i];
-            anchor.getParentNode().removeChild(anchor);
+        Node[] elementsArray = ModelUtil.getArray(elements);
+        for (int i = 0; i < elementsArray.length; i++) {
+            Node element = elementsArray[i];
+            element.getParentNode().removeChild(element);
         }
 
     }

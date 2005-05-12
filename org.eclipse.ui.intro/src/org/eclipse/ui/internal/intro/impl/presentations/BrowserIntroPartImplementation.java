@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IToolBarManager;
@@ -26,6 +28,7 @@ import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.html.HTMLElement;
+import org.eclipse.ui.internal.intro.impl.html.IIntroHTMLConstants;
 import org.eclipse.ui.internal.intro.impl.html.IntroHTMLGenerator;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
@@ -102,6 +105,7 @@ public class BrowserIntroPartImplementation extends
             }
 
             public void completed(ProgressEvent event) {
+                // ((Browser) event.getSource()).redraw();
                 flagEndOfNavigation();
                 if (!getModel().isDynamic())
                     updateNavigationActionsState();
@@ -232,17 +236,35 @@ public class BrowserIntroPartImplementation extends
     }
 
     /**
-     * Use xslt to flatten the DOM for the page. Also create any dynamic content
-     * providers if there are any.
+     * Generate an XHTML page as a string.
+     * <ul>
+     * <li> Create any dynamic content providers, if there are any. We do this
+     * by replacing each content provider with a div with the same id. The div
+     * is the parent of the dynamic content.</li>
+     * <li>Use xslt to flatten the DOM for the page, and create a string.</li>
+     * <li>Re-inject the contentProviders into the DOM to recreate the original
+     * state of the DOM. DOM could not have been cloned since cloning a DOM
+     * removes the docType.</li>
+     * </ul>
+     * Note: Resolving dynamic content is done at the UI level, consistant with
+     * SWT presentation.
      */
     private String generateXHTMLPage(AbstractIntroPage page,
             IIntroContentProviderSite site) {
-        // if page is an XHTML page, DOM is cloned, manipulated by dynamic
-        // content, passed threw XSLT tansform, and then discarded.
-        // Note: Resolving dynamic content is done at the UI level, consistant
-        // with SWT presentation.
-        Document dom = resolveDynamicContent(page, site);
-        return IntroContentParser.convertToString(dom);
+        // get/cache all content provider elements in DOM.
+        Document dom = page.getResolvedDocument();
+        NodeList nodes = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+            IntroContentProvider.TAG_CONTENT_PROVIDER);
+        // get the array version of the nodelist to work around DOM api design.
+        Node[] contentProviderElements = ModelUtil.getArray(nodes);
+
+        // this modifies the DOM.
+        resolveDynamicContent(page, site);
+        String content = IntroContentParser.convertToString(dom);
+
+        // this restores the DOM to its original state.
+        reinjectDynamicContent(dom, contentProviderElements);
+        return content;
     }
 
     /**
@@ -275,10 +297,17 @@ public class BrowserIntroPartImplementation extends
                     .getInst().createContentProvider(provider, site);
 
             if (providerClass != null) {
-                // create the specialized content, and remove content tag.
-                providerClass.createContent(provider.getId(),
-                    (Element) contentProviderElement.getParentNode());
-                contentProviderElement.getParentNode().removeChild(
+                // create a div with the same id as the contentProvider, pass it
+                // as the parent to create the specialized content, and then
+                // replace the contentProvider element with this div.
+                Properties att = new Properties();
+                att.setProperty(IIntroHTMLConstants.ATTRIBUTE_ID, provider
+                    .getId());
+                Element contentDiv = ModelUtil.createElement(dom,
+                    IIntroHTMLConstants.ELEMENT_DIV, att);
+                providerClass.createContent(provider.getId(), contentDiv);
+
+                contentProviderElement.getParentNode().replaceChild(contentDiv,
                     contentProviderElement);
             } else {
                 // we couldn't load the content provider, so add any alternate
@@ -289,6 +318,23 @@ public class BrowserIntroPartImplementation extends
         }
         return dom;
     }
+
+
+    private void reinjectDynamicContent(Document dom,
+            Node[] contentProviderElements) {
+        for (int i = 0; i < contentProviderElements.length; i++) {
+            // for each cached contentProvider, find replacement div in DOM and
+            // re-subsitute.
+            Element contentProviderElement = (Element) contentProviderElements[i];
+            Element contentProviderDiv = ModelUtil.getElementById(dom,
+                contentProviderElement
+                    .getAttribute(IIntroHTMLConstants.ATTRIBUTE_ID),
+                IIntroHTMLConstants.ELEMENT_DIV);
+            contentProviderDiv.getParentNode().replaceChild(
+                contentProviderElement, contentProviderDiv);
+        }
+    }
+
 
 
     /**
@@ -381,10 +427,6 @@ public class BrowserIntroPartImplementation extends
     }
 
     /**
-     * Clear page cache for the page that contains this provider. Remove the
-     * String cache from the HTML cache manager.This will force a call to
-     * createContents on all content providers the next time this page needs to
-     * be displayed.
      * 
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */

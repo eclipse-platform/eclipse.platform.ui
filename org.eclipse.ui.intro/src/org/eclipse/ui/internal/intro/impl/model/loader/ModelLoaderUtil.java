@@ -17,7 +17,6 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroIdElement;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -65,9 +64,7 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
         if (Log.logInfo) {
-            String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
-                configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
-                    logAttribute)).toString();
+            String msg = "Loading " + getLogString(configElement, logAttribute);
             Log.info(msg);
         }
 
@@ -87,34 +84,39 @@ public class ModelLoaderUtil {
      */
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
-        StringBuffer buffer = new StringBuffer("Bundle:"); //$NON-NLS-1$
-        buffer.append(element.getNamespace());
-        buffer.append("  Extension:"); //$NON-NLS-1$
-        buffer.append(element.getDeclaringExtension()
-            .getExtensionPointUniqueIdentifier());
-        buffer.append("  element:"); //$NON-NLS-1$
-        buffer.append(element.getName());
+        StringBuffer buffer = new StringBuffer(element.getName());
+        buffer.append(" Element");
         if (logAttribute != null) {
-            buffer.append("  "); //$NON-NLS-1$
+            buffer.append(" with \""); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append(":"); //$NON-NLS-1$
+            buffer.append("\"="); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
+        buffer.append("  in extension: "); //$NON-NLS-1$
+        buffer.append(element.getDeclaringExtension()
+            .getExtensionPointUniqueIdentifier());
+        buffer.append(" in Bundle: "); //$NON-NLS-1$
+        buffer.append(element.getNamespace());
+
+
         return buffer.toString();
     }
+
+
+
 
     /**
      * Utility method to verify that there is only a single Element in the
      * passed array of elements. If the list is empty, null is returned. If
      * there is more than one element in the array, the first one is picked, but
-     * this fact is logged. Attribute passed is used for logging.
+     * this fact is logged. Attribute and bundle passed is used for logging.
      * 
      * @param Elements
      * 
      * @return the first Element in the array, or null if the array is empty.
      */
-    public static Element validateSingleContribution(Element[] elements,
-            String logAttribute) {
+    public static Element validateSingleContribution(Bundle bundle,
+            Element[] elements, String logAttribute) {
 
         int arraySize = elements.length;
         if (arraySize == 0)
@@ -124,8 +126,8 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         Element element = elements[0];
         if (Log.logInfo) {
-            String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
-                " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
+            String msg = "Loading "
+                    + getLogString(bundle, element, logAttribute);
             Log.info(msg);
         }
 
@@ -134,7 +136,7 @@ public class ModelLoaderUtil {
             for (int i = 1; i < arraySize; i++) {
                 if (Log.logWarning)
                     // log each extra extension.
-                    Log.warning(getLogString(element, logAttribute)
+                    Log.warning(getLogString(bundle, element, logAttribute)
                             + " ignored due to multiple contributions"); //$NON-NLS-1$ 
             }
         }
@@ -145,19 +147,20 @@ public class ModelLoaderUtil {
      * Utility method to return a string to display in .log. If logAttribute is
      * not null, its value is also printed.
      */
-    public static String getLogString(Element element, String logAttribute) {
-        StringBuffer buffer = new StringBuffer("XML document:"); //$NON-NLS-1$
-        buffer.append(element.getOwnerDocument().toString());
-        buffer.append("  Parent:"); //$NON-NLS-1$
-        buffer.append(element.getParentNode().getNodeName());
-        buffer.append("  element:"); //$NON-NLS-1$
-        buffer.append(element.getNodeName());
+    public static String getLogString(Bundle bundle, Element element,
+            String logAttribute) {
+        StringBuffer buffer = new StringBuffer(element.getNodeName());
+        buffer.append(" Element");
         if (logAttribute != null) {
-            buffer.append("  "); //$NON-NLS-1$
+            buffer.append(" with \""); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append(":"); //$NON-NLS-1$
+            buffer.append("\"="); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
+        buffer.append("  from xml file in Bundle:"); //$NON-NLS-1$
+        buffer.append(bundle.getSymbolicName());
+
+
         return buffer.toString();
     }
 

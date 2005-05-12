@@ -411,7 +411,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // .getImplementationKind();
         if (parser.hasXHTMLContent()) {
             // INTRO: commenting out degradation to UI forms for now.
-            // Presentatoin kind flag is not yet defined at this stage.
+            // Presentatoin kind flag is not yet determined at this stage.
             // if (presentationStyle
             // .equals(IntroPartPresentation.BROWSER_IMPL_KIND))
             loadXHTMLContent(dom);
@@ -538,22 +538,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * inheritance from parent container because return type for parent is intro
      * legacy model.
      * 
-     * @param id
-     * @return
      */
     public Element findDomChild(String id, String localElementName) {
         if (!loaded)
             loadChildren();
         // using getElementById is tricky and we need to have intro XHTML
-        // modules to properly use tis method.
-        NodeList children = dom.getElementsByTagNameNS("*", localElementName); //$NON-NLS-1$
-        for (int i = 0; i < children.getLength(); i++) {
-            Element anchor = (Element) children.item(i);
-            if (anchor.getAttribute("id").equals(id)) //$NON-NLS-1$
-                return anchor;
-        }
-        // anchor not found.
-        return null;
+        // modules to properly use this method.
+        return ModelUtil.getElementById(dom, id, localElementName);
     }
 
     /**
@@ -573,7 +564,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Resolves the full page. It is called just before the page needs to be
      * displayed.
      * <li>adds a BASE child to the DOM HEAD element, if one is not defined.
-     * All intro documents must have a base defined to resolve all uris.</li>
+     * All intro documents must have a base defined to resolve all urls.</li>
      * <li>resolves all includes in the page. This means importing target DOM.
      * </li>
      * <li>resolves all XHTML attributes for resources, eg: src, href
@@ -584,7 +575,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         ModelUtil.insertBase(dom, ModelUtil.getParentFolderOSString(content));
         resolveIncludes();
         // now remove all anchors from this page.
-        ModelUtil.removeElement(dom, IntroAnchor.TAG_ANCHOR);
+        ModelUtil.removeAllElements(dom, IntroAnchor.TAG_ANCHOR);
         resolved = true;
     }
 
@@ -607,10 +598,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             Object[] results = findDOMIncludeTarget(include);
             Element targetElement = (Element) results[1];
             if (targetElement == null) {
-                // INTRO: fix log strings.
                 String message = "Could not resolve following include:  " //$NON-NLS-1$
-                        + ModelLoaderUtil.getLogString(includeElement,
-                            IntroInclude.ATT_PATH);
+                        + ModelLoaderUtil.getLogString(getBundle(),
+                            includeElement, IntroInclude.ATT_PATH);
                 Log.warning(message);
                 return;
             }

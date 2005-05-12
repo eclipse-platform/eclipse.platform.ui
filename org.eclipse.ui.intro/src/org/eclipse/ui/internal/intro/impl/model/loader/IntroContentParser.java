@@ -206,6 +206,7 @@ public class IntroContentParser {
             DocumentType docType = document.getDoctype();
             if (docType != null) {
                 String value = docType.getSystemId();
+                // transformer.clearParameters();
                 transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, value);
                 value = document.getDoctype().getPublicId();
                 transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, value);
@@ -216,7 +217,11 @@ public class IntroContentParser {
                 // "text/html");
                 // transformer
                 // .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
-            }
+            } else
+                Log
+                    .warning("XHTML file used to display this Intro page does not have a Document type defined. "
+                            + "XHTML requires document types to be defined.");
+
             transformer.transform(source, result);
             return stringBuffer.toString();
 

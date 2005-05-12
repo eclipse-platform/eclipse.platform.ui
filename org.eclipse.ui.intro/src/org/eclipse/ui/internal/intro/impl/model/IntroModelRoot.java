@@ -148,7 +148,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected void loadChildren() {
         children = new Vector();
         if (Log.logInfo)
-            Log.info("Loading Intro plugin model...."); //$NON-NLS-1$
+            Log.info("Creating Intro plugin model...."); //$NON-NLS-1$
 
         // load presentation first and create the model class for it. If there
         // is more than one presentation, load first one, and log rest.
@@ -297,8 +297,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
             // INTRO: fix log strings.
             Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
-                    + ModelLoaderUtil.getLogString(configExtensionElement,
-                        ATT_CONTENT));
+                    + ModelLoaderUtil.getLogString(bundle,
+                        configExtensionElement, ATT_CONTENT));
         }
     }
 
@@ -405,7 +405,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // content here.
         // There should only be one container extension. (ver3.0)
         Element extensionContentElement = ModelLoaderUtil
-            .validateSingleContribution(extensionContents,
+            .validateSingleContribution(bundle, extensionContents,
                 IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
             // no extensionContent defined.

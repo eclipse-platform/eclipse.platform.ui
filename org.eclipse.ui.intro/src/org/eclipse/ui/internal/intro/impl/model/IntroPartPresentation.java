@@ -218,20 +218,20 @@ public class IntroPartPresentation extends AbstractIntroElement {
                 implementation.init(introPart, memento);
                 implementation.createPartControl(parent);
                 if (Log.logInfo)
-                    Log.info("Loaded config implementation from: " //$NON-NLS-1$
+                    Log.info("Loading Intro UI implementation from: " //$NON-NLS-1$
                             + ModelLoaderUtil.getLogString(
-                                implementationElement, "class")); //$NON-NLS-1$
+                                implementationElement, "kind")); //$NON-NLS-1$
                 break;
             } catch (SWTError e) {
-                Log.error("Failed to create implementation from: " //$NON-NLS-1$
+                Log.error("Failed to create Intro UI implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                            "class"), e); //$NON-NLS-1$
+                            "kind"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
-                Log.error("Failed to create implementation from: " //$NON-NLS-1$
+                Log.error("Failed to create Intro UI implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                            "class"), e); //$NON-NLS-1$
+                            "kind"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             }
@@ -248,7 +248,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
                 return;
             }
             implementation.createPartControl(parent);
-            Log.warning("Loaded UI Forms implementation as a default Welcome."); //$NON-NLS-1$
+            Log
+                .warning("Loaded UI Forms implementation as a default UI implementation.");
         }
     }
 
