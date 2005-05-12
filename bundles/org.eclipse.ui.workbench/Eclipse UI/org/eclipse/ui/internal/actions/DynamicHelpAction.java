@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -72,8 +69,12 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 	private String appendAccelerator(String text) {
 		// We know that on Windows context help key is F1
 		// and cannot be changed by the user.
-		if (Platform.getWS().equals(Platform.WS_WIN32))
-			return text + "\t" + KeyStroke.getInstance(SWT.F1).format(); //$NON-NLS-1$
+		//
+		// Commented out due to the problem described in
+		// Bugzilla bug #95057
+	
+		//if (Platform.getWS().equals(Platform.WS_WIN32))
+		//	return text + "\t" + KeyStroke.getInstance(SWT.F1).format(); //$NON-NLS-1$
 		return text;
 	}
 
