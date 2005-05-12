@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
@@ -229,7 +230,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	void displayContext(IContext context, int x, int y, boolean noInfopop) {
 		if (context == null)
 			return;
-		Preferences pref = HelpUIPlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
 		boolean winfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
 		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
 		
