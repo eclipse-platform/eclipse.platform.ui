@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.macosx;
 
-import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.service.environment.Constants;
-import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 import org.eclipse.ui.internal.browser.browsers.DefaultBrowser;
 
 public class SafariBrowser extends DefaultBrowser {
@@ -29,23 +24,6 @@ public class SafariBrowser extends DefaultBrowser {
 	}
 
 	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(String)
-	 */
-	public void openURL(URL url2) {
-		String url = url2.toExternalForm();
-		/*
-		 * Code from Marc-Antoine Parent
-		 */
-		try {
-			Runtime.getRuntime().exec(new String[] { "/usr/bin/osascript", //$NON-NLS-1$
-					"-e", //$NON-NLS-1$
-					"open location \"" + url + "\"" }); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (IOException ioe) {
-			WebBrowserUIPlugin.logError("Launching \"osascript\" has failed.", ioe); //$NON-NLS-1$
-		}
-	}
-
-	/**
 	 * Creates the final command to launch.
 	 * 
 	 * @param path
@@ -53,7 +31,7 @@ public class SafariBrowser extends DefaultBrowser {
 	 * @return String[]
 	 */
 	protected String[] prepareCommand(String path, String url) {
-		if (url != null && url.startsWith("file:")) { //$NON-NLS-1$
+		if (url != null && url.toLowerCase().startsWith("file:")) { //$NON-NLS-1$
 			url = url.substring(5);
 		}
 		
@@ -67,13 +45,8 @@ public class SafariBrowser extends DefaultBrowser {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) { //$NON-NLS-1$
 				if (withinQuotation) {
-					if (Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
-						// need to quote URLs on Windows
-						tokenList.add("\"" + quotedString + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-					} else {
-						// quotes prevent launching on Unix 35673
-						tokenList.add(quotedString);
-					}
+					// quotes prevent launching on Unix 35673
+					tokenList.add(quotedString);
 				} else {
 					quotedString = ""; //$NON-NLS-1$
 				}
