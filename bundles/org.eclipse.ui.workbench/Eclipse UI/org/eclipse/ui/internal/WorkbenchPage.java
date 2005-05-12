@@ -1574,6 +1574,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return partList.getActiveEditor();
     }
 
+    /**
+     * Returns the reference for the active editor, or <code>null</code> 
+     * if there is no active editor.
+     * 
+     * @return the active editor reference or <code>null</code>
+     */
+    public IEditorReference getActiveEditorReference() {
+        return partList.getActiveEditorReference();
+    }
+    
     /*
      * (non-Javadoc) Method declared on IPartService
      */

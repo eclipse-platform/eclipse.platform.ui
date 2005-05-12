@@ -361,12 +361,40 @@ public class EditorManager implements IExtensionChangeHandler {
         }
     }
 
-    /*
-     * Answer an open editor for the input element.  If none
-     * exists return null.
+    /**
+     * Returns an open editor matching the given editor input.  
+     * If none match, returns <code>null</code>.
+     * 
+     * @param input the editor input
+     * @return the matching editor, or <code>null</code> if no match fond
      */
     public IEditorPart findEditor(IEditorInput input) {
-        ArrayList editorList = new ArrayList(Arrays.asList(page.getEditorReferences()));
+    	ArrayList othersList = new ArrayList(Arrays.asList(page.getEditorReferences()));
+    	if (othersList.isEmpty()) {
+    		return null;
+    	}
+    	IEditorReference active = page.getActiveEditorReference();
+    	if (active != null) {
+	    	othersList.remove(active);
+	    	ArrayList activeList = new ArrayList(1);
+	    	activeList.add(active);
+    		IEditorPart match = findEditor(input, activeList);
+    		if (match != null) {
+    			return match;
+    		}
+    	}
+    	return findEditor(input, othersList);
+    }
+    
+    /**
+     * Returns an open editor matching the given editor input.  
+     * If none match, returns <code>null</code>.
+     * 
+     * @param input the editor input
+     * @param editorList a mutable list containing the references for the editors to check (warning: items may be removed) 
+     * @return the matching editor, or <code>null</code> if no match fond
+     */
+    private IEditorPart findEditor(IEditorInput input, ArrayList editorList) {
         
         // Phase 1: check editors that have their own matching strategy
         for (Iterator i = editorList.iterator(); i.hasNext();) {
