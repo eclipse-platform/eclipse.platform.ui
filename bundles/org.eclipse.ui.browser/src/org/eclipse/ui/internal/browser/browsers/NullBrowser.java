@@ -14,6 +14,7 @@ import java.net.URL;
 
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
+import org.eclipse.ui.internal.browser.Messages;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 
 public class NullBrowser extends AbstractWebBrowser {
@@ -27,7 +28,6 @@ public class NullBrowser extends AbstractWebBrowser {
 			+ url
 			+ ".  Ensure that you have a required browser and adapter installed, and that the browser program is available on the system path.", //$NON-NLS-1$
 			null);
-		throw new PartInitException("Error"); //$NON-NLS-1$
-			// TODO: WebBrowserUIPlugin.getString("no_browsers", url)); //$NON-NLS-1$
+		throw new PartInitException(Messages.errorNoBrowser);
 	}
 }

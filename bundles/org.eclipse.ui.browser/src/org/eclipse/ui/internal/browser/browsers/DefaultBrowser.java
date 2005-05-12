@@ -15,8 +15,11 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
+import org.eclipse.ui.internal.browser.Messages;
+import org.eclipse.ui.internal.browser.Trace;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 /**
  * 
@@ -39,6 +42,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 		String path = location;
 
 		String[] command = prepareCommand(path, url);
+		Trace.trace(Trace.FINER, "Command: " + command); //$NON-NLS-1$
 
 		try {
 			Process pr = Runtime.getRuntime().exec(command);
@@ -56,8 +60,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 					+ path
 					+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
 					e);
-			throw new PartInitException("Error"); //$NON-NLS-1$
-				//TODO: WebBrowserUIPlugin.getString("DefaultBrowser.errorLaunching", url, path)); //$NON-NLS-1$
+			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, path));
 		}
 	}
 
@@ -68,7 +71,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 	 * @param url
 	 * @return String[]
 	 */
-	private String[] prepareCommand(String path, String url) {
+	protected String[] prepareCommand(String path, String url) {
 		ArrayList tokenList = new ArrayList();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(path.trim(),
@@ -131,7 +134,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 	 * @return The substituted string, if a substitution is made;
 	 *         <code>null</code> if no substitution is made.
 	 */
-	private String doSubstitutions(String token, String url) {
+	protected String doSubstitutions(String token, String url) {
 		boolean substituted = false;
 		StringBuffer newToken = new StringBuffer(token);
 		String substitutionMarker = "%1"; //$NON-NLS-1$
