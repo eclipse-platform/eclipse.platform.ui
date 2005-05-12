@@ -21,7 +21,7 @@ import org.eclipse.ui.browser.IWebBrowser;
  * @since 1.0
  */
 public class BrowserExt implements IBrowserExt {
-	private static final String ATTR_FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
+	private static final String ATTR_FACTORY_CLASS = "factoryclass"; //$NON-NLS-1$
 
 	private IConfigurationElement element;
 
@@ -108,6 +108,10 @@ public class BrowserExt implements IBrowserExt {
 	 *         creates is not installed
 	 */
 	public boolean isAvailable() {
+		if (delegate == null && (element.getAttribute(ATTR_FACTORY_CLASS) == null
+				|| element.getAttribute(ATTR_FACTORY_CLASS).length() == 0))
+			return true;
+		
 		try {
 			return getDelegate().isAvailable();
 		} catch (Exception e) {

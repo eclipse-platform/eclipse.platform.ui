@@ -9,14 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
-import java.io.*;
 
 import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
 
 public class MozillaFactory extends BrowserFactory {
-	private String executable;
-	private String executableName;
 	private MozillaBrowser browserInstance = null;
 	
 	/**
@@ -29,7 +26,7 @@ public class MozillaFactory extends BrowserFactory {
 	/*
 	 * @see BrowserFactory#isAvailable()
 	 */
-	public boolean isAvailable() {
+	/*public boolean isAvailable() {
 		try {
 			Process pr = Runtime.getRuntime().exec("which " + executable); //$NON-NLS-1$
 			StreamConsumer outputs = new StreamConsumer(pr.getInputStream());
@@ -48,7 +45,7 @@ public class MozillaFactory extends BrowserFactory {
 			// launching which failed, assume browser executable is present
 			return true;
 		}
-	}
+	}*/
 	
 	/**
 	 * On some OSes 0 is always returned by "which" command it is necessary to
@@ -59,7 +56,7 @@ public class MozillaFactory extends BrowserFactory {
 	 * @return @throws
 	 *         InterruptedException
 	 */
-	private boolean errorsInOutput(StreamConsumer outputs, StreamConsumer errors) {
+	/*private boolean errorsInOutput(StreamConsumer outputs, StreamConsumer errors) {
 		try {
 			outputs.join(1000);
 			if (outputs.getLastLine() != null
@@ -78,15 +75,15 @@ public class MozillaFactory extends BrowserFactory {
 			// ignore
 		}
 		return false;
-	}
-	
+	}*/
+
 	/*
 	 * @see BrowserFactory#createBrowser()
 	 */
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		// Create single browser for all clients
 		if (browserInstance == null) {
-			browserInstance = new MozillaBrowser(id, executable, executableName);
+			browserInstance = new MozillaBrowser(id, location);
 		}
 		return browserInstance;
 	}

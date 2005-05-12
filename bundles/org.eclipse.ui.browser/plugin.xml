@@ -9,8 +9,16 @@
          id="org.eclipse.ui.browser.preferencePage"
          name="%preferenceWebBrowserTitle"
          category="org.eclipse.ui.preferencePages.Workbench"
-         class="org.eclipse.ui.internal.browser.WebBrowserPreferencePage"/>
+         class="org.eclipse.ui.internal.browser.WebBrowserPreferencePage">
+           <keywordReference id="org.eclipse.ui.browser.preferenceKeywords"/>
+      </page>
    </extension>
+
+   <extension point="org.eclipse.ui.keywords">
+      <keyword
+         label="%preferenceKeywords"
+         id="org.eclipse.ui.browser.preferenceKeywords"/>
+   </extension>  
 
    <extension point="org.eclipse.ui.browserSupport">
       <support
@@ -89,11 +97,6 @@
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
       </browser>
       <browser
-         id="org.eclipse.ui.browser.defaultBrowserMacOSX"
-         name="%defaultBrowser"
-         factoryclass="org.eclipse.ui.internal.browser.macosx.DefaultBrowserFactory">
-      </browser>
-      <browser
          id="org.eclipse.ui.browser.konqueror"
          name="%browserKonqueror"
          os="Linux,AIX,HP,SunOS"
@@ -163,7 +166,7 @@
          name="%browserFirefox"
          os="MacOSX"
          executable="firefox-bin"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
+         factoryclass="org.eclipse.ui.internal.browser.macosx.MozillaFactory">
          <location>Applications/Firefox.app/Contents/MacOS/firefox-bin</location>
       </browser>
       <browser
@@ -177,7 +180,8 @@
          id="org.eclipse.ui.browser.safari"
          name="%browserSafari"
          os="MacOSX"
-         executable="Safari">
+         executable="Safari"
+         factoryclass="org.eclipse.ui.internal.browser.macosx.SafariBrowserFactory">
          <location>Applications/Safari.app/Contents/MacOS/Safari</location>
       </browser>
       <browser
@@ -185,7 +189,7 @@
          name="%browserMozilla"
          os="MacOSX"
          executable="mozilla-bin"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
+         factoryclass="org.eclipse.ui.internal.browser.macosx.MozillaFactory">
          <location>Applications/Mozilla.app/Contents/MacOS/mozilla-bin</location>
       </browser>
       <browser

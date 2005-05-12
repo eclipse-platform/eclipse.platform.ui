@@ -29,9 +29,8 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	private BrowserThread lastBrowserThread = null;
 
 	protected String executable;
-	protected String executableName;
-
-	protected Thread uiThread;
+	
+	protected boolean firstLaunch = true;
 
 	/**
 	 * Constructor
@@ -39,11 +38,9 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	 * @executable executable filename to launch
 	 * @executableName name of the program to display when error occurs
 	 */
-	public MozillaBrowser(String id, String executable, String executableName) {
+	public MozillaBrowser(String id, String executable) {
 		super(id);
-		this.uiThread = Thread.currentThread();
 		this.executable = executable;
-		this.executableName = executableName;
 	}
 
 	/*
@@ -89,7 +86,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 			} catch (InterruptedException e) {
 				// ignore
 			} catch (IOException e) {
-				WebBrowserUIPlugin.logError("Launching " + executableName //$NON-NLS-1$
+				WebBrowserUIPlugin.logError("Launching " + executable //$NON-NLS-1$
 					+ " has failed.", e); //$NON-NLS-1$
 				// TODO: log error
 				/*String msg = HelpBaseResources.getString(
@@ -140,14 +137,19 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		}
 
 		public void run() {
-			// If browser is opening, wait until it fully opens,
+			// if browser is opening, wait until it fully opens
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
-			== 0) {
+			if (firstLaunch) {
+				if (openBrowser(executable + " " + url) == 0) //$NON-NLS-1$
+					return;
+				browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 				return;
-			}
+			} else if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
+					== 0)
+				return;
+			
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
