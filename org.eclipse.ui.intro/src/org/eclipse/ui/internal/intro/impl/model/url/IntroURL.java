@@ -105,6 +105,7 @@ public class IntroURL implements IIntroURL {
     public static final String VALUE_FORWARD = "forward"; //$NON-NLS-1$
     public static final String VALUE_HOME = "home"; //$NON-NLS-1$
     public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
+    public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 
 
 
@@ -243,7 +244,7 @@ public class IntroURL implements IIntroURL {
      * @param state
      */
     private boolean setStandbyState(String state) {
-        if (state == null)
+        if (state == null || state.equalsIgnoreCase(VALUE_FALSE))
             return false;
         boolean standby = state.equals(VALUE_TRUE) ? true : false; //$NON-NLS-1$
         IIntroPart introPart = IntroPlugin.showIntro(standby);
@@ -402,7 +403,7 @@ public class IntroURL implements IIntroURL {
             modelRoot.getPresentation().updateHistory(
                 modelRoot.getCurrentPage());
             // ran action successfully. Now set intro intro standby if needed.
-            if (standbyState == null)
+            if (standbyState == null || standbyState.equalsIgnoreCase(VALUE_FALSE))
                 return true;
             return setStandbyState(standbyState);
         }
