@@ -42,12 +42,12 @@ class FileSpec {
 		if (!(other instanceof FileSpec))
 			return false;
 		FileSpec otherFileSpec = (FileSpec) other;
-		return equals(text, otherFileSpec.getType());
+		return equals(text, otherFileSpec.getType(), false);
 	}
 
-	public boolean equals(String text, int otherType) {
-		return getBasicType(type) == getBasicType(otherType) && this.text.equalsIgnoreCase(text);
-	}
+	public boolean equals(final String text, final int otherType, final boolean strict) {
+		return ((!strict && getBasicType(type) == getBasicType(otherType)) || type == otherType) && this.text.equalsIgnoreCase(text);
+	}	
 
 	public int hashCode() {
 		return text.hashCode();

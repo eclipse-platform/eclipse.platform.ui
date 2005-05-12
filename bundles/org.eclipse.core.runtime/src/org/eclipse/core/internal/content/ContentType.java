@@ -368,26 +368,29 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	boolean hasFileSpec(IScopeContext context, String text, int typeMask) {
 		if (context.equals(manager.getContext()) || (typeMask & IGNORE_USER_DEFINED) != 0)
-			return hasFileSpec(text, typeMask);
+			return hasFileSpec(text, typeMask, false);
 		String[] fileSpecs = ContentTypeSettings.getFileSpecs(context, id, typeMask);
 		for (int i = 0; i < fileSpecs.length; i++)
 			if (text.equalsIgnoreCase(fileSpecs[i]))
 				return true;
 		// no user defined association... try built-in
-		return hasFileSpec(text, typeMask | IGNORE_PRE_DEFINED);
+		return hasFileSpec(text, typeMask | IGNORE_PRE_DEFINED, false);
 	}
 
 	/**
+	 * Returns whether this content type has the given file spec.
+	 * 
 	 * @param text the file spec string
 	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
+	 * @param strict
 	 * @return true if this file spec has already been added, false otherwise
 	 */
-	boolean hasFileSpec(String text, int typeMask) {
+	boolean hasFileSpec(String text, int typeMask, boolean strict) {
 		if (fileSpecs == null)
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
-			if (spec.equals(text, typeMask))
+			if (spec.equals(text, typeMask, strict))
 				return true;
 		}
 		return false;
@@ -401,7 +404,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	 * Adds a user-defined or pre-defined file spec.
 	 */
 	boolean internalAddFileSpec(String fileSpec, int typeMask) {
-		if (hasFileSpec(fileSpec, typeMask))
+		if (hasFileSpec(fileSpec, typeMask, false))
 			return false;
 		if (fileSpecs == null)
 			fileSpecs = new ArrayList(3);
@@ -452,10 +455,10 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	}
 
 	byte internalIsAssociatedWith(String fileName) {
-		if (hasFileSpec(fileName, FILE_NAME_SPEC))
+		if (hasFileSpec(fileName, FILE_NAME_SPEC, false))
 			return ASSOCIATED_BY_NAME;
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
-		if (hasFileSpec(fileExtension, FILE_EXTENSION_SPEC))
+		if (hasFileSpec(fileExtension, FILE_EXTENSION_SPEC, false))
 			return ASSOCIATED_BY_EXTENSION;
 		// if does not have built-in file specs, delegate to parent (if any)
 		if (!hasBuiltInAssociations() && baseType != null)

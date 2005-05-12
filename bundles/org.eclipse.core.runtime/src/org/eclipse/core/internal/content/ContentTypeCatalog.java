@@ -426,6 +426,19 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
+	/**
+	 * Returns content types directly associated with the given file spec.
+	 * 
+	 * @param text a file name or extension
+	 * @param typeMask a bit-wise or of the following flags:
+	 * <ul>
+	 * 		<li>IContentType.FILE_NAME, </li>
+	 * 		<li>IContentType.FILE_EXTENSION, </li>
+	 * 		<li>IContentType.IGNORE_PRE_DEFINED, </li>
+	 * 		<li>IContentType.IGNORE_USER_DEFINED</li>
+	 *	</ul>
+	 * @return a set of content types
+	 */
 	public Set getDirectlyAssociated(String text, int typeMask) {
 		Map associations = (typeMask & IContentTypeSettings.FILE_NAME_SPEC) != 0 ? fileNames : fileExtensions;
 		Set result = null;
@@ -434,13 +447,18 @@ public final class ContentTypeCatalog {
 			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
 		else {
 			// only those specs satisfying the the type mask should be included
-			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
-			if (result != null)
+			Set initialSet = (Set) associations.get(FileSpec.getMappingKeyFor(text));
+			if (initialSet != null && !initialSet.isEmpty()) {
+				// copy so we can modify
+				result = new  HashSet(initialSet);
+				// invert the last two bits so it is easier to compare
+				typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);				
 				for (Iterator i = result.iterator(); i.hasNext();) {
 					ContentType contentType = (ContentType) i.next();
-					if (!contentType.hasFileSpec(text, typeMask))
+					if (!contentType.hasFileSpec(text, typeMask, true))
 						i.remove();
 				}
+			}
 		}
 		return result == null ? Collections.EMPTY_SET : result;
 	}
