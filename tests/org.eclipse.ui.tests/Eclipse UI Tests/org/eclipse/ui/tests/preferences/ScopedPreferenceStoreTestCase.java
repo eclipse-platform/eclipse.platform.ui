@@ -11,8 +11,6 @@
 package org.eclipse.ui.tests.preferences;
 
 import java.io.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -23,56 +21,6 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 
 	public ScopedPreferenceStoreTestCase(String name) {
 		super(name);
-	}
-
-	/**
-	 * Fails the test due to the given throwable.
-	 */
-	public static void fail(String message, Throwable e) {
-		// If the exception is a CoreException with a multistatus
-		// then print out the multistatus so we can see all the info.
-		if (e instanceof CoreException) {
-			IStatus status = ((CoreException) e).getStatus();
-			write(status, 0);
-		} else
-			e.printStackTrace();
-		fail(message + ": " + e);
-	}
-
-	private static void indent(OutputStream output, int indent) {
-		for (int i = 0; i < indent; i++)
-			try {
-				output.write("\t".getBytes());
-			} catch (IOException e) {
-				// ignore
-			}
-	}
-
-	private static void write(IStatus status, int indent) {
-		PrintStream output = System.out;
-		indent(output, indent);
-		output.println("Severity: " + status.getSeverity());
-
-		indent(output, indent);
-		output.println("Plugin ID: " + status.getPlugin());
-
-		indent(output, indent);
-		output.println("Code: " + status.getCode());
-
-		indent(output, indent);
-		output.println("Message: " + status.getMessage());
-
-		if (status.getException() != null) {
-			indent(output, indent);
-			output.print("Exception: ");
-			status.getException().printStackTrace(output);
-		}
-
-		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++)
-				write(children[i], indent + 1);
-		}
 	}
 
 	public void testNeedsSaving() {

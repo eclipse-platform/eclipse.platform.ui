@@ -33,5 +33,6 @@ public class PreferencesTestSuite extends TestSuite {
         addTest(new TestSuite(FontPreferenceTestCase.class));
         addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
         addTest(new TestSuite(ScopedPreferenceStoreTestCase.class));
+        addTest(new TestSuite(WorkingCopyPreferencesTestCase.class));
     }
 }

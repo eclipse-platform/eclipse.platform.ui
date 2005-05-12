@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.util;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWindowListener;
@@ -83,7 +85,57 @@ public abstract class UITestCase extends TestCase {
         testWindows = new ArrayList(3);
     }
 
-    /**
+	/**
+	 * Fails the test due to the given throwable.
+	 */
+	public static void fail(String message, Throwable e) {
+		// If the exception is a CoreException with a multistatus
+		// then print out the multistatus so we can see all the info.
+		if (e instanceof CoreException) {
+			IStatus status = ((CoreException) e).getStatus();
+			write(status, 0);
+		} else
+			e.printStackTrace();
+		fail(message + ": " + e);
+	}
+
+	private static void indent(OutputStream output, int indent) {
+		for (int i = 0; i < indent; i++)
+			try {
+				output.write("\t".getBytes());
+			} catch (IOException e) {
+				// ignore
+			}
+	}
+
+	private static void write(IStatus status, int indent) {
+		PrintStream output = System.out;
+		indent(output, indent);
+		output.println("Severity: " + status.getSeverity());
+
+		indent(output, indent);
+		output.println("Plugin ID: " + status.getPlugin());
+
+		indent(output, indent);
+		output.println("Code: " + status.getCode());
+
+		indent(output, indent);
+		output.println("Message: " + status.getMessage());
+
+		if (status.getException() != null) {
+			indent(output, indent);
+			output.print("Exception: ");
+			status.getException().printStackTrace(output);
+		}
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++)
+				write(children[i], indent + 1);
+		}
+	}
+
+	/**
      * Adds a window listener to the workbench to keep track of
      * opened test windows.
      */

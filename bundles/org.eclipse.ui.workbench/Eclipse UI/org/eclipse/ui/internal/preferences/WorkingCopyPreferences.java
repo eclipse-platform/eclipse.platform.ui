@@ -186,9 +186,12 @@ public class WorkingCopyPreferences implements IEclipsePreferences {
 		checkRemoved();
 		if (key == null)
 			throw new NullPointerException();
-		if (!temporarySettings.containsKey(key))
-			return;
-		Object oldValue = temporarySettings.get(key);
+		Object oldValue = null;
+		if (temporarySettings.containsKey(key)) {
+			oldValue = temporarySettings.get(key);
+		} else {
+			oldValue = original.get(key, null);
+		}
 		if (oldValue == null)
 			return;
 		temporarySettings.put(key, null);
