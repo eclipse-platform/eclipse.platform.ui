@@ -79,6 +79,7 @@ public class AntModel implements IAntModel {
     private AntTargetNode fCurrentTargetNode;
     private AntElementNode fLastNode;
     private AntElementNode fNodeBeingResolved;
+    private int fNodeBeingResolvedIndex= -1;
     
     private Map fEntityNameToPath;
     
@@ -263,6 +264,7 @@ public class AntModel implements IAntModel {
         fTaskToNode= new HashMap();
         fTaskNodes= new ArrayList();
         fNodeBeingResolved= null;
+        fNodeBeingResolvedIndex= -1;
         fLastNode= null;
         fCurrentNodeIdentifiers= null;
 		
@@ -484,13 +486,14 @@ public class AntModel implements IAntModel {
         while (iter.hasNext()) {
             AntTaskNode node = (AntTaskNode) iter.next();
             fNodeBeingResolved= node;
+            fNodeBeingResolvedIndex= -1;
             if (node.configure(false)) {
                 //resolve any new elements that may have been added
                 resolveBuildfile();
             }
         }
         fNodeBeingResolved= null;
-        
+        fNodeBeingResolvedIndex= -1;
         checkTargets();
     }
 
@@ -768,8 +771,10 @@ public class AntModel implements IAntModel {
         if (fNodeBeingResolved instanceof AntImportNode) {
             taskNode.setImportNode(fNodeBeingResolved);
             //place the node in the collection right after the import node
-            int index= fTaskNodes.indexOf(fNodeBeingResolved) + 1;
-            fTaskNodes.add(index, taskNode);
+            if (fNodeBeingResolvedIndex == -1) {
+            	fNodeBeingResolvedIndex= fTaskNodes.indexOf(fNodeBeingResolved) + 1;
+            }
+            fTaskNodes.add(fNodeBeingResolvedIndex, taskNode);
         } else {
             fTaskNodes.add(taskNode);
         }
