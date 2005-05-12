@@ -57,13 +57,6 @@
             id="org.eclipse.ui.edit.text.openExternalFile">
       </command>
       <command
-            name="%newTextEditor.name"
-            categoryId="org.eclipse.ui.category.file"
-            description="%newTextEditor.description"
-            id="org.eclipse.ui.edit.text.newTextEditor">
-      </command>
-      
-      <command
             name="%ActionDefinition.quickDiff.name"
             categoryId="org.eclipse.ui.category.edit"
             description="%ActionDefinition.quickDiff.description"
@@ -312,10 +305,36 @@
          </action>
       </editorContribution>
    </extension>
+   
+      <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            name="%NewUntitledTextFile.label"
+            icon="icons/full/etool16/new_untitled_text_file.gif"
+            category="org.eclipse.ui.Basic"
+            class="org.eclipse.ui.internal.editors.text.UntitledTextFileWizard"
+            canFinishEarly="true"
+            hasPages="false"
+            id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+         <description>
+            %NewUntitledTextFile.description
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <newWizardShortcut
+               id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%openExternalFileActionSet.label"
+            label="%openFilesActionSet.label"
             visible="true"
             id="org.eclipse.ui.edit.text.actionSet.openExternalFile">
          <action
@@ -326,20 +345,6 @@
                tooltip="%openExternalFile.description"
                menubarPath="file/new.ext"
                id="org.eclipse.ui.edit.text.openExternalFile">
-         </action>
-      </actionSet>
-      <actionSet
-            label="%newTextEditorActionSet.label"
-            visible="true"
-            id="org.eclipse.ui.edit.text.actionSet.newTextEditor">
-         <action
-               definitionId="org.eclipse.ui.edit.text.newTextEditor"
-               label="%newTextEditor.label"
-               helpContextId="new_text_editor_action_context"
-               class="org.eclipse.ui.internal.editors.text.NewTextEditorAction"
-               tooltip="%newTextEditor.description"
-               menubarPath="file/new.ext"
-               id="org.eclipse.ui.edit.text.newTextEditor">
          </action>
       </actionSet>
       <actionSet
