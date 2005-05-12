@@ -75,7 +75,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             return;
         }
 
-        if (!parser.hasProtocol() || parser.getHost() == null)
+        if (!parser.hasProtocol() || parser.getHost() == null
+                || parser.getHost().equals(""))
             // This will filter out two navigation events fired by the browser
             // on a setText. (about:blank and
             // res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm on windows,
