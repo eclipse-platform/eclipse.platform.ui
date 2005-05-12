@@ -281,7 +281,8 @@ public abstract class Plugin implements BundleActivator {
 	 * it puts there. It is recommended for plug-in preference settings and 
 	 * other configuration parameters.
 	 * </p>
-	 *
+	 * @throws IllegalStateException, when the system is running with no data area (-data @none),
+	 * or when a data area has not been set yet.
 	 * @return a local file system path
 	 */
 	public final IPath getStateLocation() throws IllegalStateException {
