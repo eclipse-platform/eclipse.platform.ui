@@ -104,7 +104,8 @@ public class Main {
     private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
     private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
 	private static final String CLEAN = "-clean"; //$NON-NLS-1$
-
+	private static final String NOEXIT = "-noExit";  //$NON-NLS-1$
+	
     private static final String OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
     private static final String STARTER = "org.eclipse.core.runtime.adaptor.EclipseStarter"; //$NON-NLS-1$
     private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
@@ -146,6 +147,7 @@ public class Main {
     private static final String PROP_PARENT_CLASSLOADER = "osgi.parentClassloader"; //$NON-NLS-1$
     private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 	private static final String PROP_NL = "osgi.nl";  //$NON-NLS-1$
+    private static final String PROP_NOSHUTDOWN = "osgi.noShutdown"; //$NON-NLS-1$
 	
     private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
     private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
@@ -176,7 +178,7 @@ public class Main {
     protected File logFile = null;
     protected BufferedWriter log = null;
     protected boolean newSession = true;
-    
+
     /**
      * A structured form for a version identifier.
      * 
@@ -953,8 +955,9 @@ public class Main {
 			// In case something weird happens, just dump stack - logging is not available at this point
 			t.printStackTrace();
 		} finally {
+			if (!Boolean.getBoolean(PROP_NOSHUTDOWN))
 			// make sure we always terminate the VM
-			System.exit(result);
+				System.exit(result);
 		}
 	}
 
@@ -1045,6 +1048,11 @@ public class Main {
                 found = true;
             }
 
+            if (args[i].equalsIgnoreCase(NOEXIT)) {
+            	System.getProperties().put(PROP_NOSHUTDOWN, "true"); //$NON-NLS-1$
+            	found = true;
+            }
+            
             // check if this is initialization pass
             if (args[i].equalsIgnoreCase(INITIALIZE)) {
                 initialize = true;
