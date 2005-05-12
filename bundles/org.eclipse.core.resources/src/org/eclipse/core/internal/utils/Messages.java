@@ -107,6 +107,7 @@ public class Messages extends NLS {
 
 	public static String preferences_deleteException;
 	public static String preferences_loadException;
+	public static String preferences_operationCanceled;
 	public static String preferences_removeNodeException;
 	public static String preferences_saveProblems;
 	public static String preferences_syncException;

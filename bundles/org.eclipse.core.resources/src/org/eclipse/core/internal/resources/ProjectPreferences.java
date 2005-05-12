@@ -256,7 +256,11 @@ public class ProjectPreferences extends EclipsePreferences {
 					}
 				};
 				ISchedulingRule rule = factory.deleteRule(fileInWorkspace);
-				ResourcesPlugin.getWorkspace().run(operation, rule, IResource.NONE, null);
+				try {
+					ResourcesPlugin.getWorkspace().run(operation, rule, IResource.NONE, null);
+				} catch (OperationCanceledException e) {
+					throw new BackingStoreException(Messages.preferences_operationCanceled);
+				}
 				return;
 			}
 			table.put(VERSION_KEY, VERSION_VALUE);
@@ -302,12 +306,16 @@ public class ProjectPreferences extends EclipsePreferences {
 				}
 			};
 			//don't bother with scheduling rules if we are already inside an operation
-			if (((Workspace)workspace).getWorkManager().isLockAlreadyAcquired()) {
-				operation.run(null);
-			} else {
-				// we might: create the .settings folder, create the file, or modify the file.
-				ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
-				workspace.run(operation, rule, IResource.NONE, null);
+			try {
+				if (((Workspace)workspace).getWorkManager().isLockAlreadyAcquired()) {
+					operation.run(null);
+				} else {
+					// we might: create the .settings folder, create the file, or modify the file.
+					ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
+						workspace.run(operation, rule, IResource.NONE, null);
+				}
+			} catch (OperationCanceledException e) {
+				throw new BackingStoreException(Messages.preferences_operationCanceled);
 			}
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
