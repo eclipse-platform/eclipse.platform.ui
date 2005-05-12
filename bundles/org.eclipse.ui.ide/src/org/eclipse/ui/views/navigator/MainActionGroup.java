@@ -14,6 +14,7 @@ package org.eclipse.ui.views.navigator;
 
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -43,6 +44,7 @@ import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 
 /**
  * The main action group for the navigator.
@@ -73,6 +75,8 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
     protected WorkingSetFilterActionGroup workingSetGroup;
 
     protected SortAndFilterActionGroup sortAndFilterGroup;
+    
+    protected UndoRedoActionGroup undoRedoGroup;
 
     protected WorkspaceActionGroup workspaceGroup;
 
@@ -208,8 +212,11 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         workingSetGroup.setWorkingSet(navigator.getWorkingSet());
         sortAndFilterGroup = new SortAndFilterActionGroup(navigator);
         workspaceGroup = new WorkspaceActionGroup(navigator);
-    }
+        IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		undoRedoGroup= new UndoRedoActionGroup(getNavigator().getSite(), workspaceContext, true);
 
+    }
+    
     /**
      * Extends the superclass implementation to set the context in the subgroups.
      */
@@ -220,6 +227,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         refactorGroup.setContext(context);
         sortAndFilterGroup.setContext(context);
         workspaceGroup.setContext(context);
+        undoRedoGroup.setContext(context);
     }
 
     /**
@@ -280,6 +288,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         workingSetGroup.fillActionBars(actionBars);
         sortAndFilterGroup.fillActionBars(actionBars);
         workspaceGroup.fillActionBars(actionBars);
+        undoRedoGroup.fillActionBars(actionBars);
 
         IMenuManager menu = actionBars.getMenuManager();
         menu.add(toggleLinkingAction);
@@ -307,6 +316,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         workingSetGroup.updateActionBars();
         sortAndFilterGroup.updateActionBars();
         workspaceGroup.updateActionBars();
+        undoRedoGroup.updateActionBars();
     }
 
     /**
@@ -346,6 +356,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
         sortAndFilterGroup.dispose();
         workingSetGroup.dispose();
         workspaceGroup.dispose();
+        undoRedoGroup.dispose();
         super.dispose();
     }
 }

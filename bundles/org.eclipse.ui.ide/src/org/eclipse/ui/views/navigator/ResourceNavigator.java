@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -78,7 +77,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -853,11 +851,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Creates the action group, which encapsulates all actions for the view.
-     * Installs global action handlers for undo and redo.
      */
     protected void makeActions() {
         setActionGroup(new MainActionGroup(this));
-        createGlobalActionHandlers();
     }
 
     /**
@@ -1353,32 +1349,4 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             }
         };
     }
-    
-    /**
-     * Returns the <code>UndoContext</code> for this view.
-     * The navigator considers the workspace the context for undo.
-     * 
-     * @return the undo context for this view
-     * @since 3.1
-     */
-    protected IUndoContext getUndoContext() { 
-    	return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
-    }
-    
-    /**
-     * Creates global action handlers for undo and redo.
-     *
-     * @since 3.1
-     */
-    protected void createGlobalActionHandlers() {
-    	IUndoContext undoContext = getUndoContext();
-    	if (undoContext != null) {
-	        /* Set up an undo redo action group that operates on the current context.
-			   The last parameter indicates that we want to prune the undo history when there 
-			   is an invalid operation on top.  */
-	        new UndoRedoActionGroup(this.getSite(), undoContext, true);
-    	}
-    	
-    }
-    
 }
