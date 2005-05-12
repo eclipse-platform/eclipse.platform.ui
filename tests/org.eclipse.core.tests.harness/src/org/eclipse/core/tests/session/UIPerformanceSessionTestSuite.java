@@ -43,7 +43,7 @@ public class UIPerformanceSessionTestSuite extends PerformanceSessionTestSuite {
 	 */
 	protected Setup newSetup() throws SetupException {
 		Setup base = super.newSetup();
-		base.setSystemProperty("org.eclipse.ui.testWaitForEarlyStartup", "false");
+		base.setSystemProperty("org.eclipse.ui.testsWaitForEarlyStartup", "false");
 		return base;
 	}
 }
