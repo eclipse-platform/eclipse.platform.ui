@@ -39,6 +39,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -85,6 +87,8 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 /**
@@ -1197,18 +1201,27 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 	}
 
-	/*
-	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 */
 	public Object getAdapter(Class adapter) {
 		if (IGotoMarker.class.equals(adapter))
 			return fGotoMarkerAdapter;
-
+	
 		if (IAnnotationAccess.class.equals(adapter))
 			return getAnnotationAccess();
-
+	
+		if (adapter == IShowInSource.class) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					ISelection selection= null;
+					ISelectionProvider selectionProvider= getSelectionProvider();
+					if (selectionProvider != null)
+						selection= selectionProvider.getSelection();
+					return new ShowInContext(getEditorInput(), selection);
+				}
+			};
+		}
+	
 		return super.getAdapter(adapter);
-
+	
 	}
 
 	/*
