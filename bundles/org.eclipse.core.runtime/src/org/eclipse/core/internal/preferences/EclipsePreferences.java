@@ -657,7 +657,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// sub-classes to over-ride if necessary
 	}
 
-	protected static void log(IStatus status) {
+	public static void log(IStatus status) {
 		InternalPlatform.getDefault().log(status);
 	}
 
