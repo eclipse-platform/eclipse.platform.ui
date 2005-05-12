@@ -60,7 +60,7 @@ public class WorkbenchTestable extends TestableObject {
             Runnable runnable = new Runnable() {
                 public void run() {
                 	// Some tests (notably the startup performance tests) do not want to wait for early startup.
-                	// Allow this to be disabled by specifying the system property: org.eclipse.ui.testWaitForEarlyStartup=false
+                	// Allow this to be disabled by specifying the system property: org.eclipse.ui.testsWaitForEarlyStartup=false
                 	// For details, see bug 94129 [Workbench] Performance test regression caused by workbench harness change
                 	if (!"false".equalsIgnoreCase(System.getProperty(PlatformUI.PLUGIN_ID + ".testsWaitForEarlyStartup"))) {  //$NON-NLS-1$ //$NON-NLS-2$
                 		waitForEarlyStartup();
