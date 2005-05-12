@@ -106,7 +106,7 @@ public class ContentTypeBuilder {
 				public boolean visit(IEclipsePreferences node) {
 					if (node == root)
 						return true;
-					ContentType contentType = localCatalog.getContentType(node.name());
+					ContentType contentType = localCatalog.internalGetContentType(node.name());
 					if (contentType != null)
 						contentType.processPreferences(node);
 					// content type nodes don't have any children anyway

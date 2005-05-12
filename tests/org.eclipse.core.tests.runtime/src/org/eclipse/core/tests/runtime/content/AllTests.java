@@ -31,6 +31,7 @@ public class AllTests extends TestCase {
 		suite.addTest(XMLContentDescriberTest.suite());
 		suite.addTest(LazyInputStreamTest.suite());
 		suite.addTest(LazyReaderTest.suite());
+		suite.addTest(TestBug94498.suite());
 		return suite;
 	}
 }
