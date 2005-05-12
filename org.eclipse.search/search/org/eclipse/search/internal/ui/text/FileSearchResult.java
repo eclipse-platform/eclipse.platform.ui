@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -58,7 +57,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
-			FileEditorInput fi= (FileEditorInput) ei;
+			IFileEditorInput fi= (IFileEditorInput) ei;
 			return match.getElement().equals(fi.getFile());
 		}
 		return false;
@@ -67,7 +66,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
-			FileEditorInput fi= (FileEditorInput) ei;
+			IFileEditorInput fi= (IFileEditorInput) ei;
 			return getMatches(fi.getFile());
 		}
 		return EMPTY_ARR;
