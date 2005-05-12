@@ -698,6 +698,14 @@ public class AntModel implements IAntModel {
         if (fNodeBeingResolved instanceof AntImportNode) {
             targetNode.setImportNode(fNodeBeingResolved);
             targetNode.setExternal(true);
+            targetNode.setFilePath(newTarget.getLocation().getFileName());
+        } else {
+           String targetFileName= newTarget.getLocation().getFileName();
+           boolean external= isNodeExternal(targetFileName);
+           targetNode.setExternal(external);
+           if (external) {
+               targetNode.setFilePath(targetFileName);
+           }
         }
         computeOffset(targetNode, line, column);
     }
@@ -754,10 +762,6 @@ public class AntModel implements IAntModel {
                 fProjectNode.addChildNode(taskNode);
             } else {
                 fCurrentTargetNode.addChildNode(taskNode);
-                if (taskNode.isExternal()) {
-                    fCurrentTargetNode.setExternal(true);
-                    fCurrentTargetNode.setFilePath(taskNode.getFilePath());
-                }
             }
         } else {
             taskNode= newNotWellKnownTaskNode(newTask, attributes);
@@ -871,8 +875,8 @@ public class AntModel implements IAntModel {
             || taskName.equalsIgnoreCase("xmlproperty"); //$NON-NLS-1$
     }
 
-    private boolean isTaskExternal(String taskFileName) {
-        File taskFile= new File(taskFileName);
+    private boolean isNodeExternal(String fileName) {
+        File taskFile= new File(fileName);
         return !taskFile.equals(getEditedFile());
     }
 
@@ -896,7 +900,7 @@ public class AntModel implements IAntModel {
 
     private void setExternalInformation(Task newTask, AntTaskNode newNode) {
         String taskFileName= newTask.getLocation().getFileName();
-        boolean external= isTaskExternal(taskFileName);
+        boolean external= isNodeExternal(taskFileName);
         newNode.setExternal(external);
         if (external) {
             newNode.setFilePath(taskFileName);
