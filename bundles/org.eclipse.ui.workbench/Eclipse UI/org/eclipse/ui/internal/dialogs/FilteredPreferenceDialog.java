@@ -297,12 +297,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			try {
 				workingCopyManager.applyChanges();
 			} catch (BackingStoreException e) {
+				String msg = e.getMessage();
+				if (msg == null)
+					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
 				IStatus errorStatus =
 					new Status(
 							IStatus.ERROR,
 							WorkbenchPlugin.PI_WORKBENCH,
 							IStatus.ERROR,
-							WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
+							msg,
 							e);
 				ErrorDialog.openError(
 						getShell(),
