@@ -32,8 +32,32 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		return new TestSuite(ContentDescriptionManagerTest.class);
 	}
 
+	/**
+	 * Blocks the calling thread until the cache flush job completes.
+	 */
+	public static void waitForCacheFlush() {
+		try {
+			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
+		} catch (OperationCanceledException e) {
+			//ignore
+		} catch (InterruptedException e) {
+			//ignore
+		}
+	}
+
 	public ContentDescriptionManagerTest(String name) {
 		super(name);
+	}
+
+	private IContentDescription getDescription(String tag, IFile file) {
+		IContentDescription description;
+		description = null;
+		try {
+			description = file.getContentDescription();
+		} catch (CoreException e) {
+			fail(tag, e);
+		}
+		return description;
 	}
 
 	protected InputStream projectDescriptionWithNatures(String project, String[] natures) {
@@ -108,6 +132,67 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNull("5.4", description2);
 	}
 
+	public void testBug94516() {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+		assertNotNull("0.1", text);
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		IFile unrelatedFile = project.getFile("file." + getName());
+		ensureExistsInWorkspace(unrelatedFile, "");
+
+		IContentDescription description = null;
+		description = getDescription("0.7", unrelatedFile);
+		assertNull("0.8", description);
+
+		try {
+			text.addFileSpec(unrelatedFile.getName(), IContentType.FILE_NAME_SPEC);
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		description = getDescription("1.0", unrelatedFile);
+		assertNotNull("1.1", description);
+		assertEquals("1.2", text, description.getContentType());
+
+		final ProjectScope projectScope = new ProjectScope(project);
+		Preferences contentTypePrefs = projectScope.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
+		// enable project-specific settings for this project
+		contentTypePrefs.putBoolean("enabled", true);
+		try {
+			contentTypePrefs.flush();
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+		// global settings should not matter anymore
+		description = getDescription("2.0", unrelatedFile);
+		assertNull("2.1", description);
+
+		IContentTypeSettings settings = null;
+		try {
+			settings = text.getSettings(projectScope);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		assertNotNull("3.1", settings);
+		assertNotSame("3.2", text, settings);
+		assertTrue("3.3", settings instanceof ContentTypeSettings);
+
+		try {
+			settings.addFileSpec(unrelatedFile.getFullPath().getFileExtension(), IContentType.FILE_EXTENSION_SPEC);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+		try {
+			contentTypePrefs.flush();
+		} catch (BackingStoreException e) {
+			fail("4.1", e);
+		}
+		description = getDescription("5.0", unrelatedFile);
+		assertNotNull("5.1", description);
+		assertEquals("5.2", text, description.getContentType());
+
+	}
+
 	/**
 	 * Ensures content type-nature associations work as expected.
 	 */
@@ -178,6 +263,55 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		description = getDescription("5.1", file);
 		assertNotNull("5.2", description);
 		assertSame("5.3", ((ContentTypeHandler) baseType).getTarget(), ((ContentTypeHandler) description.getContentType()).getTarget());
+	}
+
+	public void testProjectSpecificCharset() throws CoreException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+		IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
+		assertNotNull("0.1", text);
+		assertNotNull("0.2", xml);
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+
+		IFile txtFile = project.getFile(getName() + ".txt");
+		IFile xmlFile = project.getFile(getName() + ".xml");
+
+		ensureExistsInWorkspace(txtFile, "");
+		ensureExistsInWorkspace(xmlFile, "");
+
+		project.setDefaultCharset("FOO", getMonitor());
+		assertEquals("1.0", "FOO", txtFile.getCharset());
+		assertEquals("1.1", "UTF-8", xmlFile.getCharset());
+
+		final ProjectScope projectScope = new ProjectScope(project);
+		Preferences contentTypePrefs = projectScope.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
+		// enable project-specific settings for this project
+		contentTypePrefs.putBoolean("enabled", true);
+		try {
+			contentTypePrefs.flush();
+		} catch (BackingStoreException e) {
+			fail("2.0", e);
+		}
+		IContentTypeSettings settings = null;
+		settings = text.getSettings(projectScope);
+		settings.setDefaultCharset("BAR");
+		try {
+			contentTypePrefs.flush();
+		} catch (BackingStoreException e) {
+			fail("2.1", e);
+		}
+		assertEquals("3.0", "BAR", txtFile.getCharset());
+		assertEquals("3.1", "UTF-8", xmlFile.getCharset());
+
+		settings = xml.getSettings(projectScope);
+		settings.setDefaultCharset("");
+		try {
+			contentTypePrefs.flush();
+		} catch (BackingStoreException e) {
+			fail("4.0", e);
+		}
+		assertEquals("4.1", "BAR", txtFile.getCharset());
+		assertEquals("4.2", "FOO", xmlFile.getCharset());
 	}
 
 	public void testProjectSpecificFileAssociations() {
@@ -311,79 +445,6 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		assertNotNull("5.4b", description);
 		assertEquals("5.4c", text, description.getContentType());
 
-	}
-
-	public void testProjectSpecificCharset() throws CoreException {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
-		IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
-		assertNotNull("0.1", text);
-		assertNotNull("0.2", xml);
-		IProject project = getWorkspace().getRoot().getProject("proj1");
-
-		IFile txtFile = project.getFile(getName() + ".txt");
-		IFile xmlFile = project.getFile(getName() + ".xml");
-
-		ensureExistsInWorkspace(txtFile, "");
-		ensureExistsInWorkspace(xmlFile, "");
-
-		project.setDefaultCharset("FOO", getMonitor());
-		assertEquals("1.0", "FOO", txtFile.getCharset());
-		assertEquals("1.1", "UTF-8", xmlFile.getCharset());
-
-		final ProjectScope projectScope = new ProjectScope(project);
-		Preferences contentTypePrefs = projectScope.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
-		// enable project-specific settings for this project
-		contentTypePrefs.putBoolean("enabled", true);
-		try {
-			contentTypePrefs.flush();
-		} catch (BackingStoreException e) {
-			fail("2.0", e);
-		}
-		IContentTypeSettings settings = null;
-		settings = text.getSettings(projectScope);
-		settings.setDefaultCharset("BAR");
-		try {
-			contentTypePrefs.flush();
-		} catch (BackingStoreException e) {
-			fail("2.1", e);
-		}
-		assertEquals("3.0", "BAR", txtFile.getCharset());
-		assertEquals("3.1", "UTF-8", xmlFile.getCharset());
-
-		settings = xml.getSettings(projectScope);
-		settings.setDefaultCharset("");
-		try {
-			contentTypePrefs.flush();
-		} catch (BackingStoreException e) {
-			fail("4.0", e);
-		}
-		assertEquals("4.1", "BAR", txtFile.getCharset());
-		assertEquals("4.2", "FOO", xmlFile.getCharset());
-	}
-
-	private IContentDescription getDescription(String tag, IFile unrelatedFile) {
-		IContentDescription description;
-		description = null;
-		try {
-			description = unrelatedFile.getContentDescription();
-		} catch (CoreException e) {
-			fail(tag, e);
-		}
-		return description;
-	}
-
-	/**
-	 * Blocks the calling thread until the cache flush job completes.
-	 */
-	public static void waitForCacheFlush() {
-		try {
-			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
-		} catch (OperationCanceledException e) {
-			//ignore
-		} catch (InterruptedException e) {
-			//ignore
-		}
 	}
 
 }
