@@ -291,6 +291,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			buff.append("\"/> "); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
 			buff.append(HREF_SEARCH_HELP);
+			buff.append("\">"); //$NON-NLS-1$
 			buff.append(Messages.SearchPart_learnMore);
 			buff.append("</a>"); //$NON-NLS-1$
 		} else {

@@ -23,7 +23,7 @@ public class ShowCapabilitiesPreferenceAction implements ILiveHelpAction {
 	private boolean narrow;
 
 	public void setInitializationString(String data) {
-		if (data!=null && data.equals("narrow"))
+		if (data!=null && data.equals("narrow")) //$NON-NLS-1$
 			narrow=true;
 	}
 

@@ -101,8 +101,8 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			return documentMessage;
 		}
 		private String getActivityEditorValue(String pluginId, String className, boolean embedded) {
-			String evalue = embedded?"narrow":"";
-			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\""+evalue+"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String evalue = embedded?"narrow":""; //$NON-NLS-1$ //$NON-NLS-2$
+			return "javascript:liveAction(\""+pluginId+"\", \""+className+"\",\""+evalue+"\")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 	
