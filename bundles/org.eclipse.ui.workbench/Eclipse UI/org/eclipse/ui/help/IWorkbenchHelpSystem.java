@@ -69,7 +69,10 @@ public interface IWorkbenchHelpSystem {
 	 * </p>
 	 * 
 	 * @param expression
-	 *            the search expression
+	 *            the search expression. The actual syntax rules of the
+	 *            expression are dependent on the active
+	 *            help system. Refer to the help system
+	 *            documentation for more details.
 	 */
 	void search(String expression);
 
