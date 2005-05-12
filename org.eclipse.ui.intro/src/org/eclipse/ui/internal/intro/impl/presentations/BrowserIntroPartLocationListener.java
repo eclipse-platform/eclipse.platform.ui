@@ -75,10 +75,11 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             return;
         }
 
-        if (!parser.hasProtocol())
-            // this will filter out two navigation events fired by the browser
+        if (!parser.hasProtocol() || parser.getHost() == null)
+            // This will filter out two navigation events fired by the browser
             // on a setText. (about:blank and
-            // res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm)
+            // res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm on windows,
+            // and file:/// on Linux)
             return;
 
         if (model.isDynamic()) {

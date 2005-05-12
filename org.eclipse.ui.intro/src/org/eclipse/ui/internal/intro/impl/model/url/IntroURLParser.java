@@ -75,6 +75,22 @@ public class IntroURLParser {
 
 
     /**
+     * @return Returns the currebt url Protocol.
+     */
+    public String getProtocol() {
+        return url_inst.getProtocol();
+    }
+
+
+    /**
+     * @return Returns the currebt url Protocol.
+     */
+    public String getHost() {
+        return url_inst.getHost();
+    }
+
+
+    /**
      * Checks to see if tha passed URL is an Intro URL. An intro URL is an http
      * URL that has the intro plugin id as a host. eg:
      * "http://org.eclipse.ui.intro/test".
