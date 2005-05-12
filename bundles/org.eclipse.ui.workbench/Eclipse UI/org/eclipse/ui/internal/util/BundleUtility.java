@@ -26,41 +26,23 @@ public class BundleUtility {
 	public static boolean isActive(Bundle bundle) {
 		if (bundle == null)
 			return false;
-
 		return bundle.getState() == Bundle.ACTIVE;
 	}
 
     public static boolean isActivated(Bundle bundle) {
-        if (bundle == null)
-            return false;
-
-        switch (bundle.getState()) {
-        case Bundle.STARTING:
-        case Bundle.ACTIVE:
-        case Bundle.STOPPING:
-            return true;
-        default:
-            return false;
-        }
+        return bundle != null && (bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) != 0;
     }
 
     // TODO: needs a better name
     public static boolean isReady(Bundle bundle) {
-        if (bundle == null)
-            return false;
-
-        switch (bundle.getState()) {
-        case Bundle.RESOLVED:
-        case Bundle.STARTING:
-        case Bundle.ACTIVE:
-        case Bundle.STOPPING:
-            return true;
-        default:
-            return false;
-        }
+    	return bundle != null && isReady(bundle.getState());
     }
 
-	public static boolean isActive(String bundleId) {
+    public static boolean isReady(int bundleState) {
+    	return (bundleState & (Bundle.RESOLVED | Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) != 0;
+	}
+
+    public static boolean isActive(String bundleId) {
 		return isActive(Platform.getBundle(bundleId));
 	}
 
@@ -86,11 +68,9 @@ public class BundleUtility {
         Bundle bundle = Platform.getBundle(bundleId);
         if (bundle == null)
             return;
-
         IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
                 exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
                 exception);
-
         Platform.getLog(bundle).log(status);
     }
 }
