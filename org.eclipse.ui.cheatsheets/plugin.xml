@@ -58,4 +58,20 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%CHEAT_SHEETS_VIEW_COMMAND_NAME"
+            description="%CHEAT_SHEETS_VIEW_COMMAND_DESCRIPTION"
+            categoryId="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
+      </command>
+     </extension>
+    <extension
+    	point="org.eclipse.ui.bindings">
+      <key
+            sequence="M2+M3+Q H"
+            commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
+    </extension>
 </plugin>
