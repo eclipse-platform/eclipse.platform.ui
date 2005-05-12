@@ -9,25 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
+import java.io.*;
+import java.net.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.BaseSiteFactory;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.ISiteFactoryExtension;
-import org.eclipse.update.core.Site;
-import org.eclipse.update.core.SiteFeatureReferenceModel;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.SiteModelFactory;
-import org.eclipse.update.internal.model.SiteWithTimestamp;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 
 /**
  * An update site factory.
@@ -81,9 +69,6 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 			contentProvider.setSite(site);
 			site.resolve(url, url);
 			site.markReadOnly();
-			SiteWithTimestamp siteWithTimestamp = new SiteWithTimestamp(site);
-			siteWithTimestamp.setTimestamp( new Date(response.getLastModified()));
-			site = siteWithTimestamp;
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e); //$NON-NLS-1$
 		} catch (IOException e) {
