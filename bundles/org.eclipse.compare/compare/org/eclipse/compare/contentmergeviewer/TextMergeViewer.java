@@ -3763,7 +3763,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 //		if (d == fCurrentDiff)
 //			return;
 
-		if (fCenterButton != null)
+		if (fCenterButton != null && !fCenterButton.isDisposed())
 			fCenterButton.setVisible(false);
 						
 		fEndOfDocReached= false;	
