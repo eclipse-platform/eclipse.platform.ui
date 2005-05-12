@@ -78,11 +78,12 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		treeViewer.getTree().addMouseListener(new MouseAdapter() {
 			long lastTime;
 			public void mouseUp(MouseEvent e) {
-				if (e.time-lastTime <=e.display.getDoubleClickTime())
+				long eventTime = e.time & 0xFFFFFFFFL;
+				if (eventTime-lastTime <=e.display.getDoubleClickTime())
 					return;
 				if (e.button != 1)
 					return;
-				lastTime = e.time;
+				lastTime = eventTime;
 				Point p = new Point(e.x, e.y);
 				TreeItem item = treeViewer.getTree().getItem(p);
 				if (item != null) {
