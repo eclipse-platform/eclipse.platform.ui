@@ -293,33 +293,28 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 */
 	protected void okPressed() {
 		super.okPressed();
-		if(workingCopyManager != null)
+		if (workingCopyManager != null)
 			try {
 				workingCopyManager.applyChanges();
 			} catch (BackingStoreException e) {
 				String msg = e.getMessage();
 				if (msg == null)
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
-				IStatus errorStatus =
-					new Status(
-							IStatus.ERROR,
-							WorkbenchPlugin.PI_WORKBENCH,
-							IStatus.ERROR,
-							msg,
-							e);
-				ErrorDialog.openError(
-						getShell(),
-						WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle,
-						WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
-						errorStatus);
+				IStatus errorStatus = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg, e);
+				ErrorDialog
+						.openError(
+								getShell(),
+								WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle,
+								WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
+								errorStatus);
 			}
-			
-	   //Run the update jobs
-	   Iterator updateIterator = updateJobs.iterator();
-	   while (updateIterator.hasNext()) {
-		((Job) updateIterator.next()).schedule();
-		
-	}
+
+		// Run the update jobs
+		Iterator updateIterator = updateJobs.iterator();
+		while (updateIterator.hasNext()) {
+			((Job) updateIterator.next()).schedule();
+		}
 	}
 	
 	/* (non-Javadoc)
