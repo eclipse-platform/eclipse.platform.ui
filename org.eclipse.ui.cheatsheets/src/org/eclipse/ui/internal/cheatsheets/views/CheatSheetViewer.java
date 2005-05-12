@@ -796,7 +796,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			Bundle bundle = null;
 			if(element != null && element.getConfigurationElement() != null)
 				try{
-					String pluginId = element.getConfigurationElement().getDeclaringExtension().getNamespace();
+					String pluginId = element.getConfigurationElement().getNamespace();
 					bundle = Platform.getBundle(pluginId);
 				} catch (Exception e) {
 					// do nothing

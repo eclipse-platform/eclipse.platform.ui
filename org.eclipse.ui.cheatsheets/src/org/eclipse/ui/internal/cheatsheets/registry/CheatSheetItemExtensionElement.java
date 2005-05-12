@@ -101,7 +101,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 	public AbstractItemExtensionElement createInstance() {
 		Class extClass = null;
 		AbstractItemExtensionElement extElement = null;
-		String pluginId = configurationElement.getDeclaringExtension().getNamespace();
+		String pluginId = configurationElement.getNamespace();
 
 		try {
 			Bundle bundle = Platform.getBundle(pluginId);
