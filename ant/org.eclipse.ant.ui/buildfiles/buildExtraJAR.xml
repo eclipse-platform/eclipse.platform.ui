@@ -42,6 +42,8 @@
 			 		${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.debug.core/bin;
 			 		${eclipse.home}/plugins/org.eclipse.debug.core.jar;
+					${basedir}/../org.eclipse.debug.ui/bin;
+					${eclipse.home}/plugins/org.eclipse.debug.ui.jar;
 					${basedir}/../org.eclipse.ui.console/bin;
 					${eclipse.home}/plugins/org.eclipse.ui.console${version.suffix}.jar;
 			 		${basedir}/../org.eclipse.jface/bin;
