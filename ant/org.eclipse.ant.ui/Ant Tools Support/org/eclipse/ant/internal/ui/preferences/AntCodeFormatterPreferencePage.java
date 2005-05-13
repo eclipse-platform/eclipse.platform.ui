@@ -74,8 +74,6 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		//layout.verticalSpacing= convertVerticalDLUsToPixels(10);
-		//layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 		
 		Group indentationGroup= createGroup(numColumns, result, AntPreferencesMessages.AntCodeFormatterPreferencePage_0); //$NON-NLS-1$
