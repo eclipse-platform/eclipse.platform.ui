@@ -16,6 +16,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
@@ -29,9 +32,11 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.console.IHyperlink;
@@ -40,6 +45,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	
 	private File fBuildFileParent= null;
 	private long fStartTime;
+    private Map fFileNameToIFile= new HashMap();
 
 	/**
 	 * Associated process - discovered as needed to log messages
@@ -179,7 +185,22 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 */
 	private IHyperlink getLocationLink(Location location) {
 		if (location != null) {
-			return AntUtil.getLocationLink(location.toString(), fBuildFileParent);
+            try {
+                String fileName= location.getFileName();
+                IFile file= (IFile) fFileNameToIFile.get(fileName);
+                int lineNumber= location.getLineNumber();
+                if (file != null) {
+                    return new FileLink(file, null, -1, -1, lineNumber);
+                } 
+                file= AntUtil.getFileForLocation(fileName, fBuildFileParent);
+                if (file != null) {
+                    fFileNameToIFile.put(fileName, file);
+                    return new FileLink(file, null, -1, -1, lineNumber);
+                }
+            } catch (NoSuchMethodError e) {
+                //support for Ant older than 1.6
+                return AntUtil.getLocationLink(location.toString(), fBuildFileParent);
+            }
 		}
 		return null;
 	}	
@@ -226,6 +247,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		}
 		fProcess= null;
 		event.getProject().removeBuildListener(this);
+        fFileNameToIFile= null;
 	}
 	
 	private String getTimeString(long milliseconds) {
