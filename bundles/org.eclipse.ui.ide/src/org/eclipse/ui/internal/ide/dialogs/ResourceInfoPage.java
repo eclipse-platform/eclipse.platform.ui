@@ -41,6 +41,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
 /**
  * This is a dummy page that is added to the property dialog when multiple
@@ -68,6 +69,8 @@ public class ResourceInfoPage extends PropertyPage {
 	private IContentDescription cachedContentDescription;
 
 	private ResourceEncodingFieldEditor encodingEditor;
+	
+	private LineDelimiterEditor lineDelemiterEditor;
 
 	private static String READ_ONLY = IDEWorkbenchMessages.ResourceInfo_readOnly;
 
@@ -291,6 +294,11 @@ public class ResourceInfoPage extends PropertyPage {
 
 			}
 		});
+		
+		if (resource.getType() == IResource.PROJECT) {
+			lineDelemiterEditor = new LineDelimiterEditor(composite, resource.getProject());
+			lineDelemiterEditor.doLoad();
+		}
 
 		return composite;
 	}
@@ -669,6 +677,9 @@ public class ResourceInfoPage extends PropertyPage {
 			this.derivedBox.setSelection(false);
 
 		encodingEditor.loadDefault();
+		
+		if (lineDelemiterEditor != null)
+			lineDelemiterEditor.loadDefault();
 
 	}
 
@@ -680,6 +691,9 @@ public class ResourceInfoPage extends PropertyPage {
 		IResource resource = (IResource) getElement();
 
 		encodingEditor.store();
+		
+		if (lineDelemiterEditor != null)
+			lineDelemiterEditor.store();
 
 		try {
 			//Nothing to update if we never made the box

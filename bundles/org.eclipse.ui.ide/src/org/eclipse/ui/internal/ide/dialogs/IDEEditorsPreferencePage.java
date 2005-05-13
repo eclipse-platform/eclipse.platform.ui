@@ -27,6 +27,7 @@ import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
+import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
@@ -42,6 +43,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	private boolean clearUserSettings = false;
 
 	private ResourceEncodingFieldEditor encodingEditor;
+
+	private LineDelimiterEditor lineSeparatorEditor;
 
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
@@ -92,6 +95,9 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 			}
 		});
+		
+		lineSeparatorEditor = new LineDelimiterEditor(composite);
+		lineSeparatorEditor.doLoad();
 
 		// @issue need IDE-level help for this page
 		//		WorkbenchHelp.setHelp(parent,
@@ -111,7 +117,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		Collections.sort(encodings);
 
 		encodingEditor.loadDefault();
-
+		lineSeparatorEditor.loadDefault();
+		
 		super.performDefaults();
 
 	}
@@ -141,6 +148,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		if (clearUserSettings)
 			IDEEncoding.clearUserEncodings();
 		encodingEditor.store();
+		
+		lineSeparatorEditor.store();
 
 		return super.performOk();
 	}

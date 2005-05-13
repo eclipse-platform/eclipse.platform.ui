@@ -500,6 +500,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_savePriorToBuildingToolTip;
 	public static String IDEWorkspacePreference_RefreshButtonText;
 	public static String IDEWorkspacePreference_RefreshButtonToolTip;
+	public static String IDEWorkspacePreference_fileLineDelimiter;
+	public static String IDEWorkspacePreference_defaultLineDelim;
+	public static String IDEWorkspacePreference_otherLineDelim;
 
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
