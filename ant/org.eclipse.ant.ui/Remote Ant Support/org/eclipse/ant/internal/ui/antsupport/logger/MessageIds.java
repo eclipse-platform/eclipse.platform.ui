@@ -15,6 +15,7 @@ public class MessageIds {
 
 	public final static String PROCESS_ID=   "processID"; //$NON-NLS-1$
 	public final static String BUILD_CANCELLED= "cancelled"; //$NON-NLS-1$
-	public final static String TASK= "1"; //$NON-NLS-1$
-	public final static String TARGET= "2"; //$NON-NLS-1$
+    //constants need to start greater than the Project.MSG_* constants
+	public final static String TASK= "6"; //$NON-NLS-1$
+	public final static String TARGET= "7"; //$NON-NLS-1$
 }
