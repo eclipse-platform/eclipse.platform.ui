@@ -19,7 +19,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
- * 
+ * This class is not really sample code.  This action is used to gather debugging
+ * information about the internal state of the background job scheduling 
+ * mechanism.
  */
 public class DebugJobManagerAction implements IWorkbenchWindowActionDelegate {
 	public DebugJobManagerAction() {
@@ -37,7 +39,7 @@ public class DebugJobManagerAction implements IWorkbenchWindowActionDelegate {
 		Job[] jobs = Platform.getJobManager().find(null);
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); //$NON-NLS-1$
 		for (int i = 0; i < jobs.length; i++) {
-			System.out.println("" + jobs[i] + " state: " + JobManager.printState(jobs[i].getState())); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("" + jobs[i].getClass().getName() + " state: " + JobManager.printState(jobs[i].getState())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****"); //$NON-NLS-1$
 	}
