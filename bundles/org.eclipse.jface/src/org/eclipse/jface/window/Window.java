@@ -464,8 +464,14 @@ public abstract class Window implements IShellProvider {
 	 */
 	protected final Shell createShell() {
 
+		Shell newParent = getParentShell();
+		if(newParent != null &&  newParent.isDisposed()){
+			parentShell = null;
+			newParent = getParentShell();//Find a better parent
+		}
+		
 		//Create the shell
-		Shell newShell = new Shell(getParentShell(), getShellStyle());
+		Shell newShell = new Shell(newParent, getShellStyle());
 
 		resizeListener = new Listener() {
 			public void handleEvent(Event e) {
