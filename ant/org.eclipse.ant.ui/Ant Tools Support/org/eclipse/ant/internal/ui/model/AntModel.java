@@ -1400,6 +1400,9 @@ public class AntModel implements IAntModel {
             return;
         }
         List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(definerIdentifier);
+        if (tasks == null) {
+            return;
+        }
         Iterator iterator= tasks.iterator();
         while (iterator.hasNext()) {
             typeTable.remove(iterator.next());    
