@@ -867,8 +867,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @see org.eclipse.ui.editors.text.TextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
+		fAntModel= null;
 		super.doSetInput(input);
-        fAntModel= null;
 		setOutlinePageInput();
 		if (fFoldingStructureProvider != null) {
 			fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(input));
