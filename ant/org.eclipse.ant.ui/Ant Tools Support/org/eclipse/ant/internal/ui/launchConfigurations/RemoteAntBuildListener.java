@@ -219,7 +219,9 @@ public class RemoteAntBuildListener implements ILaunchesListener {
         int size = IAntUIConstants.LEFT_COLUMN_SIZE - (taskName.length() + 3);
         int offset = Math.max(size - 2, 1);
         int length = IAntUIConstants.LEFT_COLUMN_SIZE - size - 3;
-        generateLink(line, fileName, lineNumber, offset, length);
+        if (fileName != null) {
+            generateLink(line, fileName, lineNumber, offset, length);
+        }
         
         StringBuffer fullMessage= new StringBuffer();
         adornMessage(taskName, line, fullMessage);

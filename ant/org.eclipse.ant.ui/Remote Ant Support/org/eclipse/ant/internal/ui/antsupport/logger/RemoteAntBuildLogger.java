@@ -310,7 +310,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         String line = r.readLine();
         StringBuffer message;
         String taskName= event.getTask().getTaskName();
-        if (taskName.equals(fLastTaskName)) {
+        if (taskName != null && taskName.equals(fLastTaskName)) {
             taskName= ""; //$NON-NLS-1$
         } else {
             fLastTaskName= taskName;
@@ -324,6 +324,10 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         } catch (NoSuchMethodError e) {
             //older Ant
             fileName= location.toString();
+        }
+        if (location == Location.UNKNOWN_LOCATION) {
+            fileName= location.toString();
+            lineNumber= -1;
         }
         int priority= event.getPriority();
         while (line != null) {
