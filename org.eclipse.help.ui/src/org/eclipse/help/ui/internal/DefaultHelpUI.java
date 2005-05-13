@@ -18,6 +18,7 @@ import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -63,14 +64,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		public ExternalWorkbenchBrowser() {
 		}
 		
-		private IWebBrowser getExternalBrowser() {
-			try {
-				IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-				return support.getExternalBrowser();
-			}
-			catch (PartInitException e) {
-				return null;
-			}
+		private IWebBrowser getExternalBrowser() throws PartInitException {
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
+					.getBrowserSupport();
+			return support.getExternalBrowser();
 		}
 		public void close() {
 		}
@@ -80,9 +77,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		}
 
 		public void displayURL(String url) throws Exception {
-			IWebBrowser browser = getExternalBrowser();
-			if (browser!=null) {
-				browser.openURL(new URL(url));
+			try {
+				IWebBrowser browser = getExternalBrowser();
+				if (browser != null) {
+					browser.openURL(new URL(url));
+				}
+			} catch (PartInitException pie) {
+				ErrorUtil.displayErrorDialog(pie.getLocalizedMessage());
 			}
 		}
 
