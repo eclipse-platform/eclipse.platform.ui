@@ -30,10 +30,16 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 
 	private static final Object[] EMPTY_ARRAY = new Object[0];
 
+	/**
+	 * Construct a new instance of the extension tracker.
+	 */
 	public ExtensionTracker() {
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@registerHandler(IExtensionChangeHandler, IFilter)
+	 */
 	public void registerHandler(IExtensionChangeHandler handler, IFilter filter) {
 		synchronized (lock) {
 			if (closed)
@@ -42,7 +48,10 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 			handlers.add(new HandlerWrapper(handler, filter));
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@unregisterHandler(IExtensionChangeHandler)
+	 */
 	public void unregisterHandler(IExtensionChangeHandler handler) {
 		synchronized (lock) {
 			if (closed)
@@ -51,6 +60,9 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@registerObject(IExtension, Object, int)
+	 */
 	public void registerObject(IExtension element, Object object, int referenceType) {
 		if (element == null || object == null)
 			return;
@@ -69,7 +81,7 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 	}
 
 	/**
-	 * Implementation of IRegistryChangeListener interface.  This method should not
+	 * Implementation of IRegistryChangeListener interface.  This method must not
 	 * be called by clients.
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
@@ -146,6 +158,9 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		handler.removeExtension(removedExtension, removedObjects);
 	}
 
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@getObjects(IExtension)
+	 */
 	public Object[] getObjects(IExtension element) {
 		synchronized (lock) {
 			if (closed)
@@ -158,6 +173,9 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@close()
+	 */
 	public void close() {
 		synchronized (lock) {
 			if (closed)
@@ -171,6 +189,9 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@unregisterObject(IExtension, Object)
+	 */
 	public void unregisterObject(IExtension extension, Object object) {
 		synchronized (lock) {
 			if (closed)
@@ -181,6 +202,9 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IExtensionTracker@unregisterObject(IExtension)
+	 */
 	public Object[] unregisterObject(IExtension extension) {
 		synchronized (lock) {
 			if (closed)
@@ -191,12 +215,12 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 			return associatedObjects.toArray();
 		}
 	}
-	
-    /**
-     * Return an instance of filter matching all changes for the given extension point.
-     * @param xpt the extension point 
-     * @return a filter
-     */
+
+	/**
+	 * Return an instance of filter matching all changes for the given extension point.
+	 * @param xpt the extension point 
+	 * @return a filter
+	 */
 	public static IFilter createExtensionPointFilter(final IExtensionPoint xpt) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
@@ -205,11 +229,11 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		};
 	}
 
-    /**
-     * Return an instance of filter matching all changes for the given extension points.
-     * @param xpts the extension points used to filter
-     * @return a filter
-     */
+	/**
+	 * Return an instance of filter matching all changes for the given extension points.
+	 * @param xpts the extension points used to filter
+	 * @return a filter
+	 */
 	public static IFilter createExtensionPointFilter(final IExtensionPoint[] xpts) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {
@@ -221,11 +245,11 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		};
 	}
 
-    /**
-     * Return an instance of filter matching all changes from a given plugin.
-     * @param id the plugin id 
-     * @return a filter
-     */
+	/**
+	 * Return an instance of filter matching all changes from a given plugin.
+	 * @param id the plugin id 
+	 * @return a filter
+	 */
 	public static IFilter createNamespaceFilter(final String id) {
 		return new IFilter() {
 			public boolean matches(IExtensionPoint target) {

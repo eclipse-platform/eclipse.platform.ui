@@ -29,10 +29,10 @@ public interface IExtensionChangeHandler {
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension);
 
-    /** 
-     * This method is called after the removal of an extension.
-     * @param extension the extension being removed
-     * @param objects the objects that were associated with the removed extension 
-     */
+	/** 
+	 * This method is called after the removal of an extension.
+	 * @param extension the extension being removed
+	 * @param objects the objects that were associated with the removed extension 
+	 */
 	public void removeExtension(IExtension extension, Object[] objects);
 }
