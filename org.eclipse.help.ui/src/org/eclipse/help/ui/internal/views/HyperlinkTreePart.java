@@ -26,7 +26,8 @@ import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public abstract class HyperlinkTreePart extends AbstractFormPart implements IHelpPart {
+public abstract class HyperlinkTreePart extends AbstractFormPart implements
+		IHelpPart {
 	protected ReusableHelpPart parent;
 
 	private String id;
@@ -36,6 +37,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 	protected TreeViewer treeViewer;
 
 	private TreeItem lastItem;
+
 	private Cursor handCursor;
 
 	/**
@@ -61,7 +63,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		treeViewer.getTree().setMenu(parent.getMenu());
 		treeViewer.getTree().setForeground(
 				toolkit.getHyperlinkGroup().getForeground());
-		configureTreeViewer();		
+		configureTreeViewer();
 		treeViewer.setInput(this);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeViewer.addOpenListener(new IOpenListener() {
@@ -77,9 +79,10 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		});
 		treeViewer.getTree().addMouseListener(new MouseAdapter() {
 			long lastTime;
+
 			public void mouseUp(MouseEvent e) {
 				long eventTime = e.time & 0xFFFFFFFFL;
-				if (eventTime-lastTime <=e.display.getDoubleClickTime())
+				if (eventTime - lastTime <= e.display.getDoubleClickTime())
 					return;
 				if (e.button != 1)
 					return;
@@ -88,7 +91,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 				TreeItem item = treeViewer.getTree().getItem(p);
 				if (item != null) {
 					Object obj = item.getData();
-					if (obj !=null) {
+					if (obj != null) {
 						doOpen(obj);
 					}
 				}
@@ -151,8 +154,14 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 					}
 					Object obj = item.getData();
 					treeViewer.getTree().setCursor(handCursor);
-					item.setForeground(toolkit.getHyperlinkGroup()
-							.getActiveForeground());
+					IStructuredSelection ssel = (IStructuredSelection) treeViewer
+							.getSelection();
+					if (ssel.getFirstElement() == obj)
+						item.setForeground(container.getDisplay()
+								.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+					else
+						item.setForeground(toolkit.getHyperlinkGroup()
+								.getActiveForeground());
 					lastItem = item;
 					repaintItem(lastItem);
 					if (obj instanceof IHelpResource)
@@ -171,7 +180,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		});
 		contributeToToolBar(tbm);
 	}
-	
+
 	public void dispose() {
 		handCursor.dispose();
 		super.dispose();
@@ -195,7 +204,8 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 		};
 		collapseAllAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
-		collapseAllAction.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); //$NON-NLS-1$
+		collapseAllAction
+				.setToolTipText(Messages.AllTopicsPart_collapseAll_tooltip); //$NON-NLS-1$
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}
@@ -249,11 +259,20 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 
 	protected void handleSelectionChanged(IStructuredSelection sel) {
 		Object obj = sel.getFirstElement();
+		if (lastItem != null) {
+			Object lastObj = lastItem.getData();
+			if (lastObj==obj)
+				lastItem.setForeground(container.getDisplay()
+							.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+			else
+				lastItem.setForeground(parent.getForm().getToolkit().getHyperlinkGroup()
+						.getActiveForeground());
+			repaintItem(lastItem);
+		}
 		if (obj instanceof IHelpResource) {
 			IHelpResource res = (IHelpResource) obj;
 			updateStatus(res, false);
-		}
-		else
+		} else
 			updateStatus(null, false);
 	}
 
@@ -267,7 +286,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 					.getSelection();
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof IHelpResource)
-				res = (IHelpResource)obj;
+				res = (IHelpResource) obj;
 		}
 		if (res != null) {
 			String label = res.getLabel();
@@ -278,12 +297,13 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 			HyperlinkTreePart.this.parent.handleLinkExited(null);
 		}
 	}
-	
+
 	protected String getHref(IHelpResource res) {
 		return res.getHref();
 	}
 
 	protected abstract void configureTreeViewer();
+
 	protected abstract void doOpen(Object obj);
 
 	protected void postUpdate(final Object obj) {
@@ -300,11 +320,12 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public boolean fillContextMenu(IMenuManager manager) {
-		return parent.fillSelectionProviderMenu(treeViewer, manager, canAddBookmarks());
+		return parent.fillSelectionProviderMenu(treeViewer, manager,
+				canAddBookmarks());
 	}
-	
+
 	protected abstract boolean canAddBookmarks();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -330,6 +351,6 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements IHel
 
 	private void validateLastItem() {
 		if (lastItem != null && lastItem.isDisposed())
-			lastItem=null;
+			lastItem = null;
 	}
 }
