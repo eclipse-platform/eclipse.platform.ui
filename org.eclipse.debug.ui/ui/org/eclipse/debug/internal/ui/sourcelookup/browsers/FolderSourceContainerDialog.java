@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.internal.ide.dialogs.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * The dialog for selecting the folder for which a source container will be created.
