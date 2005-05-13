@@ -466,7 +466,7 @@ public abstract class Window implements IShellProvider {
 
 		Shell newParent = getParentShell();
 		if(newParent != null &&  newParent.isDisposed()){
-			parentShell = null;
+			parentShell = new SameShellProvider(null);
 			newParent = getParentShell();//Find a better parent
 		}
 		
