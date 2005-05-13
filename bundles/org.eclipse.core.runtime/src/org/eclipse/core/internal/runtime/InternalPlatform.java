@@ -311,6 +311,8 @@ public final class InternalPlatform {
 	public String getBundleId(Object object) {
 		if (object == null)
 			return null;
+		if (packageAdmin == null)
+			return null;
 		Bundle source = packageAdmin.getBundle(object.getClass());
 		if (source != null && source.getSymbolicName() != null)
 			return source.getSymbolicName();
