@@ -46,6 +46,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	
 	private OverlayPreferenceStore fOverlayStore;
 	protected List fStatusList;
+	private boolean fInitialized= false;
 	
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
@@ -60,15 +61,19 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	private Map fTextFields= new HashMap();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			Text text= (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
+			if (fInitialized) {
+				Text text= (Text) e.widget;
+				fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
+			}
 		}
 	};
 
 	private Map fNumberFields= new HashMap();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text) e.widget);
+			if (fInitialized) {
+				numberFieldChanged((Text) e.widget);
+			}
 		}
 	};
 			
@@ -101,7 +106,8 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 			Text t= (Text) e.next();
 			String key= (String) textFields.get(t);
 			t.setText(getOverlayStore().getString(key));
-		}		
+		}
+		fInitialized= true;
 	}
 	
 	/* (non-Javadoc)
