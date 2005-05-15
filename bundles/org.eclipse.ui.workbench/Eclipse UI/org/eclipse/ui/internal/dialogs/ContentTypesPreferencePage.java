@@ -304,6 +304,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         label.setText(WorkbenchMessages.ContentTypes_characterSetLabel);
         charsetField = new Text(composite, SWT.SINGLE | SWT.BORDER);
         charsetField.setFont(parent.getFont());
+        charsetField.setEnabled(false);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         charsetField.setLayoutData(data);
         setButton = new Button(composite, SWT.PUSH);
