@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -115,7 +116,8 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         if(canAdapt()) {        	
            IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(selection, getObjectClass());     
            if(newSelection.size() != selection.size()) {
-            	WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
+        	   if (Policy.DEBUG_CONTRIBUTIONS)
+        		   WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
             			". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$            	
             	return false;
            }
@@ -193,7 +195,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         // the actual selected object.
         if (canAdapt()) {
 			Object adapted = LegacyResourceSupport.getAdapter(object, getObjectClass());
-			if (adapted == null) {
+			if (adapted == null && Policy.DEBUG_CONTRIBUTIONS) {
 				WorkbenchPlugin.log("Error adapting " + object.getClass().getName() + //$NON-NLS-1$
 						" to " + getObjectClass() + ". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {

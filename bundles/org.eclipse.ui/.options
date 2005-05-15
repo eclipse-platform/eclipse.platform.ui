@@ -15,6 +15,9 @@ org.eclipse.ui/debug/declaredImages=false
 # Enable extended SWT debugging.
 org.eclipse.ui/debug/swtdebug=false
 
+# Enable logging of certain contribution related messages
+org.eclipse.ui/debug/contributions=false
+
 # Enable the trace of SWT graphics.
 org.eclipse.ui/trace/graphics=false
 

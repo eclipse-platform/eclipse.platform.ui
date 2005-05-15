@@ -92,6 +92,13 @@ public class Policy {
      * @since 3.1
      */
     public static boolean DEBUG_DECLARED_IMAGES = DEFAULT;
+    
+    /**
+     * Whether or not to print contribution-related issues.
+     * 
+     * @since 3.1
+     */
+    public static boolean DEBUG_CONTRIBUTIONS = DEFAULT;
 
     /**
      * Which command identifier to print handler information for.  This
@@ -120,6 +127,7 @@ public class Policy {
                     .getDebugOption(PlatformUI.PLUGIN_ID
                             + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
             DEBUG_DECLARED_IMAGES = getDebugOption("/debug/declaredImages"); //$NON-NLS-1$
+            DEBUG_CONTRIBUTIONS = getDebugOption("/debug/contributions"); //$NON-NLS-1$
         }
     }
 
