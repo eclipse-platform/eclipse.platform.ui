@@ -19,18 +19,18 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -94,7 +94,7 @@ public class ExpressionView extends VariablesView {
 	 * 
 	 * @return a content provider
 	 */
-	protected IContentProvider createContentProvider(Viewer viewer) {
+	protected RemoteVariablesContentProvider createContentProvider(Viewer viewer) {
 		return new RemoteExpressionsContentProvider((RemoteTreeViewer)viewer, getSite(), this);
 	}
 	
@@ -103,7 +103,7 @@ public class ExpressionView extends VariablesView {
 	 * 
 	 * @return an event handler
 	 */
-	protected AbstractDebugEventHandler createEventHandler() {
+	protected VariablesViewEventHandler createEventHandler() {
 		return new ExpressionViewEventHandler(this);
 	}		
 	

@@ -614,7 +614,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, this);
-		variablesViewer.setContentProvider(createContentProvider(variablesViewer));
+		RemoteVariablesContentProvider provider = createContentProvider(variablesViewer);
+		variablesViewer.setContentProvider(provider);
 		variablesViewer.setLabelProvider(createLabelProvider(variablesViewer));
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
@@ -635,7 +636,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		setEventHandler(createEventHandler());
+		VariablesViewEventHandler handler = createEventHandler();
+		handler.setContentManager(provider.getContentManager());
+		setEventHandler(handler);
 
 		return variablesViewer;
 	}
@@ -690,10 +693,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * 
 	 * @return a content provider
 	 */
-	protected IContentProvider createContentProvider(Viewer viewer) {
+	protected RemoteVariablesContentProvider createContentProvider(Viewer viewer) {
 		return new RemoteVariablesContentProvider((RemoteTreeViewer) viewer, getSite(), this);
-		// TODO: exception handler
-		//cp.setExceptionHandler(this);
 	}
 	
 	/**
@@ -701,7 +702,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * 
 	 * @return an event handler
 	 */
-	protected AbstractDebugEventHandler createEventHandler() {
+	protected VariablesViewEventHandler createEventHandler() {
 		return new VariablesViewEventHandler(this);
 	}	
 		

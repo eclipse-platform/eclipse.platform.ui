@@ -108,6 +108,8 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	 * this object can be garbage-collected.
 	 */
 	public void dispose() {
+		fManager.clearHasChildrenCache();
+		fManager.cancel();
 		fParentCache= null;
 		setExceptionHandler(null);
 	}
@@ -144,6 +146,7 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
+		fManager.cancel();
         fManager.clearHasChildrenCache();
 	}
 	
@@ -211,6 +214,10 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	
 	public boolean isShowLogicalStructure() {
 		return fUseObjectBrowsers;
+	}
+	
+	public RemoteVariableContentManager getContentManager() {
+		return fManager;
 	}
 	
 }

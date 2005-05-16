@@ -12,14 +12,14 @@ package org.eclipse.debug.internal.ui.views.registers;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -30,7 +30,7 @@ public class RegistersView extends VariablesView {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createContentProvider()
 	 */
-	protected IContentProvider createContentProvider(Viewer viewer) {
+	protected RemoteVariablesContentProvider createContentProvider(Viewer viewer) {
 		RemoteRegistersViewContentProvider cp = new RemoteRegistersViewContentProvider((RemoteTreeViewer) viewer, getSite(), this);
 //		TODO
 //		cp.setExceptionHandler(this);
@@ -77,7 +77,7 @@ public class RegistersView extends VariablesView {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createEventHandler()
 	 */
-	protected AbstractDebugEventHandler createEventHandler() {
+	protected VariablesViewEventHandler createEventHandler() {
 		return new RegistersViewEventHandler(this);
 	}
 }

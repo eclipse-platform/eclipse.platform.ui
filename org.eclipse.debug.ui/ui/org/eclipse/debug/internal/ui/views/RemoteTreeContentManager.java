@@ -315,4 +315,16 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 		else
 			progressService.schedule(fFetchJob);
 	}
+    
+    /**
+     * Cancels any content this provider is currently fetching.
+     */
+    public void cancel() {
+    	synchronized (fElementQueue) {
+    		fFetchJob.cancel();
+    		fElementQueue.clear();
+    		fAdapaters.clear();
+    		fCollectors.clear();
+    	}
+    }
 }

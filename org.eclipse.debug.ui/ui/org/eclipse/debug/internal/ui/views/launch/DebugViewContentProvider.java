@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -22,7 +21,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.views.RemoteTreeContentManager;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
@@ -31,7 +29,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
  */
 public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
     
-    private DeferredTreeContentManager fManager;
+    private RemoteTreeContentManager fManager;
     
     public DebugViewContentProvider(LaunchViewer tree, IWorkbenchPartSite site) {
         fManager = new RemoteTreeContentManager(this, tree, site);
@@ -95,7 +93,7 @@ public class DebugViewContentProvider extends BaseWorkbenchContentProvider {
      * @see org.eclipse.jface.viewers.IContentProvider#dispose()
      */
     public void dispose() {
-        fManager.cancel(DebugPlugin.getDefault().getLaunchManager());
+        fManager.cancel();
         super.dispose();
     }
 
