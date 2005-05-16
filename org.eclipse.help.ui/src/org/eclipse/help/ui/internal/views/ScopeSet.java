@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.*;
 public class ScopeSet {
 	public static final String SCOPE_DIR_NAME = "scope_sets"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT = "__DEFAULT__"; //$NON-NLS-1$
-	public static final String EXT = ".sset"; //$NON-NLS-1$
+	public static final String EXT = ".pref"; //$NON-NLS-1$
 	private String name;
 	private PreferenceStore preferenceStore;
 	private boolean needsSaving;
