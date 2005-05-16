@@ -538,8 +538,7 @@ public class JobManager implements IJobManager {
 	}
 
 	/**
-	 * Returns whether the job manager is active (has been started more
-	 * recently than it has not been shutdown).
+	 * Returns whether the job manager is active (has not been shutdown).
 	 */
 	protected boolean isActive() {
 		return active;
