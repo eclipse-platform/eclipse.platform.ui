@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,8 +14,15 @@ package org.eclipse.ui.tests.performance;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.PerformanceTestCase;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -70,11 +77,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 	    super.doSetUp();
-	    
-	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
-                fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
-                        UIPerformanceTestSetup.PERSPECTIVE1));
-	    
 	    tester = new PerformanceTester(this);
 	}
 	
@@ -156,6 +158,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            the dimension to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
+		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
@@ -171,14 +174,17 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            an array of dimensions to show in the summary
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
+		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension[] dimensions) {
+		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimensions);
 	}
 	
 	private void tagAsSummary(String shortName, Dimension dimension) {
+		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimension);
 	}
 	
@@ -191,13 +197,87 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 	
-	public void tagIfNecessary(String shortName, Dimension [] dimensions) {
-		if (shouldGloballyTag()) {
-			tagAsGlobalSummary(shortName, dimensions);
-		}
-		if (shouldLocallyTag()) {
-			tagAsSummary(shortName, dimensions);
-		}
-	}
 	
+    public static void waitForBackgroundJobs() {
+
+        Job backgroundJob = new Job("This is a test job which sits around being low priority until everything else finishes") {
+            protected IStatus run(IProgressMonitor monitor) {
+                return Status.OK_STATUS;
+            }
+        };
+
+        backgroundJob.setPriority(Job.DECORATE);
+        
+        boolean hadEvents = true;
+        Display display = PlatformUI.getWorkbench().getDisplay();
+        if (display != null) {
+            while (hadEvents) {
+                hadEvents = false;
+                // Join a low priority job then spin the event loop
+                backgroundJob.schedule(0);
+                try {
+                    backgroundJob.join();
+                } catch (InterruptedException e) {
+                }
+                
+                while (display.readAndDispatch()) {
+                    hadEvents = true;
+                }
+            }
+        }        
+    }
+    
+    /**
+     * Runs the given runnable until either 100 iterations or 4s has elapsed.
+     * Runs a minimum of 3 times.
+     * 
+     * @param runnable
+     * @since 3.1
+     */
+    public static void exercise(TestRunnable runnable) throws CoreException {
+        exercise(runnable, 3, 100, 4000);
+    }
+    
+    /**
+     * Exercises the given runnable until either the given number of iterations or the given
+     * amount of time has elapsed, whatever occurs first.
+     * 
+     * @param runnable
+     * @param maxIterations
+     * @param maxTime
+     * @since 3.1
+     */
+    public static void exercise(TestRunnable runnable, int minIterations, int maxIterations, int maxTime) throws CoreException {
+        long startTime = System.currentTimeMillis();
+        
+        for(int counter = 0; counter < maxIterations; counter++) {
+
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                
+                
+                Throwable cause = e;
+                
+                if (e instanceof CoreException) {
+                    cause = ((CoreException)e).getStatus().getException();
+                } else {
+                    if (e.getCause() != null) {
+                        cause = e.getCause();
+                    }
+                }
+                
+                throw new CoreException(new Status(IStatus.ERROR, 
+                        TestPlugin.getDefault().getBundle().getSymbolicName(),
+                        IStatus.OK,
+                        "An exception occurred", e));
+            }
+            
+            long curTime = System.currentTimeMillis();
+            if (curTime - startTime > maxTime && counter >= minIterations - 1) {
+                break;
+            } 
+        }
+    }
+    
 }

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,6 +16,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -66,33 +67,35 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
             return;
         }
         
-        // Open a file.
-        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+        // Open the two perspectives and the file, in a new window.
+        // Do this outside the loop so as not to include
+        // the initial time to open, just switching.        
+        IWorkbenchWindow window = openTestWindow(id1);
+        final IWorkbenchPage page = window.getActivePage();
+        assertNotNull(page);
+        page.setPerspective(perspective2);
+        
         //IFile aFile = getProject().getFile("1." + EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
         IFile aFile = getProject().getFile(activeEditor);
         assertTrue(aFile.exists());
 
-        IDE.openEditor(activePage, aFile, true);
+        IDE.openEditor(page, aFile, true);
 
-        // Open both perspective outside the loop so as not to include
-        // the initial time to open, just switching.        
-        activePage.setPerspective(perspective1);
-        activePage.resetPerspective();
-        activePage.setPerspective(perspective2);
-        activePage.resetPerspective();
-
-       	tagIfNecessary("Perspective Switch", Dimension.CPU_TIME);
+       	tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
         
-        for (int i = 0; i < 20; i++) {
-            processEvents();
-            
-            startMeasuring();
-            activePage.setPerspective(perspective1);
-            processEvents();
-            activePage.setPerspective(perspective2);
-            processEvents();
-            stopMeasuring();
-        }
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                
+                startMeasuring();
+                page.setPerspective(perspective1);
+                processEvents();
+                page.setPerspective(perspective2);
+                processEvents();
+                stopMeasuring();
+            } 
+        });
+        
         commitMeasurements();
         assertPerformance();
     }

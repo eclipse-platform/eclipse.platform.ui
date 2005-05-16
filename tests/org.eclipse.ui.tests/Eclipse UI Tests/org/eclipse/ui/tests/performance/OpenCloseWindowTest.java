@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,19 +32,22 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     
     protected void runTest() throws Throwable {
     	
-    	tagIfNecessary("Open/Close Window", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
-        for (int i = 0; i < WorkbenchPerformanceSuite.ITERATIONS; i++) {
-            processEvents();
-            EditorTestHelper.calmDown(500, 30000, 500);
-            
-            startMeasuring();
-            IWorkbenchWindow window = openTestWindow(id);
-            processEvents();   
-            window.close();
-            processEvents(); 
-            stopMeasuring();
-        }
+    	tagIfNecessary("Open/Close Window", Dimension.ELAPSED_PROCESS);
         
+        exercise(new TestRunnable() {
+            public void run() throws Exception {
+                processEvents();
+                EditorTestHelper.calmDown(500, 30000, 500);
+                
+                startMeasuring();
+                IWorkbenchWindow window = openTestWindow(id);
+                processEvents();   
+                window.close();
+                processEvents(); 
+                stopMeasuring();
+            } 
+        });
+                
         commitMeasurements();
         assertPerformance();
     }

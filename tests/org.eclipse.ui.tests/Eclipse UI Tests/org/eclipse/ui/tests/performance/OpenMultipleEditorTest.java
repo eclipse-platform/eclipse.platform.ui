@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -35,12 +36,14 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
     }
     
     protected void runTest() throws Throwable {
-        IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
+		IWorkbenchPage activePage = window.getActivePage();
         
-        tagIfNecessary("Open Multiple Editors", new Dimension [] {Dimension.CPU_TIME, Dimension.USED_JAVA_HEAP});
+        tagIfNecessary("Open Multiple Editors",Dimension.ELAPSED_PROCESS);
         
-        startMeasuring();            
-        for (int i = 0; i < EditorPerformanceSuite.ITERATIONS; i++) {
+        startMeasuring();      
+                
+        for (int i = 0; i < 100; i++) {
             IFile file = getProject().getFile(i + "." + extension);
             IEditorPart part = IDE.openEditor(activePage, file, true);
             processEvents();

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,13 +12,15 @@ package org.eclipse.ui.tests.performance.layout;
 
 import junit.framework.Assert;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
@@ -26,6 +28,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class PerspectiveWidgetFactory extends TestWidgetFactory {
 
     private String perspectiveId;
+    private IWorkbenchWindow window;
     
     public PerspectiveWidgetFactory(String initialPerspective) {
         perspectiveId = initialPerspective;
@@ -41,22 +44,13 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
-    public void init() {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId(perspectiveId);
-
-        Assert.assertNotNull("Unknown perspective id: " + perspectiveId 
-                + " (probably indicates a bug in the test suite)", perspective1);
-
-		// Open a file.
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		activePage.setPerspective(perspective1);
+    public void init() throws WorkbenchException {
+    	// open the perspective in a new window
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, UITestCase.getPageInput());
+		IWorkbenchPage page = window.getActivePage();
+        Assert.assertNotNull(page);
     }
     
-    public void done() {
-        
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */
@@ -68,7 +62,14 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getControl()
      */
     public Composite getControl() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return window.getShell();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
+     */
+    public void done() throws CoreException, WorkbenchException {
+    	window.close();
+    	super.done();
+    }
 }

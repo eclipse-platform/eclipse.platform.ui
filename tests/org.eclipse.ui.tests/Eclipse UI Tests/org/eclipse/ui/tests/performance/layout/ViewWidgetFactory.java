@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,20 +12,22 @@ package org.eclipse.ui.tests.performance.layout;
 
 import junit.framework.Assert;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * @since 3.1
@@ -34,6 +36,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
 
     private String viewId;
     private Control ctrl;
+    private IWorkbenchWindow window;
     
     public ViewWidgetFactory(String viewId) {
         this.viewId = viewId;
@@ -59,24 +62,22 @@ public class ViewWidgetFactory extends TestWidgetFactory {
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#init()
      */
     public void init() throws CoreException, WorkbenchException {
-        final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        final IPerspectiveDescriptor perspective1 = registry.findPerspectiveWithId("org.eclipse.ui.tests.util.EmptyPerspective");
+    	// open the view in a new window
+        window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
+		IWorkbenchPage page = window.getActivePage();
+        Assert.assertNotNull(page);
 
-        Assert.assertNotNull(perspective1);
-
-		// Open a file.
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		activePage.setPerspective(perspective1);
-		
-		IViewPart part = activePage.showView(viewId, null, WorkbenchPage.VIEW_ACTIVATE);
-
+		IViewPart part = page.showView(viewId, null, WorkbenchPage.VIEW_ACTIVATE);
+        
+        BasicPerformanceTest.waitForBackgroundJobs();
+        
 		ctrl = getControl(part);
+        
+        Point size = getMaxSize();
+        ctrl.setBounds(0,0,size.x, size.y);
+        window.getShell().setSize(size);
     }
     
-    public void done() throws CoreException, WorkbenchException {
-        
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.performance.TestWidgetFactory#getName()
      */
@@ -90,4 +91,13 @@ public class ViewWidgetFactory extends TestWidgetFactory {
     public Composite getControl() throws CoreException, WorkbenchException {
         return (Composite)ctrl;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
+     */
+    public void done() throws CoreException, WorkbenchException {
+    	window.close();
+    	super.done();
+    }
+    
 }

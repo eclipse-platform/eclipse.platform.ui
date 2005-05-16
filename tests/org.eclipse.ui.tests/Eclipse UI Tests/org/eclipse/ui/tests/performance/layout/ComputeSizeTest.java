@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,31 +16,26 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
+ * Measures the performance of a widget's computeSize method
+ * 
  * @since 3.1
  */
 public class ComputeSizeTest extends BasicPerformanceTest {
 
     private TestWidgetFactory widgetFactory;
-    private int xHint;
-    private int yHint;
-    private boolean flushState;
-    private int iterations = 100;
+    private int xIterations = 10;
+    private int yIterations = 10;
     
     /**
      * @param testName
      */
-    public ComputeSizeTest(TestWidgetFactory widgetFactory, int xHint, int yHint, boolean flushState) {
-        super(widgetFactory.getName() + " computeSize(" 
-                + ((xHint == SWT.DEFAULT)? "SWT.DEFAULT" : "" + xHint) + ", "
-                + ((yHint == SWT.DEFAULT)? "SWT.DEFAULT" : "" + yHint) + ", "
-                + (flushState ? "true" : "false") + ")");
+    public ComputeSizeTest(TestWidgetFactory widgetFactory) {
+        super(widgetFactory.getName() + " computeSize");
         
         this.widgetFactory = widgetFactory;
-        this.flushState = flushState;
-        this.xHint = xHint;
-        this.yHint = yHint;
     }
 
     /**
@@ -49,24 +44,56 @@ public class ComputeSizeTest extends BasicPerformanceTest {
     protected void runTest() throws CoreException, WorkbenchException {
 
         widgetFactory.init();
-        Composite widget = widgetFactory.getControl();
-        Point maxSize = widgetFactory.getMaxSize();
+        final Composite widget = widgetFactory.getControl();
+        //Rectangle initialBounds = widget.getBounds();
+        final Point maxSize = widgetFactory.getMaxSize();
         
-        for (int iteration = 0; iteration < iterations; iteration++) {
-            
-            processEvents();
-            
-            // Place some bogus size queries to reduce the chance of a cached value being returned
-            widget.computeSize(100, SWT.DEFAULT, false);
-            widget.computeSize(SWT.DEFAULT, 100, false);
-            
-            startMeasuring();
-            
-            widget.computeSize(xHint, yHint, flushState);
-            
-            stopMeasuring();                
-            
-        }
+        // Iteration counter. We increment this each pass through the loop in order to 
+        // generate slightly different test data each time
+        final int[] counter = new int[] {0};
+        
+        exercise(new TestRunnable() {
+           public void run() {
+        
+               // This counter determines whether we're computing a width, height, or fixed
+               // size and whether or not we flush the cache. 
+               
+               // We do things this way to avoid calling computeSize with the same (or similar) values
+               // twice in a row, which would be too easy to cache.
+               int count = counter[0];
+               
+               startMeasuring();
+               
+               for (int xIteration = 0; xIteration < xIterations; xIteration++) {
+                   
+                   for (int yIteration = 0; yIteration < yIterations; yIteration++) {
+                       // Avoid giving the same x value twice in a row in order to make it hard to cache
+                       int xSize = maxSize.x * ((xIteration + yIteration) % xIterations) / xIterations;
+                       int ySize = maxSize.y * yIteration / yIterations;
+
+                       // Alternate between flushing and not flushing the cache
+                       boolean flushState = (count % 2) != 0;
+                       
+                       // Alternate between width, height, and fixed, and default size queries 
+                       // (note: we need to alternate in order to make the result hard to cache)
+                       switch(count % 4) {
+                           case 0: widget.computeSize(xSize, SWT.DEFAULT, flushState); break;
+                           case 1: widget.computeSize(SWT.DEFAULT, ySize, flushState); break;
+                           case 2: widget.computeSize(xSize, ySize, flushState); break;
+                           case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushState); break;
+                       }
+
+                       count++;
+                   }
+               }
+               
+               stopMeasuring();
+               
+               processEvents();
+               
+               counter[0]++;               
+            } 
+        });
         
         commitMeasurements();
         assertPerformance();

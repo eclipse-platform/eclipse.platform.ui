@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -36,6 +37,16 @@ import org.eclipse.ui.WorkbenchException;
  */
 public abstract class UITestCase extends TestCase 
 {
+	/**
+	 * Returns the workbench page input to use for newly created windows.
+	 *  
+	 * @return the page input to use for newly created windows
+	 * @since 3.1 (backported for perf tests)
+	 */
+	public static IAdaptable getPageInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
 	class TestWindowListener implements IWindowListener {
 		private boolean enabled = true;
 		
@@ -169,7 +180,7 @@ public abstract class UITestCase extends TestCase
 			return 
 				fWorkbench.openWorkbenchWindow(
 					perspectiveId,
-					ResourcesPlugin.getWorkspace());
+					getPageInput());
 		} catch (WorkbenchException e) {
 			fail();
 			return null;
@@ -209,10 +220,10 @@ public abstract class UITestCase extends TestCase
 	public IWorkbenchPage[] openTestPage(IWorkbenchWindow win, int pageTotal) {		
 		try{
 			IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
-			IWorkspace work = ResourcesPlugin.getWorkspace();
+			IAdaptable input = getPageInput();
 
 			for (int i = 0; i < pageTotal; i++) {
-				pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
+				pages[i] = win.openPage(EmptyPerspective.PERSP_ID, input);
 			}
 			return pages;
 		}
@@ -239,4 +250,6 @@ public abstract class UITestCase extends TestCase
 	protected void manageWindows(boolean manage) {
 		windowListener.setEnabled(manage);
 	}
+	
+	
 }
