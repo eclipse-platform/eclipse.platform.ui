@@ -28,9 +28,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -43,6 +46,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -95,7 +99,6 @@ import org.eclipse.ui.internal.PluginActionSetBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -130,17 +133,15 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     private CheckboxTableViewer actionSetsViewer;
 
-    private IndentedTableViewer actionSetMenuViewer;
+    private TreeViewer actionSetMenuViewer;
 
-    private IndentedTableViewer actionSetToolbarViewer;
+    private TreeViewer actionSetToolbarViewer;
 
     private Combo menusCombo;
 
     private CheckboxTreeViewer menuCategoriesViewer;
 
     private CheckboxTableViewer menuItemsViewer;
-
-    private CustomizeActionBars customizeWorkbenchActionBars;
 
     private static int lastSelectedTab = -1;
 
@@ -175,6 +176,8 @@ public class CustomizePerspectiveDialog extends Dialog {
     private ArrayList actionSets = new ArrayList();
 
     private Hashtable actionSetStructures = new Hashtable();
+
+	private IWorkbenchWindowConfigurer configurer;
 
     class ActionSetDisplayItem extends Object {
         /**
@@ -348,21 +351,27 @@ public class CustomizePerspectiveDialog extends Dialog {
             return text;
         }
 
-        ArrayList getElements() {
-            ArrayList elements = new ArrayList();
-            for (int i = 0; i < children.size(); i++) {
-                ActionSetDisplayItem child = (ActionSetDisplayItem) children
-                        .get(i);
-                elements.add(child);
-                elements.addAll(child.getElements());
-            }
-            return elements;
-        }
-
         protected boolean isTopLevelMenu() {
             if (parent == null)
                 return false;
             return parent.parent == null;
+        }
+        
+        public String toString() {
+        	StringBuffer sb = new StringBuffer();
+        	for (int i = getDepth(); --i >= 0;) {
+        		sb.append("  "); //$NON-NLS-1$
+        	}
+    		sb.append("id: "); //$NON-NLS-1$
+    		sb.append(id);
+    		sb.append("  text: "); //$NON-NLS-1$
+    		sb.append(text);
+        	sb.append('\n');
+        	for (int i = 0; i < children.size(); ++i) {
+        		sb.append(children.get(i));
+        	}
+        	return sb.toString();
+        		
         }
     }
 
@@ -382,27 +391,17 @@ public class CustomizePerspectiveDialog extends Dialog {
          * workbench.  We cannot use the actual workbench action bars, since doing so would
          * make the action set items visible.  
          */
-        MenuManager menuManager;
-        CoolBarManager coolBarManager;
-
-        /**
-         * Create a new instance of this class.
-         */
-        public CustomizeActionBars() {
-        }
-
+        MenuManager menuManager = new MenuManager();
+        CoolBarManager coolBarManager = new CoolBarManager();
+        StatusLineManager statusLineManager = new StatusLineManager();
+        
         /**
          * Create a new instance of this class.
          * 
          * @param configurer the configurer
-         * @param menuManager the menu manager
-         * @param coolBarManager the cool bar manager
          */
-        public CustomizeActionBars(IWorkbenchWindowConfigurer configurer, MenuManager menuManager,
-                CoolBarManager coolBarManager) {
+        public CustomizeActionBars(IWorkbenchWindowConfigurer configurer) {
             this.configurer = configurer;
-            this.menuManager = menuManager;
-            this.coolBarManager = coolBarManager;
         }
 
         
@@ -426,7 +425,7 @@ public class CustomizePerspectiveDialog extends Dialog {
          * @see org.eclipse.ui.application.IActionBarConfigurer#getStatusLineManager()
          */
         public IStatusLineManager getStatusLineManager() {
-            return null;
+            return statusLineManager;
         }
 
         /* (non-Javadoc)
@@ -468,6 +467,11 @@ public class CustomizePerspectiveDialog extends Dialog {
         public void registerGlobalAction(IAction action) {
         }
 
+		public void dispose() {
+			coolBarManager.dispose();
+	        menuManager.dispose();	
+	        statusLineManager.dispose();
+	    }
     }
 
     class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
@@ -737,8 +741,10 @@ public class CustomizePerspectiveDialog extends Dialog {
             } else if (element instanceof ShortcutMenu) {
                 ShortcutMenu node = (ShortcutMenu) element;
                 return node.children.toArray();
+            } else if (element instanceof ArrayList) {
+            	return ((ArrayList) element).toArray();
             }
-            return null;
+            return new Object[0];
         }
 
         public Object[] getElements(Object element) {
@@ -771,8 +777,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         }
     }
 
-    class IndentedTableLabelProvider extends LabelProvider implements
-            IIndentedTableLabelProvider {
+    class ActionSetLabelProvider extends LabelProvider {
         private Map imageTable = new Hashtable();
 
         public void dispose() {
@@ -782,7 +787,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             imageTable = null;
         }
 
-        public Image getColumnImage(Object element, int column) {
+        public Image getImage(Object element) {
             ActionSetDisplayItem item = (ActionSetDisplayItem) element;
             ImageDescriptor descriptor = item.imageDescriptor;
             if (descriptor == null) {
@@ -815,7 +820,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             return image;
         }
 
-        public String getColumnText(Object element, int column) {
+        public String getText(Object element) {
             if (element instanceof ActionSetDisplayItem) {
                 ActionSetDisplayItem item = (ActionSetDisplayItem) element;
                 String text = item.getDisplayText();
@@ -847,19 +852,10 @@ public class CustomizePerspectiveDialog extends Dialog {
         super(configurer.getWindow().getShell());
         setShellStyle(SWT.MAX | SWT.RESIZE | getShellStyle());
         
-        
+        this.configurer = configurer;
         perspective = persp;
         window = (WorkbenchWindow) configurer.getWindow();
         
-        // build a structure for the menuitems and toolitems that the workbench contributes
-        customizeWorkbenchActionBars = new CustomizeActionBars(configurer, 
-                new MenuManager(), new CoolBarManager());
-
-        // Fill current actionBars in the "fake" workbench actionbars
-        window.fillActionBars(customizeWorkbenchActionBars,
-                ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR
-                        | ActionBarAdvisor.FILL_COOL_BAR);
-
         initializeActionSetInput();
         initializeShortcutMenuInput();
     }
@@ -945,10 +941,10 @@ public class CustomizePerspectiveDialog extends Dialog {
         });
     }
 
-    private void buildMenusAndToolbarsFor(ActionSetDescriptor actionSetDesc) {
+    private void buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
         String id = actionSetDesc.getId();
         ActionSetActionBars bars = new ActionSetActionBars(
-                customizeWorkbenchActionBars, id);
+        		customizeActionBars, id);
         PluginActionSetBuilder builder = new PluginActionSetBuilder();
         PluginActionSet actionSet = null;
         try {
@@ -996,8 +992,6 @@ public class CustomizePerspectiveDialog extends Dialog {
         else
             lastSelectedActionSetId = ((ActionSetDescriptor) selection
                     .getFirstElement()).getId();
-        customizeWorkbenchActionBars.coolBarManager.dispose();
-        customizeWorkbenchActionBars.menuManager.dispose();
         return super.close();
     }
 
@@ -1080,7 +1074,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         actionSetsViewer.getTable().setLayoutData(data);
         actionSetsViewer.getTable().setFont(font);
         actionSetsViewer.setLabelProvider(new WorkbenchLabelProvider());
-        actionSetsViewer.setContentProvider(new ListContentProvider());
+        actionSetsViewer.setContentProvider(new ArrayContentProvider());
         actionSetsViewer.setSorter(new ActionSetSorter());
 
         // Action list Group
@@ -1112,18 +1106,20 @@ public class CustomizePerspectiveDialog extends Dialog {
         label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
         label.setFont(font);
 
-        actionSetMenuViewer = new IndentedTableViewer(actionGroup);
+        actionSetMenuViewer = new TreeViewer(actionGroup);
+        actionSetMenuViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         data = new GridData(GridData.FILL_BOTH);
         actionSetMenuViewer.getControl().setLayoutData(data);
-        actionSetMenuViewer.setLabelProvider(new IndentedTableLabelProvider());
-        actionSetMenuViewer.setContentProvider(new ListContentProvider());
+        actionSetMenuViewer.setLabelProvider(new ActionSetLabelProvider());
+        actionSetMenuViewer.setContentProvider(new TreeContentProvider());
 
-        actionSetToolbarViewer = new IndentedTableViewer(actionGroup);
+        actionSetToolbarViewer = new TreeViewer(actionGroup);
+        actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         data = new GridData(GridData.FILL_BOTH);
         actionSetToolbarViewer.getControl().setLayoutData(data);
         actionSetToolbarViewer
-                .setLabelProvider(new IndentedTableLabelProvider());
-        actionSetToolbarViewer.setContentProvider(new ListContentProvider());
+                .setLabelProvider(new ActionSetLabelProvider());
+        actionSetToolbarViewer.setContentProvider(new TreeContentProvider());
 
         sashComposite.setWeights(new int[] { 30, 70 });
 
@@ -1321,26 +1317,24 @@ public class CustomizePerspectiveDialog extends Dialog {
             structures = new ArrayList(2);
             menubarStructure = new ActionSetDisplayItem("Menubar"); //$NON-NLS-1$
             toolbarStructure = new ActionSetDisplayItem("Toolbar"); //$NON-NLS-1$
-            MenuManager windowMenuMgr = window.getMenuManager();
-            CoolBarManager windowCoolBarManager = window.getCoolBarManager();
-            // Update internal structure
-            windowCoolBarManager.refresh();
-            if (containsActionSet(windowMenuMgr, actionSetId)) {
-                // if the action set is active, we can use the workbench menu and coolbar managers
-                // to figure out the action set structure.
-                menubarStructure.fillMenusFor(actionSetId, windowMenuMgr);
-                toolbarStructure
-                        .fillToolsFor(actionSetId, windowCoolBarManager);
-            } else {
-                // The action set is not active, so build the menus and toolbars for it using
-                // our fake action bars.
-                buildMenusAndToolbarsFor(element);
-                menubarStructure.fillMenusFor(actionSetId,
-                        customizeWorkbenchActionBars.menuManager);
-                toolbarStructure.fillToolsFor(actionSetId,
-                        customizeWorkbenchActionBars.coolBarManager);
+            
+            // Build the menus and toolbars for it using our fake action bars.
+        	// Can't reuse customizeActionBars between action sets due to action set menu reuse.  See bug 94827 for details.
+        	CustomizeActionBars customizeActionBars = new CustomizeActionBars(configurer);
+            // Fill current actionBars in the "fake" workbench action bars
+            window.fillActionBars(customizeActionBars,
+                    ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR
+                            | ActionBarAdvisor.FILL_COOL_BAR);
+            // Populate the action bars with the action set
+            buildMenusAndToolbarsFor(customizeActionBars, element);
+            // Build the representation to show
+            menubarStructure.fillMenusFor(actionSetId,
+            		customizeActionBars.menuManager);
+            toolbarStructure.fillToolsFor(actionSetId,
+            		customizeActionBars.coolBarManager);
+            // Be sure to dispose the custom bars or we'll leak
+            customizeActionBars.dispose();
 
-            }
             // Add menubarStructure and toolbarStructure to arrayList
             structures.add(menubarStructure);
             structures.add(toolbarStructure);
@@ -1354,20 +1348,17 @@ public class CustomizePerspectiveDialog extends Dialog {
             toolbarStructure = (ActionSetDisplayItem) structures.get(1);
 
         // fill the menu structure table
-        if (element != actionSetMenuViewer.getInput()) {
-            actionSetMenuViewer.setInput(menubarStructure.getElements());
-            if (menubarStructure.children.size() > 0) {
-                actionSetMenuViewer
-                        .reveal(menubarStructure.children.get(0));
-            }
+        actionSetMenuViewer.setInput(menubarStructure);
+        if (menubarStructure.children.size() > 0) {
+            actionSetMenuViewer
+                    .reveal(menubarStructure.children.get(0));
         }
+
         // fill the toolbar structure table
-        if (element != actionSetToolbarViewer.getInput()) {
-            actionSetToolbarViewer.setInput(toolbarStructure.getElements());
-            if (toolbarStructure.children.size() > 0) {
-                actionSetToolbarViewer.reveal(toolbarStructure.children
-                        .get(0));
-            }
+        actionSetToolbarViewer.setInput(toolbarStructure);
+        if (toolbarStructure.children.size() > 0) {
+            actionSetToolbarViewer.reveal(toolbarStructure.children
+                    .get(0));
         }
         selectedActionSet = element;
     }

@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -173,7 +174,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
      */
     public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
         super(parentShell);
-        contentProvider = new ListContentProvider();
+        contentProvider = new ArrayContentProvider();
         labelProvider = new WorkingSetLabelProvider();
         multiSelect = multi;
         if (multiSelect) {
