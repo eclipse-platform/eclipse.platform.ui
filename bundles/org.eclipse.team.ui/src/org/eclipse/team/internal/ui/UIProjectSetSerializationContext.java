@@ -12,6 +12,7 @@
 
 package org.eclipse.team.internal.ui;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,11 +83,20 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 		IPromptCondition prompt = new IPromptCondition() {
 			List resources = Arrays.asList(projects);
 			public boolean needsPrompt(IResource resource) {
-				return resources.contains(resource);
+                if (resource instanceof IProject) {
+                    IProject project = (IProject) resource;
+                    return (project.exists() || getTargetFile(project).exists()) && resources.contains(resource);
+                }
+				return false;
 			}
 			public String promptMessage(IResource resource) {
-				return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_0, new String[] { resource.getName() }); //$NON-NLS-1$
+                if (resource.exists())
+                    return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_0, new String[] { resource.getName() }); //$NON-NLS-1$
+                return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_2, new String[] { resource.getName(), getTargetFile((IProject)resource).getAbsolutePath() }); //$NON-NLS-1$
 			}
+            public File getTargetFile(IProject project) {
+                return new File(project.getParent().getLocation().toFile(), project.getName());
+            }
 		};
 		PromptingDialog dialog =
 			new PromptingDialog(

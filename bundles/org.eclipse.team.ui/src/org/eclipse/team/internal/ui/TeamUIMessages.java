@@ -257,6 +257,7 @@ public class TeamUIMessages extends NLS {
 	public static String HierarchicalModelProvider_0;
 	public static String UIProjectSetSerializationContext_0;
 	public static String UIProjectSetSerializationContext_1;
+    public static String UIProjectSetSerializationContext_2;
 	public static String RemoveSynchronizeParticipantAction_0;
 	public static String RemoveSynchronizeParticipantAction_1;
 

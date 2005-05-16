@@ -227,8 +227,11 @@ public abstract class ProjectSetCapability {
 		final Collection existingProjects = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
 			IProject eachProj = projects[i];
-			if (eachProj.exists())
+			if (eachProj.exists()) {
 				existingProjects.add(eachProj);
+            } else if (new File(eachProj.getParent().getLocation().toFile(), eachProj.getName()).exists()) {
+                existingProjects.add(eachProj);
+            }
 		}
 		if (existingProjects.size() == 0)
 			return projects;
