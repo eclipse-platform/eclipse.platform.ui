@@ -367,7 +367,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
     private void createButtons(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(3, false);
+        GridLayout layout = new GridLayout(4, false);
         layout.marginHeight = layout.marginWidth = 0;
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -407,6 +407,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         setButtonLayoutData(disableAll);
         
         if (allowAdvanced) {
+        		Label spacer = new Label(composite, SWT.NONE);
+        		data = new GridData(GridData.GRAB_HORIZONTAL);
+        		spacer.setLayoutData(data);
             advancedButton = new Button(composite, SWT.PUSH);
             advancedButton.setFont(parent.getFont());
             advancedButton.addSelectionListener(new SelectionAdapter() {
@@ -426,8 +429,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
             Point minSize = advancedButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
             data.widthHint = Math.max(widthHint, minSize.x);
-            data = new GridData(GridData.GRAB_HORIZONTAL
-                    | GridData.HORIZONTAL_ALIGN_END
+            data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
                     | GridData.VERTICAL_ALIGN_CENTER);
             advancedButton.setLayoutData(data);
         }
