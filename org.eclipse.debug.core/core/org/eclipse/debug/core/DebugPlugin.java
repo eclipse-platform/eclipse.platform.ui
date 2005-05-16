@@ -325,6 +325,7 @@ public class DebugPlugin extends Plugin {
         public EventDispatchJob() {
             super(DebugCoreMessages.DebugPlugin_1); //$NON-NLS-1$
             setPriority(Job.INTERACTIVE);
+            setSystem(true);
         }
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)

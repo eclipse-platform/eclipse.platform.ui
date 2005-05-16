@@ -61,9 +61,10 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
      */
     class FetchJob extends Job {
     	
-    	public FetchJob() {
-    		super(DebugUIViewsMessages.RemoteTreeContentManager_0);
-    	}
+        public FetchJob() {
+            super(DebugUIViewsMessages.RemoteTreeContentManager_0);
+            setSystem(true);
+        }
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
