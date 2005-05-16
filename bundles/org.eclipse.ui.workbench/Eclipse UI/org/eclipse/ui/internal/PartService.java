@@ -156,6 +156,11 @@ public class PartService implements IPartService {
     public void setActivePart(IWorkbenchPartReference ref) {
         IWorkbenchPartReference oldRef = activePart;
         
+        // Filter out redundant activation events
+        if (oldRef == ref) {
+            return;
+        }
+        
         if (oldRef != null) {
             firePartDeactivated(oldRef);
         }
