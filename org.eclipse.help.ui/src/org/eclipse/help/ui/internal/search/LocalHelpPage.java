@@ -149,7 +149,14 @@ public class LocalHelpPage extends RootScopePage {
 		});
 		tree.getTree().setEnabled(workingSet != null);
 		capabilityFiltering = new Button(parent, SWT.CHECK);
-		capabilityFiltering.setText(Messages.LocalHelpPage_capabilityFiltering_name); //$NON-NLS-1$
+		String checkboxLabel = HelpBasePlugin.getActivitySupport().getLocalScopeCheckboxLabel();
+		if (checkboxLabel==null)
+			checkboxLabel = Messages.LocalHelpPage_capabilityFiltering_name;  //$NON-NLS-1$
+		capabilityFiltering.setText(checkboxLabel);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		capabilityFiltering.setLayoutData(gd);
+		
 		initializeCheckedState();
 
 		// Set help for the page

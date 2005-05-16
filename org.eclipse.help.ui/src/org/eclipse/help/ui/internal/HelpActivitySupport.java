@@ -74,6 +74,14 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 				return child.getValue();
 			return null;
 		}
+		public String getLocalScopeCheckboxLabel() {
+			if (config==null)
+				return null;
+			IConfigurationElement child = getChild("localScopeCheckbox"); //$NON-NLS-1$
+			if (child!=null)
+				return child.getValue();
+			return null;
+		}
 		public boolean needsLiveHelp(boolean embedded) {
 			getDocumentMessage(embedded);
 			return needsLiveHelp;
@@ -277,5 +285,8 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	}
 	public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
 		return activityDescriptor.needsLiveHelp(embedded);
+	}
+	public String getLocalScopeCheckboxLabel() {
+		return activityDescriptor.getLocalScopeCheckboxLabel();
 	}
 }

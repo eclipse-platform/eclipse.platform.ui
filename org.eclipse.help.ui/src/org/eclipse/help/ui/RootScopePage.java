@@ -81,17 +81,17 @@ public abstract class RootScopePage extends PreferencePage implements
 		initializeDefaults(getPreferenceStore());
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		if (ed.isUserDefined())
+		//if (ed.isUserDefined())
 			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
 		masterButton.setText(Messages.RootScopePage_masterButton); //$NON-NLS-1$
 		GridData gd = new GridData();
-		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
+		gd.horizontalSpan = 2;//ed.isUserDefined() ? 2 : 1;
 		masterButton.setLayoutData(gd);
 		Label spacer = new Label(container, SWT.NULL);
 		gd = new GridData();
-		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
+		gd.horizontalSpan = 2;//ed.isUserDefined() ? 2 : 1;
 		spacer.setLayoutData(gd);
 		boolean masterValue = getPreferenceStore().getBoolean(
 				ScopeSet.getMasterKey(ed.getId()));
@@ -101,23 +101,25 @@ public abstract class RootScopePage extends PreferencePage implements
 				masterValueChanged(masterButton.getSelection());
 			}
 		});
-		if (ed.isUserDefined()) {
+		//if (ed.isUserDefined()) {
 			Label label = new Label(container, SWT.NULL);
 			label.setText(Messages.RootScopePage_name);
 			labelText = new Text(container, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 200;
 			labelText.setLayoutData(gd);
+			labelText.setEditable(ed.isUserDefined());
 			label = new Label(container, SWT.NULL);
 			label.setText(Messages.RootScopePage_desc);
 			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			label.setLayoutData(gd);
 			descText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
+			descText.setEditable(ed.isUserDefined());
 			gd.widthHint = 200;
 			gd.heightHint = 48;
 			descText.setLayoutData(gd);
-		}
+		//}
 		int ccol = createScopeContents(container);
 		// adjust number of columns if needed
 		if (ccol > layout.numColumns) {
@@ -126,12 +128,12 @@ public abstract class RootScopePage extends PreferencePage implements
 			gd.horizontalSpan = layout.numColumns;
 			gd = (GridData) spacer.getLayoutData();
 			gd.horizontalSpan = layout.numColumns;
-			if (ed.isUserDefined()) {
+			//if (ed.isUserDefined()) {
 				gd = (GridData) labelText.getLayoutData();
 				gd.horizontalSpan = layout.numColumns - 1;
 				gd = (GridData) descText.getLayoutData();
 				gd.horizontalSpan = layout.numColumns - 1;
-			}
+			//}
 		}
 		updateControls(true);
 		return container;
@@ -241,10 +243,10 @@ public abstract class RootScopePage extends PreferencePage implements
 			masterValueChanged(value);
 		} else if (first)
 			masterValueChanged(value);
-		if (ed.isUserDefined()) {
+		//if (ed.isUserDefined()) {
 			labelText.setText(ed.getLabel());
 			descText.setText(ed.getDescription());
-		}
+		//}
 	}
 
 	/**
