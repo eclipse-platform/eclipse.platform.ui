@@ -14,7 +14,6 @@ import java.io.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.preference.*;
 
 /**
@@ -23,13 +22,14 @@ import org.eclipse.jface.preference.*;
 public class ScopeSet {
 	public static final String SCOPE_DIR_NAME = "scope_sets"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT = "__DEFAULT__"; //$NON-NLS-1$
+	public static final String EXT = ".sset"; //$NON-NLS-1$
 	private String name;
 	private PreferenceStore preferenceStore;
 	private boolean needsSaving;
 	private int defaultSet = -1;
 	
 	public ScopeSet() {
-		this(Messages.ScopeSet_default); 
+		this(Messages.ScopeSet_default);
 		defaultSet = 1;
 	}
 	
@@ -38,14 +38,26 @@ public class ScopeSet {
 		this.name = name;
 	}
 	
+	public boolean isEditable() {
+		return !isDefault() && !isImplicit();
+	}
+	
 	public boolean isDefault() {
 		if (defaultSet==1)
 			return true;
 		return getPreferenceStore().getBoolean(KEY_DEFAULT);
 	}
+	
+	public boolean isImplicit() {
+		return false;
+	}
 
 	public ScopeSet(ScopeSet set) {
 		this(set.getName()+"_new"); //$NON-NLS-1$
+		copyFrom(set);
+	}
+	
+	public void copyFrom(ScopeSet set) {
 		copy((PreferenceStore)set.getPreferenceStore());
 	}
 	
@@ -65,17 +77,26 @@ public class ScopeSet {
 				}
 			}
 			catch (IOException e) {
-				//TODO need to handle this
+				String message = Messages.bind(Messages.ScopeSet_errorLoading, name);
+				HelpUIPlugin.logError(message, e);
 			}
 		}
 		return preferenceStore;
+	}
+	
+	protected String encodeFileName(String name) {
+		return name;
 	}
 
 	private String getFileName(String name) {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append(SCOPE_DIR_NAME);
-		location = location.append(name+".pref"); //$NON-NLS-1$
+		location = location.append(encodeFileName(name)+getExtension()); //$NON-NLS-1$
 		return location.toOSString();
+	}
+	
+	protected String getExtension() {
+		return EXT;
 	}
 
 	private void copy(PreferenceStore store) {
@@ -122,7 +143,8 @@ public class ScopeSet {
 					preferenceStore.save();
 				}
 				catch (IOException e) {
-					//TODO handle this
+					String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
+					HelpUIPlugin.logError(message, e);
 				}
 			}
 		}
@@ -139,7 +161,8 @@ public class ScopeSet {
 				needsSaving = false;
 			}
 			catch (IOException e) {
-				//TODO handle this
+				String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
+				HelpUIPlugin.logError(message, e);
 			}
 		}
 	}

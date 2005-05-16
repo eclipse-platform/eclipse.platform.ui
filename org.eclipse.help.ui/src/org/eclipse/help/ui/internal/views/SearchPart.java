@@ -65,6 +65,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private EngineDescriptorManager descManager;
 	
+	//private static final int COMBO_HISTORY_SIZE = 10;
+	
 	private Listener focusFilter = new Listener() {
 		public void handleEvent(Event e) {
 			switch (e.type) {
@@ -137,6 +139,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	 */
 	public SearchPart(final Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
+		scopeSetManager = new ScopeSetManager();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.FocusIn, focusFilter);
@@ -174,6 +177,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		// Pattern combo
 		searchWordCombo = new ComboPart(container, toolkit, toolkit
 				.getBorderStyle());
+		updateSearchCombo(null);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.maxWidth = 100;
 		td.valign = TableWrapData.MIDDLE;
@@ -182,19 +186,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			public void widgetSelected(SelectionEvent e) {
 				if (searchWordCombo.getSelectionIndex() < 0)
 					return;
-				// int index = previousSearchQueryData.size() - 1
-				// - searchWordCombo.getSelectionIndex();
-				/*
-				 * searchQueryData = (SearchQueryData) previousSearchQueryData
-				 * .get(index);
-				 * searchWordCombo.setText(searchQueryData.getSearchWord());
-				 * all.setSelection(!searchQueryData.isBookFiltering());
-				 * selected.setSelection(searchQueryData.isBookFiltering());
-				 * includeDisabledActivities.setSelection(!searchQueryData
-				 * .isActivityFiltering()); displaySelectedBooks(); //
-				 * headingsButton.setSelection(searchOperation.getQueryData().isFieldsSearch());
-				 * 
-				 */
+				searchFromHistory(searchWordCombo.getSelectionIndex());
 			}
 		});
 		goButton = toolkit.createButton(container, Messages.SearchPart_go,
@@ -227,11 +219,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		scopeSection.setLayoutData(td);
 		Composite filteringGroup = toolkit.createComposite(scopeSection);
 		scopeSection.setClient(filteringGroup);
-		createScopeSet(scopeSection, toolkit);
 		TableWrapLayout flayout = new TableWrapLayout();
 		flayout.numColumns = 2;
 		filteringGroup.setLayout(flayout);
-
+		createScopeSet(scopeSection, toolkit);
 		toolkit.paintBordersFor(filteringGroup);
 		toolkit.paintBordersFor(container);
 		loadEngines(filteringGroup, toolkit);
@@ -254,7 +245,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	private void createScopeSet(Section section, FormToolkit toolkit) {
-		scopeSetManager = new ScopeSetManager();
 		scopeSetLink = toolkit.createHyperlink(section, null, SWT.NULL);
 		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -430,6 +420,55 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		doSearch(text);
 	}
 
+	private void storeSearchHistory(String expression) {
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
+		/*
+		HistoryScopeSet sset = scopeSetManager.findSearchSet(expression);
+		if (sset==null) {
+			sset = new HistoryScopeSet(expression);
+			scopeSetManager.add(sset);
+		}
+		ScopeSet activeSet = scopeSetManager.getActiveSet();
+		sset.copyFrom(activeSet);		
+		sset.save();
+		updateSearchCombo(sset);
+		searchWordCombo.setText(expression);
+		*/
+	}
+
+	private void updateSearchCombo(HistoryScopeSet current) {
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
+		/*
+		ScopeSet [] sets = scopeSetManager.getScopeSets(true);
+		ArrayList items = new ArrayList();
+		ArrayList toDelete = new ArrayList();
+		if (current!=null)
+			items.add(current.getExpression());
+		for (int i=sets.length-1; i>=0; i--) {
+			HistoryScopeSet sset = (HistoryScopeSet)sets[i];
+			if (current!=null && sset==current) continue;
+			if (sets.length-i>COMBO_HISTORY_SIZE)
+				toDelete.add(sset);
+			items.add(sset.getExpression());
+		}
+		for (int i=0; i<toDelete.size(); i++) {
+			HistoryScopeSet sset = (HistoryScopeSet)toDelete.get(i);
+			scopeSetManager.remove(sset);
+		}
+		if (items.size()>0)
+			searchWordCombo.setItems((String[])items.toArray(new String[items.size()]));
+			*/
+	}
+
+	private void searchFromHistory(int index) {
+		ScopeSet [] sets = scopeSetManager.getScopeSets(true);
+		if (index>=sets.length) return;
+		HistoryScopeSet sset = (HistoryScopeSet)sets[index];
+		String expression = sset.getExpression();
+		setActiveScopeSet(sset);
+		doSearch(expression);
+	}
+
 	private void handleButtonPressed() {
 		if (searchWordCombo.getControl().isEnabled())
 			doSearch(searchWordCombo.getText());
@@ -440,6 +479,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	private void doSearch(String text) {
+		storeSearchHistory(text);
 		ScopeSet set = scopeSetManager.getActiveSet();
 		ArrayList entries = new ArrayList();
 		final SearchResultsPart results = (SearchResultsPart) parent
@@ -597,7 +637,5 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-
 	}
 }

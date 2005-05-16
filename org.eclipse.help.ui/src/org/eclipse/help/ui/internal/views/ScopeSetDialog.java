@@ -145,7 +145,7 @@ public class ScopeSetDialog extends ListDialog {
 		super(parent);
 		this.manager = manager;
 		this.descManager = descManager;
-		this.sets = extractSets(manager.getScopeSets());
+		this.sets = extractSets(manager.getScopeSets(false));
 		setContentProvider(new ScopeContentProvider());
 		setLabelProvider(new ScopeLabelProvider());
 		setInitialSelections(new Object[] { manager.getActiveSet() });
@@ -311,7 +311,7 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		boolean editableSet = set!=null && !set.isDefault();
+		boolean editableSet = set!=null && set.isEditable();
 		removeButton.setEnabled(editableSet);
 		renameButton.setEnabled(editableSet);
 		Button okButton = getOkButton();

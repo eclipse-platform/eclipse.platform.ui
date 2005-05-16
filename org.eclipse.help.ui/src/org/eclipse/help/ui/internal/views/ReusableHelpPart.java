@@ -1029,7 +1029,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 		if (part != null) {
 			part.init(this, id, memento);
-			part.initialize(mform);
 			mform.addPart(part);
 		}
 		return part;

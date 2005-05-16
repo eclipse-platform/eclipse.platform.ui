@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  */
 public class ScopeSetManager {
 	private ScopeSet activeSet;
+
 	private static final String ACTIVE_SET = "activeScopeSet"; //$NON-NLS-1$
 
 	private ArrayList sets;
@@ -41,17 +42,17 @@ public class ScopeSetManager {
 	}
 
 	public void setActiveSet(ScopeSet set) {
-		if (this.activeSet!=null) {
+		if (this.activeSet != null) {
 			this.activeSet.save();
 		}
 		this.activeSet = set;
 	}
-	
+
 	public static void ensureLocation() {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
-		location = location.append("scope_sets"); //$NON-NLS-1$
+		location = location.append(ScopeSet.SCOPE_DIR_NAME);
 		File dir = location.toFile();
-		if (dir.exists()==false)
+		if (dir.exists() == false)
 			dir.mkdir();
 	}
 
@@ -67,8 +68,14 @@ public class ScopeSetManager {
 			settings.put(ACTIVE_SET, activeSet.getName());
 	}
 
-	public ScopeSet[] getScopeSets() {
-		return (ScopeSet[]) sets.toArray(new ScopeSet[sets.size()]);
+	public ScopeSet[] getScopeSets(boolean implicit) {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < sets.size(); i++) {
+			ScopeSet set = (ScopeSet) sets.get(i);
+			if (set.isImplicit() == implicit)
+				result.add(set);
+		}
+		return (ScopeSet[]) result.toArray(new ScopeSet[result.size()]);
 	}
 
 	private void loadScopeSets() {
@@ -76,29 +83,37 @@ public class ScopeSetManager {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append("scope_sets"); //$NON-NLS-1$
 		File dir = location.toFile();
-		ScopeSet defSet=null;
+		ScopeSet defSet = null;
 		if (dir.exists() && dir.isDirectory()) {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return name.endsWith(".pref"); //$NON-NLS-1$
+					return name.endsWith(ScopeSet.EXT)
+							|| name.endsWith(HistoryScopeSet.EXT); //$NON-NLS-1$
 				}
 			});
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				String name = file.getName();
-				int loc = name.indexOf(".pref"); //$NON-NLS-1$
+				int loc = name.lastIndexOf(ScopeSet.EXT); //$NON-NLS-1$
 				if (loc != -1) {
 					ScopeSet set = new ScopeSet(name.substring(0, loc));
 					sets.add(set);
 					if (set.isDefault())
-						defSet=set;
+						defSet = set;
+					continue;
+				}
+				loc = name.lastIndexOf(HistoryScopeSet.EXT); //$NON-NLS-1$
+				if (loc != -1) {
+					HistoryScopeSet set = new HistoryScopeSet(name.substring(0,
+							loc), null);
+					sets.add(set);
 				}
 			}
 		}
-		if (sets.size()==1) {
-			activeSet = (ScopeSet)sets.get(0);
+		if (sets.size() == 1) {
+			activeSet = (ScopeSet) sets.get(0);
 		}
-		if (defSet==null)
+		if (defSet == null)
 			sets.add(new ScopeSet());
 	}
 
@@ -114,18 +129,35 @@ public class ScopeSetManager {
 		}
 		return activeSet;
 	}
-	// if name is not null, return the scope set with the
-	// matching name; otherwise, return the default set
+
 	public ScopeSet findSet(String name) {
+		return findSet(name, false);
+	}
+
+	public HistoryScopeSet findSearchSet(String expression) {
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
-			if (name!=null) {
+			if (!set.isImplicit() || !(set instanceof HistoryScopeSet))
+				continue;
+			HistoryScopeSet sset = (HistoryScopeSet) set;
+			if (sset.getExpression().equals(expression))
+				return sset;
+		}
+		return null;
+	}
+
+	public ScopeSet findSet(String name, boolean implicit) {
+		ScopeSet defaultSet = null;
+		for (int i = 0; i < sets.size(); i++) {
+			ScopeSet set = (ScopeSet) sets.get(i);
+			if (name != null && set.isImplicit() == implicit) {
 				if (set.getName().equals(name))
 					return set;
-			}
-			else if (set.isDefault())
-				return set;
+			} else if (set.isDefault())
+				defaultSet = set;
 		}
+		if (!implicit)
+			return defaultSet;
 		return null;
 	}
 }

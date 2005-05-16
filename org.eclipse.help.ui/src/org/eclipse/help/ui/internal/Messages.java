@@ -173,4 +173,6 @@ public final class Messages extends NLS {
 	public static String BrowsersPreferencePage_openInEditor;
 	public static String ReusableHelpPart_internalBrowserTitle;
 	public static String ReusableHelpPart_internalWebBrowserError;
+	public static String ScopeSet_errorLoading;
+	public static String ScopeSet_errorSaving;
 }

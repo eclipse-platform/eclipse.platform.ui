@@ -109,6 +109,7 @@ public class ComboPart {
 	public void setItems(String[] items) {
 		if (combo instanceof Combo)
 			((Combo) combo).setItems(items);
-		((CCombo) combo).setItems(items);
+		else
+			((CCombo) combo).setItems(items);
 	}
 }
