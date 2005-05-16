@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.actions;
 
  
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -19,6 +18,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Terminates all launches.
@@ -29,22 +30,11 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
 	 */
 	protected void doAction(Object element) throws DebugException {
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= lManager.getLaunches();
-		MultiStatus ms = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 
-			DebugException.REQUEST_FAILED, ActionMessages.TerminateAllAction_Terminate_all_failed_3, null); //$NON-NLS-1$
-		for (int i= 0; i < launches.length; i++) {
-			ILaunch launch= launches[i];
-			if (!launch.isTerminated()) {
-				try {
-					launch.terminate();
-				} catch (DebugException de) {
-					ms.merge(de.getStatus());
-				}
-			}
-		}
-		if (!ms.isOK()) {
-			throw new DebugException(ms);
+		if (element instanceof ILaunch) {
+			ILaunch launch = (ILaunch) element;
+			if (!launch.isTerminated() && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
+				launch.terminate();
+			}			
 		}
 	}
 	
@@ -92,5 +82,14 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 				update(getAction(), null);
 				break;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getSelection()
+	 */
+	protected IStructuredSelection getSelection() {
+		return new StructuredSelection(DebugPlugin.getDefault().getLaunchManager().getLaunches());
 	}		
+	
+	
 }

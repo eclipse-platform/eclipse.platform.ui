@@ -92,7 +92,6 @@ public class ActionMessages extends NLS {
 	public static String TerminateActionDelegate_Terminate_3;
 
 	public static String TerminateActionDelegate_Terminate_failed__1;
-	public static String TerminateAllAction_Terminate_all_failed_3;
 
 	public static String TerminateAndRemoveActionDelegate_Exceptions_occurred_attempting_to_terminate_and_remove_2;
 	public static String TerminateAndRemoveActionDelegate_Terminate_and_Remove__3;
