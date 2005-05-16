@@ -406,26 +406,22 @@ public class Utils {
                     isResource = true;
                 }
             } else if (element instanceof ResourceMapping) {
-                try {
-                    ResourceTraversal[] traversals = ((ResourceMapping)element).getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
-                    for (int k = 0; k < traversals.length; k++) {
-                        ResourceTraversal traversal = traversals[k];
-                        IResource[] resourceArray = traversal.getResources();
-                        for (int j = 0; j < resourceArray.length; j++) {
-                            IResource resource = resourceArray[j];
-                            resources.add(resource);
-                            isResource = true;
-                        }
-                    }
-                } catch (CoreException e) {
-                    TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, "Error traversing resource mapping", e)); //$NON-NLS-1$
-                }
+                isResource = true;
+                getResources((ResourceMapping)element, resources);
 			} else {
-				IResource resource = (IResource)getAdapter(element, IResource.class);
-				if(resource != null) {
-                    if (resource.getType() == IResource.ROOT) continue;
-                    resources.add(resource);
+				Object adapted = getAdapter(element, IResource.class);
+                if (adapted instanceof IResource) {
+                    IResource resource = (IResource) adapted;
                     isResource = true;
+                    if (resource.getType() != IResource.ROOT) {
+                        resources.add(resource);
+                    }
+                } else {
+                    adapted = getAdapter(element, ResourceMapping.class);
+                    if (adapted instanceof ResourceMapping) {
+                        isResource = true;
+                        getResources((ResourceMapping) adapted, resources);
+                    }
                 }
 			}
 			if (!isResource) {
@@ -435,6 +431,22 @@ public class Utils {
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
 	}
+
+    private static void getResources(ResourceMapping element, List resources) {
+        try {
+            ResourceTraversal[] traversals = element.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+            for (int k = 0; k < traversals.length; k++) {
+                ResourceTraversal traversal = traversals[k];
+                IResource[] resourceArray = traversal.getResources();
+                for (int j = 0; j < resourceArray.length; j++) {
+                    IResource resource = resourceArray[j];
+                    resources.add(resource);
+                }
+            }
+        } catch (CoreException e) {
+            TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, "Error traversing resource mapping", e)); //$NON-NLS-1$
+        }
+    }
 	
 	public static Object[] getNonResources(Object[] elements) {
 		List nonResources = new ArrayList();
