@@ -74,11 +74,6 @@ public class FilteredComboTree extends FilteredTree {
 					} else {
 						getViewer().getTree().setFocus();
 					}
-				} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (filterCombo.getText().equals("")) //$NON-NLS-1$
-						return;
-					e.doit = false;
-					setFilterText(""); //$NON-NLS-1$
 				}
 			}
 		});
