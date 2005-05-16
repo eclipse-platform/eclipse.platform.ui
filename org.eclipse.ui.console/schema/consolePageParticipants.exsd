@@ -58,6 +58,9 @@
                <documentation>
                   specifies a fully qualified name of a Java class that implements &lt;code&gt;IConsolePageParticipant&lt;/code&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.console.IConsolePageParticipant"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

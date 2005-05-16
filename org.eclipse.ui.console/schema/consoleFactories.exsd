@@ -63,6 +63,9 @@
                <documentation>
                   class implementing &lt;code&gt;org.eclipse.ui.console.IConsoleFactory&lt;/code&gt; that will be called when the associated action is invoked
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.console.IConsoleFactory"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
