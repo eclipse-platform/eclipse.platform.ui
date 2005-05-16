@@ -44,10 +44,16 @@ public class DeferredExpressionManager extends DeferredDebugElementWorkbenchAdap
 			return;
 		}
 	    Object[] children = getChildren(object);
+	    if (monitor.isCanceled()) {
+	    	return;
+	    }
 	    if (children.length > 0) {
 	    	if (collector instanceof RemoteVariableContentManager.VariableCollector) {
 	    		RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
 			    for (int i = 0; i < children.length; i++) {
+		    	    if (monitor.isCanceled()) {
+		    	    	return;
+		    	    }
 					IExpression child = (IExpression) children[i];
 					try {
 						IValue value = child.getValue();

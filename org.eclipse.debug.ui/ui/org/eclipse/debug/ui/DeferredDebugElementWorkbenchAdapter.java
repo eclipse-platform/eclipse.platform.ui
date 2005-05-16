@@ -56,6 +56,9 @@ public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementW
 			return;
 		}
 	    Object[] children = getChildren(object);
+	    if (monitor.isCanceled()) {
+	    	return;
+	    }
 	    if (children.length > 0) {
 	        collector.add(children, monitor);
 	    }

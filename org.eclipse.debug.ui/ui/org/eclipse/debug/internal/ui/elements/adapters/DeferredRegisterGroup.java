@@ -43,14 +43,20 @@ public class DeferredRegisterGroup extends DeferredDebugElementWorkbenchAdapter 
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-		if (monitor.isCanceled()) {
-			return;
-		}
+	    if (monitor.isCanceled()) {
+	    	return;
+	    }
 	    Object[] children = getChildren(object);
+	    if (monitor.isCanceled()) {
+	    	return;
+	    }
 	    if (children.length > 0) {
 	        if (collector instanceof RemoteVariableContentManager.VariableCollector) {
 	            RemoteVariableContentManager.VariableCollector remoteCollector = (RemoteVariableContentManager.VariableCollector) collector;
 	            for (int i = 0; i < children.length; i++) {
+		    	    if (monitor.isCanceled()) {
+		    	    	return;
+		    	    }
                     Object child = children[i];
                     remoteCollector.setHasChildren(child, hasChildren(child));
 	            }	    	
