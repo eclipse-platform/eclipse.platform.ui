@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -50,7 +50,7 @@ public class CodePagesPrefDialog extends Dialog {
 	public CodePagesPrefDialog(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		WorkbenchHelpSystem.getInstance().setHelp(parentShell, DebugUIPlugin.getUniqueIdentifier() + ".CodePagesPrefDialog_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell, DebugUIPlugin.getUniqueIdentifier() + ".CodePagesPrefDialog_context"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
