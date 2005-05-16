@@ -123,8 +123,9 @@ public class NewWizardMenu extends BaseNewWizardMenu {
     protected void addItems(List list) {
         list.add(new ActionContributionItem(newProjectAction)); 
         list.add(new Separator());
-        addShortcuts(list);
-        list.add(new Separator());
+        if (addShortcuts(list)) {
+        	list.add(new Separator());
+        }
         if (hasExamples()) {
             list.add(new ActionContributionItem(newExampleAction));
             list.add(new Separator());
