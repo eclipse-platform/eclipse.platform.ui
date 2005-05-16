@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
  
 import java.util.*;
 import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
@@ -24,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -110,8 +112,10 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 			}
 		});
 		TableLayout tl = new TableLayout();
-		tl.addColumnData(new ColumnWeightData(70, 100));
-		tl.addColumnData(new ColumnWeightData(30));
+        Dialog.applyDialogFont(ancestor);
+        PixelConverter converter = new PixelConverter(table);
+		tl.addColumnData(new ColumnWeightData(70, converter.convertWidthInCharsToPixels(40)));
+		tl.addColumnData(new ColumnWeightData(30, converter.convertWidthInCharsToPixels(12)));
 		table.setLayout(tl);
 		
 		Composite buttons = new Composite(parent, SWT.NULL);
