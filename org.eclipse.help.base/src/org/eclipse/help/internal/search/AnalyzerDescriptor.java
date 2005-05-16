@@ -48,7 +48,7 @@ public class AnalyzerDescriptor {
 			this.id = HelpBasePlugin.PLUGIN_ID
 					+ "#" //$NON-NLS-1$
 					+ HelpBasePlugin.getDefault().getBundle().getHeaders().get(
-							Constants.BUNDLE_VERSION);
+							Constants.BUNDLE_VERSION) + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$;
 			this.luceneAnalyzer = new DefaultAnalyzer(locale);
 			this.lang = locale;
 		}
@@ -110,7 +110,7 @@ public class AnalyzerDescriptor {
 						.getBundle(pluginId).getHeaders().get(
 								Constants.BUNDLE_VERSION);
 				this.luceneAnalyzer = (Analyzer) analyzer;
-				this.id = pluginId + "#" + pluginVersion; //$NON-NLS-1$
+				this.id = pluginId + "#" + pluginVersion + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$
 				this.lang = locale;
 				if (HelpBasePlugin.PLUGIN_ID.equals(pluginId)) {
 					// The analyzer is contributed by help plugin.
