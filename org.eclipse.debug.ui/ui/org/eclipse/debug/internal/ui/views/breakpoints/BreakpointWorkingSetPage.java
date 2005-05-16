@@ -19,6 +19,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -37,8 +38,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -166,6 +170,29 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		fTree.setInput(DebugPlugin.getDefault().getBreakpointManager());
 		fTree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				validateInput();
+			}
+		});
+
+		// Add select / deselect all buttons for bug 46669
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		Button selectAllButton = SWTUtil.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_label, null);
+		selectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_toolTip);
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				fTree.setCheckedElements(fTreeContentProvider.getElements(fTree.getInput()));
+				validateInput();
+			}
+		});
+		
+		Button deselectAllButton = SWTUtil.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_label, null);
+		deselectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_toolTip);
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				fTree.setCheckedElements(new Object[0]);
 				validateInput();
 			}
 		});

@@ -61,6 +61,10 @@ public class DebugUIViewsMessages extends NLS {
 	public static String BreakpointWorkingSetPage_4;
 	public static String BreakpointWorkingSetPage_5;
 	public static String BreakpointWorkingSetPage_6;
+	public static String BreakpointWorkingSetPage_selectAll_label;
+	public static String BreakpointWorkingSetPage_selectAll_toolTip;
+	public static String BreakpointWorkingSetPage_deselectAll_label;
+	public static String BreakpointWorkingSetPage_deselectAll_toolTip;
 	public static String DebugViewLabelDecorator_0;
 	public static String AbstractDebugEventHandler_0;
 	public static String IncrementalDeferredTreeContentManager_0;
