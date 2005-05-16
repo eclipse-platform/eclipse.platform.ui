@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariableValueEditorManager;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -101,7 +102,7 @@ public class AssignValueAction extends SelectionProviderAction {
 			    }
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
+            MessageDialog.openError(activeShell, ActionMessages.AssignValueAction_0, ActionMessages.AssignValueAction_5);
 		}
 		
 	}

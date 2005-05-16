@@ -156,4 +156,8 @@ public class ActionMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
 	}
+
+    public static String AssignValueAction_0;
+
+    public static String AssignValueAction_5;
 }
