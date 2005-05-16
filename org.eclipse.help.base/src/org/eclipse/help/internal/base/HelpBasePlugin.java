@@ -61,6 +61,9 @@ public class HelpBasePlugin extends Plugin {
 		public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
 			return false;
 		}
+		public String getLocalScopeCheckboxLabel() {
+			return null;
+		}
 	};
 	/**
 	 * Logs an Error message with an exception.

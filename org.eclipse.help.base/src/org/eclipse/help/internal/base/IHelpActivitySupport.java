@@ -83,6 +83,13 @@ public interface IHelpActivitySupport {
 	public String getDocumentMessage(boolean embedded);
 
 	/**
+	 * Returns the label for the checkbox in the local scope page
+	 * that allows search hits from disabled activities to be shown. 
+	 * @return the checkbox label 
+	 */
+	public String getLocalScopeCheckboxLabel();
+
+	/**
 	 * @param embedded
 	 *            if <code>true</code>, the message will be added to a
 	 *            document in the workbench window. Otherwise, it will be shown
