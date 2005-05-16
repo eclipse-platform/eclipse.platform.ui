@@ -25,6 +25,7 @@ public final class Messages extends NLS {
 	public static String CHEAT_SHEET_SELECTION_DIALOG_TITLE;
 	public static String CHEAT_SHEET_SELECTION_DIALOG_MSG;
 	public static String COLLAPSE_ALL_BUT_CURRENT_TOOLTIP;
+	public static String CATEGORY_OTHER;
 	public static String RESTORE_ALL_TOOLTIP;
 	public static String CHEAT_SHEET_OTHER_MENU;
 	public static String PERFORM_TASK_TOOLTIP;

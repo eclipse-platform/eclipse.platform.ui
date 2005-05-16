@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
