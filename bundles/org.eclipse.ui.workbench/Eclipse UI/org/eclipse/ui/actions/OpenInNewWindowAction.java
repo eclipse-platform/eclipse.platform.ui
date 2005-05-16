@@ -47,6 +47,7 @@ public class OpenInNewWindowAction extends Action implements
      */
     public OpenInNewWindowAction(IWorkbenchWindow window) {
         this(window, ((Workbench) window.getWorkbench()).getDefaultPageInput());
+        setActionDefinitionId("org.eclipse.ui.window.newWindow"); //$NON-NLS-1$
     }
 
     /**
