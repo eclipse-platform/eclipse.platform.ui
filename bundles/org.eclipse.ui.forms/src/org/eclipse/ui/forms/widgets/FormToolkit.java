@@ -105,7 +105,7 @@ public class FormToolkit {
 						continue;
 					}
 					if (c instanceof Text || c instanceof Table
-							|| c instanceof Tree || c instanceof TableTree)
+							|| c instanceof Tree)
 						continue;
 				}
 				if (!inactiveBorder
@@ -125,7 +125,7 @@ public class FormToolkit {
 						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1,
 								b.height + 3);
 				} else if (inactiveBorder || c instanceof Table
-						|| c instanceof Tree || c instanceof TableTree) {
+						|| c instanceof Tree) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(colors.getBorderColor());
