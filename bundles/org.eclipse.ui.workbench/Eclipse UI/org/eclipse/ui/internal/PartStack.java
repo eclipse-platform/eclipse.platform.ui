@@ -1067,11 +1067,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
             // Update the return value of getVisiblePart
             current = requestedCurrent;
-            if (current instanceof PartPane) {
-                PartPane pane = (PartPane) current;
-                
-                ((WorkbenchPartReference)pane.getPartReference()).broughtToTop();
-            }
         }
     }
 

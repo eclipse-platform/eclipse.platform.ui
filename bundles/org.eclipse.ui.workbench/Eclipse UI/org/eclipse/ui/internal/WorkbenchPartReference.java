@@ -68,13 +68,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      */
     public static final int INTERNAL_PROPERTY_ACTIVE_CHILD_CHANGED = 0x216;
 
-    /**
-     * Internal property ID: Notifies this part that its parent now considers
-     * it to be the "selected" part. Note: this should never be made API since
-     * this is really a property of the parent, not a property of the part itself.
-     */
-    public static final int INTERNAL_PROPERTY_BROUGHT_TO_TOP = 0x217;
-    
     // State constants //////////////////////////////
     
     /**
@@ -198,17 +191,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         		}
             }
         }
-    }
-    
-    /**
-     * Notifies this part that its parent container has brought it to the top.
-     * Note: this is a bit of a hack. The notion of "on top" only applies to 
-     * PartStack, and this event should really be fired by the
-     * PartStack to its own listeners. The part itself should be unaware of
-     * when it is brought to top. 
-     */
-    public void broughtToTop() {
-        fireInternalPropertyChange(INTERNAL_PROPERTY_BROUGHT_TO_TOP);
     }
 
     protected void setTitle(String newTitle) {

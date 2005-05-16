@@ -129,10 +129,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private WorkbenchPagePartList partList = new WorkbenchPagePartList(selectionService);
 
     private IActionBars actionBars;
-
-    // Initially active part, as read from the persisted state of the page (null if
-    // no previously-saved part or if the page has already been restored)
-    private IWorkbenchPartReference savedActivePart;
     
     private ViewFactory viewFactory;
 
@@ -178,6 +174,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
 	private IExtensionTracker tracker;
+    
+    // Deferral count... delays disposing parts and sending certain events if nonzero
+    private int deferCount = 0;
+    // Parts waiting to be disposed
+    private List pendingDisposals = new ArrayList();
     
 	private IExtensionChangeHandler perspectiveChangeHandler = new IExtensionChangeHandler() {
 
@@ -527,7 +528,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         // Activate part.
         //if (window.getActivePage() == this) {
-        internalBringToTop(getReference(part));
+        IWorkbenchPartReference ref = getReference(part);
+        internalBringToTop(ref);
         setActivePart(part);
     }
 
@@ -745,6 +747,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             } else {
                 internalBringToTop(ref);
+                if (ref != null) {
+                    partList.firePartBroughtToTop(ref);
+                }
             }
         } finally {
             UIStats.end(UIStats.BRING_PART_TO_TOP, part, label);
@@ -1001,7 +1006,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     private void updateActivePart() {
-
+        
+        if (isDeferred()) {
+            return;
+        }
+        
         IWorkbenchPartReference oldActivePart = partList.getActivePartReference();
         IWorkbenchPartReference oldActiveEditor = partList.getActiveEditorReference();
         IWorkbenchPartReference newActivePart = null;
@@ -1080,13 +1089,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             navigationHistory.markEditor(part);
         }
         
-        partList.setActiveEditor(ref);
-        
         actionSwitcher.updateTopEditor(part);
 
         if (ref != null) {
             activationList.bringToTop(ref);
         }
+        
+        partList.setActiveEditor(ref);
     }
     
     /**
@@ -1148,15 +1157,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.firePerspectiveChanged(this, getPerspective(), ref,
                     CHANGE_EDITOR_CLOSE);
             
-            PartPane pane = getPane(ref);
-            
-            pane.setInLayout(false);
         }        
         
-        // Update activation
-        updateActivePart();
-        
-        editorPresentation.getLayoutPart().deferUpdates(true);
+        deferUpdates(true);
         try {        
 	        // Close all editors.
 	        for (int i = 0; i < editorRefs.length; i++) {
@@ -1168,16 +1171,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 partRemoved((WorkbenchPartReference)ref);                
 	        }
         } finally {
-        	editorPresentation.getLayoutPart().deferUpdates(false);
+            deferUpdates(false);
         }
-        
-        // Dispose the (now unused) part refs
-        for (int i = 0; i < editorRefs.length; i++) {
-            WorkbenchPartReference ref = (WorkbenchPartReference) editorRefs[i];
-            
-            ref.dispose();
-        }        
-                
+                        
         // Notify interested listeners after the close
         window.firePerspectiveChanged(this, getPerspective(),
                 CHANGE_EDITOR_CLOSE);
@@ -1186,6 +1182,46 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return true;
     }
     
+    /**
+     * Enables or disables listener notifications. This is used to delay listener notifications until the
+     * end of a public method.
+     * 
+     * @param shouldDefer
+     */
+    private void deferUpdates(boolean shouldDefer) {
+        if (shouldDefer) {
+            if (deferCount == 0) {
+                startDeferring();
+            }
+            deferCount++;
+        } else {
+            deferCount--;
+            if (deferCount == 0) {
+                handleDeferredEvents();
+            }
+        }
+    }
+    
+    private void startDeferring() {
+        editorPresentation.getLayoutPart().deferUpdates(true);
+    }
+
+    private void handleDeferredEvents() {
+        updateActivePart();
+        editorPresentation.getLayoutPart().deferUpdates(false);
+        WorkbenchPartReference[] disposals = (WorkbenchPartReference[]) pendingDisposals.toArray(new WorkbenchPartReference[pendingDisposals.size()]);
+        pendingDisposals.clear();
+        for (int i = 0; i < disposals.length; i++) {
+            WorkbenchPartReference reference = disposals[i];
+            disposePart(reference);
+        }
+        
+    }
+    
+    private boolean isDeferred() {
+        return deferCount > 0;
+    }
+
     /**
      * See IWorkbenchPage#closeEditor
      */
@@ -1333,6 +1369,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /* package */ void partAdded(WorkbenchPartReference ref) {
         activationList.add(ref);
         partList.addPart(ref);
+        updateActivePart();
     }
     
     /**
@@ -1341,7 +1378,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     /* package */ void partRemoved(WorkbenchPartReference ref) {
         activationList.remove(ref);
-        partList.removePart(ref);
+        disposePart(ref);
+    }
+    
+    private void disposePart(WorkbenchPartReference ref) {
+        if (isDeferred()) {
+            pendingDisposals.add(ref);
+        } else {
+            partList.removePart(ref);
+            ref.dispose();
+        }
     }
     
     /**
@@ -2074,21 +2120,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         composite.setVisible(true);
         Perspective persp = getActivePerspective();
 
-        IWorkbenchPartReference newActive = getActivePartReference();
-        if (newActive == null) {
-            newActive = savedActivePart;
-        }
-        if (newActive == null && persp != null) {
-            IViewReference refs[] = persp.getViewReferences();
-            if (refs.length > 0) {
-                newActive = refs[0];
-            }
-        }
-        
-        if (newActive != null) {
-            activationList.setActive(newActive);
-        }
-        
         if (persp != null) {
             persp.onActivate();
             updateVisibility(null, persp);
@@ -2432,7 +2463,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IStatus restoreState(IMemento memento,
             IPerspectiveDescriptor activeDescriptor) {
         
-        editorPresentation.getLayoutPart().deferUpdates(true);
+        deferUpdates(true);
         try {
             // Restore working set
             String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
@@ -2546,7 +2577,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                                 activePartID, activePartSecondaryID);
                         
                         if (ref != null) {
-                            savedActivePart = ref;
+                            activationList.setActive(ref);
                         }
                     }
                 }
@@ -2563,7 +2594,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 UIStats.end(UIStats.RESTORE_WORKBENCH, blame, "WorkbenchPage" + label); //$NON-NLS-1$
             }
         } finally {
-            editorPresentation.getLayoutPart().deferUpdates(false);
+            deferUpdates(false);
         }
     }
 
@@ -2702,7 +2733,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Sets the active part.
      */
     private void setActivePart(IWorkbenchPart newPart) {
-        savedActivePart = null;
         // Optimize it.
         if (getActivePart() == newPart) {
             return;

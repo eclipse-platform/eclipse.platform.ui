@@ -44,10 +44,6 @@ public abstract class PartList {
                     partInputChanged(ref);
                     break;
                 }
-                // TODO: This is really a property of the stack, not the part itself.
-                // This property should be removed eventually.
-                case WorkbenchPartReference.INTERNAL_PROPERTY_BROUGHT_TO_TOP:
-                    partBroughtToTop(ref); break;
             }
         }
     };
@@ -227,10 +223,6 @@ public abstract class PartList {
         Assert.isNotNull(ref.getPart(false));
         
         firePartVisible(ref);
-    }
-    
-    private void partBroughtToTop(WorkbenchPartReference ref) {
-        firePartBroughtToTop(ref);
     }
     
     /**

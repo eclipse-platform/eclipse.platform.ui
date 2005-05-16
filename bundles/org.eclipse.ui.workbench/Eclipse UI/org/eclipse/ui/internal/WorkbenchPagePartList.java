@@ -47,7 +47,9 @@ public class WorkbenchPagePartList extends PartList {
     }
 
     protected void fireActiveEditorChanged(IWorkbenchPartReference ref) {
-        // TODO: There is no listener for editor activation changes yet
+        if (ref != null) {
+            firePartBroughtToTop(ref);
+        }
     }
 
     protected void fireActivePartChanged(IWorkbenchPartReference oldRef, IWorkbenchPartReference newRef) {
@@ -69,7 +71,7 @@ public class WorkbenchPagePartList extends PartList {
         partService.firePartInputChanged(ref);
     }
 
-    protected void firePartBroughtToTop(IWorkbenchPartReference ref) {
+    public void firePartBroughtToTop(IWorkbenchPartReference ref) {
         partService.firePartBroughtToTop(ref);
     }
 }

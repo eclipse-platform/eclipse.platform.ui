@@ -235,7 +235,6 @@ import org.eclipse.ui.views.IViewRegistry;
         int count = counter.removeRef(key);
         if (count <= 0) {
             getWorkbenchPage().partRemoved((ViewReference)ref);
-            ((WorkbenchPartReference)viewRef).dispose();
         }
     }
 
