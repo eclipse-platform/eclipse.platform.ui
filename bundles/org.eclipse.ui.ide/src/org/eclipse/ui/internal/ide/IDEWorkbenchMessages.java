@@ -795,7 +795,11 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceWorkingSetPage_warning_resourceMustBeChecked;
 	public static String ResourceWorkingSetPage_error;
 	public static String ResourceWorkingSetPage_error_updateCheckedState;
-
+	public static String ResourceWorkingSetPage_selectAll_label;
+	public static String ResourceWorkingSetPage_selectAll_toolTip;
+	public static String ResourceWorkingSetPage_deselectAll_label;
+	public static String ResourceWorkingSetPage_deselectAll_toolTip;
+	
 	public static String ResourceEncodingFieldEditor_ErrorLoadingMessage;
 	public static String ResourceEncodingFieldEditor_ErrorStoringMessage;
 	public static String ResourceEncodingFieldEditor_EncodingConflictTitle;

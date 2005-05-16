@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.wizard.WizardPage;
@@ -35,9 +36,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -159,7 +163,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
         tree = new CheckboxTreeViewer(composite);
         tree.setUseHashlookup(true);
-        tree.setContentProvider(new WorkbenchContentProvider());
+		final ITreeContentProvider treeContentProvider = new WorkbenchContentProvider();
+        tree.setContentProvider(treeContentProvider);
         tree.setLabelProvider(new DecoratingLabelProvider(
                 new WorkbenchLabelProvider(), IDEWorkbenchPlugin.getDefault()
                         .getWorkbench().getDecoratorManager()
@@ -195,7 +200,37 @@ public class ResourceWorkingSetPage extends WizardPage implements
                             });
             }
         });
-        initializeCheckedState();
+
+		// Add select / deselect all buttons for bug 46669
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout(2, false));
+		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
+		selectAllButton.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_selectAll_label);
+		selectAllButton.setToolTipText(IDEWorkbenchMessages.ResourceWorkingSetPage_selectAll_toolTip);
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				tree.setCheckedElements(treeContentProvider.getElements(tree.getInput()));
+				validateInput();
+			}
+		});
+		selectAllButton.setFont(font);
+		setButtonLayoutData(selectAllButton);
+
+		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
+		deselectAllButton.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_deselectAll_label);
+		deselectAllButton.setToolTipText(IDEWorkbenchMessages.ResourceWorkingSetPage_deselectAll_toolTip);
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				tree.setCheckedElements(new Object[0]);
+				validateInput();
+			}
+		});
+		deselectAllButton.setFont(font);
+		setButtonLayoutData(deselectAllButton);
+		
+		initializeCheckedState();
         if (workingSet != null) {
             text.setText(workingSet.getName());
         }
