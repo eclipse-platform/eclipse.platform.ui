@@ -58,7 +58,7 @@ public class DecorationScheduler {
 
 	UIJob updateJob;
 	
-	Collection removedListeners = new HashSet();
+	private Collection removedListeners = new HashSet();
 	
 	private Job clearJob;
 	
@@ -608,9 +608,8 @@ public class DecorationScheduler {
 	 * @param listener
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
-		if(updateJob == null)
-			return;
-		removedListeners.add(listener);
+		if(updatesPending())//Only keep track of them if there are updates pending
+			removedListeners.add(listener);
 		
 	}
 }
