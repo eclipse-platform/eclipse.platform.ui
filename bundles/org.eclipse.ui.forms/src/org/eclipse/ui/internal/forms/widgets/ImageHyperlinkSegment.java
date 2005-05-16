@@ -82,7 +82,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getText()
 	 */
 	public String getText() {
-		return text!=null?text:"";
+		return text!=null?text:""; //$NON-NLS-1$
 	}
 	
 	public void setText(String text) {

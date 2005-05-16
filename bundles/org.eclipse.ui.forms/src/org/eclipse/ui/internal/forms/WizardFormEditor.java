@@ -395,7 +395,7 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2, I
 		//form.getForm().setBackgroundImageAlignment(SWT.RIGHT);
 		//form.getForm().setBackgroundImageClipped(false);
 		form.getBody().setLayout(new WizardFormLayout());
-		descriptionLabel = toolkit.createLabel(form.getBody(), "", SWT.WRAP);
+		descriptionLabel = toolkit.createLabel(form.getBody(), "", SWT.WRAP); //$NON-NLS-1$
 		pageContainer = new WrappedPageBook(form.getBody(), SWT.NULL);
 		separator = toolkit.createLabel(form.getBody(), null, SWT.SEPARATOR|SWT.HORIZONTAL);
 		buttonContainer = toolkit.createComposite(form.getBody());
@@ -899,7 +899,7 @@ public class WizardFormEditor extends EditorPart implements IWizardContainer2, I
 	 */
 	private void updateDescriptionMessage() {
 		pageDescription = currentPage.getDescription();
-		String text = pageDescription!=null?pageDescription:"";
+		String text = pageDescription!=null?pageDescription:""; //$NON-NLS-1$
 		descriptionLabel.setText(text);
 	}
 

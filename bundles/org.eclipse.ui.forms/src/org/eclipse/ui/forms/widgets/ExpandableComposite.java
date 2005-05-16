@@ -747,7 +747,7 @@ public class ExpandableComposite extends Composite {
 		else if (textLabel instanceof Hyperlink)
 			return ((Hyperlink) textLabel).getText();
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 
 	/**

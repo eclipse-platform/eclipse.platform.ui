@@ -205,7 +205,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 								: ACC.STATE_COLLAPSED;
 					}
 					public void getValue(AccessibleControlEvent e) {
-						e.result = "0";
+						e.result = "0"; //$NON-NLS-1$
 					}
 				});
 	}

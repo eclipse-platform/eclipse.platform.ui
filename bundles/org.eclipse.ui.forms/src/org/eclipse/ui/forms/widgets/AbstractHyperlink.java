@@ -212,7 +212,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the hyperlink object reference
 	 */
 	public void setHref(Object href) {
-		setData("href", href);
+		setData("href", href); //$NON-NLS-1$
 	}
 
 	/**
@@ -222,7 +222,7 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * @return the hyperlink object reference
 	 */
 	public Object getHref() {
-		return getData("href");
+		return getData("href"); //$NON-NLS-1$
 	}
 
 	/**

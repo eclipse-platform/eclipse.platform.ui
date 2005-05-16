@@ -52,11 +52,11 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * @since 3.0
  */
 public class FormToolkit {
-	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
+	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder"; //$NON-NLS-1$
 
-	public static final String TREE_BORDER = "treeBorder";
+	public static final String TREE_BORDER = "treeBorder"; //$NON-NLS-1$
 
-	public static final String TEXT_BORDER = "textBorder";
+	public static final String TEXT_BORDER = "textBorder"; //$NON-NLS-1$
 
 	private int borderStyle = SWT.NULL;
 
@@ -790,12 +790,12 @@ public class FormToolkit {
 	}
 
 	private void initializeBorderStyle() {
-		String osname = System.getProperty("os.name");
-		if (osname.equals("Windows XP")) {
-			String javaHome = System.getProperty("java.home");
+		String osname = System.getProperty("os.name"); //$NON-NLS-1$
+		if (osname.equals("Windows XP")) { //$NON-NLS-1$
+			String javaHome = System.getProperty("java.home"); //$NON-NLS-1$
 			File homeDir = new File(javaHome);
-			File binDir = new File(homeDir, "bin");
-			File manifest = new File(binDir, "javaw.exe.manifest");
+			File binDir = new File(homeDir, "bin"); //$NON-NLS-1$
+			File manifest = new File(binDir, "javaw.exe.manifest"); //$NON-NLS-1$
 			if (manifest.exists()) {
 				// Skinned widgets used - check for Windows Classic
 				// If not used, set the style to BORDER
@@ -803,7 +803,7 @@ public class FormToolkit {
 				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 					borderStyle = SWT.BORDER;
 			}
-		} else if (osname.startsWith("Mac"))
+		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
 	}
 

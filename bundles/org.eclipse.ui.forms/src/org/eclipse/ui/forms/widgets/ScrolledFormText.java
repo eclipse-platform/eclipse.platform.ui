@@ -151,8 +151,8 @@ public final class ScrolledFormText extends SharedScrolledComposite {
 	private void loadText(String text) {
 		if (content != null) {
 			String markup = text;
-			if (!markup.startsWith("<form>"))
-				markup = "<form>" + text + "</form>";
+			if (!markup.startsWith("<form>")) //$NON-NLS-1$
+				markup = "<form>" + text + "</form>";  //$NON-NLS-1$//$NON-NLS-2$
 			content.setText(markup, true, false);
 		}
 	}

@@ -57,13 +57,13 @@ public final class Section extends ExpandableComposite {
 
 	private Hashtable titleColors;
 
-	private static final String COLOR_BG = "bg";
+	private static final String COLOR_BG = "bg"; //$NON-NLS-1$
 
-	private static final String COLOR_GBG = "gbg";
+	private static final String COLOR_GBG = "gbg"; //$NON-NLS-1$
 
-	private static final String COLOR_FG = "fg";
+	private static final String COLOR_FG = "fg"; //$NON-NLS-1$
 
-	private static final String COLOR_BORDER = "border";
+	private static final String COLOR_BORDER = "border"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new section instance in the provided parent.

@@ -24,7 +24,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.internal.forms.Messages;
 import org.eclipse.ui.internal.forms.widgets.*;
 
 /**
@@ -121,7 +120,7 @@ public final class FormText extends Canvas {
 	 * (those that should result in opening the web browser). Value is
 	 * "urlHandler".
 	 */
-	public static final String URL_HANDLER_ID = "urlHandler";
+	public static final String URL_HANDLER_ID = "urlHandler"; //$NON-NLS-1$
 
 	/**
 	 * Value of the horizontal margin (default is 0).
@@ -162,9 +161,9 @@ public final class FormText extends Canvas {
 
 	private Action copyShortcutAction;
 
-	private static final String INTERNAL_MENU = "__internal_menu__";
+	private static final String INTERNAL_MENU = "__internal_menu__"; //$NON-NLS-1$
 
-	private static final String CONTROL_KEY = "__segment__";
+	private static final String CONTROL_KEY = "__segment__"; //$NON-NLS-1$
 
 	private class FormTextLayout extends Layout implements ILayoutExtension {
 		public FormTextLayout() {
@@ -196,8 +195,8 @@ public final class FormText extends Canvas {
 			Point result = new Point(textWidth, textHeight);
 			if (DEBUG_TEXT) {
 				long stop = System.currentTimeMillis();
-				System.out.println("FormText computeSize: " + (stop - start)
-						+ "ms");
+				System.out.println("FormText computeSize: " + (stop - start) //$NON-NLS-1$
+						+ "ms"); //$NON-NLS-1$
 			}
 			return result;
 		}
@@ -286,7 +285,7 @@ public final class FormText extends Canvas {
 			gc.dispose();
 			if (DEBUG_TEXT) {
 				long stop = System.currentTimeMillis();
-				System.out.println("FormText.layout: " + (stop - start) + "ms");
+				System.out.println("FormText.layout: " + (stop - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -326,7 +325,7 @@ public final class FormText extends Canvas {
 		addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
 				if (DEBUG_FOCUS)
-					System.out.println("Traversal: " + e);
+					System.out.println("Traversal: " + e); //$NON-NLS-1$
 				switch (e.detail) {
 				case SWT.TRAVERSE_PAGE_NEXT:
 				case SWT.TRAVERSE_PAGE_PREVIOUS:
@@ -352,7 +351,7 @@ public final class FormText extends Canvas {
 				if (!hasFocus) {
 					hasFocus = true;
 					if (DEBUG_FOCUS) {
-						System.out.println("FormText: focus gained");
+						System.out.println("FormText: focus gained"); //$NON-NLS-1$
 					}
 					if (!mouseFocus && !controlFocusTransfer) {
 						handleFocusChange();
@@ -362,7 +361,7 @@ public final class FormText extends Canvas {
 
 			public void focusLost(FocusEvent e) {
 				if (DEBUG_FOCUS) {
-					System.out.println("FormText: focus lost");
+					System.out.println("FormText: focus lost"); //$NON-NLS-1$
 				}
 				if (hasFocus) {
 					hasFocus = false;
@@ -498,7 +497,7 @@ public final class FormText extends Canvas {
 	 *            an object of a type <samp>Image </samp>.
 	 */
 	public void setImage(String key, Image image) {
-		resourceTable.put("i." + key, image);
+		resourceTable.put("i." + key, image); //$NON-NLS-1$
 	}
 
 	/**
@@ -516,7 +515,7 @@ public final class FormText extends Canvas {
 	 *            if the key needs to be cleared.
 	 */
 	public void setColor(String key, Color color) {
-		String fullKey = "c." + key;
+		String fullKey = "c." + key; //$NON-NLS-1$
 		if (color == null)
 			resourceTable.remove(fullKey);
 		else
@@ -538,7 +537,7 @@ public final class FormText extends Canvas {
 	 *            if the key needs to be cleared.
 	 */
 	public void setFont(String key, Font font) {
-		String fullKey = "f." + key;
+		String fullKey = "f." + key; //$NON-NLS-1$
 		if (font == null)
 			resourceTable.remove(fullKey);
 		else
@@ -563,7 +562,7 @@ public final class FormText extends Canvas {
 	 * @since 3.1
 	 */
 	public void setControl(String key, Control control) {
-		String fullKey = "o." + key;
+		String fullKey = "o." + key; //$NON-NLS-1$
 		if (control == null)
 			resourceTable.remove(fullKey);
 		else
@@ -648,7 +647,7 @@ public final class FormText extends Canvas {
 					break;
 				case SWT.Traverse:
 					if (DEBUG_FOCUS)
-						System.out.println("Control traversal: " + e);
+						System.out.println("Control traversal: " + e); //$NON-NLS-1$
 					switch (e.detail) {
 					case SWT.TRAVERSE_PAGE_NEXT:
 					case SWT.TRAVERSE_PAGE_PREVIOUS:
@@ -738,7 +737,7 @@ public final class FormText extends Canvas {
 			exitLink(oldLink, SWT.NULL);
 		}
 		if (DEBUG_FOCUS)
-			System.out.println("Sync control: " + cs + ", oldLink=" + oldLink);
+			System.out.println("Sync control: " + cs + ", oldLink=" + oldLink); //$NON-NLS-1$ //$NON-NLS-2$
 		model.select(cs);
 		if (oldLink != null)
 			paintFocusTransfer(oldLink, null);
@@ -849,7 +848,7 @@ public final class FormText extends Canvas {
 	private void createMenu() {
 		Menu menu = new Menu(this);
 		final MenuItem copyItem = new MenuItem(menu, SWT.PUSH);
-		copyItem.setText(Messages.FormText_copy);
+		copyItem.setText(""); //$NON-NLS-1$
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -993,7 +992,7 @@ public final class FormText extends Canvas {
 		checkWidget();
 		if (selData != null)
 			return selData.getSelectionText();
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -1266,7 +1265,7 @@ public final class FormText extends Canvas {
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (DEBUG_FOCUS)
-			System.out.println("FormText: mouse click(" + down + ")");
+			System.out.println("FormText: mouse click(" + down + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (down) {
 			// select a hyperlink
 			mouseFocus = true;
@@ -1351,7 +1350,7 @@ public final class FormText extends Canvas {
 
 	private boolean advance(boolean next) {
 		if (DEBUG_FOCUS)
-			System.out.println("Advance: next=" + next);
+			System.out.println("Advance: next=" + next); //$NON-NLS-1$
 		IFocusSelectable current = model.getSelectedSegment();
 		if (current != null && current instanceof IHyperlinkSegment)
 			exitLink((IHyperlinkSegment) current, SWT.NULL);
@@ -1391,8 +1390,8 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (DEBUG_FOCUS) {
-			System.out.println("Handle focus change: hasFocus=" + hasFocus
-					+ ", mouseFocus=" + mouseFocus);
+			System.out.println("Handle focus change: hasFocus=" + hasFocus //$NON-NLS-1$
+					+ ", mouseFocus=" + mouseFocus); //$NON-NLS-1$
 		}
 		if (hasFocus) {
 			boolean advance = true;

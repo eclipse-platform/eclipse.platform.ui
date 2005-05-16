@@ -22,7 +22,7 @@ import org.eclipse.ui.forms.HyperlinkSettings;
  * @author
  */
 public class Paragraph {
-	public static final String HTTP = "http://";
+	public static final String HTTP = "http://"; //$NON-NLS-1$
 
 	private Vector segments;
 

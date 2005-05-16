@@ -40,7 +40,7 @@ public class SelectionData {
 	}
 	public void addSegment(String text) {
 		if (newLineNeeded) {
-			segments.add(System.getProperty("line.separator"));
+			segments.add(System.getProperty("line.separator")); //$NON-NLS-1$
 			newLineNeeded=false;
 		}
 		segments.add(text);

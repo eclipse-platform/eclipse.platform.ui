@@ -131,7 +131,7 @@ public class Hyperlink extends AbstractHyperlink {
 		if (text != null)
 			this.text = text;
 		else
-			this.text = "";
+			this.text = ""; //$NON-NLS-1$
 		redraw();
 	}
 	/**

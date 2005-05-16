@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.*;
  * @author
  */
 public class ImageSegment extends ObjectSegment {
-	public static final String SEL_IMAGE_PREFIX = "isel.";
+	public static final String SEL_IMAGE_PREFIX = "isel."; //$NON-NLS-1$
 
 	public Image getImage(Hashtable objectTable) {
 		return getImage(getObjectId(), objectTable);

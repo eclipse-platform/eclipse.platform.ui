@@ -22,16 +22,16 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FormUtil {
-	public static final String PLUGIN_ID = "org.eclipse.ui.forms";
+	public static final String PLUGIN_ID = "org.eclipse.ui.forms"; //$NON-NLS-1$
 
 	static final int H_SCROLL_INCREMENT = 5;
 
 	static final int V_SCROLL_INCREMENT = 64;
 
-	public static final String DEBUG = PLUGIN_ID + "/debug";
+	public static final String DEBUG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 
-	public static final String DEBUG_TEXT = DEBUG + "/text";
-	public static final String DEBUG_FOCUS = DEBUG + "/focus";
+	public static final String DEBUG_TEXT = DEBUG + "/text"; //$NON-NLS-1$
+	public static final String DEBUG_FOCUS = DEBUG + "/focus"; //$NON-NLS-1$
 
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {
@@ -41,7 +41,7 @@ public class FormUtil {
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory, int span) {
 		factory.createLabel(parent, label);
-		Text text = factory.createText(parent, "");
+		Text text = factory.createText(parent, ""); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
@@ -57,7 +57,7 @@ public class FormUtil {
 			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			l.setLayoutData(gd);
 		}
-		Text text = factory.createText(parent, "", style);
+		Text text = factory.createText(parent, "", style); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
@@ -68,7 +68,7 @@ public class FormUtil {
 
 	public static Text createText(Composite parent, FormToolkit factory,
 			int span) {
-		Text text = factory.createText(parent, "");
+		Text text = factory.createText(parent, ""); //$NON-NLS-1$
 		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
@@ -338,11 +338,11 @@ public class FormUtil {
 				return;
 			switch (keyCode) {
 			case SWT.ARROW_DOWN:
-				if (scomp.getData("novarrows")==null)
+				if (scomp.getData("novarrows")==null) //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, false);
 				break;
 			case SWT.ARROW_UP:
-				if (scomp.getData("novarrows")==null)
+				if (scomp.getData("novarrows")==null) //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, true);
 				break;
 			case SWT.ARROW_LEFT:
