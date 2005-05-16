@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 /**
  * An intentionally thrown exception for use in testing error handling code.
  *
- * @since 3.1
+ * @since 3.1 (backported for perf tests)
  */
 public class ForcedException extends RuntimeException {
 
