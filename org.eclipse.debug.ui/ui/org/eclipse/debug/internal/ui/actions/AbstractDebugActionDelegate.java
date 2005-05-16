@@ -91,8 +91,13 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
         protected IStatus run(IProgressMonitor monitor) {
 		    MultiStatus status= 
 				new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
-		    for (int i = 0; i < fElements.length; i++) {
-				Object element= fElements[i];
+		    Object[] targets = null;
+		    synchronized (this) {
+		    	targets = fElements;
+		    	fElements = null;
+			}
+		    for (int i = 0; i < targets.length; i++) {
+				Object element= targets[i];
 				try {
 					// Action's enablement could have been changed since
 					// it was last enabled.  Check that the action is still
@@ -111,7 +116,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
          * 
          * @param elements
          */
-        public void setTargets(Object[] elements) {
+        public synchronized void setTargets(Object[] elements) {
             fElements = elements;
         }
 	    
