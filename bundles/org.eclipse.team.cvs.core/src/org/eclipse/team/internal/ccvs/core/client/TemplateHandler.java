@@ -41,10 +41,12 @@ public class TemplateHandler extends ResponseHandler {
 	 */
 	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
 		session.readLine(); /* read the remote dir which is not needed */
-		ICVSFolder localFolder = getExistingFolder(session, localDir);
+        // Only read the template file if the container exists.
+        // This is OK as we only use the template from the project folder which must exist
+        ICVSFolder localFolder = session.getLocalRoot().getFolder(localDir);
 		IContainer container = (IContainer)localFolder.getIResource();
 		ICVSStorage templateFile = null;
-		if (container != null) {
+		if (container != null && container.exists()) {
 		    try {
                 templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));
             } catch (CVSException e) {
