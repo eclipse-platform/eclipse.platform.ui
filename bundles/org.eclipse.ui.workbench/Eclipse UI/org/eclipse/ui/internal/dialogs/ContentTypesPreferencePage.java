@@ -51,6 +51,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
@@ -415,10 +416,27 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                 public void widgetSelected(SelectionEvent e) {
                     Shell shell = e.widget.getDisplay().getActiveShell();
                     IContentType selectedContentType = getSelectedContentType();
-                    NewContentTypeFileAssociationDialog dialog = new NewContentTypeFileAssociationDialog(
-                            shell, selectedContentType);
-                    if (dialog.open() == Window.OK)
-                        fileAssociationViewer.setInput(selectedContentType);
+                    FileExtensionDialog dialog = new FileExtensionDialog(shell);
+                    if (dialog.open() == Window.OK) {
+						String name = dialog.getName();
+						String extension = dialog.getExtension();
+						try {
+							if (name.equals("*")) { //$NON-NLS-1$
+								selectedContentType.addFileSpec(extension,
+										IContentType.FILE_EXTENSION_SPEC);
+							} else {
+								selectedContentType.addFileSpec(name + (extension.length() > 0 ? ('.'
+										+ extension) : ""), //$NON-NLS-1$
+										IContentType.FILE_NAME_SPEC);
+							}
+						} catch (CoreException ex) {
+							ErrorDialog.openError(shell, null, null, ex.getStatus());
+							WorkbenchPlugin.log(ex.getStatus());
+						}
+						finally {
+							fileAssociationViewer.setInput(selectedContentType);
+						}
+					}
                 }
             });
 
