@@ -14,7 +14,8 @@ package org.eclipse.core.commands.operations;
  * <p>
  * ICompositeOperation defines an undoable operation that is composed of child
  * operations. Requests to execute, undo, or redo result in the operation taking
- * place on the composite as a whole.
+ * place on the composite as a whole. Similarly, a request to dispose the
+ * composite should result in all child operations being disposed.
  * </p>
  * 
  * @since 3.1
@@ -22,7 +23,9 @@ package org.eclipse.core.commands.operations;
 public interface ICompositeOperation extends IUndoableOperation {
 
 	/**
+	 * <p>
 	 * Add the specified operation as a child of this operation.
+	 * </p>
 	 * 
 	 * @param operation
 	 *            the operation to be added. If the operation instance has
@@ -31,11 +34,18 @@ public interface ICompositeOperation extends IUndoableOperation {
 	void add(IUndoableOperation operation);
 
 	/**
+	 * <p>
 	 * Remove the specified operation from this operation.
+	 * </p>
+	 * <p>
+	 * The composite operation should dispose the operation as part of removing
+	 * it.
+	 * </p>
 	 * 
 	 * @param operation
-	 *            the operation to be removed. This method will have no effect
-	 *            if the operation instance is not already a child.
+	 *            the operation to be removed. The operation should be disposed
+	 *            by the receiver. This method will have no effect if the
+	 *            operation instance is not already a child.
 	 */
 	void remove(IUndoableOperation operation);
 }
