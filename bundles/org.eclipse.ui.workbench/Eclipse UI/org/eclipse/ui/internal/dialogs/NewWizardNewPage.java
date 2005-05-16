@@ -65,8 +65,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * New wizard selection tab that allows the user to select a registered 'New'
  * wizard to be launched.
  */
-class NewWizardNewPage implements ISelectionChangedListener,
-        IDoubleClickListener {
+class NewWizardNewPage implements ISelectionChangedListener {
 
     // id constants
     private static final String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
@@ -323,7 +322,6 @@ class NewWizardNewPage implements ISelectionChangedListener,
         viewer.setLabelProvider(new WorkbenchLabelProvider());
         viewer.setSorter(NewWizardCollectionSorter.INSTANCE);
         viewer.addSelectionChangedListener(this);
-        viewer.addDoubleClickListener(this);
 
         ArrayList inputArray = new ArrayList();
 
@@ -362,14 +360,16 @@ class NewWizardNewPage implements ISelectionChangedListener,
              * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
              */
             public void doubleClick(DoubleClickEvent event) {
-                IStructuredSelection s = (IStructuredSelection) event
-                        .getSelection();
-                Object element = s.getFirstElement();
+            	    IStructuredSelection s = (IStructuredSelection) event
+						.getSelection();
+				selectionChanged(new SelectionChangedEvent(event.getViewer(), s));
+				
+				Object element = s.getFirstElement();
                 if (viewer.isExpandable(element)) {
                     viewer.setExpandedState(element, !viewer
                             .getExpandedState(element));
                 } else if (element instanceof WorkbenchWizardElement) {
-                    page.advanceToNextPage();
+                    page.advanceToNextPageOrFinish();
                 }
             }
         });
@@ -477,16 +477,6 @@ class NewWizardNewPage implements ISelectionChangedListener,
 						wizardHelpHref);
             }
         });
-    }
-
-    /**
-     * A wizard in the wizard viewer has been double clicked. Treat it as a
-     * selection.
-     */
-    public void doubleClick(DoubleClickEvent event) {
-        selectionChanged(new SelectionChangedEvent(event.getViewer(), event
-                .getViewer().getSelection()));
-        page.advanceToNextPage();
     }
 
     /**

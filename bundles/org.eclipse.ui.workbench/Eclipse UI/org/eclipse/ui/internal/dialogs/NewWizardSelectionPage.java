@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -65,8 +66,13 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
     /**
      * Makes the next page visible.
      */
-    public void advanceToNextPage() {
-        getContainer().showPage(getNextPage());
+    public void advanceToNextPageOrFinish() {
+    		if (canFlipToNextPage())
+    			getContainer().showPage(getNextPage());
+    		else if (canFinishEarly()) {
+    			if (getWizard().performFinish()) //the following is bad - we need methods on IWizardContainer to accomplish this
+    				((WizardDialog)getContainer()).close();
+    		}
     }
 
     /** (non-Javadoc)
