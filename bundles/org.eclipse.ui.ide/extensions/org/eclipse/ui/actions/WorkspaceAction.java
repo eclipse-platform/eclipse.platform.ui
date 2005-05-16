@@ -154,6 +154,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * </p>
      *
      * @return the message
+     * 
+     * @since 3.1
      */
     protected abstract String getOperationMessage();
 
@@ -167,6 +169,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * </p>
      *
      * @return the problems message
+     * 
+     * @since 3.1
      */
     protected String getProblemsMessage() {
         return IDEWorkbenchMessages.WorkbenchAction_problemsMessage;
@@ -181,6 +185,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * </p>
      *
      * @return the problems dialog title
+     * 
+     * @since 3.1
      */
     protected String getProblemsTitle() {
         return IDEWorkbenchMessages.WorkspaceAction_problemsTitle;
@@ -209,6 +215,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * @param resource one of the selected resources
      * @param monitor a progress monitor
      * @exception CoreException if the operation fails
+     * 
+     * @since 3.1
      */
     protected abstract void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException;
@@ -313,6 +321,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      *
      * @return <code>true</code> if pruning should be performed, 
      *   and <code>false</code> if pruning is not desired
+     *   
+     * @since 3.1
      */
     protected boolean shouldPerformResourcePruning() {
         return true;
