@@ -94,7 +94,7 @@ public class CVSTag {
 			if(date1 == null || date2 == null)return -1;
 			return date1.compareTo(date2);
 		}
-		return getName().compareTo(other.getName());
+		return getName().compareToIgnoreCase(other.getName());
 	}
 	
 	public static boolean equalTags(CVSTag tag1, CVSTag tag2) {
