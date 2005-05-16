@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Prompts the user for a multi-line comment for releasing to CVS.
@@ -92,11 +91,16 @@ public class ReleaseCommentDialog extends DetailsDialog {
 			}
 		});
 		
-		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.RELEASE_COMMENT_DIALOG);	
         Dialog.applyDialogFont(parent);
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#getHelpContextId()
+     */
+    protected String getHelpContextId() {
+        return IHelpContextIds.RELEASE_COMMENT_DIALOG;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */

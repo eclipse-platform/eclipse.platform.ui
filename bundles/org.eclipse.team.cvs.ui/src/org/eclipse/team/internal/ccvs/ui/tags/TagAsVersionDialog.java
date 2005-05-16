@@ -25,7 +25,6 @@ import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class TagAsVersionDialog extends DetailsDialog {
 
@@ -76,10 +75,15 @@ public class TagAsVersionDialog extends DetailsDialog {
 				moveTag = moveTagButton.getSelection();
 			}
 		});
-		
-		// Add F1 help
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.TAG_AS_VERSION_DIALOG);
+
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#getHelpContextId()
+     */
+    protected String getHelpContextId() {
+        return IHelpContextIds.TAG_AS_VERSION_DIALOG;
+    }
 
 	public boolean shouldMoveTag()  {
 		return moveTag;

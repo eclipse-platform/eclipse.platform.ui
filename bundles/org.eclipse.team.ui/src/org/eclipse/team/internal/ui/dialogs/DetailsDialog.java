@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A simple superclass for detail button dialogs.
@@ -143,6 +144,11 @@ abstract public class DetailsDialog extends Dialog {
 		    composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
 		
+        String helpContextId = getHelpContextId();
+        if (helpContextId != null) {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpContextId);
+        }
+            
 		// create image
 		String key = getImageKey();
 		Image image = null;
@@ -195,7 +201,17 @@ abstract public class DetailsDialog extends Dialog {
 		return composite;
 	}
 	
-	/**
+    /**
+     * Return the help context id to be used for the dialog.
+     * This context Id will be registed by this class.
+     * By default, this method returns <code>null</code>.
+     * @return the help context id to be used for the dialog.
+     */
+	protected String getHelpContextId() {
+        return null;
+    }
+
+    /**
 	 * Return whether the main area should grab excess vertical space.
 	 * The default is <code>true</code> but sublcasses can override
 	 * in cases where the main is more or less fixed but the details

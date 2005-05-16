@@ -17,13 +17,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
@@ -31,7 +25,6 @@ import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BranchPromptDialog extends DetailsDialog {
 
@@ -114,12 +107,16 @@ public class BranchPromptDialog extends DetailsDialog {
 			versionText.setText(versionName);
 		}
 
-		// F1 Help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_DIALOG);
 		applyDialogFont(composite);
 		branchText.setFocus();
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#getHelpContextId()
+     */
+    protected String getHelpContextId() {
+        return IHelpContextIds.BRANCH_DIALOG;
+    }
     private void addBranchContentAssist() {
         TagSource projectTagSource = LocalProjectTagSource.create(getSeedProject());
         if (projectTagSource != null)

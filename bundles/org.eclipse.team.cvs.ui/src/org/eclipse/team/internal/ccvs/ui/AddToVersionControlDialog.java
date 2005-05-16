@@ -15,21 +15,14 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -63,9 +56,6 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
 			 
 		// add a description label
 		if (unaddedResources.length==1) {
@@ -74,6 +64,13 @@ public class AddToVersionControlDialog extends DetailsDialog {
 			createWrappingLabel(composite, NLS.bind(CVSUIMessages.AddToVersionControlDialog_thereAreUnaddedResources, new String[] { new Integer(unaddedResources.length).toString() }));  //$NON-NLS-1$
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#getHelpContextId()
+     */
+    protected String getHelpContextId() {
+        return IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG;
+    }
 
 	/**
 	 * @see org.eclipse.team.internal.ui.DetailsDialog#createDropDownDialogArea(org.eclipse.swt.widgets.Composite)
@@ -90,9 +87,6 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		addUnaddedResourcesArea(composite);
-		
-		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
 		
 		return composite;
 	}
