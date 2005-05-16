@@ -438,6 +438,8 @@ public class JobErrorDialog extends ErrorDialog {
         Rectangle shellPosition = getShell().getBounds();
         boolean result = super.close();
         ProgressManagerUtil.animateDown(shellPosition);
+
+       ProgressManager.getInstance().errorManager.dialogClosed();
         return result;
     }
 

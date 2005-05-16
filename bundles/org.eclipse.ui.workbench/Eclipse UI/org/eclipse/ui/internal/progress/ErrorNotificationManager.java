@@ -154,12 +154,8 @@ public class ErrorNotificationManager {
             return Status.CANCEL_STATUS;
         dialog = new JobErrorDialog(ProgressManagerUtil.getNonModalShell(), title, msg, errorInfo, IStatus.OK
                 | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
-        try {
-	        dialog.open();
-        } finally {
-            dialog = null;
-            clearAllErrors();
-        }
+        
+        dialog.open();
         return Status.OK_STATUS;
     }
 
@@ -265,4 +261,13 @@ public class ErrorNotificationManager {
     public boolean hasErrors() {
         return !errors.isEmpty();
     }
+
+    /**
+     * The error dialog has been closed. Clear the list of errors and
+     * the stored dialog.
+     */
+	public void dialogClosed() {
+        dialog = null;
+        clearAllErrors();
+	}
 }
