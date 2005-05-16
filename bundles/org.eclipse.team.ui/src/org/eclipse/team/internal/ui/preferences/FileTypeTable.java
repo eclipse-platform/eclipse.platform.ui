@@ -17,14 +17,13 @@ import java.util.List;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ui.*;
 
 
-public class FileTypeTable implements ICellModifier, IStructuredContentProvider, ITableLabelProvider, IColorProvider {
+public class FileTypeTable implements ICellModifier, IStructuredContentProvider, ITableLabelProvider {
     
     private final static int COMBO_INDEX_BINARY= 0;
     private final static int COMBO_INDEX_TEXT= 1;
@@ -81,7 +80,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     }
     
     private final static int SMALL_COLUMN= 15;
-    private final static int LARGE_COLUMN= 30;
+    private final static int LARGE_COLUMN= 20;
     
     protected static final String ITEM = "item"; //$NON-NLS-1$
     protected static final String PROPERTY_MODE= "mode"; //$NON-NLS-1$
@@ -258,26 +257,5 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     
     public TableViewer getViewer() {
         return fTableViewer;
-    }
-
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-     */
-    public Color getForeground(Object element) {
-        return null;
-    }
-
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-     */
-    public Color getBackground(Object element) {
-        if (element instanceof Item) {
-            if (((Item)(element)).contributed) {
-                return Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-            }
-        }
-        return null;
     }
 }
