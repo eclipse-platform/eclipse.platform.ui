@@ -1719,11 +1719,4 @@ public class AntModel implements IAntModel {
 			reconcile();
 		}		
 	}
-    
-    /**
-     * Returns whether the AntModel should reconcile if it become dirty.
-     */
-    public boolean isReconciling() {
-       return fShouldReconcile;
-    }
 }

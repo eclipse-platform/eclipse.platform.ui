@@ -65,7 +65,8 @@ public class ToggleAutoReconcileAction extends TextEditorAction implements IProp
 		if (editor instanceof AntEditor) {
             AntModel model= ((AntEditor)editor).getAntModel();
             enabled=  model != null;
-			checked= enabled && model.isReconciling();
+			checked= enabled && fStore.getBoolean(AntEditorPreferenceConstants.EDITOR_RECONCILE);
+			model.setShouldReconcile(checked);
 		}
 			
 		setChecked(checked);
