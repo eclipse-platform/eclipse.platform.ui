@@ -94,7 +94,7 @@ public final class ObjectContributionTest extends UITestCase {
          */
         final WorkbenchWindow window = (WorkbenchWindow) fWorkbench
                 .openWorkbenchWindow("org.eclipse.ui.resourcePerspective",
-                        ResourcesPlugin.getWorkspace());
+                		getPageInput());
         final IWorkbenchPage page = window.getActivePage();
         final ISelection selection = new StructuredSelection(xmlFile);
         ResourceNavigator navigator = null;

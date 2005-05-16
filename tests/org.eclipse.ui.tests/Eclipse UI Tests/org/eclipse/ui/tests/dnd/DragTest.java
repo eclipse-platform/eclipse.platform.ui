@@ -176,7 +176,7 @@ public class DragTest extends UITestCase {
 			window = (WorkbenchWindow)
 				fWorkbench.openWorkbenchWindow(
 						"org.eclipse.ui.tests.dnd.dragdrop",
-						ResourcesPlugin.getWorkspace());
+						getPageInput());
 					
 			page = (WorkbenchPage) window.getActivePage();
 			

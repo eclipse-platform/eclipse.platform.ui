@@ -123,7 +123,7 @@ public class IWorkbenchTest extends UITestCase {
 			win =
 				fWorkbench.openWorkbenchWindow(
 					EmptyPerspective.PERSP_ID,
-					ResourcesPlugin.getWorkspace());
+					getPageInput());
 			assertNotNull(win);
 			if (!PlatformUtil.onLinux()) {
 				assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
@@ -140,7 +140,7 @@ public class IWorkbenchTest extends UITestCase {
 		boolean exceptionOccured = false;
 		try {
 			win =
-				fWorkbench.openWorkbenchWindow("afdasfdasf", ResourcesPlugin.getWorkspace());
+				fWorkbench.openWorkbenchWindow("afdasfdasf", getPageInput());
 		} catch (WorkbenchException ex) {
 			exceptionOccured = true;
 		}
@@ -156,7 +156,7 @@ public class IWorkbenchTest extends UITestCase {
 		IWorkbenchWindow win = null;
 
 		try {
-			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			win = fWorkbench.openWorkbenchWindow(getPageInput());
 			assertNotNull(win);
 
 			if (!PlatformUtil.onLinux()) {
@@ -180,7 +180,7 @@ public class IWorkbenchTest extends UITestCase {
  * implementation of single page per window
  * 
 			// Open test window.
-			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			win = fWorkbench.openWorkbenchWindow(getPageInput());
 			assertNotNull(win);
 
 			// Set platform pref for openPage.
@@ -190,9 +190,9 @@ public class IWorkbenchTest extends UITestCase {
 			
 			// Call openPage twice with the same input.
 			// Verify that we get the same page back both times.
-			page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			page1 = fWorkbench.openPage(getPageInput());
 			assertNotNull(page1);
-			page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			page2 = fWorkbench.openPage(getPageInput());
 			assertNotNull(page2);
 			assertEquals("Pages should be equal", page1, page2);
 
@@ -207,9 +207,9 @@ public class IWorkbenchTest extends UITestCase {
  * test case to match new implementation of openPage
  * otherwise this test always fails.
  *
-			page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			page1 = fWorkbench.openPage(getPageInput());
 			assertNotNull(page1);
-			page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
+			page2 = fWorkbench.openPage(getPageInput());
 			assertNotNull(page2);
 			assertTrue("Pages should be not equal", page1 != page2);
 */
@@ -229,7 +229,7 @@ public class IWorkbenchTest extends UITestCase {
  * implementation of single page per window
  * 
 			// Open test window.
-			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			win = fWorkbench.openWorkbenchWindow(getPageInput());
 			assertNotNull(win);
 
 			// Set platform pref for openPage.
@@ -240,10 +240,10 @@ public class IWorkbenchTest extends UITestCase {
 			// Call openPage twice with the same input.
 			// Verify that we get the same page back both times.
 			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace(), 0);
+				getPageInput(), 0);
 			assertNotNull(page1);
 			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-				ResourcesPlugin.getWorkspace(), 0);
+				getPageInput(), 0);
 			assertNotNull(page2);
 			assertEquals("Pages should be equal", page1, page2);
 
@@ -254,10 +254,10 @@ public class IWorkbenchTest extends UITestCase {
 			// Call openPage twice with the same input.
 			// Verify that we get two different pages back.
 			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace(), 0);
+				getPageInput(), 0);
 			assertNotNull(page1);
 			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-				ResourcesPlugin.getWorkspace(), 0);
+				getPageInput(), 0);
 			assertTrue("Pages should be not equal", page1 != page2);
 */			
 		} finally {
