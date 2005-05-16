@@ -55,7 +55,7 @@ public class CheatSheetView extends ViewPart {
 		expandRestoreAction.setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
 		expandRestoreAction.setImageDescriptor(collapseExpandImage);
 		
-		copyAction = new Action("copy") {
+		copyAction = new Action("copy") { //$NON-NLS-1$
 			public void run() {
 				viewer.copy();
 			}
