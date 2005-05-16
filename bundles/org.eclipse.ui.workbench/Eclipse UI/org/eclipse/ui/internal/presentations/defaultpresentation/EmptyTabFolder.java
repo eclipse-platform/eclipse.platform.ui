@@ -95,6 +95,12 @@ public class EmptyTabFolder extends AbstractTabFolder {
         }
     }
     
+    public void layout(boolean flushCache) {
+        super.layout(flushCache);
+        
+        control.layout(flushCache);
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setSelectedInfo(org.eclipse.ui.internal.presentations.util.PartInfo)
      */
