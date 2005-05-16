@@ -47,10 +47,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class BaseNewWizardMenu extends CompoundContributionItem {
     /*
      * @issue Should be possible to implement this class entirely using public
-     * API. Cases to be fixed: WorkbenchPage, WorkbenchWizardElement,
-     * NewWizardsRegistryReader. Suggestions:
-     * - define API for accessing current perspective's wizard shortcuts from IWorkbenchPage 
-     * - define API for a wizard registry and corresponding descriptors
+     * API. Cases to be fixed: WorkbenchWindow, NewWizardShortcutAction
+     *  Suggestions:
+     * - add the ability to update the submenus of a window
      */
 
     private final Map actions = new HashMap(21);
