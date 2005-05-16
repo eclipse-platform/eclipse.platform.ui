@@ -101,6 +101,7 @@ public abstract class BenchmarkTest extends EclipseTest {
 			for (int i = 0; i < performance_groups.length; i++) {
 				String suffix = performance_groups[i];
 				meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
+                Performance.getDefault().setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, "The current setup for the CVS test does not provide reliable timings. Only consistent test failures over time can be considered significant.");
 				groups.put(suffix, meter);
 				if (globalName != null) {
 					perf.tagAsSummary(meter, suffix, Dimension.ELAPSED_PROCESS);
