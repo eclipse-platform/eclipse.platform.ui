@@ -144,6 +144,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSDecoratorPreferencesPage_33;
 	public static String CVSDecoratorPreferencesPage_34;
 	public static String CVSDecoratorPreferencesPage_35;
+    public static String CVSDecoratorPreferencesPage_36;
+    public static String CVSDecoratorPreferencesPage_37;
 
 	public static String CVSFilePropertiesPage_ignored;
 	public static String CVSFilePropertiesPage_notManaged;
