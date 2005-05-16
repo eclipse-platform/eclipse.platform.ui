@@ -54,6 +54,9 @@
                <documentation>
                   The fully qualified name of a class (typically implementing IAdaptable) that this factory provides adapters for.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
