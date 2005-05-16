@@ -79,7 +79,7 @@ public class InstructionPointerManager {
             return;
         }        
 		IThread thread = stackFrame.getThread();
-		boolean tos = false;
+		boolean tos = true;
 		try {
 			tos = stackFrame.equals(thread.getTopStackFrame());
 		} catch (DebugException de) {
