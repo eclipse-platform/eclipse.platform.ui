@@ -1,39 +1,72 @@
 /*
- * @(#)BackingStoreException.java   1.3 01/07/18
- * $Header: /home/eclipse/org.eclipse.core.runtime/src/org/osgi/service/prefs/BackingStoreException.java,v 1.1 2004/05/05 15:14:34 jeff Exp $
- *
- * Open Services Gateway Initiative (OSGi) Confidential. 
+ * $Header: /cvshome/build/org.osgi.service.prefs/src/org/osgi/service/prefs/BackingStoreException.java,v 1.8 2005/05/13 20:33:41 hargrave Exp $
  * 
- * (C) Copyright 1996-2001 Sun Microsystems, Inc. 
+ * Copyright (c) OSGi Alliance (2001, 2005). All Rights Reserved.
  * 
- * This source code is licensed to OSGi as MEMBER LICENSED MATERIALS 
- * under the terms of Section 3.2 of the OSGi MEMBER AGREEMENT.
- * 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this 
+ * distribution, and is available at http://www.eclipse.org/legal/epl-v10.html.
  */
-
 package org.osgi.service.prefs;
 
 /**
- * Thrown to indicate that a preferences operation could not complete because
- * of a failure in the backing store, or a failure to contact the backing
- * store.
- *
- * @version $Revision: 1.1 $
- * @author Open Services Gateway Initiative
+ * Thrown to indicate that a preferences operation could not complete because of
+ * a failure in the backing store, or a failure to contact the backing store.
+ * 
+ * @version $Revision: 1.8 $
  */
-
 public class BackingStoreException extends Exception {
+    static final long serialVersionUID = -1415637364122829574L;
 	/**
-	 * All serializable objects should have a stable serialVersionUID
+	 * Nested exception.
 	 */
-	private static final long serialVersionUID = 1L;
+	private Throwable	cause;
 
 	/**
-     * Constructs a <tt>BackingStoreException</tt> with the specified detail message.
-     *
-     * @param s the detail message.
-     */
-    public BackingStoreException(String s) {
-        super(s);
-    }
+	 * Constructs a <code>BackingStoreException</code> with the specified detail
+	 * message.
+	 * 
+	 * @param s The detail message.
+	 */
+	public BackingStoreException(String s) {
+		super(s);
+	}
+	
+	/**
+	 * Constructs a <code>BackingStoreException</code> with the specified detail
+	 * message.
+	 * 
+	 * @param s The detail message.
+	 * @param cause The cause of the exception. May be <code>null</code>.
+	 * @since 1.1 
+	 */
+	public BackingStoreException(String s, Throwable cause) {
+		super(s);
+		this.cause = cause;
+	}
+	
+	/**
+	 * Returns the cause of this exception or <code>null</code> if no cause was
+	 * specified when this exception was created.
+	 * 
+	 * @return The cause of this exception or <code>null</code> if no cause was
+	 *         specified.
+	 * @since 1.1 
+	 */
+	public Throwable getCause() {
+		return cause;
+	}
+
+	/**
+	 * The cause of this exception can only be set when constructed.
+	 * 
+	 * @throws java.lang.IllegalStateException This method will always throw an
+	 *         <code>IllegalStateException</code> since the cause of this
+	 *         exception can only be set when constructed.
+	 * @since 1.1 
+	 */
+	public Throwable initCause(Throwable cause) {
+		throw new IllegalStateException();
+	}
+
 }
