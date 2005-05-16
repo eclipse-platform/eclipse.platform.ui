@@ -10,24 +10,34 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.net.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.part.ViewPart;
 
 public class CheatSheetView extends ViewPart {
 
 	private boolean actionBarContributed = false;
 	private CheatSheetExpandRestoreAction expandRestoreAction;
+	private Action copyAction;
 	private CheatSheetViewer viewer;
 	private IMemento memento;
 
@@ -44,9 +54,18 @@ public class CheatSheetView extends ViewPart {
 		expandRestoreAction = new CheatSheetExpandRestoreAction(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP, false, viewer);
 		expandRestoreAction.setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
 		expandRestoreAction.setImageDescriptor(collapseExpandImage);
+		
+		copyAction = new Action("copy") {
+			public void run() {
+				viewer.copy();
+			}
+		};
+		copyAction.setEnabled(false);
 		tbmanager.add(expandRestoreAction);
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 
 		viewer.setExpandRestoreAction(expandRestoreAction);
+		viewer.setCopyAction(copyAction);
 	
 		CheatSheetMenu cheatsheetMenuMenuItem = new CheatSheetMenu();
 		menuManager.add(cheatsheetMenuMenuItem);

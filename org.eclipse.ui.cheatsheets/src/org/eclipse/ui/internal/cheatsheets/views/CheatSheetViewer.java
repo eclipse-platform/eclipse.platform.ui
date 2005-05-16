@@ -10,22 +10,47 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.data.*;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
+import org.eclipse.ui.cheatsheets.ICheatSheetViewer;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
+import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
+import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
+import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.osgi.framework.Bundle;
 
 public class CheatSheetViewer implements ICheatSheetViewer {
@@ -47,6 +72,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private CheatSheetSaveHelper saveHelper;
 
 	private CheatSheetExpandRestoreAction expandRestoreAction;
+	private Action copyAction;
 
 	//ITEMS
 	private ViewItem currentItem;
@@ -902,5 +928,18 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			saveCurrentSheet();
 		}
 
+	}
+
+	public Action getCopyAction() {
+		return copyAction;
+	}
+
+	public void setCopyAction(Action copyAction) {
+		this.copyAction = copyAction;
+	}
+	
+	public void copy() {
+		if (currentItem!=null)
+			currentItem.copy();
 	}
 }

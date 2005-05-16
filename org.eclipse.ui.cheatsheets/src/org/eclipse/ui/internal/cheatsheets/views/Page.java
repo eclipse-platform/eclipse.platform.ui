@@ -30,12 +30,6 @@ public abstract class Page {
 
 	private Color[] colorArray;
 
-	//private final RGB bottomRGB = new RGB(255, 255, 255);
-
-	//private final RGB midRGB = new RGB(242, 252, 254);
-
-	//private final RGB topRGB = new RGB(232, 242, 254);
-
 	protected FormToolkit toolkit;
 
 	protected ScrolledForm form;
@@ -131,11 +125,6 @@ public abstract class Page {
 	protected void init(Display display) {
 		toolkit = new FormToolkit(display);
 		backgroundColor = toolkit.getColors().getBackground();
-		// Get the background color for the cheatsheet controls
-		// backgroundColor = JFaceColors.getBannerBackground(display);
-
-		// colorArray = new Color[] { new Color(display, topRGB), new
-		// Color(display, midRGB), new Color(display, bottomRGB)};
 	}
 
 	protected abstract String getTitle();

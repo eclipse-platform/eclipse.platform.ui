@@ -14,7 +14,12 @@ import java.util.ArrayList;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -180,6 +185,25 @@ public abstract class ViewItem {
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create bodyWrapperComposite: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		bodyText = page.getToolkit().createFormText(bodyWrapperComposite, false);
+		bodyText.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Action copyAction = viewer.getCopyAction();
+				if (copyAction!=null)
+					copyAction.setEnabled(bodyText.canCopy());
+			}
+		});
+		bodyText.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				Action copyAction = viewer.getCopyAction();
+				if (copyAction!=null)
+					copyAction.setEnabled(bodyText.canCopy());
+			}
+			public void focusLost(FocusEvent e) {
+				Action copyAction = viewer.getCopyAction();
+				if (copyAction!=null)
+					copyAction.setEnabled(false);
+			}
+		});
 //		bodyText = toolkit.createLabel(bodyWrapperComposite, item.getDescription(), SWT.WRAP);
 		bodyText.setText(item.getDescription(), item.getDescription().startsWith(IParserTags.FORM_START_TAG), false);
 
@@ -527,5 +551,13 @@ public abstract class ViewItem {
 
 	public void initialized() {
 		initialized = true;
+	}
+	
+	public boolean canCopy() {
+		return (bodyText!=null && !bodyText.isDisposed())?bodyText.canCopy():false;
+	}
+	public void copy() {
+		if (bodyText!=null && !bodyText.isDisposed())
+			bodyText.copy();
 	}
 }
