@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,8 +59,7 @@ public class DecorationScheduler {
 
 	UIJob updateJob;
 	
-	private Collection removedListeners = new HashSet();
-	
+	private Collection removedListeners = Collections.synchronizedSet(new HashSet());	
 	private Job clearJob;
 	
 	//Static used for the updates to indicate an update is required
@@ -610,6 +610,8 @@ public class DecorationScheduler {
 	void listenerRemoved(ILabelProviderListener listener) {
 		if(updatesPending())//Only keep track of them if there are updates pending
 			removedListeners.add(listener);
+		if(!updatesPending())//Check again in case of race condition.
+			removedListeners.remove(listener);
 		
 	}
 }
