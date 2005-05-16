@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -391,5 +392,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			//unfortunately super will force focus to the list but we want the type ahead combo to get it.
 			filteredTree.getFilterControl().setFocus();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTreeFont(org.eclipse.swt.graphics.Font)
+	 */
+	protected void updateTreeFont(Font dialogFont) {
+		applyDialogFont(filteredTree);
 	}
 }
