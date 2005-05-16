@@ -270,7 +270,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                 return true;
             int major = Integer.parseInt(tokenizer.nextToken());
             if (major != MIN_JVM_VERSION_MAJOR)
-                return major > MIN_JVM_VERSION_MINOR;
+                return major > MIN_JVM_VERSION_MAJOR;
 
             // make sure the running vm's minor is >= the requirement
             if (!tokenizer.hasMoreTokens())
