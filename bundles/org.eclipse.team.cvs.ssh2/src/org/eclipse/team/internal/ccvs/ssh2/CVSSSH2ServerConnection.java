@@ -15,9 +15,9 @@ import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
 import org.eclipse.team.internal.core.streams.*;
@@ -29,7 +29,21 @@ import com.jcraft.jsch.*;
  * doesn't support SSH2. 
  */
 public class CVSSSH2ServerConnection implements IServerConnection {
-	private static final String COMMAND = "cvs server"; //$NON-NLS-1$
+	private final class SSH2IOException extends IOException {
+        private static final long serialVersionUID = 1L;
+
+        private final JSchException e;
+
+        private SSH2IOException(String s, JSchException e) {
+            super(s);
+            this.e = e;
+        }
+
+        public Throwable getCause() {
+            return e;
+        }
+    }
+    private static final String COMMAND = "cvs server"; //$NON-NLS-1$
 	private ICVSRepositoryLocation location;
 	private String password;
 	private InputStream inputStream;
@@ -119,7 +133,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
                     // above channel connect may fail because the session is down. For this reason,
                     // we want to retry if the connection fails.
                     try {
-                        if (firstTime && isSessionDownError(ee)) {
+                        if (firstTime && (isSessionDownError(ee) || isChannelNotOpenError(ee))) {
                             tryAgain = true;
                         }
                         if (!tryAgain) {
@@ -145,11 +159,11 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 						}
 					},
 					8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
-		} catch (JSchException e) {
+		} catch (final JSchException e) {
 			if (isSSH2Unsupported(e)) {
                 ssh1 = new SSHServerConnection(location, password);
                 if (ssh1 == null) {
-                    throw new IOException(e.toString());
+                    throw new SSH2IOException(e.toString(), e);
                 }
                 ssh1.open(monitor);
             } else {
@@ -176,12 +190,14 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				        }
 			        }
 			    }
-                CVSSSH2Plugin.getDefault().getLog().log(new CVSStatus(IStatus.ERROR, "An I/O error occurred connecting using SSH2", e)); //$NON-NLS-1$
-				throw new IOException(message);
+ 				throw new SSH2IOException(message, e);
 			}
 		}
 	}
     
+    private boolean isChannelNotOpenError(JSchException ee) {
+        return ee.getMessage().indexOf("channel is not opened") != -1; //$NON-NLS-1$
+    }
     private boolean isSessionDownError(JSchException ee) {
         return ee.getMessage().equals("session is down"); //$NON-NLS-1$
     }
