@@ -35,6 +35,7 @@ public class NewEditorAction extends ActiveEditorAction {
 		super(WorkbenchMessages.NewEditorAction_text, window);
 		setId("newEditorAction"); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
+        setActionDefinitionId("org.eclipse.ui.window.newEditor"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -594,6 +594,11 @@
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.previous" />
       <command
+            name="%command.newEditor.name"
+            description="%command.newEditor.description"
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.window.newEditor" />
+      <command
             name="%command.openEditorDropDown.name"
             description="%command.openEditorDropDown.description"
             categoryId="org.eclipse.ui.category.window"
