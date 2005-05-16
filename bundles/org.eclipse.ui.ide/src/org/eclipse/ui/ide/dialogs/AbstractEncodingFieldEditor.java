@@ -14,10 +14,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -27,13 +29,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
-
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -102,7 +99,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			List encodings = IDEEncoding.getIDEEncodings();
 			String resourcePreference = getStoredValue();
 			populateEncodingsCombo(encodings, resourcePreference);
-			updateEncodingState(resourcePreference == null || resourcePreference.equals(defaultEnc));
+			updateEncodingState(resourcePreference == null);
 		}
 	}
 
@@ -205,11 +202,23 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 		data = new GridData();
 		encodingCombo.setFont(font);
 		encodingCombo.setLayoutData(data);
-		encodingCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		encodingCombo.addSelectionListener(new SelectionAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
 				updateValidState();
 			}
 		});
+		encodingCombo.addKeyListener(new KeyAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyReleased(KeyEvent e) {
+				updateValidState();
+			}
+		});
+
 
 		return group;
 	}
@@ -333,6 +342,15 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			return current == null || current.length() == 0;
 		}
 		return encodingSetting.equals(current);
+	}
+
+	/**
+	 * Return whether or not the default has been selected.
+	 * @return <code>true</code> if the default button has been
+	 * selected.
+	 */
+	boolean isDefaultSelected() {
+		return defaultEncodingButton.getSelection();
 	}
 
 }

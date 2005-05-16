@@ -77,8 +77,8 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 	protected String getStoredValue() {
 		try {
 			if (resource instanceof IContainer)
-				return ((IContainer) resource).getDefaultCharset();
-			return ((IFile) resource).getCharset();
+				return ((IContainer) resource).getDefaultCharset(false);
+			return ((IFile) resource).getCharset(false);
 
 		} catch (CoreException e) {//If there is an error return the default
 			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorLoadingMessage, e.getStatus());
@@ -94,8 +94,13 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 
 		String encoding = getSelectedEncoding();
 
-		if (hasSameEncoding(encoding))
-			return;
+		//Clear the value if nothing is selected
+		if(isDefaultSelected())
+			encoding = null;
+		else{//Don't update if the same thing is selected
+			if (hasSameEncoding(encoding))
+				return;
+		}
 
 		String descriptionCharset = getCharsetFromDescription();
 		if (descriptionCharset != null && !(descriptionCharset.equals(encoding))) {
@@ -115,10 +120,7 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 				return;
 		}
 
-		if (encoding.equals(getDefaultEnc()))
-			encoding = null;
-		else
-			IDEEncoding.addIDEEncoding(encoding);
+		IDEEncoding.addIDEEncoding(encoding);
 
 		final String finalEncoding = encoding;
 
