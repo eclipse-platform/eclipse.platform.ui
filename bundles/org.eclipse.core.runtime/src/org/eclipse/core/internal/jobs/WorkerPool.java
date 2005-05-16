@@ -124,10 +124,9 @@ class WorkerPool {
 			notify();
 			return;
 		}
-		int threadCount = numThreads;
 		//create a thread if all threads are busy and we're under the max size
 		//if the job is high priority, we start a thread no matter what
-		if (busyThreads >= threadCount) {
+		if (busyThreads >= numThreads) {
 			Worker worker = new Worker(this);
 			add(worker);
 			if (JobManager.DEBUG)
@@ -141,7 +140,7 @@ class WorkerPool {
 	 * Remove a worker thread from our list.
 	 * @return true if a worker was removed, and false otherwise.
 	 */
-	private boolean remove(Worker worker) {
+	private synchronized boolean remove(Worker worker) {
 		for (int i = 0; i < threads.length; i++) {
 			if (threads[i] == worker) {
 				System.arraycopy(threads, i + 1, threads, i, numThreads - i - 1);
