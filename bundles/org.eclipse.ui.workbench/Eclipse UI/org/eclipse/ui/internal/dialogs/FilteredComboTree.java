@@ -63,6 +63,7 @@ public class FilteredComboTree extends FilteredTree {
 	 */
 	protected void createFilterControl(Composite parent) {
 		filterCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
+		filterCombo.setFont(parent.getFont());
 		getPreferenceSearchHistory();
 		filterCombo.addTraverseListener( new TraverseListener () {
 			public void keyTraversed(TraverseEvent e) {

@@ -118,7 +118,7 @@ public class FilteredTree extends Composite {
         filterLayout.marginHeight = 0;
         filterLayout.marginWidth = 0;
         filterParent.setLayout(filterLayout);
-
+        filterParent.setFont(parent.getFont());
         filterParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
                 | GridData.GRAB_HORIZONTAL));
 

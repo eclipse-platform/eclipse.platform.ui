@@ -187,7 +187,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected Control createTreeAreaContents(Composite parent) {
 		Composite leftArea = new Composite(parent, SWT.NONE);
 		leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
+		leftArea.setFont(parent.getFont());
 		GridLayout leftLayout = new GridLayout();
 		leftLayout.numColumns = 1;
 		leftLayout.marginHeight = 0;
