@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -275,7 +276,7 @@ public class OpenWithMenu extends ContributionItem {
         try {
             String editorId = editor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID
                     : editor.getId();
-            page.openEditor(new FileEditorInput(file), editorId);
+            ((WorkbenchPage) page).openEditor(new FileEditorInput(file), editorId, true, WorkbenchPage.MATCH_BOTH);
             // only remember the default editor if the open succeeds
             IDE.setDefaultEditor(file, editorId);
         } catch (PartInitException e) {
@@ -289,7 +290,7 @@ public class OpenWithMenu extends ContributionItem {
      * Creates the menu item for clearing the current selection.
      *
      * @param menu the menu to add the item to
-     * @param file the file bing edited
+     * @param file the file being edited
      */
     private void createDefaultMenuItem(Menu menu, final IFile file) {
         final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
@@ -303,7 +304,8 @@ public class OpenWithMenu extends ContributionItem {
                     if (menuItem.getSelection()) {
                         IDE.setDefaultEditor(file, null);
                         try {
-                            IDE.openEditor(page, file, true);
+                        	IEditorDescriptor desc = IDE.getEditorDescriptor(file);
+                            ((WorkbenchPage) page).openEditor(new FileEditorInput(file), desc.getId(), true, WorkbenchPage.MATCH_BOTH);
                         } catch (PartInitException e) {
                             DialogUtil.openError(page.getWorkbenchWindow()
                                     .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,

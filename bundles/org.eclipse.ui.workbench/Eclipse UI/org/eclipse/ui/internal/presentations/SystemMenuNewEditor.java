@@ -68,7 +68,7 @@ public final class SystemMenuNewEditor extends Action implements ISelfUpdatingAc
 							try {
 								((WorkbenchPage) page).openEditor(editor
 										.getEditorInput(), editorId, true,
-										false);
+										WorkbenchPage.MATCH_NONE);
 							} catch (PartInitException e) {
 								DialogUtil.openError(page.getWorkbenchWindow()
 										.getShell(), WorkbenchMessages.Error, e

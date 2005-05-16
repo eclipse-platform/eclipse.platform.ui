@@ -51,7 +51,7 @@ public class NewEditorAction extends ActiveEditorAction {
 			return;
 		}
 		try {
-			page.openEditor(editor.getEditorInput(), editorId, true, false);
+			page.openEditor(editor.getEditorInput(), editorId, true, WorkbenchPage.MATCH_NONE);
         } catch (PartInitException e) {
             DialogUtil.openError(page.getWorkbenchWindow().getShell(),
                     WorkbenchMessages.Error,

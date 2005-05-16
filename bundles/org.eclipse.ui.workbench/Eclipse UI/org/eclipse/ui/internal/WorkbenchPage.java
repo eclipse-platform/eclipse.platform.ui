@@ -106,6 +106,12 @@ import org.eclipse.ui.views.IViewRegistry;
 public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IWorkbenchPage {
 	
+	// editor matching flags
+	public static final int MATCH_NONE = 0;
+	public static final int MATCH_INPUT = 1;
+	public static final int MATCH_ID = 2;
+	public static final int MATCH_BOTH = MATCH_INPUT | MATCH_ID;
+	
     private WorkbenchWindow window;
 
     private IAdaptable input;
@@ -2160,7 +2166,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IEditorPart openEditor(IEditorInput input, String editorID)
             throws PartInitException {
-        return openEditor(input, editorID, true, true);
+        return openEditor(input, editorID, true, MATCH_INPUT);
     }
 
     /**
@@ -2168,17 +2174,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public IEditorPart openEditor(IEditorInput input, String editorID,
 			boolean activate) throws PartInitException {
-		return openEditor(input, editorID, activate, true);
+		return openEditor(input, editorID, activate, MATCH_INPUT);
     }
 	
     /**
-	 * Opens an editor, optionally finding an existing one with the same input,
+	 * Opens an editor, optionally finding an existing one with the same input and/or id,
 	 * and optionally activating the resulting editor.
+	 * Shows the busy cursor while opening.
 	 * 
 	 * @since 3.1
 	 */
     public IEditorPart openEditor(final IEditorInput input,
-            final String editorID, final boolean activate, final boolean findExisting)
+            final String editorID, final boolean activate, final int matchFlags)
             throws PartInitException {
         if (input == null || editorID == null) {
             throw new IllegalArgumentException();
@@ -2191,7 +2198,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     public void run() {
                         try {
                             result[0] = busyOpenEditor(input, editorID,
-                                    activate, findExisting);
+                                    activate, matchFlags);
                         } catch (PartInitException e) {
                             ex[0] = e;
                         }
@@ -2203,17 +2210,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * See IWorkbenchPage.openEditor
-     */
+     * @see #openEditor(IEditorInput, String, boolean, int)
+	 */
     private IEditorPart busyOpenEditor(IEditorInput input, String editorID,
-            boolean activate, boolean findExisting) throws PartInitException {
+            boolean activate, int matchFlags) throws PartInitException {
 
         final Workbench workbench = (Workbench) getWorkbenchWindow()
                 .getWorkbench();
         workbench.largeUpdateStart();
 
         try {
-            return busyOpenEditorBatched(input, editorID, activate, findExisting);
+            return busyOpenEditorBatched(input, editorID, activate, matchFlags);
 
         } finally {
             workbench.largeUpdateEnd();
@@ -2226,57 +2233,53 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage#openEditor(IEditorInput, String, boolean)
      */
     private IEditorPart busyOpenEditorBatched(IEditorInput input,
-            String editorID, boolean activate,  boolean findExisting) throws PartInitException {
+            String editorID, boolean activate,  int matchFlags) throws PartInitException {
 
-		IEditorPart editor = null;
-		
-		if (findExisting) {
-	        // If an editor already exists for the input, use it.
-	        editor = getEditorManager().findEditor(input);
-	        if (editor != null) {
-	            if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
-	                if (editor.isDirty()) {
-	                    MessageDialog dialog = new MessageDialog(
-	                            getWorkbenchWindow().getShell(),
-	                            WorkbenchMessages.Save, 
-	                            null, // accept the default window icon
-	                            NLS.bind(WorkbenchMessages.WorkbenchPage_editorAlreadyOpenedMsg,  input.getName()), 
-	                            MessageDialog.QUESTION, new String[] {
-	                                    IDialogConstants.YES_LABEL,
-	                                    IDialogConstants.NO_LABEL,
-	                                    IDialogConstants.CANCEL_LABEL }, 0);
-	                    int saveFile = dialog.open();
-	                    if (saveFile == 0) {
-	                        try {
-	                            final IEditorPart editorToSave = editor;
-	                            getWorkbenchWindow().run(false, false,
-	                                    new IRunnableWithProgress() {
-	                                        public void run(IProgressMonitor monitor)
-	                                                throws InvocationTargetException,
-	                                                InterruptedException {
-	                                            editorToSave.doSave(monitor);
-	                                        }
-	                                    });
-	                        } catch (InvocationTargetException e) {
-	                            throw (RuntimeException) e.getTargetException();
-	                        } catch (InterruptedException e) {
-	                            return null;
-	                        }
-	                    } else if (saveFile == 2) {
-	                        return null;
-	                    }
-	                }
-	            } else {
-	                // do the IShowEditorInput notification before showing the editor
-	                // to reduce flicker
-	                if (editor instanceof IShowEditorInput) {
-	                    ((IShowEditorInput) editor).showEditorInput(input);
-	                }
-	                showEditor(activate, editor);
-	                return editor;
-	            }
-	        }
-		}
+        // If an editor already exists for the input, use it.
+		IEditorPart editor = getEditorManager().findEditor(editorID, input, matchFlags);
+        if (editor != null) {
+            if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
+                if (editor.isDirty()) {
+                    MessageDialog dialog = new MessageDialog(
+                            getWorkbenchWindow().getShell(),
+                            WorkbenchMessages.Save, 
+                            null, // accept the default window icon
+                            NLS.bind(WorkbenchMessages.WorkbenchPage_editorAlreadyOpenedMsg,  input.getName()), 
+                            MessageDialog.QUESTION, new String[] {
+                                    IDialogConstants.YES_LABEL,
+                                    IDialogConstants.NO_LABEL,
+                                    IDialogConstants.CANCEL_LABEL }, 0);
+                    int saveFile = dialog.open();
+                    if (saveFile == 0) {
+                        try {
+                            final IEditorPart editorToSave = editor;
+                            getWorkbenchWindow().run(false, false,
+                                    new IRunnableWithProgress() {
+                                        public void run(IProgressMonitor monitor)
+                                                throws InvocationTargetException,
+                                                InterruptedException {
+                                            editorToSave.doSave(monitor);
+                                        }
+                                    });
+                        } catch (InvocationTargetException e) {
+                            throw (RuntimeException) e.getTargetException();
+                        } catch (InterruptedException e) {
+                            return null;
+                        }
+                    } else if (saveFile == 2) {
+                        return null;
+                    }
+                }
+            } else {
+                // do the IShowEditorInput notification before showing the editor
+                // to reduce flicker
+                if (editor instanceof IShowEditorInput) {
+                    ((IShowEditorInput) editor).showEditorInput(input);
+                }
+                showEditor(activate, editor);
+                return editor;
+            }
+        }
 
 
         // Otherwise, create a new one. This may cause the new editor to
