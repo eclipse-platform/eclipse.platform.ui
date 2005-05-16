@@ -1107,24 +1107,44 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * See IWorkbenchPage
      */
-    public boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
-        if (editorRefs.length == 0) {
+    public boolean closeEditors(IEditorReference[] refArray, boolean save) {
+        if (refArray.length == 0) {
             return true;
         }
         
-        if (partBeingActivated != null) {
-            for (int i = 0; i < editorRefs.length; i++) {
-                IEditorReference reference = editorRefs[i];
+        // Check if we're being asked to close any parts that are already closed or cannot
+        // be closed at this time
+        ArrayList toClose = new ArrayList();
+        for (int i = 0; i < refArray.length; i++) {
+            IEditorReference reference = refArray[i];
+            
+            // If we're in the middle of creating this part, this is a programming error. Abort the entire
+            // close operation. This usually occurs if someone tries to open a dialog in a method that
+            // isn't allowed to do so, and a *syncExec tries to close the part. If this shows up in a log
+            // file with a dialog's event loop on the stack, then the code that opened the dialog is usually
+            // at fault.
+            if (reference == partBeingActivated) {
+                WorkbenchPlugin.log(new RuntimeException("WARNING: Blocked recursive attempt to close part "  //$NON-NLS-1$
+                        + partBeingActivated.getId() + " while still in the middle of activating it")); //$NON-NLS-1$
+                return false;
+            }
+            
+            if(reference instanceof WorkbenchPartReference) {
+                WorkbenchPartReference ref = (WorkbenchPartReference) reference;
                 
-                if (reference == partBeingActivated) {
-                    WorkbenchPlugin.log(new RuntimeException("WARNING: Blocked recursive attempt to close part "  //$NON-NLS-1$
-                            + partBeingActivated.getId() + " while still in the middle of activating it")); //$NON-NLS-1$
-                    return false;
+                // If we're being asked to close a part that is disposed (ie: already closed),
+                // skip it and proceed with closing the remaining parts.
+                if (ref.isDisposed()) {
+                    continue;
                 }
             }
+            
+            toClose.add(reference);
         }
         
-        if (save) {
+        IEditorReference[] editorRefs = (IEditorReference[]) toClose.toArray(new IEditorReference[toClose.size()]);
+        
+        if (save) { 
             // Intersect the dirty editors with the editors that are closing
             IEditorPart[] dirty = getDirtyEditors();
             List intersect = new ArrayList();

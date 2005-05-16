@@ -1233,7 +1233,7 @@ public class EditorManager implements IExtensionChangeHandler {
             this.outerEditor = outerEditor;
         }
         
-        public PartPane createPane() {
+        protected PartPane createPane() {
             return new MultiEditorInnerPane((EditorPane)((EditorReference)outerEditor).getPane(),
                     this, page, editorPresentation.getActiveWorkbook());
         }

@@ -162,7 +162,7 @@ public class EditorReference extends WorkbenchPartReference implements
         this.manager.checkCreatePinEditorShortcutKeyHandler();
     }
 
-    public PartPane createPane() {
+    protected PartPane createPane() {
         return new EditorPane(this, this.manager.page, this.manager.editorPresentation.getActiveWorkbook());
     }
     
@@ -214,7 +214,7 @@ public class EditorReference extends WorkbenchPartReference implements
         return (IEditorPart)getPart(restore);
     }
 
-    public void releaseReferences() {
+    protected void releaseReferences() {
         super.releaseReferences();
         editorMemento = null;
         name = null;
@@ -240,7 +240,7 @@ public class EditorReference extends WorkbenchPartReference implements
         return this.manager.page;
     }
 
-    public void doDisposePart() {
+    protected void doDisposePart() {
         if (part != null) {
             EditorSite site = (EditorSite) ((IEditorPart)part).getEditorSite();
             manager.disposeEditorActionBars((EditorActionBars) site.getActionBars());
@@ -251,9 +251,17 @@ public class EditorReference extends WorkbenchPartReference implements
 
         super.doDisposePart();
         editorMemento = null;
+        restoredInput = new NullEditorInput();
     }
 
     public IEditorInput getEditorInput() throws PartInitException {
+        if (isDisposed()) {
+            if (!(restoredInput instanceof NullEditorInput)) {
+                restoredInput = new NullEditorInput();
+            }
+            return restoredInput;
+        }
+        
         IEditorPart part = getEditor(false);
         if (part != null) {
             return part.getEditorInput();
@@ -261,11 +269,11 @@ public class EditorReference extends WorkbenchPartReference implements
         return getRestoredInput();
     }
     
-    public IEditorInput getRestoredInput() throws PartInitException {
+    private IEditorInput getRestoredInput() throws PartInitException {
         if (restoredInput != null) {
             return restoredInput;
         }
-
+        
         // Get the input factory.
         IMemento editorMem = getMemento();
         if (editorMem == null) {
@@ -439,7 +447,7 @@ public class EditorReference extends WorkbenchPartReference implements
      * @return true iff the input was actually changed
      */
     public boolean setInput(IEditorInput input) {
-        checkReference();
+
         if (part != null) {
             if (part instanceof IReusableEditor) {
                 IReusableEditor editor = (IReusableEditor) part;

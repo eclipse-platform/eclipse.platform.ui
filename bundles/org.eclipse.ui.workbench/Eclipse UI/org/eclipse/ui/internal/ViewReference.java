@@ -45,10 +45,6 @@ class ViewReference extends WorkbenchPartReference implements
 
     String secondaryId;
 
-    private boolean create = true;
-    
-    private boolean creationInProgress = false;
-    
     private IMemento memento;
 
     public ViewReference(ViewFactory factory, String id, String secondaryId, IMemento memento) {
@@ -83,7 +79,7 @@ class ViewReference extends WorkbenchPartReference implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.WorkbenchPartReference#dispose()
      */
-    public void doDisposePart() {
+    protected void doDisposePart() {
         IViewPart view = (IViewPart)part;
         if (view != null) {
             // Free action bars, pane, etc.
@@ -96,7 +92,6 @@ class ViewReference extends WorkbenchPartReference implements
         }
         
         super.doDisposePart();
-        create = false;
     }
     
     /* (non-Javadoc)
@@ -172,7 +167,7 @@ class ViewReference extends WorkbenchPartReference implements
      * @param factory TODO
      * @return
      */
-    public IWorkbenchPart createPart() {
+    protected IWorkbenchPart createPart() {
         
         // Check the status of this part
         

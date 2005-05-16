@@ -23,12 +23,14 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.util.Util;
 
@@ -315,8 +317,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * Releases any references maintained by this part reference
      * when its actual part becomes known (not called when it is disposed).
      */
-    public void releaseReferences() {
-        id = null;
+    protected void releaseReferences() {
+
     }
 
     /* package */ void addInternalPropertyListener(IPropertyListener listener) {
@@ -338,7 +340,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @see IWorkbenchPart
      */
     public void addPropertyListener(IPropertyListener listener) {
-        checkReference();
+        // The properties of a disposed reference will never change, so don't
+        // add listeners
+        if (isDisposed()) {
+            return;
+        }
+        
         propChangeListeners.add(listener);
     }
 
@@ -348,14 +355,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     public void removePropertyListener(IPropertyListener listener) {
         // Currently I'm not calling checkReference here for fear of breaking things late in 3.1, but it may
         // make sense to do so later. For now we just turn it into a NOP if the reference is disposed.
-        if (state == STATE_DISPOSED) {
+        if (isDisposed()) {
             return;
         }
         propChangeListeners.remove(listener);
     }
 
     public final String getId() {
-        checkReference();
         if (part != null) {
             IWorkbenchPartSite site = part.getSite();
             if (site != null)
@@ -365,7 +371,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public String getTitleToolTip() {
-        checkReference();
         return Util.safeString(tooltip);
     }
 
@@ -379,7 +384,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @return the pane name for the part
      */
     public String getPartName() {
-        checkReference();
         return Util.safeString(partName);
     }
     
@@ -411,7 +415,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      * @return the pane name for the part
      */
     public String getContentDescription() {
-        checkReference();
         return Util.safeString(contentDescription);
     }
 
@@ -445,7 +448,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public String getTitle() {
-        checkReference();
         return Util.safeString(title);
     }
 
@@ -468,7 +470,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public final Image getTitleImage() {
-        checkReference();
+        if (isDisposed()) {
+            return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
+        }
+        
         if (image == null) {        
             image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
         }
@@ -476,7 +481,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public ImageDescriptor getTitleImageDescriptor() {
-        checkReference();
+        if (isDisposed()) {
+            return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEF_VIEW);
+        }
+        
         return imageDescriptor;
     }
     
@@ -489,12 +497,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public boolean getVisible() {
-        checkReference();
+        if (isDisposed()) {
+            return false;
+        }
         return getPane().getVisible();
     }
     
     public void setVisible(boolean isVisible) {
-        checkReference();
+        if (isDisposed()) {
+            return;
+        }
         getPane().setVisible(isVisible);
     }
     
@@ -519,10 +531,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public final IWorkbenchPart getPart(boolean restore) {
-        if (restore) {
-            // allow this method to be called with restore == false even when the part has been disposed.
-            // This is sometimes used as poor man's isDisposed() method.
-            checkReference();
+        if (isDisposed()) {
+            return null;
         }
         
         if (part == null && restore) {
@@ -564,7 +574,19 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         
     protected abstract PartPane createPane();
     
-    public PartPane getPane() {
+    /**
+     * Returns the part pane for this part reference. Does not return null. Should not be called
+     * if the reference has been disposed.
+     * 
+     * TODO: clean up all code that has any possibility of calling this on a disposed reference
+     * and make this method throw an exception if anyone else attempts to do so.
+     * 
+     * @return
+     */
+    public final PartPane getPane() {
+        
+        // Note: we should never call this if the reference has already been disposed, since it
+        // may cause a PartPane to be created and leaked.
         if (pane == null) {
             pane = createPane();
         }
@@ -573,9 +595,16 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 
     public final void dispose() {
         
-        if (state == STATE_DISPOSED) {
+        if (isDisposed()) {
             return;
         }
+        
+        // Store the current title, tooltip, etc. so that anyone that they can be returned to
+        // anyone that held on to the disposed reference.
+        partName = getPartName();
+        contentDescription = getContentDescription();
+        tooltip = getTitleToolTip();
+        title = getTitle();
         
         if (state == STATE_CREATION_IN_PROGRESS) {
             IStatus result = WorkbenchPlugin.getStatus(
@@ -596,7 +625,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         }
         
         doDisposePart();
-        propChangeListeners.clear();
+   
         internalPropChangeListeners.clear();
         if (image != null) {
             JFaceResources.getResources().destroy(imageDescriptor);
@@ -604,6 +633,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         }
         
         state = STATE_DISPOSED;
+        imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+        defaultImageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+        immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
+        propChangeListeners.clear();
     }
 
     /**
@@ -624,7 +657,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
 
     public void setPinned(boolean newPinned) {
-        checkReference();
+        if (isDisposed()) {
+            return;
+        }
+
         if (newPinned == pinned) {
             return;
         }
@@ -637,7 +673,6 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
     }
     
     public boolean isPinned() {
-        checkReference();
         return pinned;
     }
 

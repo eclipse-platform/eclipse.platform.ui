@@ -157,7 +157,7 @@ public class EditorAreaHelper {
             if ((editorPart != null) && (editorPart instanceof MultiEditor)) {
                 editorPart = ((MultiEditor) editorPart).getActiveEditor();
                 EditorSite site = (EditorSite) editorPart.getSite();
-                result = (IEditorReference) site.getPane().getPartReference();
+                result = (IEditorReference) site.getPartReference();
             }
             return result;
         }

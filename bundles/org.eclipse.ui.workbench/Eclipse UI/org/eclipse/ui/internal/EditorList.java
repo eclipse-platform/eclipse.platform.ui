@@ -119,8 +119,7 @@ public class EditorList {
                 if (source instanceof IEditorPart) {
                     EditorSite site = (EditorSite) ((IEditorPart) source)
                             .getEditorSite();
-                    IEditorReference ref = (IEditorReference) site.getPane()
-                            .getPartReference();
+                    IEditorReference ref = (IEditorReference) site.getPartReference();
 
                     TableItem[] items = editorsTable.getItems();
                     for (int i = 0; i < items.length; i++) {
