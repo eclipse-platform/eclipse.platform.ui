@@ -156,30 +156,6 @@ public class AntElementNode implements IAdaptable {
     public List getChildNodes() {
         return fChildNodes;
     }
-    
-    /**
-     * Returns all the descendents of this node
-     */
-    public List getDescendents() {
-    	if (fChildNodes == null) {
-    		return null;
-    	}
-    	List descendents= new ArrayList();
-        determineDescendents(descendents, fChildNodes);
-        
-        return descendents;
-    }
-  
-    private void determineDescendents(List descendents, List childrenNodes) {
-		Iterator itr= childrenNodes.iterator();
-        while (itr.hasNext()) {
-			AntElementNode element = (AntElementNode) itr.next();
-			if (element.hasChildren()) {
-				determineDescendents(descendents, element.getChildNodes());
-			}
-			descendents.add(element);
-		}
-	}
 
 	/**
      * Returns the parent <code>AntElementNode</code>.
@@ -208,7 +184,9 @@ public class AntElementNode implements IAdaptable {
         if (fChildNodes == null) {
         	fChildNodes= new ArrayList();
         }
-        fChildNodes.add(childElement);
+        synchronized (this) {
+            fChildNodes.add(childElement);
+        }
     }
     
 	protected void setParent(AntElementNode node) {
@@ -446,13 +424,15 @@ public class AntElementNode implements IAdaptable {
 	 */
 	public AntElementNode getNode(int sourceOffset) {
 		if (fChildNodes != null) {
-			for (Iterator iter = fChildNodes.iterator(); iter.hasNext(); ) {
-				AntElementNode node = (AntElementNode) iter.next();
-				AntElementNode containingNode= node.getNode(sourceOffset);
-				if (containingNode != null) {
-					return containingNode;
-				}
-			}
+            synchronized (this) {
+    			for (Iterator iter = fChildNodes.iterator(); iter.hasNext(); ) {
+    				AntElementNode node = (AntElementNode) iter.next();
+    				AntElementNode containingNode= node.getNode(sourceOffset);
+    				if (containingNode != null) {
+    					return containingNode;
+    				}
+    			}
+            }
 		}
 		if (fLength == -1 && fOffset <= sourceOffset && !isExternal()) { //this is still an open element
 			return this;
