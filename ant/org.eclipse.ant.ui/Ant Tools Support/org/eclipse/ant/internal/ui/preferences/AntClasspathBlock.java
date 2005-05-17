@@ -120,12 +120,6 @@ public class AntClasspathBlock {
 	
 	private void addButtonsToButtonGroup(Composite parent) {
 	
-		upButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_upButtonTitle); //$NON-NLS-1$;
-		upButton.addSelectionListener(selectionListener);
-		downButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_downButtonTitle); //$NON-NLS-1$;
-		downButton.addSelectionListener(selectionListener);
-		removeButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_removeButtonTitle); //$NON-NLS-1$;
-		removeButton.addSelectionListener(selectionListener);
 		
 		addJARButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_addJarButtonTitle); //$NON-NLS-1$;
 		addJARButton.addSelectionListener(selectionListener);
@@ -140,6 +134,14 @@ public class AntClasspathBlock {
 		
 		antHomeButton= container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_30); //$NON-NLS-1$
 		antHomeButton.addSelectionListener(selectionListener);
+	
+		removeButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_removeButtonTitle); //$NON-NLS-1$;
+		removeButton.addSelectionListener(selectionListener);
+		
+		upButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_upButtonTitle); //$NON-NLS-1$;
+		upButton.addSelectionListener(selectionListener);
+		downButton = container.createPushButton(parent, AntPreferencesMessages.AntClasspathBlock_downButtonTitle); //$NON-NLS-1$;
+		downButton.addSelectionListener(selectionListener);
 	}
 	
 	/**
