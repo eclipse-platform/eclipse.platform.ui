@@ -173,6 +173,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 					RefactoringCoreMessages.Refactoring_undo_label), 
 				monitor);
 			if (!result.changeExecuted) {
+				fUndoChange= null;
+				fRedoChange= null;
+				clearActiveChange();
 				return createStatus(result);
 			}
 			fRedoChange= result.reverseChange;
@@ -223,6 +226,9 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 					RefactoringCoreMessages.Refactoring_redo_label), 
 				monitor);
 			if (!result.changeExecuted) {
+				fUndoChange= null;
+				fRedoChange= null;
+				clearActiveChange();
 				return createStatus(result);
 			}
 			fUndoChange= result.reverseChange;
@@ -291,7 +297,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 					result.validationStatus= fActiveChange.isValid(new SubProgressMonitor(monitor, 2));
 					if (result.validationStatus.hasFatalError()) {
 						query.stopped(result.validationStatus);
-						// fActiveChange.dispose();
+						// no need to dispose here. The framework disposes
+						// the undo since it couldn't be executed.
 						return;
 					}
 					if (!result.validationStatus.isOK() && !query.proceed(result.validationStatus)) {
