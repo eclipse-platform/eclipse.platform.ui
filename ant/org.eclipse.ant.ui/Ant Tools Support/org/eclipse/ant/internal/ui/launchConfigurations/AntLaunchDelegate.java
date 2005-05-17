@@ -589,6 +589,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			if (swtLocation != null) {
 				vmArgs.append(" -Djava.library.path=\""); //$NON-NLS-1$
 				String javaLibPath= System.getProperty("java.library.path"); //$NON-NLS-1$
+                javaLibPath= stripUnescapedQuotes(javaLibPath);
 				if (javaLibPath != null) {
 					vmArgs.append(javaLibPath);
 					if (vmArgs.charAt(vmArgs.length() - 1) != File.pathSeparatorChar) {
@@ -600,9 +601,27 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			}
 		}
 		return vmArgs;
-	}
+    }
 
-	/* (non-Javadoc)
+    private String stripUnescapedQuotes(String javaLibPath) {
+        StringBuffer buf = new StringBuffer(javaLibPath.length());
+        for (int i = 0; i < javaLibPath.length(); i++) {
+            char c = javaLibPath.charAt(i);
+            switch (c) {
+                case '"':
+                    if (i != 0 && javaLibPath.charAt(i-1) == '\\') {
+                        buf.append(c); //$NON-NLS-1$
+                    }
+                    break;
+                default:
+                    buf.append(c);
+                    break;
+            }
+        }
+        return buf.toString();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
