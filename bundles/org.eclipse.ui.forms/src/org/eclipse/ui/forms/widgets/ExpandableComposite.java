@@ -50,11 +50,11 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * The widget can be instantiated as-is, or subclassed to modify some aspects of
  * it.
  * 
- * <p>Since 3.1, left/right arrow keys can be used to control the
- * expansion state. If several expandable composites are created in
- * the same parent, up/down arrow keys can be used to traverse
- * between them. Expandable text accepts mnemonics and mnemonic
- * activation will toggle the expansion state.
+ * <p>
+ * Since 3.1, left/right arrow keys can be used to control the expansion state.
+ * If several expandable composites are created in the same parent, up/down
+ * arrow keys can be used to traverse between them. Expandable text accepts
+ * mnemonics and mnemonic activation will toggle the expansion state.
  * 
  * @see Section
  * @since 3.0
@@ -141,8 +141,8 @@ public class ExpandableComposite extends Composite {
 	 * (default is 3).
 	 */
 	public int clientVerticalSpacing = 3;
-	
-	private static final Point NULL_SIZE = new Point(0,0);
+
+	private static final Point NULL_SIZE = new Point(0, 0);
 
 	private int VSPACE = 3;
 
@@ -211,11 +211,12 @@ public class ExpandableComposite extends Composite {
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int twidth = clientArea.width - marginWidth - marginWidth
 					- thmargin - thmargin;
-			if (tsize.x>0)
+			//System.out.println(getText()+", Inner width: "+twidth); //$NON-NLS-1$
+			if (tsize.x > 0)
 				twidth -= tsize.x + GAP;
 			if (textClient != null)
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (tcsize.x>0)
+			if (tcsize.x > 0)
 				twidth -= tcsize.x + GAP;
 			Point size = null;
 			if (textLabel != null)
@@ -254,27 +255,28 @@ public class ExpandableComposite extends Composite {
 								+ tvmargin;
 				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
+				//System.out
+				//		.println(getText()
+				//				+ ", Actual text size: " + size + ", cwidth=" + clientArea.width); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (textClient != null) {
 				int tcx;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					tcx = x + size.x + GAP;
 					/*
-					if (tsize.y > tcsize.y)
-						tcy = tsize.y + marginHeight + tvmargin - tcsize.y;
-					else
-						tcy = y;
-						*/
+					 * if (tsize.y > tcsize.y) tcy = tsize.y + marginHeight +
+					 * tvmargin - tcsize.y; else tcy = y;
+					 */
 				} else {
 					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
-					//tcy = y;
+					// tcy = y;
 				}
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			int tbarHeight = 0;
 			if (size != null)
 				tbarHeight = size.y;
-			if (tcsize.x>0)
+			if (tcsize.x > 0)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
 			if (hasTitleBar())
@@ -339,7 +341,7 @@ public class ExpandableComposite extends Composite {
 
 			int innertHint = innerwHint;
 
-			Point tcsize = null;
+			Point tcsize = NULL_SIZE;
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (innertHint != SWT.DEFAULT)
@@ -357,10 +359,13 @@ public class ExpandableComposite extends Composite {
 					size.x = Math.min(defSize.x, size.x);
 				}
 			}
-			if (size != null)
+			//System.out.println(getText()
+			//		+ ", Computed text size: " + size + ", wHint=" + wHint); //$NON-NLS-1$ //$NON-NLS-2$
+			if (size.x > 0)
 				width = size.x;
-			int sizey = size != null ? size.y : 0;
-			height = tcsize != null ? Math.max(tcsize.y, sizey) : sizey;
+			if (tcsize.x>0)
+				width += GAP + tcsize.x;
+			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
@@ -403,12 +408,21 @@ public class ExpandableComposite extends Composite {
 					height += csize.y;
 			}
 			if (toggle != null) {
-				height = height - sizey + Math.max(sizey, tsize.y);
+				height = height - size.y + Math.max(size.y, tsize.y);
 				width += twidth;
 			}
-			return new Point(width + marginWidth + marginWidth + thmargin
-					+ thmargin, height + marginHeight + marginHeight + tvmargin
-					+ tvmargin);
+			
+			/*
+			 * return new Point(width + marginWidth + marginWidth + thmargin +
+			 * thmargin, height + marginHeight + marginHeight + tvmargin +
+			 * tvmargin);
+			 */
+			Point result = new Point(width + marginWidth + marginWidth
+					+ thmargin + thmargin, height + marginHeight + marginHeight
+					+ tvmargin + tvmargin);
+			//System.out.println(getText()
+			//		+ ", Computed total size: " + result + ", wHint=" + wHint + ", innerWidth="+width); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return result;
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
@@ -427,9 +441,9 @@ public class ExpandableComposite extends Composite {
 			if (hasTitleBar()) {
 				thmargin = GAP;
 			}
-			if (size != null)
+			if (size.x > 0)
 				width = size.x;
-			if (tcsize.x>0)
+			if (tcsize.x > 0)
 				width += GAP + tcsize.x;
 
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
@@ -471,9 +485,9 @@ public class ExpandableComposite extends Composite {
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
-			if (size.x>0)
+			if (size.x > 0)
 				width = size.x;
-			if (tcsize.x>0)
+			if (tcsize.x > 0)
 				width += GAP + tcsize.x;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
@@ -546,14 +560,15 @@ public class ExpandableComposite extends Composite {
 			toggle.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
 					if (textLabel instanceof Label && !isFixedStyle())
-						textLabel.setForeground(toggle.hover?toggle.getHoverDecorationColor():null);
+						textLabel.setForeground(toggle.hover ? toggle
+								.getHoverDecorationColor() : null);
 				}
 			});
 			toggle.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
-					if (e.keyCode==SWT.ARROW_UP)
+					if (e.keyCode == SWT.ARROW_UP)
 						verticalMove(false);
-					else if (e.keyCode==SWT.ARROW_DOWN)
+					else if (e.keyCode == SWT.ARROW_DOWN)
 						verticalMove(true);
 				}
 			});
@@ -577,22 +592,23 @@ public class ExpandableComposite extends Composite {
 							if (toggle != null)
 								toggle.setFocus();
 							break;
-						case SWT.MouseUp: 
+						case SWT.MouseUp:
 							label.setCursor(FormsResources.getBusyCursor());
 							programmaticToggleState();
 							label.setCursor(FormsResources.getHandCursor());
 							break;
 						case SWT.MouseEnter:
-							if (toggle!=null) {
-								label.setForeground(toggle.getHoverDecorationColor());
-								toggle.hover=true;
+							if (toggle != null) {
+								label.setForeground(toggle
+										.getHoverDecorationColor());
+								toggle.hover = true;
 								toggle.redraw();
 							}
 							break;
 						case SWT.MouseExit:
-							if (toggle!=null) {
+							if (toggle != null) {
 								label.setForeground(null);
-								toggle.hover=false;
+								toggle.hover = false;
 								toggle.redraw();
 							}
 							break;
@@ -610,20 +626,21 @@ public class ExpandableComposite extends Composite {
 			textLabel.setMenu(getMenu());
 			textLabel.addTraverseListener(new TraverseListener() {
 				public void keyTraversed(TraverseEvent e) {
-					if (e.detail==SWT.TRAVERSE_MNEMONIC) {
+					if (e.detail == SWT.TRAVERSE_MNEMONIC) {
 						// steal the mnemonic
-						if (!isVisible () || !isEnabled ()) return;
-						if (FormUtil.mnemonicMatch (getText(), e.character)) {
-							e.doit=false;
+						if (!isVisible() || !isEnabled())
+							return;
+						if (FormUtil.mnemonicMatch(getText(), e.character)) {
+							e.doit = false;
 							programmaticToggleState();
-							setFocus();							
+							setFocus();
 						}
 					}
 				}
 			});
 		}
 	}
-	
+
 	/**
 	 * Overrides 'super' to pass the menu to the text label.
 	 * 
@@ -937,32 +954,36 @@ public class ExpandableComposite extends Composite {
 		return (getExpansionStyle() & TITLE_BAR) != 0
 				|| (getExpansionStyle() & SHORT_TITLE_BAR) != 0;
 	}
+
 	private void verticalMove(boolean down) {
 		Composite parent = getParent();
-		Control [] children = parent.getChildren();
-		for (int i=0; i<children.length; i++) {
+		Control[] children = parent.getChildren();
+		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
-			if (child==this) {
+			if (child == this) {
 				ExpandableComposite sibling = getSibling(children, i, down);
-				if (sibling!=null && sibling.toggle!=null) {
+				if (sibling != null && sibling.toggle != null) {
 					sibling.setFocus();
 				}
 				break;
 			}
 		}
 	}
-	private ExpandableComposite getSibling(Control[] children, int index, boolean down) {
-		int loc = down?index+1:index-1;
-		while (loc>=0 && loc <children.length) {
-			Control c = children [loc];
-			if (c instanceof ExpandableComposite && c.isVisible()) 
-				return (ExpandableComposite)c;
-			loc = down?loc+1:loc-1;
+
+	private ExpandableComposite getSibling(Control[] children, int index,
+			boolean down) {
+		int loc = down ? index + 1 : index - 1;
+		while (loc >= 0 && loc < children.length) {
+			Control c = children[loc];
+			if (c instanceof ExpandableComposite && c.isVisible())
+				return (ExpandableComposite) c;
+			loc = down ? loc + 1 : loc - 1;
 		}
 		return null;
 	}
+
 	private void programmaticToggleState() {
-		if (toggle!=null)
+		if (toggle != null)
 			toggle.setExpanded(!toggle.isExpanded());
 		toggleState();
 	}
