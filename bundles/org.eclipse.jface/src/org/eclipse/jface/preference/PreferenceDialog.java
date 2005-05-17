@@ -94,6 +94,15 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				x = Math.max(x, size.x);
 				y = Math.max(y, size.y);
 			}
+			
+			//As pages can implement thier own computeSize
+			//take it into account
+			if(currentPage != null){
+				Point size = currentPage.computeSize();
+				x = Math.max(x, size.x);
+				y = Math.max(y, size.y);
+			}
+			
 			if (wHint != SWT.DEFAULT)
 				x = wHint;
 			if (hHint != SWT.DEFAULT)
@@ -458,7 +467,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected Composite createPageContainer(Composite parent) {
 		
-		//Create an oter composite for spacing
+		//Create an outer composite for spacing
 		Composite outer = new Composite(parent, SWT.NONE);
 		
 		GridData outerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
