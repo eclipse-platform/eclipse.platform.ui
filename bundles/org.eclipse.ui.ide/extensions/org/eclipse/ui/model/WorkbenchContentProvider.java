@@ -193,12 +193,8 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC
 				| IResourceDelta.TYPE | IResourceDelta.DESCRIPTION)) != 0) {
 			Runnable updateRunnable =  new Runnable(){
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					((StructuredViewer) viewer).update(resource, null);
-			
 				}
 			};
 			runnables.add(updateRunnable);
@@ -243,54 +239,62 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		// Process additions before removals as to not cause selection
 		// preservation prior to new objects being added
 		// Handle added children. Issue one update for all insertions.
+		int numMovedFrom = 0;
+		int numMovedTo = 0;
 		if (addedChildren.length > 0) {
 			addedObjects = new Object[addedChildren.length];
-			for (int i = 0; i < addedChildren.length; i++)
+			for (int i = 0; i < addedChildren.length; i++) {
 				addedObjects[i] = addedChildren[i].getResource();
+				if ((addedChildren[i].getFlags() & IResourceDelta.MOVED_FROM) != 0) {
+					++numMovedFrom;
+				}
+			}
 		} else
 			addedObjects = new Object[0];
 
 		// Handle removed children. Issue one update for all removals.
 		if (removedChildren.length > 0) {
 			removedObjects = new Object[removedChildren.length];
-			for (int i = 0; i < removedChildren.length; i++)
+			for (int i = 0; i < removedChildren.length; i++) {
 				removedObjects[i] = removedChildren[i].getResource();
-
-		} else
+				if ((removedChildren[i].getFlags() & IResourceDelta.MOVED_TO) != 0) {
+					++numMovedTo;
+				}
+			}
+		} else {
 			removedObjects = new Object[0];
+		}
+		// heuristic test for items moving within same folder (i.e. renames)
+		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
 		
 		Runnable addAndRemove = new Runnable(){
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
 			public void run() {
-
-				// Disable redraw until the operation is finished so we don't
-				// get a flash of both the new and old item (in the case of
-				// rename)
-				// Only do this if we're both adding and removing files (the
-				// rename case)
-				viewer.getControl().setRedraw(false);
-				try {
-
-					if (viewer instanceof AbstractTreeViewer) {
-						AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
+				if (viewer instanceof AbstractTreeViewer) {
+					AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
+					// Disable redraw until the operation is finished so we don't
+					// get a flash of both the new and old item (in the case of
+					// rename)
+					// Only do this if we're both adding and removing files (the
+					// rename case)
+					if (hasRename) {
+						treeViewer.getControl().setRedraw(false);
+					}
+					try {
 						if (addedObjects.length > 0)
 							treeViewer.add(resource, addedObjects);
 						if (removedObjects.length > 0)
 							treeViewer.remove(removedObjects);
-
-					} else
-						((StructuredViewer) viewer).refresh(resource);
-
-				} finally {
-					viewer.getControl().setRedraw(true);
+					}
+					finally {
+						if (hasRename) {
+							treeViewer.getControl().setRedraw(true);
+						}
+					}
+				} else {
+					((StructuredViewer) viewer).refresh(resource);
 				}
-				
 			}
 		};
-
-		
 		runnables.add(addAndRemove);
 	}
 
@@ -301,12 +305,8 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
 		return new Runnable(){
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
 			public void run() {
 				((StructuredViewer) viewer).refresh(resource);
-
 			}
 		};
 	}
