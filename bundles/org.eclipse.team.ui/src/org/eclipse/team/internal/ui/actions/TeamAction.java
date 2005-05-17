@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.internal.LegacyResourceSupport;
 
 /**
  * The abstract superclass of all Team actions. This class contains some convenience
@@ -140,7 +141,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param c
 	 * @return
 	 */
-	protected Object[] getSelectedResources(Class c) {
+	protected Object[] getAdaptedSelection(Class c) {
 		return getSelectedAdaptables(selection, c);
 	}
 	
@@ -150,7 +151,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @return the selected resources
 	 */
 	protected IResource[] getSelectedResources() {
-		return (IResource[])getSelectedResources(IResource.class);
+		return Utils.getContributedResources(selection.toArray());
 	}
 	
 	protected IStructuredSelection getSelection() {
@@ -164,12 +165,16 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
      * @return the resource mappings that contain resources associated with the given provider
 	 */
     protected ResourceMapping[] getSelectedResourceMappings(String providerId) {
-        Object[] elements = getSelectedAdaptables(selection, ResourceMapping.class);
+        Object[] elements = selection.toArray();
         ArrayList providerMappings = new ArrayList();
         for (int i = 0; i < elements.length; i++) {
-            ResourceMapping element = (ResourceMapping) elements[i];
-            if (providerId == null || isMappedToProvider(element, providerId)) {
-                providerMappings.add(element);
+            Object object = elements[i];       
+            Object adapted = LegacyResourceSupport.getAdaptedContributorResourceMapping(object);
+            if (adapted instanceof ResourceMapping) {
+                ResourceMapping mapping = (ResourceMapping) adapted;
+                if (providerId == null || isMappedToProvider(mapping, providerId)) {
+                    providerMappings.add(mapping);
+                }
             }
         }
         return (ResourceMapping[]) providerMappings.toArray(new ResourceMapping[providerMappings.size()]);
@@ -186,39 +191,6 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
         }
         return false;
     }
-
-    /**
-	 * Returns the selected resource based on the available traversals.
-	 * 
-	 * @return the selected resources based on the available traversals.
-	 */
-	public ResourceTraversal[] getSelectedTraversals(ResourceMappingContext context, String providerId) throws TeamException {
-		try {
-			Object[] elements = getSelectedAdaptables(selection, ResourceMapping.class);
-			ArrayList providerTraversals = new ArrayList();
-			if(elements.length > 0) {
-				for (int i = 0; i < elements.length; i++) {
-					ResourceMapping element = (ResourceMapping) elements[i];
-                    boolean addIt = true;
-                    if(providerId != null) {
-                        IProject[] projects = element.getProjects();
-                        for (int k = 0; k < projects.length; k++) {
-                            IProject project = projects[k];
-                            RepositoryProvider provider = RepositoryProvider.getProvider(project);
-                            addIt = (providerId != null && provider.getID().equals(providerId));
-                        }               
-                    }
-                    if(addIt) {
-    					ResourceTraversal[] traversals = element.getTraversals(context, null);
-                        providerTraversals.addAll(Arrays.asList(traversals));
-                    }
-				}
-            }
-			return (ResourceTraversal[]) providerTraversals.toArray(new ResourceTraversal[providerTraversals.size()]);
-		} catch (CoreException e) {
-			throw TeamException.asTeamException(e);
-		}
-	}
 	
 	/**
 	 * Convenience method for getting the current shell.

@@ -63,10 +63,20 @@ public class CVSActionSelectionProperties {
     public IResource[] getAllSelectedResources() {
         IResource[] resources = (IResource[])get(SELECTED_RESOURCES);
         if (resources == null) {
-            resources = Utils.getResources(selection.toArray());
+            resources = getResources(selection.toArray());
             put(SELECTED_RESOURCES, resources);
         }
         return resources;
+    }
+
+    /*
+     * This method gets the resources from the given objects.
+     * It does so in a manner that is consistent with how the workbench does it.
+     * Tha is, it first uses IContributionResourceAdapter, then IResource,
+     * then ResourceMapping.
+     */
+    private IResource[] getResources(Object[] objects) {
+        return Utils.getContributedResources(objects);
     }
     
    public IResource[] getNonoverlappingSelectedResources() {

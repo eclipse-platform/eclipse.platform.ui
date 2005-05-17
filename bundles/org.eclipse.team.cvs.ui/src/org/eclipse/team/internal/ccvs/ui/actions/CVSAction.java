@@ -581,7 +581,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
     protected final IResource[] getSelectedResourcesWithOverlap() {
         CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
         if (props == null) {
-            return Utils.getResources(selection.toArray());
+            return Utils.getContributedResources(selection.toArray());
         }
         return props.getAllSelectedResources();
     }
@@ -593,7 +593,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
         if (selection == null) return new IResource[0];
         CVSActionSelectionProperties props = CVSActionSelectionProperties.getProperties(getSelection());
         if (props == null) {
-            return CVSActionSelectionProperties.getNonOverlapping(Utils.getResources(selection.toArray()));
+            return CVSActionSelectionProperties.getNonOverlapping(Utils.getContributedResources(selection.toArray()));
         }
         return props.getNonoverlappingSelectedResources();
 	}

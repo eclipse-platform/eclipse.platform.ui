@@ -93,7 +93,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		}
 
 		// Selected from a History Viewer
-		final Object[] logEntries = getSelectedResources(LogEntry.class);
+		final Object[] logEntries = getAdaptedSelection(LogEntry.class);
 		if (logEntries.length == 1) {
 			final LogEntry aLogEntry = (LogEntry) logEntries[0];
 			final ICVSRemoteFile cvsRemoteFile = aLogEntry.getRemoteFile();

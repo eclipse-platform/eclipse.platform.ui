@@ -41,6 +41,7 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class Utils {
@@ -391,7 +392,7 @@ public class Utils {
 	 * @param elements
 	 * @return the list of resources contained in the given elements.
 	 */
-	private static IResource[] getResources(Object[] elements, List nonResources) {
+	private static IResource[] getResources(Object[] elements, List nonResources, boolean isContributed) {
 		List resources = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
@@ -409,7 +410,12 @@ public class Utils {
                 isResource = true;
                 getResources((ResourceMapping)element, resources);
 			} else {
-				Object adapted = getAdapter(element, IResource.class);
+                Object adapted;
+                if (isContributed) {
+                    adapted = LegacyResourceSupport.getAdaptedResource(element);
+                } else {
+                    adapted = getAdapter(element, IResource.class);
+                }
                 if (adapted instanceof IResource) {
                     IResource resource = (IResource) adapted;
                     isResource = true;
@@ -417,7 +423,11 @@ public class Utils {
                         resources.add(resource);
                     }
                 } else {
-                    adapted = getAdapter(element, ResourceMapping.class);
+                    if (isContributed) {
+                        adapted = LegacyResourceSupport.getAdaptedContributorResourceMapping(element);
+                    } else {
+                        adapted = getAdapter(element, ResourceMapping.class);
+                    }
                     if (adapted instanceof ResourceMapping) {
                         isResource = true;
                         getResources((ResourceMapping) adapted, resources);
@@ -450,13 +460,17 @@ public class Utils {
 	
 	public static Object[] getNonResources(Object[] elements) {
 		List nonResources = new ArrayList();
-		getResources(elements, nonResources);
+		getResources(elements, nonResources, false);
 		return nonResources.toArray();
 	}
 	
 	public static IResource[] getResources(Object[] element) {
-		return getResources(element, null);
+		return getResources(element, null, false);
 	}
+    
+    public static IResource[] getContributedResources(Object[] elements) {
+        return getResources(elements, null, true);
+    }
 	
 	public static Object getAdapter(Object element, Class adapter) {
 		if (element instanceof IAdaptable) {
