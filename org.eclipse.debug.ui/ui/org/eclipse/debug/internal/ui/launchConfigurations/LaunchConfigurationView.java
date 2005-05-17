@@ -265,18 +265,17 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
     private void handleConfigurationAdded(final ILaunchConfiguration configuration) {
         TreeViewer viewer = getTreeViewer();
         if (viewer != null) {
-			viewer.getControl().setRedraw(false);
 			try {
-				viewer.add(configuration.getType(), configuration);
-				// if moved, remove original now
-				ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
-				if (from != null) {
-					viewer.remove(from);
-				}
+                viewer.add(configuration.getType(), configuration);
+                viewer.setSelection(new StructuredSelection(configuration));
+                // if moved, remove original now
+                ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
+                if (from != null) {
+                    viewer.remove(from);
+                }
 			} catch (CoreException e) {
-			} finally {
-			    viewer.getControl().setRedraw(true);
 			}
+            
 			if (isAutoSelect()) {
 				getTreeViewer().setSelection(new StructuredSelection(configuration), true);
 			}
