@@ -80,11 +80,6 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	public static final String ATTR_DEBUG_MODEL_ID= "debugModelId"; //$NON-NLS-1$
 	public static final String ATTR_AUTO_OPEN= "autoOpen"; //$NON-NLS-1$
 	public static final String ATTR_AUTO_CLOSE= "autoClose"; //$NON-NLS-1$
-	/**
-	 * Attributes used to persist which views the user has manually opened/closed
-	 */
-	private static final String ATTR_VIEWS_TO_NOT_OPEN = "viewsNotToOpen"; //$NON-NLS-1$
-	private static final String ATTR_OPENED_VIEWS = "viewsNotToClose"; //$NON-NLS-1$
 	
 	/**
 	 * The launch view that this context listener works for
@@ -116,11 +111,15 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 */
 	private Set viewIdsToNotOpen= new HashSet();
 	/**
-	 * Collection of views which have been automatically opened.
+	 * Map of views which have been automatically opened.
 	 * Only views which are in this collection should be automatically
 	 * closed.
+	 * 
+	 * Key: perspective id
+	 * Value: ArrayList of view ids open in a perspective
 	 */
-	private Set openedViewIds= new HashSet();
+	private Map openedViewIds= new HashMap();
+	
 	/**
 	 * Map of ILaunch objects to the List of EnabledSubmissions that were
 	 * submitted for them.
@@ -329,7 +328,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * opened.
 	 */
 	private void saveOpenedViews() {
-		saveViewCollection(LaunchViewContextListener.PREF_OPENED_VIEWS, openedViewIds);
+		saveViewMap(LaunchViewContextListener.PREF_OPENED_VIEWS, openedViewIds);
 	}
 
 	/**
@@ -354,11 +353,57 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		}
 	}
 	
+	
+	/**
+	 * Persist the view identifiers that the user has manually
+	 * opened/closed so that we continue to not automatically
+	 * open/close them.
+	 * 
+	 * key: perspective id
+	 * value: ArrayList of view ids
+	 * 
+	 * The map is saved in the following format:
+	 * key1:arrayElm(0),arrayElm(1)/key2:arrayElm(0),arrayElm(1)
+	 * Perspective settings are delimited by "/".
+	 * view Ids are delimited by ","
+	 * 
+	 * @param attribute attribute the preference key in which to store the
+	 *  view id map
+	 * @param map that maps a persective to a list of view ids
+	 */
+	private void saveViewMap(String attribute, Map map) {
+		StringBuffer views= new StringBuffer();
+		Iterator iter= map.keySet().iterator();
+		while (iter.hasNext()) {
+			String perspId = (String) iter.next();
+			ArrayList viewIds = (ArrayList)map.get(perspId);
+			views.append("/"); //$NON-NLS-1$
+			views.append(perspId);
+			if (viewIds != null && !viewIds.isEmpty())
+			{
+				views.append(":"); //$NON-NLS-1$
+				Iterator viewsIter = viewIds.iterator();
+				while (viewsIter.hasNext())
+				{
+					String viewId = (String)viewsIter.next();
+					views.append(viewId);
+					views.append(","); //$NON-NLS-1$
+				}
+			}
+		}
+		if (views.length() > 0) {
+			IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
+			preferenceStore.removePropertyChangeListener(launchView);
+			preferenceStore.setValue(attribute, views.toString());
+			preferenceStore.addPropertyChangeListener(launchView);
+		}
+	}
+	
 	/**
 	 * Load the collection of views to not open.
 	 */
 	public void loadViewsToNotOpen() {
-		loadViewCollection(ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
+		loadViewCollection(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
 	}
 	
 	/**
@@ -366,7 +411,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * opened.
 	 */
 	public void loadOpenedViews() {
-		loadViewCollection(ATTR_OPENED_VIEWS, openedViewIds);
+		loadViewMap(LaunchViewContextListener.PREF_OPENED_VIEWS, openedViewIds);
 	}
 	
 	/**
@@ -391,6 +436,57 @@ public class LaunchViewContextListener implements IContextManagerListener {
 			}
 			startIndex= endIndex + 1;
 			endIndex= views.indexOf(',', startIndex);
+		}
+	}
+	
+	/**
+	 * Loads a map of view ids from the preferences keyed to
+	 * the given attribute, and stores them in the given map
+	 * 
+	 * The map is saved in the following format:
+	 * key1:arrayElm(0),arrayElm(1)/key2:arrayElm(0)+arrayElm(1)
+	 * Perspective settings are delimited by "/".
+	 * Key is the perspective id
+	 * ArrayElm's are the view Ids and are delimited by ","
+	 * 
+	 * @param attribute the attribute of the view ids
+	 * @param map the map to store the view ids into.
+	 */
+	private void loadViewMap(String attribute, Map map) {
+		map.clear();
+		String views = DebugUITools.getPreferenceStore().getString(attribute);
+		
+		if (views.startsWith("/")) //$NON-NLS-1$
+		{
+			// list of views ids in this format:
+			// perspective1Id:viewIdA,viewIdB/persective2Id:viewIda,viewIdB
+			String[] viewsStr = views.split("/"); //$NON-NLS-1$
+			
+			for (int i=0; i<viewsStr.length; i++)
+			{
+				if (viewsStr[i].length() == 0)
+					continue;
+				
+				// split perpectiveId and viewId
+	 			String[] data = viewsStr[i].split(":"); //$NON-NLS-1$
+				
+				// data[0] = perspective
+				// data[1] = list of view ids delimited by ","
+				
+				if (data.length == 2)
+				{
+					String perspId = data[0];
+					
+					String[] viewIds = data[1].split(","); //$NON-NLS-1$
+					ArrayList list = new ArrayList();
+					for (int j=0; j<viewIds.length; j++)
+					{
+						list.add(viewIds[j]);
+					}
+					
+					openedViewIds.put(perspId, list);
+				}
+			}
 		}
 	}
 
@@ -440,19 +536,40 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Set viewsToShow= new HashSet();
 		Set viewsToOpen= new HashSet();
 		computeViewActivation(contextIds, viewsToOpen, viewsToShow);
-		fIsTrackingPartChanges= false;
+		
+		boolean resetTrackingPartChanges = false;
+		if (fIsTrackingPartChanges)
+		{
+			// only change the flag if it is currently
+			// tracking part changes.
+			fIsTrackingPartChanges= false;
+			resetTrackingPartChanges = true;
+		}
+		
 		Iterator iterator= viewsToOpen.iterator();
+		
+		String id = page.getPerspective().getId();
+		ArrayList views = (ArrayList)openedViewIds.get(id);
+		if (views == null)
+		{
+			views = new ArrayList();
+		}
+		
 		while (iterator.hasNext()) {
 			String viewId = (String) iterator.next();
 			try {
 				IViewPart view = page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
-				openedViewIds.add(view.getViewSite().getId());
+				if (!views.contains(viewId))
+					views.add(viewId);
+
 				viewsToShow.add(view);
 			} catch (PartInitException e) {
 				DebugUIPlugin.log(e.getStatus());
 			}
 		}
+		
 		if (!viewsToOpen.isEmpty()) {
+			openedViewIds.put(id, views);
 			saveOpenedViews();
 		}
 		iterator= viewsToShow.iterator();
@@ -480,7 +597,10 @@ public class LaunchViewContextListener implements IContextManagerListener {
 				page.bringToTop(view);
 			}
 		}
-		loadTrackViews();
+		
+		// Reset if we have previously changed this setting
+		if (resetTrackingPartChanges)
+			loadTrackViews();
 	}
 	
 	/**
@@ -539,18 +659,39 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		if (viewsToClose.isEmpty()) { 
 			return;
 		}
-		fIsTrackingPartChanges= false;
+		
+		// only set this to false if fIsTrackingPartChanges is true
+		// otherwise, we may override the setting that is set
+		// by other event handlers. e.g. in #contextEnabled(...)
+		boolean resetTrackingPartChanges = false;
+		if (fIsTrackingPartChanges)
+		{
+			fIsTrackingPartChanges= false;
+			resetTrackingPartChanges = true;
+		}
 		Iterator iter= viewsToClose.iterator();
+		
+		String perspId = page.getPerspective().getId();
+		ArrayList viewIds = (ArrayList)openedViewIds.get(perspId);
+		
 		while (iter.hasNext()) {
 			String viewId= (String) iter.next();
 			IViewReference view = page.findViewReference(viewId);
 			if (view != null) {
 				page.hideView(view);
-				openedViewIds.remove(viewId);
+				if (viewIds != null && viewIds.contains(viewId))
+				{
+					// remove opened view from perspective
+					viewIds.remove(viewId);
+					openedViewIds.put(perspId, viewIds);
+				}
 			}
 		}
 		saveOpenedViews();
-		loadTrackViews();
+		
+		// reset if this setting is previously changed
+		if (resetTrackingPartChanges)
+			loadTrackViews();
 	}
 	
 	/**
@@ -565,6 +706,8 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Set viewIdsToClose= new HashSet();
 		Set viewIdsToKeepOpen= getViewIdsForEnabledContexts();
 		Iterator contexts = contextIds.iterator();
+		String currentPerspId = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective().getId();
+		ArrayList viewIds = (ArrayList)openedViewIds.get(currentPerspId);
 		while (contexts.hasNext()) {
 			String contextId = (String) contexts.next();
 			List list = getConfigurationElements(contextId);
@@ -575,7 +718,8 @@ public class LaunchViewContextListener implements IContextManagerListener {
 					continue;
 				}
 				String viewId = getViewId(element);
-				if (viewId == null || !openedViewIds.contains(viewId) || viewIdsToKeepOpen.contains(viewId)) {
+
+				if (viewId == null || viewIds == null || !viewIds.contains(viewId) || viewIdsToKeepOpen.contains(viewId)) {
 					// Don't close views that the user has manually opened or views
 					// which are associated with contexts that are still enabled.
 					continue;
@@ -929,12 +1073,33 @@ public class LaunchViewContextListener implements IContextManagerListener {
 				viewIdsToNotOpen.add(id);
 				saveViewsToNotOpen();
 			}
-			openedViewIds.remove(id);
+			
+			removeFromOpenedViews(id);
 			saveOpenedViews();
 		} else if (IWorkbenchPage.CHANGE_VIEW_SHOW.equals(changeId) && ref instanceof IViewReference) {
 			String id = ((IViewReference) ref).getId();
-			openedViewIds.remove(id);
+			removeFromOpenedViews(id);
 			saveOpenedViews();
+		}
+	}
+
+	/**
+	 * Givin a view id, this methods iterates through all the 
+	 * managed perspective and remove the view from openedViewIds
+	 * @param viewId
+	 */
+	private void removeFromOpenedViews(String viewId) {
+		Iterator keys = openedViewIds.keySet().iterator();
+		while (keys.hasNext())
+		{
+			String perspId = (String)keys.next();
+			
+			ArrayList views = (ArrayList)openedViewIds.get(perspId);
+			if (views != null && views.contains(viewId))
+			{
+				views.remove(viewId);
+				openedViewIds.put(perspId, views);
+			}
 		}
 	}
 	
