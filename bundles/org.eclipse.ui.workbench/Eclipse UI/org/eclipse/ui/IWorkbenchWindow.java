@@ -80,7 +80,8 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext {
     /**
      * Returns this workbench window's shell.
      * 
-     * @return the shell containing this window's controls
+     * @return the shell containing this window's controls or <code>null</code>
+     * if the shell has not been created yet.
      */
     public Shell getShell();
 
