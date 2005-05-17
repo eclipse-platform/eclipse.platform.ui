@@ -13,11 +13,11 @@ package org.eclipse.core.tools;
 import java.net.URL;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.internal.stats.ClassloaderStats;
+import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.runtime.VMClassInfo;
 import org.eclipse.core.tools.runtime.VMClassloaderInfo;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.osgi.framework.stats.ClassloaderStats;
-import org.eclipse.osgi.framework.stats.StatsManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

@@ -12,9 +12,7 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Hashtable;
-import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.content.ContentTypeManager;
@@ -23,7 +21,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
-import org.eclipse.osgi.service.systembundle.EntryLocator;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
@@ -57,7 +54,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		acquireURLConverterService();
 		acquireFrameworkLogService();
 		acquirePackageAdminService();
-		registerEntryLocator();
 		startInternalPlatform();
 		startRegistry(runtimeContext);
 		// the content type manager must be initialized only after the registry has been created
@@ -239,21 +235,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		Hashtable properties = new Hashtable(1);
 		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ 
 		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
-	}
-
-	private void registerEntryLocator() {
-		EntryLocator systemResources = new EntryLocator() {
-			public URL getProperties(String basename, Locale locale) {
-				basename = basename.replace('.', '/');
-				IPath propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + '_' + locale.getCountry() + NL_PROP_EXT);
-				URL result = Platform.find(getContext().getBundle(), propertiesPath);
-				if (result != null)
-					return result;
-				propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + NL_PROP_EXT);
-				return Platform.find(getContext().getBundle(), propertiesPath);
-			}
-		};
-		entryLocatorRegistration = context.registerService(EntryLocator.class.getName(), systemResources, null);
 	}
 
 	private void unregisterEntryLocator() {

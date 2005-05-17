@@ -12,12 +12,12 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import org.eclipse.core.runtime.internal.stats.ClassStats;
+import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.core.tools.TableWithTotalView;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.framework.stats.ClassStats;
-import org.eclipse.osgi.framework.stats.StatsManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
+import org.eclipse.core.runtime.internal.stats.ClassStats;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.osgi.framework.stats.ClassStats;
 import org.eclipse.swt.graphics.Image;
 
 /**

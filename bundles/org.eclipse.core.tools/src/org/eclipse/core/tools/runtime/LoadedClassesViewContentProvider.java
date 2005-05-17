@@ -11,10 +11,10 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.*;
+import org.eclipse.core.runtime.internal.stats.*;
 import org.eclipse.core.tools.IFlattable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.framework.stats.*;
 
 /**
  * Content provider for the LoadedClassesView

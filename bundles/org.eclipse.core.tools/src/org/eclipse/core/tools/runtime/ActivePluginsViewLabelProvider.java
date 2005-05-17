@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
+import org.eclipse.core.runtime.internal.stats.BundleStats;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.framework.stats.BundleStats;
 import org.eclipse.swt.graphics.Image;
 
 /**

@@ -11,10 +11,10 @@
 package org.eclipse.core.tools.runtime;
 
 import java.text.Collator;
+import org.eclipse.core.runtime.internal.stats.BundleStats;
 import org.eclipse.core.tools.ISorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.osgi.framework.stats.BundleStats;
 
 /**
  * Sorter used in the ActivePluginsView
