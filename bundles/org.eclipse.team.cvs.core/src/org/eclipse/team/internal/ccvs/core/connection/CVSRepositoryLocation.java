@@ -19,6 +19,7 @@ import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
@@ -695,62 +696,61 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * for any connection made to this remote location.
 	 */
 	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
-		Object hostLock;
+        // Get the lock for the host to ensure that we are not connecting to the same host concurrently.
+		ILock hostLock;
 		synchronized(hostLocks) {
-			hostLock = hostLocks.get(getHost());
+			hostLock = (ILock)hostLocks.get(getHost());
 			if (hostLock == null) {
-				hostLock = new Object();
+				hostLock = Platform.getJobManager().newLock();
 				hostLocks.put(getHost(), hostLock);
 			}
 		}
-		synchronized(hostLock) {
-			boolean connected = false;
-			try {
-				// Allow two ticks in case of a retry
-				monitor.beginTask(NLS.bind(CVSMessages.CVSRepositoryLocation_openingConnection, new String[] { getHost() }), 2);//$NON-NLS-1$
-				ensureLocationCached();
-				boolean cacheNeedsUpdate = false;
-				// If the previous connection failed, prompt before attempting to connect
-				if (previousAuthenticationFailed) {
-					promptForUserInfo(null);
-					// The authentication information has been change so update the cache
-					cacheNeedsUpdate = true;
-				}
-				while (true) {
-					try {
-						// The following will throw an exception if authentication fails
-						String password = this.password;
-						if (password == null) {
-							// If the instance has no password, obtain it from the cache
-							password = retrievePassword();
-						}
-						if (user == null) {
-							// This is possible if the cache was cleared somehow for a location with a mutable username
-							throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, CVSMessages.CVSRepositoryLocation_usernameRequired)); //$NON-NLS-1$
-						}
-						if (password == null)
-							password = "";//$NON-NLS-1$ 
-						Connection connection = createConnection(password, monitor);
-						if (cacheNeedsUpdate)
-						    updateCachedLocation();
-						connected = true;
-						previousAuthenticationFailed = false;
-                        return connection;
-					} catch (CVSAuthenticationException ex) {
-						previousAuthenticationFailed = true;
-						if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
-							String message = ex.getMessage();
-							promptForUserInfo(message);
-							// The authentication information has been change so update the cache
-							cacheNeedsUpdate = true;
-						} else {
-							throw ex;
-						}
+		try {
+		    hostLock.acquire();
+			// Allow two ticks in case of a retry
+			monitor.beginTask(NLS.bind(CVSMessages.CVSRepositoryLocation_openingConnection, new String[] { getHost() }), 2);//$NON-NLS-1$
+			ensureLocationCached();
+			boolean cacheNeedsUpdate = false;
+			// If the previous connection failed, prompt before attempting to connect
+			if (previousAuthenticationFailed) {
+				promptForUserInfo(null);
+				// The authentication information has been change so update the cache
+				cacheNeedsUpdate = true;
+			}
+			while (true) {
+				try {
+					// The following will throw an exception if authentication fails
+					String password = this.password;
+					if (password == null) {
+						// If the instance has no password, obtain it from the cache
+						password = retrievePassword();
+					}
+					if (user == null) {
+						// This is possible if the cache was cleared somehow for a location with a mutable username
+						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, CVSMessages.CVSRepositoryLocation_usernameRequired)); //$NON-NLS-1$
+					}
+					if (password == null)
+						password = "";//$NON-NLS-1$ 
+					Connection connection = createConnection(password, monitor);
+					if (cacheNeedsUpdate)
+					    updateCachedLocation();
+					previousAuthenticationFailed = false;
+                    return connection;
+				} catch (CVSAuthenticationException ex) {
+					previousAuthenticationFailed = true;
+					if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
+						String message = ex.getMessage();
+						promptForUserInfo(message);
+						// The authentication information has been change so update the cache
+						cacheNeedsUpdate = true;
+					} else {
+						throw ex;
 					}
 				}
-			} finally {
-				monitor.done();
 			}
+		} finally {
+            hostLock.release();
+			monitor.done();
 		}
 	}
 
