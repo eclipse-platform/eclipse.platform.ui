@@ -1268,7 +1268,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	}
 	
 	protected void synchronizeOutlinePage(AntElementNode node, boolean checkIfOutlinePageActive) {
-		if (fOutlinePage != null && !(checkIfOutlinePageActive && isAntOutlinePageAction())) {
+		if (fOutlinePage != null && !(checkIfOutlinePageActive && isAntOutlinePageActive())) {
 			fOutlinePage.removePostSelectionChangedListener(fSelectionChangedListener);
 			fOutlinePage.select(node);
 			fOutlinePage.addPostSelectionChangedListener(fSelectionChangedListener);
@@ -1308,7 +1308,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 	}
 	
-	private boolean isAntOutlinePageAction() {
+	private boolean isAntOutlinePageActive() {
 		IWorkbenchPart part= getActivePart();
 		return part instanceof ContentOutline && ((ContentOutline)part).getCurrentPage() == fOutlinePage;
 	}
