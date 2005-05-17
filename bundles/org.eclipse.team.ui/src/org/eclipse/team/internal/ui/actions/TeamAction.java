@@ -168,8 +168,8 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
         Object[] elements = selection.toArray();
         ArrayList providerMappings = new ArrayList();
         for (int i = 0; i < elements.length; i++) {
-            Object object = elements[i];       
-            Object adapted = LegacyResourceSupport.getAdaptedContributorResourceMapping(object);
+            Object object = elements[i];
+            Object adapted = getResourceMapping(object);
             if (adapted instanceof ResourceMapping) {
                 ResourceMapping mapping = (ResourceMapping) adapted;
                 if (providerId == null || isMappedToProvider(mapping, providerId)) {
@@ -178,6 +178,12 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
             }
         }
         return (ResourceMapping[]) providerMappings.toArray(new ResourceMapping[providerMappings.size()]);
+    }
+
+    private Object getResourceMapping(Object object) {
+        if (object instanceof ResourceMapping)
+            return (ResourceMapping)object;
+        return LegacyResourceSupport.getAdaptedContributorResourceMapping(object);
     }
     
     private boolean isMappedToProvider(ResourceMapping element, String providerId) {
