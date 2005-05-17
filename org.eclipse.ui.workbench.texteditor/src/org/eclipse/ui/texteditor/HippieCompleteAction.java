@@ -169,6 +169,8 @@ final class HippieCompleteAction extends TextEditorAction {
 		ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
 		sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
 		sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
+		
+		fExitStrategy.arm(((AbstractTextEditor) getTextEditor()).getSourceViewer());
 	}
 
 	/**
