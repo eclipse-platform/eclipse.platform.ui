@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95298
  *     IBM Corporation - nlsing and incorporating into Eclipse
  *******************************************************************************/
 
@@ -22,13 +22,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Class to store classpath settings of an Eclipse project.
@@ -54,6 +59,7 @@ public class EclipseClasspath
  
     private IJavaProject project;
     private String newProjectRoot;
+    private String jreLocation;
         
     public EclipseClasspath(IJavaProject project) throws JavaModelException
     {
@@ -66,6 +72,7 @@ public class EclipseClasspath
     public EclipseClasspath(IJavaProject project, String newProjectRoot) throws JavaModelException
     {
         this.project = project;
+        jreLocation = getJRELocation();
         this.newProjectRoot = newProjectRoot;
         IClasspathEntry entries[] = project.getRawClasspath();
         for (int i = 0; i < entries.length; i++)
@@ -79,6 +86,21 @@ public class EclipseClasspath
         initClassMaps();
     }
     
+    private String getJRELocation() {
+    	try {
+    		IVMInstall install= JavaRuntime.getVMInstall(project);
+    		if (install != null) {
+	    		File installLocation= install.getInstallLocation();
+	    		if (installLocation != null) {
+	    			return new Path(installLocation.toString()).toString();
+	    		}
+    		}
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
+		}
+		return ""; //$NON-NLS-1$
+	}
+
     /**
      * Get class directories without duplicates.
      */
@@ -166,14 +188,14 @@ public class EclipseClasspath
         if (entry.getContentKind() == IPackageFragmentRoot.K_BINARY &&
             entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY)
         {
-            StringBuffer jarFileBuffer = new StringBuffer();
-            StringBuffer jarFileAbsoluteBuffer = new StringBuffer();
             String jarFile = entry.getPath().toString();
             // ignore JRE libraries
-            if (jarFile.indexOf("/jre/lib/") != -1) //$NON-NLS-1$
+            if (jarFile.startsWith(jreLocation))
             {
                 return;
             }
+            StringBuffer jarFileBuffer = new StringBuffer();
+            StringBuffer jarFileAbsoluteBuffer = new StringBuffer();
             String jarFileAbsolute = ExportUtil.resolve(entry.getPath());
             if (jarFileAbsolute == null)
             {
