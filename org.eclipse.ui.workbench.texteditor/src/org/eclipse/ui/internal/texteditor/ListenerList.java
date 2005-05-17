@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.texteditor;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -128,7 +129,7 @@ final class ListenerList/*<L> implements Iterable<L>*/ {
 	
 	private void detachIterators() {
 		for (Iterator it= fIterators.iterator(); it.hasNext();) {
-			SoftReference ref= (SoftReference) it.next();
+			Reference ref= (Reference) it.next();
 			it.remove();
 			ListenerIterator iterator= (ListenerIterator) ref.get();
 			if (iterator != null)
@@ -144,7 +145,7 @@ final class ListenerList/*<L> implements Iterable<L>*/ {
 	 */
 	public synchronized Iterator/*<L>*/ iterator() {
 		ListenerIterator iterator= new ListenerIterator/*<L>*/(fListeners);
-		fIterators.add(new SoftReference(iterator));
+		fIterators.add(new WeakReference(iterator));
 		return iterator;
 	}
 	
@@ -160,7 +161,7 @@ final class ListenerList/*<L> implements Iterable<L>*/ {
 
 		synchronized (this) {
 			for (Iterator it2= fIterators.iterator(); it2.hasNext();) {
-				SoftReference ref= (SoftReference) it2.next();
+				Reference ref= (Reference) it2.next();
 				ListenerIterator iterator= (ListenerIterator) ref.get();
 				if (iterator == it) {
 					it2.remove();
