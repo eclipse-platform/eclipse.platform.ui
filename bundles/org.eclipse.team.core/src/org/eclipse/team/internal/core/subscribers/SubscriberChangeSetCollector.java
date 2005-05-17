@@ -57,6 +57,8 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
          */
         protected void processEvent(Event event, IProgressMonitor monitor) throws CoreException {
             // Handle everything in the dispatch
+            if (isShutdown())
+                throw new OperationCanceledException();
             dispatchEvents.add(event);
         }
         
@@ -67,6 +69,8 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
             if (dispatchEvents.isEmpty()) {
                 return false;
             }
+            if (isShutdown())
+                throw new OperationCanceledException();
             SyncInfoTree[] locked = null;
             try {
                 locked = beginDispath();
@@ -82,6 +86,8 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
 	                default:
 	                    break;
 	                }
+                    if (isShutdown())
+                        throw new OperationCanceledException();
                 }
             } finally {
                 try {
