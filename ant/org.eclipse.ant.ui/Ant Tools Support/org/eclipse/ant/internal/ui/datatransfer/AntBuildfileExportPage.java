@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95296
  *     IBM Corporation - adapted to wizard export page
  *******************************************************************************/
 
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -51,7 +52,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-class AntBuildfileExportPage extends WizardPage {
+public class AntBuildfileExportPage extends WizardPage {
     
     private CheckboxTableViewer fTableViewer;
     private List fSelectedJavaProjects = new ArrayList();
@@ -69,7 +70,6 @@ class AntBuildfileExportPage extends WizardPage {
      */
     public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        
         GridLayout layout = new GridLayout();
         layout.numColumns = 1;
         composite.setLayout(layout);
@@ -164,27 +164,38 @@ class AntBuildfileExportPage extends WizardPage {
      */
     public boolean generateBuildfiles() 
     {
-        Iterator javaProjects= fSelectedJavaProjects.iterator();
+        // collect all projects to create build files for
+        Set projects = new TreeSet(ExportUtil.getJavaProjectComparator());
+        Iterator javaProjects = fSelectedJavaProjects.iterator();
         while (javaProjects.hasNext()) {
             IJavaProject javaProject = (IJavaProject) javaProjects.next();
-            Set projects;
             try {
-                projects = ExportUtil.getClasspathProjectsRecursive(javaProject);
+                projects.addAll(ExportUtil.getClasspathProjectsRecursive(javaProject));
             } catch (JavaModelException e) {
                 AntUIPlugin.log(e);
                 return false;
             }
             projects.add(javaProject);
-            List confirmOverwrite = getConfirmOverwriteSet(projects);
-            if (confirmOverwrite.size() > 0)
+        }
+        
+        // confirm overwrite
+        List confirmOverwrite = getConfirmOverwriteSet(projects);
+        if (confirmOverwrite.size() > 0)
+        {
+            String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE + //$NON-NLS-1$
+                EclipseClasspath.toString(confirmOverwrite, ExportUtil.NEWLINE);
+            if (! MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message)) //$NON-NLS-1$
             {
-                String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE + //$NON-NLS-1$
-                    EclipseClasspath.toString(confirmOverwrite, ExportUtil.NEWLINE);
-                if (! MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message)) //$NON-NLS-1$
-                {
-                    continue;
-                }
-            }       
+                return true;
+            }
+        }
+        
+        List cyclicProjects = new ArrayList();
+        
+        // create build files for all projects
+        javaProjects = projects.iterator();
+        while (javaProjects.hasNext()) {
+            IJavaProject javaProject = (IJavaProject) javaProjects.next();       
             try {
                 BuildFileCreator.create(javaProject);
             } catch (JavaModelException e) {
@@ -206,28 +217,38 @@ class AntBuildfileExportPage extends WizardPage {
                 AntUIPlugin.log(e);
                 return false;
             }
-            List projectNames = new ArrayList();
-            for (Iterator iter = projects.iterator(); iter.hasNext();)
-            {
-                IJavaProject project = (IJavaProject) iter.next();
-                projectNames.add(project.getProject().getName());
-            }
-            String message = MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_5 + ExportUtil.NEWLINE, new String[] {EclipseClasspath.toString(projectNames, ExportUtil.NEWLINE)}); //$NON-NLS-1$
-                
+
             try {
                 if (ExportUtil.hasCyclicDependency(javaProject))
                 {
-                    String warningMessage= MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6 + ExportUtil.NEWLINE + //$NON-NLS-1$
-                            DataTransferMessages.AntBuildfileExportPage_7 + //$NON-NLS-1$
-                            DataTransferMessages.AntBuildfileExportPage_8 + ExportUtil.NEWLINE + ExportUtil.NEWLINE +  //$NON-NLS-1$
-                            message, new String[] {javaProject.getProject().getName()});
-                    MessageDialog.openWarning(getShell(), DataTransferMessages.AntBuildfileExportPage_9, warningMessage); //$NON-NLS-1$
+                    cyclicProjects.add(javaProject.getProject().getName());
                 }
             } catch (CoreException e) {
                 AntUIPlugin.log(e);
                 return false;
             }
         }
+
+        // show warning if project has cycle
+        if (cyclicProjects.size() > 0)
+        {
+            String warningMessage= MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6 + ExportUtil.NEWLINE + ExportUtil.NEWLINE + //$NON-NLS-1$
+                    DataTransferMessages.AntBuildfileExportPage_7 + //$NON-NLS-1$
+                    DataTransferMessages.AntBuildfileExportPage_8,
+                    new String[] { ExportUtil.NEWLINE + EclipseClasspath.toString(cyclicProjects, ExportUtil.NEWLINE)});
+            MessageDialog.openWarning(getShell(), DataTransferMessages.AntBuildfileExportPage_9, warningMessage); //$NON-NLS-1$
+        }
+        
+        // show success message
+        List projectNames = new ArrayList();
+        for (Iterator iter = projects.iterator(); iter.hasNext();)
+        {
+            IJavaProject project = (IJavaProject) iter.next();
+            projectNames.add(project.getProject().getName());
+        }
+        String message = MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_5 + ExportUtil.NEWLINE, new String[] {ExportUtil.NEWLINE + EclipseClasspath.toString(projectNames, ExportUtil.NEWLINE)}); //$NON-NLS-1$
+        MessageDialog.openInformation(getShell(), DataTransferMessages.AntBuildfileExportPage_0, message);
+
         return true;
     }
     
@@ -257,18 +278,19 @@ class AntBuildfileExportPage extends WizardPage {
    private boolean existsBuildFile(IJavaProject project)
     {
         String projectRoot = ExportUtil.getProjectRoot(project);
-        File buildFile = new File(projectRoot + "/build.xml"); //$NON-NLS-1$
+        File buildFile = new File(projectRoot + File.separator + "build.xml"); //$NON-NLS-1$
         if (buildFile.exists())
         {
             BufferedReader in = null;
             try
             {
                 in = new BufferedReader(new FileReader(buildFile));
+                int i = BuildFileCreator.WARNING.indexOf(ExportUtil.NEWLINE);
+                String warning = BuildFileCreator.WARNING.substring(0, i);
                 String line;
-                String warning= "<!--" + BuildFileCreator.WARNING;  //$NON-NLS-1$
                 while ((line = in.readLine()) != null)
                 {
-                    if (line.length() > 0 && warning.startsWith(line))
+                    if (line.indexOf(warning) != -1)
                     {
                         return false;
                     }
