@@ -13,25 +13,12 @@ package org.eclipse.ui.texteditor;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.core.commands.NotHandledException;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
@@ -40,8 +27,8 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
+import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
 
 /**
  * Action for moving selected lines in an editor.
@@ -49,135 +36,7 @@ import org.eclipse.ui.commands.ICommandService;
  */
 public class MoveLinesAction extends TextEditorAction {
 
-	/**
-	 * Detects the end of a compound edit command. The user is assumed to have ended the command
-	 * when
-	 * <ul>
-	 * <li>entering any text with a different key combination than the one used to move / copy</li>
-	 * <li>clicking anywhere in the editor</li>
-	 * <li>the viewer loses focus</li>
-	 * <li>the underlying document gets changed due to anything but this action</li>
-	 * </ul>
-	 */
-	private class ExitStrategy implements VerifyKeyListener, MouseListener, FocusListener, IDocumentListener, IExecutionListener {
-
-		/**
-		 * The widget this instance is registered with for <code>VerifyKey</code>-, <code>Mouse</code>-
-		 * and <code>FocusEvent</code>s, or <code>null</code> if not registered.
-		 */
-		private StyledText fWidgetEventSource;
-		/**
-		 * The document this instance is registered with for <code>DocumentEvent</code>s,
-		 * or <code>null</code> if not registered.
-		 */
-		private IDocument fDocumentEventSource;
-		/**
-		 * Indicates whether there are any pending registrations.<br/>
-		 * Invariant: <code>fIsInstalled || (fWidgetEventSource == fDocumentEventSource == null)</code>
-		 */
-		private boolean fIsInstalled;
-
-		/**
-		 * Installs the exit strategy with all event sources.
-		 */
-		public void install() {
-			if (fIsInstalled)
-				uninstall();
-			fIsInstalled= true;
-
-			ISourceViewer viewer= fEditor.getSourceViewer();
-			if (viewer == null)
-				return;
-
-			fWidgetEventSource= viewer.getTextWidget();
-			if (fWidgetEventSource == null)
-				return;
-
-			fWidgetEventSource.addVerifyKeyListener(this);
-			fWidgetEventSource.addMouseListener(this);
-			fWidgetEventSource.addFocusListener(this);
-
-			fDocumentEventSource= viewer.getDocument();
-			if (fDocumentEventSource != null)
-				fDocumentEventSource.addDocumentListener(this);
-			
-			ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-			if (commandService != null)
-				commandService.addExecutionListener(this);
-		}
-
-		/**
-		 * Uninstalls the exit strategy with all event sources it was previously registered with.
-		 */
-		public void uninstall() {
-			if (fWidgetEventSource != null) {
-				fWidgetEventSource.removeVerifyKeyListener(this);
-				fWidgetEventSource.removeMouseListener(this);
-				fWidgetEventSource.removeFocusListener(this);
-				fWidgetEventSource= null;
-			}
-			if (fDocumentEventSource != null) {
-				fDocumentEventSource.removeDocumentListener(this);
-				fDocumentEventSource= null;
-			}
-			
-			ICommandService commandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-			if (commandService != null)
-				commandService.removeExecutionListener(this);
-			
-			fIsInstalled= false;
-		}
-
-		public void verifyKey(VerifyEvent event) {
-			if (event.stateMask != fStateMask) {
-				endCompoundEdit();
-			}
-		}
-
-		public void mouseDoubleClick(MouseEvent e) {
-			endCompoundEdit();
-		}
-
-		public void mouseDown(MouseEvent e) {
-			endCompoundEdit();
-		}
-
-		public void mouseUp(MouseEvent e) {}
-
-		public void focusLost(FocusEvent e) {
-			endCompoundEdit();
-		}
-
-		public void focusGained(FocusEvent e) {}
-
-		public void documentAboutToBeChanged(DocumentEvent event) {
-			// don't do this since it will break interaction between the moveUp and moveDown actions.
-//			if (!fDescription.correspondsTo(event)) endCompoundEdit();
-		}
-
-		public void documentChanged(DocumentEvent event) {}
-
-		public void notHandled(String commandId, NotHandledException exception) {
-		}
-
-		public void postExecuteFailure(String commandId, ExecutionException exception) {
-		}
-
-		public void postExecuteSuccess(String commandId, Object returnValue) {
-		}
-
-		public void preExecute(String commandId, ExecutionEvent event) {
-			if (!fCopy && !(ITextEditorActionDefinitionIds.MOVE_LINES_UP.equals(commandId) || ITextEditorActionDefinitionIds.MOVE_LINES_DOWN.equals(commandId))
-					|| fCopy && !(ITextEditorActionDefinitionIds.COPY_LINES_UP.equals(commandId) || ITextEditorActionDefinitionIds.COPY_LINES_DOWN.equals(commandId)))
-				endCompoundEdit();
-		}
-	}
-
-	/* keys */
-
-	/** Key for status message upon illegal move. <p>Value {@value}</p> */
-
-	/* state variables - define what this action does */
+	/* configuration variables - define what this action does */
 
 	/** <code>true</code> if lines are shifted upwards, <code>false</code> otherwise. */
 	private final boolean fUpwards;
@@ -189,7 +48,7 @@ public class MoveLinesAction extends TextEditorAction {
 	/* compound members of this action */
 
 	/** The exit strategy that will detect the ending of a compound edit */
-	private final ExitStrategy fExitStrategy= new ExitStrategy();
+	private final CompoundEditExitStrategy fStrategy;
 
 	/* process variables - may change in every run() */
 
@@ -200,10 +59,6 @@ public class MoveLinesAction extends TextEditorAction {
 	private boolean fAddDelimiter;
 	/** <code>true</code> if a compound move / copy is going on. */
 	private boolean fEditInProgress= false;
-	/** stateMask for this action - if it changes, the edition is considered to be ended */
-	private int fStateMask;
-//	/** Description of the last edition triggered by this action */
-//	private EditDescription fDescription= new EditDescription();
 
 	/**
 	 * Creates and initializes the action for the given text editor.
@@ -224,6 +79,13 @@ public class MoveLinesAction extends TextEditorAction {
 		fEditor= editor;
 		fUpwards= upwards;
 		fCopy= copy;
+		String[] commandIds= copy ? new String[] {ITextEditorActionDefinitionIds.COPY_LINES_UP, ITextEditorActionDefinitionIds.COPY_LINES_DOWN } : new String[] {ITextEditorActionDefinitionIds.MOVE_LINES_UP, ITextEditorActionDefinitionIds.MOVE_LINES_DOWN };
+		fStrategy= new CompoundEditExitStrategy(commandIds);
+		fStrategy.addCompoundListener(new ICompoundEditListener() {
+			public void endCompoundEdit() {
+				MoveLinesAction.this.endCompoundEdit();
+			}
+		});
 		update();
 	}
 
@@ -236,7 +98,7 @@ public class MoveLinesAction extends TextEditorAction {
 
 		fEditInProgress= true;
 
-		fExitStrategy.install();
+		fStrategy.arm(fEditor.getSourceViewer());
 
 		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
@@ -295,8 +157,6 @@ public class MoveLinesAction extends TextEditorAction {
 	private void endCompoundEdit() {
 		if (!fEditInProgress || fEditor == null)
 			return;
-
-		fExitStrategy.uninstall();
 
 		IRewriteTarget target= (IRewriteTarget)fEditor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
@@ -383,8 +243,6 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void runWithEvent(Event event) {
-
-		updateShortCut(event);
 
 		// get involved objects
 		if (fEditor == null)
@@ -483,16 +341,6 @@ public class MoveLinesAction extends TextEditorAction {
 			// won't happen without concurrent modification - bail out
 			return;
 		}
-	}
-
-	/**
-	 * Saves the state mask of <code>event</code> for comparison with the next event in order to
-	 * detect key changes in the set of keys pressed by the user.
-	 *
-	 * @param event the event that triggered this action
-	 */
-	private void updateShortCut(Event event) {
-		fStateMask= event.stateMask;
 	}
 
 	/**

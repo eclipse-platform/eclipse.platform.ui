@@ -15,26 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
-
+import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
 import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
+import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
@@ -97,32 +93,6 @@ final class HippieCompleteAction extends TextEditorAction {
 	}
 
 	/**
-	 * Invalidate the completion state when the document contents changes not as
-	 * the result of the completion action itself.
-	 */
-	class DocumentChangeListener implements IDocumentListener {
-		public void documentAboutToBeChanged(DocumentEvent event) {
-		}
-
-		public void documentChanged(DocumentEvent event) {
-			if (!fModifyingLock) {
-				clearState();
-			}
-		}
-	}
-
-	/**
-	 * This class invalidates the completion state when the selection changes.
-	 */
-	class SelectionChangeListener implements ISelectionChangedListener {
-		public void selectionChanged(SelectionChangedEvent event) {
-			if (!fModifyingLock) {
-				clearState();
-			}
-		}
-	}
-
-	/**
 	 * The document that will be manipulated (currently open in the editor)
 	 */
 	private IDocument fDocument;
@@ -134,28 +104,13 @@ final class HippieCompleteAction extends TextEditorAction {
 	private CompletionState fLastCompletion= null;
 
 	/**
-	 * Modification lock that will prevent invalidation of the completion state
-	 * when the completion action modifies the document
-	 */
-	private boolean fModifyingLock= false;
-
-	/**
-	 * The selection listener that is registered with the selection provider of
-	 * this editor.
-	 */
-	private SelectionChangeListener fSelectionListener;
-
-	/**
-	 * The document change listener that is registered with the currently open
-	 * document.
-	 */
-	private DocumentChangeListener fDocumentListener;
-
-	/**
 	 * The completion engine
 	 */
 	private final HippieCompletionEngine fEngine= new HippieCompletionEngine();
 
+	/** The compound edit exit strategy. */
+	private final CompoundEditExitStrategy fExitStrategy= new CompoundEditExitStrategy(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
+	
 	/**
 	 * Creates a new action.
 	 *
@@ -167,6 +122,11 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	HippieCompleteAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
+		fExitStrategy.addCompoundListener(new ICompoundEditListener() {
+			public void endCompoundEdit() {
+				clearState();
+			}
+		});
 	}
 
 	/**
@@ -177,11 +137,14 @@ final class HippieCompleteAction extends TextEditorAction {
 		fLastCompletion= null;
 
 		ITextEditor editor= getTextEditor();
-		if (editor != null && fSelectionListener != null)
-			editor.getSelectionProvider().removeSelectionChangedListener(fSelectionListener);
-
-		if (fDocument != null && fDocumentListener != null)
-			fDocument.removeDocumentListener(fDocumentListener);
+		
+		if (editor != null) {
+			IRewriteTarget target= (IRewriteTarget) editor.getAdapter(IRewriteTarget.class);
+			if (target != null) {
+				fExitStrategy.disarm();
+				target.endCompoundChange();
+			}
+		}
 
 		fDocument= null;
 	}
@@ -190,29 +153,22 @@ final class HippieCompleteAction extends TextEditorAction {
 	 * Perform the next completion.
 	 */
 	private void completeNext() {
-		// we don't wish to receive events on our own changes
-		fModifyingLock= true;
 		try {
-			try {
-				fDocument.replace(fLastCompletion.startOffset, fLastCompletion.length, fLastCompletion.suggestions[fLastCompletion.nextSuggestion]);
-			} catch (BadLocationException e) {
-				// we should never get here. different from other places to notify the user.
-				log(e);
-				clearState();
-				return;
-			}
-
-			// advance the suggestion state
-			fLastCompletion.advance();
-
-			// move the caret to the insertion point
-			ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
-            sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
-            sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
-		} finally {
-			// allow changes
-			fModifyingLock= false;
+			fDocument.replace(fLastCompletion.startOffset, fLastCompletion.length, fLastCompletion.suggestions[fLastCompletion.nextSuggestion]);
+		} catch (BadLocationException e) {
+			// we should never get here. different from other places to notify the user.
+			log(e);
+			clearState();
+			return;
 		}
+		
+		// advance the suggestion state
+		fLastCompletion.advance();
+		
+		// move the caret to the insertion point
+		ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
+		sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
+		sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
 	}
 
 	/**
@@ -323,24 +279,6 @@ final class HippieCompleteAction extends TextEditorAction {
 	}
 
 	/**
-	 * Installs the selection and document listeners. Both editor and cached
-	 * document must be valid.
-	 */
-	private void installListeners() {
-		ITextEditor editor= getTextEditor();
-		Assert.isNotNull(editor);
-		Assert.isNotNull(fDocument);
-
-		if (fSelectionListener == null)
-			fSelectionListener= new SelectionChangeListener();
-		editor.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
-
-		if (fDocumentListener == null)
-			fDocumentListener= new DocumentChangeListener();
-		fDocument.addDocumentListener(fDocumentListener);
-	}
-
-	/**
 	 * Returns <code>true</code> if the current completion state is still
 	 * valid given the current document and selection.
 	 *
@@ -426,7 +364,10 @@ final class HippieCompleteAction extends TextEditorAction {
 				return;
 			}
 
-			installListeners();
+			IRewriteTarget target= (IRewriteTarget) getTextEditor().getAdapter(IRewriteTarget.class);
+			if (target != null)
+				target.beginCompoundChange();
+			
 			fLastCompletion= new CompletionState(suggestions, getSelectionOffset());
 		}
 	}
