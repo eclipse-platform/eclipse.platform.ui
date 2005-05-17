@@ -1333,15 +1333,15 @@ public class Main {
 		URL result = null;
         if (domain != null)
         	source = domain.getCodeSource();
-        if (source == null || domain == null)
+        if (source == null || domain == null) {
 			if (debug)
 				System.out.println("CodeSource location is null. Defaulting the install location to file:startup.jar"); //$NON-NLS-1$
 			try {
-				result = new URL("file:startup.jar");
+				result = new URL("file:startup.jar"); //$NON-NLS-1$
 			} catch (MalformedURLException e2) {
 				//Ignore
 			}
-			
+        }
 		if (source != null)
 			result = source.getLocation();
 		
@@ -1358,7 +1358,7 @@ public class Main {
                 chars[0] = Character.toLowerCase(chars[0]);
                 path = new String(chars);
             }
-        if (path.endsWith(".jar")) //$NON-NLS-1$
+        if (path.toLowerCase().endsWith(".jar")) //$NON-NLS-1$
             path = path.substring(0, path.lastIndexOf("/") + 1); //$NON-NLS-1$
         try {
             try {
