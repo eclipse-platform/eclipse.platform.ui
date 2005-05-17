@@ -187,6 +187,24 @@ public class AntEditorTests extends AbstractAntUITest {
     	}
     }
     
+    /**
+     * Bug 95061
+     */
+    public void testSelfClosingTagOpenDeclaration() throws PartInitException, BadLocationException {
+        try {
+            IFile file= getIFile("macrodef.xml");
+            AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+            int offset = getOffsetWithinLine(editor, 18, 10);
+            editor.selectAndReveal(offset, 0);
+            
+            editor.openReferenceElement();
+            ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+            assertTrue("Selection is not correct: " + selection.getText(), "macrodef".equals(selection.getText()));
+        } finally {
+            EditorTestHelper.closeAllEditors();    
+        }
+    }
+    
     public void testMacroDefAttributeOpenDeclaration() throws PartInitException, BadLocationException {
     	try {
     		IFile file= getIFile("macrodef.xml");
