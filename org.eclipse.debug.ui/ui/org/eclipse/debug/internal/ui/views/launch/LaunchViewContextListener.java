@@ -116,7 +116,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * closed.
 	 * 
 	 * Key: perspective id
-	 * Value: ArrayList of view ids open in a perspective
+	 * Value: HashSet of view ids open in a perspective
 	 */
 	private Map openedViewIds= new HashMap();
 	
@@ -376,7 +376,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Iterator iter= map.keySet().iterator();
 		while (iter.hasNext()) {
 			String perspId = (String) iter.next();
-			ArrayList viewIds = (ArrayList)map.get(perspId);
+			Set viewIds = (Set)map.get(perspId);
 			views.append("/"); //$NON-NLS-1$
 			views.append(perspId);
 			if (viewIds != null && !viewIds.isEmpty())
@@ -478,7 +478,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 					String perspId = data[0];
 					
 					String[] viewIds = data[1].split(","); //$NON-NLS-1$
-					ArrayList list = new ArrayList();
+					Set list = new HashSet();
 					for (int j=0; j<viewIds.length; j++)
 					{
 						list.add(viewIds[j]);
@@ -549,18 +549,17 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Iterator iterator= viewsToOpen.iterator();
 		
 		String id = page.getPerspective().getId();
-		ArrayList views = (ArrayList)openedViewIds.get(id);
+		Set views = (Set)openedViewIds.get(id);
 		if (views == null)
 		{
-			views = new ArrayList();
+			views = new HashSet();
 		}
 		
 		while (iterator.hasNext()) {
 			String viewId = (String) iterator.next();
 			try {
 				IViewPart view = page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
-				if (!views.contains(viewId))
-					views.add(viewId);
+				views.add(viewId);
 
 				viewsToShow.add(view);
 			} catch (PartInitException e) {
@@ -672,18 +671,17 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Iterator iter= viewsToClose.iterator();
 		
 		String perspId = page.getPerspective().getId();
-		ArrayList viewIds = (ArrayList)openedViewIds.get(perspId);
+		Set viewIds = (Set)openedViewIds.get(perspId);
 		
 		while (iter.hasNext()) {
 			String viewId= (String) iter.next();
 			IViewReference view = page.findViewReference(viewId);
 			if (view != null) {
 				page.hideView(view);
-				if (viewIds != null && viewIds.contains(viewId))
+				if (viewIds != null)
 				{
 					// remove opened view from perspective
 					viewIds.remove(viewId);
-					openedViewIds.put(perspId, viewIds);
 				}
 			}
 		}
@@ -707,7 +705,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Set viewIdsToKeepOpen= getViewIdsForEnabledContexts();
 		Iterator contexts = contextIds.iterator();
 		String currentPerspId = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective().getId();
-		ArrayList viewIds = (ArrayList)openedViewIds.get(currentPerspId);
+		Set viewIds = (Set)openedViewIds.get(currentPerspId);
 		while (contexts.hasNext()) {
 			String contextId = (String) contexts.next();
 			List list = getConfigurationElements(contextId);
@@ -1094,11 +1092,10 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		{
 			String perspId = (String)keys.next();
 			
-			ArrayList views = (ArrayList)openedViewIds.get(perspId);
-			if (views != null && views.contains(viewId))
+			Set views = (Set)openedViewIds.get(perspId);
+			if (views != null)
 			{
 				views.remove(viewId);
-				openedViewIds.put(perspId, views);
 			}
 		}
 	}
