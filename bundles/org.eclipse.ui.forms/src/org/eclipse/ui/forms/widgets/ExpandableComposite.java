@@ -141,6 +141,8 @@ public class ExpandableComposite extends Composite {
 	 * (default is 3).
 	 */
 	public int clientVerticalSpacing = 3;
+	
+	private static final Point NULL_SIZE = new Point(0,0);
 
 	private int VSPACE = 3;
 
@@ -203,17 +205,17 @@ public class ExpandableComposite extends Composite {
 			}
 			int x = marginWidth + thmargin;
 			int y = marginHeight + tvmargin;
-			Point tsize = null;
-			Point tcsize = null;
+			Point tsize = NULL_SIZE;
+			Point tcsize = NULL_SIZE;
 			if (toggle != null)
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			int twidth = clientArea.width - marginWidth - marginWidth
 					- thmargin - thmargin;
-			if (tsize != null)
+			if (tsize.x>0)
 				twidth -= tsize.x + GAP;
 			if (textClient != null)
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (tcsize != null)
+			if (tcsize.x>0)
 				twidth -= tcsize.x + GAP;
 			Point size = null;
 			if (textLabel != null)
@@ -247,8 +249,8 @@ public class ExpandableComposite extends Composite {
 				int ty = y;
 				if (textClient != null
 						&& (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
-					if (tsize.y < tcsize.y)
-						ty = tcsize.y / 2 - tsize.y / 2 + marginHeight
+					if (size.y < tcsize.y)
+						ty = tcsize.y / 2 - size.y / 2 + marginHeight
 								+ tvmargin;
 				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
@@ -272,7 +274,7 @@ public class ExpandableComposite extends Composite {
 			int tbarHeight = 0;
 			if (size != null)
 				tbarHeight = size.y;
-			if (tcsize != null)
+			if (tcsize.x>0)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
 			if (hasTitleBar())
@@ -318,7 +320,7 @@ public class ExpandableComposite extends Composite {
 			initCache(changed);
 
 			int width = 0, height = 0;
-			Point tsize = null;
+			Point tsize = NULL_SIZE;
 			int twidth = 0;
 			if (toggle != null) {
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -413,10 +415,10 @@ public class ExpandableComposite extends Composite {
 			initCache(changed);
 
 			int width = 0;
-			Point size = null;
+			Point size = NULL_SIZE;
 			if (textLabel != null)
 				size = textLabelCache.computeSize(5, SWT.DEFAULT);
-			Point tcsize = null;
+			Point tcsize = NULL_SIZE;
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
@@ -427,7 +429,7 @@ public class ExpandableComposite extends Composite {
 			}
 			if (size != null)
 				width = size.x;
-			if (tcsize != null)
+			if (tcsize.x>0)
 				width += GAP + tcsize.x;
 
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
@@ -457,10 +459,10 @@ public class ExpandableComposite extends Composite {
 			initCache(changed);
 
 			int width = 0;
-			Point size = null;
+			Point size = NULL_SIZE;
 			if (textLabel != null)
 				size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point tcsize = null;
+			Point tcsize = NULL_SIZE;
 			int thmargin = 0;
 
 			if (hasTitleBar()) {
@@ -469,9 +471,9 @@ public class ExpandableComposite extends Composite {
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
-			if (size != null)
+			if (size.x>0)
 				width = size.x;
-			if (tcsize != null)
+			if (tcsize.x>0)
 				width += GAP + tcsize.x;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
