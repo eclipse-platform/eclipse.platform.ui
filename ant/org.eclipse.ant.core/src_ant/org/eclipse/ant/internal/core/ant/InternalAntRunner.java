@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -378,7 +379,7 @@ public class InternalAntRunner {
             }
 			
 			setProperties(antProject, false);
-			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+			if (isVersionCompatible("1.5")) { //$NON-NLS-1$
 				new InputHandlerSetter().setInputHandler(antProject, "org.eclipse.ant.internal.core.ant.NullInputHandler"); //$NON-NLS-1$
 			}
 			parseBuildFile(antProject);
@@ -659,6 +660,10 @@ public class InternalAntRunner {
 				//set the system property that any input handler
 				//can check to see if handling input is allowed
 				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
+				if (isVersionCompatible("1.5")) { //$NON-NLS-1$
+					InputHandlerSetter setter= new InputHandlerSetter();
+					setter.setInputHandler(getCurrentProject(), "org.eclipse.ant.internal.core.ant.FailInputHandler"); //$NON-NLS-1$
+				}
 			}
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file___0__1, new String[]{getBuildFileLocation()})); //$NON-NLS-1$

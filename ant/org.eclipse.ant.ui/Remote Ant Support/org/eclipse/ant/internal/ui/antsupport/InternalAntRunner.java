@@ -380,6 +380,10 @@ public class InternalAntRunner {
 				//set the system property that any input handler
 				//can check to see if handling input is allowed
 				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
+				if (isVersionCompatible("1.5")) { //$NON-NLS-1$
+					InputHandlerSetter setter= new InputHandlerSetter();
+					setter.setInputHandler(getCurrentProject(), "org.eclipse.ant.internal.ui.antsupport.inputhandler.FailInputHandler"); //$NON-NLS-1$
+				}
 			}
 			
 			getCurrentProject().log(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
