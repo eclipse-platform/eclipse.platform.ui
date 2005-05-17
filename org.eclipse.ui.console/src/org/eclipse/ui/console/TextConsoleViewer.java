@@ -181,8 +181,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             }
 
             try {
-//                Display display = ConsolePlugin.getStandardDisplay();
-//                Color hyperlinkText = JFaceColors.getHyperlinkText(display);
                 Position[] positions = getDocument().getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
                 Position[] overlap = findPosition(offset, length, positions);
                 Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
@@ -194,22 +192,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                         override(ranges, linkRange);                    
                     }
                 }
-//                if (overlap != null) {
-//	                for (int i = 0; i < overlap.length; i++) {
-//                        StyleRange linkRange = new StyleRange(overlap[i].offset, overlap[i].length, hyperlinkText, null);
-//                        linkRange.underline = true;
-//	                    weave(ranges, linkRange);
-//	                }
-//                }
-////                if (hyperlink != null) {
-//                    IRegion region = console.getRegion(hyperlink);
-//                    if (region != null) {
-//                        Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-//                        StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
-//                        linkRange.underline = true;
-//                        override(ranges, linkRange);
-//                    }
-////                }
             } catch (BadPositionCategoryException e) {
             }
             
