@@ -23,7 +23,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
@@ -108,9 +107,10 @@ public class ShareProjectOperation extends CVSOperation {
 	 * @throws CVSException
 	 */
 	protected void mapProjectToRemoteFolder(final ICVSRemoteFolder remote, IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(null, 100);
-		purgeAnyCVSFolders();
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+		purgeAnyCVSFolders(Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 		// Link the project to the newly created module
+        monitor.subTask(NLS.bind(CVSUIMessages.ShareProjectOperation_3, new String[] { project.getName(), remote.getRepositoryRelativePath() }));
 		ICVSFolder folder = (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(project);
 		folder.setFolderSyncInfo(remote.getFolderSyncInfo());
 		//Register it with Team.  If it already is, no harm done.
@@ -186,16 +186,19 @@ public class ShareProjectOperation extends CVSOperation {
 	
 	/**
 	 * Method findCommonRootInSubfolders.
+	 * @param monitor 
 	 * @return String
 	 */
-	private void purgeAnyCVSFolders() {
+	private void purgeAnyCVSFolders(final IProgressMonitor monitor) {
 		try {
+            monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
 			folder.accept(new ICVSResourceVisitor() {
 				public void visitFile(ICVSFile file) throws CVSException {
 					// nothing to do for files
 				}
 				public void visitFolder(ICVSFolder folder) throws CVSException {
+                    monitor.subTask(NLS.bind(CVSUIMessages.ShareProjectOperation_2, new String[] { folder.getIResource().getFullPath().toString() } ));
 					if (folder.isCVSFolder()) {
 						// for now, just unmanage
 						folder.unmanage(null);
@@ -205,6 +208,8 @@ public class ShareProjectOperation extends CVSOperation {
 		} catch (CVSException e) {
 			// log the exception and return null
 			CVSUIPlugin.log(e);
-		}
+		} finally {
+		    monitor.done();
+        }
 	}
 }

@@ -44,6 +44,7 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 		throws CVSException, InterruptedException {
 		
 		// This method will be invoked for each provider being disconnected
+        monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		IProject project = provider.getProject();
 		try {
 			RepositoryProvider.unmap(project);
@@ -53,8 +54,9 @@ public class DisconnectOperation extends RepositoryProviderOperation {
 		if (unmanage) {
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
 			cvsFolder.unmanage(monitor);
-			EclipseSynchronizer.getInstance().deconfigure(project, monitor);
+			EclipseSynchronizer.getInstance().deconfigure(project, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 		}
+        monitor.done();
 	}
 
 	/* (non-Javadoc)

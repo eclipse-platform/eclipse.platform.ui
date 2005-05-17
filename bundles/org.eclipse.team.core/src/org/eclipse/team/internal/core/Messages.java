@@ -17,6 +17,8 @@ public class Messages extends NLS {
 	public static String ok;
 	public static String concatStrings;
 
+    public static String AbstractResourceVariantTree_0;
+    
 	public static String Assert_assertionFailed;
 
 	public static String FileModificationValidator_someReadOnly;

@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.core.Policy;
 
 /**
  * An implemenation of <code>IResourceVariantTree</code> that provides the logic for
@@ -177,6 +175,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	protected abstract boolean setVariant(IResource local, IResourceVariant remote) throws TeamException;
 
 	private void collectChanges(IResource local, IResourceVariant remote, Collection changedResources, int depth, IProgressMonitor monitor) throws TeamException {
+        monitor.subTask(NLS.bind(Messages.AbstractResourceVariantTree_0, new String[] {local.getFullPath().toString()}));
 		boolean changed = setVariant(local, remote);
 		if (changed) {
 			changedResources.add(local);

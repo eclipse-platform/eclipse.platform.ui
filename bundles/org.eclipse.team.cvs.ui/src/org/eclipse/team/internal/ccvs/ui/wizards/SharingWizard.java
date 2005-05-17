@@ -530,7 +530,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	private void populateSyncPage(final boolean exists) throws InvocationTargetException, InterruptedException {
 		getContainer().run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				monitor.beginTask(null, 100);
+				monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 				if (exists) {
 					reconcileProject(Policy.subMonitorFor(monitor, 50));
 				} else {

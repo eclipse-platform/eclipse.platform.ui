@@ -12,8 +12,9 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
+import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
@@ -33,8 +34,8 @@ public class RefreshChangeListener implements ISubscriberChangeListener {
 			}
 		}
 	}
-	public SyncInfo[] getChanges() {
-		collector.waitForCollector(new NullProgressMonitor());
+	public SyncInfo[] getChanges(IProgressMonitor monitor) {
+		collector.waitForCollector(monitor);
 		List changedSyncInfos = new ArrayList();
 		SyncInfoSet set = collector.getSyncInfoSet();
 		for (Iterator it = changes.iterator(); it.hasNext();) {

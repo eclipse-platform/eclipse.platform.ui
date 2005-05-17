@@ -375,11 +375,10 @@ public final class RefreshSubscriberJob extends Job {
 			} finally {
 				event.setStopTime(System.currentTimeMillis());
 				subscriber.removeListener(changeListener);
-				monitor.done();
 			}
 			
 			// Post-Notify
-			event.setChanges(changeListener.getChanges());
+			event.setChanges(changeListener.getChanges(monitor));
 			if (status == null) {
 				status = calculateStatus(event);
 			}
@@ -388,6 +387,7 @@ public final class RefreshSubscriberJob extends Job {
 			return event.getStatus();
 		} finally {
 			if (acquired) lock.release();
+            monitor.done();
 		}
 	}
 	

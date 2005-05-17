@@ -218,8 +218,8 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);
 			cvsFolder.setFolderSyncInfo(newInfo);
 		}
-        if (remote == null && isIgnored(local)) {
-            // Do not record the lack of existance of a remote for ignored local files
+        if (remote == null && !isManaged(local)) {
+            // Do not record the lack of existance of a remote for unmanaged local files
             // Instead, just flush the remote bytes if there are any
             flushVariants(local, IResource.DEPTH_ZERO);
             return false;
@@ -234,9 +234,9 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
         }
 	}
 	
-	private boolean isIgnored(IResource local) {
+	private boolean isManaged(IResource local) {
         try {
-            return CVSWorkspaceRoot.getCVSResourceFor(local).isIgnored();
+            return CVSWorkspaceRoot.getCVSResourceFor(local).isManaged();
         } catch (CVSException e) {
             return false;
         }

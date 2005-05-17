@@ -898,7 +898,9 @@ public class CVSUIMessages extends NLS {
 	public static String SharingWizardSyncPage_8;
 	public static String SharingWizardSyncPage_9;
 	public static String SharingWizardSyncPage_12;
-	public static String ShareProjectOperation_1;
+    public static String ShareProjectOperation_1;
+    public static String ShareProjectOperation_2;
+    public static String ShareProjectOperation_3;
 	public static String CVSProjectPropertiesPage_31;
 	public static String CVSProjectPropertiesPage_32;
 	public static String CVSProjectPropertiesPage_33;
