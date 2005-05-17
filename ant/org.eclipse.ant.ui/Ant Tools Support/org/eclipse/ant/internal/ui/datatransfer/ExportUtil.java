@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300
  *     IBM Corporation - nlsing and incorporating into Eclipse. 
  *                          Class created from combination of all utility classes of contribution
  *******************************************************************************/
@@ -371,12 +371,33 @@ public class ExportUtil
      */
     public static String toString(Document doc) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException
     {
+        // NOTE: There are different transformer implementations in the wild, which are configured differently
+        //       regarding the indent size:
+        //       Java 1.4: org.apache.xalan.transformer.TransformerIdentityImpl 
+        //       Java 1.5: com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl
+
         StringWriter writer = new StringWriter();
         Source source = new DOMSource(doc);
         Result result = new StreamResult(writer);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory factory = TransformerFactory.newInstance();
+        boolean indentFallback = false;
+        try
+        {
+            // indent using TransformerImpl
+            factory.setAttribute("indent-number", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        catch (IllegalArgumentException e)
+        {
+            // option not supported, set indent size below
+            indentFallback = true;
+        }
+        Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (indentFallback)
+        {
+            // indent using TransformerIdentityImpl
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         transformer.transform(source, result);
         return writer.toString();
     }
