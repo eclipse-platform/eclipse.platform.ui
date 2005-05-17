@@ -434,6 +434,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		}
 		Set refIds= references.keySet();
 		AntElementNode node= antModel.getNode(cursorPosition, false);
+		if (node == null) {
+			return NO_PROPOSALS;
+		}
 		while (node.getParentNode() instanceof AntTaskNode) {
 			node= node.getParentNode();
 		}
@@ -582,6 +585,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 
 	private Class getNestedType() {
     	AntElementNode currentNode= antModel.getNode(cursorPosition, false);
+    	if (currentNode == null) {
+    		return null;
+    	}
 		AntElementNode parent= currentNode.getParentNode();
 		if (parent instanceof AntTaskNode) {
 			String parentName= parent.getName();
