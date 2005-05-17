@@ -187,6 +187,7 @@ public class CVSMessages extends NLS {
 	public static String EclipseFile_Problem_writing_resource;
 	public static String EclipseFolder_problem_creating;
 	public static String EclipseFolder_isModifiedProgress;
+    public static String EclipseFolder_0;
 
 	public static String EclipseSynchronizer_UpdatingSyncEndOperation;
 	public static String EclipseSynchronizer_UpdatingSyncEndOperationCancelled;
