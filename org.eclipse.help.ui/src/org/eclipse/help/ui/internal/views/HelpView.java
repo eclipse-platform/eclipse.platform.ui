@@ -132,10 +132,10 @@ public class HelpView extends ViewPart implements IPartListener2,
 					// context help changes with selections
 					installSelectionListener(part);
 				}
-				if (part instanceof IPageChangeProvider)
-					installPageListener(part);
 			} else if (visible)
 				reusableHelpPart.update(part, c);
+			if (part instanceof IPageChangeProvider)
+				installPageListener(part);
 		}
 	}
 
@@ -377,6 +377,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 	}
 
 	public void pageChanged(PageChangedEvent event) {
+		if (!visible)
+			return;
 		updateActivePart();
 	}
 }
