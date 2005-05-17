@@ -13,6 +13,9 @@
 		<eclipseMacro v="This is v">
 			
 		</eclipseMacro>
+		<eclipseMacro v="This is v2"/>
+		<eclipseMacro v="This is v3"/>
+		<eclipseMacro v="This is v4"/>
 	</target>
 
 </project>

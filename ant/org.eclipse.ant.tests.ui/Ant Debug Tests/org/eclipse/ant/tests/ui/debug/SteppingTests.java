@@ -74,6 +74,10 @@ public class SteppingTests extends AbstractAntDebugTest {
     
 	private void antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber) throws CoreException {
 		String fileName = "debugAntCall";
+		debugStack(sepVM, lineNumber, kind, frameName, frameLineNumber, fileName, true);
+	}
+
+	private AntThread debugStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber, String fileName, boolean terminate) throws CoreException, DebugException {
 		ILineBreakpoint bp = createLineBreakpoint(lineNumber, fileName + ".xml");
 		AntThread thread= null;
 		try {
@@ -83,24 +87,31 @@ public class SteppingTests extends AbstractAntDebugTest {
 			ILaunchConfiguration config= getLaunchConfiguration(fileName);
 			thread= launchToLineBreakpoint(config, bp);
 			
-			AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
-			assertNotNull(frame);
-			switch (kind) {
-				case DebugEvent.BREAKPOINT: 
-					stepOverToHitBreakpoint(frame);
-					break;
-				case DebugEvent.STEP_OVER:
-					stepOver(frame);
-					break;
-				case DebugEvent.STEP_INTO:
-					stepInto(frame);
-					break;
-			}
-			assertFrame(thread, frameName, frameLineNumber);
+			debugFrame(kind, frameName, frameLineNumber, thread);
+			return thread;
 		} finally {
-			terminateAndRemove(thread);
-			removeAllBreakpoints();
+			if (terminate) {
+				terminateAndRemove(thread);
+				removeAllBreakpoints();
+			}
 		}
+	}
+
+	private void debugFrame(int kind, String frameName, int frameLineNumber, AntThread thread) throws DebugException {
+		AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
+		assertNotNull(frame);
+		switch (kind) {
+			case DebugEvent.BREAKPOINT: 
+				stepOverToHitBreakpoint(frame);
+				break;
+			case DebugEvent.STEP_OVER:
+				stepOver(frame);
+				break;
+			case DebugEvent.STEP_INTO:
+				stepInto(frame);
+				break;
+		}
+		assertFrame(thread, frameName, frameLineNumber);
 	}
 	
     private AntStackFrame assertFrame(AntThread thread, String frameName, int lineNumber) throws DebugException {
@@ -111,6 +122,53 @@ public class SteppingTests extends AbstractAntDebugTest {
         assertTrue("Line number of stack frame incorrect. Expected " + lineNumber + " was: " + actualLineNumber, lineNumber == actualLineNumber);
         return frame;
     }
+    
+    /**
+     * bug 85309
+     * @throws CoreException
+     */
+    public void testStepOutOfMacrodef() throws CoreException {
+    	String fileName = "macrodef";
+		debugStack(false, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true);
+    }
+    
+    /**
+     * bug 85309
+     * @throws CoreException
+     */
+    public void testStepOutOfMacrodefSepVM() throws CoreException {
+    	String fileName = "macrodef";
+		debugStack(true, 8 , DebugEvent.STEP_OVER, "type: eclipseMacro", 16, fileName, true);
+    }
+    
+    /**
+     * bug 94769
+     * @throws CoreException
+     */
+    public void testStepIntoMacrodef() throws CoreException {
+    	testMacroDef(false);
+    }
+    
+ /**
+     * bug 94769
+     * @throws CoreException
+     */
+    public void testStepIntoMacrodefSepVM() throws CoreException {
+    	testMacroDef(true);
+    }
+
+    private void testMacroDef(boolean sepVM) throws CoreException, DebugException {
+    	AntThread thread= null;
+    	try {
+    		String fileName = "macrodef";
+    		thread= debugStack(sepVM, 16 , DebugEvent.STEP_INTO, "type: sequential", 0, fileName, false);
+    		debugFrame(DebugEvent.STEP_INTO, "type: echo", 8, thread);
+    		debugFrame(DebugEvent.STEP_OVER, "type: eclipseMacro", 17, thread);
+    	} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
     
 //    public void testStepBackFromAnt() throws Exception {
 //        antCallStack(false);
