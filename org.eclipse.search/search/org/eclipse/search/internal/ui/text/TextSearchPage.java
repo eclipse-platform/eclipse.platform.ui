@@ -662,8 +662,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		} else if (isProjectScope) {
 			IProject editorProject= getEditorProject();
-			if (editorProject != null)
+			if (editorProject != null) {
 				resources.add(editorProject);
+				firstProjectName= editorProject.getName();
+			}
 		}
 
 		String name;
