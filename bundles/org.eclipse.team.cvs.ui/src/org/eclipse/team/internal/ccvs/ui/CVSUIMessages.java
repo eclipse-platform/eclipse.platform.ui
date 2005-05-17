@@ -819,6 +819,7 @@ public class CVSUIMessages extends NLS {
 	public static String CheckoutProjectOperation_8;
 	public static String CheckoutProjectOperation_9;
 	public static String CheckoutProjectOperation_0;
+    public static String CheckoutProjectOperation_1;
 	public static String CVSOperation_0;
 	public static String CVSOperation_1;
 	public static String CVSOperation_2;

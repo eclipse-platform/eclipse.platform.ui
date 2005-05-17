@@ -28,7 +28,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 /**
@@ -159,7 +158,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			// An exception occurred either during the module-expansion or checkout
 			// Since we were able to make a connection, return the status so the
 			// checkout of any other modules can proceed
-			return e.getStatus();
+			return new CVSStatus(e.getStatus().getSeverity(), NLS.bind(CVSUIMessages.CheckoutProjectOperation_1, new String[] {resource.getRepositoryRelativePath(), e.getMessage()}), e);
 		} finally {
 			session.close();
 			pm.done();
