@@ -590,6 +590,7 @@ public class ReviewPage	extends BannerPage {
 				.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						selectRequiredFeatures();
+						updateItemCount();
 					}
 				});
 
@@ -695,6 +696,7 @@ public class ReviewPage	extends BannerPage {
                 for (int i=0; i<nodes.length; i++)
                     nodes[i] = descendants.get(i);
                 treeViewer.update(nodes, null);
+                updateItemCount();
             }
         });
 
@@ -830,7 +832,7 @@ public class ReviewPage	extends BannerPage {
 	private void pageChanged() {
 		Object[] checked = getSelectedJobs();
 		int totalCount = jobs.size();
-		updateItemCount(checked.length, totalCount);
+		updateItemCount();
 		if (checked.length > 0) {
 			validateSelection();
 		} else {
@@ -843,6 +845,10 @@ public class ReviewPage	extends BannerPage {
 		treeViewer.update(jobs.toArray(), null);
 		statusButton.setEnabled(validationStatus != null);
         treeViewer.refresh();
+	}
+	
+	private void updateItemCount() {
+		updateItemCount(-1, -1);
 	}
 
 	private void updateItemCount(int checkedCount, int totalCount) {
