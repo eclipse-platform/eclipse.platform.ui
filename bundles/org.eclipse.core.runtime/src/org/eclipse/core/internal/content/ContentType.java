@@ -445,7 +445,9 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		if (tmpDescriber == null)
 			return defaultDescription;
 		ContentDescription description = new ContentDescription(options, this);
-		describe(tmpDescriber, buffer, description);
+		if (describe(tmpDescriber, buffer, description) == IContentDescriber.INVALID)
+			// the contents were actually invalid for the content type
+			return null;
 		// the describer didn't add any details, return default description
 		if (!description.isSet())
 			return defaultDescription;

@@ -251,7 +251,7 @@ public final class ContentTypeCatalog {
 
 	IContentType[] findContentTypesFor(ContentTypeMatcher matcher, InputStream contents, String fileName) throws IOException {
 		final ILazySource buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(matcher, buffer, fileName);
+		IContentType[] selected = internalFindContentTypesFor(matcher, buffer, fileName, true);
 		// give the policy a chance to change the results
 		ISelectionPolicy policy = matcher.getPolicy();
 		if (policy != null)
@@ -299,7 +299,7 @@ public final class ContentTypeCatalog {
 	}
 
 	private IContentDescription getDescriptionFor(ContentTypeMatcher matcher, ILazySource contents, String fileName, QualifiedName[] options) throws IOException {
-		IContentType[] selected = internalFindContentTypesFor(matcher, contents, fileName);
+		IContentType[] selected = internalFindContentTypesFor(matcher, contents, fileName, false);
 		if (selected.length == 0)
 			return null;
 		// give the policy a chance to change the results
@@ -369,7 +369,7 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
 		final IContentType[][] subset;
 		final Comparator validPolicy;
 		Comparator indeterminatePolicy;
@@ -383,6 +383,13 @@ public final class ContentTypeCatalog {
 			indeterminatePolicy = policyGeneralIsBetter;
 			validPolicy = policySpecificIsBetter;
 		}
+		int total = subset[0].length + subset[1].length;
+		if (total == 0)
+			// don't do further work if subset is empty
+			return subset[0];
+		if (!forceValidation && total == 1)
+			// do not do validation if not forced and only one was found (caller will validate later)
+			return subset[0].length == 1 ? subset[0] : subset[1];
 		return internalFindContentTypesFor(buffer, subset, validPolicy, indeterminatePolicy);
 	}
 
@@ -450,9 +457,9 @@ public final class ContentTypeCatalog {
 			Set initialSet = (Set) associations.get(FileSpec.getMappingKeyFor(text));
 			if (initialSet != null && !initialSet.isEmpty()) {
 				// copy so we can modify
-				result = new  HashSet(initialSet);
+				result = new HashSet(initialSet);
 				// invert the last two bits so it is easier to compare
-				typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);				
+				typeMask ^= (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED);
 				for (Iterator i = result.iterator(); i.hasNext();) {
 					ContentType contentType = (ContentType) i.next();
 					if (!contentType.hasFileSpec(text, typeMask, true))
