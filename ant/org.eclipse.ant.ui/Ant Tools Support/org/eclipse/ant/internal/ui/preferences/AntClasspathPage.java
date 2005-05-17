@@ -31,15 +31,15 @@ import org.eclipse.ui.PlatformUI;
  */
 public class AntClasspathPage implements IAntBlockContainer {
 
-	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock();
-	private AntRuntimePreferencePage preferencePage;
-	private ClasspathModel model;
+	private AntClasspathBlock fAntClasspathBlock= new AntClasspathBlock();
+	private AntRuntimePreferencePage fPreferencePage;
+	private ClasspathModel fModel;
 	
 	/**
 	 * Creates an instance.
 	 */
 	public AntClasspathPage(AntRuntimePreferencePage preferencePage) {
-		this.preferencePage = preferencePage;
+		fPreferencePage = preferencePage;
 	}
 	
 	/**
@@ -48,18 +48,18 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * @return set of user classpath entries
 	 */
 	protected IAntClasspathEntry[] getAdditionalEntries() {
-		return model.getEntries(ClasspathModel.GLOBAL_USER);
+		return fModel.getEntries(ClasspathModel.GLOBAL_USER);
 	}
 	
 	/**
 	 * Returns the specified ant home classpath entries
 	 */
 	protected IAntClasspathEntry[] getAntHomeEntries() {
-		return model.getEntries(ClasspathModel.ANT_HOME);
+		return fModel.getEntries(ClasspathModel.ANT_HOME);
 	}
 	
 	protected String getAntHome() {
-		return antClasspathBlock.getAntHome();
+		return fAntClasspathBlock.getAntHome();
 	}
 	
 	/**
@@ -69,25 +69,25 @@ public class AntClasspathPage implements IAntBlockContainer {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		createClasspathModel();
-		antClasspathBlock.initializeAntHome(prefs.getAntHome());
-		antClasspathBlock.setInput(model);
+		fAntClasspathBlock.initializeAntHome(prefs.getAntHome());
+		fAntClasspathBlock.setInput(fModel);
 		
-		preferencePage.setErrorMessage(null);
-		preferencePage.setValid(true);
+		fPreferencePage.setErrorMessage(null);
+		fPreferencePage.setValid(true);
 	}
 	
 	protected void createClasspathModel() {
-		model= new ClasspathModel();
+		fModel= new ClasspathModel();
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		model.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
-		model.setGlobalEntries(prefs.getAdditionalClasspathEntries());
-        model.setContributedEntries(prefs.getContributedClasspathEntries());
+		fModel.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
+		fModel.setGlobalEntries(prefs.getAdditionalClasspathEntries());
+        fModel.setContributedEntries(prefs.getContributedClasspathEntries());
 	}
 	
 	protected void performDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		model= new ClasspathModel();
-		model.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
+		fModel= new ClasspathModel();
+		fModel.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
 		IAntClasspathEntry toolsEntry= prefs.getToolsJarEntry();
 		IAntClasspathEntry[] additionalEntries;
 		if (toolsEntry == null) {
@@ -95,10 +95,10 @@ public class AntClasspathPage implements IAntBlockContainer {
 		} else {
 			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
 		}
-		model.setGlobalEntries(additionalEntries);
-        model.setContributedEntries(prefs.getContributedClasspathEntries());
-		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
-		antClasspathBlock.setInput(model);
+		fModel.setGlobalEntries(additionalEntries);
+        fModel.setContributedEntries(prefs.getContributedClasspathEntries());
+		fAntClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
+		fAntClasspathBlock.setInput(fModel);
 		update();
 	}
 	
@@ -108,7 +108,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.AntClasspathPage_title); //$NON-NLS-1$;
-		item.setImage(antClasspathBlock.getClasspathImage());
+		item.setImage(fAntClasspathBlock.getClasspathImage());
 		item.setData(this);
 		item.setControl(createContents(folder));
 		return item;
@@ -132,8 +132,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 
 		top.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		antClasspathBlock.setContainer(this);
-		antClasspathBlock.createContents(top);
+		fAntClasspathBlock.setContainer(this);
+		fAntClasspathBlock.createContents(top);
 		
 		return top;
 	}
@@ -142,32 +142,32 @@ public class AntClasspathPage implements IAntBlockContainer {
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
-		if (antClasspathBlock.isValidated()){
+		if (fAntClasspathBlock.isValidated()){
 			return;
 		}
 		setMessage(null);
 		setErrorMessage(null);
-		boolean valid= antClasspathBlock.validateAntHome();
+		boolean valid= fAntClasspathBlock.validateAntHome();
 	
 		if (valid) {
-			valid= antClasspathBlock.validateToolsJAR();
+			valid= fAntClasspathBlock.validateToolsJAR();
 		}
 		
-		preferencePage.setValid(valid);
+		fPreferencePage.setValid(valid);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
-		preferencePage.setMessage(message);
+		fPreferencePage.setMessage(message);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
-		preferencePage.setErrorMessage(message);
+		fPreferencePage.setErrorMessage(message);
 	}
 	
 	/* (non-Javadoc)
@@ -177,7 +177,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 		button.setText(buttonText);
-		preferencePage.setButtonLayoutData(button);
+		fPreferencePage.setButtonLayoutData(button);
 		return button;
 	}
 }
