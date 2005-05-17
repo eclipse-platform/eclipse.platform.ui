@@ -25,15 +25,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
     /**
      * Create a new instance of the receiver.
      * @param structured The Viewer we are providing content for
-     */
-    public ProgressViewerContentProvider(ProgressViewer structured) {
-        super();
-        progressViewer = structured;
-    }
-
-    /**
-     * Create a new instance of the receiver.
-     * @param structured The Viewer we are providing content for
      * @param noDebug A flag to indicate if the debug flag is false.
      */
     public ProgressViewerContentProvider(ProgressViewer structured,
@@ -111,7 +102,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
      */
     public Object[] getElements(Object inputElement) {
         JobTreeElement[] elements = ProgressManager.getInstance()
-                .getRootElements(!filterDebug);
+                .getRootElements(debug());
         return getDisplayedValues(elements);
     }
 
@@ -123,7 +114,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
      *            the array of elements.
      * @param subWithParent
      *            sub with parent flag.
-     * @return
+     * @return Object[]
      */
     private Object[] getRoots(Object[] elements, boolean subWithParent) {
         if (elements.length == 0)

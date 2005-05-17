@@ -30,15 +30,17 @@ public class ProgressTreeContentProvider extends ProgressContentProvider
         viewer = mainViewer;
     }
 
+    
     /**
      * Create a new instance of the receiver with the supplied
      * viewer and debug flag.
      * @param mainViewer
-     * @param noDebug If true do not show debug information
+     * @param debug If true do show debug information
+     * @see ProgressContentProvider
      */
     public ProgressTreeContentProvider(NewProgressViewer mainViewer,
-            boolean noDebug) {
-        super(noDebug);
+            boolean debug) {
+        super(debug);
         viewer = mainViewer;
     }
 

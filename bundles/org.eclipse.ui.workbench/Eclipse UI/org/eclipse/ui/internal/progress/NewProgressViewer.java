@@ -1617,7 +1617,7 @@ public class NewProgressViewer extends TreeViewer implements
         
         if(job.isSystem()){
         	if(getContentProvider() instanceof ProgressContentProvider)
-        		return ((ProgressContentProvider) getContentProvider()).filterDebug;
+        		return !((ProgressContentProvider) getContentProvider()).debug();
         	return false;
         }
         return false;

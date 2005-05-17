@@ -331,7 +331,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
      * @return ProgressTreeContentProvider
      */
     private ProgressTreeContentProvider getContentProvider() {
-        return new ProgressTreeContentProvider(viewer, !Policy.DEBUG_SHOW_SYSTEM_JOBS) {
+        return new ProgressTreeContentProvider(viewer, Policy.DEBUG_SHOW_SYSTEM_JOBS) {
             /*
              * (non-Javadoc)
              * 

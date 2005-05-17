@@ -20,28 +20,30 @@ import org.eclipse.jface.viewers.Viewer;
 public abstract class ProgressContentProvider implements
         IProgressUpdateCollector, IStructuredContentProvider {
 
+	private boolean overrideValue;
 	/**
-	 * Return whether or not we are filtering debug items.
+	 * Return whether or not we check the preferences or overide.
 	 */
-    protected boolean filterDebug;
+    private boolean override = false;
 
     /**
      * Create a new instance of the receiver with all of the
      * default values.  
      */
     public ProgressContentProvider() {
-        this(!ProgressViewUpdater.getSingleton().debug);
+    	ProgressViewUpdater.getSingleton().addCollector(this);
     }
 
     /**
      * Create a new instance of the receiver with a flag to 
      * indicate if there will be debug info shown or not.
-     * @param noDebug If true debug information will be shown
+     * @param debug If true debug information will be shown
      * if the debug flag in the ProgressManager is true.
      */
-    public ProgressContentProvider(boolean noDebug) {
-        ProgressViewUpdater.getSingleton().addCollector(this);
-        filterDebug = noDebug;
+    public ProgressContentProvider(boolean debug) {
+    	this();
+    	override = true;
+        overrideValue = debug;
     }
 
     /*
@@ -51,7 +53,7 @@ public abstract class ProgressContentProvider implements
      */
     public Object[] getElements(Object inputElement) {
 
-        return ProgressManager.getInstance().getRootElements(!filterDebug);
+        return ProgressManager.getInstance().getRootElements(debug());
     }
 
     /*
@@ -71,6 +73,19 @@ public abstract class ProgressContentProvider implements
      */
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         //No change when input changes
+    }
+    
+    /**
+     * Return whether or not we are debugging. Check the
+     * system settings unless we are overiding them.
+     * @return boolean <code>true</code> if debug
+     * (system) jobs are being shown.
+     */
+    public boolean debug(){
+    	if(override)
+    		return overrideValue;
+    	return ProgressViewUpdater.getSingleton().debug;
+    	
     }
 
 }
