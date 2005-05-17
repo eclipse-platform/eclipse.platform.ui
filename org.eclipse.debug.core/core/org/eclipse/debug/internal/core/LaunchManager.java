@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -170,7 +169,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Collection of launches
 	 */
-	private Vector fLaunches= new Vector(10);
+	private List fLaunches= new ArrayList(10);
 	
 	/**
 	 * Set of launches for efficient 'isRegistered()' check
@@ -380,12 +379,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param launch the launch to remove
 	 * @return whether the launch was removed
 	 */
-	protected synchronized boolean internalRemoveLaunch(ILaunch launch) {
+	protected boolean internalRemoveLaunch(ILaunch launch) {
 		if (launch == null) {
 			return false;
 		}
-		fLaunchSet.remove(launch);
-		return fLaunches.remove(launch);
+		synchronized (fLaunches) {
+			fLaunchSet.remove(launch);
+			return fLaunches.remove(launch);
+		}
 	}
 	
 	/**
@@ -407,47 +408,55 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
 	 */
-	public synchronized boolean isRegistered(ILaunch launch) {
-		return fLaunchSet.contains(launch);
+	public boolean isRegistered(ILaunch launch) {
+		synchronized (fLaunches) {
+			return fLaunchSet.contains(launch);
+		}
 	}
 
 	/**
 	 * @see ILaunchManager#getDebugTargets()
 	 */
 	public IDebugTarget[] getDebugTargets() {
-		List allTargets= new ArrayList(fLaunches.size());
-		if (fLaunches.size() > 0) {
-			Iterator e= fLaunches.iterator();
-			while (e.hasNext()) {
-				IDebugTarget[] targets= ((ILaunch) e.next()).getDebugTargets();
-				for (int i = 0; i < targets.length; i++) {
-					allTargets.add(targets[i]);
+		synchronized (fLaunches) {
+			List allTargets= new ArrayList(fLaunches.size());
+			if (fLaunches.size() > 0) {
+				Iterator e= fLaunches.iterator();
+				while (e.hasNext()) {
+					IDebugTarget[] targets= ((ILaunch) e.next()).getDebugTargets();
+					for (int i = 0; i < targets.length; i++) {
+						allTargets.add(targets[i]);
+					}
 				}
 			}
+			return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
 		}
-		return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
 	}
 			
 	/**
 	 * @see ILaunchManager#getLaunches()
 	 */
 	public ILaunch[] getLaunches() {
-		return (ILaunch[])fLaunches.toArray(new ILaunch[fLaunches.size()]);
+		synchronized (fLaunches) {
+			return (ILaunch[])fLaunches.toArray(new ILaunch[fLaunches.size()]);
+		}
 	}
 
 	/**
 	 * @see ILaunchManager#getProcesses()
 	 */
 	public IProcess[] getProcesses() {
-		List allProcesses= new ArrayList(fLaunches.size());
-		Iterator e= fLaunches.iterator();
-		while (e.hasNext()) {
-			IProcess[] processes= ((ILaunch) e.next()).getProcesses();
-			for (int i= 0; i < processes.length; i++) {
-				allProcesses.add(processes[i]);
+		synchronized (fLaunches) {
+			List allProcesses= new ArrayList(fLaunches.size());
+			Iterator e= fLaunches.iterator();
+			while (e.hasNext()) {
+				IProcess[] processes= ((ILaunch) e.next()).getProcesses();
+				for (int i= 0; i < processes.length; i++) {
+					allProcesses.add(processes[i]);
+				}
 			}
+			return (IProcess[])allProcesses.toArray(new IProcess[allProcesses.size()]);
 		}
-		return (IProcess[])allProcesses.toArray(new IProcess[allProcesses.size()]);
 	}
 	
 	/**
@@ -467,13 +476,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param launch launch to register
 	 * @return whether the launch was added
 	 */
-	protected synchronized boolean internalAddLaunch(ILaunch launch) {
-		if (fLaunches.contains(launch)) {
-			return false;
+	protected boolean internalAddLaunch(ILaunch launch) {
+		synchronized (fLaunches) {
+			if (fLaunches.contains(launch)) {
+				return false;
+			}
+			fLaunches.add(launch);
+			fLaunchSet.add(launch);
+			return true;
 		}
-		fLaunches.add(launch);
-		fLaunchSet.add(launch);
-		return true;
 	}
 	
 	/**
