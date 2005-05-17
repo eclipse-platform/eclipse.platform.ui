@@ -121,7 +121,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		//refresh the hot root if applicable
 		if (time - hotRootTime > HOT_ROOT_DECAY)
 			hotRoot = null;
-		else if (hotRoot != null)
+		else if (hotRoot != null && !monitor.isCanceled())
 			poll(hotRoot);
 		//process roots that have not yet been refreshed this iteration
 		final long loopStart = System.currentTimeMillis();

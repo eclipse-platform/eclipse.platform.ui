@@ -31,7 +31,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	/**
 	 * The PollingMonitor in charge of doing filesystem polls.
 	 */
-	protected PollingMonitor pollMonitor;
+	protected final PollingMonitor pollMonitor;
 	/**
 	 * The list of registered monitor factories.
 	 */
@@ -39,12 +39,11 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 	/**
 	 * Reference to the refresh manager
 	 */
-	protected RefreshManager refreshManager;
+	protected final RefreshManager refreshManager;
 	/**
-	 * A mapping of monitors to a list of resources each monitor is responsible
-	 * for
+	 * A mapping of monitors to a list of resources each monitor is responsible for.
 	 */
-	protected Map registeredMonitors;
+	protected final Map registeredMonitors;
 	/**
 	 * Reference to the worskpace
 	 */
@@ -289,6 +288,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 		registeredMonitors.clear();
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + " stopping monitor manager."); //$NON-NLS-1$
+		pollMonitor.cancel();
 	}
 
 	void unmonitor(IResource resource) {
