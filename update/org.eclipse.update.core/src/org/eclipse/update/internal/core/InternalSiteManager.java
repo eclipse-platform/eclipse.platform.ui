@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,28 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFactory;
+import org.eclipse.update.core.ISiteFactoryExtension;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.internal.model.ITimestamp;
 
 /**
  * 
@@ -35,6 +47,8 @@ public class InternalSiteManager {
 
 	// cache found sites
 	private static Map sites = new HashMap();
+	// cache http updated url
+	private static Map httpSitesUpdatedUrls = new HashMap();
 	// cache timestamps
 	private static Map siteTimestamps = new HashMap();
 	public static boolean globalUseCache = true;
@@ -95,6 +109,9 @@ public class InternalSiteManager {
 
 		// use cache if set up globally (globalUseCache=true)
 		// and passed as parameter (useCache=true)
+		if (httpSitesUpdatedUrls.containsKey(siteURL.toExternalForm())) {
+			siteURL = (URL)httpSitesUpdatedUrls.get(siteURL.toExternalForm());
+		}
 		String siteURLString = siteURL.toExternalForm();
 		if ((useCache && globalUseCache) && isValidCachedSite(siteURL)) {
 			site = (ISite) sites.get(siteURLString);
@@ -160,12 +177,16 @@ public class InternalSiteManager {
 		}
 
 		if (site != null) {
-			sites.put(siteURL.toExternalForm(), site);
-			try {
-				Response response = UpdateCore.getPlugin().get(URLEncoder.encode(siteURL));
-				siteTimestamps.put(siteURL, new Long(response.getLastModified()));
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
+			sites.put(site.getURL().toExternalForm(), site);
+			if (site instanceof ITimestamp) {
+				siteTimestamps.put(site.getURL(), new Long(((ITimestamp)site).getTimestamp().getTime()));
+			} else {
+				try {
+					Response response = UpdateCore.getPlugin().get(URLEncoder.encode(siteURL));
+					siteTimestamps.put(siteURL, new Long(response.getLastModified()));
+				} catch (MalformedURLException e) {
+				} catch (IOException e) {
+				}
 			}
 		}
 
@@ -241,55 +262,58 @@ public class InternalSiteManager {
 	 * 4 open the stream	
 	 */
 	private static ISite createSite(String siteType, URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
+		
 		if (monitor == null) monitor = new NullProgressMonitor();
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
-
+		URL fixedUrl;
+		
+		// see if we need to (and can) fix url by adding site.xml to it
 		try {
-			monitor.worked(1);
-			site = createSite(factory, url, monitor);
-		} catch (CoreException e) {
-			if (monitor.isCanceled()) return null;
-
-			// if the URL is pointing to either a file 
-			// or a directory, without reference			
-			if (url.getRef() != null) {
-				// 4 nothing we can do
-				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), e);
+			if ( (url.getRef() != null) || (url.getFile().endsWith(Site.SITE_XML) || (url.getProtocol().equalsIgnoreCase("file")))) { //$NON-NLS-1$
+			 	fixedUrl = url;
 			} else if (url.getFile().endsWith("/")) { //$NON-NLS-1$
-				// 1 try to add site.xml
-				URL urlRetry;
-				try {
-					urlRetry = new URL(url, Site.SITE_XML);
-				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateURL, (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$
-				}
-				try {
-					monitor.worked(1);
-					site = createSite(factory, urlRetry, monitor);
-				} catch (CoreException e1) {
-					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
-				}
-			} else if (url.getFile().endsWith(Site.SITE_XML)) {
-				// 3 nothing we can do
-				throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), e);
+				fixedUrl = new URL(url, Site.SITE_XML);
 			} else {
-				// 2 try to add /site.xml 
-				URL urlRetry;
-				try {
-					urlRetry = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML);	//$NON-NLS-1$
-				} catch (MalformedURLException e1) {
-					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToCreateURL, (new String[] { url.toExternalForm() + "+" + Site.SITE_XML })), e1);	//$NON-NLS-1$
-				}
-
-				try {
-					monitor.worked(1);
-					site = createSite(factory, urlRetry, monitor);
-				} catch (CoreException e1) {
-					throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
+				fixedUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/" + Site.SITE_XML);	//$NON-NLS-1$
+			}
+		} catch (MalformedURLException mue) {
+			fixedUrl = url;
+		}
+		
+		try {
+			try { 
+				monitor.worked(1);
+				return createSite( factory, fixedUrl, url, monitor);
+			} catch (CoreException ce) {
+				if (monitor.isCanceled()) 
+					return null;
+			
+				if (!fixedUrl.equals(url)) {
+					// try with original url
+					 return createSite( factory, url, url, monitor);
+				} else if (url.getProtocol().equalsIgnoreCase("file")){
+					try {
+						return createSite( factory, new URL( url, (url.getFile().endsWith("/")? "": "/") + Site.SITE_XML), url, monitor);
+					} catch (MalformedURLException mue) {
+						throw ce;
+					}
+				} else {
+					throw ce;
 				}
 			}
+		} catch(CoreException ce) {
+			throw Utilities.newCoreException(NLS.bind(Messages.InternalSiteManager_UnableToAccessURL, (new String[] { url.toExternalForm() })), ce);
 		}
+	}
+	
+	private static ISite createSite(ISiteFactory factory, URL url, URL originalUrl, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
+		
+		ISite site;
+			
+		site = createSite(factory, url, monitor);
+		httpSitesUpdatedUrls.put(originalUrl.toExternalForm(), url);	
+		
 		return site;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,20 +9,52 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configurator.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
+import org.eclipse.update.configuration.IProblemHandler;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.FeatureContentProvider;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteContentProvider;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.configurator.*;
-import org.eclipse.update.internal.model.*;
-import org.osgi.framework.*;
+import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.internal.configurator.ConfigurationActivator;
+import org.eclipse.update.internal.configurator.FeatureEntry;
+import org.eclipse.update.internal.configurator.IConfigurationConstants;
+import org.eclipse.update.internal.configurator.SiteEntry;
+import org.eclipse.update.internal.model.ConfigurationActivityModel;
+import org.eclipse.update.internal.model.ConfiguredSiteModel;
+import org.eclipse.update.internal.model.InstallConfigurationModel;
+import org.osgi.framework.Bundle;
 
 /**
  * Manages ConfiguredSites
