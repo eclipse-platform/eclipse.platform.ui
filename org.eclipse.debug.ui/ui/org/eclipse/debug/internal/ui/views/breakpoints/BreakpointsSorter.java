@@ -96,7 +96,6 @@ public class BreakpointsSorter extends ViewerSorter {
 			try {
 				lineBreakpoint= marker1.isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
 			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce);
 			}
 			if (lineBreakpoint) {
 				return compareLineBreakpoints(b1, b2, name1,name2);
