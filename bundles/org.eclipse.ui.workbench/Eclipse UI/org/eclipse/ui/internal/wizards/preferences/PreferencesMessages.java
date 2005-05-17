@@ -47,6 +47,7 @@ public class PreferencesMessages extends NLS {
 	public static String WizardPreferencesImportPage1_choose;
 	public static String WizardPreferencesImportPage1_file;
 	public static String WizardPreferencesImportPage1_title;
+	public static String WizardPreferencesImportPage1_invalidPrefFile;
 	
 	public static String SelectionDialog_selectLabel;
 	public static String SelectionDialog_deselectLabel;

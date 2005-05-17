@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
     /**
+     * Create a new instance of the receiver with name pageName.
      * @param pageName
      */
     protected WizardPreferencesImportPage1(String pageName) {
@@ -50,16 +51,23 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         this("preferencesImportPage1");//$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getAllButtonText()
+     */
     protected String getAllButtonText() {
         return PreferencesMessages.WizardPreferencesImportPage1_all;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getChooseButtonText()
+     */
     protected String getChooseButtonText() {
         return PreferencesMessages.WizardPreferencesImportPage1_choose;
     }
 
-    /*
-     * return the PreferenceTransgerElements specified
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getTransfers()
      */
     protected PreferenceTransferElement[] getTransfers() {
         if (validFromFile()) {
@@ -110,14 +118,19 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         return new PreferenceTransferElement[0];
     }
 
+    /**
+     * Return whether or not the file is valid.
+     * @return <code>true</code> of the file is an existing
+     * file and not a directory
+     */
     private boolean validFromFile() {
         File fromFile = new File(getDestinationValue());
         return fromFile.exists() && !fromFile.isDirectory();
     }
 
-    /**
-     * @param composite
-     * 
+  
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#createTransferArea(org.eclipse.swt.widgets.Composite)
      */
     protected void createTransferArea(Composite composite) {
         createDestinationGroup(composite);
@@ -183,11 +196,31 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
         super.handleEvent(e);
     }
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getFileDialogTitle()
+     */
     protected String getFileDialogTitle(){
 		return PreferencesMessages.WizardPreferencesImportPage1_title;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getFileDialogStyle()
+	 */
 	protected int getFileDialogStyle() {
 		return SWT.OPEN;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#validDestination()
+	 */
+	protected boolean validDestination() {
+		return super.validDestination() && validFromFile();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getInvalidDestinationMessage()
+	 */
+	protected String getInvalidDestinationMessage() {
+		return PreferencesMessages.WizardPreferencesImportPage1_invalidPrefFile;
 	}
 }

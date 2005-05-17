@@ -192,14 +192,25 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected abstract void createTransferArea(Composite composite);
 
-	protected final boolean validateDestinationGroup() {
+	/**
+	 * Validate the destination group.
+	 * @return <code>true</code> if the group is valid. If
+	 * not set the error message and return <code>false</code>.
+	 */
+	protected boolean validateDestinationGroup() {
 		if (!validDestination()) {
-			setErrorMessage(PreferencesMessages.WizardPreferencesExportPage1_noPrefFile);
+			setErrorMessage(getInvalidDestinationMessage());
 			return false;
 		}
 
 		return true;
 	}
+
+	/**
+	 * Return the message that indicates an invalid destination.
+	 * @return String
+	 */
+	abstract protected String getInvalidDestinationMessage();
 
 	protected boolean validDestination() {
 		File file = new File(getDestinationValue());

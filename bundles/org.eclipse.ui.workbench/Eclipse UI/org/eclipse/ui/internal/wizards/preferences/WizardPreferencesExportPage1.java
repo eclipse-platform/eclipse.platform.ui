@@ -151,4 +151,11 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	protected int getFileDialogStyle() {
 		return SWT.SAVE;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getInvalidDestinationMessage()
+	 */
+	protected String getInvalidDestinationMessage() {
+		return PreferencesMessages.WizardPreferencesExportPage1_noPrefFile;
+	}
 }
