@@ -237,6 +237,10 @@ public class AboutDialog extends ProductInfoDialog {
 
         // override any layout inherited from createDialogArea 
         GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+        layout.horizontalSpacing = 0;
         top.setLayout(layout);
         top.setLayoutData(new GridData(GridData.FILL_BOTH));
         top.setBackground(background);
@@ -251,6 +255,8 @@ public class AboutDialog extends ProductInfoDialog {
         layout.numColumns = (aboutImage == null || getItem() == null ? 1 : 2);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
+        layout.verticalSpacing = 0;
+        layout.horizontalSpacing = 0;
         topContainer.setLayout(layout);
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
@@ -272,8 +278,24 @@ public class AboutDialog extends ProductInfoDialog {
         }
 
         if (getItem() != null) {
+        	// there is no margins around the image, so insert an extra composite 
+        	// here to provide some margins for the text.
+            Composite textContainer = new Composite(topContainer, SWT.NONE);
+            textContainer.setBackground(background);
+            textContainer.setForeground(foreground);
+
+            layout = new GridLayout();
+            layout.numColumns = 1;
+            textContainer.setLayout(layout);
+            data = new GridData();
+            data.horizontalAlignment = GridData.FILL;
+            data.verticalAlignment = GridData.BEGINNING;
+            data.grabExcessHorizontalSpace = true;
+            textContainer.setLayoutData(data);
+
+        	
             // text on the right
-            text = new StyledText(topContainer, SWT.MULTI | SWT.READ_ONLY);
+            text = new StyledText(textContainer, SWT.MULTI | SWT.READ_ONLY);
             text.setCaret(null);
             text.setFont(parent.getFont());
             data = new GridData();
