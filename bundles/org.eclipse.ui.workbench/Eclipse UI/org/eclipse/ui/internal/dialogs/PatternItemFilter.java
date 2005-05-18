@@ -103,6 +103,11 @@ public class PatternItemFilter extends PatternFilter {
 	 * satisifes the match criteria.
 	 */
 	private boolean wordMatches(String text) {
+		
+		//If the whole text matches we are all set
+		if(match(text))
+			return true;
+		
 		// Break the text up into words, separating based on whitespace and
 		// common punctuation.
 		// Previously used String.split(..., "\\W"), where "\W" is a regular
