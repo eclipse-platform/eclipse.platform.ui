@@ -368,7 +368,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <p>
 	 * The provided monitor can be used to report progress and respond to 
 	 * cancellation.  If the progress monitor has been canceled, the job
-	 * should finish its execution at the earliest convenience. 
+	 * should finish its execution at the earliest convenience and return a result
+	 * status of severity <code>IStatus.CANCEL</code>.  The singleton
+	 * cancel status <code>Status.CANCEL_STATUS</code> can be used for
+	 * this purpose.
 	 * <p>
 	 * This method must not be called directly by clients.  Clients should call
 	 * <code>schedule</code>, which will in turn cause this method to be called.
