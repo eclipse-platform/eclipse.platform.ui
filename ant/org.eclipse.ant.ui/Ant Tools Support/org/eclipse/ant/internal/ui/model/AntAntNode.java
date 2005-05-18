@@ -27,13 +27,22 @@ public class AntAntNode extends AntTaskNode {
         if (fFile != null) {
             label.append(fFile);
             label.append(File.separatorChar);
+        } else {
+            File basedir= task.getProject().getBaseDir();
+            if (basedir != null) {
+                fFile=basedir.getAbsolutePath();
+            }
         }
         String fileName = attributes.getValue(IAntModelConstants.ATTR_ANT_FILE);
         if (fileName == null) {
             fileName= "build.xml"; //$NON-NLS-1$
         }
         label.append(fileName);
-        fFile+=File.separatorChar + fileName;
+        if (fFile != null) {
+            fFile+=File.separatorChar + fileName;
+        } else {
+            fFile= fileName;
+        }
         
         String more = attributes.getValue(IAntModelConstants.ATTR_TARGET);
         if(more != null) {
