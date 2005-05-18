@@ -174,16 +174,16 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 
 	/**
 	 * Returns the scheduling rule that is to be obtained before this
-	 * operation is executed by it's context or <code>null</code> if
+	 * operation is executed by its context or <code>null</code> if
 	 * no scheduling rule is to be obtained. If the operation is run 
-	 * as a job, the schdulin rule is used as the schduling rule of the
+	 * as a job, the scheduling rule is used as the scheduling rule of the
 	 * job. Otherwise, it is obtained before execution of the operation
 	 * occurs.
 	 * <p>
 	 * By default, no scheduling
-	 * rule is obtained. Sublcasses can override to in order ot obtain a
-	 * scheduling rule or can obtain schduling rules withing their operation
-	 * if finer grained schduling is desired.
+	 * rule is obtained. Sublcasses can override in order to obtain a
+	 * scheduling rule or can obtain schduling rules within their operation
+	 * if finer grained scheduling is desired.
 	 * 
 	 * @return the schduling rule to be obtained by this operation
 	 * or <code>null</code>.
@@ -195,7 +195,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	/**
 	 * Return whether the auto-build should be postponed until after
 	 * the operation is complete. The default is to postpone the auto-build.
-	 * subclas can override.
+	 * subclasses can override.
 	 * 
 	 * @return whether to postpone the auto-build while the operation is executing.
 	 */
@@ -265,7 +265,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
      * only keep one entry of a particular type available. 
      * This method is only relevant if the operation is run as
      * a job (i.e., <code>canRunAsJob</code> returns <code>true</code>).
-     * Subclasses that ovveride this method should also override 
+     * Subclasses that override this method should also override 
      * <code>isSameFamilyAs</code> in order to match operations of the same type.
      * 
      * @return <code>true</code> to keep the operation and <code>false</code>
@@ -294,9 +294,9 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
      * Return whether the job that is running this operation should be considered
      * a member member of the given family. Subclasses can override this method in
      * order to support the family based funtionality provided by the {@link IJobManager}.
-     * By default, <code>false</code> s always returned. Subclasses that override the
+     * By default, <code>false</code> is always returned. Subclasses that override the
      * <code>isKeepOneProgressServiceEntry</code> method do not need to override
-     * this method, but nstead should override <code>isSameFamilyAs</code>.
+     * this method, but instead should override <code>isSameFamilyAs</code>.
      * 
      * @param family the family being tested.
      * @return whether the job that is running this operation should be considered
