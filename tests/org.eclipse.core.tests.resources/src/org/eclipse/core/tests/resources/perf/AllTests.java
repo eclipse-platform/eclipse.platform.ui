@@ -25,7 +25,8 @@ public class AllTests extends TestSuite {
 		suite.addTest(LocalHistoryPerformanceTest.suite());
 		suite.addTest(WorkspacePerformanceTest.suite());
 		suite.addTest(PropertyManagerPerformanceTest.suite());
-		suite.addTest(ContentDescriptionPerformanceTest.suite());		
+		// these tests are flawed - see bug 57137
+		// suite.addTest(ContentDescriptionPerformanceTest.suite());
 		return suite;
 	}
 
