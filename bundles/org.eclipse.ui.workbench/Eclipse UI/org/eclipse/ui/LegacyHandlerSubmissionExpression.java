@@ -109,4 +109,16 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 
 		return EvaluationResult.TRUE;
 	}
+
+    public final String toString() {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append("LegacyHandlerSubmission("); //$NON-NLS-1$
+        buffer.append(activeShell);
+        buffer.append(',');
+        buffer.append(activePartId);
+        buffer.append(',');
+        buffer.append(activeSite);
+        buffer.append(')');
+        return buffer.toString();
+    }
 }

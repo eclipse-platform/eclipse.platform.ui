@@ -80,4 +80,12 @@ public final class ActiveShellExpression extends Expression {
 
 		return EvaluationResult.TRUE;
 	}
+    
+    public final String toString() {
+        final StringBuffer buffer = new StringBuffer();
+        buffer.append("ActiveShellExpression("); //$NON-NLS-1$
+        buffer.append(activeShell);
+        buffer.append(')');
+        return buffer.toString();
+    }
 }
