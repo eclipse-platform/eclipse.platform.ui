@@ -125,10 +125,21 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			}
 			if (msg == null)
 				msg= ""; //$NON-NLS-1$
-			fText.setText(msg);
+			fText.setText(escapeAmpersands(msg));
 			if (image == null && msg.length() > 0)
 				image= INFO;
 			fImage.setImage(image);
+		}
+		private String escapeAmpersands(String message) {
+			StringBuffer result= new StringBuffer();
+			for (int i= 0; i < message.length(); i++) {
+				char ch= message.charAt(i);
+				if (ch == '&') {
+					result.append('&');
+				}
+				result.append(ch);
+			}
+			return result.toString();
 		}
 	}
 	
