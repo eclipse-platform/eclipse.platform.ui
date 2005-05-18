@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.commands.CommandManager;
@@ -121,6 +123,7 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
@@ -1441,23 +1444,37 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Returns an array with the ids of all plugins that extend the
+	 * Returns the ids of all plug-ins that extend the
 	 * <code>org.eclipse.ui.startup</code> extension point.
 	 * 
-	 * @return String[]
+	 * @return the ids of all plug-ins containing 1 or more startup extensions
 	 */
 	public String[] getEarlyActivatedPlugins() {
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(PlatformUI.PLUGIN_ID,
 						IWorkbenchConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
-		String[] result = new String[extensions.length];
+		ArrayList pluginIds = new ArrayList(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
-			result[i] = extensions[i].getNamespace();
+			String id = extensions[i].getNamespace();
+			if (!pluginIds.contains(id)) {
+				pluginIds.add(id);
+			}
 		}
-		return result;
+		return (String[]) pluginIds.toArray(new String[pluginIds.size()]);
 	}
 
+	/**
+	 * Returns the ids of the early activated plug-ins that have been disabled by the user.
+	 * 
+	 * @return the ids of the early activated plug-ins that have been disabled by the user
+	 */
+	public String[] getDisabledEarlyActivatedPlugins() {
+		String pref = PrefUtil.getInternalPreferenceStore().getString(
+				IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+		return Util.getArrayFromList(pref, ";"); //$NON-NLS-1$
+	}
+	
 	/*
 	 * Starts all plugins that extend the <code> org.eclipse.ui.startup </code>
 	 * extension point, and that the user has not disabled via the preference
@@ -1477,20 +1494,21 @@ public final class Workbench implements IWorkbench {
 			return;
 		}
 		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
-			final String disabledPlugins = getPreferenceStore().getString(
-					IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-
 			protected IStatus run(IProgressMonitor monitor) { 
+		        HashSet disabledPlugins = new HashSet(Arrays.asList(getDisabledEarlyActivatedPlugins()));
 				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins, extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
+					if (monitor.isCanceled() || !PlatformUI.isWorkbenchRunning()) {
+						return Status.CANCEL_STATUS;
+					}
 					IExtension extension = extensions[i];
 
-					monitor.subTask(extension.getNamespace());
-					
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
-					if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
+					if (!disabledPlugins.contains(extension.getNamespace())) {
+						monitor.subTask(extension.getNamespace());
 						Platform.run(new EarlyStartupRunnable(extension));
+					}
 					monitor.worked(1);
 				}
 				monitor.done();
@@ -1894,13 +1912,17 @@ public final class Workbench implements IWorkbench {
 		// shutdown application-specific portions first
 		advisor.postShutdown();
 
+		cancelEarlyStartup();
+		
 		// for dynamic UI
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				extensionEventHandler);
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
+		
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();
+		
 		// shutdown the rest of the workbench
 		WorkbenchColors.shutdown();
 		activityHelper.shutdown();
@@ -1913,6 +1935,16 @@ public final class Workbench implements IWorkbench {
 		ObjectActionContributorManager.getManager().dispose();
 		if (tracker != null)
 			tracker.close();
+	}
+
+	/**
+	 * Cancels the early startup job, if it's still running.
+	 */
+	private void cancelEarlyStartup() {
+		Platform.getJobManager().cancel(EARLY_STARTUP_FAMILY);
+		// We do not currently wait for any plug-in currently being started to complete
+		// (e.g. by doing a join on EARLY_STARTUP_FAMILY), since they may do a syncExec,
+		// which would hang.  See bug 94537 for rationale.
 	}
 
 	/*

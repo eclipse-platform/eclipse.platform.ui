@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -83,20 +86,15 @@ public class StartupPreferencePage extends PreferencePage implements
     }
 
     private void populatePluginsList() {
-        String descriptors[] = workbench.getEarlyActivatedPlugins();
-        IPreferenceStore store = workbench.getPreferenceStore();
-        String pref = store
-                .getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-        if (pref == null)
-            pref = new String();
-        for (int i = 0; i < descriptors.length; i++) {
-            String desc = descriptors[i];
+        String pluginIds[] = workbench.getEarlyActivatedPlugins();
+        HashSet disabledPlugins = new HashSet(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
+        for (int i = 0; i < pluginIds.length; i++) {
+            String pluginId = pluginIds[i];
             TableItem item = new TableItem(pluginsList, SWT.NONE);
-            item.setText((String) Platform.getBundle(desc).getHeaders().get(
+            item.setText((String) Platform.getBundle(pluginId).getHeaders().get(
                     Constants.BUNDLE_NAME));
-            item.setData(desc);
-            String id = desc + IPreferenceConstants.SEPARATOR;
-            item.setChecked(pref.indexOf(id) < 0);
+            item.setData(pluginId);
+            item.setChecked(!disabledPlugins.contains(pluginId));
         }
     }
 
