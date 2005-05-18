@@ -230,6 +230,8 @@ public interface IWorkbenchConstants {
     public static final String TAG_WINDOW = "window"; //$NON-NLS-1$
 
     public static final String TAG_VERSION = "version"; //$NON-NLS-1$
+    
+    public static final String TAG_PROGRESS_COUNT = "progressCount";  //$NON-NLS-1$
 
     public static final String TAG_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
 

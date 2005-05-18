@@ -65,6 +65,7 @@ import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleListener;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -957,5 +958,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             // Is this OK? See bug 85071.
             return null;
         }
-    }    
+    }
+
+	/* package */ void addBundleListener(BundleListener bundleListener) {
+		bundleContext.addBundleListener(bundleListener);
+	}    
+
+	/* package */ void removeBundleListener(BundleListener bundleListener) {
+		bundleContext.removeBundleListener(bundleListener);
+	}    
+	
+	/* package */ int getBundleCount() {
+		return bundleContext.getBundles().length;
+	}
 }
