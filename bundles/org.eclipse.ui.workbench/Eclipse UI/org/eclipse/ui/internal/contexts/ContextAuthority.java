@@ -858,4 +858,19 @@ final class ContextAuthority implements ISourceProviderListener {
 			}
 		}
 	}
+    
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the contexts (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     */
+    final void updateShellKludge() {
+        updateCurrentState();
+        sourceChanged(ISources.ACTIVE_SHELL);
+    }
 }

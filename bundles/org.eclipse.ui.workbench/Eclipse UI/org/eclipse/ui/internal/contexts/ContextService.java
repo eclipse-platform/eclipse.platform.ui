@@ -127,4 +127,37 @@ public final class ContextService implements IContextService {
 	public final boolean unregisterShell(final Shell shell) {
 		return contextAuthority.unregisterShell(shell);
 	}
+
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the contexts (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     */
+    public final void updateShellKludge() {
+        contextAuthority.updateShellKludge();
+    }
+
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the contexts (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     * 
+     * @param shell
+     *            The shell that should be considered active; must not be
+     *            <code>null</code>.
+     */
+    public final void updateShellKludge(final Shell shell) {
+        contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,
+                ISources.ACTIVE_SHELL_NAME, shell);
+    }
 }

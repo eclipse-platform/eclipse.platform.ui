@@ -19,6 +19,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -106,4 +107,37 @@ public final class HandlerService implements IHandlerService {
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		handlerAuthority.removeSourceProvider(provider);
 	}
+
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the handlers (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     */
+    public final void updateShellKludge() {
+        handlerAuthority.updateShellKludge();
+    }
+
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the handlers (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     * 
+     * @param shell
+     *            The shell that should be considered active; must not be
+     *            <code>null</code>.
+     */
+    public final void updateShellKludge(final Shell shell) {
+        handlerAuthority.sourceChanged(ISources.ACTIVE_SHELL,
+                ISources.ACTIVE_SHELL_NAME, shell);
+    }
 }

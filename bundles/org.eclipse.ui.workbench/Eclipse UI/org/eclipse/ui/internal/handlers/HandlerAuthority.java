@@ -25,6 +25,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
 
@@ -520,4 +521,19 @@ final class HandlerAuthority implements ISourceProviderListener {
 	private final void updateCurrentState() {
 		fillInCurrentState(context);
 	}
+    
+    /**
+     * <p>
+     * Bug 95792. A mechanism by which the key binding architecture can force an
+     * update of the handlers (based on the active shell) before trying to
+     * execute a command. This mechanism is required for GTK+ only.
+     * </p>
+     * <p>
+     * DO NOT CALL THIS METHOD.
+     * </p>
+     */
+    final void updateShellKludge() {
+        updateCurrentState();
+        sourceChanged(ISources.ACTIVE_SHELL);
+    }
 }

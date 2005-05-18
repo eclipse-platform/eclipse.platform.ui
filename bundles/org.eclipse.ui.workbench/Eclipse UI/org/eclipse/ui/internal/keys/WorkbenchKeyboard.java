@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -40,8 +41,12 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.contexts.ContextService;
+import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -723,6 +728,43 @@ public final class WorkbenchKeyboard {
 					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
 							+ potentialKeyStrokes + ")"); //$NON-NLS-1$
 		}
+        
+        /*
+         * KLUDGE. This works around a couple of specific problems in how GTK+
+         * works. The first problem is the ordering of key press events with
+         * respect to shell activation events. If on the event thread a dialog
+         * is about to open, and the user presses a key, the key press event
+         * will arrive before the shell activation event. From the perspective
+         * of Eclipse, this means that things like two "Open Type" dialogs can
+         * appear if "Ctrl+Shift+T" is pressed twice rapidly. For more
+         * information, please see Bug 95792. The second problem is simply a bug
+         * in GTK+, for which an incomplete workaround currently exists in SWT.
+         * This makes shell activation events unreliable. Please see Bug 56231
+         * and Bug 95222 for more information.
+         */
+        if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+            final Widget widget = event.widget;
+
+            // Update the contexts.
+            final ContextService contextService = (ContextService) workbench
+                    .getAdapter(IContextService.class);
+            if ((widget instanceof Control) && (!widget.isDisposed())) {
+                final Shell shell = ((Control) widget).getShell();
+                contextService.updateShellKludge(shell);
+            } else {
+                contextService.updateShellKludge();
+            }
+
+            // Update the handlers.
+            final HandlerService handlerService = (HandlerService) workbench
+                    .getAdapter(IHandlerService.class);
+            if ((widget instanceof Control) && (!widget.isDisposed())) {
+                final Shell shell = ((Control) widget).getShell();
+                handlerService.updateShellKludge(shell);
+            } else {
+                handlerService.updateShellKludge();
+            }
+        } 
         
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
