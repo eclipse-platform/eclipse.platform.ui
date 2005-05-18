@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297 
  *     IBM Corporation - nlsing and incorporating into Eclipse. 
  *                          Class created from combination of all utility classes of contribution
  *******************************************************************************/
@@ -14,8 +14,11 @@
 package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +33,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -39,17 +43,36 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IRegion;
+import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IFileEditorInput;
 import org.w3c.dom.Document;
 
 /**
@@ -272,32 +295,225 @@ public class ExportUtil
     /**
      * Find JUnit tests. Same tests are also returned by Eclipse run configuration wizard.
      * 
-     * <p>NOTE: You might see a dialog flashing up for a very short time.
+     * <p>NOTE: Copied from {@link from org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#findTestsInContainer}
+     * to use non-api functionality
      *  
      * @param containerHandle    project, package or source folder
-     * 
-     * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration
      */
     public static IType[] findTestsInContainer(String containerHandle)
     {
-//        IJavaElement container;
-//        try
-//        {
-//            container = JavaCore.create(containerHandle);
-//        }
-//        catch (Exception e)
-//        {
-//            return new IType[0];
-//        }
-//        try
-//        {
-//            return TestSearchEngine.findTests(new Object[] { container });
-//        }
-//        catch (Exception e)
-//        {
-//            return new IType[0];
-//        }
-        return new IType[0];
+        IJavaElement container= JavaCore.create(containerHandle);
+        if (container == null) {
+            return new IType[0];
+        }
+        final Object[] elements = new Object[] { container };
+        final Set result= new HashSet();            
+        if (elements.length > 0) {
+            doFindTests(elements, result);
+        }
+        return (IType[]) result.toArray(new IType[result.size()]) ;
+    }
+    
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    // to avoid dependency to other component
+    private static class JUnitSearchResultCollector extends SearchRequestor {
+        List fList;
+        Set fFailed= new HashSet();
+        Set fMatches= new HashSet();
+        
+        public JUnitSearchResultCollector(List list) {
+            fList= list;
+        }
+        
+        public void acceptSearchMatch(SearchMatch match) throws CoreException {
+            Object enclosingElement= match.getElement();
+            if (!(enclosingElement instanceof IMethod)) 
+                return;
+            
+            IMethod method= (IMethod)enclosingElement;      
+            
+            IType declaringType= method.getDeclaringType();
+            if (fMatches.contains(declaringType) || fFailed.contains(declaringType))
+                return;
+            if (!hasSuiteMethod(declaringType) && !isTestType(declaringType)) {
+                fFailed.add(declaringType);
+                return;
+            }
+            fMatches.add(declaringType);
+        }
+        
+        public void endReporting() {
+            fList.addAll(fMatches);
+        }
+    }
+    
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static List searchMethod(final IJavaSearchScope scope) throws CoreException {
+        final List typesFound= new ArrayList(200);  
+        searchMethod(typesFound, scope);
+        return typesFound;  
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static List searchMethod(final List v, IJavaSearchScope scope) throws CoreException {      
+        SearchRequestor requestor= new JUnitSearchResultCollector(v);
+        int matchRule= SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH;
+        SearchPattern suitePattern= SearchPattern.createPattern("suite() Test", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, matchRule); //$NON-NLS-1$
+        SearchParticipant[] participants= new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
+        new SearchEngine().search(suitePattern, participants, scope, requestor, null); 
+        return v;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static void doFindTests(Object[] elements, Set result) {
+        int nElements= elements.length;
+        for (int i= 0; i < nElements; i++) {
+            try {
+                collectTypes(elements[i], result);
+            } catch (CoreException e) {
+                AntUIPlugin.log(e.getStatus());
+            }
+        }
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static void collectTypes(Object element, Set result) throws CoreException/*, InvocationTargetException*/ {
+        element= computeScope(element);
+        while((element instanceof ISourceReference) && !(element instanceof ICompilationUnit)) {
+            if(element instanceof IType) {
+                if (hasSuiteMethod((IType)element) || isTestType((IType)element)) {
+                    result.add(element);
+                    return;
+                }
+            }
+            element= ((IJavaElement)element).getParent();
+        }
+        if (element instanceof ICompilationUnit) {
+            ICompilationUnit cu= (ICompilationUnit)element;
+            IType[] types= cu.getAllTypes();
+
+            for (int i= 0; i < types.length; i++) {
+                if (hasSuiteMethod(types[i])  || isTestType(types[i]))
+                    result.add(types[i]);
+            }
+        } 
+        else if (element instanceof IJavaElement) {
+            List testCases= findTestCases((IJavaElement)element);
+            List suiteMethods= searchSuiteMethods((IJavaElement)element);            
+            while (!suiteMethods.isEmpty()) {
+                if (!testCases.contains(suiteMethods.get(0))) {
+                    testCases.add(suiteMethods.get(0));
+                }
+                suiteMethods.remove(0);
+            }
+            result.addAll(testCases);
+        }
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static List findTestCases(IJavaElement element) throws JavaModelException {
+        List found = new ArrayList();
+        IJavaProject javaProject= element.getJavaProject();
+
+        IType testCaseType = testCaseType(javaProject); 
+        if (testCaseType == null)
+            return found;
+        
+        IType[] subtypes= javaProject.newTypeHierarchy(testCaseType, getRegion(javaProject), null).getAllSubtypes(testCaseType);
+            
+        if (subtypes == null)
+            throw new JavaModelException(new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE, null/*JUnitMessages.JUnitBaseLaunchConfiguration_error_notests*/, null))); 
+
+        for (int i = 0; i < subtypes.length; i++) {
+            try {
+                if (element.equals(subtypes[i].getAncestor(element.getElementType())) && hasValidModifiers(subtypes[i]))
+                    found.add(subtypes[i]);
+            } catch (JavaModelException e) {
+                AntUIPlugin.log(e.getStatus());
+            }
+        }
+        return found;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static IType testCaseType(IJavaProject javaProject) {
+        try {
+            return javaProject.findType("junit.framework.TestCase"); //$NON-NLS-1$
+        } catch (JavaModelException e) {
+            AntUIPlugin.log(e.getStatus());
+            return null;
+        } 
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static IRegion getRegion(IJavaProject javaProject) throws JavaModelException{
+        IRegion region = JavaCore.newRegion();
+        IJavaElement[] elements= javaProject.getChildren();
+        for(int i=0; i<elements.length; i++) {
+            if (((IPackageFragmentRoot)elements[i]).isArchive())
+                continue;
+            region.add(elements[i]);
+        }
+        return region;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static Object computeScope(Object element) throws JavaModelException {
+        if (element instanceof IFileEditorInput)
+            element= ((IFileEditorInput)element).getFile();
+        if (element instanceof IResource)
+            element= JavaCore.create((IResource)element);
+        if (element instanceof IClassFile) {
+            IClassFile cf= (IClassFile)element;
+            element= cf.getType();
+        }
+        return element;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static List searchSuiteMethods(IJavaElement element) throws CoreException {    
+        // fix for bug 36449  JUnit should constrain tests to selected project [JUnit]
+        IJavaSearchScope scope= SearchEngine.createJavaSearchScope(new IJavaElement[] { element },
+                IJavaSearchScope.SOURCES);
+        return searchMethod(scope);
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static boolean hasSuiteMethod(IType type) throws JavaModelException {
+        IMethod method= type.getMethod("suite", new String[0]); //$NON-NLS-1$
+        if (method == null || !method.exists()) 
+            return false;
+        
+        if (!Flags.isStatic(method.getFlags()) ||   
+            !Flags.isPublic(method.getFlags()) ||           
+            !Flags.isPublic(method.getDeclaringType().getFlags())) { 
+            return false;
+        }
+        if (!Signature.getSimpleName(Signature.toString(method.getReturnType())).equals("Test" /*JUnitPlugin.SIMPLE_TEST_INTERFACE_NAME*/)) { //$NON-NLS-1$
+            return false;
+        }
+        return true;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static boolean isTestType(IType type) throws JavaModelException {
+        if (!hasValidModifiers(type))
+            return false;
+        
+        IType[] interfaces= type.newSupertypeHierarchy(null).getAllSuperInterfaces(type);
+        for (int i= 0; i < interfaces.length; i++)
+            if(interfaces[i].getFullyQualifiedName('.').equals("junit.framework.Test" /*JUnitPlugin.TEST_INTERFACE_NAME*/)) //$NON-NLS-1$
+                return true;
+        return false;
+    }
+
+    // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
+    private static boolean hasValidModifiers(IType type) throws JavaModelException {
+        if (Flags.isAbstract(type.getFlags())) 
+            return false;
+        if (!Flags.isPublic(type.getFlags())) 
+            return false;
+        return true;
     }
 
     /**
