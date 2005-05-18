@@ -109,7 +109,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/**
      * Creates a new workbench advisor instance.
      */
-    protected IDEWorkbenchAdvisor() {
+    public IDEWorkbenchAdvisor() {
         super();
         if (workbenchAdvisor != null) {
             throw new IllegalStateException();
