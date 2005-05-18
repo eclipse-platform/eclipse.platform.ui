@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -61,7 +63,12 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class FileEditorsPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage, Listener {
-    protected Table resourceTypeTable;
+	
+    private static final String DATA_EDITOR = "editor"; //$NON-NLS-1$
+
+    private static final String DATA_FROM_CONTENT_TYPE = "type"; //$NON-NLS-1$
+    
+	protected Table resourceTypeTable;
 
     protected Button addResourceTypeButton;
 
@@ -320,7 +327,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             for (int i = 0; i < array.length; i++) {
                 IEditorDescriptor editor = array[i];
                 TableItem item = new TableItem(editorTable, SWT.NULL);
-                item.setData(editor);
+                item.setData(DATA_EDITOR, editor);
                 // Check if it is the default editor
                 String defaultString = null;
                 FileEditorMapping ext = getSelectedResourceType();
@@ -337,12 +344,48 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 }
                 item.setImage(getImage(editor));
             }
+            
+            // now add any content type editors
+			EditorRegistry registry = (EditorRegistry) WorkbenchPlugin
+					.getDefault().getEditorRegistry();
+			IContentType[] contentTypes = Platform.getContentTypeManager()
+					.findContentTypesFor(resourceType.getLabel());
+			for (int i = 0; i < contentTypes.length; i++) {
+				array = registry.getEditorsForContentType(contentTypes[i]);
+				for (int j = 0; j < array.length; j++) {
+					IEditorDescriptor editor = array[i];
+					// don't add duplicates
+					TableItem[] items = editorTable.getItems();
+					TableItem foundItem = null;
+					for (int k = 0; k < items.length; k++) {
+						if (items[k].getData(DATA_EDITOR).equals(editor)) {
+							foundItem = items[k];
+							break;
+						}
+					}
+					if (foundItem == null) {
+						TableItem item = new TableItem(editorTable, SWT.NULL);
+						item.setData(DATA_EDITOR, editor);
+						item.setData(DATA_FROM_CONTENT_TYPE, Boolean.TRUE);
+						item
+								.setText(editor.getLabel()
+										+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+						item.setImage(getImage(editor));
+					} else { // update the item to reflect its origin
+						foundItem.setData(DATA_FROM_CONTENT_TYPE, Boolean.TRUE);
+						foundItem
+								.setText(foundItem.getText()
+										+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+					}
+				}
+			}
+            
         }
     }
 
     /**
-     * Place the existing resource types in the table
-     */
+	 * Place the existing resource types in the table
+	 */
     protected void fillResourceTypeTable() {
         // Populate the table with the items
         IFileEditorMapping[] array = WorkbenchPlugin.getDefault()
@@ -380,7 +423,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         if (editorTable.getItemCount() > 0) {
             ArrayList editorList = new ArrayList();
             for (int i = 0; i < editorTable.getItemCount(); i++)
-                editorList.add(editorTable.getItem(i).getData());
+                editorList.add(editorTable.getItem(i).getData(DATA_EDITOR));
 
             return (IEditorDescriptor[]) editorList
                     .toArray(new IEditorDescriptor[editorList.size()]);
@@ -473,7 +516,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 int i = editorTable.getItemCount();
                 boolean isEmpty = i < 1;
                 TableItem item = new TableItem(editorTable, SWT.NULL, i);
-                item.setData(editor);
+                item.setData(DATA_EDITOR, editor);
                 if (isEmpty)
                     item
                             .setText(editor.getLabel()
@@ -510,16 +553,20 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         boolean defaultEditor = editorTable.getSelectionIndex() == 0;
         if (items.length > 0) {
             getSelectedResourceType().removeEditor(
-                    (EditorDescriptor) items[0].getData());
+                    (EditorDescriptor) items[0].getData(DATA_EDITOR));
             items[0].dispose(); //Table is single selection
         }
         if (defaultEditor && editorTable.getItemCount() > 0) {
             TableItem item = editorTable.getItem(0);
             if (item != null)
                 item
-                        .setText(((EditorDescriptor) (item.getData()))
+                        .setText(((EditorDescriptor) (item.getData(DATA_EDITOR)))
                                 .getLabel()
                                 + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
+			if (!isEditorRemovable(item))
+				item
+						.setText(item.getText()
+								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
         }
 
     }
@@ -545,19 +592,31 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             // First change the label of the old default
             TableItem oldDefaultItem = editorTable.getItem(0);
             oldDefaultItem
-                    .setText(((EditorDescriptor) oldDefaultItem.getData())
+                    .setText(((EditorDescriptor) oldDefaultItem.getData(DATA_EDITOR))
                             .getLabel());
+            // update the label to reflect the locked state
+            if (!isEditorRemovable(oldDefaultItem)) 
+            	oldDefaultItem
+						.setText(oldDefaultItem.getText()
+								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
             // Now set the new default
-            EditorDescriptor editor = (EditorDescriptor) items[0].getData();
+            EditorDescriptor editor = (EditorDescriptor) items[0].getData(DATA_EDITOR);
             getSelectedResourceType().setDefaultEditor(editor);
+            Boolean fromContentType = (Boolean) items[0].getData(DATA_FROM_CONTENT_TYPE);
             items[0].dispose(); //Table is single selection
             TableItem item = new TableItem(editorTable, SWT.NULL, 0);
-            item.setData(editor);
+            item.setData(DATA_EDITOR, editor);
+            if (fromContentType != null)
+            		item.setData(DATA_FROM_CONTENT_TYPE, fromContentType);
             item
                     .setText(editor.getLabel()
                             + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
             item.setImage(getImage(editor));
-            editorTable.setSelection(new TableItem[] { item });
+            if (!isEditorRemovable(item))
+				item
+						.setText(item.getText()
+								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+			editorTable.setSelection(new TableItem[] { item });
         }
     }
 
@@ -572,15 +631,44 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         removeResourceTypeButton.setEnabled(resourceTypeSelected);
         editorLabel.setEnabled(resourceTypeSelected);
         addEditorButton.setEnabled(resourceTypeSelected);
-        removeEditorButton.setEnabled(editorSelected);
+        removeEditorButton.setEnabled(editorSelected && isEditorRemovable());
         defaultEditorButton.setEnabled(editorSelected);
     }
-
+    
     /**
-     * Update the selected type.
-     */
+	 * Return whether the selected editor is removable. An editor is removable
+	 * if it is not submitted via a content-type binding.
+	 * 
+	 * @return whether the selected editor is removable
+	 * @since 3.1
+	 */
+    private boolean isEditorRemovable() {
+		TableItem[] items = editorTable.getSelection();
+		if (items.length > 0) 
+			return isEditorRemovable(items[0]);
+		return false;
+	}
+    
+    /**
+	 * Return whether the given editor is removable. An editor is removable
+	 * if it is not submitted via a content-type binding.
+	 * 
+	 * @param item the item to test
+	 * @return whether the selected editor is removable
+	 * @since 3.1
+	 */
+    private boolean isEditorRemovable(TableItem item) {
+		Boolean fromContentType = (Boolean) item.getData(DATA_FROM_CONTENT_TYPE);
+		if (fromContentType == null)
+			return true;
+		return !fromContentType.booleanValue();
+	}
+
+	/**
+	 * Update the selected type.
+	 */
     public void updateSelectedResourceType() {
-        //  TableItem item = resourceTypeTable.getSelection()[0]; //Single select
+        // TableItem item = resourceTypeTable.getSelection()[0]; //Single select
         //  Image image = ((IFileEditorMapping)item.getData()).getImageDescriptor().getImage();
         //  imagesToDispose.addElement(image);
         //  item.setImage(image);

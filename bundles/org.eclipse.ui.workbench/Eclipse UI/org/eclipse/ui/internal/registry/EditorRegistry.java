@@ -1428,4 +1428,45 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 		}
 		return allRelated.toArray();
 	}
+
+	/**
+	 * Return the editors bound to this content type, either directly or indirectly.
+	 * 
+	 * @param type the content type to check
+	 * @return the editors
+	 * @since 3.1
+     *
+     * TODO: this should be rolled in with the above findRelatedObjects code
+	 */
+	public IEditorDescriptor [] getEditorsForContentType(IContentType type) {
+		ArrayList allRelated = new ArrayList();
+		if (type == null) 
+			return new IEditorDescriptor [0];
+		
+		Object [] related = relatedRegistry.getRelatedObjects(type);
+		for (int i = 0; i < related.length; i++) {	
+			// we don't want to return duplicates
+			if (!allRelated.contains(related[i])) {
+				// if it's not filtered, add it to the list
+				if (!WorkbenchActivityHelper.filterItem(related[i]))
+					allRelated.add(related[i]);
+				
+			}
+		}
+		
+		// now add any indirectly related objects, walking up the content type hierarchy 
+		while ((type = type.getBaseType()) != null) {
+			related = relatedRegistry.getRelatedObjects(type);
+			for (int i = 0; i < related.length; i++) {
+				// we don't want to return duplicates
+				if (!allRelated.contains(related[i])) {
+					// if it's not filtered, add it to the list
+					if (!WorkbenchActivityHelper.filterItem(related[i]))
+						allRelated.add(related[i]);
+				}
+			}
+		}
+		
+		return (IEditorDescriptor[]) allRelated.toArray(new IEditorDescriptor[allRelated.size()]);
+	}
 }
