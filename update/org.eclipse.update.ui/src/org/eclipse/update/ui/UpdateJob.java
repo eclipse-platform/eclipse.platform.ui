@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.ui;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +26,8 @@ import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 import org.eclipse.update.operations.OperationsManager;
 import org.eclipse.update.search.IUpdateSearchResultCollector;
@@ -222,38 +224,37 @@ public class UpdateJob extends Job {
     private class ResultCollectorWithMirrors extends SearchResultCollector
             implements IUpdateSearchResultCollectorFromMirror {
         
-        //private HashMap mirrors = new HashMap(0);
+        private HashMap mirrors = new HashMap(0);
         
         /* (non-Javadoc)
          * @see org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror#getMirror(org.eclipse.update.core.ISite, java.lang.String)
          */
         public IURLEntry getMirror(final ISiteWithMirrors site, final String siteName) {
-            return null;
-//            if (mirrors.containsKey(site))
-//                return (IURLEntry)mirrors.get(site);
-//            try {
-//                IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
-//                if (mirrorURLs.length == 0)
-//                    return null;
-//                else {
-//                    // here we need to prompt the user
-//                    final Shell shell = UpdateUI.getActiveWorkbenchShell();
-//                    final IURLEntry[] returnValue = new IURLEntry[1];
-//                    shell.getDisplay().syncExec(new Runnable() {
-//                        public void run() {
-//                            MirrorsDialog dialog = new MirrorsDialog(shell, site, siteName);
-//                            dialog.create();
-//                            dialog.open();
-//                            IURLEntry mirror = dialog.getMirror();
-//                            mirrors.put(site, mirror);
-//                            returnValue[0] = mirror;
-//                        }
-//                    });
-//                    return returnValue[0];
-//                }
-//            } catch (CoreException e) {
-//                return null;
-//            }
+            //return null;
+            if (mirrors.containsKey(site))
+                return (IURLEntry)mirrors.get(site);
+            try {
+                IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
+                if (mirrorURLs.length == 0)
+                    return null;
+                else {
+                    // here we need to prompt the user
+                    final IURLEntry[] returnValue = new IURLEntry[1];
+                    UpdateUI.getStandardDisplay().syncExec(new Runnable() {
+                        public void run() {
+                            MirrorsDialog dialog = new MirrorsDialog(UpdateUI.getActiveWorkbenchShell(), site, siteName);
+                            dialog.create();
+                            dialog.open();
+                            IURLEntry mirror = dialog.getMirror();
+                            mirrors.put(site, mirror);
+                            returnValue[0] = mirror;
+                        }
+                    });
+                    return returnValue[0];
+                }
+            } catch (CoreException e) {
+                return null;
+            }
         }
     }
 }

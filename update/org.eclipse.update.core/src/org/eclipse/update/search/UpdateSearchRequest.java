@@ -352,9 +352,10 @@ public class UpdateSearchRequest {
 				return null;
 			}
 			
-			// prompt the user to pick up a site
-			if ((collector instanceof IUpdateSearchResultCollectorFromMirror)
-				&& (site instanceof ISiteWithMirrors)) {
+			// prompt the user to pick up a site (do not recursively go into mirror sites on the mirror site)
+			if ((collector instanceof IUpdateSearchResultCollectorFromMirror) &&
+				(site instanceof ISiteWithMirrors) &&
+                !(siteAdapter instanceof MirroredUpdateSiteAdapter)) {
 				IURLEntry mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
 				if (mirror != null) 
 					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, new SubProgressMonitor(monitor,1), false);
