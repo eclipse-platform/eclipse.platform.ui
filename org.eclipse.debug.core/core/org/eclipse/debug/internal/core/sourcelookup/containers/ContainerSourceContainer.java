@@ -46,7 +46,8 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private boolean fSubfolders = false;
 	
 	// whether the platform is case insensitive
-	private boolean fCaseInsensitive = new File("A").equals(new File("a"));  //$NON-NLS-1$//$NON-NLS-2$
+	private static boolean fgCaseInsensitive = new File("A").equals(new File("a"));  //$NON-NLS-1$//$NON-NLS-2$
+	
 	private File fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
@@ -60,7 +61,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	public ContainerSourceContainer(IContainer container, boolean subfolders) {
 		fContainer = container;
 		fSubfolders = subfolders;
-		if (fCaseInsensitive) {
+		if (fgCaseInsensitive) {
 			IPath location = fContainer.getLocation();
 			if (location != null) {
 				fRootFile = location.toFile();
@@ -92,7 +93,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		// To prevent the interruption of the search procedure we check 
 		// if the path is valid before passing it to "getFile".
 		if ( validateFile(name) ) {
-			if (fCaseInsensitive && fRootFile != null) {
+			if (fgCaseInsensitive && fRootFile != null) {
 				File osFile = new File(fRootFile, name);
 				if (osFile.exists()) {
 					try {
