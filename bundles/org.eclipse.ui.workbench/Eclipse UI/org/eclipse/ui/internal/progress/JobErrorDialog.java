@@ -88,6 +88,10 @@ public class JobErrorDialog extends ErrorDialog {
      * Method which should be invoked when new errors become available for display
      */
     void refresh() {
+    	
+    	if(AUTOMATED_MODE)//Nothing to refresh if we never opened it
+    		return;
+    	
         if (isMultipleJobErrors()) {
             if (jobListViewer == null && !dialogArea.isDisposed()) {
 	            // The job list doesn't exist so create it.
