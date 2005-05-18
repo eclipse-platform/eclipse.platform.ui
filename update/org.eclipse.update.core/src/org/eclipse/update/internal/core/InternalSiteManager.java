@@ -292,9 +292,17 @@ public class InternalSiteManager {
 				if (!fixedUrl.equals(url)) {
 					// try with original url
 					 return createSite( factory, url, url, monitor);
-				} else if (url.getProtocol().equalsIgnoreCase("file")){
+				} else if (url.getProtocol().equalsIgnoreCase("file") && ! url.getFile().endsWith(Site.SITE_XML)){
 					try {
-						return createSite( factory, new URL( url, (url.getFile().endsWith("/")? "": "/") + Site.SITE_XML), url, monitor);
+						if (url.getFile().endsWith("/")) {
+							return createSite(factory, new URL(url,
+									Site.SITE_XML), url, monitor);
+						} else {
+							return createSite(factory, new URL(url
+									.getProtocol(), url.getHost(), url
+									.getPort(), url.getFile()
+									+ "/" + Site.SITE_XML), url, monitor); //$NON-NLS-1$							
+						}
 					} catch (MalformedURLException mue) {
 						throw ce;
 					}
