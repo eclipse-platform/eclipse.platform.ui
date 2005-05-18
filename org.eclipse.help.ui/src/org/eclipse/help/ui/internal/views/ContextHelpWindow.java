@@ -56,42 +56,40 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 	private Rectangle savedPbounds;
 
 	private Rectangle savedBounds;
-	
-	private Cursor busyCursor;
-	
+
 	private boolean parentResizeBlocked = false;
 
 	public ContextHelpWindow(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.CLOSE | SWT.RESIZE);
-		if (Platform.getWS().equals(Platform.WS_GTK))
-			busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
-		parentListener = new ControlListener() {
-			public void controlMoved(ControlEvent e) {
-				maintainRelativePosition();
-			}
-
-			public void controlResized(ControlEvent e) {
-				onParentWindowResize();
-			}
-		};
-		listener = new Listener() {
-			public void handleEvent(Event e) {
-				switch (e.type) {
-				case SWT.FocusIn:
-				case SWT.Selection:
-					update((Control) e.widget);
-					break;
-				case SWT.Move:
-					if (onWindowMove())
-						e.doit = false;
-					break;
-				case SWT.Resize:
-					onWindowResize();
-					break;
+		if (!Platform.getWS().equals(Platform.WS_GTK)) {
+			parentListener = new ControlListener() {
+				public void controlMoved(ControlEvent e) {
+					maintainRelativePosition();
 				}
-			}
-		};
+
+				public void controlResized(ControlEvent e) {
+					onParentWindowResize();
+				}
+			};
+			listener = new Listener() {
+				public void handleEvent(Event e) {
+					switch (e.type) {
+					case SWT.FocusIn:
+					case SWT.Selection:
+						update((Control) e.widget);
+						break;
+					case SWT.Move:
+						if (onWindowMove())
+							e.doit = false;
+						break;
+					case SWT.Resize:
+						onWindowResize();
+						break;
+					}
+				}
+			};
+		}
 	}
 
 	private void maintainRelativePosition() {
@@ -153,11 +151,10 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		helpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); //$NON-NLS-1$		
 		helpPart.createControl(container, toolkit);
 		helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		hookListeners();
+		if (!Platform.getWS().equals(Platform.WS_GTK)) 
+			hookListeners();
 		helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		if (busyCursor!=null)
-			getParentShell().setCursor(busyCursor);
 		return container;
 	}
 
@@ -175,11 +172,6 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 		unhookPageChangeListener(shell.getParent(), listener);
 		shell.removeListener(SWT.Move, listener);
 		shell.removeListener(SWT.Resize, listener);
-		if (busyCursor!=null) {
-			shell.getParent().setCursor(null);
-			busyCursor.dispose();
-			busyCursor=null;
-		}
 	}
 
 	private void hookPageChangeListener(Composite parent, Listener listener) {
@@ -347,7 +339,8 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 	}
 
 	public boolean close() {
-		unhookListeners();
+		if (!Platform.getWS().equals(Platform.WS_GTK)) 
+			unhookListeners();
 		if (super.close()) {
 			if (toolkit != null) {
 				toolkit.dispose();

@@ -327,7 +327,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		helpShell.setText(Messages.DefaultHelpUI_wtitle);
 		helpShell.setSize(300, pbounds.height);
 		f1Window.update(context, c);
-		f1Window.dock(true);
+		if (!Platform.getWS().equals(Platform.WS_GTK))		
+			f1Window.dock(true);
 		helpShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				f1Window = null;
