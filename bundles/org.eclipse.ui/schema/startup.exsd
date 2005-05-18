@@ -8,7 +8,7 @@
       <documentation>
          This extension point is used to register plugins that want to be activated on startup. The plugin class or the class given as the attribute on the startup element must implement the interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Once the workbench is started, the method earlyStartup() will be called from a separate thread. 
 
-If the startup element has a class attribute, the method earlyStartup() will be called on this class.  Otherwise, this method will be called from the plugin class.
+If the startup element has a class attribute, the class will be instantiated and earlyStartup() will be called on the result.  Otherwise, this method will be called on the plug-in class.  Do not specify the plug-in class as the value of the class attribute, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
 
 These plugins are listed in the workbench preferences and the user may disable any plugin from early startup.
       </documentation>
@@ -53,6 +53,7 @@ These plugins are listed in the workbench preferences and the user may disable a
                <documentation>
                   a fully qualified name of the class that implements 
 &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
+If not specified, the plug-in class is used.   Do not specify the plug-in class as an explicit value, or it will be instantiated twice (once by regular plug-in activation, and once by this mechanism).
 Since release 3.0.
                </documentation>
                <appInfo>
