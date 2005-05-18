@@ -12,7 +12,11 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 public class BulletParagraph extends Paragraph {
 	public static final int CIRCLE = 1;

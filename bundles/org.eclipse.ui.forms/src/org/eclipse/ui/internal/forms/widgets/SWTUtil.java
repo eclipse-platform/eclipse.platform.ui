@@ -13,16 +13,8 @@ package org.eclipse.ui.internal.forms.widgets;
  * @version 	1.0
  * @author
  */
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -70,40 +62,5 @@ public class SWTUtil {
 			return ((ScrollBar) widget).getParent().getShell();
 
 		return null;
-	}
-
-	/**
-	 * Returns a width hint for a button control.
-	 */
-	public static int getButtonWidthHint(Button button) {
-		if (button.getFont().equals(JFaceResources.getDefaultFont()))
-			button.setFont(JFaceResources.getDialogFont());
-		PixelConverter converter= new PixelConverter(button);
-		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	}
-
-	/**
-	 * Sets width and height hint for the button control.
-	 * <b>Note:</b> This is a NOP if the button's layout data is not
-	 * an instance of <code>GridData</code>.
-	 * 
-	 * @param	the button for which to set the dimension hint
-	 */
-	public static void setButtonDimensionHint(Button button) {
-		Dialog.applyDialogFont(button);
-		Assert.isNotNull(button);
-		Object gd = button.getLayoutData();
-		if (gd instanceof GridData) {
-			((GridData) gd).widthHint = getButtonWidthHint(button);
-		}
-	}
-
-	public static void setDialogSize(Dialog dialog, int width, int height) {
-		Point computedSize =
-			dialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		width = Math.max(computedSize.x, width);
-		height = Math.max(computedSize.y, height);
-		dialog.getShell().setSize(width, height);
 	}
 }

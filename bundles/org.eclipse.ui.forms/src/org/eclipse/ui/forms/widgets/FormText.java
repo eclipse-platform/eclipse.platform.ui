@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -24,6 +23,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.internal.forms.Messages;
 import org.eclipse.ui.internal.forms.widgets.*;
 
 /**
@@ -156,10 +156,6 @@ public final class FormText extends Canvas {
 	private boolean inSelection = false;
 
 	private SelectionData selData;
-
-	private Action openAction;
-
-	private Action copyShortcutAction;
 
 	private static final String INTERNAL_MENU = "__internal_menu__"; //$NON-NLS-1$
 
@@ -848,7 +844,7 @@ public final class FormText extends Canvas {
 	private void createMenu() {
 		Menu menu = new Menu(this);
 		final MenuItem copyItem = new MenuItem(menu, SWT.PUSH);
-		copyItem.setText(""); //$NON-NLS-1$
+		copyItem.setText(Messages.FormText_copy);
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -1056,20 +1052,6 @@ public final class FormText extends Canvas {
 		if (segment != null && segment instanceof IHyperlinkSegment)
 			return (IHyperlinkSegment) segment;
 		return null;
-	}
-
-	/**
-	 * Context menu is about to show - override to add actions to the menu
-	 * manager. Subclasses are required to call 'super' when overriding.
-	 * 
-	 * @param manager
-	 *            the pop-up menu manager
-	 * @since 3.1
-	 */
-	protected void contextMenuAboutToShow(IMenuManager manager) {
-		IHyperlinkSegment link = getSelectedLink();
-		if (link != null)
-			contributeLinkActions(manager, link);
 	}
 
 	private void initAccessible() {
@@ -1561,14 +1543,14 @@ public final class FormText extends Canvas {
 		}
 		gc.dispose();
 	}
-
+/*
 	private void contributeLinkActions(IMenuManager manager,
 			IHyperlinkSegment link) {
 		manager.add(openAction);
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
 	}
-
+*/
 	private void ensureVisible(IFocusSelectable segment) {
 		if (mouseFocus) {
 			mouseFocus = false;

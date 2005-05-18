@@ -9,12 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.forms.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
+import org.eclipse.ui.internal.forms.widgets.FormsResources;
 /**
  * Form is a custom control that renders a title and
  * an optional background image above the body composite.

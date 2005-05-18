@@ -12,10 +12,6 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.ArrayList;
 
-/**
- * @version 	1.0
- * @author
- */
 public class Locator implements Cloneable { 
 	public int indent;
 	public int x, y;

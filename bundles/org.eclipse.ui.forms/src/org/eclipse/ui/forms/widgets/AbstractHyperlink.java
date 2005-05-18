@@ -11,12 +11,21 @@
 package org.eclipse.ui.forms.widgets;
 
 import java.util.Vector;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.widgets.FormsResources;
 
 /**
