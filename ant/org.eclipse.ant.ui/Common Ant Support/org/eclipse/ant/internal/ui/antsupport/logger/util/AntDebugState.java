@@ -39,7 +39,7 @@ public class AntDebugState implements IDebugBuildLogger {
     
     private Map fTargetToBuildSequence= null;
     private Target fTargetToExecute= null;
-    private Target fTargetExecuting= null;
+    private Stack fTargetsExecuting= new Stack();
 	
 	private boolean fConsiderTargetBreakpoints= false;
 	private boolean fShouldSuspend;
@@ -119,7 +119,11 @@ public class AntDebugState implements IDebugBuildLogger {
 	}
 
 	public void setTargetExecuting(Target target) {
-		fTargetExecuting= target;
+        if (target == null) {
+            fTargetsExecuting.pop();
+        } else {
+            fTargetsExecuting.push(target);
+        }
 	}
 
 	public Target getTargetToExecute() {
@@ -127,7 +131,10 @@ public class AntDebugState implements IDebugBuildLogger {
 	}
 	
 	public Target getTargetExecuting() {
-		return fTargetExecuting;
+        if (fTargetsExecuting.isEmpty()) {
+            return null;
+        }
+		return (Target) fTargetsExecuting.peek();
 	}
 
 	public boolean isStepIntoSuspend() {
@@ -166,8 +173,11 @@ public class AntDebugState implements IDebugBuildLogger {
 		if (isAfterTaskEvent() && getCurrentTask() != null) {
 			return getCurrentTask().getLocation();
 		}
-		if (considerTargetBreakpoints() && getTargetExecuting() != null) {
-			return getLocation(getTargetExecuting());
+		if (considerTargetBreakpoints()) {
+	        Target targetExecuting= getTargetExecuting();
+	        if (targetExecuting != null) {
+                return getLocation(targetExecuting);      
+            }
 		}
 		return null;
 	}
