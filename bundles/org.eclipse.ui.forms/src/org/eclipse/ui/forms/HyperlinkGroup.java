@@ -56,6 +56,9 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 				link.setBackground(getActiveBackground());
 			if (getActiveForeground() != null)
 				link.setForeground(getActiveForeground());
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
+				link.setUnderlined(true);
+			link.setCursor(getHyperlinkCursor());			
 		}
 		private void onMouseExit(Event e) {
 			Hyperlink link = (Hyperlink) e.widget;
@@ -63,18 +66,17 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 				link.setBackground(getBackground());
 			if (getForeground() != null)
 				link.setForeground(getForeground());
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
+				link.setUnderlined(false);
 		}
 		public void linkActivated(HyperlinkEvent e) {
 		}
 
 		public void linkEntered(HyperlinkEvent e) {
+			Hyperlink link = (Hyperlink) e.widget;
 			if (lastEntered != null) {
 				linkExited(lastEntered);
 			}
-			Hyperlink link = (Hyperlink) e.widget;
-			link.setCursor(getHyperlinkCursor());
-			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
-				link.setUnderlined(true);
 			lastEntered = link;
 		}
 
@@ -83,8 +85,6 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		}
 		private void linkExited(Hyperlink link) {
 			link.setCursor(null);
-			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
-				link.setUnderlined(false);
 			if (lastEntered == link)
 				lastEntered = null;
 		}
