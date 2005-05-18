@@ -97,6 +97,7 @@ import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.PluginActionSetBuilder;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -178,6 +179,8 @@ public class CustomizePerspectiveDialog extends Dialog {
     private Hashtable actionSetStructures = new Hashtable();
 
 	private IWorkbenchWindowConfigurer configurer;
+
+    private List initiallyActive = new ArrayList();
 
     class ActionSetDisplayItem extends Object {
         /**
@@ -960,8 +963,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     private void checkInitialActionSetSelections() {
         // Check off the action sets that are active for the perspective.
-        IActionSetDescriptor[] actionSetDescriptors = perspective
-                .getActionSets();
+        IActionSetDescriptor[] actionSetDescriptors = ((WorkbenchPage)window.getActivePage()).getActionSets();
+        initiallyActive  = Arrays.asList(actionSetDescriptors);
         if (actionSets != null) {
             for (int i = 0; i < actionSetDescriptors.length; i++)
                 actionSetsViewer.setChecked(actionSetDescriptors[i], true);
@@ -1625,17 +1628,21 @@ public class CustomizePerspectiveDialog extends Dialog {
             }
         }
 
-        ArrayList actionSetList = new ArrayList();
+        ArrayList toAdd = new ArrayList();
+        ArrayList toRemove = new ArrayList();
+        toRemove.addAll(initiallyActive);
+        
         Object[] selected = actionSetsViewer.getCheckedElements();
         for (int i = 0; i < selected.length; i++) {
             Object obj = selected[i];
-            actionSetList.add(obj);
+            toRemove.remove(obj);
+            if (!initiallyActive.contains(toRemove)) {
+                toAdd.add(obj);
+            }
         }
-        IActionSetDescriptor[] actionSetArray = new IActionSetDescriptor[actionSetList
-                .size()];
-        actionSetArray = (IActionSetDescriptor[]) actionSetList
-                .toArray(actionSetArray);
-        perspective.setActionSets(actionSetArray);
+        
+        perspective.turnOnActionSets((IActionSetDescriptor[]) toAdd.toArray(new IActionSetDescriptor[toAdd.size()]));
+        perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove.toArray(new IActionSetDescriptor[toAdd.size()]));
 
         super.okPressed();
     }

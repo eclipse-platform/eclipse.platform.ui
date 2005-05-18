@@ -203,4 +203,18 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable,
     public String getPluginId() {
         return pluginId;
     }
+    
+    public boolean equals(Object arg0) {
+        if (!(arg0 instanceof ActionSetDescriptor)) {
+            return false;
+        }
+        
+        ActionSetDescriptor descr = (ActionSetDescriptor) arg0;
+        
+        return id.equals(descr.id) && descr.pluginId.equals(pluginId);
+    }
+    
+    public int hashCode() {
+        return id.hashCode() + pluginId.hashCode();
+    }
 }

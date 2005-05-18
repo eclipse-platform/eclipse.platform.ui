@@ -41,7 +41,6 @@ import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -75,9 +74,7 @@ public class Perspective {
     private PartPlaceholder editorHolder;
 
     private ViewFactory viewFactory;
-
-    private ArrayList visibleActionSets;
-
+    
     private ArrayList alwaysOnActionSets;
 
     private ArrayList alwaysOffActionSets;
@@ -137,7 +134,6 @@ public class Perspective {
         this.page = page;
         this.editorArea = page.getEditorPresentation().getLayoutPart();
         this.viewFactory = page.getViewFactory();
-        visibleActionSets = new ArrayList(2);
         alwaysOnActionSets = new ArrayList(2);
         alwaysOffActionSets = new ArrayList(2);
         fastViews = new ArrayList(2);
@@ -209,7 +205,7 @@ public class Perspective {
     /**
      * Create the initial list of action sets.
      */
-    private void createInitialActionSets(List stringList) {
+    private void createInitialActionSets(List outputList, List stringList) {
         ActionSetRegistry reg = WorkbenchPlugin.getDefault()
                 .getActionSetRegistry();
         Iterator iter = stringList.iterator();
@@ -217,7 +213,7 @@ public class Perspective {
             String id = (String) iter.next();
             IActionSetDescriptor desc = reg.findActionSet(id);
             if (desc != null)
-                visibleActionSets.add(desc);
+                outputList.add(desc);
             else
                 WorkbenchPlugin.log("Unable to find Action Set: " + id);//$NON-NLS-1$
         }
@@ -284,18 +280,6 @@ public class Perspective {
                 return ref;
         }
         return null;
-    }
-
-    /**
-     * Returns an array of the visible action sets. 
-     */
-    public IActionSetDescriptor[] getActionSets() {
-        int size = visibleActionSets.size();
-        IActionSetDescriptor[] array = new IActionSetDescriptor[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = (IActionSetDescriptor) visibleActionSets.get(i);
-        }
-        return array;
     }
 
     /**
@@ -456,19 +440,6 @@ public class Perspective {
         return resultArray;
     }
 
-    /**
-     * @see IWorkbenchPage
-     * Note: The page is expected to update action bars.
-     */
-    public void hideActionSet(String id) {
-        ActionSetRegistry reg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IActionSetDescriptor desc = reg.findActionSet(id);
-        if (alwaysOnActionSets.contains(desc))
-            return;
-        if (desc != null)
-            visibleActionSets.remove(desc);
-    }
 
     /**
      * Hide the editor area if visible
@@ -730,8 +701,14 @@ public class Perspective {
         mapIDtoViewLayoutRec.putAll(layout.getIDtoViewLayoutRecMap());
 
         // Create action sets.
-        createInitialActionSets(layout.getActionSets());
-        alwaysOnActionSets.addAll(visibleActionSets);
+        List temp = new ArrayList();
+        createInitialActionSets(temp, layout.getActionSets());
+
+        for (Iterator iter = temp.iterator(); iter.hasNext();) {
+            IActionSetDescriptor descriptor = (IActionSetDescriptor) iter.next();
+            
+            addAlwaysOn(descriptor);
+        }
         newWizardShortcuts = layout.getNewWizardShortcuts();
         showViewShortcuts = layout.getShowViewShortcuts();
         perspectiveShortcuts = layout.getPerspectiveShortcuts();
@@ -752,6 +729,61 @@ public class Perspective {
 
     }
 
+    private void removeAlwaysOn(IActionSetDescriptor descriptor) {
+        if (descriptor == null) {
+            return;
+        }
+        if (!alwaysOnActionSets.contains(descriptor)) {
+            return;
+        }
+        
+        alwaysOnActionSets.remove(descriptor);
+        if (page != null) {
+            page.perspectiveActionSetChanged(this, descriptor, ActionSetManager.CHANGE_HIDE);
+        }
+    }
+    
+    private void addAlwaysOff(IActionSetDescriptor descriptor) {
+        if (descriptor == null) {
+            return;
+        }
+        if (alwaysOffActionSets.contains(descriptor)) {
+            return;
+        }
+        alwaysOffActionSets.add(descriptor);
+        if (page != null) {
+            page.perspectiveActionSetChanged(this, descriptor, ActionSetManager.CHANGE_MASK);
+        }
+        removeAlwaysOn(descriptor);
+    }
+    
+    private void addAlwaysOn(IActionSetDescriptor descriptor) {
+        if (descriptor == null) {
+            return;
+        }
+        if (alwaysOnActionSets.contains(descriptor)) {
+            return;
+        }
+        alwaysOnActionSets.add(descriptor);
+        if (page != null) {
+            page.perspectiveActionSetChanged(this, descriptor, ActionSetManager.CHANGE_SHOW);
+        }
+        removeAlwaysOff(descriptor);
+    }
+    
+    private void removeAlwaysOff(IActionSetDescriptor descriptor) {
+        if (descriptor == null) {
+            return;
+        }
+        if (!alwaysOffActionSets.contains(descriptor)) {
+            return;
+        }
+        alwaysOffActionSets.remove(descriptor);
+        if (page != null) {
+            page.perspectiveActionSetChanged(this, descriptor, ActionSetManager.CHANGE_UNMASK);
+        }
+    }
+    
     /**
      * activate.
      */
@@ -1072,21 +1104,9 @@ public class Perspective {
         }
 
         HashSet knownActionSetIds = new HashSet();
-        // Load the action sets.
-        IMemento[] actions = memento
-                .getChildren(IWorkbenchConstants.TAG_ACTION_SET);
-        ArrayList actionsArray = new ArrayList(actions.length);
-        for (int x = 0; x < actions.length; x++) {
-            String actionSetID = actions[x]
-                    .getString(IWorkbenchConstants.TAG_ID);
-            actionsArray.add(actionSetID);
-            knownActionSetIds.add(actionSetID);
-        }
-
-        createInitialActionSets(actionsArray);
 
         // Load the always on action sets.
-        actions = memento
+        IMemento[] actions = memento
                 .getChildren(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
         for (int x = 0; x < actions.length; x++) {
             String actionSetID = actions[x]
@@ -1094,7 +1114,7 @@ public class Perspective {
             IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
-                alwaysOnActionSets.add(d);
+                addAlwaysOn(d);
                 knownActionSetIds.add(actionSetID);
             }
         }
@@ -1108,7 +1128,7 @@ public class Perspective {
             IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
-                alwaysOffActionSets.add(d);
+                addAlwaysOff(d);
                 knownActionSetIds.add(actionSetID);
             }
         }
@@ -1165,22 +1185,12 @@ public class Perspective {
             IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
-                alwaysOnActionSets.add(d);
-                visibleActionSets.add(d);
-                // You don't need to add this action set id to
-                // the list of knownActionSetIds.  The next thing
-                // we do is to add all visibleActionSets to the
-                // list of knownActionSetIds.
+                addAlwaysOn(d);
+                knownActionSetIds.add(d.getId());
             }
         }
 
         // Add the visible set of action sets to our knownActionSetIds
-        for (int i = 0; i < visibleActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) visibleActionSets
-                    .get(i);
-            if (desc != null)
-                knownActionSetIds.add(desc.getId());
-        }
         // Now go through the registry to ensure we pick up any new action sets
         // that have been added but not yet considered by this perspective.
         ActionSetRegistry reg = WorkbenchPlugin.getDefault()
@@ -1316,17 +1326,9 @@ public class Perspective {
             boundsMem.putInteger(IWorkbenchConstants.TAG_WIDTH, bounds.width);
         }
 
-        // Save the visible action sets.
-        Iterator itr = visibleActionSets.iterator();
-        while (itr.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) itr.next();
-            IMemento child = memento
-                    .createChild(IWorkbenchConstants.TAG_ACTION_SET);
-            child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
-        }
 
         // Save the "always on" action sets.
-        itr = alwaysOnActionSets.iterator();
+        Iterator itr = alwaysOnActionSets.iterator();
         while (itr.hasNext()) {
             IActionSetDescriptor desc = (IActionSetDescriptor) itr.next();
             IMemento child = memento
@@ -1465,38 +1467,27 @@ public class Perspective {
 
         return result;
     }
-
-    /**
-     * Sets the visible action sets. 
-     * Note: The page is expected to update action bars.
-     */
-    public void setActionSets(IActionSetDescriptor[] newArray) {
-        // We assume that changes to action set visibilty should be remembered
-        // and not reversed as parts are activated.
-        ArrayList turnedOff = (ArrayList) visibleActionSets.clone();
+    
+    public void turnOnActionSets(IActionSetDescriptor[] newArray) {
         for (int i = 0; i < newArray.length; i++) {
-            IActionSetDescriptor desc = newArray[i];
-            turnedOff.remove(desc);
-            if (!visibleActionSets.contains(desc)) {
-                // make sure this always stays visible
-                alwaysOnActionSets.add(desc);
-                alwaysOffActionSets.remove(desc);
-            }
+            IActionSetDescriptor descriptor = newArray[i];
+            
+            addAlwaysOn(descriptor);
         }
-        for (int i = 0; i < turnedOff.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) turnedOff.get(i);
-            // make sure this always stays hidden
-            alwaysOnActionSets.remove(desc);
-            alwaysOffActionSets.add(desc);
-        }
-
-        visibleActionSets.clear();
-        int newSize = newArray.length;
-        for (int i = 0; i < newSize; i++) {
-            visibleActionSets.add(newArray[i]);
+    }
+    
+    public void turnOffActionSets(IActionSetDescriptor[] toDisable) {
+        for (int i = 0; i < toDisable.length; i++) {
+            IActionSetDescriptor descriptor = toDisable[i];
+            
+            turnOffActionSet(descriptor);
         }
     }
 
+    public void turnOffActionSet(IActionSetDescriptor toDisable) {
+        addAlwaysOff(toDisable);
+    }
+    
     /**
      * Return the active fast view or null if there are no
      * fast views or if there are all minimized.
@@ -1603,19 +1594,6 @@ public class Perspective {
         showViewShortcuts = list;
     }
 
-    /**
-     * @see IWorkbenchPage
-     * Note: The page is expected to update action bars.
-     */
-    public void showActionSet(String id) {
-        ActionSetRegistry reg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IActionSetDescriptor desc = reg.findActionSet(id);
-        if (alwaysOffActionSets.contains(desc))
-            return;
-        if (desc != null && !visibleActionSets.contains(desc))
-            visibleActionSets.add(desc);
-    }
 
     /**
      * Show the editor area if not visible
@@ -1762,33 +1740,43 @@ public class Perspective {
 
     //for dynamic UI
     /* package */void addActionSet(IActionSetDescriptor newDesc) {
-        for (int i = 0; i < visibleActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) visibleActionSets
+        for (int i = 0; i < alwaysOnActionSets.size(); i++) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
                     .get(i);
             if (desc.getId().equals(newDesc.getId())) {
-                visibleActionSets.remove(desc);
-                alwaysOnActionSets.remove(desc);
-                alwaysOffActionSets.remove(desc);
+                removeAlwaysOn(desc);
+                removeAlwaysOff(desc);
                 break;
             }
         }
-        visibleActionSets.add(newDesc);
-        alwaysOnActionSets.add(newDesc);
+        addAlwaysOn(newDesc);
     }
 
     //for dynamic UI
     /* package */void removeActionSet(String id) {
-        for (int i = 0; i < visibleActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) visibleActionSets
+        
+        for (int i = 0; i < alwaysOnActionSets.size(); i++) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
                     .get(i);
             if (desc.getId().equals(id)) {
-                visibleActionSets.remove(desc);
-                alwaysOnActionSets.remove(desc);
-                alwaysOffActionSets.remove(desc);
+                removeAlwaysOn(desc);
                 break;
             }
         }
-
+       
+        for (int i = 0; i < alwaysOffActionSets.size(); i++) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOffActionSets
+                    .get(i);
+            if (desc.getId().equals(id)) {
+                removeAlwaysOff(desc);
+                break;
+            }
+        }
+    }
+    
+    void removeActionSet(IActionSetDescriptor toRemove) {
+        removeAlwaysOn(toRemove);
+        removeAlwaysOff(toRemove);
     }
 
     public void setFastViewState(int newState) {
@@ -1862,6 +1850,14 @@ public class Perspective {
      */
     public void testInvariants() {        
         getPresentation().getLayout().testInvariants();
+    }
+
+    public IActionSetDescriptor[] getAlwaysOnActionSets() {
+        return (IActionSetDescriptor[]) alwaysOnActionSets.toArray(new IActionSetDescriptor[alwaysOnActionSets.size()]);
+    }
+    
+    public IActionSetDescriptor[] getAlwaysOffActionSets() {
+        return (IActionSetDescriptor[]) alwaysOffActionSets.toArray(new IActionSetDescriptor[alwaysOffActionSets.size()]);
     }
 
 }

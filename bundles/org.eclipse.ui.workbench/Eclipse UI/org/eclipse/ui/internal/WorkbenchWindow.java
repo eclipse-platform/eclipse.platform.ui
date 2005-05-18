@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -398,18 +397,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
             // if none of the new sets are marked as initially visible, abort.
             if (setsToActivate.isEmpty())
                 return;
+            
+            IActionSetDescriptor[] descriptors = (IActionSetDescriptor[]) setsToActivate
+                .toArray(new IActionSetDescriptor[setsToActivate.size()]);
 
             WorkbenchPage page = getActiveWorkbenchPage();
             if (page != null) {
 	            Perspective[] perspectives = page.getOpenInternalPerspectives();
 	
 	            for (int i = 0; i < perspectives.length; i++) {
-	                IActionSetDescriptor[] originalSets = perspectives[i]
-	                        .getActionSets();
-	                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
-	                newSets.addAll(setsToActivate);
-	                perspectives[i].setActionSets((IActionSetDescriptor[]) newSets
-	                        .toArray(new IActionSetDescriptor[newSets.size()]));
+                    perspectives[i].turnOnActionSets(descriptors);
 	            }
             }
 
@@ -433,26 +430,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
             // update all opened perspectives
             Perspective[] perspectives = getActiveWorkbenchPage()
                     .getOpenInternalPerspectives();
-            boolean updateNeeded = false;
+            boolean updateNeeded = true;
             for (int i = 0; i < perspectives.length; i++) {
-                IActionSetDescriptor[] originalSets = perspectives[i]
-                        .getActionSets();
-                ArrayList newSets = new ArrayList(Arrays.asList(originalSets));
+                
                 for (int j = 0; j < objects.length; j++) {
                     if (objects[j] instanceof IActionSetDescriptor) {
-                        IActionSetDescriptor setToRemove = (IActionSetDescriptor) objects[j];
-                        newSets.remove(setToRemove);
+                        perspectives[i].removeActionSet((IActionSetDescriptor)objects[j]);
                     }
-                }
-
-                // if set sizes differ, flag for window updating
-                // and update the perspective
-                if (originalSets.length != newSets.size()) {
-                    updateNeeded |= true;
-                    perspectives[i]
-                            .setActionSets((IActionSetDescriptor[]) newSets
-                                    .toArray(new IActionSetDescriptor[newSets
-                                            .size()]));
                 }
             }
 

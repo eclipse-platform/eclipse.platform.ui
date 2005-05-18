@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -90,6 +91,7 @@ import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -135,6 +137,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private WorkbenchPagePartList partList = new WorkbenchPagePartList(selectionService);
 
     private IActionBars actionBars;
+    
+    private ActionSetManager actionSets = new ActionSetManager();
     
     private ViewFactory viewFactory;
 
@@ -259,7 +263,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         private IEditorPart topEditor;
 
-        private ArrayList actionSets = new ArrayList();
+        private ArrayList oldActionSets = new ArrayList();
 
         /**
          * Updates the contributions given the new part as the active part.
@@ -446,29 +450,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * @return <code>true</code> if the action sets changed
          */
         private boolean updateActionSets(ArrayList newActionSets) {
-            if (actionSets.equals(newActionSets))
+            if (oldActionSets.equals(newActionSets))
                 return false;
-
-            Perspective persp = getActivePerspective();
-            if (persp == null) {
-                actionSets = newActionSets;
-                return false;
-            }
-
-            // hide the old
-            for (int i = 0; i < actionSets.size(); i++) {
-                persp.hideActionSet(((IActionSetDescriptor) actionSets.get(i))
-                        .getId());
-            }
 
             // show the new
             for (int i = 0; i < newActionSets.size(); i++) {
-                persp.showActionSet(((IActionSetDescriptor) newActionSets
-                        .get(i)).getId());
+                actionSets.showAction((IActionSetDescriptor) newActionSets
+                        .get(i));
             }
+            
+            // hide the old
+            for (int i = 0; i < oldActionSets.size(); i++) {
+                actionSets.hideAction((IActionSetDescriptor) oldActionSets
+                        .get(i));            }
 
-            actionSets = newActionSets;
+            oldActionSets = newActionSets;
 
+            Perspective persp = getActivePerspective();
+            if (persp == null) {
+                return false;
+            }
+            
             window.updateActionSets(); // this calls updateActionBars
             window.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
                     CHANGE_ACTION_SET_SHOW);
@@ -1632,11 +1634,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns an array of the visible action sets.
      */
     public IActionSetDescriptor[] getActionSets() {
-        Perspective persp = getActivePerspective();
-        if (persp != null)
-            return persp.getActionSets();
-        else
-            return new IActionSetDescriptor[0];
+        Collection collection = actionSets.getVisibleItems();
+        
+        return (IActionSetDescriptor[]) collection.toArray(new IActionSetDescriptor[collection.size()]);
     }
 
     /**
@@ -1953,7 +1953,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public void hideActionSet(String actionSetID) {
         Perspective persp = getActivePerspective();
         if (persp != null) {
-            persp.hideActionSet(actionSetID);
+            persp.removeActionSet(actionSetID);
             window.updateActionSets();
             window.firePerspectiveChanged(this, getPerspective(),
                     CHANGE_ACTION_SET_HIDE);
@@ -2879,11 +2879,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	            window.firePerspectiveActivated(this, newPersp.getDesc());
 	        }
 	
-	        // Update the window
-	        window.updateActionSets();
-	
 	        updateVisibility(oldPersp, newPersp);
 	
+            // Update the window
+            window.updateActionSets();
 
 	        if (newPersp != null && oldPersp != null) {
 	            if (!stickyPerspectives.contains(newPersp.getDesc())) {
@@ -2919,10 +2918,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
+    void perspectiveActionSetChanged(Perspective perspective, IActionSetDescriptor descriptor, int changeType) {
+        if (perspective == getActivePerspective()) {
+            actionSets.change(descriptor, changeType);
+        }
+    }
+    
 	/*
      * Update visibility state of all views.
      */
     private void updateVisibility(Perspective oldPersp, Perspective newPersp) {
+        
         // Flag all parts in the old perspective
         IWorkbenchPartReference[] oldRefs = new IWorkbenchPartReference[0];
         if (oldPersp != null) {
@@ -3035,10 +3041,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public void showActionSet(String actionSetID) {
         Perspective persp = getActivePerspective();
         if (persp != null) {
-            persp.showActionSet(actionSetID);
-            window.updateActionSets();
-            window.firePerspectiveChanged(this, getPerspective(),
-                    CHANGE_ACTION_SET_SHOW);
+            ActionSetRegistry reg = WorkbenchPlugin.getDefault()
+                 .getActionSetRegistry();
+            
+            IActionSetDescriptor desc = reg.findActionSet(actionSetID);
+            if (desc != null) {
+                persp.addActionSet(desc);
+                window.updateActionSets();
+                window.firePerspectiveChanged(this, getPerspective(),
+                        CHANGE_ACTION_SET_SHOW);
+            }
         }
     }
 
@@ -3740,8 +3752,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Removes a perspective from the list.
          */
         public boolean remove(Perspective perspective) {
-            if (active == perspective)
+            if (active == perspective) {
+                updateActionSets(active, null);
                 active = null;
+            }
             usedList.remove(perspective);
             return openedList.remove(perspective);
         }
@@ -3806,11 +3820,47 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (perspective == active)
                 return;
 
+            updateActionSets(active, perspective);
             active = perspective;
 
             if (perspective != null) {
                 usedList.remove(perspective);
                 usedList.add(perspective);
+            }
+        }
+        
+        private void updateActionSets(Perspective oldPersp, Perspective newPersp) {
+            // Update action sets
+            if (newPersp != null) {
+                IActionSetDescriptor[] newAlwaysOn = newPersp.getAlwaysOnActionSets();
+                for (int i = 0; i < newAlwaysOn.length; i++) {
+                    IActionSetDescriptor descriptor = newAlwaysOn[i];
+                    
+                    actionSets.showAction(descriptor);
+                }
+                
+                IActionSetDescriptor[] newAlwaysOff = newPersp.getAlwaysOffActionSets();
+                for (int i = 0; i < newAlwaysOff.length; i++) {
+                    IActionSetDescriptor descriptor = newAlwaysOff[i];
+                    
+                    actionSets.maskAction(descriptor);
+                }
+            }
+            
+            if (oldPersp != null) {
+                IActionSetDescriptor[] newAlwaysOn = oldPersp.getAlwaysOnActionSets();
+                for (int i = 0; i < newAlwaysOn.length; i++) {
+                    IActionSetDescriptor descriptor = newAlwaysOn[i];
+                    
+                    actionSets.hideAction(descriptor);
+                }
+                
+                IActionSetDescriptor[] newAlwaysOff = oldPersp.getAlwaysOffActionSets();
+                for (int i = 0; i < newAlwaysOff.length; i++) {
+                    IActionSetDescriptor descriptor = newAlwaysOff[i];
+                    
+                    actionSets.unmaskAction(descriptor);
+                }
             }
         }
     }
