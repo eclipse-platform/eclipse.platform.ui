@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -42,8 +43,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
@@ -70,9 +73,9 @@ import org.eclipse.ui.contexts.NotDefinedException;
  * an element with the specified debug model identifier is selected,
  * the specified activity will be enabled.
  */
-public class LaunchViewContextListener implements IContextManagerListener {
+public class LaunchViewContextListener implements IContextManagerListener, IActivityManagerListener {
 
-	public static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "debugModel"; //$NON-NLS-1$
+	private static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "/debugModel"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
 	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
 	public static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
@@ -90,9 +93,20 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * of context IDs (List<String>).
 	 */
 	private Map modelsToContexts= new HashMap();
+	
+	/**
+	 * A cache of activity pattern bindings for debug models. 
+	 */
+	private List modelPatternBindings = new ArrayList();
+	
+	/**
+	 * Currently enabled activities
+	 */
+	private Set enabledActivities;
+	
 	/**
 	 * A mapping of debug model IDs (String) to a collection
-	 * of activity IDs (List<String>).
+	 * of resolved activity IDs (Set<String>).
 	 */
 	private Map modelsToActivities= new HashMap();
 	/**
@@ -176,7 +190,11 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		loadOpenedViews();
 		loadViewsToNotOpen();
 		loadAutoManagePerspectives();
-		PlatformUI.getWorkbench().getContextSupport().getContextManager().addContextManagerListener(this);
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.getContextSupport().getContextManager().addContextManagerListener(this);
+		IActivityManager activityManager = workbench.getActivitySupport().getActivityManager();
+		activityManager.addActivityManagerListener(this);
+		enabledActivities = activityManager.getEnabledActivityIds();
 	}
 	
 	/**
@@ -234,7 +252,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	}
 	
 	/**
-	 * Loads the extensions which map debug model identifiers
+	 * Loads the extensions which map debug model patterns
 	 * to activity ids. This information is used to activate the
 	 * appropriate activities when a debug element is selected.
 	 */
@@ -251,15 +269,8 @@ public class LaunchViewContextListener implements IContextManagerListener {
 				while (patternIterator.hasNext()) {
 					IActivityPatternBinding patternBinding= (IActivityPatternBinding) patternIterator.next();
 					String pattern = patternBinding.getPattern().pattern();
-					int index = pattern.lastIndexOf(DEBUG_MODEL_ACTIVITY_SUFFIX);
-					if (index > 0) {
-						String debugModel= pattern.substring(0, index - 1);
-						List ids = (List)modelsToActivities.get(debugModel);
-						if (ids == null) {
-							ids = new ArrayList();
-							modelsToActivities.put(debugModel, ids);
-						}
-						ids.add(activityId);
+					if (pattern.endsWith(DEBUG_MODEL_ACTIVITY_SUFFIX)) {
+						modelPatternBindings.add(patternBinding);
 					}
 				}
 			}
@@ -780,7 +791,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		}
 		String[] modelIds= getDebugModelIdsForSelection(selection);
 		enableContexts(getContextsForModels(modelIds), launch);
-		enableActivities(getActivitiesForModels(modelIds));
+		enableActivitiesFor(modelIds);
 	}
 
 	/**
@@ -825,24 +836,6 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	}
 	
 	/**
-	* Returns the activity identifiers associated with the
-	* given model identifiers.
-	* 
-	* @param modelIds the model identifiers
-	* @return the activities associated with the given model identifiers
-	*/
-	protected List getActivitiesForModels(String[] modelIds) {
-		List activityIds= new ArrayList();
-		for (int i = 0; i < modelIds.length; i++) {
-			List ids= (List) modelsToActivities.get(modelIds[i]);
-			if (ids != null) {
-				activityIds.addAll(ids);
-			}
-		}
-		return activityIds;
-	}
-	
-	/**
 	* Returns the context identifiers associated with the
 	* given model identifiers.
 	* 
@@ -865,20 +858,42 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	}
 	
 	/**
-	 * Enables the given activities in the workbench.
+	 * Enables activities in the workbench associated with the given debug 
+	 * model ids that are not already enabled.
 	 * 
-	 * @param activityIds the activities to enable
+	 * @param debug model ids for which to enable activities
 	 */
-	protected void enableActivities(List activityIds) {
-		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		Set enabledIds = activitySupport.getActivityManager().getEnabledActivityIds();
-		Set idsToEnable= new HashSet();
-		Iterator iter= activityIds.iterator();
-		while (iter.hasNext()) {
-			idsToEnable.add(iter.next());
+	protected void enableActivitiesFor(String[] modelIds) {
+		Set newActivities = null;
+		for (int i = 0; i < modelIds.length; i++) {
+			String id = modelIds[i];
+			Set ids= (Set) modelsToActivities.get(id);
+			if (ids == null) {
+				// first time the model has been seen, perform pattern matching
+				ids = new HashSet();
+				modelsToActivities.put(id, ids);
+				Iterator bindings = modelPatternBindings.iterator();
+				while (bindings.hasNext()) {
+					IActivityPatternBinding binding = (IActivityPatternBinding) bindings.next();
+					String regex = binding.getPattern().pattern();
+					regex = regex.substring(0, regex.length() - DEBUG_MODEL_ACTIVITY_SUFFIX.length());
+					if (Pattern.matches(regex, id)) {
+						ids.add(binding.getActivityId());
+					}
+				}
+			}
+			if (!enabledActivities.containsAll(ids)) {
+				if (newActivities == null) {
+					newActivities = new HashSet();
+				}
+				newActivities.addAll(ids);
+			}
 		}
-		if (!idsToEnable.isEmpty()) {
-			idsToEnable.addAll(enabledIds);
+		if (newActivities != null) {
+			IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+			Set idsToEnable= new HashSet(enabledActivities.size() + newActivities.size());
+			idsToEnable.addAll(enabledActivities);
+			idsToEnable.addAll(newActivities);
 			activitySupport.setEnabledActivityIds(idsToEnable);
 		}
 	}
@@ -1171,6 +1186,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	public void dispose() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getContextSupport().getContextManager().removeContextManagerListener(this);
+		workbench.getActivitySupport().getActivityManager().removeActivityManagerListener(this);
 	}
 
 	/**
@@ -1180,4 +1196,15 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	protected void clearLastEnabledContexts() {
 		lastEnabledIds.clear();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
+	 */
+	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
+			enabledActivities = activityManagerEvent.getActivityManager().getEnabledActivityIds();
+		}
+		
+	}
+
 }
