@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -246,14 +247,23 @@ public class LinkedPositionGroup {
 				edits.add(new ReplaceEdit(p.getOffset() + relativeOffset, length, text));
 			}
 
-			for (Iterator it= map.keySet().iterator(); it.hasNext(); ) {
-				IDocument d= (IDocument) it.next();
-				TextEdit edit= new MultiTextEdit(0, d.getLength());
-				edit.addChildren((TextEdit[]) ((List) map.get(d)).toArray(new TextEdit[0]));
-				map.put(d, edit);
-			}
+			try {
+				for (Iterator it= map.keySet().iterator(); it.hasNext();) {
+					IDocument d= (IDocument) it.next();
+					TextEdit edit= new MultiTextEdit(0, d.getLength());
+					edit.addChildren((TextEdit[]) ((List) map.get(d)).toArray(new TextEdit[0]));
+					map.put(d, edit);
+				}
 
-			return map;
+				return map;
+			} catch (MalformedTreeException x) {
+				// may happen during undo, as LinkedModeModel does not know 
+				// that the changes technically originate from a parent environment
+				// if this happens, post notification changes are not accepted anyway and
+				// we can simply return null - any changes will be undone by the undo
+				// manager
+				return null;
+			}
 
 		}
 
