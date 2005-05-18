@@ -53,6 +53,7 @@ public class ContributionTemplateStore extends TemplateStore {
 
 	private static final String CONTEXT_TYPE_ID= "contextTypeId"; //$NON-NLS-1$
 	private static final String DESCRIPTION= "description"; //$NON-NLS-1$
+	private static final String AUTO_INSERT= "autoinsert"; //$NON-NLS-1$
 
 	private static final String TEMPLATE= "template"; //$NON-NLS-1$
 	private static final String PATTERN= "pattern"; //$NON-NLS-1$
@@ -228,7 +229,14 @@ public class ContributionTemplateStore extends TemplateStore {
 						if (desc == null)
 							desc= ""; //$NON-NLS-1$
 
-						Template template= new Template(name, desc, contextTypeId, pattern);
+						String autoInsert= element.getAttribute(AUTO_INSERT);
+						boolean bAutoInsert;
+						if (autoInsert == null)
+							bAutoInsert= true;
+						else
+							bAutoInsert= Boolean.parseBoolean(autoInsert);
+						
+						Template template= new Template(name, desc, contextTypeId, pattern, bAutoInsert);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
 						if (validateTemplate(template))
 							map.add(data);

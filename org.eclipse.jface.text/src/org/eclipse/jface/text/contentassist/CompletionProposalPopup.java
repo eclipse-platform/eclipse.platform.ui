@@ -225,7 +225,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 					} else {
 
-						if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting()) {
+						if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals[0])) {
 
 							insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
 							hide();
@@ -1014,6 +1014,25 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setFocus();
 		}
 	}
+	
+	/**
+	 * Returns <code>true</code> if <code>proposal</code> should be autoinserted,
+	 * <code>false</code> otherwise.
+	 * 
+	 * @param proposal the single proposal that might be automatically inserted
+	 * @return <code>true</code> if <code>proposal</code> can be inserted automatically,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean canAutoInsert(ICompletionProposal proposal) {
+		if (fContentAssistant.isAutoInserting()) {
+			if (proposal instanceof ICompletionProposalExtension4) {
+				ICompletionProposalExtension4 ext= (ICompletionProposalExtension4) proposal;
+				return ext.isAutoInsertable();
+			}
+			return true; // default behavior before ICompletionProposalExtension4 was introduced
+		}
+		return false;
+	}
 
 	/**
 	 * Completes the common prefix of all proposals directly in the code. If no
@@ -1045,7 +1064,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					if (count == 0) {
 						control.getDisplay().beep();
 						hide();
-					} else if (count == 1 && fContentAssistant.isAutoInserting()) {
+					} else if (count == 1 && canAutoInsert(fFilteredProposals[0])) {
 						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
 						hide();
 					} else {
@@ -1079,9 +1098,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		// 0: insert single proposals
 		if (fFilteredProposals.length == 1) {
-			insertProposal(fFilteredProposals[0], (char) 0, 0, fFilterOffset);
-			hide();
-			return true;
+			if (canAutoInsert(fFilteredProposals[0])) {
+				insertProposal(fFilteredProposals[0], (char) 0, 0, fFilterOffset);
+				hide();
+				return true;
+			}
+			return false;
 		}
 
 		// 1: extract pre- and postfix from all remaining proposals
@@ -1146,13 +1168,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// 2: replace single proposals
 
 		if (rightCase.size() == 1) {
-			insertProposal((ICompletionProposal) rightCase.get(0), (char) 0, 0, fInvocationOffset);
-			hide();
-			return true;
+			ICompletionProposal proposal= (ICompletionProposal) rightCase.get(0);
+			if (canAutoInsert(proposal)) {
+				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
+				hide();
+				return true;
+			}
+			return false;
 		} else if (checkWrongCase && wrongCase.size() == 1) {
-			insertProposal((ICompletionProposal) wrongCase.get(0), (char) 0, 0, fInvocationOffset);
-			hide();
+			ICompletionProposal proposal= (ICompletionProposal) wrongCase.get(0);
+			if (canAutoInsert(proposal)) {
+				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
+				hide();
 			return true;
+			}
+			return false;
 		}
 
 		// 3: replace post- / prefixes

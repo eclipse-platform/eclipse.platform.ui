@@ -29,12 +29,17 @@ public class Template {
 	private /*final*/ String fContextTypeId;
 	/** The template pattern. */
 	private /*final*/ String fPattern;
+	/**
+	 * The auto insertable property. 
+	 * @since 3.1
+	 */
+	private final boolean fIsAutoInsertable;
 
 	/**
 	 * Creates an empty template.
 	 */
 	public Template() {
-		this("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		this("", "", "", "", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/**
@@ -43,7 +48,7 @@ public class Template {
 	 * @param template the template to copy
 	 */
 	public Template(Template template) {
-		this(template.getName(), template.getDescription(), template.getContextTypeId(), template.getPattern());
+		this(template.getName(), template.getDescription(), template.getContextTypeId(), template.getPattern(), template.isAutoInsertable());
 	}
 
 	/**
@@ -53,14 +58,29 @@ public class Template {
 	 * @param description the description of the template
 	 * @param contextTypeId the id of the context type in which the template can be applied
 	 * @param pattern the template pattern
+	 * @deprecated as of 3.1 replaced by {@link #Template(String, String, String, String, boolean)}
 	 */
 	public Template(String name, String description, String contextTypeId, String pattern) {
+		this(name, description, contextTypeId, pattern, true); // templates are auto insertable per default
+	}
+
+	/**
+	 * Creates a template.
+	 *
+	 * @param name the name of the template
+	 * @param description the description of the template
+	 * @param contextTypeId the id of the context type in which the template can be applied
+	 * @param pattern the template pattern
+	 * @param isAutoInsertable the auto insertable property of the template
+	 */
+	public Template(String name, String description, String contextTypeId, String pattern, boolean isAutoInsertable) {
 		Assert.isNotNull(description);
 		fDescription= description;
 		fName= name;
 		Assert.isNotNull(contextTypeId);
 		fContextTypeId= contextTypeId;
 		fPattern= pattern;
+		fIsAutoInsertable= isAutoInsertable;
 	}
 
 	/*
@@ -175,7 +195,17 @@ public class Template {
 		return t.fName.equals(fName)
 				&& t.fPattern.equals(fPattern)
 				&& t.fContextTypeId.equals(fContextTypeId)
-				&& t.fDescription.equals(fDescription);
+				&& t.fDescription.equals(fDescription)
+				&& t.fIsAutoInsertable == fIsAutoInsertable;
 	}
 
+	/**
+	 * Returns the auto insertable property of the template.
+	 * 
+	 * @return the auto insertable property of the template
+	 * @since 3.1
+	 */
+	public boolean isAutoInsertable() {
+		return fIsAutoInsertable;
+	}
 }

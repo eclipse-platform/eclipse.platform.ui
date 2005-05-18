@@ -119,6 +119,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 						return type.getName();
 					return template.getContextTypeId();
 				case 2:
+					return template.isAutoInsertable() ? TextEditorTemplateMessages.TemplatePreferencePage_yes : TextEditorTemplateMessages.TemplatePreferencePage_no;
+				case 3:
 					return template.getDescription();
 				default:
 					return ""; //$NON-NLS-1$
@@ -244,7 +246,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
-		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
+
+		TableColumn column4= new TableColumn(table, SWT.NONE);
+		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -377,7 +382,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		updateButtons();
-        configureTableResizing(innerParent, buttons, table, column1, column2, column3);
+        configureTableResizing(innerParent, buttons, table, column1, column2, column3, column4);
 
 		Dialog.applyDialogFont(parent);
 		return parent;
@@ -418,8 +423,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @param column1 the first column
 	 * @param column2 the second column
 	 * @param column3 the third column
+	 * @param column4 the fourth column
      */
-    private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3) {
+    private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3, final TableColumn column4) {
         parent.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent e) {
                 Rectangle area= parent.getClientArea();
@@ -439,7 +445,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
                     // match the client area width
                     column1.setWidth(width/4);
                     column2.setWidth(width/4);
-                    column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
+                    column3.setWidth(width/8);
+                    column4.setWidth(width - (column1.getWidth() + column2.getWidth() + column3.getWidth()));
                     table.setSize(width, area.height);
                 } else {
                     // table is getting bigger so make the table
@@ -448,7 +455,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
                     table.setSize(width, area.height);
                     column1.setWidth(width / 4);
                     column2.setWidth(width / 4);
-                    column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
+                    column3.setWidth(width / 8);
+                    column4.setWidth(width - (column1.getWidth() + column2.getWidth() + column3.getWidth()));
                  }
             }
         });
@@ -559,7 +567,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		Iterator it= fContextTypeRegistry.contextTypes();
 		if (it.hasNext()) {
-			Template template= new Template("", "", ((TemplateContextType) it.next()).getId(), "");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			Template template= new Template("", "", ((TemplateContextType) it.next()).getId(), "", true);   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			Template newTemplate= editTemplate(template, false, true);
 			if (newTemplate != null) {

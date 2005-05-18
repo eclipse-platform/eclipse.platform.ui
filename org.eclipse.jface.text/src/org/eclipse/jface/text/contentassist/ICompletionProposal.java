@@ -47,6 +47,12 @@ import org.eclipse.jface.text.IDocument;
  *				<li>provide a custom completion text and offset for prefix completion</li>
  *			</ul>
  * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension4} since version 3.1 introducing
+ *		the following functions:
+ *			<ul>
+ *				<li>specify whether a proposal is automatically insertable</li>
+ *			</ul>
+ * </li>
  * </ul>
  * </p>
  * <p>

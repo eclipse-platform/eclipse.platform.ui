@@ -544,7 +544,7 @@ class EditTemplateDialog extends StatusDialog {
 
 	protected void okPressed() {
 		String name= fNameText == null ? fOriginalTemplate.getName() : fNameText.getText();
-		fNewTemplate= new Template(name, fDescriptionText.getText(), getContextId(), fPatternEditor.getDocument().get());
+		fNewTemplate= new Template(name, fDescriptionText.getText(), getContextId(), fPatternEditor.getDocument().get(), true);
 		super.okPressed();
 	}
 

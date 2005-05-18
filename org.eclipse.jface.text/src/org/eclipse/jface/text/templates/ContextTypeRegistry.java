@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,7 +27,7 @@ import java.util.Map;
 public class ContextTypeRegistry {
 
 	/** all known context types */
-	private final Map fContextTypes= new HashMap();
+	private final Map fContextTypes= new LinkedHashMap();
 
 	/**
 	 * Adds a context type to the registry. If there already is a context type

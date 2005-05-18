@@ -61,6 +61,7 @@ public class TemplateReaderWriter {
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 	private static final String DELETED_ATTRIBUTE= "deleted"; //$NON-NLS-1$
+	private static final String AUTO_INSERTABLE_ATTRIBUTE= "autoinsert"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance.
@@ -172,6 +173,7 @@ public class TemplateReaderWriter {
 					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
 
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
+				boolean autoInsertable= getBooleanValue(attributes, AUTO_INSERTABLE_ATTRIBUTE, true);
 
 				StringBuffer buffer= new StringBuffer();
 				NodeList children= node.getChildNodes();
@@ -183,7 +185,7 @@ public class TemplateReaderWriter {
 				String pattern= buffer.toString();
 				pattern= translateString(pattern, bundle);
 
-				Template template= new Template(name, description, context, pattern);
+				Template template= new Template(name, description, context, pattern, autoInsertable);
 				TemplatePersistenceData data= new TemplatePersistenceData(template, enabled, id);
 				data.setDeleted(deleted);
 
@@ -289,6 +291,12 @@ public class TemplateReaderWriter {
 				Attr deleted= document.createAttribute(DELETED_ATTRIBUTE);
 				deleted.setValue(data.isDeleted() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
 				attributes.setNamedItem(deleted);
+
+				if (template != null) {
+					Attr autoInsertable= document.createAttribute(AUTO_INSERTABLE_ATTRIBUTE);
+					deleted.setValue(template.isAutoInsertable() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
+					attributes.setNamedItem(autoInsertable);
+				}
 
 				if (template != null) {
 					Text pattern= document.createTextNode(template.getPattern());

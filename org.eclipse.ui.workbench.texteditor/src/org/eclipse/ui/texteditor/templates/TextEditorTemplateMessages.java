@@ -89,4 +89,8 @@ final class TextEditorTemplateMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorTemplateMessages.class);
 	}
+
+	public static String TemplatePreferencePage_yes;
+	public static String TemplatePreferencePage_no;
+	public static String TemplatePreferencePage_column_autoinsert;
 }
