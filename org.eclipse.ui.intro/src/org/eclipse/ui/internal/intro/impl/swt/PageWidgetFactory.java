@@ -302,7 +302,7 @@ public class PageWidgetFactory {
     }
 
     private Control createFormText(Composite parent, String text, Color fg) {
-        FormText formText = toolkit.createFormText(parent, true);
+        FormText formText = toolkit.createFormText(parent, false);
         formText.addHyperlinkListener(hyperlinkAdapter);
         try {
             formText.setText(text, true, true);
