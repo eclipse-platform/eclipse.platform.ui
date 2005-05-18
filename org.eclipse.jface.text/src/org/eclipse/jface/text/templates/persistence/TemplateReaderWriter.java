@@ -294,7 +294,7 @@ public class TemplateReaderWriter {
 
 				if (template != null) {
 					Attr autoInsertable= document.createAttribute(AUTO_INSERTABLE_ATTRIBUTE);
-					deleted.setValue(template.isAutoInsertable() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
+					autoInsertable.setValue(template.isAutoInsertable() ? Boolean.toString(true) : Boolean.toString(false)); //$NON-NLS-1$ //$NON-NLS-2$
 					attributes.setNamedItem(autoInsertable);
 				}
 
