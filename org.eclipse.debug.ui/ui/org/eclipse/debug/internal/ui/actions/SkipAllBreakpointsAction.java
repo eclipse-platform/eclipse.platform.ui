@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -49,8 +54,20 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run(){
-		IBreakpointManager manager = getBreakpointManager();
-		manager.setEnabled(!manager.isEnabled());
+		final IBreakpointManager manager = getBreakpointManager();
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                if(!monitor.isCanceled()) {
+                    manager.setEnabled(!manager.isEnabled());
+                } 
+            }
+        };
+        
+        try {
+            DebugUIPlugin.getDefault().getWorkbench().getProgressService().busyCursorWhile(runnable);
+        } catch (InvocationTargetException e) {
+        } catch (InterruptedException e) {
+        }
 	}
 	
 	/**
