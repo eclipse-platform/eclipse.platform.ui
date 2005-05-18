@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
@@ -643,27 +645,47 @@ public final class WorkbenchKeyboard {
 	}
 
 	/**
-	 * Logs the given exception, and opens a dialog explaining the failure.
-	 * 
-	 * @param e
-	 *            The exception to log; must not be <code>null</code>.
-	 */
-	final void logException(final CommandException e) {
-		Throwable nestedException = e.getCause();
-		Throwable exception = (nestedException == null) ? e : nestedException;
-		String message = Util.translateString(RESOURCE_BUNDLE,
-				"ExecutionError.Message"); //$NON-NLS-1$
-		String title = Util.translateString(RESOURCE_BUNDLE,
-				"ExecutionError.Title"); //$NON-NLS-1$
-		String exceptionMessage = exception.getMessage();
-		if (exceptionMessage == null) {
-			exceptionMessage = exception.getClass().getName();
-		}
-		IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(workbench.getActiveWorkbenchWindow().getShell(),
-				title, message, status);
+     * Logs the given exception, and opens a dialog explaining the failure.
+     * 
+     * @param e
+     *            The exception to log; must not be <code>null</code>.
+     * @param command
+     *            The parameterized command for the binding to execute; may be
+     *            <code>null</code>.
+     */
+    final void logException(final CommandException e,
+            final ParameterizedCommand command) {
+        Throwable nestedException = e.getCause();
+        Throwable exception = (nestedException == null) ? e : nestedException;
+
+        // If we can, include the command name in the exception.
+        String message = null;
+        if (command != null) {
+            try {
+                final String name = command.getCommand().getName();
+                message = MessageFormat.format(Util.translateString(
+                        RESOURCE_BUNDLE, "ExecutionError.MessageCommandName"), //$NON-NLS-1$
+                        new Object[] { name });
+            } catch (final NotDefinedException nde) {
+                // Fall through (message == null)
+            }
+        }
+        if (message == null) {
+            message = Util.translateString(RESOURCE_BUNDLE,
+                    "ExecutionError.Message"); //$NON-NLS-1$
+        }
+
+        String title = Util.translateString(RESOURCE_BUNDLE,
+                "ExecutionError.Title"); //$NON-NLS-1$
+        String exceptionMessage = exception.getMessage();
+        if (exceptionMessage == null) {
+            exceptionMessage = exception.getClass().getName();
+        }
+        IStatus status = new Status(IStatus.ERROR,
+                WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+        WorkbenchPlugin.log(message, status);
+        ErrorDialog.openError(workbench.getDisplay().getActiveShell(),
+                title, message, status);
 	}
 
 	/**
@@ -694,14 +716,8 @@ public final class WorkbenchKeyboard {
 	 *            The event; may be <code>null</code>.
 	 * @return <code>true</code> if a command is executed; <code>false</code>
 	 *         otherwise.
-	 * @throws CommandException
-	 *             if the handler does not complete execution for some reason.
-	 *             It is up to the caller of this method to decide whether to
-	 *             log the message, display a dialog, or ignore this exception
-	 *             entirely.
 	 */
-	public boolean press(List potentialKeyStrokes, Event event)
-			throws CommandException {
+	public boolean press(List potentialKeyStrokes, Event event) {
 		if (DEBUG && DEBUG_VERBOSE) {
 			System.out
 					.println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
@@ -719,8 +735,13 @@ public final class WorkbenchKeyboard {
 
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
 				final Binding binding = getPerfectMatch(sequenceAfterKeyStroke);
-				return (executeCommand(binding, event) || !sequenceBeforeKeyStroke
-						.isEmpty());
+                try {
+                    return executeCommand(binding, event) || !sequenceBeforeKeyStroke
+						.isEmpty();
+                } catch (final CommandException e) {
+                    logException(e, binding.getParameterizedCommand());
+                    return true;
+                }
 
 			} else if ((keyAssistDialog != null)
                     && (keyAssistDialog.getShell() != null)
@@ -762,12 +783,7 @@ public final class WorkbenchKeyboard {
 		// Dispatch the keyboard shortcut, if any.
 		boolean eatKey = false;
 		if (!keyStrokes.isEmpty()) {
-			try {
-				eatKey = press(keyStrokes, event);
-			} catch (CommandException e) {
-				logException(e);
-				eatKey = true;
-			}
+			eatKey = press(keyStrokes, event);
 		}
 
 		if (eatKey) {

@@ -643,7 +643,8 @@ final class KeyAssistDialog extends Dialog {
 			try {
 				workbenchKeyboard.executeCommand(binding, trigger);
 			} catch (final CommandException e) {
-				workbenchKeyboard.logException(e);
+				workbenchKeyboard.logException(e, binding
+                        .getParameterizedCommand());
 			}
 		}
 	}
