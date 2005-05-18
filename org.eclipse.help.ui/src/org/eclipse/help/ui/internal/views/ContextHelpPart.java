@@ -15,9 +15,13 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -32,9 +36,13 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$	
 
 	private FormText text;
+
 	private Control lastControl;
+
 	private IContextProvider lastProvider;
+
 	private IContext lastContext;
+
 	private IWorkbenchPart lastPart;
 
 	private String defaultText = ""; //$NON-NLS-1$
@@ -51,13 +59,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				| Section.TITLE_BAR);
 		Section section = getSection();
 		section.marginWidth = 5;
-		section.setText(Messages.ContextHelpPart_about); 
+		section.setText(Messages.ContextHelpPart_about);
 		Composite container = toolkit.createComposite(section);
 		section.setClient(container);
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				if (e.getState() && (lastProvider!=null || lastControl!=null)) {
-					String helpText = createContextHelp(lastProvider, lastControl);
+				if (e.getState()
+						&& (lastProvider != null || lastControl != null)) {
+					String helpText = createContextHelp(lastProvider,
+							lastControl);
 					updateText(helpText);
 				}
 			}
@@ -78,6 +88,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			public void linkActivated(HyperlinkEvent e) {
 				doOpenLink(e.getHref());
 			}
+
 			public void linkEntered(HyperlinkEvent e) {
 				ContextHelpPart.this.parent.handleLinkEntered(e);
 			}
@@ -156,11 +167,13 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateDynamicHelp() {
-		if (lastProvider!=null || lastControl!=null)
-			updateDynamicHelp(lastProvider!=null?lastProvider.getSearchExpression(lastControl):null, lastControl);		
+		if (lastProvider != null || lastControl != null)
+			updateDynamicHelp(lastProvider != null ? lastProvider
+					.getSearchExpression(lastControl) : null, lastControl);
 	}
-	
-	public void handleActivation(IContext context, Control c, IWorkbenchPart part) {
+
+	public void handleActivation(IContext context, Control c,
+			IWorkbenchPart part) {
 		if (text.isDisposed())
 			return;
 		lastControl = c;
@@ -174,7 +187,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		updateDynamicHelp();
 	}
 
-	public void handleActivation(IContextProvider provider, Control c, IWorkbenchPart part) {
+	public void handleActivation(IContextProvider provider, Control c,
+			IWorkbenchPart part) {
 		if (text.isDisposed())
 			return;
 		lastControl = c;
@@ -186,12 +200,14 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			updateText(helpText);
 		updateDynamicHelp();
 	}
-	
+
 	private void updateTitle() {
-		if (lastPart!=null)
-			getSection().setText(NLS.bind(Messages.ContextHelpPart_aboutP, lastPart.getSite().getRegisteredName()));
+		if (lastPart != null)
+			getSection().setText(
+					NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
+							.getSite().getRegisteredName()));
 		else
-			getSection().setText(Messages.ContextHelpPart_about); 
+			getSection().setText(Messages.ContextHelpPart_about);
 	}
 
 	private void updateText(String helpText) {
@@ -236,7 +252,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					if (part != null) {
 						buff.append("\""); //$NON-NLS-1$
 						if (part instanceof IViewPart)
-							buff.append(NLS.bind(Messages.ContextHelpPart_query_view, part.getSite().getRegisteredName()));
+							buff.append(NLS.bind(
+									Messages.ContextHelpPart_query_view, part
+											.getSite().getRegisteredName()));
 						buff.append("\" "); //$NON-NLS-1$
 					}
 					IPerspectiveDescriptor persp = page.getPerspective();
@@ -244,14 +262,29 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						if (buff.length() > 0)
 							buff.append("OR "); //$NON-NLS-1$
 						buff.append("\""); //$NON-NLS-1$
-						buff.append(NLS.bind(Messages.ContextHelpPart_query_perspective, persp.getLabel()));
+						buff.append(NLS.bind(
+								Messages.ContextHelpPart_query_perspective,
+								persp.getLabel()));
 						buff.append("\""); //$NON-NLS-1$
 					}
 				}
 				break;
 			} else if (data instanceof Window) {
-				Window w = (Window)data;
+				Window w = (Window) data;
+				if (w instanceof IPageChangeProvider) {
+					Object page = ((IPageChangeProvider) w).getSelectedPage();
+					String pageName = getPageName(c, page);
+					if (pageName != null) {
+						buff.append("\""); //$NON-NLS-1$
+						buff.append(pageName);
+						buff.append("\" "); //$NON-NLS-1$
+					}
+				}
+				if (buff.length() > 0)
+					buff.append("OR "); //$NON-NLS-1$
+				buff.append("\""); //$NON-NLS-1$
 				buff.append(w.getShell().getText());
+				buff.append("\""); //$NON-NLS-1$
 				break;
 			}
 			parent = parent.getParent();
@@ -259,8 +292,37 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return buff.length() > 0 ? buff.toString().trim() : null;
 	}
 
+	private String getPageName(Control focusControl, Object page) {
+		if (page instanceof IDialogPage)
+			return ((IDialogPage) page).getTitle();
+		if (focusControl == null)
+			return null;
+
+		Composite parent = focusControl.getParent();
+		while (parent != null) {
+			if (parent instanceof TabFolder) {
+				TabItem[] selection = ((TabFolder) parent).getSelection();
+				if (selection.length == 1)
+					return stripMnemonic(selection[0].getText());
+			} else if (parent instanceof CTabFolder) {
+				CTabItem selection = ((CTabFolder) parent).getSelection();
+				return stripMnemonic(selection.getText());
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
+	
+	private String stripMnemonic(String name) {
+		int loc = name.indexOf('&');
+		if (loc!= -1)
+			return name.substring(0, loc)+name.substring(loc+1);
+		return name;
+	}
+
 	private String createContextHelp(IContextProvider provider, Control c) {
-		if (provider==null) return createContextHelp(c);
+		if (provider == null)
+			return createContextHelp(c);
 		lastContext = provider.getContext(c);
 		if (lastContext != null) {
 			return formatHelpContext(lastContext);
@@ -270,7 +332,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	private String createContextHelp(Control page) {
 		String text = null;
-		lastContext = null;		
+		lastContext = null;
 		if (page != null) {
 			if (page != null /* && page.isVisible() */&& !page.isDisposed()) {
 				IContext helpContext = findHelpContext(page);
@@ -307,21 +369,22 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		sbuf.append("</p>"); //$NON-NLS-1$
 		IHelpResource[] links = context.getRelatedTopics();
 		IContext2 context2 = null;
-		if (links!=null && context instanceof IContext2) {
-			context2 = (IContext2)context;
+		if (links != null && context instanceof IContext2) {
+			context2 = (IContext2) context;
 			ContextHelpSorter sorter = new ContextHelpSorter(context2);
 			sorter.sort(null, links);
 		}
 		if (links != null && links.length > 0) {
 			String category = null;
-			if (context2==null)
+			if (context2 == null)
 				addCategory(sbuf, null);
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
-				if (context2!=null) {
+				if (context2 != null) {
 					String cat = context2.getCategory(link);
-					if (cat==null && category!=null || cat!=null&&category==null||
-							cat!=null&&category!=null &&!cat.equals(category)) {
+					if (cat == null && category != null || cat != null
+							&& category == null || cat != null
+							&& category != null && !cat.equals(category)) {
 						addCategory(sbuf, cat);
 					}
 					category = cat;
@@ -332,11 +395,11 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
 				String tcat = getTopicCategory(link.getHref(), locale);
-				if (tcat!=null) {
+				if (tcat != null) {
 					sbuf.append("\" alt=\""); //$NON-NLS-1$
 					sbuf.append(tcat);
 				}
-				sbuf.append("\">");	//$NON-NLS-1$	 		
+				sbuf.append("\">"); //$NON-NLS-1$	 		
 				sbuf.append(parent.escapeSpecialChars(link.getLabel()));
 				sbuf.append("</a>"); //$NON-NLS-1$
 				sbuf.append("</li>"); //$NON-NLS-1$
@@ -345,9 +408,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		sbuf.append("</form>"); //$NON-NLS-1$
 		return sbuf.toString();
 	}
-	
+
 	private void addCategory(StringBuffer sbuf, String category) {
-		if (category==null)
+		if (category == null)
 			category = Messages.ContextHelpPart_seeAlso;
 		sbuf.append("<p><span color=\""); //$NON-NLS-1$
 		sbuf.append(FormColors.TITLE);
@@ -380,7 +443,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		} else {
 			styledText = context.getText();
 		}
-		if (styledText==null)
+		if (styledText == null)
 			return ""; //$NON-NLS-1$
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -391,17 +454,19 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		if (input instanceof ContextHelpProviderInput) {
 			ContextHelpProviderInput chinput = (ContextHelpProviderInput) input;
-			if (chinput.getContext()!=null)
-				handleActivation(chinput.getContext(), chinput.getControl(), chinput.getPart());
+			if (chinput.getContext() != null)
+				handleActivation(chinput.getContext(), chinput.getControl(),
+						chinput.getPart());
 			else
-				handleActivation(chinput.getProvider(), chinput.getControl(), chinput.getPart());
+				handleActivation(chinput.getProvider(), chinput.getControl(),
+						chinput.getPart());
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void setFocus() {
-		if (text!=null)
+		if (text != null)
 			text.setFocus();
 	}
 
@@ -422,7 +487,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean hasFocusControl(Control control) {
 		return text.equals(control);
 	}
-	
+
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
@@ -440,6 +505,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	public void saveState(IMemento memento) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
