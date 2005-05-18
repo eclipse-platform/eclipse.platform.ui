@@ -10,26 +10,47 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.widgets.ScrolledFormText;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.model.DiscoveryFolder;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.update.internal.ui.model.SiteCategory;
+import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.operations.IUpdateModelChangedListener;
+import org.eclipse.update.search.EnvironmentFilter;
+import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.UpdateSearchScope;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 
@@ -543,5 +564,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			bookmarks.length,
 			sitesToVisit.length);
 		return all;
+	}
+
+	public boolean isPageComplete() {
+		return treeViewer.getCheckedElements().length != 0;
 	}
 }

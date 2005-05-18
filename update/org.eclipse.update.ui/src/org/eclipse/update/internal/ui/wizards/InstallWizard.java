@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -19,7 +20,9 @@ import org.eclipse.update.internal.search.SiteSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.BackLevelFilter;
+import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.UpdateSearchScope;
 import org.eclipse.update.ui.UpdateJob;
 
 public class InstallWizard
@@ -78,6 +81,7 @@ public class InstallWizard
 	}
 
 	public IWizardPage getNextPage(IWizardPage page) {
+
 		if (modePage != null && page.equals(modePage)) {
 			boolean update = modePage.isUpdateMode();
 			if (!update)
@@ -101,6 +105,7 @@ public class InstallWizard
      * @see Wizard#performFinish()
      */
     public boolean performFinish() {
+
         saveSettings();
         
         if (Platform.getJobManager().find(UpdateJob.family).length > 0) {
@@ -141,10 +146,12 @@ public class InstallWizard
 	}
 
     public boolean canFinish() {
-        if (isUpdate())
-            return true;
-        else
-            return super.canFinish();
+    	      
+    	if ( modePage.isCurrentPage()) {
+            return isUpdate();
+    	} else {
+            return sitePage.isPageComplete();
+    	}   	
     }
     
     private boolean isUpdate() {

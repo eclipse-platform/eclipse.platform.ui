@@ -10,17 +10,22 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.UpdateSearchRequest;
 
 /**
  */
@@ -127,5 +132,19 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	public boolean isUpdateMode() {
 		return updateMode;
 	}
+
+	public boolean isPageComplete() {
+		return updateMode && super.isPageComplete();
+	}
+
+	protected boolean isCurrentPage() {
+		return super.isCurrentPage();
+	}
+
+	public boolean canFlipToNextPage() {
+		return !updateMode;
+	}
+	
+	
     
 }
