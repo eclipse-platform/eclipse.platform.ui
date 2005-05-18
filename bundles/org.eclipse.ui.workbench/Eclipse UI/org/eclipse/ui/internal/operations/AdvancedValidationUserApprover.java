@@ -250,15 +250,15 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 				else
 					title = WorkbenchMessages.Operations_undoWarning;
 			} else {
-				warning = WorkbenchMessages.Operations_proceedWithNonOKUndoStatus;
+				warning = WorkbenchMessages.Operations_proceedWithNonOKRedoStatus;
 				if (status.getSeverity() == IStatus.INFO)
 					title = WorkbenchMessages.Operations_redoInfo;
 				else
 					title = WorkbenchMessages.Operations_redoWarning;
 			}
 
-			String message = NLS.bind(warning, status.getMessage(), operation
-					.getLabel());
+			String message = NLS.bind(warning, new Object [] {title, status.getMessage(), operation
+					.getLabel()});
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
