@@ -170,6 +170,9 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	public void saveState(IMemento memento) {
 		// TODO Auto-generated method stub
-		
+	}
+	public void setFocus() {
+		if (contextHelpPart!=null)
+			contextHelpPart.setFocus();
 	}
 }

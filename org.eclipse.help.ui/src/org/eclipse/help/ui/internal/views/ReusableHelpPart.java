@@ -496,8 +496,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		public void setFocus() {
 			// set focus on the control that had
 			// focus when this page was active
-			if (focusControl != null)
-				focusControl.setFocus();
+			if (focusControl != null && focusControl.setFocus())
+				return;
 			if (partRecs.size() == 0)
 				return;
 			PartRec rec = (PartRec) partRecs.get(0);

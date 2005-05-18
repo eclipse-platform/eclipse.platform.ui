@@ -205,4 +205,9 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 
 	public void saveState(IMemento memento) {
 	}	
+	
+	public void setFocus() {
+		if (linkContainer!=null)
+			linkContainer.setFocus();
+	}
 }

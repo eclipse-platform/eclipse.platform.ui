@@ -170,6 +170,11 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		super.dispose();
 	}
 	
+	public void setFocus() {
+		if (searchResults!=null)
+			searchResults.setFocus();
+	}
+	
 	public void stop () {
 		if (runningJob!=null) {
 			runningJob.cancel();

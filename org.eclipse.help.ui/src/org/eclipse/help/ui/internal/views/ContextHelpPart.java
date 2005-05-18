@@ -399,6 +399,11 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return false;
 	}
+	
+	public void setFocus() {
+		if (text!=null)
+			text.setFocus();
+	}
 
 	/*
 	 * (non-Javadoc)

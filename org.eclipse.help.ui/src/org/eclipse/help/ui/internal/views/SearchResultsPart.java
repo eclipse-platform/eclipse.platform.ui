@@ -200,7 +200,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
 	}
-
+	
 	void clearResults() {
 		clearResultSections();
 		separator.setVisible(false);
