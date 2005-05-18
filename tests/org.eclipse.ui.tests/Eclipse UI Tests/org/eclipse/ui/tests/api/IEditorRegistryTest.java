@@ -279,7 +279,7 @@ public class IEditorRegistryTest extends TestCase {
 		IContentType contentType = Platform.getContentTypeManager().getContentType("org.eclipse.ui.tests.content-type1");
 		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type1.blah", contentType);
 		assertNotNull(descriptor);
-		assertEquals("org.eclipse.ui.tests.contentType1Editor", descriptor.getId());
+		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
 	}
 	
 	/**
@@ -289,7 +289,7 @@ public class IEditorRegistryTest extends TestCase {
 		IContentType contentType = Platform.getContentTypeManager().getContentType("org.eclipse.ui.tests.content-type1");
 		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type1", contentType);
 		assertNotNull(descriptor);
-		assertEquals("org.eclipse.ui.tests.contentType1Editor", descriptor.getId());
+		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
 	}
 
 	/**
