@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger;
 public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements IDebugBuildLogger {
 	
 	private ServerSocket fServerSocket;
+	private static final int fgServerSocketTimeout= 5000;
 	private Socket fRequestSocket;
 	
 	private PrintWriter fRequestWriter;
@@ -121,6 +123,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 		
 		try{
+			fServerSocket.setSoTimeout(fgServerSocketTimeout);
 			fRequestSocket= fServerSocket.accept();
 			fRequestWriter= new PrintWriter(fRequestSocket.getOutputStream(), true);
 			fRequestReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
@@ -129,11 +132,10 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			readerThread.setDaemon(true);
 			readerThread.start();
 			return;
-		} catch(IOException e){
+		} catch(SocketTimeoutException e){
+		} catch(IOException e) {
 		}
-		
 		shutDown();
-		//throw new BUildExection()
 	}
 	
 	/* (non-Javadoc)

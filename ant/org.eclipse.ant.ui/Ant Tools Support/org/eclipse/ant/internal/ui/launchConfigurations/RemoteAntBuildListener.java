@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +57,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * The server socket
      */
     private ServerSocket fServerSocket;
+    private static final int fgServerSocketTimeout= 5000;
     private Socket fSocket;
     private int fPort= -1;
     private BufferedReader fBufferedReader;
@@ -87,6 +89,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                     System.out.println("Creating server socket " + fServerPort); //$NON-NLS-1$
                 }
                 fServerSocket= new ServerSocket(fServerPort);
+                fServerSocket.setSoTimeout(fgServerSocketTimeout);
                 fSocket= fServerSocket.accept();            
                 if (fDebug) {
                     System.out.println("Connection"); //$NON-NLS-1$
@@ -97,6 +100,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                     receiveMessage(message);
                 }
             } catch (SocketException e) {
+            } catch (SocketTimeoutException e) {	
             } catch (IOException e) {
                 // fall through
             }
