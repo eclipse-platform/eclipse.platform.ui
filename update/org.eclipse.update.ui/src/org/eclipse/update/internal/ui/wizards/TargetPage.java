@@ -150,7 +150,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
         label.setLayoutData(gd);
 
 		installLocation = new Label(client, SWT.NULL);
-        installLocation.setText("foo");
+        installLocation.setText("foo"); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         installLocation.setLayoutData(gd);
         

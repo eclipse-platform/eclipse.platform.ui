@@ -831,7 +831,6 @@ public class ReviewPage	extends BannerPage {
 	
 	private void pageChanged() {
 		Object[] checked = getSelectedJobs();
-		int totalCount = jobs.size();
 		updateItemCount();
 		if (checked.length > 0) {
 			validateSelection();

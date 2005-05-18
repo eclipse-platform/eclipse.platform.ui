@@ -87,7 +87,7 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 		desc.setText("", false, false); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 		desc.setLayoutData(td);
-		taskList = toolkit.createFormText(form.getBody(), true);
+		taskList = toolkit.createFormText(form.getBody(), false);
 		taskList.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		taskList.addHyperlinkListener(taskAction); //$NON-NLS-1$
 		taskList.setText("", false, false); //$NON-NLS-1$

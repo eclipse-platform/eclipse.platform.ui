@@ -74,7 +74,7 @@ public class FeatureGeneralPropertyPage
 		addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_provider, feature.getProvider()); 
 		long size = feature.getInstallSize();
 		if (size != ContentEntryModel.UNKNOWN_SIZE)
-			addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_size, new Long(size).toString() + " " + UpdateUIMessages.FeatureGeneralPropertyPage_Kilobytes); 
+			addField(composite, UpdateUIMessages.FeatureGeneralPropertyPage_size, new Long(size).toString() + " " + UpdateUIMessages.FeatureGeneralPropertyPage_Kilobytes);  //$NON-NLS-1$
 
 	}
 	
@@ -140,6 +140,6 @@ public class FeatureGeneralPropertyPage
 	}
 	
 	private String getEscapedString(String value) {
-		return value.replaceAll("&", "&&");
+		return value.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
