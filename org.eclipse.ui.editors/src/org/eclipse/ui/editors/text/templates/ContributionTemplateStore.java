@@ -234,7 +234,7 @@ public class ContributionTemplateStore extends TemplateStore {
 						if (autoInsert == null)
 							bAutoInsert= true;
 						else
-							bAutoInsert= Boolean.parseBoolean(autoInsert);
+							bAutoInsert= Boolean.valueOf(autoInsert).booleanValue();
 						
 						Template template= new Template(name, desc, contextTypeId, pattern, bAutoInsert);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
