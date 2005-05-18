@@ -212,7 +212,8 @@ public class JobManager implements IJobManager {
 		}
 		//call monitor outside sync block
 		if (monitor != null) {
-			monitor.setCanceled(true);
+			if (!monitor.isCanceled())
+				monitor.setCanceled(true);
 			return false;
 		}
 		//only notify listeners if the job was waiting or sleeping
@@ -992,7 +993,7 @@ public class JobManager implements IJobManager {
 
 	/**
 	 * Returns the estimated time in milliseconds before the next job is scheduled
-	 * to wake up. The result may be negative.  Returns JobManager.NEVER if
+	 * to wake up. The result may be negative.  Returns InternalJob.T_INFINITE if
 	 * there are no sleeping or waiting jobs.
 	 */
 	protected long sleepHint() {
