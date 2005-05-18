@@ -146,7 +146,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.FocusOut, focusFilter);
 		container.setLayout(layout);
 		// Search Expression
-		searchWordText = toolkit.createFormText(container, true);
+		searchWordText = toolkit.createFormText(container, false);
 		searchWordChevron = new Chevron(searchWordText, SWT.NULL);
 		toolkit.adapt(searchWordChevron, true, true);
 		searchWordChevron.setHoverDecorationColor(toolkit.getHyperlinkGroup()

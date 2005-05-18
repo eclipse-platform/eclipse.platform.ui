@@ -128,7 +128,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		section.setTextClient(clearLink);
 		*/		
 		resultSorter = new SorterByScore();
-		searchResults = toolkit.createFormText(section, true);
+		searchResults = toolkit.createFormText(section, false);
 		section.setClient(searchResults);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));

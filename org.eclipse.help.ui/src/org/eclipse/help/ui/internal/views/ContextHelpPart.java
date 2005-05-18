@@ -67,7 +67,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		layout.leftMargin = layout.rightMargin = 0;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		text = toolkit.createFormText(container, true);
+		text = toolkit.createFormText(container, false);
 		text.setWhitespaceNormalized(false);
 		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
