@@ -1647,8 +1647,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 			} catch (CoreException e) {
-				//don't fail entire open if refresh failed, just report as minor warning
+				//don't fail entire open if refresh failed, just report as warning
 				return e.getStatus();
+			} catch (RuntimeException e) {
+				//don't fail entire open if refresh failed, just report as warning
+				return new ResourceStatus(IResourceStatus.INTERNAL_ERROR, Path.ROOT, Messages.resources_errorMultiRefresh, e);
 			}
 		}
 		//finally register a string pool participant

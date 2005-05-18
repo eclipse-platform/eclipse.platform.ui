@@ -184,7 +184,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		boolean existsInWorkspace = node.existsInWorkspace();
 		if (!existsInWorkspace) {
 			if (!CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
-				// do we have any alphabetic variants on the workspace?
+				// do we have any alphabetic variants in the workspace?
 				IResource variant = target.findExistingResourceVariant(target.getFullPath());
 				if (variant != null)
 					return RL_UNKNOWN;
@@ -207,16 +207,14 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 			}
 		} else {
 			if (node.existsInFileSystem()) {
-				if (!CoreFileSystemLibrary.isCaseSensitive()) {
-					Container parent = (Container) target.getParent();
-					if (!parent.exists()) {
-						refresh(parent);
-						if (!parent.exists())
-							return RL_NOT_IN_SYNC;
-					}
-					if (!target.getName().equals(node.getLocalName()))
-						return RL_IN_SYNC;
+				Container parent = (Container) target.getParent();
+				if (!parent.exists()) {
+					refresh(parent);
+					if (!parent.exists())
+						return RL_NOT_IN_SYNC;
 				}
+				if (!target.getName().equals(node.getLocalName()))
+					return RL_IN_SYNC;
 				createResource(node, target);
 				resourceChanged = true;
 				return RL_NOT_IN_SYNC;
