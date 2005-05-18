@@ -49,7 +49,10 @@ public class FormUtil {
 	public static final String DEBUG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 
 	public static final String DEBUG_TEXT = DEBUG + "/text"; //$NON-NLS-1$
+
 	public static final String DEBUG_FOCUS = DEBUG + "/focus"; //$NON-NLS-1$
+
+	public static final String FOCUS_SCROLLING = "focusScrolling"; //$NON-NLS-1$
 
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {
@@ -203,7 +206,9 @@ public class FormUtil {
 	public static void ensureVisible(Control c) {
 		ScrolledComposite scomp = getScrolledComposite(c);
 		if (scomp != null) {
-			FormUtil.ensureVisible(scomp, c);
+			Object data = scomp.getData(FOCUS_SCROLLING);
+			if (data == null || !data.equals(Boolean.FALSE))
+				FormUtil.ensureVisible(scomp, c);
 		}
 	}
 
@@ -231,8 +236,8 @@ public class FormUtil {
 		// horizontal left - make sure the left edge of
 		// the control is showing
 		if (controlOrigin.x < x) {
-			if (controlSize.x< area.width)
-				x = controlOrigin.x+controlSize.x-area.width;
+			if (controlSize.x < area.width)
+				x = controlOrigin.x + controlSize.x - area.width;
 			else
 				x = controlOrigin.x;
 		}
@@ -245,8 +250,8 @@ public class FormUtil {
 		// vertical top - make sure the top of
 		// the control is showing
 		if (controlOrigin.y < y) {
-			if (controlSize.y< area.height)
-				y = controlOrigin.y+controlSize.y-area.height;
+			if (controlSize.y < area.height)
+				y = controlOrigin.y + controlSize.y - area.height;
 			else
 				y = controlOrigin.y;
 		}
@@ -356,11 +361,11 @@ public class FormUtil {
 				return;
 			switch (keyCode) {
 			case SWT.ARROW_DOWN:
-				if (scomp.getData("novarrows")==null) //$NON-NLS-1$
+				if (scomp.getData("novarrows") == null) //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, false);
 				break;
 			case SWT.ARROW_UP:
-				if (scomp.getData("novarrows")==null) //$NON-NLS-1$
+				if (scomp.getData("novarrows") == null) //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, true);
 				break;
 			case SWT.ARROW_LEFT:
@@ -460,20 +465,26 @@ public class FormUtil {
 		}
 		return new Font(display, fontDatas);
 	}
-	public static boolean mnemonicMatch (String text, char key) {
-		char mnemonic = findMnemonic (text);
-		if (mnemonic == '\0') return false;
-		return Character.toUpperCase (key) == Character.toUpperCase (mnemonic);
+
+	public static boolean mnemonicMatch(String text, char key) {
+		char mnemonic = findMnemonic(text);
+		if (mnemonic == '\0')
+			return false;
+		return Character.toUpperCase(key) == Character.toUpperCase(mnemonic);
 	}
-	private static char findMnemonic (String string) {
+
+	private static char findMnemonic(String string) {
 		int index = 0;
-		int length = string.length ();
+		int length = string.length();
 		do {
-			while (index < length && string.charAt (index) != '&') index++;
-			if (++index >= length) return '\0';
-			if (string.charAt (index) != '&') return string.charAt (index);
+			while (index < length && string.charAt(index) != '&')
+				index++;
+			if (++index >= length)
+				return '\0';
+			if (string.charAt(index) != '&')
+				return string.charAt(index);
 			index++;
 		} while (index < length);
-	 	return '\0';
+		return '\0';
 	}
 }

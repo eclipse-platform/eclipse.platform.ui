@@ -34,7 +34,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	private static final int H_SCROLL_INCREMENT = 5;
 
 	private static final int V_SCROLL_INCREMENT = 64;
-
+	
 	private boolean ignoreLayouts = true;
 
 	private boolean ignoreResizes = false;
@@ -48,7 +48,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	private boolean reflowPending = false;
 
 	private boolean delayedReflow = true;
-
+	
 	/**
 	 * Creates the new instance.
 	 * 
@@ -119,9 +119,14 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 * If content is set, transfers focus to the content.
 	 */
 	public boolean setFocus() {
+		boolean result;
+		setData(FormUtil.FOCUS_SCROLLING, Boolean.FALSE);
 		if (getContent() != null)
-			return getContent().setFocus();
-		return super.setFocus();
+			result = getContent().setFocus();
+		else
+			result = super.setFocus();
+		setData(FormUtil.FOCUS_SCROLLING, null);
+		return result;
 	}
 
 	/*

@@ -168,6 +168,17 @@ public class FormView extends ViewPart {
 	 * Passing the focus request to the form.
 	 */
 	public void setFocus() {
+		Control focusControl = form.getDisplay().getFocusControl();
+		if (focusControl!=null) {
+			Composite parent = focusControl.getParent();
+			while (parent!=null) {
+				if (parent==form) {
+					// already have focus
+					return;
+				}
+				parent = parent.getParent();
+			}
+		}
 		form.setFocus();
 	}
 	/**

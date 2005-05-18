@@ -114,7 +114,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		
 		createSpacer(toolkit, client, 2);
 		
-		FormText rtext = toolkit.createFormText(parent, true);
+		FormText rtext = toolkit.createFormText(parent, false);
 		rtext.setText(RTEXT_DATA, true, false);
 		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;

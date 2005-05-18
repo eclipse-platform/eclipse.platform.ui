@@ -52,7 +52,7 @@ public class SecondPage extends FormPage {
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
 			toolkit.getColors().getColor(FormColors.SEPARATOR));
-		FormText description = toolkit.createFormText(section, true);
+		FormText description = toolkit.createFormText(section, false);
 		description.setText("<form><p>This description has <b>bold</b> text.</p></form>", true, false);
 		section.setDescriptionControl(description);
 		Composite client = toolkit.createComposite(section, SWT.WRAP);

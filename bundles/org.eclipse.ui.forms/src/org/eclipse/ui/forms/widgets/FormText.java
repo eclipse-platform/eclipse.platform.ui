@@ -132,11 +132,11 @@ public final class FormText extends Canvas {
 	 */
 	public int marginHeight = 1;
 
+	// private fields
 	private static final boolean DEBUG_TEXT = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$//$NON-NLS-2$
 
 	private static final boolean DEBUG_FOCUS = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_FOCUS)); //$NON-NLS-1$//$NON-NLS-2$		
 
-	// private fields
 	private boolean hasFocus;
 
 	private boolean paragraphsSeparated = true;
@@ -788,6 +788,7 @@ public final class FormText extends Canvas {
 		}
 		return false;
 	}
+
 	/**
 	 * Controls whether whitespace inside paragraph and list items is
 	 * normalized. Note that the new value will not affect the current text in
@@ -1461,15 +1462,6 @@ public final class FormText extends Canvas {
 		}
 		if (!isDisposed() && model.linkExists(link)) {
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
-			// IHyperlinkSegment selectedLink = model.getSelectedLink();
-			// if (selectedLink!=link) {
-			// if (selectedLink != null)
-			// exitLink(selectedLink, SWT.NULL);
-			// model.selectLink(link);
-			// enterLink(link, SWT.NULL);
-			// paintFocusTransfer(selectedLink, link);
-
-			// }
 		}
 	}
 
@@ -1543,14 +1535,7 @@ public final class FormText extends Canvas {
 		}
 		gc.dispose();
 	}
-/*
-	private void contributeLinkActions(IMenuManager manager,
-			IHyperlinkSegment link) {
-		manager.add(openAction);
-		manager.add(copyShortcutAction);
-		manager.add(new Separator());
-	}
-*/
+
 	private void ensureVisible(IFocusSelectable segment) {
 		if (mouseFocus) {
 			mouseFocus = false;
@@ -1618,8 +1603,23 @@ public final class FormText extends Canvas {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
+	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		redraw();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setFocus()
+	 */
+	public boolean setFocus() {
+		mouseFocus = true;
+		boolean result = super.setFocus();
+		mouseFocus = false;
+		return result;
 	}
 }
