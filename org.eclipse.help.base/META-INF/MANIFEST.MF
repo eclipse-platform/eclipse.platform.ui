@@ -7,14 +7,14 @@ Bundle-Activator: org.eclipse.help.internal.base.HelpBasePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.browser,
- org.eclipse.help.internal.base,
- org.eclipse.help.internal.base.util,
- org.eclipse.help.internal.browser,
- org.eclipse.help.internal.browser.macosx,
- org.eclipse.help.internal.search,
- org.eclipse.help.internal.search.federated,
- org.eclipse.help.internal.standalone,
- org.eclipse.help.internal.workingset,
+ org.eclipse.help.internal.base;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.base.util;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.browser;x-friends:="org.eclipse.help.ui",
+ org.eclipse.help.internal.browser.macosx;x-internal:=true,
+ org.eclipse.help.internal.search;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.search.federated;x-friends:="org.eclipse.help.ui",
+ org.eclipse.help.internal.standalone;x-internal:=true,
+ org.eclipse.help.internal.workingset;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp",
  org.eclipse.help.search,
  org.eclipse.help.standalone
 Require-Bundle: org.apache.lucene,

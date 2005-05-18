@@ -7,11 +7,11 @@ Bundle-Activator: org.eclipse.help.internal.HelpPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help,
- org.eclipse.help.internal,
- org.eclipse.help.internal.context,
- org.eclipse.help.internal.model,
- org.eclipse.help.internal.protocols,
- org.eclipse.help.internal.toc,
- org.eclipse.help.internal.util
+ org.eclipse.help.internal;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.context;x-friends:="org.eclipse.help.base,org.eclipse.help.ui",
+ org.eclipse.help.internal.model;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.protocols;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.toc;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp",
+ org.eclipse.help.internal.util;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp"
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-AutoStart: true
