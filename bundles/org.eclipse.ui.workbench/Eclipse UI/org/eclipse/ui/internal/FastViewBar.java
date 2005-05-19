@@ -987,8 +987,12 @@ public class FastViewBar implements IWindowTrim {
         Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
         result.height = size.y;
         result.width = size.x;
-
+        
         boolean horizontal = Geometry.isHorizontal(getSide());
+        if (control.getItemCount() == 0) {
+        	Geometry.setDimension(result, horizontal, 0);
+        }
+        
         int hoverSide = horizontal ? SWT.RIGHT : SWT.BOTTOM;
 
         result = Geometry.getExtrudedEdge(result, -Geometry.getDimension(
