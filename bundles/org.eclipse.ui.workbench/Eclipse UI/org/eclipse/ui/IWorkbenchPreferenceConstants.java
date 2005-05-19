@@ -325,8 +325,7 @@ public interface IWorkbenchPreferenceConstants {
     public static final String EDITOR_MINIMUM_CHARACTERS = "EDITOR_MINIMUM_CHARACTERS"; //$NON-NLS-1$
 
 	/**
-	 * <p> Stores whether or not system jobs are being
-	 * shown</p>.
+	 * Stores whether or not system jobs are being shown.
      * 
      * @since 3.1
 	 */
@@ -348,8 +347,7 @@ public interface IWorkbenchPreferenceConstants {
     public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
     
     /**
-     * <p> Stores whether or not to show progress while starting the workbench
-     * </p>
+     * Stores whether or not to show progress while starting the workbench.
      * 
      * @since 3.1
      */
