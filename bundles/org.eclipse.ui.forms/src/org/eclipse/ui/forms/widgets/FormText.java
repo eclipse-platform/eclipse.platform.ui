@@ -1617,8 +1617,10 @@ public final class FormText extends Canvas {
 	 */
 	public boolean setFocus() {
 		mouseFocus = true;
+		FormUtil.setFocusScrollingEnabled(this, false);
 		boolean result = super.setFocus();
 		mouseFocus = false;
+		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
 	}
 }

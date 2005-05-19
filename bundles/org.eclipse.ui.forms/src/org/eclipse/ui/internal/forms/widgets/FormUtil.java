@@ -487,4 +487,15 @@ public class FormUtil {
 		} while (index < length);
 		return '\0';
 	}
+	
+	public static void setFocusScrollingEnabled(Control c, boolean enabled) {
+		ScrolledComposite scomp = null;
+		
+		if (c instanceof ScrolledComposite)
+			scomp = (ScrolledComposite)c;
+		else
+			scomp = getScrolledComposite(c);
+		if (scomp!=null)
+			scomp.setData(FormUtil.FOCUS_SCROLLING, enabled?null:Boolean.FALSE);
+	}
 }

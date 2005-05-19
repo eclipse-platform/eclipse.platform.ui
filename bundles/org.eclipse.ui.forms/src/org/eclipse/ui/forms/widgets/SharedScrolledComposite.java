@@ -120,12 +120,12 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 */
 	public boolean setFocus() {
 		boolean result;
-		setData(FormUtil.FOCUS_SCROLLING, Boolean.FALSE);
+		FormUtil.setFocusScrollingEnabled(this, false);
 		if (getContent() != null)
 			result = getContent().setFocus();
 		else
 			result = super.setFocus();
-		setData(FormUtil.FOCUS_SCROLLING, null);
+		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
 	}
 
