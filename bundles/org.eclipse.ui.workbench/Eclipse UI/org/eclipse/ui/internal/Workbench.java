@@ -1407,6 +1407,11 @@ public final class Workbench implements IWorkbench {
 		SynchronousBundleListener bundleListener = new SynchronousBundleListener() {
 
 			public void bundleChanged(final BundleEvent event) {
+                // Don't report progress unless we're running in the ui thread
+                if (Display.getCurrent() == null) {
+                    return;
+                }
+                
                 if (event.getType() == BundleEvent.STARTED) {
                 	progressCount++;
                 	IProgressMonitor progressMonitor = progressMonitorDialog.getProgressMonitor();
