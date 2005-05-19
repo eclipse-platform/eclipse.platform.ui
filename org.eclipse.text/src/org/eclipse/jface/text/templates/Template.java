@@ -72,6 +72,7 @@ public class Template {
 	 * @param contextTypeId the id of the context type in which the template can be applied
 	 * @param pattern the template pattern
 	 * @param isAutoInsertable the auto insertable property of the template
+	 * @since 3.1
 	 */
 	public Template(String name, String description, String contextTypeId, String pattern, boolean isAutoInsertable) {
 		Assert.isNotNull(description);
