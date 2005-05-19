@@ -752,10 +752,9 @@ public final class FormText extends Canvas {
 				controlFocusTransfer = false;
 				model.select(segment);
 				return advance(next);
-			} else {
-				// nowhere to go
-				return setFocusToNextSibling(this, next);
 			}
+			// nowhere to go
+			return setFocusToNextSibling(this, next);
 		}
 		if (setFocusToNextSibling(c, next))
 			return true;
