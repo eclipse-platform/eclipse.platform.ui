@@ -339,7 +339,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		fCustomizeButton= createActionButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
+		fCustomizeButton= createButton(composite, CUSTOMIZE_ID, SearchMessages.SearchDialog_customize, true); 
 		
 		Label filler= new Label(composite, SWT.NONE);
 		filler.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
