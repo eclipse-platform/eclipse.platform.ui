@@ -27,7 +27,7 @@ package org.eclipse.jface.text;
  * a document provides the <code>replace</code> method which substitutes a given
  * string for a specified text range in the document. On each document change, all
  * registered document listeners are informed exactly once.
- *
+ * <p>
  * Positions are stickers to the document's text that are updated when the
  * document is changed. Positions are updated by {@link org.eclipse.jface.text.IPositionUpdater}s. Position
  * updaters are managed as a list. The list defines the sequence in which position
@@ -36,8 +36,8 @@ package org.eclipse.jface.text;
  * the document defines the order of position in a category based on the position's offset
  * based on the implementation of the method <code>computeIndexInCategory</code>.
  * Each document must support a default position category whose name is specified by this
- * interface.<p>
- *
+ * interface.</p>
+ * <p>
  * A document can be considered consisting of a sequence of not overlapping partitions.
  * A partition is defined by its offset, its length, and its type. Partitions are
  * updated on every document manipulation and ensured to be up-to-date when the document
@@ -49,13 +49,17 @@ package org.eclipse.jface.text;
  * informed exactly once. The extension interface {@link org.eclipse.jface.text.IDocumentExtension3}
  * introduced in version 3.0 extends the concept of partitions and allows a document to
  * not only manage one but multiple partitioning. Each partitioning has an id which must
- * be used to refer to a particular partitioning.<p>
- *
+ * be used to refer to a particular partitioning.</p>
+ * <p>
  * An <code>IDocument</code> provides methods to map line numbers and character
  * positions onto each other based on the document's line delimiters. When moving text
  * between documents using different line delimiters, the text must be converted to
- * use the target document's line delimiters.<p>
- *
+ * use the target document's line delimiters.</p>
+ * <p>
+ * An <code>IDocument</code> does not care about mixed line delimiters. Clients who
+ * who want to ensure a single line delimiter in their document should use the line
+ * delimiter returned by {@link org.eclipse.jface.text.TextUtilities#getDefaultLineDelimiter(IDocument)}.</p>
+ * <p>
  * <code>IDocument</code> throws <code>BadLocationException</code> if the parameters of
  * queries or manipulation requests are not inside the bounds of the document. The purpose
  * of this style of exception handling is
@@ -63,11 +67,11 @@ package org.eclipse.jface.text;
  * <li> prepare document for multi-thread access
  * <li> allow clients to implement backtracking recovery methods
  * <li> prevent clients from up-front contract checking when dealing with documents.
- * </ul>
- *
+ * </ul></p>
+ * <p>
  * A document support for searching has deprecated since version 3.0. The recommended way
- * for searching is to use a {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}.<p>
- *
+ * for searching is to use a {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}.</p>
+ * <p>
  * In order to provide backward compatibility for clients of <code>IDocument</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
@@ -82,15 +86,17 @@ package org.eclipse.jface.text;
  *      length partitions in conjunction with the distinction between open and closed partitions. </li>
  * <li> {@link org.eclipse.jface.text.IDocumentExtension4} since version 3.1 introducing the
  *      concept of rewrite sessions. A rewrite session is a sequence of document replace operations
- *      that form a semantic unit.</li>
- * </ul>
- *
+ *      that form a semantic unit. It also introduces a modification stamp and the ability to
+ *      set the initial line delimiter and to query the default line delimiter.</li>
+ * </ul></p>
+ * <p>
  * Clients may implement this interface and its extension interfaces or use the default
- * implementation provided by <code>AbstractDocument</code> and <code>Document</code>.
- *
+ * implementation provided by <code>AbstractDocument</code> and <code>Document</code>.</p>
+ * 
  * @see org.eclipse.jface.text.IDocumentExtension
  * @see org.eclipse.jface.text.IDocumentExtension2
  * @see org.eclipse.jface.text.IDocumentExtension3
+ * @see org.eclipse.jface.text.IDocumentExtension4
  * @see org.eclipse.jface.text.Position
  * @see org.eclipse.jface.text.IPositionUpdater
  * @see org.eclipse.jface.text.IDocumentPartitioner

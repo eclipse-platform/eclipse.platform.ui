@@ -21,12 +21,14 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextStore;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -194,7 +196,17 @@ public class ProjectionDocument extends AbstractDocument {
 	public IDocument getMasterDocument() {
 		return fMasterDocument;
 	}
-
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#getDefaultLineDelimiter()
+	 * @since 3.1
+	 */
+	public String getDefaultLineDelimiter() {
+		if (fMasterDocument instanceof IDocumentExtension4)
+			return ((IDocumentExtension4)fMasterDocument).getDefaultLineDelimiter();
+		return TextUtilities.getDefaultLineDelimiter(this);
+	}
+	
 	/**
 	 * Initializes the projection document from the master document based on
 	 * the master's fragments.

@@ -155,6 +155,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.1
 	 */
 	private long fModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+	/**
+	 * This document's default line delimiter.
+	 * @since 3.1
+	 */
+	private String fInitialLineDelimiter;
 
 
 	/**
@@ -802,6 +807,51 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public String[] getLegalLineDelimiters() {
 		return getTracker().getLegalLineDelimiters();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#getDefaultLineDelimiter()
+	 * @since 3.1
+	 */
+	public String getDefaultLineDelimiter() {
+		
+		String lineDelimiter= null;
+		
+		try {
+			lineDelimiter= getLineDelimiter(0);
+		} catch (BadLocationException x) {
+		}
+	
+		if (lineDelimiter != null)
+			return lineDelimiter;
+
+		if (fInitialLineDelimiter != null)
+			return fInitialLineDelimiter;
+
+		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+		String[] delimiters= getLegalLineDelimiters();
+		Assert.isTrue(delimiters.length > 0);
+		for (int i= 0; i < delimiters.length; i++) {
+			if (delimiters[i].equals(sysLineDelimiter)) {
+				lineDelimiter= sysLineDelimiter;
+				break;
+			}
+		}
+		
+		if (lineDelimiter == null)
+			lineDelimiter= delimiters[0];
+	
+		return lineDelimiter;
+		
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#setInitialLineDelimiter(java.lang.String)
+	 * @since 3.1
+	 */
+	public void setInitialLineDelimiter(String lineDelimiter) {
+		Assert.isNotNull(lineDelimiter);
+		fInitialLineDelimiter= lineDelimiter;
 	}
 
 	/*

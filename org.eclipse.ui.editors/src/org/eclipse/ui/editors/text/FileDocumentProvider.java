@@ -17,7 +17,6 @@ import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.widgets.Display;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,6 +29,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -40,6 +41,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
@@ -47,6 +49,7 @@ import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 import org.eclipse.jface.operation.IRunnableContext;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.IEditorInput;
@@ -678,6 +681,13 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				s= x.getStatus();
 				d= createEmptyDocument();
 			}
+			
+			// Set the initial line delimiter
+			if (d instanceof IDocumentExtension4) {
+				String initalLineDelimiter= getLineDelimiterPreference(input.getFile()); 
+				if (initalLineDelimiter != null)
+					((IDocumentExtension4)d).setInitialLineDelimiter(initalLineDelimiter);
+			}
 
 			IAnnotationModel m= createAnnotationModel(element);
 			FileSynchronizer f= new FileSynchronizer(input);
@@ -692,6 +702,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 
 		return super.createElementInfo(element);
+	}
+	
+	private String getLineDelimiterPreference(IFile file) {
+		IScopeContext[] scopeContext;
+		if (file != null && file.getProject() != null) {
+			// project preference
+			scopeContext= new IScopeContext[] { new ProjectScope(file.getProject()) };
+			String lineDelimiter= Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+			if (lineDelimiter != null)
+				return lineDelimiter;
+		}
+		// workspace preference
+		scopeContext= new IScopeContext[] { new InstanceScope() };
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
 	}
 
 	/*

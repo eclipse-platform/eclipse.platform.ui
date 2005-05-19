@@ -473,27 +473,31 @@ public class TextUtilities {
 	 */
 	public static String getDefaultLineDelimiter(IDocument document) {
 
+		if (document instanceof IDocumentExtension4) 
+			return ((IDocumentExtension4)document).getDefaultLineDelimiter();
+		
 		String lineDelimiter= null;
-
+			
 		try {
 			lineDelimiter= document.getLineDelimiter(0);
 		} catch (BadLocationException x) {
 		}
 
-		if (lineDelimiter == null) {
-			String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
-			String[] delimiters= document.getLegalLineDelimiters();
-			Assert.isTrue(delimiters.length > 0);
-			for (int i= 0; i < delimiters.length; i++) {
-				if (delimiters[i].equals(sysLineDelimiter)) {
-					lineDelimiter= sysLineDelimiter;
-					break;
-				}
+		if (lineDelimiter != null)
+			return lineDelimiter;
+		
+		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+		String[] delimiters= document.getLegalLineDelimiters();
+		Assert.isTrue(delimiters.length > 0);
+		for (int i= 0; i < delimiters.length; i++) {
+			if (delimiters[i].equals(sysLineDelimiter)) {
+				lineDelimiter= sysLineDelimiter;
+				break;
 			}
-
-			if (lineDelimiter == null)
-				lineDelimiter= delimiters[0];
 		}
+		
+		if (lineDelimiter == null)
+			lineDelimiter= delimiters[0];
 
 		return lineDelimiter;
 	}

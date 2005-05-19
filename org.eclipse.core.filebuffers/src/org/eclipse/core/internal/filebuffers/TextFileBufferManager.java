@@ -30,12 +30,15 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -53,6 +56,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 
@@ -238,6 +242,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			document= runnableResult[0];
 		else
 			document= new Document();
+		
+		// Set the initial line delimiter
+		if (document instanceof IDocumentExtension4) {
+			String initalLineDelimiter= getLineDelimiterPreference(location); 
+			if (initalLineDelimiter != null)
+				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
+		}
 
 		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
 		if (participants != null) {
@@ -548,5 +559,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	private IFile getWorkspaceFile(IFileBuffer fileBuffer) {
 		return FileBuffers.getWorkspaceFileAtLocation(fileBuffer.getLocation());
+	}
+	
+	private String getLineDelimiterPreference(IPath location) {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		IScopeContext[] scopeContext;
+		if (file != null && file.getProject() != null) {
+			// project preference
+			scopeContext= new IScopeContext[] { new ProjectScope(file.getProject()) };
+			String lineDelimiter= Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+			if (lineDelimiter != null)
+				return lineDelimiter;
+		}
+		// workspace preference
+		scopeContext= new IScopeContext[] { new InstanceScope() };
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
 	}
 }
