@@ -66,14 +66,18 @@ The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file.
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. 
+
+Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file.
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. 
+
+Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
                </documentation>
             </annotation>
          </attribute>
@@ -588,14 +592,18 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a CSS file which is applied to the page only when using the Web based presentation.
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. 
+
+Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation.
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. 
+
+Since 3.1, Styles can also be a comma separated list of styles. In this case, they will be added to the HTML HEAD element in the order in which they are listed in the style attribute.  
                </documentation>
             </annotation>
          </attribute>
