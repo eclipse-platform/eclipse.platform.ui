@@ -28,6 +28,7 @@ import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -116,16 +117,6 @@ public final class CompoundEditExitStrategy {
 	private final String[] fCommandIds;
 	private final EventListener fEventListener= new EventListener();
 	private final ListenerList fListenerList= new ListenerList();
-	private final ListenerList.INotifier fNotifier= new ListenerList.INotifier() {
-		public void notifyListener(Object listener) {
-			try {
-				((ICompoundEditListener) listener).endCompoundEdit();
-			} catch (Exception e) {
-				IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "listener notification failed", e); //$NON-NLS-1$
-				TextEditorPlugin.getDefault().getLog().log(status);
-			}
-		}
-	};
 
 	private ITextViewer fViewer;
 	private StyledText fWidgetEventSource;
@@ -219,7 +210,16 @@ public final class CompoundEditExitStrategy {
 	
 	private void fireEndCompoundEdit() {
 		disarm();
-		fListenerList.notifyListeners(fNotifier);
+		Object[] listeners= fListenerList.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			ICompoundEditListener listener= (ICompoundEditListener) listeners[i];
+			try {
+				listener.endCompoundEdit();
+			} catch (Exception e) {
+				IStatus status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "listener notification failed", e); //$NON-NLS-1$
+				TextEditorPlugin.getDefault().getLog().log(status);
+			}
+		}
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public final class CompoundEditExitStrategy {
 	 * @param listener the new listener
 	 */
 	public void addCompoundListener(ICompoundEditListener listener) {
-		fListenerList.addListener(listener);
+		fListenerList.add(listener);
 	}
 	
 	/**
@@ -240,7 +240,7 @@ public final class CompoundEditExitStrategy {
 	 * @param listener the listener to be removed.
 	 */
 	public void removeCompoundListener(ICompoundEditListener listener) {
-		fListenerList.removeListener(listener);
+		fListenerList.remove(listener);
 	}
 	
 }
