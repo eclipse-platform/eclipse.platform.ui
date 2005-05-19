@@ -375,7 +375,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
-		layout.marginWidth = IDialogConstants.HORIZONTAL_MARGIN;
+		layout.marginWidth = 0;
 		pageAreaComposite.setLayout(layout);
 		
 	
@@ -388,7 +388,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		titleComposite.setLayout(layout);
-		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData titleLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+		titleLayoutData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		titleComposite.setLayoutData(titleLayoutData);
 		createTitleArea(titleComposite);
 		
 		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -398,7 +400,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		
 		// Build the Page container
 		pageContainer = createPageContainer(pageAreaComposite);
-		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData pageContainerData = new GridData(GridData.FILL_BOTH);
+		pageContainerData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		pageContainer.setLayoutData(pageContainerData);
 		// Build the separator line
 		Label bottomSeparator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
 		bottomSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
