@@ -74,4 +74,12 @@
             commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
     </extension>
+    <extension
+          point="org.eclipse.ui.activitySupport">
+      <triggerPoint id="org.eclipse.ui.cheatsheetSelectionDialog">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>
+    </extension>
 </plugin>

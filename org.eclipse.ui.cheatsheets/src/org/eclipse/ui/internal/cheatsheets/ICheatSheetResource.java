@@ -28,6 +28,8 @@ public interface ICheatSheetResource {
 	public static final String MEMENTO_ID = "id"; //$NON-NLS-1$
 	public static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
 	public static final String MEMENTO_URL = "url"; //$NON-NLS-1$
+	
+	public static final String TRIGGER_POINT_ID = "org.eclipse.ui.cheatsheetSelectionDialog"; //$NON-NLS-1$
 
 
 	//

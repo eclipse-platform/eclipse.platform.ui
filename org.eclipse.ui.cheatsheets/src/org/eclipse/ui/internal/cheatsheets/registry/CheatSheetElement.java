@@ -12,9 +12,9 @@ package org.eclipse.ui.internal.cheatsheets.registry;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.osgi.framework.Bundle;
@@ -22,7 +22,7 @@ import org.osgi.framework.Bundle;
 /**
  *	Instances represent registered cheatsheets.
  */
-public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
+public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, IPluginContribution {
 	private String contentFile;
 	private String id;
 	private String name;
@@ -174,5 +174,13 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 		}
 
 		return null;
+	}
+
+	public String getLocalId() {
+		return id;
+	}
+
+	public String getPluginId() {
+		return configurationElement.getNamespace();
 	}
 }

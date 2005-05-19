@@ -133,8 +133,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 *	@param parent org.eclipse.ui.internal.model.CheatSheetCollectionElement
 	 *	@param childName java.lang.String
 	 */
-	protected CheatSheetCollectionElement createCollectionElement(CheatSheetCollectionElement parent, String id, String label) {
-		CheatSheetCollectionElement newElement = new CheatSheetCollectionElement(id, label, parent);
+	protected CheatSheetCollectionElement createCollectionElement(CheatSheetCollectionElement parent, String pluginId, String id, String label) {
+		CheatSheetCollectionElement newElement = new CheatSheetCollectionElement(pluginId, id, label, parent);
 
 		parent.add(newElement);
 		return newElement;
@@ -145,7 +145,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * initial elements, if needed.
 	 */
 	protected AdaptableList createEmptyCheatSheetCollection() {
-		return new CheatSheetCollectionElement("root", "root", null); //$NON-NLS-1$//$NON-NLS-2$
+		return new CheatSheetCollectionElement(null, "root", "root", null); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
@@ -255,7 +255,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			return;
 
 		if (parent != null)
-			createCollectionElement(parent, category.getId(), category.getLabel());
+			createCollectionElement(parent, category.getPluginId(), category.getId(), category.getLabel());
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		CheatSheetCollectionElement otherCategory = getChildWithID(root, UNCATEGORIZED_CHEATSHEET_CATEGORY);
 
 		if (otherCategory == null)
-			otherCategory = createCollectionElement(root, UNCATEGORIZED_CHEATSHEET_CATEGORY, UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL);
+			otherCategory = createCollectionElement(root, null, UNCATEGORIZED_CHEATSHEET_CATEGORY, UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL);
 
 		otherCategory.add(element);
 	}

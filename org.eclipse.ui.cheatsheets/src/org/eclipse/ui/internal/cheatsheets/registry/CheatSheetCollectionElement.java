@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.registry;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -21,7 +22,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * thereby facilitating the definition of tree structures composed of 
  * these elements. Instances also store a list of cheatsheets.
  */
-public class CheatSheetCollectionElement extends AdaptableList {
+public class CheatSheetCollectionElement extends AdaptableList implements IPluginContribution {
+	private String pluginId;
 	private String id;
 	private String name;
 	private CheatSheetCollectionElement parent;
@@ -32,8 +34,9 @@ public class CheatSheetCollectionElement extends AdaptableList {
 	 *
 	 * @param name java.lang.String
 	 */
-	public CheatSheetCollectionElement(String id, String name, CheatSheetCollectionElement parent) {
+	public CheatSheetCollectionElement(String pluginId, String id, String name, CheatSheetCollectionElement parent) {
 		this.name = name;
+		this.pluginId = pluginId;
 		this.id = id;
 		this.parent = parent;
 	}
@@ -177,5 +180,13 @@ public class CheatSheetCollectionElement extends AdaptableList {
 		buf.append(cheatsheets.size());
 		buf.append(" cheatsheets"); //$NON-NLS-1$
 		return buf.toString();
+	}
+
+	public String getLocalId() {
+		return getId();
+	}
+
+	public String getPluginId() {
+		return pluginId;
 	}
 }

@@ -10,24 +10,51 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.dialogs;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ITriggerPoint;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.model.*;
-
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionSorter;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  * Dialog to allow the user to select a cheat sheet from a list.
@@ -44,6 +71,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 	private Text desc;
 
+	private Button showAllButton;
+
+	private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
+
 	private boolean okButtonState;
 
 	// id constants
@@ -51,6 +82,41 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private final static String STORE_EXPANDED_CATEGORIES_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
 	private final static String STORE_SELECTED_CHEATSHEET_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
+
+	private static class ActivityViewerFilter extends ViewerFilter {
+		private boolean hasEncounteredFilteredItem = false;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (WorkbenchActivityHelper.filterItem(element)) {
+				setHasEncounteredFilteredItem(true);
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * @return returns whether the filter has filtered an item
+		 */
+		public boolean getHasEncounteredFilteredItem() {
+			return hasEncounteredFilteredItem;
+		}
+
+		/**
+		 * @param sets
+		 *            whether the filter has filtered an item
+		 */
+		public void setHasEncounteredFilteredItem(
+				boolean hasEncounteredFilteredItem) {
+			this.hasEncounteredFilteredItem = hasEncounteredFilteredItem;
+		}
+	}
 
 	private class CheatsheetLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
@@ -65,7 +131,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 				return CheatSheetPlugin.getPlugin().getImageRegistry().get(
 						ICheatSheetResource.CHEATSHEET_OBJ);
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
-						ISharedImages.IMG_OBJ_FOLDER);
+					ISharedImages.IMG_OBJ_FOLDER);
 		}
 	}
 
@@ -92,6 +158,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		//TODO need to add help context id
 		// WorkbenchHelp.setHelp(newShell,
 		// IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 	}
@@ -143,6 +210,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		treeViewer.setContentProvider(getCheatSheetProvider());
 		treeViewer.setLabelProvider(new CheatsheetLabelProvider());
 		treeViewer.setSorter(CheatSheetCollectionSorter.INSTANCE);
+		treeViewer.addFilter(activityViewerFilter);
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setInput(cheatsheetCategories);
 
@@ -152,6 +220,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		data.widthHint = 100;
 		data.heightHint = 48;
 		desc.setLayoutData(data);
+
+		if (activityViewerFilter.getHasEncounteredFilteredItem())
+			createShowAllButton(outerContainer);
 
 		// Add double-click listener
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -168,6 +239,33 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 		Dialog.applyDialogFont(outerContainer);
 		return outerContainer;
+	}
+
+	/**
+	 * Create a show all button in the parent.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>.
+	 */
+	private void createShowAllButton(Composite parent) {
+		showAllButton = new Button(parent, SWT.CHECK);
+		showAllButton
+				.setText(Messages.CheatSheetCategoryBasedSelectionDialog_showAll);
+		showAllButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				if (showAllButton.getSelection()) {
+					treeViewer.resetFilters();
+				} else {
+					treeViewer.addFilter(activityViewerFilter);
+				}
+			}
+		});
 	}
 
 	/**
@@ -266,6 +364,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	protected void okPressed() {
 		if (currentSelection != null) {
 			ArrayList result = new ArrayList(1);
+			ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
+					.getActivitySupport().getTriggerPointManager()
+					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
+			if (!WorkbenchActivityHelper.allowUseOf(triggerPoint,
+					currentSelection))
+				return;
 			result.add(currentSelection);
 			setResult(result);
 		} else {
@@ -290,7 +394,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			return; // no stored values
 
 		CheatSheetCollectionElement category = expandPreviouslyExpandedCategories();
-		if (category!=null)
+		if (category != null)
 			selectPreviouslySelectedCheatSheet(category);
 	}
 
@@ -309,7 +413,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * selected last time this page was used. If a category or cheatsheet that
 	 * was previously selected no longer exists then it is ignored.
 	 */
-	protected void selectPreviouslySelectedCheatSheet(CheatSheetCollectionElement category) {
+	protected void selectPreviouslySelectedCheatSheet(
+			CheatSheetCollectionElement category) {
 		String cheatsheetId = settings.get(STORE_SELECTED_CHEATSHEET_ID);
 		if (cheatsheetId == null)
 			return;
