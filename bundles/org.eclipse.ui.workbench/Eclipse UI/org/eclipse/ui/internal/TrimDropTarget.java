@@ -48,7 +48,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         }
 
         public void drop() {
-            draggedTrim.dock(dropSide);
+            if (dropSide != layout.getTrimLocation(draggedTrim.getControl())) {
+                draggedTrim.dock(dropSide);
+            }
         }
 
         public Cursor getCursor() {
@@ -98,31 +100,27 @@ import org.eclipse.ui.internal.layout.TrimLayout;
             if (trimControl.getParent() == windowComposite) {
                 Control targetTrim = getTrimControl(currentControl);
 
-                if (targetTrim != null) {
-                    int side = layout.getTrimLocation(targetTrim);
+                int side = layout.getTrimLocation(targetTrim);
 
-                    if (side == SWT.DEFAULT) {
-                        if (targetTrim == layout.getCenterControl()) {
-                            side = CompatibilityDragTarget.getRelativePosition(
-                                    targetTrim, position);
-                            if (side == SWT.CENTER) {
-                                side = SWT.DEFAULT;
-                            }
-
-                            targetTrim = null;
+                if (side == SWT.DEFAULT) {
+                    if (targetTrim == layout.getCenterControl()) {
+                        side = CompatibilityDragTarget.getRelativePosition(
+                                targetTrim, position);
+                        if (side == SWT.CENTER) {
+                            side = SWT.DEFAULT;
                         }
-                    }
 
-                    if (side != SWT.DEFAULT
-                            && (targetTrim != trimControl)
-                            && (targetTrim != null || side != layout
-                                    .getTrimLocation(trimControl))
-                            && ((side & draggedTrim.getValidSides()) != 0)) {
-                        final int dropSide = side;
-                        final Control insertionPoint = targetTrim;
-
-                        return createDropResult(dragRectangle, draggedTrim, dropSide);
+                        targetTrim = null;
                     }
+                }
+
+                side = Geometry.getClosestSide(window.getShell().getBounds(), position);
+                
+                if (side != SWT.DEFAULT
+                        && ((side & draggedTrim.getValidSides()) != 0)) {
+                    final int dropSide = side;
+                    
+                    return createDropResult(dragRectangle, draggedTrim, dropSide);
                 }
             }
         }
