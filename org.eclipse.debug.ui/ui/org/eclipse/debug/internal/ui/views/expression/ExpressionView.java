@@ -22,11 +22,13 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
+import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
 import org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -143,6 +145,10 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		IAction action = new AvailableLogicalStructuresAction(this);
+        if (action.isEnabled()) {
+            menu.add(action);
+        }
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
