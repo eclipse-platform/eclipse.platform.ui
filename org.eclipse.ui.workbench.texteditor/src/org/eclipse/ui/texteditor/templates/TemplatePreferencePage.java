@@ -41,6 +41,17 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -61,18 +72,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
-
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
-import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
-import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
-import org.eclipse.jface.text.templates.persistence.TemplateStore;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
@@ -119,9 +118,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 						return type.getName();
 					return template.getContextTypeId();
 				case 2:
-					return template.isAutoInsertable() ? TextEditorTemplateMessages.TemplatePreferencePage_yes : TextEditorTemplateMessages.TemplatePreferencePage_no;
-				case 3:
 					return template.getDescription();
+				case 3:
+					return template.isAutoInsertable() ? TextEditorTemplateMessages.TemplatePreferencePage_yes : TextEditorTemplateMessages.TemplatePreferencePage_no;
 				default:
 					return ""; //$NON-NLS-1$
 			}
@@ -246,10 +245,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
-		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
+		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
 
 		TableColumn column4= new TableColumn(table, SWT.NONE);
-		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+		column4.setAlignment(SWT.CENTER);
+		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -438,25 +438,27 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
                     width -= vBarSize.x;
                 }
                 width -= buttons.getSize().x;
+                int clientWidth= width - (table.getSize().x - table.getClientArea().width);
                 Point oldSize= table.getSize();
                 if (oldSize.x > width) {
                     // table is getting smaller so make the columns
                     // smaller first and then resize the table to
                     // match the client area width
-                    column1.setWidth(width/4);
-                    column2.setWidth(width/4);
-                    column3.setWidth(width/8);
-                    column4.setWidth(width - (column1.getWidth() + column2.getWidth() + column3.getWidth()));
+                    column1.setWidth(clientWidth/4);
+                    column2.setWidth(clientWidth/4);
+                    column4.setWidth(clientWidth/8);
+                    column3.setWidth(clientWidth - (column1.getWidth() + column2.getWidth() + column4.getWidth()));
                     table.setSize(width, area.height);
                 } else {
                     // table is getting bigger so make the table
                     // bigger first and then make the columns wider
                     // to match the client area width
                     table.setSize(width, area.height);
+                    width= table.getClientArea().width;
                     column1.setWidth(width / 4);
                     column2.setWidth(width / 4);
-                    column3.setWidth(width / 8);
-                    column4.setWidth(width - (column1.getWidth() + column2.getWidth() + column3.getWidth()));
+                    column4.setWidth(width / 8);
+                    column3.setWidth(width - (column1.getWidth() + column2.getWidth() + column4.getWidth()));
                  }
             }
         });
