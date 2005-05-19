@@ -171,7 +171,7 @@ a#news .background-image {
 #action-links a:hover,
 #action-links a:focus,
 #action-links a:active {
-	border-right : 0px;
+	border : 0px;
 }
 /* Styles for debugging 
 div#links-background a {
