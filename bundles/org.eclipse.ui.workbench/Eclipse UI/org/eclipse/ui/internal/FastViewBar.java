@@ -434,6 +434,7 @@ public class FastViewBar implements IWindowTrim {
         dragHandle.setLayoutData(new CellData());
         dragHandle.setBackground(control.getInteriorColor());
         dragHandle.addListener(SWT.MenuDetect, menuListener);
+        dragHandle.setToolTipText(tip);
 
         fastViewBar.createControl(control);
 
