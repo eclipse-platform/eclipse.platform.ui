@@ -106,6 +106,9 @@ public class IntroModelSerializer {
         text.append("\n\tpage alt-styles are = "); //$NON-NLS-1$
 
         Hashtable altStylesHashtable = page.getAltStyles();
+        if (altStylesHashtable == null)
+            return;
+
         Enumeration altStyles = altStylesHashtable.keys();
         while (altStyles.hasMoreElements()) {
             String altStyle = (String) altStyles.nextElement();

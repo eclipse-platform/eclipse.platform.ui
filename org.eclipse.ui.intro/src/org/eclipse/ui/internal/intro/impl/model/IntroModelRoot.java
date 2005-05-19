@@ -543,16 +543,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
             return;
 
         // Update the parent page styles. skip style if it is null;
-        String style = extension.getStyle();
-        if (style != null)
-            targetContainer.getParentPage().addStyle(style);
+        String[] styles = extension.getStyles();
+        if (styles != null)
+            targetContainer.getParentPage().addStyles(styles);
 
         // for alt-style cache bundle for loading resources.
-        style = extension.getAltStyle();
-        if (style != null) {
-            Bundle bundle = extension.getBundle();
-            targetContainer.getParentPage().addAltStyle(style, bundle);
-        }
+        Hashtable altStyles = extension.getAltStyles();
+        if (altStyles != null)
+            targetContainer.getParentPage().addAltStyles(altStyles);
+
     }
 
 

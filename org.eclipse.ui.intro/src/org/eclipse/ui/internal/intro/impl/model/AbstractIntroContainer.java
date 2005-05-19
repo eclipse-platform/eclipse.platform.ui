@@ -479,8 +479,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * are including a shared group, or if we are including an element from the
      * same page, do nothing. For inherited alt-styles, we have to cache the pd
      * from which we inherited the styles to be able to access resources in that
-     * plugin. Also note that when including an container, it must be resolved
-     * otherwise reparenting will cause includes in this target containet to
+     * plugin. Also note that when including a container, it must be resolved
+     * otherwise reparenting will cause includes in this target container to
      * fail.
      * 
      * @param include

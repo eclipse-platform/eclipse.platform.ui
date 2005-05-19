@@ -94,7 +94,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * </ul>
      */
     private Vector styles;
-
     private Hashtable altStyles;
 
     /**
@@ -139,7 +138,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     private void init(Element element, Bundle bundle, String base) {
         String[] styleValues = getAttributeList(element, ATT_STYLE);
-        if (styleValues != null) {
+        if (styleValues != null && styleValues.length > 0) {
             style = styleValues[0];
             style = BundleUtil.getResolvedResourceLocation(base, style, bundle);
             for (int i = 1; i < styleValues.length; i++) {
@@ -151,7 +150,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
 
         String[] altStyleValues = getAttributeList(element, ATT_ALT_STYLE);
-        if (altStyleValues != null) {
+        if (altStyleValues != null && altStyleValues.length > 0) {
             altStyle = altStyleValues[0];
             altStyle = BundleUtil.getResolvedResourceLocation(base, altStyle,
                 bundle);
@@ -220,6 +219,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // call get children first to resolve includes and populate styles
         // vector. Resolving children will initialize the style vectors.
         getChildren();
+        if (styles == null)
+            // style vector is still null because page does not have styles.
+            return new String[0];
         String[] stylesArray = new String[styles.size()];
         styles.copyInto(stylesArray);
         return stylesArray;
@@ -251,18 +253,22 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @param style
      */
     protected void addStyle(String style) {
-        initStylesVectors();
+        if (!initStyles(style))
+            return;
         if (styles.contains(style))
             return;
         styles.add(style);
     }
 
     public void insertStyle(String style, int location) {
-        initStylesVectors();
+        if (!initStyles(style))
+            return;
         if (styles.contains(style))
             return;
         styles.add(location, style);
     }
+
+
 
     /**
      * Adds the given style to the list.Style is not added if it already exists
@@ -271,7 +277,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @param altStyle
      */
     protected void addAltStyle(String altStyle, Bundle bundle) {
-        initStylesVectors();
+        if (!initAltStyles(altStyle))
+            return;
         if (altStyles.containsKey(altStyle))
             return;
         altStyles.put(altStyle, bundle);
@@ -283,6 +290,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * 
      */
     protected void addStyles(String[] styles) {
+        if (styles == null)
+            return;
         for (int i = 0; i < styles.length; i++)
             addStyle(styles[i]);
     }
@@ -291,8 +300,31 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * Util method to add map of altstyles to list.
      */
     protected void addAltStyles(Hashtable altStyles) {
-        // 
+        if (altStyles == null)
+            return;
+        if (this.altStyles == null)
+            // delay creation until needed.
+            this.altStyles = new Hashtable();
         this.altStyles.putAll(altStyles);
+    }
+
+
+    private boolean initStyles(String style) {
+        if (style == null)
+            return false;
+        if (this.styles == null)
+            // delay creation until needed.
+            this.styles = new Vector();
+        return true;
+    }
+
+    private boolean initAltStyles(String style) {
+        if (style == null)
+            return false;
+        if (this.altStyles == null)
+            // delay creation until needed.
+            this.altStyles = new Hashtable();
+        return true;
     }
 
 
@@ -313,7 +345,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#resolveChildren()
      */
     protected void resolveChildren() {
-        initStylesVectors();
         // flag would be set
         if (isXHTMLPage)
             resolvePage();
@@ -321,14 +352,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             super.resolveChildren();
     }
 
-    private void initStylesVectors() {
-        if (styles == null)
-            // delay creation until needed.
-            styles = new Vector();
-        if (altStyles == null)
-            // delay creation until needed.
-            altStyles = new Hashtable();
-    }
+
 
     /**
      * Override parent behavior to add support for HEAD & Title element in pages

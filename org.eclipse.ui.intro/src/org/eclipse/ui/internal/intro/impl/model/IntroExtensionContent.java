@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -25,7 +26,9 @@ import org.w3c.dom.NodeList;
  * An intro container extension. If the content attribute is defined, then it is
  * assumed that we have XHTML content in an external file. Load content from
  * external DOM. No need to worry about caching here because this is a transient
- * model class. It is used and then disregarded from the model.
+ * model class. It is used and then disregarded from the model.<br>
+ * Just like in a page, the styles and altStyles strings can be a comma
+ * separated list of styles. Handle this by storing styles just like pages.
  */
 public class IntroExtensionContent extends AbstractIntroElement {
 
@@ -37,29 +40,84 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
     private String path;
-    private String style;
-    private String altStyle;
     private String content;
 
     private Element element;
     private String base;
 
+    private Vector styles = new Vector();
+    private Hashtable altStyles = new Hashtable();
+
     IntroExtensionContent(Element element, Bundle bundle, String base) {
         super(element, bundle);
         path = getAttribute(element, ATT_PATH);
-        style = getAttribute(element, ATT_STYLE);
-        altStyle = getAttribute(element, ATT_ALT_STYLE);
         content = getAttribute(element, ATT_CONTENT);
         this.element = element;
         this.base = base;
 
-        // Resolve.
-        style = BundleUtil.getResolvedResourceLocation(base, style, bundle);
-        altStyle = BundleUtil.getResolvedResourceLocation(base, altStyle,
-            bundle);
+        // load and resolve styles.
+        init(element, bundle, base);
         // if content is not null we have XHTML extension.
         content = BundleUtil.getResolvedResourceLocation(base, content, bundle);
     }
+
+
+    /**
+     * Initialize styles. Take first style in style attribute and make it the
+     * page style. Then put other styles in styles vectors. Make sure to resolve
+     * each style.
+     * 
+     * @param element
+     * @param bundle
+     */
+    private void init(Element element, Bundle bundle, String base) {
+        String[] styleValues = getAttributeList(element, ATT_STYLE);
+        if (styleValues != null && styleValues.length > 0) {
+            for (int i = 0; i < styleValues.length; i++) {
+                String style = styleValues[i];
+                style = BundleUtil.getResolvedResourceLocation(base, style,
+                    bundle);
+                addStyle(style);
+            }
+        }
+
+        String[] altStyleValues = getAttributeList(element, ATT_ALT_STYLE);
+        if (altStyleValues != null && altStyleValues.length > 0) {
+            for (int i = 0; i < altStyleValues.length; i++) {
+                String style = altStyleValues[i];
+                style = BundleUtil.getResolvedResourceLocation(base, style,
+                    bundle);
+                addAltStyle(style, bundle);
+            }
+        }
+    }
+
+    /**
+     * Adds the given style to the list. Style is not added if it already exists
+     * in the list.
+     * 
+     * @param style
+     */
+    protected void addStyle(String style) {
+        if (styles.contains(style))
+            return;
+        styles.add(style);
+    }
+
+
+    /**
+     * Adds the given style to the list.Style is not added if it already exists
+     * in the list.
+     * 
+     * @param altStyle
+     */
+    protected void addAltStyle(String altStyle, Bundle bundle) {
+        if (altStyles.containsKey(altStyle))
+            return;
+        altStyles.put(altStyle, bundle);
+    }
+
+
 
     /**
      * @return Returns the path.
@@ -115,15 +173,17 @@ public class IntroExtensionContent extends AbstractIntroElement {
     /**
      * @return Returns the altStyle.
      */
-    protected String getAltStyle() {
-        return altStyle;
+    protected Hashtable getAltStyles() {
+        return altStyles;
     }
 
     /**
      * @return Returns the style.
      */
-    protected String getStyle() {
-        return style;
+    protected String[] getStyles() {
+        String[] stylesArray = new String[styles.size()];
+        styles.copyInto(stylesArray);
+        return stylesArray;
     }
 
     /**
