@@ -177,13 +177,13 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 			try {
 				fServerSocket= new ServerSocket(fRequestPort);
 			} catch (IOException ioe) {
-				//throw new buildexection();
 				shutDown();
 			}
 			requestConnect();
 		} else {
 			shutDown();
 		}
+        fDebugState.buildStarted();
 		fDebugState.setShouldSuspend(true);
 		waitIfSuspended();
 	}
@@ -204,6 +204,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		fDebugState.taskFinished();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
+	 */
 	public synchronized void waitIfSuspended() {
 		String detail= null;
 		boolean shouldSuspend= true;
@@ -338,11 +341,14 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		fDebugState.setTargetExecuting(null);
     }   
     
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
+     */
     public void configure(Map userProperties) {
        super.configure(userProperties);
        String requestPortProperty= (String) userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
         if (requestPortProperty != null) {
             fRequestPort= Integer.parseInt(requestPortProperty);
         }
-    } 
+    }
 }

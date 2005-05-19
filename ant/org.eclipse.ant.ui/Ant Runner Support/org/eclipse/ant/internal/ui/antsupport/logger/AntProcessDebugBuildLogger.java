@@ -53,6 +53,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		launch.addDebugTarget(fAntDebugTarget);
         
         fAntDebugTarget.buildStarted();
+        fDebugState.buildStarted();
 	}
 
 	/* (non-Javadoc)
@@ -71,6 +72,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		fDebugState.taskStarted(event);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
+	 */
 	public synchronized void waitIfSuspended() {
 		fResumed= false;
 		IBreakpoint breakpoint= breakpointAtLineNumber(fDebugState.getBreakpointLocation());

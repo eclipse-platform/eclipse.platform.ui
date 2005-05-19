@@ -38,7 +38,8 @@ public class AntDebugState implements IDebugBuildLogger {
 	private Map fProperties= null;
     
     private Map fTargetToBuildSequence= null;
-    private Target fTargetToExecute= null;
+    private Map fProjectToTargetNames= null;
+    private Stack fTargetsToExecute= new Stack();
     private Stack fTargetsExecuting= new Stack();
 	
 	private boolean fConsiderTargetBreakpoints= false;
@@ -59,7 +60,7 @@ public class AntDebugState implements IDebugBuildLogger {
 		return fLastTaskFinished;
 	}
 
-	public void setLastTaskFinished(Task lastTaskFinished) {
+	private void setLastTaskFinished(Task lastTaskFinished) {
 		fLastTaskFinished= lastTaskFinished;
 
 	}
@@ -94,7 +95,7 @@ public class AntDebugState implements IDebugBuildLogger {
 		fConsiderTargetBreakpoints= considerTargetBreakpoints;
 	}
 
-	public Stack getTasks() {
+	private Stack getTasks() {
 		return fTasks;
 	}
 
@@ -115,7 +116,11 @@ public class AntDebugState implements IDebugBuildLogger {
 	}
 
 	public void setTargetToExecute(Target target) {
-		fTargetToExecute= target;
+        if (target == null) {
+            fTargetsToExecute.pop();
+        } else {
+            fTargetsToExecute.push(target);
+        }
 	}
 
 	public void setTargetExecuting(Target target) {
@@ -126,11 +131,14 @@ public class AntDebugState implements IDebugBuildLogger {
         }
 	}
 
-	public Target getTargetToExecute() {
-		return fTargetToExecute;
+	private Target getTargetToExecute() {
+	    if (fTargetsToExecute.isEmpty()) {
+            return null;
+        }
+		return (Target) fTargetsToExecute.peek();
 	}
 	
-	public Target getTargetExecuting() {
+	private Target getTargetExecuting() {
         if (fTargetsExecuting.isEmpty()) {
             return null;
         }
@@ -230,11 +238,12 @@ public class AntDebugState implements IDebugBuildLogger {
 
     public void targetStarted(BuildEvent event) {
 		setAfterTaskEvent(false);
+        Project eventProject = event.getProject();
         if (getInitialProperties() == null) {
-            fInitialProperties= event.getProject().getProperties();
+            fInitialProperties= eventProject.getProperties();
         }
-        if (getTargetToBuildSequence() == null) {
-            setTargetToBuildSequence(new HashMap());
+        if (fProjectToTargetNames.get(eventProject) == null) {
+            fProjectToTargetNames.put(eventProject, eventProject.getReference("eclipse.ant.targetVector")); //$NON-NLS-1$
             setTargetToExecute(initializeBuildSequenceInformation(event, getTargetToBuildSequence()));
         }
         
@@ -242,9 +251,9 @@ public class AntDebugState implements IDebugBuildLogger {
         if (event.getTarget().equals(getTargetToExecute())) {
             //the dependancies of the target to execute have been met
             //prepare for the next target
-            Vector targets= (Vector) event.getProject().getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+            Vector targets= (Vector) fProjectToTargetNames.get(eventProject);
             if (!targets.isEmpty()) {
-                setTargetToExecute((Target) event.getProject().getTargets().get(targets.remove(0)));
+                setTargetToExecute((Target) eventProject.getTargets().get(targets.remove(0)));
             } else {
                 setTargetToExecute(null);
             }
@@ -330,16 +339,41 @@ public class AntDebugState implements IDebugBuildLogger {
 	    
 		Target targetToExecute= getTargetToExecute();
 		Target targetExecuting= getTargetExecuting();
+        Project projectExecuting= targetExecuting.getProject();
+        
 		if (tasks.isEmpty()) {
 			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
 		} else {
 			for (int i = tasks.size() - 1; i >= 0 ; i--) {
 				Task task= (Task) tasks.get(i);
-				appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
+                if (task.getProject() == projectExecuting) {
+                    appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
+                } else {
+                    //sub build target dependancies
+                    String targetName= task.getOwningTarget().getName();
+                    if (targetName != null && targetName.length() != 0) { //skip for implicit target
+                        Iterator itr= fTargetsToExecute.iterator();
+                        while (itr.hasNext()) {
+                            Target target = (Target) itr.next();
+                            if (target.getProject() != projectExecuting) {
+                                continue;
+                            }
+                            marshalTargetDependancyStack(stackRepresentation, target, targetExecuting);
+                        }
+                    }
+                    projectExecuting= task.getProject();
+                    targetExecuting= task.getOwningTarget();
+                    appendToStack(stackRepresentation, targetExecuting.getName(), task.getTaskName(), task.getLocation());
+                }
 			}
 		}
+
 	    //target dependancy stack 
-	     if (targetToExecute != null) {
+	    marshalTargetDependancyStack(stackRepresentation, targetToExecute, targetExecuting);
+	}
+
+    private void marshalTargetDependancyStack(StringBuffer stackRepresentation, Target targetToExecute, Target targetExecuting) {
+        if (targetToExecute != null) {
 	     	Vector buildSequence= (Vector) getTargetToBuildSequence().get(targetToExecute);
 	     	int startIndex= buildSequence.indexOf(targetExecuting) + 1;
 	     	int dependancyStackDepth= buildSequence.indexOf(targetToExecute);
@@ -352,7 +386,7 @@ public class AntDebugState implements IDebugBuildLogger {
 	            }
 	     	}
 	     }
-	}
+    }
 
 	public void marshallProperties(StringBuffer propertiesRepresentation, boolean escapeLineSep) {
 		if (getTasks().isEmpty()) {
@@ -449,6 +483,9 @@ public class AntDebugState implements IDebugBuildLogger {
 	private Target initializeBuildSequenceInformation(BuildEvent event, Map targetToBuildSequence) {
 	    Project antProject= event.getProject();
 	    Vector targets= (Vector) antProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+        if (targets == null) {
+            return null;
+        }
 	    Iterator itr= targets.iterator();
 	    Hashtable allTargets= antProject.getTargets();
 	    String targetName;
@@ -461,4 +498,9 @@ public class AntDebugState implements IDebugBuildLogger {
 	    //the target to execute
 	    return (Target) allTargets.get(targets.remove(0));
 	}
+    
+    public void buildStarted() {
+        setTargetToBuildSequence(new HashMap());
+        fProjectToTargetNames= new HashMap();
+    }
 }

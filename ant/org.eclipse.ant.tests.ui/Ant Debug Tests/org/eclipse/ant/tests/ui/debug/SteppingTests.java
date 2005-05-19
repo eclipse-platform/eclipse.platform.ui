@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
 
 public class SteppingTests extends AbstractAntDebugTest {
 
@@ -39,17 +40,33 @@ public class SteppingTests extends AbstractAntDebugTest {
     }
 	
 	 /**
-     * bug 88218
+     * bug 88218, 85769
      */
     public void testStepIntoAntCall() throws Exception {
-		antCallStack(false, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16);
+        AntThread thread= null;
+        try {
+            thread= antCallStack(false, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false);
+            IStackFrame[] frames= thread.getStackFrames();
+            assertFrame("call", 10, (AntStackFrame)frames[1]);
+        } finally {
+            terminateAndRemove(thread);
+            removeAllBreakpoints();
+        }
     }
     
     /**
-     * bug 88218
+     * bug 88218, 85769
      */
     public void testStepIntoAntCallSepVM() throws Exception {
-		antCallStack(true, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16);
+        AntThread thread= null;
+        try {
+            thread= antCallStack(true, 5, DebugEvent.STEP_INTO, "pre-call: echo", 16, false);
+            IStackFrame[] frames= thread.getStackFrames();
+            assertFrame("call", 10, (AntStackFrame)frames[1]);
+        } finally {
+            terminateAndRemove(thread);
+            removeAllBreakpoints();
+        }
     }
 	
 	 public void testStepOverAntCall() throws Exception {
@@ -72,10 +89,14 @@ public class SteppingTests extends AbstractAntDebugTest {
 		 antCallStack(true, 5, DebugEvent.BREAKPOINT, "call: sleep", 12);
 	 }
     
-	private void antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber) throws CoreException {
-		String fileName = "debugAntCall";
-		debugStack(sepVM, lineNumber, kind, frameName, frameLineNumber, fileName, true);
+	private AntThread antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber) throws CoreException {
+        return antCallStack(sepVM, lineNumber, kind, frameName, frameLineNumber, true);
 	}
+    
+	private AntThread antCallStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber, boolean terminate) throws CoreException {
+        String fileName = "debugAntCall";
+        return debugStack(sepVM, lineNumber, kind, frameName, frameLineNumber, fileName, terminate);
+    }
 
 	private AntThread debugStack(boolean sepVM, int lineNumber, int kind, String frameName, int frameLineNumber, String fileName, boolean terminate) throws CoreException, DebugException {
 		ILineBreakpoint bp = createLineBreakpoint(lineNumber, fileName + ".xml");
@@ -116,6 +137,10 @@ public class SteppingTests extends AbstractAntDebugTest {
 	
     private AntStackFrame assertFrame(AntThread thread, String frameName, int lineNumber) throws DebugException {
         AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
+        return assertFrame(frameName, lineNumber, frame);
+    }
+
+    private AntStackFrame assertFrame(String frameName, int lineNumber, AntStackFrame frame) {
         String actualFrameName= frame.getName();
         int actualLineNumber= frame.getLineNumber();
         assertTrue("Name of stack frame incorrect. Expected " + frameName + " was: " + actualFrameName, frameName.equals(actualFrameName));

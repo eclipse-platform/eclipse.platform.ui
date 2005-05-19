@@ -588,6 +588,9 @@ public class InternalAntRunner {
 	 */
 	private void run(List argList) {
 		setCurrentProject(new Project());
+        if (isVersionCompatible("1.6.3")) { //$NON-NLS-1$
+           new ExecutorSetter().setExecutor(getCurrentProject());
+        }
 		Throwable error = null;
 		PrintStream originalErr = System.err;
 		PrintStream originalOut = System.out;
@@ -696,7 +699,9 @@ public class InternalAntRunner {
             if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
                 targets.add(getCurrentProject().getDefaultTarget());
             }
-            getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
+			if (!isVersionCompatible("1.6.3")) {  //$NON-NLS-1$
+	            getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
+			}
 			getCurrentProject().executeTargets(targets);
 		} catch (OperationCanceledException e) {
 			scriptExecuted= false;
