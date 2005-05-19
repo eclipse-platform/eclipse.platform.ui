@@ -71,7 +71,7 @@ public class OvalComposite extends Composite implements PaintListener {
         if (interiorColor != null) {
             gc.fillPolygon(shapeArray);
         }
-	    gc.drawPolygon(shapeArray);
+	    gc.drawPolyline(shapeArray);
 	}
 
 	public Rectangle getClientArea() {
