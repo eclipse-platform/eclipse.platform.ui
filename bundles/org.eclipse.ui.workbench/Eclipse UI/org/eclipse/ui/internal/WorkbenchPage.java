@@ -96,6 +96,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -2972,10 +2973,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * Sets the perspective.
      * 
-     * @param persp
+     * @param desc
      *            identifies the new perspective.
      */
     public void setPerspective(final IPerspectiveDescriptor desc) {
+    	if (Util.equals(getPerspective(), desc)) {
+    		return;
+    	}
         // Going from multiple to single rows can make the coolbar
         // and its adjacent views appear jumpy as perspectives are
         // switched. Turn off redraw to help with this.
