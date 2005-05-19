@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 /**
  * 
  */
@@ -40,7 +38,7 @@ public class FileCharSequenceProvider {
 		return curr;
 	}
 	
-	public void releaseCharSequence(CharSequence seq) throws IOException {
+	public void releaseCharSequence(CharSequence seq) throws CoreException, IOException {
 		if (seq instanceof FileCharSequence) {
 			FileCharSequence curr= (FileCharSequence) seq;
 			try {
@@ -53,6 +51,27 @@ public class FileCharSequenceProvider {
 		}
 	}
 	
+	public static class FileCharSequenceException extends RuntimeException {
+		private static final long serialVersionUID= 1L;
+
+		/* package */ FileCharSequenceException(IOException e) {
+			super(e);
+		}
+		
+		/* package */ FileCharSequenceException(CoreException e) {
+			super(e);
+		}
+		
+		public void throwWrappedException() throws CoreException, IOException {
+			Throwable wrapped= getCause();
+			if (wrapped instanceof CoreException) {
+				throw (CoreException) wrapped;
+			} else if (wrapped instanceof IOException) {
+				throw (IOException) wrapped;
+			}
+			// not possible
+		}
+	}
 	
 	
 	private static final class CharSubSequence implements CharSequence {
@@ -107,7 +126,13 @@ public class FileCharSequenceProvider {
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
-			return fParent.getSubstring(fSequenceOffset,  fSequenceLength);
+			try {
+				return fParent.getSubstring(fSequenceOffset,  fSequenceLength);
+			} catch (IOException e) {
+				throw new FileCharSequenceException(e); 
+			} catch (CoreException e) {
+				throw new FileCharSequenceException(e); 
+			}
 		}
 	}
 	
@@ -208,6 +233,7 @@ public class FileCharSequenceProvider {
 	}
 	
 	private final class FileCharSequence implements CharSequence {
+		
 		private Reader fReader;
 		private int fReaderPos;
 		
@@ -236,8 +262,7 @@ public class FileCharSequenceProvider {
 			}
 			initializeReader();
 		}
-		
-	
+			
 		private void initializeReader() throws CoreException, IOException {
 			if (fReader != null) {
 				fReader.close();
@@ -262,11 +287,9 @@ public class FileCharSequenceProvider {
 				try {
 					getBuffer(Integer.MAX_VALUE);
 				} catch (IOException e) {
-					SearchPlugin.log(e);
-					return 0;
+					throw new FileCharSequenceException(e); 
 				} catch (CoreException e) {
-					SearchPlugin.log(e);
-					return 0;
+					throw new FileCharSequenceException(e); 
 				}
 			}
 			return fLength.intValue();
@@ -354,41 +377,33 @@ public class FileCharSequenceProvider {
 				}
 				return buffer.get(index);
 			} catch (IOException e) {
-				SearchPlugin.log(e);
+				throw new FileCharSequenceException(e); 
 			} catch (CoreException e) {
-				SearchPlugin.log(e);
+				throw new FileCharSequenceException(e); 
 			}
-			return 0;
 		}
 		
-		public String getSubstring(int start, int length) {
-			try {
-				int pos= start;
-				int endPos= start + length;
-				
-				if (fLength != null && endPos > fLength.intValue()) {
-					throw new IndexOutOfBoundsException("end must be smaller than length"); //$NON-NLS-1$
-				}
-				
-				StringBuffer res= new StringBuffer(length);
-				
-				Buffer buffer= getBuffer(pos);
-				while (pos < endPos && buffer != null) {
-					int bufEnd= buffer.getEndOffset();
-					if (bufEnd >= endPos) {
-						return buffer.append(res, pos, endPos - pos).toString();
-					}
-					buffer.append(res, pos, bufEnd - pos);
-					pos= bufEnd;
-					buffer= getBuffer(pos);
-				}
-				return res.toString();
-			} catch (IOException e) {
-				SearchPlugin.log(e);
-			} catch (CoreException e) {
-				SearchPlugin.log(e);
+		public String getSubstring(int start, int length) throws IOException, CoreException {
+			int pos= start;
+			int endPos= start + length;
+			
+			if (fLength != null && endPos > fLength.intValue()) {
+				throw new IndexOutOfBoundsException("end must be smaller than length"); //$NON-NLS-1$
 			}
-			return new String();
+			
+			StringBuffer res= new StringBuffer(length);
+			
+			Buffer buffer= getBuffer(pos);
+			while (pos < endPos && buffer != null) {
+				int bufEnd= buffer.getEndOffset();
+				if (bufEnd >= endPos) {
+					return buffer.append(res, pos, endPos - pos).toString();
+				}
+				buffer.append(res, pos, bufEnd - pos);
+				pos= bufEnd;
+				buffer= getBuffer(pos);
+			}
+			return res.toString();
 		}
 		
 	
@@ -426,11 +441,10 @@ public class FileCharSequenceProvider {
 				}
 				return res.toString();
 			} catch (IOException e) {
-				SearchPlugin.log(e);
+				throw new FileCharSequenceException(e); 
 			} catch (CoreException e) {
-				SearchPlugin.log(e);
+				throw new FileCharSequenceException(e); 
 			}
-			return ""; //$NON-NLS-1$
 		}
 	}
 

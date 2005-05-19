@@ -168,6 +168,8 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 				try {
 					seq= fFileCharSequenceProvider.newCharSequence(file);
 					fLocator.locateMatches(fProgressMonitor, seq, fCollector, proxy);
+				} catch (FileCharSequenceProvider.FileCharSequenceException e) {
+					e.throwWrappedException();
 				} finally {
 					if (seq != null) {
 						try {
@@ -186,7 +188,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 		} catch (IllegalCharsetNameException e) {
 			IFile file= (IFile) proxy.requestResource();
 			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args); 
+			String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args);
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		} catch (IOException e) {
 			IFile file= (IFile) proxy.requestResource();
