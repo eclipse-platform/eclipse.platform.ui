@@ -50,11 +50,11 @@ public interface IIntroConstants {
 
     // Performance keys
     // -----------------------
-    String INTRO = "intro";
-    String PERF_VIEW_CREATION_TIME = PLUGIN_ID + "/perf/createView";
-    String PERF_SET_STANDBY_STATE = PLUGIN_ID + "/perf/setStandbyState";
+    String INTRO = "intro"; //$NON-NLS-1$
+    String PERF_VIEW_CREATION_TIME = PLUGIN_ID + "/perf/createView"; //$NON-NLS-1$
+    String PERF_SET_STANDBY_STATE = PLUGIN_ID + "/perf/setStandbyState"; //$NON-NLS-1$
     // not exposed in .option. Used because framework is convenient.
-    String PERF_UI_ZOOM = PLUGIN_ID + "/perf/uiZoom";
+    String PERF_UI_ZOOM = PLUGIN_ID + "/perf/uiZoom"; //$NON-NLS-1$
 
 
 

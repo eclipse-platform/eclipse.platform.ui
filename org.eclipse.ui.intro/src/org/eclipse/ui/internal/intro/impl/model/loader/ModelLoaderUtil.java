@@ -64,7 +64,7 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
         if (Log.logInfo) {
-            String msg = "Loading " + getLogString(configElement, logAttribute);
+            String msg = "Loading " + getLogString(configElement, logAttribute); //$NON-NLS-1$
             Log.info(msg);
         }
 
@@ -85,7 +85,7 @@ public class ModelLoaderUtil {
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
         StringBuffer buffer = new StringBuffer(element.getName());
-        buffer.append(" Element");
+        buffer.append(" Element"); //$NON-NLS-1$
         if (logAttribute != null) {
             buffer.append(" with \""); //$NON-NLS-1$
             buffer.append(logAttribute);
@@ -126,7 +126,7 @@ public class ModelLoaderUtil {
         // we should only have one, so use first one.
         Element element = elements[0];
         if (Log.logInfo) {
-            String msg = "Loading "
+            String msg = "Loading " //$NON-NLS-1$
                     + getLogString(bundle, element, logAttribute);
             Log.info(msg);
         }
@@ -150,7 +150,7 @@ public class ModelLoaderUtil {
     public static String getLogString(Bundle bundle, Element element,
             String logAttribute) {
         StringBuffer buffer = new StringBuffer(element.getNodeName());
-        buffer.append(" Element");
+        buffer.append(" Element"); //$NON-NLS-1$
         if (logAttribute != null) {
             buffer.append(" with \""); //$NON-NLS-1$
             buffer.append(logAttribute);

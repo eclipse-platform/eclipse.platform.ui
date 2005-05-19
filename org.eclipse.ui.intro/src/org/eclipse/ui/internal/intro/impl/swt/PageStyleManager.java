@@ -198,7 +198,7 @@ public class PageStyleManager extends SharedStyleManager {
         try {
             intValue = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            Log.error("Failed to parse key: " + key + " as an integer.", e);
+            Log.error("Failed to parse key: " + key + " as an integer.", e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return intValue;
     }

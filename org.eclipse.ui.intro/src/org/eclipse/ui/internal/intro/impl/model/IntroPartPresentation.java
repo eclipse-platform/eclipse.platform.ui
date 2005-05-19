@@ -180,7 +180,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             launchBar = new IntroLaunchBarElement(children[0]);
             if (children.length > 1)
                 Log
-                    .warning("Mutiple Intro Launch bars defined when only one is allowed. Only first one was loaded. ");
+                    .warning("Mutiple Intro Launch bars defined when only one is allowed. Only first one was loaded. "); //$NON-NLS-1$
         }
         return launchBar;
     }
@@ -249,7 +249,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             }
             implementation.createPartControl(parent);
             Log
-                .warning("Loaded UI Forms implementation as a default UI implementation.");
+                .warning("Loaded UI Forms implementation as a default UI implementation."); //$NON-NLS-1$
         }
     }
 

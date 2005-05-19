@@ -77,8 +77,8 @@ public final class ImageUtil {
             // Should never be here.
             Log.error("could not create Image Descriptor", e); //$NON-NLS-1$
         }
-        Log.warning("could not create Image Descriptor for: " + imageName
-                + " in bundle: " + bundle.getSymbolicName());
+        Log.warning("could not create Image Descriptor for: " + imageName //$NON-NLS-1$
+                + " in bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
         return ImageDescriptor.getMissingImageDescriptor();
     }
 

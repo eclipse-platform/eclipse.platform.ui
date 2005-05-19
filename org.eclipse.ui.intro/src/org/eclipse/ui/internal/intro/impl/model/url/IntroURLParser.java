@@ -169,7 +169,7 @@ public class IntroURLParser {
             // and the value as the second array.
             String[] keyValuePair = params[i].split("="); //$NON-NLS-1$
             if (keyValuePair.length != 2) {
-                Log.warning("Ignoring the following Intro URL parameter: "
+                Log.warning("Ignoring the following Intro URL parameter: " //$NON-NLS-1$
                         + params[i]);
                 continue;
             }

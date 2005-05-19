@@ -756,8 +756,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         IntroGroup divToReplace = (IntroGroup) findTarget(embedTarget);
         if (divToReplace == null) {
             // we failed to find embed div, log and exit.
-            Log.warning("Failed to find embedTarget: " + embedTarget
-                    + " in page " + getId());
+            Log.warning("Failed to find embedTarget: " + embedTarget //$NON-NLS-1$
+                    + " in page " + getId()); //$NON-NLS-1$
             return false;
         }
 

@@ -153,8 +153,8 @@ public class BundleUtil {
             // we need to resolve this URL.
             String copyResource = resource;
             if (forceNLResolve && !copyResource.startsWith(NL_TAG)) {
-                if (copyResource.startsWith("/")
-                        || copyResource.startsWith("\\"))
+                if (copyResource.startsWith("/") //$NON-NLS-1$
+                        || copyResource.startsWith("\\")) //$NON-NLS-1$
                     copyResource = resource.substring(1);
                 copyResource = NL_TAG + copyResource;
             }

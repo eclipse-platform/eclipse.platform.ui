@@ -92,11 +92,11 @@ public class ShowHelpURLHandler {
             currentPageId = currentPage.getUnmangledId();
         else
             currentPageId = currentPage.getId();
-        String mangledPageId = currentPageId + "_" + "WITH_IFRAME";
+        String mangledPageId = currentPageId + "_" + "WITH_IFRAME"; //$NON-NLS-1$ //$NON-NLS-2$
 
         // get current standby state.
         boolean standby = IntroPlugin.isIntroStandby();
-        String standbyAsString = standby ? IntroURL.VALUE_TRUE : "false";
+        String standbyAsString = standby ? IntroURL.VALUE_TRUE : "false"; //$NON-NLS-1$
 
         AbstractIntroPage pageWithIFrame = (AbstractIntroPage) model.findChild(
             mangledPageId, AbstractIntroElement.ABSTRACT_PAGE);

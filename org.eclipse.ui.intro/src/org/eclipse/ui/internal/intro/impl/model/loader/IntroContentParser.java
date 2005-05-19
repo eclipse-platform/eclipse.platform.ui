@@ -219,8 +219,8 @@ public class IntroContentParser {
                 // .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
             } else
                 Log
-                    .warning("XHTML file used to display this Intro page does not have a Document type defined. "
-                            + "XHTML requires document types to be defined.");
+                    .warning("XHTML file used to display this Intro page does not have a Document type defined. " //$NON-NLS-1$
+                            + "XHTML requires document types to be defined."); //$NON-NLS-1$
 
             transformer.transform(source, result);
             return stringBuffer.toString();

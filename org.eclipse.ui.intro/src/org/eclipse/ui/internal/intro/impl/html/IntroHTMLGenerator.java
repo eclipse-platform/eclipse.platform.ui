@@ -453,8 +453,8 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateIntroInjectedIFrame(
             IntroInjectedIFrame element, int indentLevel) {
-        HTMLElement iframe = generateIFrameElement(element.getIFrameURL(), "0",
-            "auto", indentLevel);
+        HTMLElement iframe = generateIFrameElement(element.getIFrameURL(), "0", //$NON-NLS-1$
+            "auto", indentLevel); //$NON-NLS-1$
         return iframe;
     }
 

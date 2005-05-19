@@ -76,7 +76,7 @@ public class BrowserIntroPartLocationListener implements LocationListener {
         }
 
         if (!parser.hasProtocol() || parser.getHost() == null
-                || parser.getHost().equals(""))
+                || parser.getHost().equals("")) //$NON-NLS-1$
             // This will filter out two navigation events fired by the browser
             // on a setText. (about:blank and
             // res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm on windows,
@@ -91,14 +91,14 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // completed. We need to update history only in dynamic case. In
             // static case, the browser keeps the history.
             Browser browser = (Browser) event.getSource();
-            if (browser.getData("frameNavigation") == null && event.top == true) {
+            if (browser.getData("frameNavigation") == null && event.top == true) { //$NON-NLS-1$
                 // we are navigating to a regular fully qualified URL. Event.top
                 // is true.
-                browser.setData("frameNavigation", "true");
+                browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
                 implementation.updateHistory(url);
             }
 
-            if (browser.getData("frameNavigation") == null
+            if (browser.getData("frameNavigation") == null //$NON-NLS-1$
                     && event.top == false) {
                 // a new url navigation that is not in a top frame, assume that
                 // it is an embedded Help System topic navigation. we are

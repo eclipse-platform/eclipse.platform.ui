@@ -109,7 +109,7 @@ public class SharedStyleManager {
                 int b = Integer.parseInt(value.substring(5, 7), 16);
                 return new RGB(r, g, b);
             } catch (NumberFormatException e) {
-                Log.error("Failed to parser: " + value + " as an integer", e);
+                Log.error("Failed to parser: " + value + " as an integer", e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         return null;

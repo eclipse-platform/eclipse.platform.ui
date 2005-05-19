@@ -123,7 +123,7 @@ public class ModelUtil {
             URL parentFolderURL = Platform.find(bundle, parentFolder);
             if (parentFolderURL == null) {
                 // should never be here.
-                Log.error("Could not find folder to extract: " + contentFile,
+                Log.error("Could not find folder to extract: " + contentFile, //$NON-NLS-1$
                     null);
                 return;
             }
@@ -293,7 +293,7 @@ public class ModelUtil {
      */
     public static Element getElementById(Document dom, String id,
             String localElementName) {
-        NodeList children = dom.getElementsByTagNameNS("*", "*");
+        NodeList children = dom.getElementsByTagNameNS("*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
         for (int i = 0; i < children.getLength(); i++) {
             Element element = (Element) children.item(i);
             if (element.getAttribute("id").equals(id)) //$NON-NLS-1$
