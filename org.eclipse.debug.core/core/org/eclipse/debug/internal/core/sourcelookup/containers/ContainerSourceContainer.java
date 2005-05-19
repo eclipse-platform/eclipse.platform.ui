@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
@@ -46,8 +47,9 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private boolean fSubfolders = false;
 	
 	// whether the platform is case insensitive
-	private static boolean fgCaseInsensitive = new File("A").equals(new File("a"));  //$NON-NLS-1$//$NON-NLS-2$
-	
+	private static boolean fgCaseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+
+	private IPath fRootPath = null;
 	private File fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
@@ -61,10 +63,10 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	public ContainerSourceContainer(IContainer container, boolean subfolders) {
 		fContainer = container;
 		fSubfolders = subfolders;
-		if (fgCaseInsensitive) {
-			IPath location = fContainer.getLocation();
-			if (location != null) {
-				fRootFile = location.toFile();
+		if (!fgCaseSensitive) {
+			fRootPath = fContainer.getLocation();
+			if (fRootPath != null) {
+				fRootFile = fRootPath.toFile();
 				fRoot = ResourcesPlugin.getWorkspace().getRoot();
 			}
 		}
@@ -93,11 +95,16 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		// To prevent the interruption of the search procedure we check 
 		// if the path is valid before passing it to "getFile".
 		if ( validateFile(name) ) {
-			if (fgCaseInsensitive && fRootFile != null) {
+			if (!fgCaseSensitive && fRootFile != null) {
 				File osFile = new File(fRootFile, name);
 				if (osFile.exists()) {
 					try {
-						IFile[] files = fRoot.findFilesForLocation(new Path(osFile.getCanonicalPath()));
+						// See bug 82627 and bug 95679 - we have to append the container path in the case
+						// that Eclipse thinks it is, with the file system case of the file in order to
+						// be successful when finding the IFile for a location
+						IPath canonicalPath = new Path(osFile.getCanonicalPath());
+						IPath workspacePath = fRootPath.append(canonicalPath.removeFirstSegments(fRootPath.segmentCount())); 
+						IFile[] files = fRoot.findFilesForLocation(workspacePath);
 						if (isFindDuplicates() && files.length > 1) {
 							for (int i = 0; i < files.length; i++) {
 								sources.add(files[i]);
