@@ -48,6 +48,7 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
     	List result = new ArrayList();
         List parents = new ArrayList();
         IResource res = breakpoint.getMarker().getResource();
+        parents.add(res);
         while (res != null) {
             res = res.getParent();
             if (res != null) {
