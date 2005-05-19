@@ -58,6 +58,8 @@ public interface IWorkbenchGraphicConstants {
 
     public final static String IMG_LCL_MIN_VIEW = "IMG_LCL_MIN_VIEW"; //$NON-NLS-1$
 
+    public final static String IMG_LCL_RENDERED_VIEW_MENU = "IMG_LCL_RENDERED_VIEW_MENU"; //$NON-NLS-1$
+    
     public final static String IMG_LCL_VIEW_MENU = "IMG_LCL_VIEW_MENU"; //$NON-NLS-1$
 
     public final static String IMG_LCL_SELECTED_MODE = "IMG_LCL_SELECTED_MODE"; //$NON-NLS-1$

@@ -103,7 +103,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
             
 	        ToolItem pullDownButton = new ToolItem(actualToolBar, SWT.PUSH);
 	        Image hoverImage = WorkbenchImages
-	                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+	                .getImage(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU);
 	        pullDownButton.setDisabledImage(hoverImage);
 	        pullDownButton.setImage(hoverImage);
 	        pullDownButton.setToolTipText(WorkbenchMessages.Menu); 
