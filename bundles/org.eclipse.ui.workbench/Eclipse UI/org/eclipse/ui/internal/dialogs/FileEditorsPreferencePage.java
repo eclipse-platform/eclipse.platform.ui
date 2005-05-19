@@ -353,7 +353,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 			for (int i = 0; i < contentTypes.length; i++) {
 				array = registry.getEditorsForContentType(contentTypes[i]);
 				for (int j = 0; j < array.length; j++) {
-					IEditorDescriptor editor = array[i];
+					IEditorDescriptor editor = array[j];
 					// don't add duplicates
 					TableItem[] items = editorTable.getItems();
 					TableItem foundItem = null;
