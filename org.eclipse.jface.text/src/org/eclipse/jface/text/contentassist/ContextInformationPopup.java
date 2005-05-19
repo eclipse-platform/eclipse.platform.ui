@@ -230,9 +230,6 @@ class ContextInformationPopup implements IContentAssistListener {
 					setContexts(contexts);
 					displayContextSelector();
 					hideContextInfoPopup();
-
-				} else if (!autoActivated) {
-					control.getDisplay().beep();
 				}
 			}
 		});
