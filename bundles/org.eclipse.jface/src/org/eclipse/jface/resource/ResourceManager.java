@@ -99,6 +99,10 @@ public abstract class ResourceManager {
      * ImageDescriptors)
      */
     public final Image createImageWithDefault(ImageDescriptor descriptor) {
+        if (descriptor == null) {
+        	return getDefaultImage();
+        }
+        
         try {
             return (Image)create(descriptor);
         } catch (DeviceResourceException e) {

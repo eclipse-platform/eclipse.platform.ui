@@ -81,6 +81,8 @@ public class TrimLayout extends Layout implements ICachingLayout {
 
     private static final int NONTRIM = 4;
 
+	private int spacing = 3;
+
     private class TrimData {
         int controlsIndex;
 
@@ -562,14 +564,14 @@ public class TrimLayout extends Layout implements ICachingLayout {
                 - trimSize[BOTTOM];
 
         arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
-                trimSize[TOP]), controls[TOP], true);
+                trimSize[TOP]), controls[TOP], true, spacing);
         arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane,
-                widthOfCenterPane, trimSize[BOTTOM]), controls[BOTTOM], true);
+                widthOfCenterPane, trimSize[BOTTOM]), controls[BOTTOM], true, spacing);
         arrange(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT],
-                clientArea.height - trimSize[TOP]), controls[LEFT], false);
+                clientArea.height - trimSize[TOP]), controls[LEFT], false, spacing);
         arrange(new Rectangle(rightOfCenterPane, topOfCenterPane,
                 trimSize[RIGHT], clientArea.height - trimSize[TOP]),
-                controls[RIGHT], false);
+                controls[RIGHT], false, spacing);
 
         if (centerArea.getControl() != null) {
             centerArea.getControl().setBounds(leftOfCenterPane,
@@ -602,7 +604,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
      * @param controls a list of SizeCaches for controls that will span the rectangle
      */
     private static void arrange(Rectangle area, List controls,
-            boolean horizontally) {
+            boolean horizontally, int spacing) {
         Point currentPosition = new Point(area.x, area.y);
 
         List resizable = new ArrayList(controls.size());
@@ -627,7 +629,7 @@ public class TrimLayout extends Layout implements ICachingLayout {
             idx++;
         }
 
-        int available = Geometry.getDimension(area, horizontally) - used;
+        int available = Geometry.getDimension(area, horizontally) - used - spacing  * (controls.size() - 1);
         idx = 0;
         int remainingResizable = resizable.size();
 
@@ -649,11 +651,11 @@ public class TrimLayout extends Layout implements ICachingLayout {
             if (horizontally) {
                 next.getControl().setBounds(currentPosition.x,
                         currentPosition.y, thisSize, hint);
-                currentPosition.x += thisSize;
+                currentPosition.x += thisSize + spacing;
             } else {
                 next.getControl().setBounds(currentPosition.x,
                         currentPosition.y, hint, thisSize);
-                currentPosition.y += thisSize;
+                currentPosition.y += thisSize + spacing;
             }
         }
     }

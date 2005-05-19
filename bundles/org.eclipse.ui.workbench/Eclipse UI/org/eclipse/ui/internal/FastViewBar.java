@@ -50,6 +50,7 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.layout.CellData;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.Row;
@@ -78,12 +79,10 @@ public class FastViewBar implements IWindowTrim {
     private MenuItem restoreItem;
 
     private IViewReference selection;
+    
+    private OvalComposite control;
 
-    private boolean visible = false;
-
-    private Composite control;
-
-    private GridData toolBarData;
+    private CellData toolBarData;
 
     private static final int HIDDEN_WIDTH = 5;
 
@@ -105,12 +104,22 @@ public class FastViewBar implements IWindowTrim {
 
     private int lastSide;
 
-    private Label fastViewLabel;
-
-    private Label fastViewLabel2;
-
     private int oldLength = 0;
 
+    private Listener dragListener = new Listener() {
+        public void handleEvent(Event event) {
+            Point position = DragUtil.getEventLoc(event);
+
+            IViewReference ref = getViewAt(position);
+
+            if (ref == null) {
+                startDraggingFastViewBar(position, false);
+            } else {
+                startDraggingFastView(ref, position, false);
+            }
+        }
+    };
+    
     private IChangeListener orientationChangeListener = new IChangeListener() {
         public void update(boolean changed) {
             if (changed && selectedView != null) {
@@ -122,7 +131,14 @@ public class FastViewBar implements IWindowTrim {
     // Map of string view IDs onto Booleans (true iff horizontally aligned)
     private Map viewOrientation = new HashMap();
 
-    private Listener menuListener;
+    private Listener menuListener = new Listener() {
+        public void handleEvent(Event event) {
+            Point loc = new Point(event.x, event.y);
+            if (event.type == SWT.MenuDetect) {
+                showFastViewBarPopup(loc);
+            }
+        }
+    };
 
     class ViewDropTarget extends AbstractDropTarget {
         List panes;
@@ -183,6 +199,8 @@ public class FastViewBar implements IWindowTrim {
     }
     
     ViewDropTarget dropTarget;
+
+    private DragHandle dragHandle;
     
     /**
      * Constructs a new fast view bar for the given workbench window.
@@ -214,6 +232,7 @@ public class FastViewBar implements IWindowTrim {
                        
                        if (item != null) {
                            item.dispose();
+                           updateLayoutData();
                            return;
                        }
                    }
@@ -358,20 +377,19 @@ public class FastViewBar implements IWindowTrim {
      * @param parent enclosing SWT composite
      */
     public void createControl(Composite parent) {
-        control = new Composite(parent, SWT.NONE);
+        control = new OvalComposite(parent, currentOrientation.get());
 
         side.addChangeListener(new IChangeListener() {
             public void update(boolean changed) {
-                if (changed
-                        && (Geometry.isHorizontal(getSide()) != Geometry
-                                .isHorizontal(lastSide))) {
+                if (changed) {
                     disposeChildControls();
                     createChildControls();
                 }
                 lastSide = getSide();
             }
         });
-
+        control.addListener(SWT.MenuDetect, menuListener);
+        PresentationUtil.addDragListener(control, dragListener);
         currentOrientation.addChangeListener(orientationChangeListener);
 
         createChildControls();
@@ -391,49 +409,36 @@ public class FastViewBar implements IWindowTrim {
         fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | flags);
         fastViewBar.add(new ShowFastViewContribution(window));
 
-        menuListener = new Listener() {
-            public void handleEvent(Event event) {
-                Point loc = new Point(event.x, event.y);
-                if (event.type == SWT.MenuDetect) {
-                    showFastViewBarPopup(loc);
-                }
-            }
-        };
-        CellLayout controlLayout = new CellLayout(0).setMargins(0,
-                newSide == SWT.BOTTOM ? 0 : 3).setDefaultRow(Row.growing())
-                .setDefaultColumn(Row.fixed()).setColumn(
-                        newSide == SWT.BOTTOM ? 1 : 0, Row.growing());
+        control.setOrientation(newSide);
+        CellLayout controlLayout;
+        
+        if (Geometry.isHorizontal(newSide)) {
+        	controlLayout = new CellLayout(0)
+        		.setMargins(0, 0)
+        		.setDefaultRow(Row.growing())
+        		.setDefaultColumn(Row.fixed())
+        		.setColumn(1, Row.growing());
+        } else {
+        	controlLayout = new CellLayout(1)
+        		.setMargins(0, 3)
+        		.setDefaultColumn(Row.growing())
+        		.setDefaultRow(Row.fixed())
+        		.setRow(1, Row.growing());
+        }
         control.setLayout(controlLayout);
         String tip = WorkbenchMessages.FastViewBar_0; 
         control.setToolTipText(tip);
 
-        // When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view
-        // bar if there's nothing in it.
-        if (newSide == SWT.BOTTOM) {
-            fastViewLabel = createFastViewSeparator(control);
-            fastViewLabel.setToolTipText(tip);
-        }
+        dragHandle = new DragHandle(control);
+        dragHandle.setHorizontal(!Geometry.isHorizontal(newSide));
+        dragHandle.setLayoutData(new CellData());
+        dragHandle.setBackground(control.getInteriorColor());
+        dragHandle.addListener(SWT.MenuDetect, menuListener);
+
         fastViewBar.createControl(control);
-        if (newSide == SWT.BOTTOM) {
-            fastViewLabel2 = createFastViewSeparator(control);
-            fastViewLabel2.setToolTipText(tip);
-        }
 
+        getToolBar().setBackground(control.getInteriorColor());
         getToolBar().addListener(SWT.MenuDetect, menuListener);
-
-        Listener dragListener = new Listener() {
-            public void handleEvent(Event event) {
-                Point position = DragUtil.getEventLoc(event);
-
-                IViewReference ref = getViewAt(position);
-
-                if (ref == null) {
-                    startDraggingFastViewBar(position, false);
-                } else {
-                    startDraggingFastView(ref, position, false);
-                }
-            }
-        };
 
         IDragOverListener fastViewDragTarget = new IDragOverListener() {
 
@@ -478,18 +483,14 @@ public class FastViewBar implements IWindowTrim {
 
         };
 
-        toolBarData = new GridData(GridData.FILL_BOTH);
-        toolBarData.widthHint = HIDDEN_WIDTH;
-        visible = false;
+        toolBarData = new CellData();
+        toolBarData.align(SWT.FILL, SWT.FILL);
 
         getToolBar().setLayoutData(toolBarData);
         PresentationUtil.addDragListener(getToolBar(), dragListener);
         DragUtil.addDragTarget(getControl(), fastViewDragTarget);
-        if (fastViewLabel != null) {
-            PresentationUtil.addDragListener(fastViewLabel, dragListener);
-        }
-        if (fastViewLabel2 != null) {
-            PresentationUtil.addDragListener(fastViewLabel2, dragListener);
+        if (dragHandle != null) {
+            PresentationUtil.addDragListener(dragHandle, dragListener);
         }
 
         update(true);
@@ -781,15 +782,10 @@ public class FastViewBar implements IWindowTrim {
     protected void disposeChildControls() {
         fastViewBar.dispose();
         fastViewBar = null;
-
-        if (fastViewLabel != null) {
-            fastViewLabel.dispose();
-            fastViewLabel = null;
-        }
-
-        if (fastViewLabel2 != null) {
-            fastViewLabel2.dispose();
-            fastViewLabel2 = null;
+        
+        if (dragHandle != null) {
+            dragHandle.dispose();
+            dragHandle = null;
         }
 
         if (moveCursor != null) {
@@ -800,6 +796,7 @@ public class FastViewBar implements IWindowTrim {
         oldLength = 0;
     }
 
+    
     /**
      * Refreshes the contents to match the fast views in the window's
      * current perspective. 
@@ -810,23 +807,7 @@ public class FastViewBar implements IWindowTrim {
         fastViewBar.update(force);
         ToolItem[] items = fastViewBar.getControl().getItems();
 
-        boolean shouldExpand = items.length > 0;
-        if (shouldExpand != visible) {
-
-            getToolBar().setVisible(true);
-            if (!shouldExpand) {
-                toolBarData.widthHint = HIDDEN_WIDTH;
-            } else {
-                toolBarData.widthHint = SWT.DEFAULT;
-            }
-
-            visible = shouldExpand;
-        }
-
-        if (items.length != oldLength) {
-            LayoutUtil.resize(control);
-            oldLength = items.length;
-        }
+        updateLayoutData();
 
         for (int idx = 0; idx < items.length; idx++) {
             IViewReference view = getViewFor(items[idx]);
@@ -835,6 +816,26 @@ public class FastViewBar implements IWindowTrim {
                     isHorizontal(view) ? SWT.HORIZONTAL : SWT.VERTICAL));
         }
     }
+
+	/**
+	 * @param items
+	 */
+	private void updateLayoutData() {
+		ToolItem[] items = fastViewBar.getControl().getItems();
+		boolean isHorizontal = Geometry.isHorizontal(getSide());
+		boolean shouldExpand = items.length > 0 || isHorizontal;
+
+        if (shouldExpand) {
+        	toolBarData.setHint(CellData.MINIMUM, Geometry.isHorizontal(getSide()) ? 32 : SWT.DEFAULT, SWT.DEFAULT);
+        } else {
+        	toolBarData.setHint(CellData.OVERRIDE, HIDDEN_WIDTH, SWT.DEFAULT);
+        }
+        
+        if (items.length != oldLength) {
+            LayoutUtil.resize(control);
+            oldLength = items.length;
+        }
+	}
 
     /**
      * Returns the currently selected fastview

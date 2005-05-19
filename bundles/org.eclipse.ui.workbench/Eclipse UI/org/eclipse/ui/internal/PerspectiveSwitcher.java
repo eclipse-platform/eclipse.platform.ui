@@ -733,11 +733,12 @@ public class PerspectiveSwitcher {
         perspectiveBar.createControl(trimControl);
         perspectiveBar.getControl().addListener(SWT.MenuDetect, popupListener);
 
-        trimSeparator = new Label(trimControl, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData sepData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING
-                | GridData.HORIZONTAL_ALIGN_CENTER);
-        sepData.widthHint = SEPARATOR_LENGTH;
-        trimSeparator.setLayoutData(sepData);
+//        trimSeparator = new Label(trimControl, SWT.SEPARATOR | SWT.HORIZONTAL);
+//        GridData sepData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING
+//                | GridData.HORIZONTAL_ALIGN_CENTER);
+//        sepData.widthHint = SEPARATOR_LENGTH;
+//        trimSeparator.setLayoutData(sepData);
+//        trimSeparator.setVisible(false);
 
         trimLayoutData = new GridData(GridData.FILL_BOTH);
         trimVisible = false;
