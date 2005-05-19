@@ -110,6 +110,8 @@ public class HelpIndexBuilder {
 	private DocumentBuilder parser;
 	
 	private static Locale[] legalLocales = Locale.getAvailableLocales();
+	private static HashSet legalLanguages = null;
+	private static HashSet legalCountries = null;
 
 	class PluginIdentifier {
 		String id;
@@ -370,22 +372,27 @@ public class HelpIndexBuilder {
 			File language = languages[i];
 			if (!language.isDirectory())
 				continue;
+			if (!isValidLanguage(language.getName()))
+				continue;
 			File [] countries = language.listFiles();
 			for (int j=0; j<countries.length; j++) {
 				File country = countries[j];
 				String locale;
-				if (country.isDirectory())
+				boolean hasCountry = false;
+				if (country.isDirectory() && isValidCountry(country.getName()))
+					hasCountry = true;
+				if (hasCountry)
 					locale = language.getName()+"_"+country.getName(); //$NON-NLS-1$
 				else
 					locale = language.getName();
 				if (isValidLocale(locale) && !locales.contains(locale)) {
 					String relativePath;
-					if (country.isDirectory())
+					if (hasCountry)
 						relativePath = "/nl/"+language.getName()+"/"+country.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 					else
 						relativePath = "/nl/"+language.getName(); //$NON-NLS-1$
 					LocaleDir dir = new LocaleDir(locale, relativePath);
-					if (country.isDirectory())
+					if (hasCountry)
 						dir.addDirectory(country);
 					dir.addDirectory(language);
 					dir.addDirectory(destination);
@@ -430,6 +437,28 @@ public class HelpIndexBuilder {
 				return true;
 		}
 		return false;
+	}
+	
+	private boolean isValidLanguage(String language) {
+		if (legalLanguages==null) {
+			legalLanguages = new HashSet();
+			String [] choices = Locale.getISOLanguages();
+			for (int i=0; i<choices.length; i++) {
+				legalLanguages.add(choices[i]);
+			}
+		}
+		return legalLanguages.contains(language);
+	}
+	
+	private boolean isValidCountry(String country) {
+		if (legalCountries==null) {
+			legalCountries = new HashSet();
+			String [] choices = Locale.getISOCountries();
+			for (int i=0; i<choices.length; i++) {
+				legalCountries.add(choices[i]);
+			}
+		}
+		return legalCountries.contains(country);
 	}
 	
 	/*
@@ -646,7 +675,7 @@ public class HelpIndexBuilder {
 				return new PluginIdentifier(id, version);
 		}
 		// check for the OSGi manifest
-		File OSGiFile = new File(manifest.getParentFile(),
+		File OSGiFile = new File(destination,
 				"META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (OSGiFile.exists()) {
