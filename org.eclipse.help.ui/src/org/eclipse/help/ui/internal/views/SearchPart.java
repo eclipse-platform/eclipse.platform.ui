@@ -98,6 +98,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				if (searchJobs.length == 0) {
 					// search finished
 					searchInProgress = false;
+					if (container.isDisposed())
+						return;
 					container.getDisplay().asyncExec(this);
 					SearchResultsPart results = (SearchResultsPart) parent
 							.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
