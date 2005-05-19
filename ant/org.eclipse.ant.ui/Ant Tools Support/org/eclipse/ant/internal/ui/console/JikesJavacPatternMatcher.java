@@ -28,7 +28,6 @@ import org.eclipse.ui.console.TextConsole;
 public class JikesJavacPatternMatcher implements IPatternMatchListenerDelegate {
 
     private TextConsole fConsole;
-    private Pattern fFilePattern = Pattern.compile("\\S*\\.java"); //$NON-NLS-1$
     private Pattern fLineNumberPattern = Pattern.compile("\\d+"); //$NON-NLS-1$
 
     public void connect(TextConsole console) {
@@ -55,18 +54,13 @@ public class JikesJavacPatternMatcher implements IPatternMatchListenerDelegate {
             return;
         }
 
-        Matcher matcher = null;
-        synchronized (fFilePattern) {
-            matcher = fFilePattern.matcher(matchedText);
-        }
-        String filePath = null;
-        if (matcher.find()) {
-            filePath = matcher.group();
-            filePath = filePath.substring(1); // pattern returns the first "
-            int matchStart = matcher.start() + 1;
-            eventOffset += matchStart;
-            eventLength = matcher.end() - matchStart;
-        }
+        int start = matchedText.indexOf('\"')+1;
+        int end = matchedText.indexOf('\"', start);        
+        String filePath = matchedText.substring(start, end);
+        
+        int fileStart = matchedText.indexOf(filePath) + eventOffset;
+        int fileLength = filePath.length();
+        
         if (filePath == null) {
             return; 
         }
@@ -84,7 +78,7 @@ public class JikesJavacPatternMatcher implements IPatternMatchListenerDelegate {
         
         FileLink link = new FileLink(file, null, -1, -1, lineNumber);
         try {
-            fConsole.addHyperlink(link, eventOffset, eventLength);
+            fConsole.addHyperlink(link, fileStart, fileLength);
         } catch (BadLocationException e) {
             AntUIPlugin.log(e);
         }

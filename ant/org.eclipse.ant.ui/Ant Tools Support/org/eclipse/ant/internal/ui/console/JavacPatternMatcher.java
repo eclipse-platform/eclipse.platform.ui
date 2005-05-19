@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.console;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,7 +24,6 @@ import org.eclipse.ui.console.TextConsole;
 public class JavacPatternMatcher implements IPatternMatchListenerDelegate {
 
     private TextConsole fConsole;
-    private Pattern fFilePattern = Pattern.compile("\\S+\\.java"); //$NON-NLS-1$
 
     public void connect(TextConsole console) {
         fConsole = console;
@@ -52,23 +48,20 @@ public class JavacPatternMatcher implements IPatternMatchListenerDelegate {
             return;
         }
         
-        Matcher matcher = null;
-        synchronized (fFilePattern) {
-            matcher = fFilePattern.matcher(matchedText);
-        }
-        String filePath = null;
-        int lineNumber = -1;
-        if (matcher.find()) {
-            filePath = matcher.group();
-            int matchStart = matcher.start();
-            eventOffset += matchStart;
-            int matchEnd = matcher.end();
-            eventLength = matchEnd - matchStart;
+        int index = matchedText.indexOf("[javac]"); //$NON-NLS-1$
+        String filePath = matchedText.substring(index+7);
+        index = filePath.indexOf(':');
+        filePath = filePath.substring(0, index).trim();
+
+        int fileStart = matchedText.indexOf(filePath);
+        eventOffset += fileStart;
+        eventLength = filePath.length();
+
+        int numStart = matchedText.indexOf(':')+1;
+        int numEnd = matchedText.indexOf(':', numStart);
+        String lineNumberString = matchedText.substring(numStart, numEnd);
+        int lineNumber = Integer.parseInt(lineNumberString);
             
-            int numStart = matchEnd + 1;
-            int numEnd = matchedText.indexOf(':', numStart);
-            lineNumber = Integer.parseInt(matchedText.substring(numStart, numEnd));
-        }
         if (filePath == null) {
             return; 
         }

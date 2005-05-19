@@ -29,8 +29,6 @@ public class EclipseJavacPatternMatcher implements IPatternMatchListenerDelegate
 
     private TextConsole fConsole;
 
-    private Pattern fFileNamePattern = Pattern.compile("\\S+\\.java"); //$NON-NLS-1$
-
     private Pattern fLineNumberPattern = Pattern.compile("\\d+"); //$NON-NLS-1$
 
     public void connect(TextConsole console) {
@@ -57,16 +55,13 @@ public class EclipseJavacPatternMatcher implements IPatternMatchListenerDelegate
             return;
         }
 
-        Matcher matcher = null;
-        synchronized (fFileNamePattern) {
-            matcher = fFileNamePattern.matcher(matchedText);
-        }
-        String filePath = null;
-        if (matcher.find()) {
-            filePath = matcher.group();
-            eventOffset += matcher.start();
-            eventLength -= matcher.start();
-        }
+        int index = matchedText.indexOf("ERROR in"); //$NON-NLS-1$
+        String filePath = matchedText.substring(index+8).trim();
+
+        int fileStart = matchedText.indexOf(filePath);
+        eventOffset += fileStart;
+        eventLength = filePath.length();
+
         if (filePath == null) {
             return; 
         }

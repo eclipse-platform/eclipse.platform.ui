@@ -689,23 +689,26 @@ M4 = Platform-specific fourth key -->
       <consolePatternMatchListener
             class="org.eclipse.ant.internal.ui.console.EclipseJavacPatternMatcher"
             id="org.eclipse.ant.ui.eclipseJavacPatternMatcher"
+            qualifier="javac"
             regex="\[javac.*\].*ERROR in.*">
          <enablement>
             <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
          </enablement>
       </consolePatternMatchListener>
 	  <consolePatternMatchListener
-            class="org.eclipse.ant.internal.ui.console.JavacPatternMatcher"
-            id="org.eclipse.ant.ui.JavacPatternMatcher"
-            regex="\[.*javac.*\] .*\.java:.*:.*">
+         class="org.eclipse.ant.internal.ui.console.JavacPatternMatcher"
+         id="org.eclipse.ant.ui.JavacPatternMatcher"
+         qualifier="javac"
+         regex="\[.*javac.*\] .*\.java:.*:.*">
          <enablement>
             <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
          </enablement>
       </consolePatternMatchListener>
 	  <consolePatternMatchListener
-            class="org.eclipse.ant.internal.ui.console.JikesJavacPatternMatcher"
-            id="org.eclipse.ant.ui.JikesJavacPatternMatcher"
-            regex="\[javac\].*\&quot;.*\&quot;:">
+         class="org.eclipse.ant.internal.ui.console.JikesJavacPatternMatcher"
+         id="org.eclipse.ant.ui.JikesJavacPatternMatcher"
+         qualifier="javac"
+         regex="\[javac\].*\&quot;.*\&quot;:">
          <enablement>
             <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
          </enablement>
