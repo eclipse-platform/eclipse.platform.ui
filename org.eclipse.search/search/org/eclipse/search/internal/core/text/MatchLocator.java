@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
- * A class finding matches withing a file.
+ * A class finding matches within a file.
  * @since 3.0
  */
 public class MatchLocator {
