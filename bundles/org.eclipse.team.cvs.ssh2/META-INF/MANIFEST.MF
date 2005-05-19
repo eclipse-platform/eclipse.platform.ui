@@ -3,6 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.cvs.ssh2; singleton:=true
 Bundle-Version: 3.1.0
+Bundle-ClassPath: cvsssh2.jar,
+ jsch-0.1.18.jar
 Bundle-Activator: org.eclipse.team.internal.ccvs.ssh2.CVSSSH2Plugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -16,4 +18,3 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.team.cvs.ssh
 Eclipse-AutoStart: true
-Bundle-ClassPath: .,jsch-0.1.18.jar
