@@ -233,7 +233,7 @@ public abstract class AbstractIntroPartImplementation {
                 stats.endRun();
                 Util
                     .logPerformanceMessage(
-                        "(perf stats) time spent in UI code before content is displayed (standbyStateChanged event is fired) ",
+                        "(perf stats) time spent in UI code before content is displayed (standbyStateChanged event is fired) ", //$NON-NLS-1$
                         stats.getRunningTime());
                 stats.reset();
             }
@@ -254,13 +254,13 @@ public abstract class AbstractIntroPartImplementation {
                 setStandbyStateStats.endRun();
                 Util
                     .logPerformanceMessage(
-                        "(perf stats) setting standby state (zooming, displaying content) took:",
+                        "(perf stats) setting standby state (zooming, displaying content) took:", //$NON-NLS-1$
                         +setStandbyStateStats.getRunningTime());
                 setStandbyStateStats.reset();
             } else
                 Util
                     .logPerformanceTime(
-                        "setting standby state (zooming, generating content, setText() ) took:",
+                        "setting standby state (zooming, generating content, setText() ) took:", //$NON-NLS-1$
                         +start);
 
             if (logUIcreationTime) {
@@ -271,12 +271,12 @@ public abstract class AbstractIntroPartImplementation {
                     stats.endRun();
                     Util
                         .logPerformanceMessage(
-                            "END - (perf stats): creating CustomizableIntroPart view took:",
+                            "END - (perf stats): creating CustomizableIntroPart view took:", //$NON-NLS-1$
                             +stats.getRunningTime());
                     stats.reset();
                 } else
                     Util.logPerformanceTime(
-                        "END: creating CustomizableIntroPart view took:",
+                        "END: creating CustomizableIntroPart view took:", //$NON-NLS-1$
                         +IntroPlugin.getDefault().gettUICreationStartTime());
 
 

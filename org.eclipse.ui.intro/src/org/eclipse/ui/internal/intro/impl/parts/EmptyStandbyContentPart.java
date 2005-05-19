@@ -49,7 +49,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(gd);
 
-        contentText = toolkit.createText(contentComposite, " ", SWT.MULTI
+        contentText = toolkit.createText(contentComposite, " ", SWT.MULTI //$NON-NLS-1$
                 | SWT.WRAP);
         GridData textGd = new GridData(GridData.FILL_BOTH);
         contentText.setLayoutData(textGd);
@@ -91,7 +91,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         if (input != null)
             setMessage((String) input);
         else
-            setMessage("");
+            setMessage(""); //$NON-NLS-1$
     }
 
     /*

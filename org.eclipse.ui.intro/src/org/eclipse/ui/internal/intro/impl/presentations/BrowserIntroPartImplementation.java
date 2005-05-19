@@ -126,7 +126,7 @@ public class BrowserIntroPartImplementation extends
         // if we are logging performance, log actual UI creation time for
         // browser.
         if (Log.logPerformance)
-            Util.logPerformanceTime("creating a new Browser() took:", start);
+            Util.logPerformanceTime("creating a new Browser() took:", start); //$NON-NLS-1$
 
         addToolBarActions();
 
@@ -217,7 +217,7 @@ public class BrowserIntroPartImplementation extends
             success = browser.setText(content);
             if (Log.logPerformance)
                 Util
-                    .logPerformanceTime("setText() on the browser took:", start);
+                    .logPerformanceTime("setText() on the browser took:", start); //$NON-NLS-1$
 
             if (!success)
                 Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$

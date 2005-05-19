@@ -65,7 +65,7 @@ public class PageWidgetFactory {
                 return;
             }
             DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
-                Messages.HyperlinkAdapter_urlIs + " " + url);
+                Messages.HyperlinkAdapter_urlIs + " " + url); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {

@@ -124,9 +124,9 @@ public class IntroLaunchBar implements IWindowTrim {
 
     static final int BUTTON_FG = SWT.COLOR_WIDGET_DARK_SHADOW;
 
-    static final String S_STORED_LOCATION = "introLaunchBar.location";
+    static final String S_STORED_LOCATION = "introLaunchBar.location"; //$NON-NLS-1$
 
-    private final static String LAUNCH_COMMAND_BASE = "http://org.eclipse.ui.intro/showPage?id=";
+    private final static String LAUNCH_COMMAND_BASE = "http://org.eclipse.ui.intro/showPage?id="; //$NON-NLS-1$
 
     private Color fg;
 
