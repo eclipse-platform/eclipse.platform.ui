@@ -62,11 +62,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
         				boolean isManaged = cvsResource.isManaged();
                         if (isManaged && includeManaged) {
                             includeResource = true;
-                        } else {
+                        } else if (exists) {
             				boolean isIgnored = cvsResource.isIgnored();
                             if (isIgnored && includeIgnored) {
                                 includeResource = true;
-                            } else if ( ! isManaged && ! isIgnored && includeUnmanaged) {
+                            } else if (! isManaged && ! isIgnored && includeUnmanaged) {
                                 includeResource = true;
             				}
                         }
