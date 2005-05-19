@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.browser;
 import java.net.MalformedURLException;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -34,7 +35,8 @@ public class BrowserLauncher implements IEditorLauncher {
 			// ignore
 		}
 		catch (PartInitException e) {
-			//TODO Report this exception
+			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+					Messages.errorDialogTitle, e.getLocalizedMessage());
 		}
 	}
 }

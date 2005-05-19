@@ -306,14 +306,14 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
         display.asyncExec(runnable);
     }
     
-    private void doOpenExternalEditor(String id, IEditorInput input) {
+    protected void doOpenExternalEditor(String id, IEditorInput input) {
         IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
         String name = input.getName();
         IEditorDescriptor [] editors = registry.getEditors(name);
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
         String editorId = null;
-        for (int i=0; i<editors.length; i++) {
+        for (int i = 0; i < editors.length; i++) {
             IEditorDescriptor editor = editors[i];
             if (editor.getId().equals(id))
                 continue;

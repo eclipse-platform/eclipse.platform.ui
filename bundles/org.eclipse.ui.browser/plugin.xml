@@ -74,7 +74,7 @@
       <browser
          id="org.eclipse.ui.browser.mozilla"
          name="%browserMozilla"
-         os="Linux,AIX,HP,SunOS"
+         os="linux,aix,hpux,solaris"
          executable="mozilla"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>usr/bin/mozilla</location>
@@ -83,7 +83,7 @@
       <browser
          id="org.eclipse.ui.browser.netscape"
          name="%browserNetscape"
-         os="Linux,AIX,HP,SunOS"
+         os="linux,aix,hpux,solaris"
          executable="netscape"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>usr/bin/netscape</location>
@@ -92,21 +92,21 @@
       <browser
          id="org.eclipse.ui.browser.firefox"
          name="%firefox"
-         os="Linux,AIX,HP,SunOS"
+         os="linux,aix,hpux,solaris"
          executable="firefox"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
       </browser>
       <browser
          id="org.eclipse.ui.browser.konqueror"
          name="%browserKonqueror"
-         os="Linux,AIX,HP,SunOS"
+         os="linux,aix,hpux,solaris"
          executable="konqueror">
          <location>opt/kde3/bin/konqueror</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.galeon"
          name="%browserGaleon"
-         os="Linux,AIX,HP,SunOS"
+         os="linux,aix,hpux,solaris"
          executable="galeon">
          <location>opt/usr/gnome/bin/galeon</location>
       </browser>

@@ -112,7 +112,7 @@ public class BrowserViewer extends Composite {
 
     protected boolean newWindow;
 
-    private IBrowserViewerContainer container;
+    protected IBrowserViewerContainer container;
 
     protected String title;
 

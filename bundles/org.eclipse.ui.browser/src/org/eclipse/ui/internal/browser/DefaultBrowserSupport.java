@@ -88,9 +88,9 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		IWebBrowser browser = getExistingWebBrowser(browserId);
 		if (browser != null) {
 			if (browser instanceof InternalBrowserInstance) {
-				InternalBrowserInstance instance = (InternalBrowserInstance) browser;
-				instance.setName(name);
-				instance.setTooltip(tooltip);
+				InternalBrowserInstance instance2 = (InternalBrowserInstance) browser;
+				instance2.setName(name);
+				instance2.setTooltip(tooltip);
 			}
 			return browser;
 		}

@@ -48,18 +48,18 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 		this.tooltip = tooltip;
 	}
 
-	protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part) {
-		this.part = part;
+	protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part2) {
+		this.part = part2;
 		listener = new IPartListener() {
-			public void partActivated(IWorkbenchPart part) {
+			public void partActivated(IWorkbenchPart part3) {
 				// ignore
 			}
 
-			public void partBroughtToTop(IWorkbenchPart part) {
+			public void partBroughtToTop(IWorkbenchPart part3) {
 				// ignore
 			}
 
-			public void partClosed(IWorkbenchPart part) {
+			public void partClosed(IWorkbenchPart part3) {
 				if (part.equals(InternalBrowserInstance.this.part)) {
 					InternalBrowserInstance.this.part = null;
 					page.removePartListener(listener);
@@ -68,11 +68,11 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 				}
 			}
 
-			public void partDeactivated(IWorkbenchPart part) {
+			public void partDeactivated(IWorkbenchPart part3) {
 				// ignore
 			}
 
-			public void partOpened(IWorkbenchPart part) {
+			public void partOpened(IWorkbenchPart part3) {
 				// ignore
 			}
 		};

@@ -256,12 +256,18 @@ public class WebBrowserUtil {
 	 * 
 	 * @param browserId
 	 * @param style
-	 * @return
+	 * @return secondaryId
 	 */
 	public static String encodeStyle(String browserId, int style) {
 		return browserId + STYLE_SEP + style;
 	}
 
+	/**
+	 * Decodes secondary id into a browser style.
+	 * 
+	 * @param secondaryId
+	 * @return style
+	 */
 	public static int decodeStyle(String secondaryId) {
 		if (secondaryId != null) {
 			int sep = secondaryId.lastIndexOf(STYLE_SEP);
@@ -270,6 +276,7 @@ public class WebBrowserUtil {
 				try {
 					return Integer.parseInt(stoken);
 				} catch (NumberFormatException e) {
+					// ignore
 				}
 			}
 		}

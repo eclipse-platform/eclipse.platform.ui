@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.browser;
 
 import java.net.URL;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.AbstractWebBrowser;
@@ -40,6 +41,7 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 			}
 		}
 		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText); //$NON-NLS-1$
-		Program.launch(urlText);
+		if (!Program.launch(urlText))
+			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, url.toExternalForm()));
 	}
 }

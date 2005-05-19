@@ -32,7 +32,7 @@ public class BrowserText {
 
     private Label sep;
 
-    private Link link;
+    protected Link link;
 
     private BrowserViewer viewer;
 
@@ -125,7 +125,7 @@ public class BrowserText {
         exception.setText(swriter.toString());
     }
 
-    private void toggleException() {
+    protected void toggleException() {
         expanded = !expanded;
         updateButtonText();
         GridData gd = (GridData) exception.getLayoutData();
@@ -141,7 +141,7 @@ public class BrowserText {
             button.setText(Messages.BrowserText_button_expand);
     }
 
-    private void updateWidth(Composite parent) {
+    protected void updateWidth(Composite parent) {
         Rectangle area = parent.getClientArea();
         updateWidth(title, area.width);
         updateWidth(text, area.width);
@@ -157,7 +157,7 @@ public class BrowserText {
             gd.widthHint = width - 10;
     }
 
-    private void doOpenExternal() {
+    protected void doOpenExternal() {
         IBrowserViewerContainer container = viewer.getContainer();
         if (container != null)
             container.openInExternalBrowser(url);

@@ -200,19 +200,22 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		external.setLayoutData(data);
+		
+		label = new Label(composite, SWT.WRAP);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.browserList);
 		data = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_CENTER);
 		data.horizontalSpan = 2;
-		data.horizontalIndent = 15;
 		label.setLayoutData(data);
 
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalIndent = 15;
 		table.setLayoutData(data);
 		table.setHeaderVisible(false);
 		table.setLinesVisible(false);
@@ -228,9 +231,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer.setInput("root"); //$NON-NLS-1$
 
 		// uncheck any other elements that might be checked and leave only the
-		// element checked to
-		// remain checked since one can only chose one brower at a time to be
-		// current.
+		// element checked to remain checked since one can only chose one
+		// brower at a time to be current.
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				checkNewDefaultBrowser(e.getElement());
@@ -239,11 +241,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				BrowserManager.getInstance().setCurrentWebBrowser(browser);
 
 				// if no other browsers are checked, don't allow the single one
-				// currently
-				// checked to become unchecked, and lose a current browser. That
-				// is, don't
-				// permit unchecking if no other item is checked which is
-				// supposed to be the case.
+				// currently checked to become unchecked, and lose a current
+				// browser. That is, don't permit unchecking if no other item
+				// is checked which is supposed to be the case.
 				Object[] obj = tableViewer.getCheckedElements();
 				if (obj.length == 0)
 					tableViewer.setChecked(e.getElement(), true);
@@ -251,8 +251,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		});
 
 		// set a default, checked browser based on the current browser. If there
-		// is not a
-		// current browser, but the first item exists, use that instead.
+		// is not a current browser, but the first item exists, use that instead.
 		// This will work currently until workbench shutdown, because current
 		// browser is not yet persisted.
 		IBrowserDescriptor browser = BrowserManager.getInstance()
@@ -500,32 +499,23 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		external.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean inte = !external.getSelection();
 				boolean sel = !tableViewer.getSelection().isEmpty();
-
-				table.setEnabled(!inte);
-				add.setEnabled(!inte);
-				edit.setEnabled(!inte && sel);
-				remove.setEnabled(!inte && sel);
-				search.setEnabled(!inte);
+				edit.setEnabled(sel);
+				remove.setEnabled(sel);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// ignore
 			}
 		});
-		internal.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.INTERNAL);
+		internal.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.INTERNAL);
 		if (system != null)
-			system.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.SYSTEM);		
-		external.setSelection(WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.EXTERNAL);
+			system.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.SYSTEM);		
+		external.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.EXTERNAL);
 
 		boolean sel = !tableViewer.getSelection().isEmpty();
-		boolean exte = WebBrowserPreference.getBrowserChoice()==WebBrowserPreference.EXTERNAL;
-		table.setEnabled(exte);
-		add.setEnabled(exte);
-		edit.setEnabled(exte && sel);
-		remove.setEnabled(exte && sel);
-		search.setEnabled(exte);
+		edit.setEnabled(sel);
+		remove.setEnabled(sel);
 
 		Dialog.applyDialogFont(composite);
 
