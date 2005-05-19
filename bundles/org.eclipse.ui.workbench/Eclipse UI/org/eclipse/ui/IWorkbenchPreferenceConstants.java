@@ -346,4 +346,12 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
+    
+    /**
+     * <p> Stores whether or not to show progress while starting the workbench
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static final String SHOW_PROGRESS_ON_STARTUP = "SHOW_PROGRESS_ON_STARTUP"; //$NON-NLS-1$
 }

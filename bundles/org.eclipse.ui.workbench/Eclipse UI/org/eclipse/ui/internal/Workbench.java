@@ -243,6 +243,13 @@ public final class Workbench implements IWorkbench {
 	 * workbench state. Initially -1 for unknown number.
 	 */
 	private int progressCount = -1;
+	
+	/**
+	 * A field to hold the workbench windows that have been restored.  In the
+	 * event that not all windows have been restored, this field allows the 
+	 * openWindowsAfterRestore method to open some windows.
+	 */
+	private WorkbenchWindow[] createdWindows;
 
 	/**
 	 * Creates a new workbench.
@@ -1393,141 +1400,77 @@ public final class Workbench implements IWorkbench {
 		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
 				WorkbenchMessages.Workbench_problemsRestoring, null);
 		
-		// Retrieve how many plug-ins were loaded while restoring the workbench
-		Integer lastProgressCount = memento.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
+		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 		
-		// If we don't know how many plug-ins were loaded last time,
-		// assume we are loading half of the installed plug-ins.
-		final int expectedProgressCount = Math.max(1, lastProgressCount==null ? WorkbenchPlugin.getDefault().getBundleCount() / 2 : lastProgressCount.intValue());
-		progressCount = 0;
-		final double cutoff = 0.95;
-		final Thread uiThread = Thread.currentThread();
-		
-		final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(null);
-		SynchronousBundleListener bundleListener = new SynchronousBundleListener() {
-
-			public void bundleChanged(final BundleEvent event) {
-                // Don't report progress unless we're running in the ui thread
-                if (Display.getCurrent() == null) {
-                    return;
-                }
-                
-                if (event.getType() == BundleEvent.STARTED) {
-                	progressCount++;
-                	IProgressMonitor progressMonitor = progressMonitorDialog.getProgressMonitor();
-					if(progressCount <= expectedProgressCount * cutoff) {
-						progressMonitor.worked(1);
-                	}
-                	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Restoring_Loaded, event.getBundle().getSymbolicName()));
-                	if(Thread.currentThread()==uiThread) {
-	                	while(Display.getCurrent().readAndDispatch()) {
-	                	}
-                	}
-                }
-			}};
-		WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
-		
-		// newWindowHolder[0] will be set to the array of windows to open
-		final WorkbenchWindow[][] newWindowHolder = new WorkbenchWindow[1][];
-
-		try {
-			progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(WorkbenchMessages.Restoring_Workspace, expectedProgressCount);
-					
-					// hide splash screen now that we are showing progress.
-					// Assuming that Platform.endSplash() is idempotent.
-					Platform.endSplash();
-					
-					IMemento childMem;
-					try {
-						UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
-						IMemento mruMemento = memento
-						.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
-						if (mruMemento != null) {
-							result.add(getEditorHistory().restoreState(mruMemento));
-						}
-					} finally {
-						UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
-					}
-					
-					// Restore advisor state.
-					IMemento advisorState = memento
-					.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
-					if (advisorState != null)
-						result.add(getAdvisor().restoreState(advisorState));
-					
-					// Get the child windows.
-					IMemento[] children = memento
-					.getChildren(IWorkbenchConstants.TAG_WINDOW);
-					
-					newWindowHolder[0] = new WorkbenchWindow[children.length];
-					
-					// Read the workbench windows.
-					for (int x = 0; x < children.length; x++) {
-						childMem = children[x];
-						WorkbenchWindow newWindow = newWorkbenchWindow();
-						newWindowHolder[0][x] = newWindow;
-						newWindow.create();
-						
-						// allow the application to specify an initial perspective to open
-						// @issue temporary workaround for ignoring initial perspective
-						// String initialPerspectiveId =
-						// getAdvisor().getInitialWindowPerspectiveId();
-						// if (initialPerspectiveId != null) {
-						// IPerspectiveDescriptor desc =
-						// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
-						// result.merge(newWindow.restoreState(childMem, desc));
-						// }
-						// add the window so that any work done in newWindow.restoreState
-						// that relies on Workbench methods has windows to work with
-						windowManager.add(newWindow);
-						
-						// now that we've added it to the window manager we need to listen
-						// for any exception that might hose us before we get a chance to
-						// open it. If one occurs, remove the new window from the manager.
-						// Assume that the new window is a phantom for now
-						boolean restored = false;
-						try {
-							result.merge(newWindow.restoreState(childMem, null));
-							try {
-								newWindow.fireWindowRestored();
-							} catch (WorkbenchException e) {
-								result.add(e.getStatus());
-							}
-							// everything worked so far, don't close now
-							restored = true;
-						} finally {
-							if (!restored) {
-								// null the window in newWindowHolder so that it won't be opened later on
-								newWindowHolder[0][x] = null;
-								newWindow.close();
-							}
-						}
-					}
-					IProgressMonitor progressMonitor = progressMonitorDialog.getProgressMonitor();
-					progressMonitor.subTask(WorkbenchMessages.Restoring_Done);
-					int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
-					progressMonitor.worked(remainingWork);
-					progressMonitor.done();
-				}});
-		} finally {
-			WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+		if(!showProgress) {
+			/*
+			 * Restored windows will be set in the createdWindows field to be used by the openWindowsAfterRestore() method 
+			 */
+			try {
+				doRestoreState(memento, result);
+			} finally {
+				openWindowsAfterRestore();
+			}
+		} else {
+			// Retrieve how many plug-ins were loaded while restoring the workbench
+			Integer lastProgressCount = memento.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
 			
-			// now open the windows (except the ones that were nulled because we closed them above)
-			for(int x=0; x<newWindowHolder[0].length; x++) {
-				if(newWindowHolder[0][x]!=null) {
-					boolean opened = false;
-					try {
-						newWindowHolder[0][x].open();
-						opened = true;
-					} finally {
-						if(!opened) {
-							newWindowHolder[0][x].close();
-						}
-					}
-				}
+			// If we don't know how many plug-ins were loaded last time,
+			// assume we are loading half of the installed plug-ins.
+			final int expectedProgressCount = Math.max(1, lastProgressCount==null ? WorkbenchPlugin.getDefault().getBundleCount() / 2 : lastProgressCount.intValue());
+			progressCount = 0;
+			final double cutoff = 0.95;
+			final Thread uiThread = Thread.currentThread();
+			
+			final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(null);
+			SynchronousBundleListener bundleListener = new SynchronousBundleListener() {
+	
+				public void bundleChanged(final BundleEvent event) {
+	                // Don't report progress unless we're running in the ui thread
+	                if (Display.getCurrent() == null) {
+	                    return;
+	                }
+	                
+	                if (event.getType() == BundleEvent.STARTED) {
+	                	if(Thread.currentThread()==uiThread) {
+		                	progressCount++;
+		                	IProgressMonitor progressMonitor = progressMonitorDialog.getProgressMonitor();
+							if(progressCount <= expectedProgressCount * cutoff) {
+								progressMonitor.worked(1);
+		                	}
+		                	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Restoring_Loaded, event.getBundle().getSymbolicName()));
+		                	// spin the event loop a little to have the progress dialog repaint if necessary
+		                	while(Display.getCurrent().readAndDispatch()) {
+		                	}
+	                	}
+	                }
+				}};
+			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+				
+			try {
+				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
+	
+					public void run(IProgressMonitor monitor) {
+						monitor.beginTask(WorkbenchMessages.Restoring_Workspace, expectedProgressCount);
+						
+						// hide splash screen now that we are showing progress.
+						// Assuming that Platform.endSplash() is idempotent.
+						Platform.endSplash();
+						
+						/*
+						 * Restored windows will be set in the createdWindows field to be used by the openWindowsAfterRestore() method 
+						 */
+						doRestoreState(memento, result);
+						
+						monitor.subTask(WorkbenchMessages.Restoring_Done);
+						int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
+						monitor.worked(remainingWork);
+						monitor.done();
+					}});
+			} finally {
+				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+				
+				openWindowsAfterRestore();
 			}
 		}
 		return result;
@@ -1661,6 +1604,8 @@ public final class Workbench implements IWorkbench {
 				startPlugins();
 				addStartupRegistryListener();
 
+			//	WWinPluginAction.refreshActionList();
+				
 				display.asyncExec(new Runnable() {
 					public void run() {
 						UIStats.end(UIStats.START_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
@@ -2510,5 +2455,94 @@ public final class Workbench implements IWorkbench {
 
 	public final Object getAdapter(final Class key) {
 		return services.get(key);
+	}
+
+	private void doRestoreState(final IMemento memento, final MultiStatus status) {
+		IMemento childMem;
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
+			IMemento mruMemento = memento
+			.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
+			if (mruMemento != null) {
+				status.add(getEditorHistory().restoreState(mruMemento));
+			}
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "MRUList"); //$NON-NLS-1$
+		}
+		
+		// Restore advisor state.
+		IMemento advisorState = memento
+		.getChild(IWorkbenchConstants.TAG_WORKBENCH_ADVISOR);
+		if (advisorState != null)
+			status.add(getAdvisor().restoreState(advisorState));
+		
+		// Get the child windows.
+		IMemento[] children = memento
+		.getChildren(IWorkbenchConstants.TAG_WINDOW);
+		
+		createdWindows = new WorkbenchWindow[children.length];
+		
+		// Read the workbench windows.
+		for (int i = 0; i < children.length; i++) {
+			childMem = children[i];
+			WorkbenchWindow newWindow = newWorkbenchWindow();
+			createdWindows[i] = newWindow;
+			newWindow.create();
+			
+			// allow the application to specify an initial perspective to open
+			// @issue temporary workaround for ignoring initial perspective
+			// String initialPerspectiveId =
+			// getAdvisor().getInitialWindowPerspectiveId();
+			// if (initialPerspectiveId != null) {
+			// IPerspectiveDescriptor desc =
+			// getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
+			// result.merge(newWindow.restoreState(childMem, desc));
+			// }
+			// add the window so that any work done in newWindow.restoreState
+			// that relies on Workbench methods has windows to work with
+			windowManager.add(newWindow);
+			
+			// now that we've added it to the window manager we need to listen
+			// for any exception that might hose us before we get a chance to
+			// open it. If one occurs, remove the new window from the manager.
+			// Assume that the new window is a phantom for now
+			boolean restored = false;
+			try {
+				status.merge(newWindow.restoreState(childMem, null));
+				try {
+					newWindow.fireWindowRestored();
+				} catch (WorkbenchException e) {
+					status.add(e.getStatus());
+				}
+				// everything worked so far, don't close now
+				restored = true;
+			} finally {
+				if (!restored) {
+					// null the window in newWindowHolder so that it won't be opened later on
+					createdWindows[i] = null;
+					newWindow.close();
+				}
+			}
+		}
+	}
+
+	private void openWindowsAfterRestore() {
+		if (createdWindows == null)
+			return;
+		// now open the windows (except the ones that were nulled because we closed them above)
+		for(int i=0; i<createdWindows.length; i++) {
+			if(createdWindows[i]!=null) {
+				boolean opened = false;
+				try {
+					createdWindows[i].open();
+					opened = true;
+				} finally {
+					if(!opened) {
+						createdWindows[i].close();
+					}
+				}
+			}
+		}
+		createdWindows = null;
 	}
 }
