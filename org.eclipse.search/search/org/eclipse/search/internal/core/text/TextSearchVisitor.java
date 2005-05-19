@@ -190,18 +190,26 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		} catch (IOException e) {
 			IFile file= (IFile) proxy.requestResource();
-			String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		} catch (CoreException e) {
 			IFile file= (IFile) proxy.requestResource();
-			String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		} finally {
 			updateProgressMonitor();
 		}		
 		return false; // finish, files don't have children
+	}
+	
+	private String getExceptionMessage(Exception e) {
+		String message= e.getLocalizedMessage();
+		if (message == null) {
+			return e.getClass().getName();
+		}
+		return message;
 	}
 
 	private IDocument getOpenDocument(IFile file) {
