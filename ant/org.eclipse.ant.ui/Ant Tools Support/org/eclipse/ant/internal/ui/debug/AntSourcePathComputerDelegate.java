@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
@@ -45,7 +47,7 @@ public class AntSourcePathComputerDelegate extends JavaSourcePathComputer {
 		String path = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		path= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(path);
         List sourceContainers= new ArrayList();
-		ISourceContainer folderContainer = null;
+		ISourceContainer sourceContainer = null;
 		IProject project= null;
 		if (path != null) {
 			IResource resource = AntUtil.getFileForLocation(path, null);
@@ -54,14 +56,19 @@ public class AntSourcePathComputerDelegate extends JavaSourcePathComputer {
 				if (container.getType() == IResource.PROJECT) {
 					project= (IProject)container;
 				} else if (container.getType() == IResource.FOLDER) {
-					folderContainer = new FolderSourceContainer(container, true);
+					sourceContainer = new FolderSourceContainer(container, true);
 					project= container.getProject();
 				}
-			}
+			} else { //external to the workspace
+			    File buildFile= new File(path);
+                if (buildFile.exists()) {
+                    sourceContainer= new DirectorySourceContainer(buildFile.getParentFile(), true);
+                }
+            }
 		}
 		
-		if (folderContainer != null) {
-			sourceContainers.add(folderContainer);
+		if (sourceContainer != null) {
+			sourceContainers.add(sourceContainer);
 		}
 		if (project != null) {
 			sourceContainers.add(new ProjectSourceContainer(project, false));

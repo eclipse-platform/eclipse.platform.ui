@@ -20,8 +20,10 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.internal.debug.ui.LocalFileStorageEditorInput;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
@@ -137,6 +139,9 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 		if (element instanceof ILineBreakpoint) {
 			return new FileEditorInput((IFile)((ILineBreakpoint)element).getMarker().getResource());
 		}
+        if (element instanceof LocalFileStorage) {
+            return new LocalFileStorageEditorInput((LocalFileStorage)element);
+        }
 		return null;
 	}
 	
@@ -144,9 +149,6 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
 	public String getEditorId(IEditorInput input, Object element) {
-		if (element instanceof IFile || element instanceof ILineBreakpoint) {
-			return "org.eclipse.ant.ui.internal.editor.AntEditor"; //$NON-NLS-1$
-		}
-		return null;
+		return "org.eclipse.ant.ui.internal.editor.AntEditor"; //$NON-NLS-1$
 	}
 }
