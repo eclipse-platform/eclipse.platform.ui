@@ -57,7 +57,7 @@ package org.eclipse.jface.text;
  * use the target document's line delimiters.</p>
  * <p>
  * An <code>IDocument</code> does not care about mixed line delimiters. Clients who
- * who want to ensure a single line delimiter in their document should use the line
+ * want to ensure a single line delimiter in their document should use the line
  * delimiter returned by {@link org.eclipse.jface.text.TextUtilities#getDefaultLineDelimiter(IDocument)}.</p>
  * <p>
  * <code>IDocument</code> throws <code>BadLocationException</code> if the parameters of
