@@ -54,7 +54,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="and">
       <annotation>
          <documentation>
-            This element represent a boolean AND operation on the result of evaluating it&apos;s two sub-element expressions.
+            This element represent a boolean AND operation on the result of evaluating its two sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
@@ -73,7 +73,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="or">
       <annotation>
          <documentation>
-            This element represent a boolean OR operation on the result of evaluating it&apos;s two sub-element expressions.
+            This element represent a boolean OR operation on the result of evaluating its two sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
@@ -92,7 +92,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="not">
       <annotation>
          <documentation>
-            This element represent a boolean NOT operation on the result of evaluating it&apos;s sub-element expressions.
+            This element represent a boolean NOT operation on the result of evaluating its sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
