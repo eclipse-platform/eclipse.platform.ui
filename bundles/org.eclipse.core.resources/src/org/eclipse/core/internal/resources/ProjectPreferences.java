@@ -109,7 +109,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			return;
 		try {
 			synchronized (this) {
-				String[] names = computeChildren(project.getLocation());
+				String[] names = computeChildren();
 				for (int i = 0; i < names.length; i++)
 					addChild(names[i], null);
 			}
@@ -156,6 +156,10 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
+	}
+	
+	protected boolean isAlreadyLoaded(String path) {
+		return loadedNodes.contains(path);
 	}
 
 	protected void loaded() {
@@ -482,18 +486,36 @@ public class ProjectPreferences extends EclipsePreferences {
 		Preferences root = Platform.getPreferencesService().getRootNode();
 		String project = path.segment(0);
 		String qualifier = path.removeFileExtension().lastSegment();
-		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
+		ProjectPreferences projectNode = (ProjectPreferences) root.node(ProjectScope.SCOPE).node(project);
+		// if the node isn't known then just return
 		try {
 			if (!projectNode.nodeExists(qualifier))
 				return;
 		} catch (BackingStoreException e) {
 			// ignore
 		}
-		// remove the preferences
-		removeNode(projectNode.node(qualifier));
+
+		// if the node was loaded we need to clear the values and remove
+		// its reference from the parent (don't save it though)
+		// otherwise just remove the reference from the parent
+		String childPath = projectNode.absolutePath() + IPath.SEPARATOR + qualifier;
+		if (projectNode.isAlreadyLoaded(childPath))
+			removeNode(projectNode.node(qualifier));
+		else
+			projectNode.removeNode(qualifier);
+
 		// notifies the CharsetManager if needed
 		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
 			preferencesChanged(file.getProject());
+	}
+
+	private synchronized void removeNode(String path) {
+		if (children != null) {
+			if (children.remove(path) != null)
+				makeDirty();
+			if (children.isEmpty())
+				children = null;
+		}
 	}
 
 	static void deleted(IResource resource) throws CoreException {
@@ -530,6 +552,31 @@ public class ProjectPreferences extends EclipsePreferences {
 		// notifies the CharsetManager 		
 		if (hasResourcesSettings)
 			preferencesChanged(folder.getProject());
+	}
+
+	/*
+	 * Figure out what the children of this node are based on the resources
+	 * that are in the workspace.
+	 */
+	private String[] computeChildren() {
+		if (project == null)
+			return EMPTY_STRING_ARRAY;
+		IFolder folder = project.getFolder(DEFAULT_PREFERENCES_DIRNAME);
+		if (!folder.exists())
+			return EMPTY_STRING_ARRAY;
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (CoreException e) {
+			return EMPTY_STRING_ARRAY;
+		}
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < members.length; i++) {
+			IResource resource = members[i];
+			if (resource.getType() == IResource.FILE && resource.getFullPath().getFileExtension().equals(PREFS_FILE_EXTENSION))
+				result.add(resource.getFullPath().removeFileExtension().lastSegment());
+		}
+		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
 	}
 
 	public void flush() throws BackingStoreException {

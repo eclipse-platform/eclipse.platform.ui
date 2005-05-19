@@ -23,17 +23,25 @@ import org.osgi.service.prefs.Preferences;
 public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 
 	private static final String DIR_NAME = ".settings";
-	private static final String FILE_EXTENSION = ".prefs";
+	private static final String FILE_EXTENSION = "prefs";
 
 	public static Test suite() {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, ProjectPreferenceSessionTest.class);
-		//		return new ProjectPreferenceSessionTest("testDeleteFileBeforeLoad2");
+//						return new ProjectPreferenceSessionTest("testDeleteFileBeforeLoad2");
 	}
 
 	public ProjectPreferenceSessionTest(String name) {
 		super(name);
 	}
 
+	/*
+	 * See bug 91244
+	 * - set some project settings
+	 * - save them
+	 * - exit the session
+	 * - startup
+	 * - delete the .prefs file from disk
+	 */
 	public void testDeleteFileBeforeLoad1() {
 		IProject project = getProject("testDeleteFileBeforeLoad");
 		String qualifier = "test.delete.file.before.load";
@@ -46,18 +54,33 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 		} catch (BackingStoreException e) {
 			fail("1.99", e);
 		}
+		waitForRefresh();
+		IFile file = project.getFile(new Path(DIR_NAME).append(qualifier).addFileExtension(FILE_EXTENSION));
+		assertTrue("2.0", file.exists());
+		assertTrue("2.1", file.getLocation().toFile().exists());
 	}
 
 	public void testDeleteFileBeforeLoad2() {
 		IProject project = getProject("testDeleteFileBeforeLoad");
-		String qualifier = "test.delete.file.before.load";
-		IFile file = project.getFile(new Path(DIR_NAME).append(qualifier).addFileExtension(FILE_EXTENSION));
-		assertTrue("1.0", project.exists());
-		Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+		Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
+		ILogListener listener = new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				if (!Platform.PI_RUNTIME.equals(plugin))
+					return;
+				Throwable t = status.getException();
+				if (t == null)
+					return;
+				if (t instanceof BackingStoreException)
+					fail("1.0", t);
+			}
+		};
 		try {
-			file.delete(IResource.NONE, getMonitor());
+			Platform.addLogListener(listener);
+			project.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
+		} finally {
+			Platform.removeLogListener(listener);
 		}
 	}
 
