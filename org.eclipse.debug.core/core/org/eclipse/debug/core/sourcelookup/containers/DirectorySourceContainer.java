@@ -43,7 +43,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.directory"; //$NON-NLS-1$
 	
 	/**
-	 * Consutructs an external folder container for the
+	 * Constructs an external folder container for the
 	 * directory identified by the given path.
 	 * 
 	 * @param dirPath path to a directory in the local file system
@@ -55,7 +55,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	}
 	
 	/**
-	 * Consutructs an external folder container for the
+	 * Constructs an external folder container for the
 	 * directory identified by the given file.
 	 * 
 	 * @param dir a directory in the local file system
