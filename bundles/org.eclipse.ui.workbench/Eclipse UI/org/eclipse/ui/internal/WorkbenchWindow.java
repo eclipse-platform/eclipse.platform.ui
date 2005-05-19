@@ -2974,7 +2974,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                     int side = fastViewBar.getSide();
 
                     fastViewBar.getControl().setLayoutData(
-                            new TrimLayoutData(side != SWT.BOTTOM, SWT.DEFAULT,
+                            new TrimLayoutData(false, SWT.DEFAULT,
                                     SWT.DEFAULT));
 
                     if (side == SWT.BOTTOM

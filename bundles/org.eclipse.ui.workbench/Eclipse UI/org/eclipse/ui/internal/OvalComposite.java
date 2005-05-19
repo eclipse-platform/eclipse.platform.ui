@@ -22,7 +22,6 @@ public class OvalComposite extends Composite implements PaintListener {
 	    
 	    addPaintListener(this);
 	    this.orientation = orientation;
-        interiorColor = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 	}
 	
 	public void setOrientation(int orientation) {
@@ -34,7 +33,9 @@ public class OvalComposite extends Composite implements PaintListener {
 	    GC gc = e.gc;
 	    Color color = e.display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 	    gc.setForeground(color);
-        gc.setBackground(interiorColor);
+        if (interiorColor != null) {
+            gc.setBackground(interiorColor);
+        }
 	
 	    Shape shape = new Shape(TOP_LEFT_CORNER.length + 2);
 	    
@@ -67,7 +68,9 @@ public class OvalComposite extends Composite implements PaintListener {
         	.transform(shape);
 	    
 	    int[] shapeArray = targetShape.getData();
-	    gc.fillPolygon(shapeArray);
+        if (interiorColor != null) {
+            gc.fillPolygon(shapeArray);
+        }
 	    gc.drawPolygon(shapeArray);
 	}
 

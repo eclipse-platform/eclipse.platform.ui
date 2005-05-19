@@ -432,13 +432,11 @@ public class FastViewBar implements IWindowTrim {
         dragHandle = new DragHandle(control);
         dragHandle.setHorizontal(!Geometry.isHorizontal(newSide));
         dragHandle.setLayoutData(new CellData());
-        dragHandle.setBackground(control.getInteriorColor());
         dragHandle.addListener(SWT.MenuDetect, menuListener);
         dragHandle.setToolTipText(tip);
 
         fastViewBar.createControl(control);
 
-        getToolBar().setBackground(control.getInteriorColor());
         getToolBar().addListener(SWT.MenuDetect, menuListener);
 
         IDragOverListener fastViewDragTarget = new IDragOverListener() {
@@ -824,14 +822,20 @@ public class FastViewBar implements IWindowTrim {
 	private void updateLayoutData() {
 		ToolItem[] items = fastViewBar.getControl().getItems();
 		boolean isHorizontal = Geometry.isHorizontal(getSide());
-		boolean shouldExpand = items.length > 0 || isHorizontal;
+		boolean shouldExpand = items.length > 0;
 
-        if (shouldExpand) {
-        	toolBarData.setHint(CellData.MINIMUM, Geometry.isHorizontal(getSide()) ? 32 : SWT.DEFAULT, SWT.DEFAULT);
-        } else {
-        	toolBarData.setHint(CellData.OVERRIDE, HIDDEN_WIDTH, SWT.DEFAULT);
+        Point hint = new Point(32, shouldExpand ? SWT.DEFAULT : HIDDEN_WIDTH);
+        
+        if (!isHorizontal) {
+            Geometry.flipXY(hint);
         }
         
+        if (shouldExpand) {
+            toolBarData.setHint(CellData.MINIMUM, hint);
+        } else {
+            toolBarData.setHint(CellData.OVERRIDE, hint);
+        }
+   
         if (items.length != oldLength) {
             LayoutUtil.resize(control);
             oldLength = items.length;
