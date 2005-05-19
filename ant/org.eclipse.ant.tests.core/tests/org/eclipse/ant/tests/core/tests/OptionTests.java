@@ -26,8 +26,8 @@ public class OptionTests extends AbstractAntTest {
 	
 	protected static final String UNKNOWN_ARG= "Unknown argument: ";
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
-	protected static final String VERSION= "Apache Ant version 1.6.3 compiled on April 28 2005";
-	protected static final String PLUGIN_VERSION= "org.apache.ant_1.6.3";
+	protected static final String VERSION= "Apache Ant version 1.6.4 compiled on May 19 2005";
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.6.4";
 	 
 	public OptionTests(String name) {
 		super(name);
