@@ -105,8 +105,11 @@ public class LineDelimiterEditor {
 		};
 
 		defaultButton = new Button(group, SWT.RADIO);
-		defaultButton
-				.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelim);
+		if (project == null)
+			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelim);
+		else
+			defaultButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_defaultLineDelimProj);
+		
 		data = new GridData();
 		data.horizontalSpan = 2;
 		defaultButton.setLayoutData(data);
@@ -153,8 +156,8 @@ public class LineDelimiterEditor {
 	 */
 	public String getStoredValue() {
 		IScopeContext[] scopeContext = new IScopeContext[] { getScopeContext() };
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME,
-				Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+		IEclipsePreferences node = scopeContext[0].getNode(Platform.PI_RUNTIME);
+		return node.get(Platform.PREF_LINE_SEPARATOR, null);
 	}
 
 	/**
