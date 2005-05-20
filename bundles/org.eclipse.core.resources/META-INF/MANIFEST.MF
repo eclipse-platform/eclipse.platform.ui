@@ -7,18 +7,18 @@ Bundle-Activator:
  org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.internal.resources.mapping,
- org.eclipse.core.internal.resources,
- org.eclipse.core.resources.refresh,
+Export-Package: org.eclipse.core.internal.dtree;x-internal:=true,
+ org.eclipse.core.internal.events;x-internal:=true,
+ org.eclipse.core.internal.localstore;x-internal:=true,
+ org.eclipse.core.internal.properties;x-internal:=true,
+ org.eclipse.core.internal.refresh;x-internal:=true,
+ org.eclipse.core.internal.resources;x-internal:=true,
+ org.eclipse.core.internal.resources.mapping;x-internal:=true,
+ org.eclipse.core.internal.utils;x-internal:=true,
+ org.eclipse.core.internal.watson;x-internal:=true,
  org.eclipse.core.resources,
- org.eclipse.core.internal.dtree,
- org.eclipse.core.internal.localstore,
- org.eclipse.core.resources.team,
- org.eclipse.core.internal.watson,
- org.eclipse.core.internal.properties,
- org.eclipse.core.internal.events,
- org.eclipse.core.internal.refresh,
- org.eclipse.core.internal.utils
+ org.eclipse.core.resources.refresh,
+ org.eclipse.core.resources.team
 Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.ant.core;resolution:=optional,
  org.apache.ant;resolution:=optional
