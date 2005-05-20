@@ -84,13 +84,14 @@ public class RemoteAntBuildListener implements ILaunchesListener {
         }
         
         public void run() {
+            Exception exception= null;
             try {
                 if (fDebug) {
                     System.out.println("Creating server socket " + fServerPort); //$NON-NLS-1$
                 }
                 fServerSocket= new ServerSocket(fServerPort);
                 fServerSocket.setSoTimeout(fgServerSocketTimeout);
-                fSocket= fServerSocket.accept();            
+                fSocket= fServerSocket.accept();
                 if (fDebug) {
                     System.out.println("Connection"); //$NON-NLS-1$
                 }   
@@ -100,9 +101,15 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                     receiveMessage(message);
                 }
             } catch (SocketException e) {
-            } catch (SocketTimeoutException e) {	
+                exception= e;
+            } catch (SocketTimeoutException e) {
+                exception= e;
             } catch (IOException e) {
                 // fall through
+                exception= e;
+            }
+            if (exception != null) {
+                AntUIPlugin.log(exception);
             }
             shutDown();
         }
@@ -120,7 +127,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * 
      * @param port The port number to create the server connection on
      */
-    public synchronized void startListening(int eventPort) {
+    public synchronized void startListening(int eventPort){
         fPort = eventPort;
         ServerConnection connection = new ServerConnection(eventPort);
         connection.start();
