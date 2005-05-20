@@ -26,7 +26,7 @@ Integrated Scenarios
   	h.  Select "Redo Rename method bar to bar2" from any of these locations
   	i.  Operation is redone without prompting or warning
   	j.  Undo again to revert files to original state and close editors.
-  <prompt on non-local undo>
+  <prompt on non-local undo, proceed>
     a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
@@ -37,12 +37,23 @@ Integrated Scenarios
   	h.  Select "Redo Rename method foo to foo2" from package explorer.
   	i.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
   	j.  Undo again to revert files to original state and close editors.
+  <prompt on non-local undo, do not proceed>
+    a.  Open A.Java and B.java
+  	b.  In A, click in the method name for "foo" and choose Refactor>Rename
+  	c.  Rename "foo" to "foo2"
+  	d.  Verify that "Undo Rename method foo to foo2" appears in Edit>Undo in pulldown menu of editor, editor popup, Package Explorer, and Navigator.
+  	e.  Select "Undo Rename method foo to foo2" from A's edit menu.
+  	f.  Operation prompts as to whether you want to proceed since the refactoring affects other files.
+  	g.  Select "no" and operation is cancelled.
+  	h.  Select "Undo Typing" to undo the local text change triggered originally by the refactoring
+  	i.  Go to B.Java and undo associated text changes
+  	j.  Close editors
   <detection of changed file>
     a.  Open A.Java and B.java
   	b.  In A, click in the method name for "foo" and choose Refactor>Rename
   	c.  Rename "foo" to "foo2"
   	d.  In B, type some text anywhere.
-  	e.  Go back to A and Select "Undo Rename method bar to bar2" from A's edit menu.
+  	e.  Go back to A and Select "Undo Rename method foo to foo2" from A's edit menu.
   	f.  Operation informs you that it cannot be completed since B has changed.
   	g.  Select OK
   	h.  Choose "Undo Typing" from A to revert the text part of the refactoring
