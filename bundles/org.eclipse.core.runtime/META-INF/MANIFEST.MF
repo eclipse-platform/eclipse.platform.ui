@@ -6,18 +6,17 @@ Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
-Export-Package: 
- org.osgi.service.prefs; version=1.0,
- org.eclipse.core.internal.registry,
- org.eclipse.core.internal.runtime,
- org.eclipse.core.internal.preferences,
- org.eclipse.core.internal.content, 
- org.eclipse.core.internal.boot,
- org.eclipse.core.runtime.preferences,
- org.eclipse.core.internal.jobs,
- org.eclipse.core.runtime.jobs,
- org.eclipse.core.runtime.content,
+Export-Package: org.eclipse.core.internal.boot;x-friends:="org.eclipse.core.resources,org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
+ org.eclipse.core.internal.content;x-internal:=true,
+ org.eclipse.core.internal.jobs;x-internal:=true,
+ org.eclipse.core.internal.preferences;x-friends:="org.eclipse.core.resources",
+ org.eclipse.core.internal.registry;x-internal:=true,
+ org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility,org.eclipse.pde.build",
  org.eclipse.core.runtime,
- org.eclipse.core.runtime.dynamichelpers
+ org.eclipse.core.runtime.content,
+ org.eclipse.core.runtime.dynamichelpers,
+ org.eclipse.core.runtime.jobs,
+ org.eclipse.core.runtime.preferences,
+ org.osgi.service.prefs;version="1.0"
 Require-Bundle: 
  org.eclipse.osgi; visibility:=reexport
