@@ -244,7 +244,7 @@ public class IntroURL implements IIntroURL {
      * @param state
      */
     private boolean setStandbyState(String state) {
-        if (state == null || state.equalsIgnoreCase(VALUE_FALSE))
+        if (state == null)
             return false;
         boolean standby = state.equals(VALUE_TRUE) ? true : false; //$NON-NLS-1$
         IIntroPart introPart = IntroPlugin.showIntro(standby);
@@ -403,8 +403,7 @@ public class IntroURL implements IIntroURL {
             modelRoot.getPresentation().updateHistory(
                 modelRoot.getCurrentPage());
             // ran action successfully. Now set intro intro standby if needed.
-            if (standbyState == null
-                    || standbyState.equalsIgnoreCase(VALUE_FALSE))
+            if (standbyState == null)
                 return true;
             return setStandbyState(standbyState);
         }
