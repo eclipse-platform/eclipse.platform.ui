@@ -21,6 +21,7 @@ public class Context extends ContextsNode implements IContext2 {
 	private String text;
 	protected String pluginID;
 	protected String shortID;
+	protected String title;
 	/**
 	 * Context constructor.
 	 */
@@ -29,6 +30,7 @@ public class Context extends ContextsNode implements IContext2 {
 		if (attrs == null)
 			return;
 		shortID = attrs.getValue("id"); //$NON-NLS-1$
+		title = attrs.getValue("title"); //$NON-NLS-1$
 	}
 	private static String stripStyle(String s, String style) {
 		int len = s.length();
@@ -132,5 +134,11 @@ public class Context extends ContextsNode implements IContext2 {
 		// For backward compatibility, all the topics
 		// will continue to belong to the default category
 		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IContext2#getTitle()
+	 */
+	public String getTitle() {
+		return title;
 	}
 }

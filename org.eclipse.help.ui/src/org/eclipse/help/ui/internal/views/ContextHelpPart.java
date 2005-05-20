@@ -202,12 +202,17 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateTitle() {
-		if (lastPart != null)
-			getSection().setText(
-					NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
-							.getSite().getRegisteredName()));
-		else
-			getSection().setText(Messages.ContextHelpPart_about);
+		String title = null;
+		if (lastContext != null && lastContext instanceof IContext2) {
+			IContext2 c2 = (IContext2)lastContext;
+			title = c2.getTitle(); 
+		}
+		if (title==null && lastPart != null)
+			title = NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
+							.getSite().getRegisteredName());
+		if (title==null)
+			title = Messages.ContextHelpPart_about;
+		getSection().setText(title);
 	}
 
 	private void updateText(String helpText) {
