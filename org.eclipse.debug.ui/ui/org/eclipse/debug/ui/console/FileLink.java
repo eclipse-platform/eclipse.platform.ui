@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -90,8 +91,9 @@ public class FileLink implements IConsoleHyperlink {
 							}
 							IDocument document = provider.getDocument(input);
 							try {
-								fFileOffset = document.getLineOffset(fFileLineNumber - 1);
-								fFileLength = document.getLineLength(fFileLineNumber - 1);
+                                IRegion region= document.getLineInformation(fFileLineNumber - 1);
+								fFileOffset = region.getOffset();
+								fFileLength = region.getLength();
 							} catch (BadLocationException e) {
 								// unable to link
 								DebugUIPlugin.log(e);
