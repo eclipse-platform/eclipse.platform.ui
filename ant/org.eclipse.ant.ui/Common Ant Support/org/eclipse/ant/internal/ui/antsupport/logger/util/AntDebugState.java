@@ -243,8 +243,11 @@ public class AntDebugState implements IDebugBuildLogger {
             fInitialProperties= eventProject.getProperties();
         }
         if (fProjectToTargetNames.get(eventProject) == null) {
-            fProjectToTargetNames.put(eventProject, eventProject.getReference("eclipse.ant.targetVector")); //$NON-NLS-1$
-            setTargetToExecute(initializeBuildSequenceInformation(event, getTargetToBuildSequence()));
+            Object ref= eventProject.getReference("eclipse.ant.targetVector"); //$NON-NLS-1$
+            if (ref != null) {
+                fProjectToTargetNames.put(eventProject, ref);
+                setTargetToExecute(initializeBuildSequenceInformation(event, getTargetToBuildSequence()));
+            }
         }
         
         setTargetExecuting(event.getTarget());
