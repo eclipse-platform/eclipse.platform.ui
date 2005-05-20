@@ -537,14 +537,6 @@ public class Main {
     private void addBaseJars(URL base, ArrayList result) throws IOException {
         String baseJarList = System.getProperty(PROP_CLASSPATH);
         if (baseJarList == null) {
-            URL url = constructURL(base, ECLIPSE_PROPERTIES);
-            try {
-                mergeProperties(System.getProperties(), loadProperties(url));
-            } catch(IOException e) {
-                //Ignore the exception since the property file is not required 
-                if (debug)
-                    System.out.println("File " + url.toExternalForm() + " not found."); //$NON-NLS-1$  //$NON-NLS-2$
-            }
             readFrameworkExtensions(base, result);
             baseJarList = System.getProperties().getProperty(PROP_CLASSPATH);
         }
