@@ -29,16 +29,23 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style);
 		input.setName(this.name);
 		input.setToolTipText(this.tooltip);
-        WebBrowserEditor editor = (WebBrowserEditor)part;
+		WebBrowserEditor editor = (WebBrowserEditor)part;
+		
+		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage page = null;
+		if (workbenchWindow != null)
+			page = workbenchWindow.getActivePage();
+		
+		if (page == null)
+			throw new PartInitException(Messages.errorCouldNotLaunchInternalWebBrowser);
 		
 		if (editor != null) {
 			editor.init(editor.getEditorSite(), input);
+			page.activate(editor);
 		} else {
 			try {
-				IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
-				final IWorkbenchPage page = workbenchWindow.getActivePage();
 				IEditorPart editorPart = page.openEditor(input, WebBrowserEditor.WEB_BROWSER_EDITOR_ID);
-                hookPart(page, editorPart);
+				hookPart(page, editorPart);
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}
