@@ -221,6 +221,47 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op.hasContext(contextB));
 	}
 	
+	public void test94410() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		op2.execute(null, null);
+		ICompositeOperation batch = new TriggeredOperations(op2, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		history.setLimit(contextA, 0);
+		op1.execute(null, null);
+		history.add(op1);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("Operation should be batching", op == batch);
+		assertFalse("Operation should not have context", op.hasContext(contextA));
+	}
+	
+	public void test94410AllContextsEmpty() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		op2.execute(null, null);
+		ICompositeOperation batch = new TriggeredOperations(op2, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		history.setLimit(contextA, 0);
+		history.setLimit(contextB, 0);
+		history.setLimit(contextC, 0);
+		op1.execute(null, null);
+		history.add(op1);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("Operation should not have been added", op == null);
+	}
+
+	public void test94400() throws ExecutionException {
+		UnredoableTestOperation op = new UnredoableTestOperation("troubled op");
+		op.addContext(contextA);
+		history.execute(op, null, null);
+		assertTrue("Operation should be undoable", history.canUndo(contextA));
+		history.undo(contextA, null, null);
+		assertFalse("Operation should not be in redo history", history.getRedoOperation(contextA) == op);
+		assertTrue("Operation should be disposed", op.disposed);
+	}
+	
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
