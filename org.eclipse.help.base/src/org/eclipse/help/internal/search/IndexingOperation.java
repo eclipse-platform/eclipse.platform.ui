@@ -71,6 +71,7 @@ class IndexingOperation {
 	 */
 	protected void execute(IProgressMonitor pm)
 			throws OperationCanceledException, IndexingException {
+		checkCancelled(pm);
 		Collection staleDocs = getRemovedDocuments(index);
 		numRemoved = staleDocs.size();
 		Collection newDocs = getAddedDocuments(index);
@@ -92,7 +93,7 @@ class IndexingOperation {
 		// 1. remove all documents for plugins changed (including change in a
 		// fragment)
 		removeStaleDocuments(new SubProgressMonitor(pm, numRemoved), staleDocs);
-
+		checkCancelled(pm);
 		// 2. merge prebult plugin indexes and addjust
 		addNewDocuments(new SubProgressMonitor(pm, 10 * numAdded), newDocs,
 				staleDocs.size() == 0);
@@ -149,7 +150,9 @@ class IndexingOperation {
 			System.out
 					.println("IndexOperation.addNewDocuments: " + prebuiltDocs.size() + " different documents merged."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		checkCancelled(pm);
 		Collection docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
+		checkCancelled(pm);
 		Map docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
 		// IProgressMonitor addMonitor = new SubProgressMonitor(pm,
 		// docsToDelete.size()*10 + docsToIndex.size()*100;
@@ -160,9 +163,10 @@ class IndexingOperation {
 					.println("IndexOperation.addNewDocuments: " + docsToDelete.size() + " documents have more than one copy indexed."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
-
+		checkCancelled(pm);
 		addDocuments(new SubProgressMonitor(pm, 10 * docsToIndex.size()),
 				docsToIndex, docsToDelete.size() == 0);
+		checkCancelled(pm);
 		removeNewDocuments(new SubProgressMonitor(pm, docsToDelete.size()),
 				docsToDelete);
 		pm.done();
