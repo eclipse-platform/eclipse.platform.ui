@@ -218,6 +218,7 @@ public class TarInputStream extends FilterInputStream
 		StringBuffer mode = new StringBuffer();
 		for(i = 0; i < 8; i++) {
 			if(header[pos + i] == 0) break;
+			if(header[pos + i] == ' ') continue;
 			mode.append((char) header[pos + i]);
 		}
 		if(mode.length() > 0 && mode.charAt(0) != '0') mode.insert(0, '0');
@@ -232,6 +233,7 @@ public class TarInputStream extends FilterInputStream
 		StringBuffer size = new StringBuffer();
 		for(i = 0; i < 12; i++) {
 			if(header[pos + i] == 0) break;
+			if(header[pos + i] == ' ') continue;
 			size.append((char) header[pos + i]);
 		}
 		if(size.charAt(0) != '0') size.insert(0, '0');
