@@ -23,10 +23,10 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.internal.debug.ui.LocalFileStorageEditorInput;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -140,7 +140,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 			return new FileEditorInput((IFile)((ILineBreakpoint)element).getMarker().getResource());
 		}
         if (element instanceof LocalFileStorage) {
-            return new LocalFileStorageEditorInput((LocalFileStorage)element);
+            return new JavaFileEditorInput(((LocalFileStorage)element).getFile());
         }
 		return null;
 	}
