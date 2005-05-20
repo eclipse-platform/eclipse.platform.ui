@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -26,11 +28,13 @@ public class ShowViewAction extends Action implements IPluginContribution {
     private IWorkbenchWindow window;
 
     private IViewDescriptor desc;
-
+    private boolean makeFast = false;
+    
+    
     /**
      * ShowViewAction constructor comment.
      */
-    protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc) {
+    protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc, boolean makeFast) {
         super(""); //$NON-NLS-1$
         
         // TODO: is this wart still needed? 
@@ -44,6 +48,7 @@ public class ShowViewAction extends Action implements IPluginContribution {
 				IWorkbenchHelpContextIds.SHOW_VIEW_ACTION);
         this.window = window;
         this.desc = desc;
+        this.makeFast = makeFast;
     }
 
     /**
@@ -53,7 +58,23 @@ public class ShowViewAction extends Action implements IPluginContribution {
         IWorkbenchPage page = window.getActivePage();
         if (page != null) {
             try {
-                page.showView(desc.getId());
+                if (makeFast) {
+                    WorkbenchPage wp = (WorkbenchPage) page;
+                    
+                    IViewReference ref = wp.findViewReference(desc.getId());
+                    
+                    if (ref == null) {
+                        IViewPart part = page.showView(desc.getId(), null, IWorkbenchPage.VIEW_CREATE);
+                        ref = (IViewReference)wp.getReference(part); 
+                    }
+                    
+                    if (!wp.isFastView(ref)) {
+                        wp.addFastView(ref);
+                    }
+                    wp.activate(ref.getPart(true));
+                } else {
+                    page.showView(desc.getId());
+                }
             } catch (PartInitException e) {
                 ErrorDialog.openError(window.getShell(), WorkbenchMessages.ShowView_errorTitle,
                         e.getMessage(), e.getStatus());

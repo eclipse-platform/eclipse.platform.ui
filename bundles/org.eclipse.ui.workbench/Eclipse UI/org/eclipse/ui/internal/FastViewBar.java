@@ -19,11 +19,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -70,7 +70,7 @@ import org.osgi.framework.Bundle;
 public class FastViewBar implements IWindowTrim {
     private ToolBarManager fastViewBar;
 
-    private Menu fastViewBarMenu;
+    private MenuManager fastViewBarMenuManager;
 
     private Menu sidesMenu;
 
@@ -86,21 +86,9 @@ public class FastViewBar implements IWindowTrim {
 
     private static final int HIDDEN_WIDTH = 5;
 
-    private MenuItem showOn;
-
     private Cursor moveCursor;
 
-    private MenuItem closeItem;
-
-    private MenuItem orientationItem;
-
-    private IntModel side = new IntModel(getInitialSide());
-
-    private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
-
-    private RadioMenu radioButtons;
-
-    private IViewReference selectedView;
+    IntModel side = new IntModel(getInitialSide());
 
     private int lastSide;
 
@@ -116,14 +104,6 @@ public class FastViewBar implements IWindowTrim {
                 startDraggingFastViewBar(position, false);
             } else {
                 startDraggingFastView(ref, position, false);
-            }
-        }
-    };
-    
-    private IChangeListener orientationChangeListener = new IChangeListener() {
-        public void update(boolean changed) {
-            if (changed && selectedView != null) {
-                setOrientation(selectedView, currentOrientation.get());
             }
         }
     };
@@ -201,6 +181,10 @@ public class FastViewBar implements IWindowTrim {
     ViewDropTarget dropTarget;
 
     private DragHandle dragHandle;
+
+    private FastViewBarContextMenuContribution contextContributionItem;
+
+    private ShowViewMenu showViewMenu;
     
     /**
      * Constructs a new fast view bar for the given workbench window.
@@ -280,6 +264,15 @@ public class FastViewBar implements IWindowTrim {
                }
            }
         });
+        
+        fastViewBarMenuManager = new MenuManager();
+        contextContributionItem = new FastViewBarContextMenuContribution(this);
+        MenuManager showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+        IContributionItem showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+        showViewMenuMgr.add(showViewMenu);
+        
+        fastViewBarMenuManager.add(contextContributionItem);
+        fastViewBarMenuManager.add(showViewMenuMgr);
     }
 
     /**
@@ -377,7 +370,7 @@ public class FastViewBar implements IWindowTrim {
      * @param parent enclosing SWT composite
      */
     public void createControl(Composite parent) {
-        control = new OvalComposite(parent, currentOrientation.get());
+        control = new OvalComposite(parent, side.get());
 
         side.addChangeListener(new IChangeListener() {
             public void update(boolean changed) {
@@ -390,7 +383,6 @@ public class FastViewBar implements IWindowTrim {
         });
         control.addListener(SWT.MenuDetect, menuListener);
         PresentationUtil.addDragListener(control, dragListener);
-        currentOrientation.addChangeListener(orientationChangeListener);
 
         createChildControls();
     }
@@ -647,112 +639,13 @@ public class FastViewBar implements IWindowTrim {
 
         ToolBar toolBar = getToolBar();
 
-        // The fast view bar menu is created lazily here.
-        if (fastViewBarMenu == null) {
-            Menu menu = new Menu(toolBar);
+        Menu menu = fastViewBarMenuManager.createContextMenu(toolBar);
 
-            orientationItem = new MenuItem(menu, SWT.CASCADE);
-            {
-                orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
+        IViewReference selectedView = getViewAt(pt);
+        contextContributionItem.setTarget(selectedView);
 
-                Menu orientationSwtMenu = new Menu(orientationItem);
-                RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
-                        currentOrientation);
-                orientationMenu
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
-                orientationMenu
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
-
-                orientationItem.setMenu(orientationSwtMenu);
-            }
-
-            restoreItem = new MenuItem(menu, SWT.CHECK);
-            restoreItem.setSelection(true);
-            restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
-            restoreItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    if (selectedView != null) {
-                        WorkbenchPage page = window.getActiveWorkbenchPage();
-                        if (page != null) {
-                            int idx = getIndex(selectedView);
-                            ToolItem item = getItem(idx);
-                            Rectangle bounds = item.getBounds();
-                            Rectangle startBounds = Geometry.toDisplay(item
-                                    .getParent(), bounds);
-
-                            page.removeFastView(selectedView);
-
-                            IWorkbenchPart toActivate = selectedView
-                                    .getPart(true);
-                            if (toActivate != null) {
-                                page.activate(toActivate);
-                            }
-
-                            ViewPane pane = (ViewPane) ((WorkbenchPartReference) selectedView)
-                                    .getPane();
-
-                            RectangleAnimation animation = new RectangleAnimation(
-                                    window.getShell(), startBounds, pane
-                                            .getParentBounds());
-
-                            animation.schedule();
-                        }
-                    }
-                }
-            });
-
-            closeItem = new MenuItem(menu, SWT.NONE);
-            closeItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
-            closeItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    if (selectedView != null) {
-                        WorkbenchPage page = window.getActiveWorkbenchPage();
-                        if (page != null) {
-                            page.hideView(selectedView);
-                        }
-                    }
-                }
-            });
-
-            new MenuItem(menu, SWT.SEPARATOR);
-
-            showOn = new MenuItem(menu, SWT.CASCADE);
-            {
-                showOn.setText(WorkbenchMessages.FastViewBar_dock_on); 
-
-                sidesMenu = new Menu(showOn);
-                radioButtons = new RadioMenu(sidesMenu, side);
-
-                radioButtons.addMenuItem(WorkbenchMessages.FastViewBar_Left, new Integer(SWT.LEFT)); 
-                radioButtons
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_Right, new Integer(SWT.RIGHT)); 
-                radioButtons
-                        .addMenuItem(
-                                WorkbenchMessages.FastViewBar_Bottom, new Integer(SWT.BOTTOM));
-
-                showOn.setMenu(sidesMenu);
-            }
-            fastViewBarMenu = menu;
-        }
-
-        selectedView = getViewAt(pt);
-        boolean selectingView = (selectedView != null);
-        restoreItem.setEnabled(selectingView);
-        restoreItem.setSelection(true);
-        closeItem.setEnabled(selectingView);
-        orientationItem.setEnabled(selectingView);
-        if (selectingView) {
-            // Set the new orientation, but avoid re-sending the event to our own
-            // listener
-            currentOrientation.set(getOrientation(selectedView),
-                    orientationChangeListener);
-        }
-
-        fastViewBarMenu.setLocation(pt.x, pt.y);
-        fastViewBarMenu.setVisible(true);
+        menu.setLocation(pt.x, pt.y);
+        menu.setVisible(true);
     }
 
     public int getOrientation(IViewReference ref) {
@@ -771,9 +664,7 @@ public class FastViewBar implements IWindowTrim {
     }
 
     public void dispose() {
-        if (radioButtons != null) {
-            radioButtons.dispose();
-        }
+        fastViewBarMenuManager.dispose();
 
         disposeChildControls();
     }
@@ -1024,5 +915,42 @@ public class FastViewBar implements IWindowTrim {
                     next.getInteger(IWorkbenchConstants.TAG_POSITION));
         }
     }
+    
+    public WorkbenchWindow getWindow() {
+        return window;
+    }
+    
+    /**
+     * 
+     */
+    public void restoreView(IViewReference selectedView) {
+        if (selectedView != null) {
+            WorkbenchPage page = window.getActiveWorkbenchPage();
+            if (page != null) {
+                int idx = getIndex(selectedView);
+                ToolItem item = getItem(idx);
+                Rectangle bounds = item.getBounds();
+                Rectangle startBounds = Geometry.toDisplay(item
+                        .getParent(), bounds);
 
+                page.removeFastView(selectedView);
+
+                IWorkbenchPart toActivate = selectedView
+                        .getPart(true);
+                if (toActivate != null) {
+                    page.activate(toActivate);
+                }
+
+                ViewPane pane = (ViewPane) ((WorkbenchPartReference) selectedView)
+                        .getPane();
+
+                RectangleAnimation animation = new RectangleAnimation(
+                        window.getShell(), startBounds, pane
+                                .getParentBounds());
+
+                animation.schedule();
+            }
+        }
+    }
+    
 }

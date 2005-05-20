@@ -63,18 +63,7 @@ public class ShowViewMenu extends ContributionItem {
 		}
 	};
 
-	private Action showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
-		final ShowViewHandler handler = new ShowViewHandler();
-
-		public void run() {
-			try {
-				handler.execute(new ExecutionEvent(Collections.EMPTY_MAP, null,
-						null));
-			} catch (final ExecutionException e) {
-				// Do nothing.
-			}
-		}
-	};
+	private Action showDlgAction;
 
 	private Map actions = new HashMap(21);
 
@@ -91,7 +80,20 @@ public class ShowViewMenu extends ContributionItem {
 	};
 
 	protected static Collator collator;
+    private boolean makeFast;
 
+    /**
+     * Creates a Show View menu.
+     * 
+     * @param window
+     *            the window containing the menu
+     * @param id
+     *            the id
+     */
+    public ShowViewMenu(IWorkbenchWindow window, String id) {
+        this(window, id, false);
+    }
+    
 	/**
 	 * Creates a Show View menu.
 	 * 
@@ -100,15 +102,30 @@ public class ShowViewMenu extends ContributionItem {
 	 * @param id
 	 *            the id
 	 */
-	public ShowViewMenu(IWorkbenchWindow window, String id) {
+	public ShowViewMenu(IWorkbenchWindow window, String id, final boolean makeFast) {
 		super(id);
 		this.window = window;
-		window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
+        showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
+            final ShowViewHandler handler = new ShowViewHandler(makeFast);
+
+            public void run() {
+                try {
+                    handler.execute(new ExecutionEvent(Collections.EMPTY_MAP, null,
+                            null));
+                } catch (final ExecutionException e) {
+                    // Do nothing.
+                }
+            }
+        };
+        
+        window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
 				IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 		// indicate that a show views submenu has been created
 		((WorkbenchWindow) window)
 				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+        
 		showDlgAction.setActionDefinitionId("org.eclipse.ui.views.showView"); //$NON-NLS-1$
+        this.makeFast = makeFast;
 	}
 
 	public boolean isDirty() {
@@ -194,7 +211,7 @@ public class ShowViewMenu extends ContributionItem {
 			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 			IViewDescriptor desc = reg.find(id);
 			if (desc != null) {
-				action = new ShowViewAction(window, desc);
+				action = new ShowViewAction(window, desc, makeFast);
 				action.setActionDefinitionId(id);
 				actions.put(id, action);
 			}

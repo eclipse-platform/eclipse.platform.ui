@@ -17,11 +17,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -38,7 +41,15 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * The name of the parameter providing the view identifier.
 	 */
 	private static final String PARAMETER_NAME_VIEW_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
-
+    private boolean makeFast = false;
+  
+    public ShowViewHandler() {
+    }
+    
+    public ShowViewHandler(boolean makeFast) {
+        this.makeFast = makeFast;
+    }
+    
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		// Get the view identifier, if any.
@@ -47,7 +58,11 @@ public final class ShowViewHandler extends AbstractHandler {
 		if (value == null) {
 			openOther();
 		} else {
-			openView((String) value);
+            try {
+                openView((String) value);
+            } catch (PartInitException e) {
+                throw new ExecutionException("Part could not be initialized", e); //$NON-NLS-1$
+            }
 		}
 
 		return null;
@@ -73,7 +88,7 @@ public final class ShowViewHandler extends AbstractHandler {
 		final IViewDescriptor[] descriptors = dialog.getSelection();
 		for (int i = 0; i < descriptors.length; ++i) {
 			try {
-				page.showView(descriptors[i].getId());
+                openView(descriptors[i].getId());
 			} catch (PartInitException e) {
 				ErrorDialog.openError(window.getShell(),
 						WorkbenchMessages.ShowView_errorTitle, e.getMessage(),
@@ -90,7 +105,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             If the part could not be initialized.
 	 */
-	private final void openView(final String viewId) throws ExecutionException {
+	private final void openView(final String viewId) throws PartInitException {
 		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI
 				.getWorkbench().getActiveWorkbenchWindow();
 		if (activeWorkbenchWindow == null) {
@@ -102,10 +117,23 @@ public final class ShowViewHandler extends AbstractHandler {
 			return;
 		}
 
-		try {
-			activePage.showView(viewId);
-		} catch (PartInitException e) {
-			throw new ExecutionException("Part could not be initialized", e); //$NON-NLS-1$
-		}
+        if (makeFast) {
+            WorkbenchPage wp = (WorkbenchPage) activePage;
+            
+            IViewReference ref = wp.findViewReference(viewId);
+            
+            if (ref == null) {
+                IViewPart part = wp.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
+                ref = (IViewReference)wp.getReference(part); 
+            }
+            
+            if (!wp.isFastView(ref)) {
+                wp.addFastView(ref);
+            }
+            wp.activate(ref.getPart(true));
+        } else {
+            activePage.showView(viewId);
+        }
+		
 	}
 }

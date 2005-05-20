@@ -58,4 +58,5 @@ public class ShowViewMenuAction extends ShowPartPaneMenuAction {
                     && ((ViewPane) pane).hasViewMenu());
         }
     }
+    
 }

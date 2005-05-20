@@ -1439,9 +1439,7 @@ public final class Workbench implements IWorkbench {
 								progressMonitor.worked(1);
 		                	}
 		                	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Restoring_Loaded, event.getBundle().getSymbolicName()));
-		                	// spin the event loop a little to have the progress dialog repaint if necessary
-		                	while(Display.getCurrent().readAndDispatch()) {
-		                	}
+                            Display.getCurrent().update();
 	                	}
 	                }
 				}};
