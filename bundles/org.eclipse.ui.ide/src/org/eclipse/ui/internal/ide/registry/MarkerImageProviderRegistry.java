@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -25,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IMarkerImageProvider;
+import org.osgi.framework.Bundle;
 
 /**
  * Implementation of a marker image registry which maps either
@@ -58,7 +58,7 @@ public class MarkerImageProviderRegistry {
 
         IConfigurationElement element;
 
-        IPluginDescriptor pluginDescriptor;
+        Bundle pluginBundle;
 
         IMarkerImageProvider provider;
     }
@@ -94,8 +94,7 @@ public class MarkerImageProviderRegistry {
     public void addProvider(IConfigurationElement element) {
         Descriptor desc = new Descriptor();
         desc.element = element;
-        desc.pluginDescriptor = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
+        desc.pluginBundle = Platform.getBundle(element.getNamespace());
         desc.id = element.getAttribute(ATT_ID);
         desc.markerType = element.getAttribute(ATT_MARKER_TYPE);
         desc.imagePath = element.getAttribute(ATT_ICON);
@@ -106,7 +105,7 @@ public class MarkerImageProviderRegistry {
         if (desc.className == null) {
             //Don't need to keep these references.
             desc.element = null;
-            desc.pluginDescriptor = null;
+            desc.pluginBundle = null;
         }
         descriptors.add(desc);
     }
@@ -121,7 +120,7 @@ public class MarkerImageProviderRegistry {
             try {
                 if (marker.isSubtypeOf(desc.markerType)) {
                     if (desc.className != null) {
-                        if (desc.pluginDescriptor.isPluginActivated()) {
+                    	if (desc.pluginBundle.getState()==Bundle.ACTIVE) {
                             //-- Get the image descriptor from the provider.
                             //-- Save the image descriptor url as a persistable property, so a
                             //image descriptor can be created without activating the plugin next
@@ -172,7 +171,7 @@ public class MarkerImageProviderRegistry {
      */
     ImageDescriptor getImageDescriptor(Descriptor desc) {
         try {
-            URL installURL = desc.pluginDescriptor.getInstallURL();
+            URL installURL = desc.pluginBundle.getEntry("/"); //$NON-NLS-1$
             URL url = new URL(installURL, desc.imagePath);
             return ImageDescriptor.createFromURL(url);
         } catch (MalformedURLException e) {

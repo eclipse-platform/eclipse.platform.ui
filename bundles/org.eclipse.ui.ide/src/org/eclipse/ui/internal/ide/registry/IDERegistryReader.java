@@ -18,7 +18,6 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -43,12 +42,12 @@ public abstract class IDERegistryReader {
 
     private static final Comparator comparer = new Comparator() {
         public int compare(Object arg0, Object arg1) {
-            String s1 = ((IExtension) arg0).getDeclaringPluginDescriptor()
-                    .getUniqueIdentifier();
-            String s2 = ((IExtension) arg1).getDeclaringPluginDescriptor()
-                    .getUniqueIdentifier();
-            return s1.compareToIgnoreCase(s2);
-        }
+			IExtension i1 = (IExtension) arg0;
+			String s1 = i1.getNamespace();
+			IExtension i2 = (IExtension) arg1;
+			String s2 = i2.getNamespace();
+			return s1.compareToIgnoreCase(s2);
+		}
     };
 
     /**
@@ -76,14 +75,14 @@ public abstract class IDERegistryReader {
      * text and the information in the configuration element.
      */
     protected void logError(IConfigurationElement element, String text) {
-        IExtension extension = element.getDeclaringExtension();
-        IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
-        StringBuffer buf = new StringBuffer();
-        buf
-                .append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
-        buf.append("\n" + text);//$NON-NLS-1$
-        IDEWorkbenchPlugin.log(buf.toString());
-    }
+		IExtension extension = element.getDeclaringExtension();
+		String pluginId = extension.getNamespace();
+		StringBuffer buf = new StringBuffer();
+		buf.append("Plugin " + pluginId + ", extension " //$NON-NLS-2$//$NON-NLS-1$
+				+ extension.getExtensionPointUniqueIdentifier());
+		buf.append("\n" + text);//$NON-NLS-1$
+		IDEWorkbenchPlugin.log(buf.toString());
+	}
 
     /**
      * Logs a very common registry error when a required attribute is missing.

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -55,11 +54,9 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
             logMissingAttribute(element, ATT_ICON);
             return true;
         }
-        IExtension extension = element.getDeclaringExtension();
-        String extendingPluginId = extension.getDeclaringPluginDescriptor()
-                .getUniqueIdentifier();
-        ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
-                extendingPluginId, icon);
+		String extendingPluginId = element.getNamespace();
+		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
+				extendingPluginId, icon);
 
         if (image != null)
             registry.setNatureImage(natureId, image);

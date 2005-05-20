@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -31,6 +30,7 @@ import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * This internal class represents the top of the IDE workbench.
@@ -109,14 +109,13 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      * @throws CoreException
      */
     public static Object createExtension(final IConfigurationElement element,
-            final String classAttribute) throws CoreException {
-        // If plugin has been loaded create extension.
-        // Otherwise, show busy cursor then create extension.
-        IPluginDescriptor plugin = element.getDeclaringExtension()
-                .getDeclaringPluginDescriptor();
-        if (plugin.isPluginActivated()) {
-            return element.createExecutableExtension(classAttribute);
-        } else {
+			final String classAttribute) throws CoreException {
+		// If plugin has been loaded create extension.
+		// Otherwise, show busy cursor then create extension.
+		Bundle plugin = Platform.getBundle(element.getNamespace());
+		if (plugin.getState() == Bundle.ACTIVE) {
+			return element.createExecutableExtension(classAttribute);
+		} else {
             final Object[] ret = new Object[1];
             final CoreException[] exc = new CoreException[1];
             BusyIndicator.showWhile(null, new Runnable() {

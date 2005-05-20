@@ -16,7 +16,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.tests.util.CallHistory;
+import org.osgi.framework.Bundle;
 
 /**
  * Base class for mock intro and workbench parts.
@@ -83,9 +84,9 @@ public class MockPart implements IExecutableExtension {
         String strIcon = config.getAttribute("icon");//$NON-NLS-1$
         if (strIcon != null) {
             try {
-                IPluginDescriptor pd = config.getDeclaringExtension()
-                        .getDeclaringPluginDescriptor();
-                URL fullPathString = new URL(pd.getInstallURL(), strIcon);
+            	Bundle plugin = Platform.getBundle(config.getNamespace());
+                URL installURL = plugin.getEntry("/"); //$NON-NLS-1$
+                URL fullPathString = new URL(installURL, strIcon);
                 ImageDescriptor imageDesc = ImageDescriptor
                         .createFromURL(fullPathString);
                 titleImage = imageDesc.createImage();

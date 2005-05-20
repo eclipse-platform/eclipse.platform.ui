@@ -17,7 +17,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ICapabilityInstallWizard;
@@ -172,11 +171,9 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
     }
 
     public ImageDescriptor getIconDescriptor() {
-        if (icon == null && isValid()) {
-            IExtension extension = element.getDeclaringExtension();
-            String extendingPluginId = extension.getDeclaringPluginDescriptor()
-                    .getUniqueIdentifier();
-            String location = element.getAttribute(ATT_ICON);
+		if (icon == null && isValid()) {
+			String extendingPluginId = element.getNamespace();
+			String location = element.getAttribute(ATT_ICON);
             if (location != null && location.length() > 0)
                 icon = AbstractUIPlugin.imageDescriptorFromPlugin(
                         extendingPluginId, location);

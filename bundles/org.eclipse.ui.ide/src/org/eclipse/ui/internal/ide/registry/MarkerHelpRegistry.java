@@ -23,11 +23,13 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * This class is a registry for marker help
@@ -134,9 +136,8 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
                         .get(result);
                 if (element != null) {
                     IMarkerResolutionGenerator generator = null;
-                    if (element.getDeclaringExtension()
-                            .getDeclaringPluginDescriptor().isPluginActivated()) {
-                        // The element's plugin is loaded so we instantiate the resolution
+                   if (Platform.getBundle(element.getNamespace()).getState()==Bundle.ACTIVE) {
+                         // The element's plugin is loaded so we instantiate the resolution
                         try {
                             generator = (IMarkerResolutionGenerator) element
                                     .createExecutableExtension(ATT_CLASS);
