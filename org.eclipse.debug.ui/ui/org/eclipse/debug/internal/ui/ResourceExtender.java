@@ -36,11 +36,8 @@ public class ResourceExtender extends PropertyTester {
 
     private static final String PROPERTY_MATCHES_CONTENT_TYPE = "matchesContentType"; //$NON-NLS-1$
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jdt.internal.corext.refactoring.participants.properties.IPropertyEvaluator#test(java.lang.Object,
-     *      java.lang.String, java.lang.String)
+    /* (non-Javadoc)
+     * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
      */
     public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
         IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
