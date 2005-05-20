@@ -174,28 +174,28 @@
       </ignore>
       <ignore
             enabled="false"
-            pattern="jnilib"/>
+            pattern="*.jnilib"/>
       <ignore
             enabled="false"
-            pattern="sl"/>
+            pattern="*.sl"/>
       <ignore
             enabled="false"
-            pattern="dll"/>
+            pattern="*.dll"/>
       <ignore
             enabled="false"
-            pattern="bat"/>
+            pattern="*.bat"/>
       <ignore
             enabled="false"
-            pattern="com"/>
+            pattern="*.com"/>
       <ignore
             enabled="true"
-            pattern="log"/>
+            pattern="*.log"/>
       <ignore
             enabled="true"
-            pattern="zip"/>
+            pattern="*.zip"/>
       <ignore
             enabled="true"
-            pattern="gz"/>
+            pattern="*.gz"/>
    </extension>
 
 <!-- ************ File Types *************** -->
