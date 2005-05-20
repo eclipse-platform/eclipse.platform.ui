@@ -11,13 +11,10 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -36,10 +33,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * The Heap Status control, which shows the heap usage statistics in the window trim.
@@ -123,7 +116,7 @@ public class HeapStatus extends Composite {
                     break;
                 case SWT.Resize:
                     Rectangle rect = getClientArea();
-                    button.setBounds(rect.width - imgBounds.width, 1, imgBounds.width, rect.height - 2);
+                    button.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
                     break;
                 case SWT.Paint:
                     if (event.widget == HeapStatus.this)
@@ -208,11 +201,22 @@ public class HeapStatus extends Composite {
      */
     private void createContextMenu() {
         MenuManager menuMgr = new MenuManager();
-        menuMgr.add(new SetMarkAction());
-        menuMgr.add(new ClearMarkAction());
-        menuMgr.add(new ShowKyrsoftViewAction());
+        menuMgr.setRemoveAllWhenShown(true);
+        menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				fillMenu(menuMgr);
+			}
+		});
         Menu menu = menuMgr.createContextMenu(this);
         setMenu(menu);
+    }
+    
+    private void fillMenu(IMenuManager menuMgr) {
+        menuMgr.add(new SetMarkAction());
+        menuMgr.add(new ClearMarkAction());
+//        if (isKyrsoftViewAvailable()) {
+//        	menuMgr.add(new ShowKyrsoftViewAction());
+//        }
     }
 
     /**
@@ -366,34 +370,42 @@ public class HeapStatus extends Composite {
             clearMark();
         }
     }
-    
-    class ShowKyrsoftViewAction extends Action {
-        ShowKyrsoftViewAction() {
-            super(WorkbenchMessages.ShowKyrsoftViewAction_text);
-        }
-        public void run() {
-            if (Platform.getBundle(IHeapStatusConstants.KYRSOFT_PLUGIN_ID) == null) { 
-                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_KyrsoftNotInstalled);
-                return;
-            }
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            IWorkbenchPage page = window == null ? null : window.getActivePage();
-            if (page == null) {
-                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_OpenPerspectiveFirst);
-                return;
-            }
-            try {
-                page.showView(IHeapStatusConstants.KYRSOFT_VIEW_ID);
-            }
-            catch (PartInitException e) {
-                String msg = WorkbenchMessages.ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
-                IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e);
-                ErrorDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, msg, status);
-            }
-            
-        }
-    }
-    
+
+//    /**
+//     * Returns whether the Kyrsoft memory monitor view is available.
+//     * 
+//     * @return <code>true</code> if available, <code>false</code> otherwise
+//     */
+//    private boolean isKyrsoftViewAvailable() {
+//        return (Platform.getBundle(IHeapStatusConstants.KYRSOFT_PLUGIN_ID) != null) && PlatformUI.getWorkbench().getViewRegistry().find(IHeapStatusConstants.KYRSOFT_VIEW_ID) != null; 
+//    }
+//    
+//    class ShowKyrsoftViewAction extends Action {
+//        ShowKyrsoftViewAction() {
+//            super(WorkbenchMessages.ShowKyrsoftViewAction_text);
+//        }
+//        public void run() {
+//            if (!isKyrsoftViewAvailable()) { 
+//                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_KyrsoftNotInstalled);
+//                return;
+//            }
+//			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+//            IWorkbenchPage page = window == null ? null : window.getActivePage();
+//            if (page == null) {
+//                MessageDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, WorkbenchMessages.ShowKyrsoftViewAction_OpenPerspectiveFirst);
+//                return;
+//            }
+//            try {
+//                page.showView(IHeapStatusConstants.KYRSOFT_VIEW_ID);
+//            }
+//            catch (PartInitException e) {
+//                String msg = WorkbenchMessages.ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
+//                IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e);
+//                ErrorDialog.openError(getShell(), WorkbenchMessages.HeapStatus_Error, msg, status);
+//            }
+//            
+//        }
+//    }
 
 }
 
