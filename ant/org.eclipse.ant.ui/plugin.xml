@@ -423,7 +423,21 @@ M4 = Platform-specific fourth key -->
             adaptableType="org.eclipse.core.resources.IFile">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
-   </extension>   
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.ui.IPathEditorInput">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>
+   </extension>
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+   	<propertyTester
+      		namespace="org.eclipse.ant.ui"
+            properties="isAntBuildFile"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="org.eclipse.ant.internal.ui.AntBuildFilePropertyTester"
+            id="org.eclipse.ant.ui.IResourceExtender">
+      </propertyTester>
+	</extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
@@ -441,7 +455,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
+                   <test property="org.eclipse.ant.ui.isAntBuildFile"/>
                  </or>
                </iterate>
              </with>
@@ -469,7 +483,7 @@ M4 = Platform-specific fourth key -->
                <iterate>
                  <or>
                    <instanceof value="org.eclipse.ant.internal.ui.model.AntElementNode"/>
-                     <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
+                   <test property="org.eclipse.ant.ui.isAntBuildFile"/>
                  </or>
                </iterate>
              </with>
