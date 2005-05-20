@@ -34,7 +34,7 @@ package org.eclipse.ui;
  *   &LT;perspective
  *       id="com.example.javaplugin.perspective"
  *       name="Java"
- *       class="com.example.javaplugin.JavaPerspective"
+ *       class="com.example.javaplugin.JavaPerspective"&GT;
  *   &LT;/perspective&GT;
  * &LT;/extension&GT;
  * </pre>
