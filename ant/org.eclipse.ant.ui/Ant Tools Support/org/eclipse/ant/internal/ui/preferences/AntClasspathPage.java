@@ -58,6 +58,13 @@ public class AntClasspathPage implements IAntBlockContainer {
 		return fModel.getEntries(ClasspathModel.ANT_HOME);
 	}
 	
+	/**
+	 * Returns the contributed classpath entries
+	 */
+	protected IAntClasspathEntry[] getContributedEntries() {
+		return fModel.getEntries(ClasspathModel.CONTRIBUTED);
+	}
+	
 	protected String getAntHome() {
 		return fAntClasspathBlock.getAntHome();
 	}

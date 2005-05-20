@@ -119,6 +119,11 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				break;
 			case USER : 
 				return getUserEntries();
+			case CONTRIBUTED : 
+				if (fContributedGlobalEntry != null) {
+					return fContributedGlobalEntry.getEntries();
+				}
+				break;
 		}
 		return new IAntClasspathEntry[0];
 	}
