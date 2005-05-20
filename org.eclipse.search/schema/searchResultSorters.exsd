@@ -7,8 +7,11 @@
       </appInfo>
       <documentation>
          This extension point allows a plug-in to contribute 
-search result sorters to the search result view&apos;s Sort 
+search result sorters to the (old) search result view&apos;s Sort 
 context menu.
+This extension point is deprecated since 3.0. The search
+result views are now contributed by clients and sorters
+are directly managed by these pages.
       </documentation>
    </annotation>
 
