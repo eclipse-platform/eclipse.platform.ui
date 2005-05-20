@@ -364,8 +364,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		// placed back in the undo history.
 		if (status.isOK()) {
 			// We will only add the operation to the undo stack if it can indeed
-			// be
-			// undone. This conservatism is added to support the integration
+			// be undone. This conservatism is added to support the integration
 			// of existing frameworks (such as Refactoring) that produce
 			// undo and redo behavior on the fly and cannot guarantee that a
 			// successful redo means a successful undo will be available.
@@ -377,6 +376,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				if (addToUndoStack && checkUndoLimit(operation)) {
 					undoList.add(operation);
 				}
+			}
+			if (!addToUndoStack) {
+				// dispose the operation since we did not add it to the stack
+				// and will no longer have a reference to it.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
+				operation.dispose();
 			}
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
@@ -438,7 +443,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				undoList.remove(operation);
 				if (addToRedoStack && checkRedoLimit(operation)) {
 					redoList.add(operation);
-				}
+				} 
+			}
+			if (!addToRedoStack) {
+				// dispose the operation since we did not add it to the stack
+				// and will no longer have a reference to it.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
+				operation.dispose();
 			}
 			// notification occurs after the undo and redo histories are
 			// adjusted
