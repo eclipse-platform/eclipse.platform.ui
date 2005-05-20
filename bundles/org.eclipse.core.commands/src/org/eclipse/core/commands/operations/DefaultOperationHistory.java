@@ -271,10 +271,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (limit > 0) {
 				forceRedoLimit(contexts[i], limit - 1);
 			} else {
-				return false;
+				// this context has a 0 limit
+				operation.removeContext(contexts[i]);
 			}
 		}
-		return true;
+		return operation.getContexts().length > 0;
 	}
 
 	/**
@@ -288,10 +289,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (limit > 0) {
 				forceUndoLimit(contexts[i], limit - 1);
 			} else {
-				return false;
+				// this context has a 0 limit
+				operation.removeContext(contexts[i]);
 			}
 		}
-		return true;
+		return operation.getContexts().length > 0;
 	}
 
 	/*
