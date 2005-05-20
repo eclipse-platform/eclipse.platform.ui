@@ -27,9 +27,11 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -101,7 +103,6 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                     receiveMessage(message);
                 }
             } catch (SocketException e) {
-                exception= e;
             } catch (SocketTimeoutException e) {
                 exception= e;
             } catch (IOException e) {
@@ -251,6 +252,11 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                 if (file != null) {
                     fFileNameToIFile.put(fileName, file);
                     taskLink= new FileLink(file, null, -1, -1, lineNumber);
+                } else {
+                    File javaIOFile= FileUtils.newFileUtils().resolveFile(fBuildFileParent, fileName);
+                    if (javaIOFile.exists()) {
+                        taskLink= new ExternalHyperlink(javaIOFile, lineNumber);
+                    }
                 }
             } else {
                 taskLink= new FileLink(file, null, -1, -1, lineNumber);

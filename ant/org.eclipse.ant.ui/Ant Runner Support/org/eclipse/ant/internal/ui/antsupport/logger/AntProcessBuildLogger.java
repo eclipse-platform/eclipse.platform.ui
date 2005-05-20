@@ -23,8 +23,10 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
+import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
 import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugState;
@@ -196,6 +198,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
                 if (file != null) {
                     fFileNameToIFile.put(fileName, file);
                     return new FileLink(file, null, -1, -1, lineNumber);
+                }
+                File javaIOFile= FileUtils.newFileUtils().resolveFile(fBuildFileParent, fileName);
+                if (javaIOFile.exists()) {
+                    return new ExternalHyperlink(javaIOFile, lineNumber);
                 }
             } catch (NoSuchMethodError e) {
                 //support for Ant older than 1.6
