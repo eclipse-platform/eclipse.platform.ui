@@ -7,6 +7,8 @@
       </appInfo>
       <documentation>
          For providing web browsers capable of displaying html documents at a given URL.
+
+&lt;p&gt;&lt;b&gt;Note: since 3.1, help system uses workbench browser support (see &lt;code&gt;org.eclipse.ui.browserSupport&lt;/code&gt;). The extension point described in this document remains to be used for standalone help only. Any custom browser adapters that need to work in the workbench mode need to be moved to the workbench extension point.&lt;/b&gt;
       </documentation>
    </annotation>
 
