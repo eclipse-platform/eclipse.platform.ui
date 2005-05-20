@@ -16,6 +16,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
+import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
@@ -59,7 +60,12 @@ public class RegistersViewerState extends AbstractViewerState {
 		Object element = null;
 		for( int i = 0; i < names.length; i++ ) {
 			element = null;
-			Object[] children = contentProvider.getChildren( parent );
+            Object[] children = null;
+            if (viewer instanceof RemoteTreeViewer) {
+                children = ((RemoteTreeViewer) viewer).getCurrentChildren(parent);
+            } else {
+                children = contentProvider.getChildren(parent);
+            }
 			String name = names[i];
 			for( int j = 0; j < children.length; j++ ) {
 				if ( children[j] instanceof IRegisterGroup ) {	
