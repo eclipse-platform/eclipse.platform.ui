@@ -79,13 +79,13 @@ public class InstructionPointerManager {
             return;
         }        
 		IThread thread = stackFrame.getThread();
-		boolean tos = true;
+		IStackFrame tos = null;
 		try {
-			tos = stackFrame.equals(thread.getTopStackFrame());
+			tos = thread.getTopStackFrame();
 		} catch (DebugException de) {
 		}
         // Create the annotation object
-		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame, tos);
+		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame, tos == null || stackFrame.equals(tos));
 		
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;
