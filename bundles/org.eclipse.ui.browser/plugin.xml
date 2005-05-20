@@ -42,6 +42,7 @@
             contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
             icon="icons/obj16/internal_browser.gif"
             id="org.eclipse.ui.browser.editor"
+            extensions="htm,html,shtml"
             name="%viewWebBrowserTitle"/>
       <editor
             extensions="htm,html,shtml"
