@@ -27,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -240,16 +238,20 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name);
+		column1.setResizable(false);
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
+		column2.setResizable(false);
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
 		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
+		column3.setResizable(false);
 
 		TableColumn column4= new TableColumn(table, SWT.NONE);
 		column4.setAlignment(SWT.CENTER);
 		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
+		column4.setResizable(false);
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -382,7 +384,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		updateButtons();
-        configureTableResizing(innerParent, buttons, table, column1, column2, column3, column4);
+        configureTableResizing(table, column1, column2, column3, column4);
 
 		Dialog.applyDialogFont(parent);
 		return parent;
@@ -417,49 +419,25 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	/**
      * Correctly resizes the table so no phantom columns appear
      *
-	 * @param parent the parent control
-	 * @param buttons the buttons
 	 * @param table the table
 	 * @param column1 the first column
 	 * @param column2 the second column
 	 * @param column3 the third column
 	 * @param column4 the fourth column
      */
-    private static void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3, final TableColumn column4) {
-        parent.addControlListener(new ControlAdapter() {
+    private static void configureTableResizing(final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3, final TableColumn column4) {
+        table.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent e) {
-                Rectangle area= parent.getClientArea();
-                Point preferredSize= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-                int width= area.width - 2 * table.getBorderWidth();
-                if (preferredSize.y > area.height) {
-                    // Subtract the scrollbar width from the total column width
-                    // if a vertical scrollbar will be required
-                    Point vBarSize = table.getVerticalBar().getSize();
-                    width -= vBarSize.x;
-                }
-                width -= buttons.getSize().x;
-                int clientWidth= width - (table.getSize().x - table.getClientArea().width);
-                Point oldSize= table.getSize();
-                if (oldSize.x > width) {
-                    // table is getting smaller so make the columns
-                    // smaller first and then resize the table to
-                    // match the client area width
-                    column1.setWidth(clientWidth/4);
-                    column2.setWidth(clientWidth/4);
-                    column4.setWidth(clientWidth/8);
-                    column3.setWidth(clientWidth - (column1.getWidth() + column2.getWidth() + column4.getWidth()));
-                    table.setSize(width, area.height);
-                } else {
-                    // table is getting bigger so make the table
-                    // bigger first and then make the columns wider
-                    // to match the client area width
-                    table.setSize(width, area.height);
-                    width= table.getClientArea().width;
-                    column1.setWidth(width / 4);
-                    column2.setWidth(width / 4);
-                    column4.setWidth(width / 8);
-                    column3.setWidth(width - (column1.getWidth() + column2.getWidth() + column4.getWidth()));
-                 }
+                int width= table.getClientArea().width;
+                // give the description column twice as much as all the others
+                // minimum is 80
+                int normalWidth= Math.max(width / 5, 80);
+                int descWidth= Math.max(width - 3 * normalWidth, 80);
+                column1.setWidth(normalWidth);
+                column2.setWidth(normalWidth);
+                column3.setWidth(descWidth);
+                column4.setWidth(normalWidth);
+                table.getHorizontalBar().setVisible(normalWidth * 3 + descWidth > width);
             }
         });
     }
