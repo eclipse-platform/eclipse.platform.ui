@@ -697,6 +697,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
         // Get the lock for the host to ensure that we are not connecting to the same host concurrently.
+        Policy.checkCanceled(monitor);
 		ILock hostLock;
 		synchronized(hostLocks) {
 			hostLock = (ILock)hostLocks.get(getHost());

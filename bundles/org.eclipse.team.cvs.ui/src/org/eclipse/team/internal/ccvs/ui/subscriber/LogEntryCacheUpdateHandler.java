@@ -212,6 +212,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
      * @see org.eclipse.team.internal.core.BackgroundEventHandler#processEvent(org.eclipse.team.internal.core.BackgroundEventHandler.Event, org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void processEvent(Event event, IProgressMonitor monitor) throws CoreException {
+        Policy.checkCanceled(monitor);
         switch (event.getType()) {
         	case REMOVAL:
         	case CHANGE:
@@ -230,6 +231,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
      * @see org.eclipse.team.internal.core.BackgroundEventHandler#doDispatchEvents(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected boolean doDispatchEvents(IProgressMonitor monitor) throws TeamException {
+        Policy.checkCanceled(monitor);
         boolean dispatched = false;
         monitor.beginTask(null, 50);
         dispatched |= updateCache(Policy.subMonitorFor(monitor, 20));
@@ -432,6 +434,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
             monitor.setTaskName(CVSUIMessages.CVSChangeSetCollector_4); //$NON-NLS-1$
             for (Iterator iter = projectMapping.values().iterator(); iter.hasNext();) {
                 SyncInfoSet set = (SyncInfoSet) iter.next();
+                Policy.checkCanceled(monitor);
                 fetchLogEntries(logEntriesCache, set, Policy.subMonitorFor(monitor, 90));
                 fireFetchedNotification(logEntriesCache, set, Policy.subMonitorFor(monitor, 10));
             }

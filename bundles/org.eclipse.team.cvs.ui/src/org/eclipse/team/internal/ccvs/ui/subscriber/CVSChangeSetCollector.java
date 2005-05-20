@@ -158,20 +158,22 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
     /*
      * Initialize the log entry handler and place it in the configuration
      */
-    private LogEntryCacheUpdateHandler initializeLogEntryHandler(ISynchronizePageConfiguration configuration) {
+    private LogEntryCacheUpdateHandler initializeLogEntryHandler(final ISynchronizePageConfiguration configuration) {
         final LogEntryCacheUpdateHandler logEntryHandler = new LogEntryCacheUpdateHandler(configuration);
         configuration.setProperty(LOG_ENTRY_HANDLER, logEntryHandler);
         // Use an action group to get notified when the configuration is disposed
         configuration.addActionContribution(new SynchronizePageActionGroup() {
             public void dispose() {
                 super.dispose();
-                LogEntryCacheUpdateHandler handler = (LogEntryCacheUpdateHandler)getConfiguration().getProperty(LOG_ENTRY_HANDLER);
+                LogEntryCacheUpdateHandler handler = (LogEntryCacheUpdateHandler)configuration.getProperty(LOG_ENTRY_HANDLER);
                 if (handler != null) {
                     handler.shutdown();
-                    getConfiguration().setProperty(LOG_ENTRY_HANDLER, null);
+                    configuration.setProperty(LOG_ENTRY_HANDLER, null);
                 }
             }
         });
+        // It is possible that the configuration has been disposed concurrently by another thread
+        // TODO
         return logEntryHandler;
     }
 
