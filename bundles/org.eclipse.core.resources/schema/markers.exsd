@@ -14,7 +14,7 @@ optionally persisted by the workspace whenever a
 workspace save or snapshot is done. 
 &lt;p&gt;
 Users can define and query for markers of a given type.  
-Marker types are defined in a hierarchy which support 
+Marker types are defined in a hierarchy that supports 
 multiple-inheritance.  Marker type definitions also 
 specify a number attributes which must or may be 
 present on a marker of that type as well as whether 
