@@ -40,6 +40,7 @@ public class ModelUtil {
     private static String TAG_BODY = "body"; //$NON-NLS-1$
     private static String TAG_HEAD = "head"; //$NON-NLS-1$
     private static String TAG_BASE = "base"; //$NON-NLS-1$
+    public static String TAG_DIV = "div"; //$NON-NLS-1$
     private static String TAG_PARAM = "param"; //$NON-NLS-1$
     private static String ATT_SRC = "src"; //$NON-NLS-1$
     private static String ATT_HREF = "href"; //$NON-NLS-1$

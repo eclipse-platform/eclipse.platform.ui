@@ -304,7 +304,7 @@ public class BrowserIntroPartImplementation extends
                 att.setProperty(IIntroHTMLConstants.ATTRIBUTE_ID, provider
                     .getId());
                 Element contentDiv = ModelUtil.createElement(dom,
-                    IIntroHTMLConstants.ELEMENT_DIV, att);
+                    ModelUtil.TAG_DIV, att);
                 providerClass.createContent(provider.getId(), contentDiv);
 
                 contentProviderElement.getParentNode().replaceChild(contentDiv,
@@ -329,7 +329,7 @@ public class BrowserIntroPartImplementation extends
             Element contentProviderDiv = ModelUtil.getElementById(dom,
                 contentProviderElement
                     .getAttribute(IIntroHTMLConstants.ATTRIBUTE_ID),
-                IIntroHTMLConstants.ELEMENT_DIV);
+                ModelUtil.TAG_DIV);
             contentProviderDiv.getParentNode().replaceChild(
                 contentProviderElement, contentProviderDiv);
         }
