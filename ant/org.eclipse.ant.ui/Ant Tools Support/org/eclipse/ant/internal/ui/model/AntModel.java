@@ -181,8 +181,9 @@ public class AntModel implements IAntModel {
         fLocationProvider= locationProvider;
         if (fgInstanceCount == 0) {
             //no other models are open to ensure that the classpath is up to date wrt the
-            //Ant preferences
+            //Ant preferences and start listening for breakpoint changes
         	AntDefiningTaskNode.setJavaClassPath();
+            AntModelCore.getDefault().startBreakpointListening();
         }
         fgInstanceCount++;
         DecayCodeCompletionDataStructuresThread.cancel();
@@ -211,6 +212,7 @@ public class AntModel implements IAntModel {
         if (fgInstanceCount == 0) {
             fgClassLoader= null;
             DecayCodeCompletionDataStructuresThread.getDefault().start();
+            AntModelCore.getDefault().stopBreakpointListening();
             cleanup();
         }
     }
