@@ -72,6 +72,7 @@
         <group id="curve-image" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links">
+				<anchor id="navigationBegin"/>
                 <link label="Overview" url="http://org.eclipse.ui.intro/showPage?id=overview" id="overview" style-id="left">
                     <text>Find out what Eclipse is all about</text>
                 </link>
@@ -84,6 +85,7 @@
                 <link label="What&apos;s New" url="http://org.eclipse.ui.intro/showPage?id=news" id="news" style-id="right">
                     <text>Find out what is new in this release</text>
                 </link>
+				<anchor id="navigationEnd"/>
             </group>
             <group id="action-links">
                 <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
