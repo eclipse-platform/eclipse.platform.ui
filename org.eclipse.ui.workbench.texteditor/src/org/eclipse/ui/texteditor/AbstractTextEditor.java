@@ -3765,10 +3765,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						progressMonitor.setCanceled(true);
 				}
 			} else {
-
+				IStatus status= exception.getStatus();
 				String title= EditorMessages.Editor_error_save_title;
 				String msg= EditorMessages.Editor_error_save_message;
-				ErrorDialog.openError(shell, title, msg, exception.getStatus());
+				
+				/*
+				 * XXX: Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=96227
+				 * 		Appending low-level message to message for now
+				 */
+				if (status.getException() != null) {
+					String lowLevelMessage= status.getException().getLocalizedMessage();
+					if (lowLevelMessage == null)
+						msg= msg + "\n" + lowLevelMessage; //$NON-NLS-1$
+				}
+				
+				ErrorDialog.openError(shell, title, msg, status);
 
 				/*
 				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
