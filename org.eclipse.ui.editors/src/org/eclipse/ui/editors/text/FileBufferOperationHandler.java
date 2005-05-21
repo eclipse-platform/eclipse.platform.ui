@@ -13,11 +13,14 @@ package org.eclipse.ui.editors.text;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -28,11 +31,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner;
 import org.eclipse.core.filebuffers.manipulation.IFileBufferOperation;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,8 +48,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
 
 /**
  * Operation handler for a file buffer.
@@ -80,29 +82,6 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			fResources= null;
 		}
 		fLocation= location;
-	}
-
-	/*
-	 * @see org.eclipse.ui.commands.IHandler#execute(java.util.Map)
-	 */
-	public Object execute(Map parameterValuesByName) throws ExecutionException {
-		computeSelectedResources();
-		try {
-
-			if (fResources != null && fResources.length > 0) {
-				IFile[] files= collectFiles(fResources);
-				if (files != null && files.length > 0)
-					doRun(files, null, fFileBufferOperation);
-			} else if (fLocation != null)
-				doRun(null, fLocation, fFileBufferOperation);
-
-			// Standard return value. DO NOT CHANGE.
-			return null;
-
-		} finally {
-			fResources= null;
-			fLocation= null;
-		}
 	}
 
 	protected final void computeSelectedResources() {
@@ -239,5 +218,29 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 	protected boolean isAcceptableLocation(IPath location) {
 		return true;
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 * @since 3.1
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		computeSelectedResources();
+		try {
+
+			if (fResources != null && fResources.length > 0) {
+				IFile[] files= collectFiles(fResources);
+				if (files != null && files.length > 0)
+					doRun(files, null, fFileBufferOperation);
+			} else if (fLocation != null)
+				doRun(null, fLocation, fFileBufferOperation);
+
+			// Standard return value. DO NOT CHANGE.
+			return null;
+
+		} finally {
+			fResources= null;
+			fLocation= null;
+		}
 	}
 }
