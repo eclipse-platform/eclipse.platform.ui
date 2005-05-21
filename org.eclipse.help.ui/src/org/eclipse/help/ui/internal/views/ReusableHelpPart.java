@@ -1437,15 +1437,37 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				break;
 			case '<':
 				if (leaveBold) {
-					if (i + 3 < value.length()) {
+					int length = value.length();
+					if (i +  6 < length) {
+						String tag = value.substring(i, i+7);
+						if (tag.equalsIgnoreCase("</code>")) { //$NON-NLS-1$
+							buf.append("</span>"); //$NON-NLS-1$
+							i+= 6;
+							continue;
+						}
+					}
+					if (i +  5 < length) {
+						String tag = value.substring(i, i+6);
+						if (tag.equalsIgnoreCase("<code>")) { //$NON-NLS-1$
+							buf.append("<span font=\"code\">"); //$NON-NLS-1$
+							i+= 5;
+							continue;
+						}
+					}
+					if (i + 3 < length) {
 						String tag = value.substring(i, i + 4);
 						if (tag.equalsIgnoreCase("</b>")) { //$NON-NLS-1$
 							buf.append(tag);
 							i += 3;
 							continue;
 						}
+						if (tag.equalsIgnoreCase("<br>")) { //$NON-NLS-1$
+							buf.append("<br/>"); //$NON-NLS-1$
+							i+= 3;
+							continue;
+						}					
 					}
-					if (i + 2 < value.length()) {
+					if (i + 2 < length) {
 						String tag = value.substring(i, i + 3);
 						if (tag.equalsIgnoreCase("<b>")) { //$NON-NLS-1$
 							buf.append(tag);

@@ -17,11 +17,14 @@ import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -48,6 +51,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private String defaultText = ""; //$NON-NLS-1$
 
 	private String id;
+	
+	private Font codeFont;
 
 	/**
 	 * @param parent
@@ -82,6 +87,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
+		codeFont = createCodeFont(parent.getDisplay(), parent.getFont(), JFaceResources.getTextFont());
+		text.setFont("code", codeFont); //$NON-NLS-1$
 		String key = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		text.setImage(key, HelpUIResources.getImage(key));
 		text.addHyperlinkListener(new IHyperlinkListener() {
@@ -98,6 +105,28 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		text.setText(defaultText, false, false);
+	}
+	
+	private static Font createCodeFont(Display display, Font regularFont, Font textFont) {
+		FontData[] rfontData = regularFont.getFontData();
+		FontData[] tfontData = textFont.getFontData();
+		int height = 0;
+		
+		for (int i=0; i<rfontData.length; i++) {
+			FontData data = rfontData[i];
+			height = Math.max(height, data.getHeight());
+		}
+		for (int i = 0; i < tfontData.length; i++) {
+			tfontData[i].setHeight(height);
+		}
+		return new Font(display, tfontData);
+	}
+	
+	public void dispose() {
+		if (codeFont!=null)
+			codeFont.dispose();
+		codeFont = null;
+		super.dispose();
 	}
 
 	/*
