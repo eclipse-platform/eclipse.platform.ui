@@ -141,8 +141,8 @@ public class IntroURL implements IIntroURL {
 
     protected boolean doExecute() {
         if (Log.logInfo) {
-            String msg = StringUtil.concat("Running Introl URL with Action: ", //$NON-NLS-1$
-                action, " and Parameters: ", parameters.toString()).toString(); //$NON-NLS-1$
+            String msg = StringUtil.concat("Running Introl URL with action: ", //$NON-NLS-1$
+                action, " and parameters: ", parameters.toString()).toString(); //$NON-NLS-1$
             Log.info(msg);
         }
 
