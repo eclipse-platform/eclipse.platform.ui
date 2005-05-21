@@ -799,7 +799,12 @@ public class AntModel implements IAntModel {
 
     private AntTaskNode newTaskNode(Task newTask, Attributes attributes) {
         AntTaskNode newNode= null;
-        String taskName= newTask.getTaskName();
+        String taskName= newTask.getTaskName(); 
+        if (newTask instanceof UnknownElement) {
+            //attempt to handle namespaces
+            taskName= ((UnknownElement) newTask).getTag();
+        }
+        
         if (isPropertySettingTask(taskName)) { //$NON-NLS-1$
             newNode= new AntPropertyNode(newTask, attributes);
         } else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
