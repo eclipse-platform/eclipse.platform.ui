@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
@@ -97,7 +96,7 @@ public class AntFoldingStructureProvider {
 			addFoldingRegions(currentRegions, root);
 			updateFoldingRegions(model, currentRegions);
 		} catch (BadLocationException be) {
-			AntUIPlugin.log(be);
+			//ignore as document has changed
 		}
 	}
 	
