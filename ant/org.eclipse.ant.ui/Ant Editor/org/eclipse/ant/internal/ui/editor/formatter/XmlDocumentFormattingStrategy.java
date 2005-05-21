@@ -16,6 +16,7 @@ import java.util.LinkedList;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
@@ -54,6 +55,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
 	        if (indent != -1) {
 	        	formatter.setInitialIndent(indent);
 	        }
+            formatter.setDefaultLineDelimiter(TextUtilities.getDefaultLineDelimiter(document));
 	        String formattedText = formatter.format(documentText, this.prefs);
 	        if (formattedText != null && !formattedText.equals(documentText)) {
 	        	document.set(formattedText);

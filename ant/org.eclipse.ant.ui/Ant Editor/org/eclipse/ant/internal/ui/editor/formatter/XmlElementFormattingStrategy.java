@@ -18,6 +18,7 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
@@ -82,7 +83,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         int indentLength = partition.getOffset() - line.getOffset();
         String lineDelimiter= document.getLineDelimiter(document.getLineOfOffset(line.getOffset()));
         if (lineDelimiter == null) {
-            lineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+            lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
         }
         return XmlTagFormatter.format(partitionText, prefs, document.get(line.getOffset(), indentLength), lineDelimiter);
 

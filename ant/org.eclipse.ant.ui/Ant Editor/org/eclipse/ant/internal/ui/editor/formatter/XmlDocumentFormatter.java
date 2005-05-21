@@ -326,10 +326,9 @@ public class XmlDocumentFormatter {
     }
 
     private int depth;
-
     private StringBuffer formattedXml;
-
     private boolean lastNodeWasText;
+    private String fDefaultLineDelimiter;
 
     public XmlDocumentFormatter() {
 		super();
@@ -345,7 +344,7 @@ public class XmlDocumentFormatter {
         if (!lastNodeWasText) {
 
             if (tag.startsOnNewline() && !hasNewlineAlready(out)) {
-                out.append(System.getProperty("line.separator")); //$NON-NLS-1$
+                out.append(fDefaultLineDelimiter);
             }
 
             if (tag.requiresInitialIndent()) {
@@ -518,4 +517,9 @@ public class XmlDocumentFormatter {
 		
 		return oneIndent;
 	}
+
+    public void setDefaultLineDelimiter(String defaultLineDelimiter) {
+       fDefaultLineDelimiter= defaultLineDelimiter;
+        
+    }
 }
