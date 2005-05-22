@@ -11,7 +11,7 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.variableClasspathEntry&quot;&gt;&#10;&lt;memento variableString=&quot;${system:ECLIPSE_HOME}/plugins/org.eclipse.swt.${system:WS}_3.1.0/ws/${system:WS}/swt-pi.jar&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;&#10;"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.jface.text.tests"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.library.path=${system:ECLIPSE_HOME}/plugins/org.eclipse.swt.${system:WS}_3.1.0/os/${system:OS}/${system:ARCH}"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.library.path=${workspace_loc}/org.eclipse.swt.${system:OS}.${system:WS}.${system:ARCH}/"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 </launchConfiguration>
