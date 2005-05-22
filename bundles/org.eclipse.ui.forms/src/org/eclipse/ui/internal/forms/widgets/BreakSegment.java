@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -26,10 +27,15 @@ public class BreakSegment extends ParagraphSegment {
 	 */
 	public boolean advanceLocator(GC gc, int wHint, Locator locator,
 			Hashtable objectTable, boolean computeHeightOnly) {
+		if (locator.rowHeight==0) {
+			FontMetrics fm = gc.getFontMetrics();
+			locator.rowHeight = fm.getHeight();
+		}
 		if (computeHeightOnly) locator.collectHeights();		
 		locator.x = locator.indent;
 		locator.y += locator.rowHeight;
 		locator.rowHeight = 0;
+		locator.leading = 0;
 		return true;
 	}
 
@@ -48,6 +54,10 @@ public class BreakSegment extends ParagraphSegment {
 	public void layout(GC gc, int width, Locator locator, Hashtable ResourceTable,
 			boolean selected) {
 		locator.resetCaret();
+		if (locator.rowHeight==0) {
+			FontMetrics fm = gc.getFontMetrics();
+			locator.rowHeight = fm.getHeight();
+		}
 		locator.y += locator.rowHeight;
 		locator.rowHeight = 0;
 		locator.rowCounter++;		
