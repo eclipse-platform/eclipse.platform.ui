@@ -18,9 +18,6 @@ import java.io.Reader;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
@@ -31,6 +28,10 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -421,14 +422,18 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	public IContentType getContentType(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) element).getStorage();
+			Reader reader= null;
 			InputStream stream= null;
 			try {
+				IContentDescription desc;
 				IDocument document= getDocument(element);
-				if (document != null)
-					stream= new DocumentInputStream(document);
-				else
+				if (document != null) {
+					reader= new DocumentReader(document);
+					desc= Platform.getContentTypeManager().getDescriptionFor(reader, storage.getName(), NO_PROPERTIES);
+				} else {
 					stream= storage.getContents();
-				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
+					desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
+				}
 				if (desc != null && desc.getContentType() != null)
 					return desc.getContentType();
 			} catch (IOException x) {
@@ -446,6 +451,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
 			} finally {
 				try {
+					// Note: either 'reader' or 'stream' is null
+					if (reader != null)
+						reader.close();
 					if (stream != null)
 						stream.close();
 				} catch (IOException x) {

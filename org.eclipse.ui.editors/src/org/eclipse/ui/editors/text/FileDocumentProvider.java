@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.text;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.widgets.Display;
@@ -625,10 +626,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return encoding;
 
 		// Probe content
-		InputStream stream= new DocumentInputStream(document);
+		Reader reader= new DocumentReader(document);
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, targetFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
 			if (description != null) {
 				encoding= description.getCharset();
 				if (encoding != null)
@@ -638,8 +639,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// continue with next strategy
 		} finally {
 			try {
-				if (stream != null)
-					stream.close();
+				if (reader != null)
+					reader.close();
 			} catch (IOException x) {
 			}
 		}

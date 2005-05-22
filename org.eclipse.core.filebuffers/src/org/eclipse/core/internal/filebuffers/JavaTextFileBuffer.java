@@ -280,15 +280,15 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		InputStream stream= null;
 		try {
 			if (isDirty()) {
-				stream= new DocumentInputStream(getDocument());
+				Reader reader= new DocumentReader(getDocument());
 				try {
-					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), NO_PROPERTIES);
 					if (desc != null && desc.getContentType() != null)
 						return desc.getContentType();
 				} finally {
 					try {
-						if (stream != null)
-							stream.close();
+						if (reader != null)
+							reader.close();
 					} catch (IOException ex) {
 					}
 				}
@@ -470,10 +470,10 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 		if (fFile != null) {
 			// Probe content
-			InputStream stream= new DocumentInputStream(fDocument);
+			Reader reader= new DocumentReader(fDocument);
 			try {
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
 				if (description != null) {
 					String encoding= description.getCharset();
 					if (encoding != null)
@@ -483,8 +483,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				// try next strategy
 			} finally {
 				try {
-					if (stream != null)
-						stream.close();
+					if (reader != null)
+						reader.close();
 				} catch (IOException x) {
 				}
 			}

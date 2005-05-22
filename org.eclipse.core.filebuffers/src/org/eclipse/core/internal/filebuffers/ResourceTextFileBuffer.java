@@ -176,16 +176,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public IContentType getContentType() throws CoreException {
 		try {
 			if (isDirty()) {
-				InputStream stream= null;
+				Reader reader= null;
 				try {
-					stream= new DocumentInputStream(getDocument());
-					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+					reader= new DocumentReader(getDocument());
+					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), NO_PROPERTIES);
 					if (desc != null && desc.getContentType() != null)
 						return desc.getContentType();
 				} finally {
 					try {
-						if (stream != null)
-							stream.close();
+						if (reader != null)
+							reader.close();
 					} catch (IOException x) {
 					}
 				}
@@ -367,10 +367,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return fExplicitEncoding;
 
 		// Probe content
-		InputStream stream= new DocumentInputStream(fDocument);
+		Reader reader= new DocumentReader(fDocument);
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
 			if (description != null) {
 				String encoding= description.getCharset();
 				if (encoding != null)
@@ -380,8 +380,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			// try next strategy
 		} finally {
 			try {
-				if (stream != null)
-					stream.close();
+				if (reader != null)
+					reader.close();
 			} catch (IOException x) {
 			}
 		}
