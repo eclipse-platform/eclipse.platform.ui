@@ -149,11 +149,13 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.DefaultTextEditor"
-            extensions="txt"
             icon="icons/full/obj16/file_obj.gif"
             class="org.eclipse.ui.editors.text.TextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             id="org.eclipse.ui.DefaultTextEditor">
+            <contentTypeBinding
+               contentTypeId="org.eclipse.core.runtime.text"
+            /> 
       </editor>
    </extension>
    <extension
