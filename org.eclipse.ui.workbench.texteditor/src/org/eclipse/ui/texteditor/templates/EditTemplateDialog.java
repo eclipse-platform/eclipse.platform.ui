@@ -124,6 +124,7 @@ class EditTemplateDialog extends StatusDialog {
 	private Combo fContextCombo;
 	private SourceViewer fPatternEditor;
 	private Button fInsertVariableButton;
+	private Button fAutoInsertCheckbox;
 	private boolean fIsNameModifiable;
 
 	private StatusInfo fValidationStatus;
@@ -211,7 +212,7 @@ class EditTemplateDialog extends StatusDialog {
 			Composite composite= new Composite(parent, SWT.NONE);
 			composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			layout= new GridLayout();
-			layout.numColumns= 3;
+			layout.numColumns= 4;
 			layout.marginWidth= 0;
 			layout.marginHeight= 0;
 			composite.setLayout(layout);
@@ -239,6 +240,9 @@ class EditTemplateDialog extends StatusDialog {
 			}
 
 			fContextCombo.addModifyListener(listener);
+			
+			fAutoInsertCheckbox= createCheckbox(composite, TextEditorTemplateMessages.EditTemplateDialog_autoinsert);
+			fAutoInsertCheckbox.setSelection(fOriginalTemplate.isAutoInsertable());
 		}
 
 		createLabel(parent, TextEditorTemplateMessages.EditTemplateDialog_description);
@@ -353,6 +357,14 @@ class EditTemplateDialog extends StatusDialog {
 		return text;
 	}
 
+	private static Button createCheckbox(Composite parent, String name) {
+		Button button= new Button(parent, SWT.CHECK);
+		button.setText(name);
+		button.setLayoutData(new GridData());
+		
+		return button;
+	}
+	
 	private SourceViewer createEditor(Composite parent, String pattern) {
 		SourceViewer viewer= createViewer(parent);
 
@@ -544,7 +556,8 @@ class EditTemplateDialog extends StatusDialog {
 
 	protected void okPressed() {
 		String name= fNameText == null ? fOriginalTemplate.getName() : fNameText.getText();
-		fNewTemplate= new Template(name, fDescriptionText.getText(), getContextId(), fPatternEditor.getDocument().get(), true);
+		boolean isAutoInsertable= fAutoInsertCheckbox != null && fAutoInsertCheckbox.getSelection();
+		fNewTemplate= new Template(name, fDescriptionText.getText(), getContextId(), fPatternEditor.getDocument().get(), isAutoInsertable);
 		super.okPressed();
 	}
 

@@ -93,4 +93,5 @@ final class TextEditorTemplateMessages extends NLS {
 	public static String TemplatePreferencePage_yes;
 	public static String TemplatePreferencePage_no;
 	public static String TemplatePreferencePage_column_autoinsert;
+	public static String EditTemplateDialog_autoinsert;
 }
