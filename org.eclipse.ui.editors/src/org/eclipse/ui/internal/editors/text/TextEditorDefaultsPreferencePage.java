@@ -498,9 +498,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
-		EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
-		tabWidthDomain.addRange(1, 16);
-		addSpinner(appearanceComposite, tabWidth, tabWidthDomain, 0);
+		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
+		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 2, 0);
 
 		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
