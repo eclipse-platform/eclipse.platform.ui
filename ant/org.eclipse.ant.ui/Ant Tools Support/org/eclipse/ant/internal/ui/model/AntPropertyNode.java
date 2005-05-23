@@ -209,7 +209,7 @@ public class AntPropertyNode extends AntTaskNode {
         if (fBaseLabel != null) {
             if (fBaseLabel.equals(identifier)) {
                 int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
-                nameOffset= textToSearch.indexOf(identifier, nameOffset);
+                nameOffset= textToSearch.indexOf(identifier, nameOffset + 1);
                 results.add(new Integer(getOffset() + nameOffset));
             }
         }
