@@ -192,10 +192,17 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String helpText = createContextHelp(c);
 		if (getSection().isExpanded())
 			updateText(helpText);
-		updateDynamicHelp();
+		updateDynamicHelp(false);
 	}
 
-	private void updateDynamicHelp() {
+	private void updateDynamicHelp(boolean explicitContext) {
+		if (explicitContext && lastContext instanceof IContext2) {
+			String title = ((IContext2)lastContext).getTitle();
+			if (title!=null) {
+				updateDynamicHelp(stripMnemonic(title), lastControl);
+				return;
+			}
+		}
 		if (lastProvider != null || lastControl != null)
 			updateDynamicHelp(lastProvider != null ? lastProvider
 					.getSearchExpression(lastControl) : null, lastControl);
@@ -236,7 +243,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		updateTitle(context!=null);
 		if (getSection().isExpanded())
 			updateText(helpText);
-		updateDynamicHelp();
+		updateDynamicHelp(context!=null);
 	}
 
 	private void updateTitle(boolean contextSupplied) {
