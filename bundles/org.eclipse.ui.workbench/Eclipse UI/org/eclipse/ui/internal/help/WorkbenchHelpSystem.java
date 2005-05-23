@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelp;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
@@ -276,6 +277,52 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		}
 	}
 
+	/**
+	 * A wrapper for action help context that passes the action
+	 * text to be used as a title. 
+	 * @since 3.1
+	 */
+	private static class ContextWithTitle implements IContext2 {
+		private IContext context;
+		private String title;
+
+		ContextWithTitle(IContext context, String title) {
+			this.context = context;
+			this.title = title;
+		}
+
+		public String getTitle() {
+			if (context instanceof IContext2) {
+				String ctitle = ((IContext2)context).getTitle();
+				if (ctitle!=null)
+					return ctitle;
+			}
+			return title;
+		}
+
+		public String getStyledText() {
+			if (context instanceof IContext2) {
+				return ((IContext2)context).getStyledText();
+			}
+			return context.getText();
+		}
+
+		public String getCategory(IHelpResource topic) {
+			if (context instanceof IContext2) {
+				return ((IContext2)context).getCategory(topic);
+			}
+			return null;
+		}
+
+		public IHelpResource[] getRelatedTopics() {
+			return context.getRelatedTopics();
+		}
+
+		public String getText() {
+			return context.getText();
+		}
+	}
+	
 	/**
 	 * Compatibility wrapper, or <code>null</code> if none. Do not access
 	 * directly; see getHelpSupport().
@@ -899,7 +946,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 * @see org.eclipse.ui.help.IWorkbenchHelpSystem#setHelp(org.eclipse.jface.action.IAction,
 	 *      java.lang.String)
 	 */
-	public void setHelp(IAction action, final String contextId) {
+	public void setHelp(final IAction action, final String contextId) {
 		action.setHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent event) {
 				if (getHelpUI() != null) {
@@ -907,7 +954,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 					if (context != null) {
 						Point point = computePopUpLocation(event.widget
 								.getDisplay());
-						displayContext(context, point.x, point.y);
+						displayContext(new ContextWithTitle(context, action.getText()), point.x, point.y);
 					}
 				}
 			}
