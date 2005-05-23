@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.swt.SWT;
@@ -283,7 +285,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
 		
 		// a spacer
-		new Label(composite, SWT.NONE);
+		Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		separator.setVisible(false);
 		
 		Label previewLabel= new Label(composite, SWT.NULL);
 		previewLabel.setText(Utilities.getString("ComparePreferencePage.preview.label"));	//$NON-NLS-1$
@@ -293,6 +296,13 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		gd.widthHint= convertWidthInCharsToPixels(60);
 		gd.heightHint= convertHeightInCharsToPixels(13);
 		previewer.setLayoutData(gd);
+		
+		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.NONE,
+				"org.eclipse.ui.preferencePages.ColorsAndFonts", Utilities.getString("ComparePreferencePage.colorAndFontLink"), //$NON-NLS-1$ //$NON-NLS-2$
+				(IWorkbenchPreferenceContainer) getContainer(), null);
+
+		GridData data= new GridData(SWT.FILL, SWT.CENTER, false, false);
+		area.getControl().setLayoutData(data);
 		
 		return composite;
 	}
