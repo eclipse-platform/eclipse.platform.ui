@@ -43,9 +43,9 @@ import org.w3c.dom.*;
 public class PlatformConfiguration implements IPlatformConfiguration, IConfigurationConstants {
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
-	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+	//private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 //	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-	private static final String XML_ENCODING = "UTF-8";
+	private static final String XML_ENCODING = "UTF-8"; //$NON-NLS-1$
 
 	private Configuration config;
 	private URL configLocation;
@@ -1051,7 +1051,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		String protocol = url.getProtocol();
 		if (protocol.equals("file")) //$NON-NLS-1$
 			return true;
-		else if (protocol.equals("platform")) {
+		else if (protocol.equals("platform")) { //$NON-NLS-1$
 			URL resolved = null;
 			try {
 				resolved = resolvePlatformURL(url); // 19536
@@ -1068,7 +1068,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		String path = null;
 		if (protocol.equals("file")) //$NON-NLS-1$
 			path = url.getFile();
-		else if (protocol.equals("platform")) { // $NON-NLS-1$
+		else if (protocol.equals("platform")) { //$NON-NLS-1$
 			URL resolved = null;
 			try {
 				resolved = resolvePlatformURL(url); // 19536
@@ -1088,7 +1088,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	public static URL resolvePlatformURL(URL url) throws IOException {
 		// 19536
-		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$;
+		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			url = Platform.asLocalURL(url);
 			// TODO URL resolution by platform returns url file:d:/path as opposed to file:/d:/path
 			File f = new File(url.getFile());

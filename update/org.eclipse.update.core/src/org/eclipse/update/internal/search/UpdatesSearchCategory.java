@@ -297,7 +297,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		ArrayList hits,
 		IUpdateSearchFilter filter,
 		IUpdateSearchResultCollector collector) {
-		Object[] array = hits.toArray();
+		//Object[] array = hits.toArray();
 		IFeature topHit = null;
 		for (int i = 0; i < hits.size(); i++) {
 			Hit hit = (Hit) hits.get(i);

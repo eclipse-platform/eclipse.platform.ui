@@ -316,7 +316,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	
 	private boolean isValidSite(URL url) {
 		URL resolvedURL=  url;
-		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$
+		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
 				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
 			} catch (IOException e) {
@@ -331,8 +331,8 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		if (!siteRoot.exists()) {
 			Utils.debug("Site " + resolvedURL + " does not exist "); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
-		} else
-			return true;
+		}
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)

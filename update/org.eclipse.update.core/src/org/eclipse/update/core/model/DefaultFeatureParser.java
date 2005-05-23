@@ -1147,7 +1147,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	private void internalError(String message) {
         if (location != null)
-            message += " " + NLS.bind(Messages.DefaultFeatureParser_location, (new String[] { location }));
+            message += " " + NLS.bind(Messages.DefaultFeatureParser_location, (new String[] { location })); //$NON-NLS-1$
 		error(new Status(IStatus.ERROR, PLUGIN_ID, Platform.PARSE_PROBLEM, message, null));
 	}
 

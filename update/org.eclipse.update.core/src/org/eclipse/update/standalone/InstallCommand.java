@@ -87,7 +87,7 @@ public class InstallCommand extends ScriptedCommand {
 			// are we still checking for sites? forget about it
 			if (targetSite == null)
 				throw Utilities.newCoreException(
-						Messages.Standalone_cannotInstall + featureId + " " + version, 
+						Messages.Standalone_cannotInstall + featureId + " " + version,  //$NON-NLS-1$
 						null);
 			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
@@ -169,7 +169,7 @@ public class InstallCommand extends ScriptedCommand {
 				return true;
 			} catch (Exception e) {
 				throw Utilities.newCoreException(
-					Messages.Standalone_cannotInstall + featureId + " " + version, 
+					Messages.Standalone_cannotInstall + featureId + " " + version,  //$NON-NLS-1$
 					e);
 			}
 		} catch (CoreException ce) {

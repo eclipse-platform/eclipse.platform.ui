@@ -25,7 +25,7 @@ import org.xml.sax.*;
 
 
 public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurationConstants{	
-	private static final String MAC_OS_MARKER = ".DS_Store";
+	private static final String MAC_OS_MARKER = ".DS_Store"; //$NON-NLS-1$
 	
 	private URL url; // this is the external URL for the site
 	private URL resolvedURL; // this is the resolved URL used internally
@@ -71,7 +71,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		this.policy = policy;
 		this.resolvedURL = this.url;
-		if (url.getProtocol().equals("platform")) { // $NON-NLS-1$
+		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
 				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
 			} catch (IOException e) {

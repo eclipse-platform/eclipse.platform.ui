@@ -40,7 +40,7 @@ public class UpdatePolicy {
 	private static final String ATT_PATTERN = "pattern"; //$NON-NLS-1$
 	private static final String ATT_TYPE = "url-type"; //$NON-NLS-1$
 	private static final String ATT_TYPE_VALUE_UPDATE = "update"; //$NON-NLS-1$
-	private static final String ATT_TYPE_VALUE_BOTH = "both"; //$NON-NLS-1$
+	//private static final String ATT_TYPE_VALUE_BOTH = "both"; //$NON-NLS-1$
 	private static final String ATT_TYPE_VALUE_DISCOVERY = "discovery"; //$NON-NLS-1$
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

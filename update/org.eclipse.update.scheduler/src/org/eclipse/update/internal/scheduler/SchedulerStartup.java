@@ -33,12 +33,7 @@ public class SchedulerStartup implements IStartup {
 
 	public static final String VALUE_ON_SCHEDULE = "on-schedule"; //$NON-NLS-1$
 
-	public static final String P_DOWNLOAD = "download"; // value is true or
-
-	// //$NON-NLS-1$
-
-	// false, default is
-	// false //$NON-NLS-1$
+	public static final String P_DOWNLOAD = "download"; // value is true or false, default isfalse //$NON-NLS-1$
 
 	// values are to be picked up from the arryas DAYS and HOURS
 	public static final String P_DAY = "day"; //$NON-NLS-1$

@@ -264,7 +264,7 @@ public class InternalSiteManager {
 	private static ISite createSite(String siteType, URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
 		
 		if (monitor == null) monitor = new NullProgressMonitor();
-		ISite site = null;
+		//ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
 		URL fixedUrl;
 		
@@ -292,9 +292,9 @@ public class InternalSiteManager {
 				if (!fixedUrl.equals(url)) {
 					// try with original url
 					 return createSite( factory, url, url, monitor);
-				} else if (url.getProtocol().equalsIgnoreCase("file") && ! url.getFile().endsWith(Site.SITE_XML)){
+				} else if (url.getProtocol().equalsIgnoreCase("file") && ! url.getFile().endsWith(Site.SITE_XML)){ //$NON-NLS-1$
 					try {
-						if (url.getFile().endsWith("/")) {
+						if (url.getFile().endsWith("/")) { //$NON-NLS-1$
 							return createSite(factory, new URL(url,
 									Site.SITE_XML), url, monitor);
 						} else {

@@ -18,27 +18,27 @@ import org.w3c.dom.*;
 
 public class XMLPrintHandler {
 	//	used to print XML file
-	public static final String XML_COMMENT_END_TAG = "-->";
-	public static final String XML_COMMENT_BEGIN_TAG = "<!--";
-	public static final String XML_HEAD = "<?xml version=\"1.0\" encoding=\"";
-	public static final String XML_HEAD_END_TAG = "?>";
-	public static final String XML_DBL_QUOTES = "\"";
-	public static final String XML_SPACE = " ";
-	public static final String XML_BEGIN_TAG = "<";
-	public static final String XML_END_TAG = ">";
-	public static final String XML_EQUAL = "=";
-	public static final String XML_SLASH = "/";
+	public static final String XML_COMMENT_END_TAG = "-->"; //$NON-NLS-1$
+	public static final String XML_COMMENT_BEGIN_TAG = "<!--"; //$NON-NLS-1$
+	public static final String XML_HEAD = "<?xml version=\"1.0\" encoding=\""; //$NON-NLS-1$
+	public static final String XML_HEAD_END_TAG = "?>"; //$NON-NLS-1$
+	public static final String XML_DBL_QUOTES = "\""; //$NON-NLS-1$
+	public static final String XML_SPACE = " "; //$NON-NLS-1$
+	public static final String XML_BEGIN_TAG = "<"; //$NON-NLS-1$
+	public static final String XML_END_TAG = ">"; //$NON-NLS-1$
+	public static final String XML_EQUAL = "="; //$NON-NLS-1$
+	public static final String XML_SLASH = "/"; //$NON-NLS-1$
 
 	public static void printBeginElement(Writer xmlWriter, String elementString) throws IOException{
 		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
-		temp.append(elementString).append(XML_END_TAG).append("\n");
+		temp.append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
 
 	public static void printEndElement(Writer xmlWriter, String elementString) throws IOException{
 		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
-		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n");
+		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
@@ -50,13 +50,13 @@ public class XMLPrintHandler {
 
 	public static void printComment(Writer xmlWriter, String comment)throws IOException {
 		StringBuffer temp = new StringBuffer(XML_COMMENT_BEGIN_TAG);
-		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n");
+		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
 	public static void printHead(Writer xmlWriter, String encoding) throws IOException {
 		StringBuffer temp = new StringBuffer(XML_HEAD);
-		temp.append(encoding).append(XML_DBL_QUOTES).append(XML_HEAD_END_TAG).append("\n");
+		temp.append(encoding).append(XML_DBL_QUOTES).append(XML_HEAD_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
@@ -109,7 +109,7 @@ public class XMLPrintHandler {
 			break;
 		}
 		default: {
-			throw new UnsupportedOperationException("Unsupported XML Node Type.");
+			throw new UnsupportedOperationException(Messages.XMLPrintHandler_unsupportedNodeType);
 			
 		}
 		}

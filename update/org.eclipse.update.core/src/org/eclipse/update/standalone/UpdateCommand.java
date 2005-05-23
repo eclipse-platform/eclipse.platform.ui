@@ -37,7 +37,7 @@ public class UpdateCommand extends ScriptedCommand {
 	private UpdateSearchRequest searchRequest;
 	private UpdateSearchResultCollector collector;
 	private String featureId;
-	private String version;
+	//private String version;
 	private IFeature currentFeature;
 
 	/**
@@ -65,7 +65,7 @@ public class UpdateCommand extends ScriptedCommand {
 
 		try {
 			this.featureId = featureId;
-			this.version = version;
+			//this.version = version;
 			if (featureId != null) {
 				this.targetSite =
 					UpdateUtils.getSiteWithFeature(

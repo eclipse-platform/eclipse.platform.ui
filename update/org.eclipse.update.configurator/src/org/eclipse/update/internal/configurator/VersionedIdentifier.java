@@ -39,14 +39,14 @@ public class VersionedIdentifier {
 			this.identifier = s.substring(0, loc);
 			version = s.substring(loc + 1);
 			if(version==null)
-				version = "0.0.0";
+				version = "0.0.0"; //$NON-NLS-1$
 			parseVersion(version);
 		} else
 			this.identifier = s;
 	}
 	
 	public VersionedIdentifier(String id, String version) {
-		this(id+ID_SEPARATOR+ (version==null?"0.0.0":version) );
+		this(id+ID_SEPARATOR+ (version==null?"0.0.0":version) ); //$NON-NLS-1$
 		this.version = version;
 	}
 	
@@ -157,12 +157,12 @@ public class VersionedIdentifier {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return (identifier + "_" + version).hashCode();
+		return (identifier + "_" + version).hashCode(); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return identifier + "_" + version;
+		return identifier + "_" + version; //$NON-NLS-1$
 	}
 }

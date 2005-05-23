@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.update.internal.configurator.ConfigurationActivato
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.update.configurator,
- org.eclipse.update.internal.configurator,
- org.eclipse.update.internal.configurator.branding
+ org.eclipse.update.internal.configurator;x-friends:="org.eclipse.update.core",
+ org.eclipse.update.internal.configurator.branding;x-friends:="org.eclipse.update.core"
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-AutoStart: true

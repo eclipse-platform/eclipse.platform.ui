@@ -66,7 +66,7 @@ public final class AboutInfo {
 //		Assert.isNotNull(versionId);
 //		Assert.isNotNull(pluginId);
 		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
-		IStatus status = reader.load();
+		reader.load();
 // bug 78031
 //		if (!status.isOK()) {
 //			//return null;

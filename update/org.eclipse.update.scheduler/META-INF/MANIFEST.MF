@@ -6,8 +6,8 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.update.internal.scheduler.UpdateSchedulerPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.update.internal.scheduler,
- org.eclipse.update.internal.scheduler.preferences
+Export-Package: org.eclipse.update.internal.scheduler;x-internal:=true,
+ org.eclipse.update.internal.scheduler.preferences;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.update.core,
  org.eclipse.update.ui,
