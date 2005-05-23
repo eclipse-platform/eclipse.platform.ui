@@ -779,8 +779,9 @@ public class AntModel implements IAntModel {
             taskNode.setImportNode(fNodeBeingResolved);
             //place the node in the collection right after the import node
             if (fNodeBeingResolvedIndex == -1) {
-            	fNodeBeingResolvedIndex= fTaskNodes.indexOf(fNodeBeingResolved) + 1;
+            	fNodeBeingResolvedIndex= fTaskNodes.indexOf(fNodeBeingResolved);
             }
+            fNodeBeingResolvedIndex++;
             fTaskNodes.add(fNodeBeingResolvedIndex, taskNode);
         } else {
             fTaskNodes.add(taskNode);
