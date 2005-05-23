@@ -115,7 +115,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	private void handlePartActivation(IWorkbenchPartReference ref) {
 		if (reusableHelpPart == null)
 			return;
-		if (!reusableHelpPart.isMonitoringContextHelp())
+		if (!visible || !reusableHelpPart.isMonitoringContextHelp())
 			return;
 		if (isThisPart(ref))
 			return;
@@ -126,13 +126,12 @@ public class HelpView extends ViewPart implements IPartListener2,
 			IContextProvider provider = (IContextProvider) part
 					.getAdapter(IContextProvider.class);
 			if (provider != null) {
-				if (visible)
-					reusableHelpPart.update(provider, null, part, c);
+				reusableHelpPart.update(provider, null, part, c);
 				if ((provider.getContextChangeMask() & IContextProvider.SELECTION) != 0) {
 					// context help changes with selections
 					installSelectionListener(part);
 				}
-			} else if (visible)
+			} else
 				reusableHelpPart.update(part, c);
 			if (part instanceof IPageChangeProvider)
 				installPageListener(part);
@@ -183,11 +182,11 @@ public class HelpView extends ViewPart implements IPartListener2,
 			return;
 		if (monitoredPart == null)
 			return;
-		IContextProvider provider = (IContextProvider) monitoredPart
-				.getAdapter(IContextProvider.class);
 		Control c = monitoredPart.getSite().getShell().getDisplay()
 				.getFocusControl();
 		if (c != null && c.isDisposed() == false && visible) {
+			IContextProvider provider = (IContextProvider) monitoredPart
+			.getAdapter(IContextProvider.class);
 			if (provider != null)
 				reusableHelpPart.update(provider, null, monitoredPart, c);
 			else
