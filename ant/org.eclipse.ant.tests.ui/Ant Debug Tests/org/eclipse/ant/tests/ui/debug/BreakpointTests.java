@@ -172,15 +172,14 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	public void testBreakpointSepVM() throws Exception {
 		breakpoints(true, "default", 5, 15);
 	}
+
+	public void testTargetBreakpoint() throws Exception {
+		breakpoints(false, "entry2", 4, 24);
+	}
 	
-	//TODO enable when move to Ant 1.6.3 as need target location
-//	public void testTargetBreakpoint() throws Exception {
-//		breakpoints(false, "entry2", 4, 24);
-//	}
-//	
-//	public void testTargetBreakpointSepVM() throws Exception {
-//		breakpoints(true, "entry2", 4, 24);
-//	}
+	public void testTargetBreakpointSepVM() throws Exception {
+		breakpoints(true, "entry2", 4, 24);
+	}
 	
 	private void breakpoints(boolean sepVM, String defaultTargetName, int firstLineNumber, int secondLineNumber) throws CoreException {
 		String fileName = "breakpoints";
