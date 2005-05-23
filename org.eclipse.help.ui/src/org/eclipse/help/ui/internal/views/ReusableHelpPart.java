@@ -986,16 +986,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	public void update(IWorkbenchPart part, Control control) {
 		mform.setInput(new ContextHelpProviderInput((IContextProvider) null,
-				control, part));
+				null, control, part));
 	}
 
-	public void update(IContextProvider provider, IWorkbenchPart part,
+	public void update(IContextProvider provider, IContext context, IWorkbenchPart part,
 			Control control) {
-		mform.setInput(new ContextHelpProviderInput(provider, control, part));
+		mform.setInput(new ContextHelpProviderInput(provider, context, control, part));
 	}
 
 	public void update(IContext context, IWorkbenchPart part, Control control) {
-		mform.setInput(new ContextHelpProviderInput(context, control, part));
+		mform.setInput(new ContextHelpProviderInput(null, context, control, part));
 	}
 
 	private IHelpPart createPart(String id, IToolBarManager tbm) {

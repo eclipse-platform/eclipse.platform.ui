@@ -127,7 +127,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 					.getAdapter(IContextProvider.class);
 			if (provider != null) {
 				if (visible)
-					reusableHelpPart.update(provider, part, c);
+					reusableHelpPart.update(provider, null, part, c);
 				if ((provider.getContextChangeMask() & IContextProvider.SELECTION) != 0) {
 					// context help changes with selections
 					installSelectionListener(part);
@@ -189,7 +189,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 				.getFocusControl();
 		if (c != null && c.isDisposed() == false && visible) {
 			if (provider != null)
-				reusableHelpPart.update(provider, monitoredPart, c);
+				reusableHelpPart.update(provider, null, monitoredPart, c);
 			else
 				reusableHelpPart.update(monitoredPart, c);
 		}
@@ -348,7 +348,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 					provider = (IContextProvider) part
 					.getAdapter(IContextProvider.class);
 			if (provider != null)
-				reusableHelpPart.update(provider, part, control);
+				reusableHelpPart.update(provider, context, part, control);
 			else
 				reusableHelpPart.update(context, part, control);
 		}

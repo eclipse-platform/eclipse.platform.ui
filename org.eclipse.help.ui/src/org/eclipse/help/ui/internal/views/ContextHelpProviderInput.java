@@ -20,15 +20,10 @@ public class ContextHelpProviderInput {
 	private IContextProvider provider;
 	private Control control;
 	private IWorkbenchPart part;
-	public ContextHelpProviderInput(IContextProvider provider, Control control, IWorkbenchPart part) {
+	public ContextHelpProviderInput(IContextProvider provider, IContext context, Control control, IWorkbenchPart part) {
 		this.provider = provider;
-		this.control =control;
-		this.part = part;
-	}
-	
-	public ContextHelpProviderInput(IContext context, Control control, IWorkbenchPart part) {
 		this.context = context;
-		this.control = control;
+		this.control =control;
 		this.part = part;
 	}
 	

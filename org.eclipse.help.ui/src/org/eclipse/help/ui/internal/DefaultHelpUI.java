@@ -12,7 +12,8 @@ package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -23,7 +24,7 @@ import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.environment.*;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -280,9 +281,6 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		return BaseHelpSystem.resolve(href, documentOnly);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.help.AbstractHelpUI#unresolve(java.net.URL)
-	 */
 	public String unresolve(URL url) {
 		return BaseHelpSystem.unresolve(url);
 	}

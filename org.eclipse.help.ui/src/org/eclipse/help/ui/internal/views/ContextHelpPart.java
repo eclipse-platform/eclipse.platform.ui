@@ -201,42 +201,51 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					.getSearchExpression(lastControl) : null, lastControl);
 	}
 
-	public void handleActivation(IContext context, Control c,
-			IWorkbenchPart part) {
-		if (text.isDisposed())
-			return;
-		lastControl = c;
-		lastContext = context;
-		lastPart = part;
-		lastProvider = null;
-		String helpText = formatHelpContext(context);
-		updateTitle();
-		if (getSection().isExpanded())
-			updateText(helpText);
-		updateDynamicHelp();
-	}
+//	public void handleActivation(IContext context, Control c,
+//			IWorkbenchPart part) {
+//		if (text.isDisposed())
+//			return;
+//		lastControl = c;
+//		lastContext = context;
+//		lastPart = part;
+//		lastProvider = null;
+//		String helpText = formatHelpContext(context);
+//		updateTitle(context!=null);
+//		if (getSection().isExpanded())
+//			updateText(helpText);
+//		updateDynamicHelp();
+//	}
 
-	public void handleActivation(IContextProvider provider, Control c,
+	public void handleActivation(IContextProvider provider, IContext context, 
+			Control c,
 			IWorkbenchPart part) {
 		if (text.isDisposed())
 			return;
 		lastControl = c;
 		lastProvider = provider;
+		lastContext = context;
 		lastPart = part;
-		String helpText = createContextHelp(provider, c);
-		updateTitle();
+		if (context==null && provider!=null) {
+			lastContext = provider.getContext(c);
+		}
+		String helpText;
+		if (lastContext!=null)
+			helpText = formatHelpContext(lastContext);
+		else
+			helpText = createContextHelp(c);
+		updateTitle(context!=null);
 		if (getSection().isExpanded())
 			updateText(helpText);
 		updateDynamicHelp();
 	}
 
-	private void updateTitle() {
+	private void updateTitle(boolean contextSupplied) {
 		String title = null;
 		if (lastContext != null && lastContext instanceof IContext2) {
 			IContext2 c2 = (IContext2)lastContext;
 			title = c2.getTitle(); 
 		}
-		if (title==null && lastPart != null)
+		if (title==null && !contextSupplied && lastPart != null)
 			title = NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
 							.getSite().getRegisteredName());
 		if (title==null)
@@ -488,12 +497,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		if (input instanceof ContextHelpProviderInput) {
 			ContextHelpProviderInput chinput = (ContextHelpProviderInput) input;
-			if (chinput.getContext() != null)
-				handleActivation(chinput.getContext(), chinput.getControl(),
+			//if (chinput.getContext() != null)
+				handleActivation(chinput.getProvider(), chinput.getContext(), chinput.getControl(),
 						chinput.getPart());
-			else
-				handleActivation(chinput.getProvider(), chinput.getControl(),
-						chinput.getPart());
+			//else
+				//handleActivation(chinput.getProvider(), chinput.getControl(),
+					//	chinput.getPart());
 			return true;
 		}
 		return false;
@@ -538,7 +547,5 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-
 	}
 }
