@@ -66,8 +66,13 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
 
-	/** Border thickness in pixels. */
-	private static final int BORDER= 1;
+	/** Outer border thickness in pixels. */
+	private static final int OUTER_BORDER= 1;
+	/**
+	 * Inner border thickness in pixels.
+	 * @since 3.1
+	 */
+	private static final int INNER_BORDER= 1;
 
 	/** The control's shell */
 	private Shell fShell;
@@ -125,29 +130,29 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
+		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : OUTER_BORDER;
 		layout.marginHeight= border;
 		layout.marginWidth= border;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
 
-		if (statusFieldText != null) {
-			composite= new Composite(composite, SWT.NONE);
-			layout= new GridLayout(1, false);
-			layout.marginHeight= 0;
-			layout.marginWidth= 0;
-			layout.verticalSpacing= 1;
-			composite.setLayout(layout);
-			gd= new GridData(GridData.FILL_BOTH);
-			composite.setLayoutData(gd);
-			composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}
+		composite= new Composite(composite, SWT.NONE);
+		layout= new GridLayout(1, false);
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.verticalSpacing= 1;
+		composite.setLayout(layout);
+		gd= new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(gd);
+		composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+		composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 		// Text field
 		fText= new StyledText(composite, SWT.MULTI | SWT.READ_ONLY | style);
 		gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+		gd.horizontalIndent= INNER_BORDER;
+		gd.verticalIndent= INNER_BORDER;
 		fText.setLayoutData(gd);
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
