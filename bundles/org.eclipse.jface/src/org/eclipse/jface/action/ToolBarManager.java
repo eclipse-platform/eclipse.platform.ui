@@ -263,78 +263,82 @@ public class ToolBarManager extends ContributionManager implements
 				// toolbar item.
 				boolean useRedraw = (clean.size() - (mi.length - toRemove
 						.size())) >= 3;
-				if (useRedraw) {
-					toolBar.setRedraw(false);
-				}
+                try {
+                    if (useRedraw) {
+                        toolBar.setRedraw(false);
+                    }
 
-				// remove obsolete items
-				for (int i = toRemove.size(); --i >= 0;) {
-					ToolItem item = (ToolItem) toRemove.get(i);
-					if (!item.isDisposed()) {
-						Control ctrl = item.getControl();
-						if (ctrl != null) {
-							item.setControl(null);
-							ctrl.dispose();
-						}
-						item.dispose();
-					}
-				}
+                    // remove obsolete items
+                    for (int i = toRemove.size(); --i >= 0;) {
+                        ToolItem item = (ToolItem) toRemove.get(i);
+                        if (!item.isDisposed()) {
+                            Control ctrl = item.getControl();
+                            if (ctrl != null) {
+                                item.setControl(null);
+                                ctrl.dispose();
+                            }
+                            item.dispose();
+                        }
+                    }
 
-				// add new items
-				IContributionItem src, dest;
-				mi = toolBar.getItems();
-				int srcIx = 0;
-				int destIx = 0;
-				for (Iterator e = clean.iterator(); e.hasNext();) {
-					src = (IContributionItem) e.next();
+                    // add new items
+                    IContributionItem src, dest;
+                    mi = toolBar.getItems();
+                    int srcIx = 0;
+                    int destIx = 0;
+                    for (Iterator e = clean.iterator(); e.hasNext();) {
+                        src = (IContributionItem) e.next();
 
-					// get corresponding item in SWT widget
-					if (srcIx < mi.length)
-						dest = (IContributionItem) mi[srcIx].getData();
-					else
-						dest = null;
+                        // get corresponding item in SWT widget
+                        if (srcIx < mi.length)
+                            dest = (IContributionItem) mi[srcIx].getData();
+                        else
+                            dest = null;
 
-					if (dest != null && src.equals(dest)) {
-						srcIx++;
-						destIx++;
-						continue;
-					}
+                        if (dest != null && src.equals(dest)) {
+                            srcIx++;
+                            destIx++;
+                            continue;
+                        }
 
-					if (dest != null && dest.isSeparator() && src.isSeparator()) {
-						mi[srcIx].setData(src);
-						srcIx++;
-						destIx++;
-						continue;
-					}
+                        if (dest != null && dest.isSeparator()
+                                && src.isSeparator()) {
+                            mi[srcIx].setData(src);
+                            srcIx++;
+                            destIx++;
+                            continue;
+                        }
 
-					int start = toolBar.getItemCount();
-					src.fill(toolBar, destIx);
-					int newItems = toolBar.getItemCount() - start;
-					for (int i = 0; i < newItems; i++) {
-						ToolItem item = toolBar.getItem(destIx++);
-						item.setData(src);
-					}
-				}
+                        int start = toolBar.getItemCount();
+                        src.fill(toolBar, destIx);
+                        int newItems = toolBar.getItemCount() - start;
+                        for (int i = 0; i < newItems; i++) {
+                            ToolItem item = toolBar.getItem(destIx++);
+                            item.setData(src);
+                        }
+                    }
 
-				// remove any old tool items not accounted for
-				for (int i = mi.length; --i >= srcIx;) {
-					ToolItem item = mi[i];
-					if (!item.isDisposed()) {
-						Control ctrl = item.getControl();
-						if (ctrl != null) {
-							item.setControl(null);
-							ctrl.dispose();
-						}
-						item.dispose();
-					}
-				}
+                    // remove any old tool items not accounted for
+                    for (int i = mi.length; --i >= srcIx;) {
+                        ToolItem item = mi[i];
+                        if (!item.isDisposed()) {
+                            Control ctrl = item.getControl();
+                            if (ctrl != null) {
+                                item.setControl(null);
+                                ctrl.dispose();
+                            }
+                            item.dispose();
+                        }
+                    }
 
-				setDirty(false);
+                    setDirty(false);
 
-				// turn redraw back on if we turned it off above
-				if (useRedraw) {
-					toolBar.setRedraw(true);
-				}
+                    // turn redraw back on if we turned it off above
+                } finally {
+                    if (useRedraw) {
+                        toolBar.setRedraw(true);
+                    }
+                }
 
 				int newCount = toolBar.getItemCount();
 				relayout(toolBar, oldCount, newCount);
