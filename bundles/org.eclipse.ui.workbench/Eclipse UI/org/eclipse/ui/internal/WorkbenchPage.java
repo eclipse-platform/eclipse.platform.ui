@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -179,8 +180,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     };
 
-    // a set of perspectives in which sticky views have already been created.
-    private Set stickyPerspectives = new HashSet(7);
+    // a mapping of perspectives to a set of stickyviews that have been activated in that perspective.
+    // this map is persisted across sessions
+    private Map stickyPerspectives = new HashMap(7);
 
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
@@ -2612,6 +2614,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     navigationHistory.restoreState(childMem);
                 else if (getActiveEditor() != null)
                     navigationHistory.markEditor(getActiveEditor());
+                
+                IMemento stickyState = memento
+						.getChild(IWorkbenchConstants.TAG_STICKY_STATE);
+				// restore the sticky activation state
+
+				if (stickyState != null) {
+					IMemento[] stickyPerspMems = stickyState
+							.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
+					for (int i = 0; i < stickyPerspMems.length; i++) {
+						String perspectiveId = stickyPerspMems[i].getID();
+						Set viewState = new HashSet(7);
+						stickyPerspectives.put(perspectiveId, viewState);
+						IMemento[] viewStateMementos = stickyPerspMems[i]
+								.getChildren(IWorkbenchConstants.TAG_VIEW);
+						for (int j = 0; j < viewStateMementos.length; j++) {
+							viewState.add(viewStateMementos[j].getID());
+						}
+					}
+
+				}                
                 return result;
             } finally {
             	String blame = activeDescriptor == null ? pageName : activeDescriptor.getId();
@@ -2740,7 +2762,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         navigationHistory.saveState(memento
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
-        return result;
+        
+        IMemento stickyState = memento
+				.createChild(IWorkbenchConstants.TAG_STICKY_STATE);
+		// save the sticky activation state
+		itr = stickyPerspectives.entrySet().iterator();
+		while (itr.hasNext()) {
+			Map.Entry entry = (Map.Entry) itr.next();
+			String perspectiveId = (String) entry.getKey();
+			Set activatedViewIds = (Set) entry.getValue();
+			IMemento perspectiveState = stickyState.createChild(
+					IWorkbenchConstants.TAG_PERSPECTIVE, perspectiveId);
+			for (Iterator i = activatedViewIds.iterator(); i.hasNext();) {
+				String viewId = (String) i.next();
+				perspectiveState.createChild(IWorkbenchConstants.TAG_VIEW,
+						viewId);
+			}
+		}
+		return result;
     }
     
     private String getId(IWorkbenchPart part) {
@@ -2886,26 +2925,33 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             window.updateActionSets();
 
 	        if (newPersp != null && oldPersp != null) {
-	            if (!stickyPerspectives.contains(newPersp.getDesc())) {
-	                IViewRegistry viewReg = WorkbenchPlugin.getDefault()
-	                        .getViewRegistry();
-	                IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
-	                for (int i = 0; i < stickyDescs.length; i++) {
-	                    try {
-	                        // show a sticky view if it was in the last perspective
-	                        if (oldPersp.findView(stickyDescs[i].getId()) != null) {
-	                            showView(stickyDescs[i].getId(), null,
-	                                    IWorkbenchPage.VIEW_CREATE);
-	                        }
-	                    } catch (PartInitException e) {
-	                        WorkbenchPlugin
-	                                .log(
-	                                        "Could not open view :" + stickyDescs[i].getId(), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + stickyDescs[i].getId(), e)); //$NON-NLS-1$ //$NON-NLS-2$
-	                    }
-	                }
-	                stickyPerspectives.add(newPersp.getDesc());
-	            }
-	        }
+	        		Set activatedStickyViewsInThisPerspective = (Set) stickyPerspectives.get(newPersp.getDesc().getId());
+	        		if (activatedStickyViewsInThisPerspective == null) {
+	        			activatedStickyViewsInThisPerspective = new HashSet(7);
+	        			stickyPerspectives.put(newPersp.getDesc().getId(), activatedStickyViewsInThisPerspective);
+	        		}
+	            
+                IViewRegistry viewReg = WorkbenchPlugin.getDefault()
+                        .getViewRegistry();
+                IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
+                for (int i = 0; i < stickyDescs.length; i++) {
+                    final String viewId = stickyDescs[i].getId();
+					try {
+                        // show a sticky view if it was in the last perspective and hasn't already been activated in this one
+                        if (oldPersp.findView(viewId) != null
+								&& !activatedStickyViewsInThisPerspective
+										.contains(viewId)) {
+							showView(viewId, null,
+									IWorkbenchPage.VIEW_CREATE);
+							activatedStickyViewsInThisPerspective.add(viewId);
+						}
+                    } catch (PartInitException e) {
+                        WorkbenchPlugin
+                                .log(
+                                        "Could not open view :" + viewId, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + viewId, e)); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+            }
         } finally {
             window.largeUpdateEnd();
             if (newPersp == null)
