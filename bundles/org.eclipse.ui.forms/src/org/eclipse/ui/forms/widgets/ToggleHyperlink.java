@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,8 +27,8 @@ import org.eclipse.ui.forms.events.*;
 public abstract class ToggleHyperlink extends AbstractHyperlink {
 	protected int innerWidth;
 	protected int innerHeight;
-	private boolean expanded;
 	protected boolean hover;
+	private boolean expanded;	
 	private Color decorationColor;
 	private Color hoverColor;
 	/**
@@ -41,18 +41,26 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public ToggleHyperlink(Composite parent, int style) {
 		super(parent, style);
-		addListener(SWT.MouseEnter, new Listener() {
+		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				hover = true;
-				redraw();
+				switch (e.type) {
+					case SWT.MouseEnter:
+						hover=true;
+						redraw();
+						break;
+					case SWT.MouseExit:
+						hover = false;
+						redraw();
+						break;
+					case SWT.KeyDown:
+						onKeyDown(e);
+						break;
+				}
 			}
-		});
-		addListener(SWT.MouseExit, new Listener() {
-			public void handleEvent(Event e) {
-				hover = false;
-				redraw();
-			}
-		});
+		};
+		addListener(SWT.MouseEnter, listener);
+		addListener(SWT.MouseExit, listener);
+		addListener(SWT.KeyDown, listener);
 		addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				setExpanded(!isExpanded());
@@ -90,6 +98,18 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * Returns the hover color of the decoration.
 	 * 
 	 * @return the hover color of the decoration.
+	 * @since 3.1
+	 */
+	public Color getHoverDecorationColor() {
+		return hoverColor;
+	}
+	
+	/**
+	 * Returns the hover color of the decoration.
+	 * 
+	 * @return the hover color of the decoration.
+	 * @deprecated use <code>getHoverDecorationColor</code>
+	 * @see #getHoverDecorationColor()
 	 */
 	public Color geHoverDecorationColor() {
 		return hoverColor;
@@ -106,13 +126,15 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int width, height;
+		/*
 		if (wHint != SWT.DEFAULT)
 			width = wHint;
-		else
+		else */
 			width = innerWidth + 2 * marginWidth;
+		/*
 		if (hHint != SWT.DEFAULT)
 			height = hHint;
-		else
+		else */
 			height = innerHeight + 2 * marginHeight;
 		return new Point(width, height);
 	}
@@ -139,6 +161,20 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 		getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
+			}
+			public void getName(AccessibleEvent e) {
+				if (getParent() instanceof ExpandableComposite) {
+					String name = ((ExpandableComposite)getParent()).getText();
+					int index = name.indexOf('&');
+					if (index != -1) {
+						name = name.substring(0, index) + name.substring(index + 1);
+					}
+					e.result = name;
+				}
+					
+			}
+			public void getDescription(AccessibleEvent e) {
+				getName(e);
 			}
 		});
 		getAccessible().addAccessibleControlListener(
@@ -169,10 +205,22 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 								: ACC.STATE_COLLAPSED;
 					}
 					public void getValue(AccessibleControlEvent e) {
-						e.result = ToggleHyperlink.this.isExpanded()
-								? "1"
-								: "0";
+						e.result = "0"; //$NON-NLS-1$
 					}
 				});
+	}
+	private void onKeyDown(Event e) {
+		if (e.keyCode==SWT.ARROW_RIGHT) {
+			// expand if collapsed
+			if (!isExpanded()) {
+				handleActivate(e);
+			}
+		}
+		else if (e.keyCode==SWT.ARROW_LEFT) {
+			// collapse if expanded
+			if (isExpanded()) {
+				handleActivate(e);
+			}
+		}
 	}
 }

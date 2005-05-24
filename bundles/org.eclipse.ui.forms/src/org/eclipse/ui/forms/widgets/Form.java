@@ -1,20 +1,32 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.forms.widgets.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
+import org.eclipse.ui.internal.forms.widgets.FormsResources;
 /**
  * Form is a custom control that renders a title and
  * an optional background image above the body composite.
@@ -60,9 +72,21 @@ public class Form extends Composite {
 	private int TITLE_GAP = 5;
 	private Image backgroundImage;
 	private boolean backgroundImageTiled;
+	private boolean backgroundImageClipped=true;
+	private int backgroundImageAlignment=SWT.LEFT;
+	private GradientInfo gradientInfo;
 	private String text;
 	private Composite body;
 	private ToolBarManager toolBarManager;
+	private SizeCache bodyCache = new SizeCache();
+	private SizeCache toolbarCache = new SizeCache();
+	private FormText selectionText;
+	
+	private class GradientInfo {
+		Color [] gradientColors;
+		int [] percents;
+		boolean vertical;
+	}
 
 	private class FormLayout extends Layout implements ILayoutExtension {
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
@@ -73,6 +97,12 @@ public class Form extends Composite {
 		}
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
+		    if (flushCache) {
+		        bodyCache.flush();
+		        toolbarCache.flush();
+		    }
+			bodyCache.setControl(body);
+		    
 			int width = 0;
 			int height = 0;
 			if (text != null) {
@@ -88,17 +118,22 @@ public class Form extends Composite {
 					height = extent.y;
 				}
 				gc.dispose();
-			}
-			if (toolBarManager != null) {
+				if (toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
-					Point tbsize = toolBar
-							.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					toolbarCache.setControl(toolBar);
+					Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					if (width != 0)
 						width += TITLE_GAP;
 					width += tbsize.x;
 					height = Math.max(height, tbsize.y);
 				}
+				}
+			}
+			if (backgroundImage!=null && !backgroundImageClipped) {
+				Rectangle ibounds = backgroundImage.getBounds();
+				if (height < ibounds.height)
+					height = ibounds.height;
 			}
 			if (height != 0)
 				height += TITLE_VMARGIN * 2;
@@ -107,22 +142,31 @@ public class Form extends Composite {
 			int ihHint = hHint;
 			if (ihHint > 0 && ihHint != SWT.DEFAULT)
 				ihHint -= height;
-			Point bsize = body.computeSize(FormUtil.getWidthHint(wHint, body),
-					FormUtil.getHeightHint(ihHint, body), flushCache);
+			
+			Point bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint, body),
+					FormUtil.getHeightHint(ihHint, body));
 			width = Math.max(bsize.x, width);
 			height += bsize.y;
 			return new Point(width, height);
 		}
+		
 		protected void layout(Composite composite, boolean flushCache) {
+		    if (flushCache) {
+		        bodyCache.flush();
+		        toolbarCache.flush();
+		    }
+		    bodyCache.setControl(body);
+		    
 			Rectangle carea = composite.getClientArea();
 			int height = 0;
 			Point tbsize = null;
 			int twidth = carea.width - TITLE_HMARGIN * 2;
-			if (toolBarManager != null) {
+			if (text!=null && toolBarManager != null) {
 				ToolBar toolBar = toolBarManager.getControl();
 				if (toolBar != null) {
-					tbsize = toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					toolBar.setBounds(carea.width - 1 - TITLE_HMARGIN
+				    toolbarCache.setControl(toolBar);
+					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
 							- tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
 					height = tbsize.y;
 				}
@@ -138,9 +182,15 @@ public class Form extends Composite {
 				if (tbsize != null)
 					height = Math.max(tbsize.y, height);
 			}
+			if (backgroundImage!=null && !backgroundImageClipped) {
+				Rectangle ibounds = backgroundImage.getBounds();
+				if (height < ibounds.height)
+					height = ibounds.height;
+			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
-			body.setBounds(0, height, carea.width, carea.height - height);
+			
+			bodyCache.setBounds(0, height, carea.width, carea.height - height);			
 		}
 	}
 	/**
@@ -216,10 +266,20 @@ public class Form extends Composite {
 	 */
 	public void setText(String text) {
 		this.text = text;
+		if (toolBarManager != null) {
+			toolBarManager.getControl().setVisible(text!=null);
+		}
 		layout();
 		redraw();
 	}
 
+	public void setTextBackground(Color [] gradientColors, int [] percents, boolean vertical) {
+		gradientInfo = new GradientInfo();
+		gradientInfo.gradientColors = gradientColors;
+		gradientInfo.percents = percents;
+		gradientInfo.vertical = vertical;
+	}
+	
 	/**
 	 * Returns the optional background image of this form. The image is
 	 * rendered starting at the position 0,0 and is painted behind the title.
@@ -285,10 +345,24 @@ public class Form extends Composite {
 	private void onPaint(GC gc) {
 		if (text==null) return;
 		Rectangle carea = getClientArea();
-
 		gc.setFont(getFont());
-		Point textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
-		int theight = TITLE_HMARGIN + textSize.y + TITLE_HMARGIN + TITLE_GAP;
+		int textWidth = carea.width-TITLE_HMARGIN-TITLE_HMARGIN;
+		int theight=0;
+		if (toolBarManager!=null) {
+			ToolBar toolBar = toolBarManager.getControl();
+			if (toolBar != null) {
+				toolbarCache.setControl(toolBar);
+				Point tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				textWidth -= TITLE_GAP-tbsize.x;
+				theight = tbsize.y;
+			}
+		}
+		Point textSize = FormUtil.computeWrapSize(gc, text, textWidth);
+		theight = Math.max(textSize.y, theight);
+		theight += TITLE_HMARGIN + TITLE_HMARGIN + TITLE_GAP;
+		if (backgroundImage!=null && !backgroundImageClipped) {
+			theight = Math.max(theight, backgroundImage.getBounds().height);
+		}
 		Image buffer= new Image(getDisplay(), carea.width, theight);
 		GC bufferGC = new GC(buffer, gc.getStyle());
 		bufferGC.setBackground(getBackground());
@@ -298,8 +372,12 @@ public class Form extends Composite {
 				TITLE_VMARGIN,
 				carea.width-TITLE_HMARGIN-TITLE_HMARGIN, 
 				textSize.y);
+		bufferGC.fillRectangle(0, 0, carea.width, theight);
 		if (backgroundImage != null) {
 			drawBackgroundImage(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
+		}
+		else if (gradientInfo != null) {
+			drawTextGradient(bufferGC, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
 		}
 		FormUtil.paintWrapText(bufferGC, text, tbounds);
 		gc.drawImage(buffer, 0, 0);
@@ -307,8 +385,8 @@ public class Form extends Composite {
 		buffer.dispose();
 	}
 	private void drawBackgroundImage(GC gc, int width, int height) {
+		Rectangle ibounds = backgroundImage.getBounds();		
 		if (backgroundImageTiled) {
-			Rectangle ibounds = backgroundImage.getBounds();
 			int x=0;
 			int y=0;
 			// loop and tile image until the entire title area is covered
@@ -324,9 +402,52 @@ public class Form extends Composite {
 			}
 		}
 		else {
-			gc.drawImage(backgroundImage, 0, 0);
+			switch (backgroundImageAlignment) {
+				case SWT.LEFT:
+					gc.drawImage(backgroundImage, 0, 0);
+					break;
+				case SWT.RIGHT:
+					//Rectangle clientArea = getClientArea();
+					gc.drawImage(backgroundImage, width-ibounds.width, 0);
+					break;
+			}
 		}
-		
+	}
+	private void drawTextGradient(GC gc, int width, int height) {
+		final Color oldBackground = gc.getBackground();
+		if (gradientInfo.gradientColors.length == 1) {
+			if (gradientInfo.gradientColors[0] != null) gc.setBackground(gradientInfo.gradientColors[0]);
+			gc.fillRectangle(0, 0, width, height);
+		} else {
+			final Color oldForeground = gc.getForeground();
+			Color lastColor = gradientInfo.gradientColors[0];
+			if (lastColor == null) lastColor = oldBackground;
+			int pos = 0;
+			for (int i = 0; i < gradientInfo.percents.length; ++i) {
+				gc.setForeground(lastColor);
+				lastColor = gradientInfo.gradientColors[i + 1];
+				if (lastColor == null) lastColor = oldBackground;
+				gc.setBackground(lastColor);
+				if (gradientInfo.vertical) {
+					final int gradientHeight = (gradientInfo.percents[i] * height / 100) - pos;
+					gc.fillGradientRectangle(0, pos, width, gradientHeight, true);
+					pos += gradientHeight;
+				} else {
+					final int gradientWidth = (gradientInfo.percents[i] * width / 100) - pos;
+					gc.fillGradientRectangle(pos, 0, gradientWidth, height, false);
+					pos += gradientWidth;
+				}
+			}
+			if (gradientInfo.vertical && pos < height) {
+				gc.setBackground(getBackground());
+				gc.fillRectangle(0, pos, width, height - pos);
+			}
+			if (!gradientInfo.vertical && pos < width) {
+				gc.setBackground(getBackground());
+				gc.fillRectangle(pos, 0, width - pos, height);
+			}
+			gc.setForeground(oldForeground);
+		}		
 	}
 	/**
 	 * @return Returns the backgroundImageTiled.
@@ -341,5 +462,41 @@ public class Form extends Composite {
 		this.backgroundImageTiled = backgroundImageTiled;
 		if (isVisible())
 			redraw();
+	}
+	/**
+	 * @return Returns the backgroundImageAlignment.
+	 * @since 3.1
+	 */
+	public int getBackgroundImageAlignment() {
+		return backgroundImageAlignment;
+	}
+	/**
+	 * @param backgroundImageAlignment The backgroundImageAlignment to set.
+	 * @since 3.1
+	 */
+	public void setBackgroundImageAlignment(int backgroundImageAlignment) {
+		this.backgroundImageAlignment = backgroundImageAlignment;
+		if (isVisible())
+			redraw();
+	}
+	/**
+	 * @return Returns the backgroundImageClipped.
+	 * @since 3.1
+	 */
+	public boolean isBackgroundImageClipped() {
+		return backgroundImageClipped;
+	}
+	/**
+	 * @param backgroundImageClipped The backgroundImageClipped to set.
+	 * @since 3.1
+	 */
+	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
+		this.backgroundImageClipped = backgroundImageClipped;
+	}
+	void setSelectionText(FormText text) {
+		if (selectionText!=null && selectionText!=text) {
+			selectionText.clearSelection();
+		}
+		this.selectionText = text;
 	}
 }

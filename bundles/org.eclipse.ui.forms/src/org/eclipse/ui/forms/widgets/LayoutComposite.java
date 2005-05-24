@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -13,7 +13,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 /**
  * The class overrides default method for computing size in Composite by
- * accepting size returned from layout managers as-is. The defualt code accepts
+ * accepting size returned from layout managers as-is. The default code accepts
  * width or height hint assuming it is correct. However, it is possible that
  * the computation using the provided width hint results in a real size that is
  * larger. This can result in wrapped text widgets being clipped, asking to

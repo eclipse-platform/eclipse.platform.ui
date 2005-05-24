@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,9 +62,10 @@ public final class TreeNode extends ToggleHyperlink {
 		int x = 1;
 		int y = 0;
 		gc.setFont(getFont());
-		int height = gc.getFontMetrics().getHeight();
-		y = height / 2 - 4;
-		y = Math.max(y, 0);
+		//int height = gc.getFontMetrics().getHeight();
+		//y = height / 2 - 4;
+		//y = Math.max(y, 0);
+		y = 2;
 		return new Rectangle(x, y, 8, 8);
 	}
 }

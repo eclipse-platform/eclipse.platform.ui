@@ -1,18 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chriss Gross (schtoo@schtoo.com) - fix for 61670
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+
 /**
  * This class extends hyperlink widget by adding the capability to render an
  * image relative to the text. If no text has been set, only image will be
@@ -22,9 +25,10 @@ import org.eclipse.swt.widgets.Event;
  * When image is taller than the text, additional style can be provided to
  * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
  * SWT.CENTER).
- * <p>The class does not need to be sublassed but it is allowed
- * to do so if some aspect of the image hyperlink needs to be
- * modified.
+ * <p>
+ * The class does not need to be sublassed but it is allowed to do so if some
+ * aspect of the image hyperlink needs to be modified.
+ * 
  * @since 3.0
  */
 public class ImageHyperlink extends Hyperlink {
@@ -32,23 +36,36 @@ public class ImageHyperlink extends Hyperlink {
 	 * Amount of pixels between the image and the text (default is 5).
 	 */
 	public int textSpacing = 5;
+
 	private Image image;
+
 	private Image hoverImage;
+
 	private Image activeImage;
+
 	private int state;
+
 	private static final int HOVER = 1 << 1;
+
 	private static final int ACTIVE = 1 << 2;
+
+	private int verticalAlignment = SWT.CENTER;
+
+	private int horizontalAlignment = SWT.LEFT;
+
 	/**
 	 * Creates the image hyperlink instance.
 	 * 
 	 * @param parent
 	 *            the control parent
 	 * @param style
-	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE)
+	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE, LEFT, RIGHT)
 	 */
 	public ImageHyperlink(Composite parent, int style) {
-		super(parent, style);
+		super(parent, removeAlignment(style));
+		extractAlignment(style);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,32 +80,48 @@ public class ImageHyperlink extends Hyperlink {
 			image = hoverImage;
 		if (image == null)
 			image = this.image;
-		if (image == null)
-			return;
-		Rectangle ibounds = image.getBounds();
+		Rectangle ibounds = image != null ? image.getBounds() : new Rectangle(0, 0, 0, 0);
 		Point maxsize = computeMaxImageSize();
-		int x = marginWidth + maxsize.x / 2 - ibounds.width / 2;
+		int spacing = image!=null?textSpacing:0;		
+		int textWidth = clientArea.width - maxsize.x - spacing
+				- marginWidth - marginWidth;
 		int y = marginHeight + maxsize.y / 2 - ibounds.height / 2;
-		gc.drawImage(image, x, y);
-		if (getText() != null) {
-			int textWidth = clientArea.width - maxsize.x - textSpacing
-					- marginWidth - marginWidth;
-			int textX = marginWidth + maxsize.x + textSpacing;
-			Point textSize = computeTextSize(textWidth, SWT.DEFAULT);
-			textWidth = textSize.x;
-			int slotHeight = clientArea.height - marginHeight - marginHeight;
-			int textY;
-			int textHeight = textSize.y;
-			if ((getStyle() & SWT.BOTTOM) != 0) {
-				textY = marginHeight + slotHeight - textHeight;
-			} else if ((getStyle() & SWT.CENTER) != 0) {
-				textY = marginHeight + slotHeight / 2 - textHeight / 2;
-			} else {
-				textY = marginHeight;
+
+		if (horizontalAlignment == SWT.LEFT) {
+			int x = marginWidth + maxsize.x / 2 - ibounds.width / 2;
+			int textX = marginWidth + maxsize.x + spacing;
+			if (image != null)
+				gc.drawImage(image, x, y);
+			if (getText() != null)
+				drawText(gc, clientArea, textX, textWidth);
+		} else if (horizontalAlignment == SWT.RIGHT) {
+			int x = marginWidth;
+			if (getText() != null) {
+				x += drawText(gc, clientArea, x, textWidth);
 			}
-			paintText(gc, new Rectangle(textX, textY, textWidth, textHeight));
+			x += maxsize.x / 2 - ibounds.width / 2 + spacing;
+			if (image != null)
+				gc.drawImage(image, x, y);
 		}
 	}
+
+	private int drawText(GC gc, Rectangle clientArea, int textX, int textWidth) {
+		Point textSize = computeTextSize(textWidth, SWT.DEFAULT);
+		int slotHeight = clientArea.height - marginHeight - marginHeight;
+		int textY;
+		textWidth = textSize.x;
+		int textHeight = textSize.y;
+		if (verticalAlignment == SWT.BOTTOM) {
+			textY = marginHeight + slotHeight - textHeight;
+		} else if (verticalAlignment == SWT.CENTER) {
+			textY = marginHeight + slotHeight / 2 - textHeight / 2;
+		} else {
+			textY = marginHeight;
+		}
+		paintText(gc, new Rectangle(textX, textY, textWidth, textHeight));
+		return textWidth;
+	}
+
 	/**
 	 * Computes the control size by reserving space for images in addition to
 	 * text.
@@ -104,18 +137,19 @@ public class ImageHyperlink extends Hyperlink {
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
 		Point isize = computeMaxImageSize();
+		int spacing = isize.x>0?textSpacing:0;
 		Point textSize = null;
 		if (getText() != null) {
 			int innerWHint = wHint;
 			if (wHint != SWT.DEFAULT) {
-				innerWHint = wHint - 2 * marginWidth;
+				innerWHint = wHint - 2 * marginWidth - isize.x - spacing;
 			}
 			textSize = super.computeSize(innerWHint, hHint, changed);
 		}
 		int width = isize.x;
 		int height = isize.y;
 		if (textSize != null) {
-			width += textSpacing;
+			width += spacing;
 			width += textSize.x;
 			height = Math.max(height, textSize.y);
 		}
@@ -123,22 +157,26 @@ public class ImageHyperlink extends Hyperlink {
 		height += 2 * marginHeight;
 		return new Point(width, height);
 	}
+
 	protected void handleEnter(Event e) {
 		state = HOVER;
 		super.handleEnter(e);
 	}
+
 	protected void handleExit(Event e) {
 		state = 0;
 		super.handleExit(e);
 	}
+
 	protected void handleActivate(Event e) {
 		state &= ACTIVE;
 		redraw();
 		super.handleActivate(e);
 		state &= ~ACTIVE;
-		if (!isDisposed()) 
+		if (!isDisposed())
 			redraw();
 	}
+
 	/**
 	 * Returns active image.
 	 * 
@@ -147,15 +185,17 @@ public class ImageHyperlink extends Hyperlink {
 	public Image getActiveImage() {
 		return activeImage;
 	}
+
 	/**
 	 * Sets the image to show when link is activated.
 	 * 
 	 * @param activeImage
-	 *  
+	 * 
 	 */
 	public void setActiveImage(Image activeImage) {
 		this.activeImage = activeImage;
 	}
+
 	/**
 	 * Returns the hover image.
 	 * 
@@ -164,6 +204,7 @@ public class ImageHyperlink extends Hyperlink {
 	public Image getHoverImage() {
 		return hoverImage;
 	}
+
 	/**
 	 * Sets the image to show when link is hover state (on mouse over).
 	 * 
@@ -172,6 +213,7 @@ public class ImageHyperlink extends Hyperlink {
 	public void setHoverImage(Image hoverImage) {
 		this.hoverImage = hoverImage;
 	}
+
 	/**
 	 * Returns the image to show in the normal state.
 	 * 
@@ -180,6 +222,7 @@ public class ImageHyperlink extends Hyperlink {
 	public Image getImage() {
 		return image;
 	}
+
 	/**
 	 * Sets the image to show when link is in the normal state.
 	 * 
@@ -188,6 +231,7 @@ public class ImageHyperlink extends Hyperlink {
 	public void setImage(Image image) {
 		this.image = image;
 	}
+
 	private Point computeMaxImageSize() {
 		int x = 0;
 		int y = 0;
@@ -204,5 +248,40 @@ public class ImageHyperlink extends Hyperlink {
 			y = Math.max(activeImage.getBounds().height, y);
 		}
 		return new Point(x, y);
+	}
+
+	private static int removeAlignment(int style) {
+		int resultStyle = style;
+		if ((style & SWT.CENTER) != 0) {
+			resultStyle &= (~SWT.CENTER);
+		}
+		if ((style & SWT.TOP) != 0) {
+			resultStyle &= (~SWT.TOP);
+		}
+		if ((style & SWT.BOTTOM) != 0) {
+			resultStyle &= (~SWT.BOTTOM);
+		}
+		if ((style & SWT.LEFT) != 0) {
+			resultStyle &= (~SWT.LEFT);
+		}
+		if ((style & SWT.RIGHT) != 0) {
+			resultStyle &= (~SWT.RIGHT);
+		}
+		return resultStyle;
+	}
+
+	private void extractAlignment(int style) {
+		if ((style & SWT.CENTER) != 0) {
+			verticalAlignment = SWT.CENTER;
+		} else if ((style & SWT.TOP) != 0) {
+			verticalAlignment = SWT.TOP;
+		} else if ((style & SWT.BOTTOM) != 0) {
+			verticalAlignment = SWT.BOTTOM;
+		}
+		if ((style & SWT.LEFT) != 0) {
+			horizontalAlignment = SWT.LEFT;
+		} else if ((style & SWT.RIGHT) != 0) {
+			horizontalAlignment = SWT.RIGHT;
+		}
 	}
 }

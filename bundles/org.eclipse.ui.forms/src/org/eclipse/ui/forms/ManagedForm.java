@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,6 +37,7 @@ public class ManagedForm implements IManagedForm {
 	private FormToolkit toolkit;
 	private Object container;
 	private boolean ownsToolkit;
+	private boolean initialized;	
 	private Vector parts = new Vector();
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
@@ -68,6 +69,7 @@ public class ManagedForm implements IManagedForm {
 	 */
 	public void addPart(IFormPart part) {
 		parts.add(part);
+		part.initialize(this);
 	}
 	/**
 	 * Remove the part from this form.
@@ -127,14 +129,19 @@ public class ManagedForm implements IManagedForm {
 			}
 		}
 	}
+
 	/**
-	 * Initializes all the parts in this form.
+	 * Initializes the form by looping through the managed
+	 * parts and initializing them. Has no effect if
+	 * already called once.
 	 */
 	public void initialize() {
+		if (initialized) return;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
 			part.initialize(this);
 		}
+		initialized=true;
 	}
 	/**
 	 * Disposes all the parts in this form.
@@ -149,9 +156,27 @@ public class ManagedForm implements IManagedForm {
 		}
 	}
 	/**
-	 * Refreshes the form by refreshes all the stale parts.
+	 * Refreshes the form by refreshes all the stale parts. 
+	 * Since 3.1, this method is performed on a UI thread
+	 * when called from another thread so it is not needed
+	 * to wrap the call in <code>Display.syncExec</code>
+	 * or <code>asyncExec</code>.
 	 */
 	public void refresh() {
+		Thread t = Thread.currentThread();
+		Thread dt = toolkit.getColors().getDisplay().getThread();
+		if (t.equals(dt))
+			doRefresh();
+		else {
+			toolkit.getColors().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					doRefresh();
+				}
+			});
+		}
+	}
+	
+	private void doRefresh() {
 		int nrefreshed = 0;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);

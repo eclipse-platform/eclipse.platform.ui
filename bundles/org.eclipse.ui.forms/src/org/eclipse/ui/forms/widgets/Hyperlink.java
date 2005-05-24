@@ -1,31 +1,37 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.forms.widgets.*;
+
 /**
  * Hyperlink is a concrete implementation of the abstract base class that draws
  * text in the client area. Text can be wrapped and underlined. Hyperlink is
- * typically added to the hyperlink group so that certain properties are
- * managed for all the hyperlinks that belong to it.
- * <p>Hyperlink can be extended.
+ * typically added to the hyperlink group so that certain properties are managed
+ * for all the hyperlinks that belong to it.
+ * <p>
+ * Hyperlink can be extended.
+ * 
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0
  */
 public class Hyperlink extends AbstractHyperlink {
 	private String text;
+
 	private boolean underlined;
+
 	/**
 	 * Creates a new hyperlink control in the provided parent.
 	 * 
@@ -38,12 +44,16 @@ public class Hyperlink extends AbstractHyperlink {
 		super(parent, SWT.NO_BACKGROUND | style);
 		initAccessible();
 	}
+
 	protected void initAccessible() {
 		Accessible accessible = getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = getText();
+				if (e.result == null)
+					getHelp(e);
 			}
+
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
@@ -51,10 +61,10 @@ public class Hyperlink extends AbstractHyperlink {
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = toControl(new Point(e.x, e.y));
-				e.childID = (getBounds().contains(pt))
-						? ACC.CHILDID_SELF
+				e.childID = (getBounds().contains(pt)) ? ACC.CHILDID_SELF
 						: ACC.CHILDID_NONE;
 			}
+
 			public void getLocation(AccessibleControlEvent e) {
 				Rectangle location = getBounds();
 				Point pt = toDisplay(new Point(location.x, location.y));
@@ -63,12 +73,15 @@ public class Hyperlink extends AbstractHyperlink {
 				e.width = location.width;
 				e.height = location.height;
 			}
+
 			public void getChildCount(AccessibleControlEvent e) {
 				e.detail = 0;
 			}
+
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_LABEL;
+				e.detail = ACC.ROLE_LINK;
 			}
+
 			public void getState(AccessibleControlEvent e) {
 				int state = ACC.STATE_NORMAL;
 				if (Hyperlink.this.getSelection())
@@ -77,18 +90,20 @@ public class Hyperlink extends AbstractHyperlink {
 			}
 		});
 	}
+
 	/**
 	 * Sets the underlined state. It is not necessary to call this method when
 	 * in a hyperlink group.
 	 * 
 	 * @param underlined
-	 *            if <samp>true </samp>, a line will be drawn below the text
-	 *            for each wrapped line.
+	 *            if <samp>true </samp>, a line will be drawn below the text for
+	 *            each wrapped line.
 	 */
 	public void setUnderlined(boolean underlined) {
 		this.underlined = underlined;
 		redraw();
 	}
+
 	/**
 	 * Returns the underline state of the hyperlink.
 	 * 
@@ -98,6 +113,7 @@ public class Hyperlink extends AbstractHyperlink {
 	public boolean isUnderlined() {
 		return underlined;
 	}
+
 	/**
 	 * Overrides the parent by incorporating the margin.
 	 */
@@ -111,6 +127,7 @@ public class Hyperlink extends AbstractHyperlink {
 		int textHeight = textSize.y + 2 * marginHeight;
 		return new Point(textWidth, textHeight);
 	}
+
 	/**
 	 * Returns the current hyperlink text.
 	 * 
@@ -119,6 +136,7 @@ public class Hyperlink extends AbstractHyperlink {
 	public String getText() {
 		return text;
 	}
+
 	/**
 	 * Sets the text of this hyperlink.
 	 * 
@@ -129,9 +147,10 @@ public class Hyperlink extends AbstractHyperlink {
 		if (text != null)
 			this.text = text;
 		else
-			text = "";
+			this.text = ""; //$NON-NLS-1$
 		redraw();
 	}
+
 	/**
 	 * Paints the hyperlink text.
 	 * 
@@ -145,6 +164,7 @@ public class Hyperlink extends AbstractHyperlink {
 				- marginHeight);
 		paintText(gc, bounds);
 	}
+
 	/**
 	 * Paints the hyperlink text in provided bounding rectangle.
 	 * 
@@ -159,15 +179,18 @@ public class Hyperlink extends AbstractHyperlink {
 		if ((getStyle() & SWT.WRAP) != 0) {
 			FormUtil.paintWrapText(gc, text, bounds, underlined);
 		} else {
+			Point textSize = computeTextSize(bounds.width, SWT.DEFAULT);
+			int textWidth = textSize.x;
+			int textHeight = textSize.y;
 			gc.drawText(getText(), bounds.x, bounds.y, true);
 			if (underlined) {
-				FontMetrics fm = gc.getFontMetrics();
-				int descent = fm.getDescent();
-				int lineY = bounds.y + bounds.height - descent + 1;
-				gc.drawLine(bounds.x, lineY, bounds.x + bounds.width, lineY);
+				int descent = gc.getFontMetrics().getDescent();
+				int lineY = bounds.y + textHeight - descent + 1;
+				gc.drawLine(bounds.x, lineY, bounds.x + textWidth, lineY);
 			}
 		}
 	}
+
 	protected Point computeTextSize(int wHint, int hHint) {
 		Point extent;
 		GC gc = new GC(this);

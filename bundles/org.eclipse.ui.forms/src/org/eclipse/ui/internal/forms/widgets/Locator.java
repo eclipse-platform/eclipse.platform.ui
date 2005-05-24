@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,10 +12,6 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.ArrayList;
 
-/**
- * @version 	1.0
- * @author
- */
 public class Locator implements Cloneable { 
 	public int indent;
 	public int x, y;
@@ -41,7 +37,7 @@ public class Locator implements Cloneable {
 			return null;
 		}
 	}
-	public void collectHeights(boolean advance) {
+	public void collectHeights() {
 		heights.add(new int [] { rowHeight, leading} );
 		rowCounter++;
 	}
@@ -56,13 +52,15 @@ public class Locator implements Cloneable {
 			int rleading = rdata[1];
 			if (text)
 				return y + rheight - segmentHeight - rleading;
-			else
-				return y + rheight - segmentHeight;
+			return y + rheight - segmentHeight;
 		}
 		return y;
 	}
 	
 	public void resetCaret() {
-		x = marginWidth + indent;
+		x = getStartX();
+	}
+	public int getStartX() {
+		return marginWidth + indent;
 	}
 }

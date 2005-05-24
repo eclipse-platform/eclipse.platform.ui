@@ -1,22 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
+
 import java.util.Vector;
 
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.*;
+
 /**
  * This class forms a base of multi-page form editors that typically use one or
  * more pages with forms and one page for raw source of the editor input.
@@ -33,25 +40,42 @@ import org.eclipse.ui.part.*;
  * that key bindings, selection service etc. is compatible with the one for the
  * standalone case. The other method adds classes that implement
  * <code>IFormPage</code> interface. These pages will be created lazily and
- * they will share the common key binding and selection service.
+ * they will share the common key binding and selection service. Since 3.1,
+ * FormEditor is a page change provider. It allows listeners to attach to it and
+ * get notified when pages are changed. This new API in JFace allows dynamic
+ * help to update on page changes.
  * 
  * @since 3.0
  */
-public abstract class FormEditor extends MultiPageEditorPart {
+public abstract class FormEditor extends MultiPageEditorPart implements
+		IPageChangeProvider {
+
+	/**
+	 * An array of pages currently in the editor. Page objects are not limited
+	 * to those that implement <code>IFormPage</code>, hence the size of this
+	 * array matches the number of pages as viewed by the user.
+	 * <p>
+	 * Subclasses can access this field but should not modify it.
+	 */
+	protected Vector pages = new Vector();
+
 	private FormToolkit toolkit;
-	protected Vector pages;
-	private IEditorPart sourcePage;
+
 	private int currentPage = -1;
-	private static class FormEditorSelectionProvider
-			extends
-				MultiPageSelectionProvider {
+
+	private ListenerList pageListeners = new ListenerList(3);
+
+	private static class FormEditorSelectionProvider extends
+			MultiPageSelectionProvider {
 		private ISelection globalSelection;
+
 		/**
 		 * @param multiPageEditor
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
 			super(formEditor);
 		}
+
 		public ISelection getSelection() {
 			IEditorPart activeEditor = ((FormEditor) getMultiPageEditor())
 					.getActiveEditor();
@@ -63,6 +87,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 			return globalSelection;
 		}
+
 		/*
 		 * (non-Javadoc) Method declared on <code> ISelectionProvider </code> .
 		 */
@@ -81,12 +106,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		}
 	}
+
 	/**
 	 * The constructor.
 	 */
 	public FormEditor() {
-		pages = new Vector();
 	}
+
 	/**
 	 * Overrides super to plug in a different selection provider.
 	 */
@@ -96,6 +122,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 	}
+
 	/**
 	 * Creates the common toolkit for this editor and adds pages to the editor.
 	 * 
@@ -105,6 +132,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		toolkit = createToolkit(getContainer().getDisplay());
 		addPages();
 	}
+
 	/**
 	 * Creates the form toolkit. The method can be implemented to substitute a
 	 * subclass of the toolkit that should be used for this editor. A typical
@@ -119,15 +147,44 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(display);
 	}
+
 	/**
 	 * Subclass should implement this method to add pages to the editor using
 	 * 'addPage(IFormPage)' method.
 	 */
 	protected abstract void addPages();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void addPageChangedListener(IPageChangedListener listener) {
+		pageListeners.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#removePageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageListeners.remove(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
+	 */
+	public Object getSelectedPage() {
+		return getActivePageInstance();
+	}
+
 	/**
-	 * Adds the form page to this editor. Form page will be
-	 * loaded lazily. Its part control will not be created
-	 * until it is activated for the first time.
+	 * Adds the form page to this editor. Form page will be loaded lazily. Its
+	 * part control will not be created until it is activated for the first
+	 * time.
 	 * 
 	 * @param page
 	 *            the form page to add
@@ -137,23 +194,88 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		configurePage(i, page);
 		return i;
 	}
-/**
- * Adds a simple SWT control as a page. Overrides superclass
- * implementation to keep track of pages.
- *@param control the page control to add
- *@return the 0-based index of the newly added page 
- */
+
+	/**
+	 * Adds the form page to this editor at the specified index (0-based). Form
+	 * page will be loaded lazily. Its part control will not be created until it
+	 * is activated for the first time.
+	 * 
+	 * @param index
+	 *            the position to add the page at (0-based)
+	 * @param page
+	 *            the form page to add
+	 * @since 3.1
+	 */
+	public void addPage(int index, IFormPage page) throws PartInitException {
+		super.addPage(index, page.getPartControl());
+		configurePage(index, page);
+	}
+
+	/**
+	 * Adds a simple SWT control as a page. Overrides superclass implementation
+	 * to keep track of pages.
+	 * 
+	 * @param control
+	 *            the page control to add
+	 * @return the 0-based index of the newly added page
+	 */
 	public int addPage(Control control) {
 		int i = super.addPage(control);
 		try {
-			registerPage(control);
+			registerPage(-1, control);
 		} catch (PartInitException e) {
 			// cannot happen for controls
 		}
 		return i;
 	}
+
 	/**
-	 * Adds the complete editor part to the multi-page editor.
+	 * Adds a simple SWT control as a page. Overrides superclass implementation
+	 * to keep track of pages.
+	 * 
+	 * @param control
+	 *            the page control to add
+	 * @param index
+	 *            the index at which to add the page (0-based)
+	 * @since 3.1
+	 */
+	public void addPage(int index, Control control) {
+		super.addPage(index, control);
+		try {
+			registerPage(index, control);
+		} catch (PartInitException e) {
+			// cannot happen for controls
+		}
+	}
+
+	/**
+	 * Tests whether the editor is dirty by checking all the pages that
+	 * implement <code>IFormPage</code>. If none of them is dirty, the method
+	 * delegates further processing to <code>super.isDirty()</code>.
+	 * 
+	 * @return <code>true</code> if any of the pages in the editor are dirty,
+	 *         <code>false</code> otherwise.
+	 * @since 3.1
+	 */
+
+	public boolean isDirty() {
+		if (pages != null) {
+			for (int i = 0; i < pages.size(); i++) {
+				Object page = pages.get(i);
+				if (page instanceof IFormPage) {
+					IFormPage fpage = (IFormPage) page;
+					if (fpage.isDirty())
+						return true;
+				}
+			}
+		}
+		return super.isDirty();
+	}
+
+	/**
+	 * Adds a complete editor part to the multi-page editor.
+	 * 
+	 * @see MultiPageEditorPart#addPage(IEditorPart, IEditorInput)
 	 */
 	public int addPage(IEditorPart editor, IEditorInput input)
 			throws PartInitException {
@@ -161,9 +283,26 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		if (editor instanceof IFormPage)
 			configurePage(index, (IFormPage) editor);
 		else
-			registerPage(editor);
+			registerPage(-1, editor);
 		return index;
 	}
+
+	/**
+	 * Adds a complete editor part to the multi-page editor at the specified
+	 * position.
+	 * 
+	 * @see MultiPageEditorPart#addPage(int, IEditorPart, IEditorInput)
+	 * @since 3.1
+	 */
+	public void addPage(int index, IEditorPart editor, IEditorInput input)
+			throws PartInitException {
+		super.addPage(index, editor, input);
+		if (editor instanceof IFormPage)
+			configurePage(index, (IFormPage) editor);
+		else
+			registerPage(index, editor);
+	}
+
 	/**
 	 * Configures the form page.
 	 * 
@@ -177,10 +316,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	protected void configurePage(int index, IFormPage page)
 			throws PartInitException {
 		setPageText(index, page.getTitle());
-		//setPageImage(index, page.getTitleImage());
+		// setPageImage(index, page.getTitleImage());
 		page.setIndex(index);
-		registerPage(page);
+		registerPage(index, page);
 	}
+
 	/**
 	 * Overrides the superclass to remove the page from the page table.
 	 * 
@@ -200,6 +340,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		super.removePage(pageIndex);
 	}
+
 	// fix the page indices after the removal
 	private void updatePageIndices() {
 		for (int i = 0; i < pages.size(); i++) {
@@ -210,6 +351,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		}
 	}
+
 	/**
 	 * Called to indicate that the editor has been made dirty or the changes
 	 * have been saved.
@@ -217,6 +359,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public void editorDirtyStateChanged() {
 		firePropertyChange(PROP_DIRTY);
 	}
+
 	/**
 	 * Disposes the pages and the toolkit after disposing the editor itself.
 	 * Subclasses must call 'super' when reimplementing the method.
@@ -235,12 +378,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		pages = null;
 		// toolkit may be null if editor has been instantiated
-		// but never created - see defect #62190  
-		if (toolkit!=null) {
+		// but never created - see defect #62190
+		if (toolkit != null) {
 			toolkit.dispose();
 			toolkit = null;
 		}
 	}
+
 	/**
 	 * Returns the toolkit owned by this editor.
 	 * 
@@ -249,6 +393,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
+
 	/**
 	 * Widens the visibility of the method in the superclass.
 	 * 
@@ -257,6 +402,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public IEditorPart getActiveEditor() {
 		return super.getActiveEditor();
 	}
+
 	/**
 	 * Returns the current page index. The value is identical to the value of
 	 * 'getActivePage()' except during the page switch, when this method still
@@ -267,13 +413,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * will still return the last active page.
 	 * 
 	 * @see #getActivePage
-	 * 
 	 * @return the currently selected page or -1 if no page is currently
 	 *         selected
 	 */
 	protected int getCurrentPage() {
 		return currentPage;
 	}
+
 	/**
 	 * @see MultiPageEditorPart#pageChange(int)
 	 */
@@ -317,7 +463,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		// Call super - this will cause pages to switch
 		super.pageChange(newPageIndex);
 		this.currentPage = newPageIndex;
+		IFormPage newPage = getActivePageInstance();
+		if (newPage != null)
+			firePageChanged(new PageChangedEvent(this, newPage));
 	}
+
 	/**
 	 * Sets the active page using the unique page identifier.
 	 * 
@@ -338,6 +488,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return null;
 	}
+
 	/**
 	 * Finds the page instance that has the provided id.
 	 * 
@@ -356,6 +507,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return null;
 	}
+
 	/**
 	 * Sets the active page using the unique page identifier and sets its input
 	 * to the provided object.
@@ -375,6 +527,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return page;
 	}
+
 	/**
 	 * Iterates through the pages calling similar method until a page is found
 	 * that contains the desired page input.
@@ -383,7 +536,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 *            the object to select and reveal
 	 * @return the page that accepted the request or <code>null</code> if no
 	 *         page has the desired object.
-	 * 
 	 * @see #setActivePage
 	 */
 	public IFormPage selectReveal(Object pageInput) {
@@ -397,6 +549,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns active page instance if the currently selected page index is not
 	 * -1, or <code>null</code> if it is.
@@ -413,6 +566,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		}
 		return null;
 	}
+
 	/**
 	 * @see MultiPageEditorPart#setActivePage(int)
 	 */
@@ -429,6 +583,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			super.setActivePage(pageIndex);
 		updateActionBarContributor(pageIndex);
 	}
+
 	/**
 	 * Notifies action bar contributor about page change.
 	 * 
@@ -446,6 +601,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 					.setActivePage(getEditor(pageIndex));
 		}
 	}
+
 	/**
 	 * Closes the editor programmatically.
 	 * 
@@ -463,13 +619,30 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		});
 	}
-	private void registerPage(Object page) throws PartInitException {
-		if (!pages.contains(page))
-			pages.add(page);
+
+	private void registerPage(int index, Object page) throws PartInitException {
+		if (!pages.contains(page)) {
+			if (index == -1)
+				pages.add(page);
+			else
+				pages.add(index, page);
+		}
 		if (page instanceof IFormPage) {
 			IFormPage fpage = (IFormPage) page;
 			if (fpage.isEditor() == false)
 				fpage.init(getEditorSite(), getEditorInput());
+		}
+	}
+
+	private void firePageChanged(final PageChangedEvent event) {
+		Object[] listeners = pageListeners.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			final IPageChangedListener l = (IPageChangedListener) listeners[i];
+			SafeRunnable.run(new SafeRunnable() {
+				public void run() {
+					l.pageChanged(event);
+				}
+			});
 		}
 	}
 }

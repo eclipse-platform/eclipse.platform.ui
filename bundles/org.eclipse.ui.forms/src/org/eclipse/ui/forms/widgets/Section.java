@@ -1,20 +1,30 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545) 
+ *       
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import java.util.Hashtable;
+
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+
 /**
  * A variation of the expandable composite that adds optional description below
  * the title. Section is often used as a basic building block if forms because
@@ -23,10 +33,15 @@ import org.eclipse.swt.widgets.*;
  * In case of the TITLE_BAR style, Section renders the title bar in a way
  * compatible with the rest of the workbench. Since it is a widget, all the
  * colors must be supplied directly. When created by the form toolkit, these
- * colors are supplied by the toolkit. The toolkit initializes these
- * colors based on the system colors. For this reason, it is 
- * recommended to create the section by the toolkit instead of
- * through its own constructor.
+ * colors are supplied by the toolkit. The toolkit initializes these colors
+ * based on the system colors. For this reason, it is recommended to create the
+ * section by the toolkit instead of through its own constructor.
+ * <p>
+ * Since 3.1, it is possible to set a control to be used for section
+ * description. If used, <code>DESCRIPTION</code> style should not be set. A
+ * typical way to take advantage of the new method is to set an instance of
+ * <code>FormText</code> to provide for hyperlinks and images in the
+ * description area.
  * 
  * @since 3.0
  */
@@ -35,13 +50,21 @@ public final class Section extends ExpandableComposite {
 	 * Description style. If used, description will be rendered below the title.
 	 */
 	public static final int DESCRIPTION = 1 << 7;
-	private Label descriptionLabel;
+
+	private Control descriptionControl;
+
 	private Control separator;
+
 	private Hashtable titleColors;
-	private static final String COLOR_BG = "bg";
-	private static final String COLOR_GBG = "gbg";
-	private static final String COLOR_FG = "fg";
-	private static final String COLOR_BORDER = "border";
+
+	private static final String COLOR_BG = "bg"; //$NON-NLS-1$
+
+	private static final String COLOR_GBG = "gbg"; //$NON-NLS-1$
+
+	private static final String COLOR_FG = "fg"; //$NON-NLS-1$
+
+	private static final String COLOR_BORDER = "border"; //$NON-NLS-1$
+
 	/**
 	 * Creates a new section instance in the provided parent.
 	 * 
@@ -51,15 +74,22 @@ public final class Section extends ExpandableComposite {
 	 *            the style to use
 	 */
 	public Section(Composite parent, int style) {
-		super(parent, SWT.NULL, style);
+		this(parent, SWT.NULL, style);
+	}
+
+	Section(Composite parent, int cstyle, int style) {
+		super(parent, cstyle, style);
+		int rtl = cstyle & SWT.RIGHT_TO_LEFT;
 		if ((style & DESCRIPTION) != 0) {
-			descriptionLabel = new Label(this, SWT.WRAP);
+			descriptionControl = new Label(this, SWT.WRAP | rtl);
 		}
 	}
+
 	protected void internalSetExpanded(boolean expanded) {
 		super.internalSetExpanded(expanded);
 		reflow();
 	}
+
 	protected void reflow() {
 		Composite c = this;
 		while (c != null) {
@@ -87,16 +117,18 @@ public final class Section extends ExpandableComposite {
 			}
 		}
 	}
+
 	/**
-	 * Sets the description text. Has no effect of DESCRIPTION style was not
+	 * Sets the description text. Has no effect if DESCRIPTION style was not
 	 * used to create the control.
 	 * 
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		if (descriptionLabel != null)
-			descriptionLabel.setText(description);
+		if (descriptionControl instanceof Label)
+			((Label) descriptionControl).setText(description);
 	}
+
 	/**
 	 * Returns the current description text.
 	 * 
@@ -104,10 +136,11 @@ public final class Section extends ExpandableComposite {
 	 *         not used to create the control.
 	 */
 	public String getDescription() {
-		if (descriptionLabel != null)
-			return descriptionLabel.getText();
+		if (descriptionControl instanceof Label)
+			return ((Label) descriptionControl).getText();
 		return null;
 	}
+
 	/**
 	 * Sets the separator control of this section. The separator must not be
 	 * <samp>null </samp> and must be a direct child of this container. If
@@ -121,6 +154,7 @@ public final class Section extends ExpandableComposite {
 		Assert.isTrue(separator != null && separator.getParent().equals(this));
 		this.separator = separator;
 	}
+
 	/**
 	 * Returns the control that is used as a separator betweeen the title and
 	 * the client, or <samp>null </samp> if not set.
@@ -130,6 +164,7 @@ public final class Section extends ExpandableComposite {
 	public Control getSeparatorControl() {
 		return separator;
 	}
+
 	/**
 	 * Sets the background of the section.
 	 * 
@@ -138,9 +173,11 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (descriptionLabel != null)
-			descriptionLabel.setBackground(bg);
+		if (descriptionControl != null
+				&& (getExpansionStyle() & DESCRIPTION) != 0)
+			descriptionControl.setBackground(bg);
 	}
+
 	/**
 	 * Sets the foreground of the section.
 	 * 
@@ -149,18 +186,45 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (descriptionLabel != null)
-			descriptionLabel.setForeground(fg);
+		if (descriptionControl != null
+				&& (getExpansionStyle() & DESCRIPTION) != 0)
+			descriptionControl.setForeground(fg);
 	}
+
 	/**
-	 * Returns the control used to render the description.
+	 * Returns the control used to render the description. In 3.1, this method
+	 * was promoted to public.
 	 * 
 	 * @return description control or <code>null</code> if DESCRIPTION style
-	 *         was not used to create the control.
+	 *         was not used to create the control and description control was
+	 *         not set by the client.
+	 * @see #setDescriptionControl(org.eclipse.swt.widgets.Control)
 	 */
-	protected Control getDescriptionControl() {
-		return descriptionLabel;
+	public Control getDescriptionControl() {
+		return descriptionControl;
 	}
+
+	/**
+	 * Sets the description control of this section. The control must not be
+	 * <samp>null</samp> and must be a direct child of this container. If
+	 * defined, contol will be placed below the title text and the separator and
+	 * will be hidden int he collapsed state.
+	 * <p>
+	 * This method and <code>DESCRIPTION</code> style are mutually exclusive.
+	 * Use the method only if you want to create the description control
+	 * yourself.
+	 * 
+	 * @since 3.1
+	 * @param descriptionControl
+	 *            the control that will be placed below the title text.
+	 */
+	public void setDescriptionControl(Control descriptionControl) {
+		Assert.isTrue((getExpansionStyle() & DESCRIPTION) == 0);
+		Assert.isTrue(descriptionControl != null
+				&& descriptionControl.getParent().equals(this));
+		this.descriptionControl = descriptionControl;
+	}
+
 	/**
 	 * Sets the color of the title bar border when TITLE_BAR style is used.
 	 * 
@@ -170,6 +234,7 @@ public final class Section extends ExpandableComposite {
 	public void setTitleBarBorderColor(Color color) {
 		putTitleBarColor(COLOR_BORDER, color);
 	}
+
 	/**
 	 * Sets the color of the title bar foreground when TITLE_BAR style is used.
 	 * 
@@ -178,7 +243,9 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarForeground(Color color) {
 		putTitleBarColor(COLOR_FG, color);
+		textLabel.setForeground(color);
 	}
+
 	/**
 	 * Sets the color of the title bar background when TITLE_BAR style is used.
 	 * This color is used as a starting color for the vertical gradient.
@@ -188,10 +255,8 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarBackground(Color color) {
 		putTitleBarColor(COLOR_BG, color);
-		textLabel.setBackground(color);
-		if (toggle != null)
-			toggle.setBackground(color);
 	}
+
 	/**
 	 * Sets the color of the title bar gradient background when TITLE_BAR style
 	 * is used. This color is used at the height where title controls end
@@ -202,10 +267,13 @@ public final class Section extends ExpandableComposite {
 	 */
 	public void setTitleBarGradientBackground(Color color) {
 		putTitleBarColor(COLOR_GBG, color);
-		//textLabel.setBackground(color);
-		//if (toggle!=null)
-		//	toggle.setBackground(color);
+		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+			textLabel.setBackground(color);
+			if (toggle != null)
+				toggle.setBackground(color);
+		}
 	}
+
 	/**
 	 * Returns the title bar border color when TITLE_BAR style is used.
 	 * 
@@ -216,6 +284,7 @@ public final class Section extends ExpandableComposite {
 			return null;
 		return (Color) titleColors.get(COLOR_BORDER);
 	}
+
 	/**
 	 * Returns the title bar gradient background color when TITLE_BAR style is
 	 * used.
@@ -225,8 +294,11 @@ public final class Section extends ExpandableComposite {
 	public Color getTitleBarGradientBackground() {
 		if (titleColors == null)
 			return null;
+		if ((getExpansionStyle() & SHORT_TITLE_BAR) != 0)
+			return getBackground();
 		return (Color) titleColors.get(COLOR_GBG);
 	}
+
 	/**
 	 * Returns the title bar foreground when TITLE_BAR style is used.
 	 * 
@@ -237,6 +309,7 @@ public final class Section extends ExpandableComposite {
 			return null;
 		return (Color) titleColors.get(COLOR_FG);
 	}
+
 	/**
 	 * Returns the title bar background when TITLE_BAR style is used.
 	 * 
@@ -247,11 +320,15 @@ public final class Section extends ExpandableComposite {
 			return null;
 		return (Color) titleColors.get(COLOR_BG);
 	}
+
 	private void putTitleBarColor(String key, Color color) {
+		if (color == null)
+			return;
 		if (titleColors == null)
 			titleColors = new Hashtable();
 		titleColors.put(key, color);
 	}
+
 	protected void onPaint(PaintEvent e) {
 		Color bg = null;
 		Color gbg = null;
@@ -272,52 +349,93 @@ public final class Section extends ExpandableComposite {
 		if (gbg == null)
 			gbg = bg;
 		Rectangle bounds = getClientArea();
-		Point tsize = null;
-		Point tcsize = null;
-		if (toggle != null)
-			tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		int twidth = bounds.width - marginWidth - marginWidth;
-		if (tsize != null)
-			twidth -= tsize.x + GAP;
-		if (getTextClient() != null)
-			tcsize = getTextClient()
-					.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		if (tcsize != null)
-			twidth -= tcsize.x + GAP;
-		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
-		int tvmargin = GAP;
 		int theight = 0;
-		if (tsize != null)
-			theight += Math.max(theight, tsize.y);
-		if (tcsize != null)
-			theight = Math.max(theight, tcsize.y);
-		theight = Math.max(theight, size.y);
-		theight += tvmargin + tvmargin;
+		int tvmargin = GAP;
+		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+			Point tsize = null;
+			Point tcsize = null;
+			if (toggle != null)
+				tsize = toggle.getSize();
+			int twidth = bounds.width - marginWidth - marginWidth;
+			if (tsize != null)
+				twidth -= tsize.x + GAP;
+			if (getTextClient() != null)
+				tcsize = getTextClient().getSize();
+			if (tcsize != null)
+				twidth -= tcsize.x + GAP;
+			Point size = textLabel.getSize();
+			if (tsize != null)
+				theight += Math.max(theight, tsize.y);
+			if (tcsize != null)
+				theight = Math.max(theight, tcsize.y);
+			theight = Math.max(theight, size.y);
+			theight += tvmargin + tvmargin;
+		} else {
+			theight = 5;
+		}
 		int midpoint = (theight * 66) / 100;
 		int rem = theight - midpoint;
 		GC gc = e.gc;
-		gc.setForeground(bg);
-		gc.setBackground(gbg);
-		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
-				- marginWidth - marginWidth, midpoint - 1, true);
-		gc.setForeground(gbg);
+		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+			gc.setForeground(bg);
+			gc.setBackground(gbg);
+			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+					- 1 - marginWidth - marginWidth, midpoint - 1, true);
+			gc.setForeground(gbg);
+			gc.setBackground(getBackground());
+			gc
+					.fillGradientRectangle(marginWidth, marginHeight + midpoint
+							- 1, bounds.width - 1 - marginWidth - marginWidth,
+							rem - 1, true);
+		} else if (isExpanded()) {
+			gc.setForeground(bg);
+			gc.setBackground(getBackground());
+			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+					- marginWidth - marginWidth, theight, true);
+		}
 		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
-				bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
+		// repair the upper left corner
+		gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+				marginHeight + 2, marginWidth + 2, marginHeight });
+		// repair the upper right corner
+		gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+				marginHeight, bounds.width - marginWidth - 1, marginHeight,
+				bounds.width - marginWidth - 1, marginHeight + 2 });
 		gc.setForeground(border);
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
-				+ theight - 1);
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
-				marginHeight);
-		gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth
-				- 3, marginHeight);
-		gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width
-				- marginWidth - 1, marginHeight + 2);
-		gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-				bounds.width - marginWidth - 1, marginHeight + theight - 1);
-		if (toggle != null && !isExpanded()) {
+		if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
+			// top left curve
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
+					marginHeight);
+			// top edge
+			gc.drawLine(marginWidth + 2, marginHeight, bounds.width
+					- marginWidth - 3, marginHeight);
+			// top right curve
+			gc.drawLine(bounds.width - marginWidth - 3, marginHeight,
+					bounds.width - marginWidth - 1, marginHeight + 2);
+		} else {
+			// collapsed short title bar
+			// top edge
+			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
+					marginHeight);
+		}
+		if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
+				&& !isExpanded()) {
+			// left vertical edge
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
+					marginHeight + theight - 1);
+			// right vertical edge
+			gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
+					bounds.width - marginWidth - 1, marginHeight + theight - 1);
+			// bottom edge (if closed)
 			gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
 					- marginWidth - 1, marginHeight + theight - 1);
+		} else if (isExpanded()) {
+			// left vertical edge gradient
+			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
+					theight - 2, true);
+			// right vertical edge gradient
+			gc.fillGradientRectangle(bounds.width - marginWidth - 1,
+					marginHeight + 2, 1, theight - 2, true);
 		}
 	}
 }

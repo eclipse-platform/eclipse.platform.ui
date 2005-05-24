@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -116,7 +116,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Commits the part by committing the current page.
- * @boolean onSave <code>true</code> if commit is requested as a result
+ * @param onSave <code>true</code> if commit is requested as a result
  * of the 'save' action, <code>false</code> otherwise.
  */
 	public void commit(boolean onSave) {
@@ -143,8 +143,8 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
-		for (Enumeration enum = pages.elements(); enum.hasMoreElements();) {
-			PageBag pageBag = (PageBag) enum.nextElement();
+		for (Enumeration enm = pages.elements(); enm.hasMoreElements();) {
+			PageBag pageBag = (PageBag) enm.nextElement();
 			pageBag.dispose();
 		}
 	}
@@ -158,6 +158,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Tests if the currently visible page is dirty.
+ * @return <code>true</code> if the page is dirty, <code>false</code> otherwise.
  */
 	public boolean isDirty() {
 		IDetailsPage page = getCurrentPage();
@@ -167,6 +168,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Tests if the currently visible page is stale and needs refreshing.
+ * @return <code>true</code> if the page is stale, <code>false</code> otherwise.
  */	
 	public boolean isStale() {
 		IDetailsPage page = getCurrentPage();
@@ -286,8 +288,8 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		// overflow
 		int currentTicket = PageBag.getCurrentTicket();
 		int cutoffTicket = currentTicket - getPageLimit();
-		for (Enumeration enum=pages.keys(); enum.hasMoreElements();) {
-			Object key = enum.nextElement();
+		for (Enumeration enm=pages.keys(); enm.hasMoreElements();) {
+			Object key = enm.nextElement();
 			PageBag pageBag = (PageBag)pages.get(key);
 			if (pageBag.getTicket()<=cutoffTicket) {
 				// candidate - see if it is active and not fixed
