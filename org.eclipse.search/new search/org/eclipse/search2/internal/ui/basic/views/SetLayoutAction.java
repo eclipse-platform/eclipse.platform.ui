@@ -20,7 +20,7 @@ public class SetLayoutAction extends Action {
 	private int fLayout;
 
 	public SetLayoutAction(AbstractTextSearchViewPage page, String label, String tooltip, int layout) {
-		super(label,  IAction.AS_CHECK_BOX);
+		super(label,  IAction.AS_RADIO_BUTTON);
 		fPage= page;
 		setToolTipText(tooltip); //$NON-NLS-1$
 		fLayout= layout;
