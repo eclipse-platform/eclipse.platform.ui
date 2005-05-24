@@ -81,6 +81,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$
 	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.ProxyInputHandler"; //$NON-NLS-1$
+    
+    private static String fgSWTLibraryLocation;
 	
 	private String fMode;
     private boolean fUserSpecifiedLogger= false;
@@ -648,22 +650,23 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	}
 
 	private String getSWTLibraryLocation() {
-        Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
-        BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
-        BundleDescription[] fragments= description.getFragments();
-        if (fragments == null || fragments.length == 0) {
-            return null;
-        }
-        Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName()); //$NON-NLS-1$
-        try {
-            URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
-            IPath path= new Path(url.getPath());
-            path= path.removeTrailingSeparator();
-            return path.toOSString();
-        } catch (IOException e) {
-        }
-        
-        return null;
+       if (fgSWTLibraryLocation == null) {
+            Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
+            BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
+            BundleDescription[] fragments= description.getFragments();
+            if (fragments == null || fragments.length == 0) {
+                return null;
+            }
+            Bundle fragBundle= Platform.getBundle(fragments[0].getSymbolicName()); //$NON-NLS-1$
+            try {
+                URL url= Platform.asLocalURL(fragBundle.getEntry("/")); //$NON-NLS-1$
+                IPath path= new Path(url.getPath());
+                path= path.removeTrailingSeparator();
+                fgSWTLibraryLocation= path.toOSString();
+            } catch (IOException e) {
+            }
+		}
+        return fgSWTLibraryLocation;
 	}
     
      /* (non-Javadoc)
