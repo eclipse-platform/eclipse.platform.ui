@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -32,6 +33,7 @@ public abstract class BufferValidationState {
 	
 	protected IFile fFile;
 	protected boolean fExisted;
+	protected String fEncoding;
 
 	protected static class ModificationStamp {
 		private int fKind;
@@ -81,32 +83,37 @@ public abstract class BufferValidationState {
 		}
 	}
 	
-	public RefactoringStatus isValid(boolean needsSaving) {
+	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		if (!fExisted) {
 			if (fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_existing, //$NON-NLS-1$
-					fFile.getFullPath().toString()
-					));
+					fFile.getFullPath().toString()));
 		} else {
 			if (!fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_not_existing, //$NON-NLS-1$
-					fFile.getFullPath().toString()
-					));
+					fFile.getFullPath().toString()));
 		}
 		if (needsSaving) {
 			if (fFile.isReadOnly()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_read_only, //$NON-NLS-1$
-					fFile.getFullPath().toString()
-					));
+					fFile.getFullPath().toString()));
 			} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_outOfSync, //$NON-NLS-1$
-					fFile.getFullPath().toString()
-					));
+					fFile.getFullPath().toString()));
 			} 			
+		}
+		if (fEncoding == null) {
+			return RefactoringStatus.createFatalErrorStatus(Messages.format(
+				RefactoringCoreMessages.BufferValidationState_no_character_encoding,
+				fFile.getFullPath().toString()));
+		} else if (!fEncoding.equals(fFile.getCharset(true))) {
+			return RefactoringStatus.createFatalErrorStatus(Messages.format(
+				RefactoringCoreMessages.BufferValidationState_character_encoding_changed,
+				fFile.getFullPath().toString()));
 		}
 		return new RefactoringStatus();
 	}
@@ -118,6 +125,11 @@ public abstract class BufferValidationState {
 	protected BufferValidationState(IFile file) {
 		fFile= file;
 		fExisted= file.exists();
+		try {
+			fEncoding= file.getCharset(true);
+		} catch (CoreException e) {
+			fEncoding= null;
+		}
 	}
 	
 	protected IDocument getDocument() {
@@ -222,7 +234,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 		getDocument().addDocumentListener(fDocumentListener);
 	}
 
-	public RefactoringStatus isValid(boolean needsSaving) {
+	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving);
 		if (result.hasFatalError())
 			return result;
@@ -270,7 +282,7 @@ class ModificationStampValidationState extends BufferValidationState {
 		fModificationStamp= getModificationStamp();
 	}
 
-	public RefactoringStatus isValid(boolean needsSaving) {
+	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving);
 		if (result.hasFatalError())
 			return result;
