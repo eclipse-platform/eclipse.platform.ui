@@ -20,6 +20,14 @@ import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class LogSerializationTest extends RuntimeTest {
 
+	class TestException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		TestException() {
+			super();
+		}
+	}
+
 	protected File logFile = null;
 
 	public LogSerializationTest(String name) {
@@ -139,11 +147,10 @@ public class LogSerializationTest extends RuntimeTest {
 	}
 
 	protected IStatus[] getInterestingStatuses() {
-		return new IStatus[] {
-				new Status(IStatus.WARNING, "(#(*$%#", 1, "../\\\\\'\'\"", new NullPointerException()), //
+		return new IStatus[] {new Status(IStatus.WARNING, "(#(*$%#", 1, "../\\\\\'\'\"", new TestException()), //
 				new Status(IStatus.WARNING, "org.foo", 1, "This is the message", null), //
-				new Status(IStatus.ERROR, "org.foo", 1, "This is the message", new IllegalStateException()), //
-				new Status(IStatus.OK, ".", 1, "This is the message", new NullPointerException()), //
+				new Status(IStatus.ERROR, "org.foo", 1, "This is the message", new TestException()), //
+				new Status(IStatus.OK, ".", 1, "This is the message", new TestException()), //
 				new Status(IStatus.INFO, "org.asdfhsfhsdf976dsf6sd0f6s", 1, "#*&^$(*&#@^$)(#&)(", null),};
 	}
 
