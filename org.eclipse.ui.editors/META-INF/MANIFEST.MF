@@ -9,9 +9,9 @@ Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.ui.editors.text,
  org.eclipse.ui.editors.text.templates,
- org.eclipse.ui.internal.editors.quickdiff,
- org.eclipse.ui.internal.editors.text,
- org.eclipse.ui.internal.texteditor,
+ org.eclipse.ui.internal.editors.quickdiff;x-internal:=true,
+ org.eclipse.ui.internal.editors.text;x-internal:=true,
+ org.eclipse.ui.internal.texteditor;x-internal:=true,
  org.eclipse.ui.texteditor
 Require-Bundle: 
  org.eclipse.core.runtime,

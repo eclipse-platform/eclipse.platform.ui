@@ -8,10 +8,10 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.ui.contentassist,
- org.eclipse.ui.internal.texteditor,
- org.eclipse.ui.internal.texteditor.quickdiff,
- org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer,
- org.eclipse.ui.internal.texteditor.spelling,
+ org.eclipse.ui.internal.texteditor;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.quickdiff;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.spelling;x-internal:=true,
  org.eclipse.ui.texteditor,
  org.eclipse.ui.texteditor.link,
  org.eclipse.ui.texteditor.quickdiff,
