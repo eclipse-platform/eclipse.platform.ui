@@ -346,12 +346,12 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @param listToPopulate The list to fill.
      */
     private void populateList(List listToPopulate) {
-        populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails, null);
+        populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails);
     }
 
     /**
      * Populate the list with the messages from the given status. Traverse the
-     * childen of the status deeply and also traverse CoreExceptions that appear
+     * children of the status deeply and also traverse CoreExceptions that appear
      * in the status.
      * @param listToPopulate the list to populate
      * @param buildingStatus the status being displayed
@@ -360,40 +360,59 @@ public class ErrorDialog extends IconAndMessageDialog {
      * just its children
      */
     private void populateList(List listToPopulate, IStatus buildingStatus,
-            int nesting, boolean includeStatus, String parentMessage) {
+            int nesting, boolean includeStatus) {
         
         if (!buildingStatus.matches(displayMask)) {
             return;
         }
+
+        Throwable t = buildingStatus.getException();
+        boolean isCoreException= t instanceof CoreException;
+        boolean incrementNesting= false;
         
-        int childNesting = nesting;
-        String message = null;
-        if (includeStatus) {
+       	if (includeStatus) {
 	        StringBuffer sb = new StringBuffer();
 	        for (int i = 0; i < nesting; i++) {
 	            sb.append(NESTING_INDENT); //$NON-NLS-1$
 	        }
-	        message = buildingStatus.getMessage();
+	        String message = buildingStatus.getMessage();
             sb.append(message);
 	        listToPopulate.add(sb.toString());
-	        childNesting++;
+	        incrementNesting= true;
+       	}
+        	
+        if (!isCoreException && t != null) {
+        	// Include low-level exception message
+	        StringBuffer sb = new StringBuffer();
+	        for (int i = 0; i < nesting; i++) {
+	            sb.append(NESTING_INDENT); //$NON-NLS-1$
+	        }
+	        String message = t.getLocalizedMessage();
+	        if (message != null) {
+	            sb.append(message);
+	            listToPopulate.add(sb.toString());
+	            incrementNesting= true;
+	        }
         }
         
+        if (incrementNesting) 
+	        nesting++;
+        
         // Look for a nested core exception
-        Throwable t = buildingStatus.getException();
-        if (t instanceof CoreException) {
+        if (isCoreException) {
             CoreException ce = (CoreException)t;
             IStatus eStatus = ce.getStatus();
             // Only print the exception message if it is not contained in the parent message
             if (message == null || message.indexOf(eStatus.getMessage()) == -1) {
-                populateList(listToPopulate, eStatus, childNesting, true, message);
+                populateList(listToPopulate, eStatus, nesting, true);
             }
         }
+
         
         // Look for child status
         IStatus[] children = buildingStatus.getChildren();
         for (int i = 0; i < children.length; i++) {
-            populateList(listToPopulate, children[i], childNesting, true, message);
+            populateList(listToPopulate, children[i], nesting, true);
         }
     }
 
@@ -519,13 +538,13 @@ public class ErrorDialog extends IconAndMessageDialog {
      * This method is invoked once when the dialog is built.
      * By default, the Details button is only included if
      * the status used when creating the dialog was a multi-status
-     * or if the status contains an exception that is a CoreException.
+     * or if the status contains an exception.
      * Subclasses may override.
      * @return whether the Details button should be included
      * @since 3.1
      */
     protected boolean shouldShowDetailsButton() {
-        return status.isMultiStatus() || status.getException() instanceof CoreException;
+        return status.isMultiStatus() || status.getException() != null;
     }
     
     /**
