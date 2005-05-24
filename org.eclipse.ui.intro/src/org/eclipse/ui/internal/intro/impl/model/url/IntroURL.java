@@ -141,8 +141,8 @@ public class IntroURL implements IIntroURL {
 
     protected boolean doExecute() {
         if (Log.logInfo) {
-            String msg = StringUtil.concat("Running Introl URL with action: ", //$NON-NLS-1$
-                action, " and parameters: ", parameters.toString()).toString(); //$NON-NLS-1$
+            String msg = StringUtil.concat("Running Intro URL action ", action, //$NON-NLS-1$
+                " with parameters: ", parameters.toString()).toString(); //$NON-NLS-1$
             Log.info(msg);
         }
 
@@ -420,7 +420,7 @@ public class IntroURL implements IIntroURL {
     private boolean includePageToShow(IntroModelRoot model, String pageId) {
         AbstractIntroPage page = findPageToShow(pageId);
         if (page == null) {
-            Log.error("Failed to clone Intro page.", null); //$NON-NLS-1$
+            Log.warning("Could not find an Intro page with id=" + pageId); //$NON-NLS-1$
             return false;
         }
         // now clone the target page because original model should be kept

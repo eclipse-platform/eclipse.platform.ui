@@ -6,13 +6,13 @@ org.eclipse.ui.intro/debug = true
 # Enable logging of information messages in the plugin. By default, info
 # messages are not logged. Setting this option to true will enable logging
 # trace information messages.
-org.eclipse.ui.intro/trace/logInfo = false
+org.eclipse.ui.intro/trace/logInfo = true
 
 # Enable logging of performance messages in the plugin. By default, performance
 # messages are not logged. Setting this option to true will enable logging
 # trace information messages. (note: enabling info logging does not enable
 # this flag.)
-org.eclipse.ui.intro/trace/logPerformance = true
+org.eclipse.ui.intro/trace/logPerformance = false
 
 # Enable printing the generated HTML to the console.  By default, the HTML
 # is not printed.  By setting this option to true, the HTML for each 

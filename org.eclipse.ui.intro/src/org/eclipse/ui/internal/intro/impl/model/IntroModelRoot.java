@@ -296,9 +296,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 bundle, base));
 
             // INTRO: fix log strings.
-            Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
-                    + ModelLoaderUtil.getLogString(bundle,
-                        configExtensionElement, ATT_CONTENT));
+            Log
+                .warning("Could not resolve the following configExtension: " //$NON-NLS-1$
+                        + ModelLoaderUtil.getLogString(bundle,
+                            configExtensionElement,
+                            IntroExtensionContent.ATT_PATH));
         }
     }
 
@@ -649,7 +651,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // not a page. Test for root page.
             if (!pageId.equals(homePage.getId())) {
                 // not a page nor the home page.
-                Log.warning("Could not find Intro page with id: " + pageId); //$NON-NLS-1$
+                Log
+                    .warning("Could not set current page to Intro page with id: " + pageId); //$NON-NLS-1$
                 return false;
             }
         }

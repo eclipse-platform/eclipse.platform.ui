@@ -85,14 +85,14 @@ public class ModelLoaderUtil {
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
         StringBuffer buffer = new StringBuffer(element.getName());
-        buffer.append(" Element"); //$NON-NLS-1$
+        buffer.append(" element"); //$NON-NLS-1$
         if (logAttribute != null) {
-            buffer.append(" with \""); //$NON-NLS-1$
+            buffer.append(" with "); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append("\"="); //$NON-NLS-1$
+            buffer.append("=\""); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
-        buffer.append("  in extension: "); //$NON-NLS-1$
+        buffer.append("\" in extension: "); //$NON-NLS-1$
         buffer.append(element.getDeclaringExtension()
             .getExtensionPointUniqueIdentifier());
         buffer.append(" in Bundle: "); //$NON-NLS-1$
@@ -150,14 +150,14 @@ public class ModelLoaderUtil {
     public static String getLogString(Bundle bundle, Element element,
             String logAttribute) {
         StringBuffer buffer = new StringBuffer(element.getNodeName());
-        buffer.append(" Element"); //$NON-NLS-1$
+        buffer.append(" element"); //$NON-NLS-1$
         if (logAttribute != null) {
-            buffer.append(" with \""); //$NON-NLS-1$
+            buffer.append(" with "); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append("\"="); //$NON-NLS-1$
+            buffer.append("=\""); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
-        buffer.append("  from xml file in Bundle:"); //$NON-NLS-1$
+        buffer.append("\" from xml file in Bundle:"); //$NON-NLS-1$
         buffer.append(bundle.getSymbolicName());
 
 
