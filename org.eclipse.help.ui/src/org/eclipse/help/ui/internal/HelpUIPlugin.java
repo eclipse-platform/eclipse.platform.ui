@@ -9,13 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.ui.internal.util.ErrorUtil;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * This class is Help UI plugin.
@@ -34,11 +39,17 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	 * already have been called
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
+		logError(message, ex, true, false);
+	}	
+
+	public static synchronized void logError(String message, Throwable ex, boolean log, boolean openDialog) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
 				message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
+		if (openDialog)
+			ErrorDialog.openError(null, null, null, errorStatus);
 	}
 	/**
 	 * Logs a Warning message with an exception. Note that the message should

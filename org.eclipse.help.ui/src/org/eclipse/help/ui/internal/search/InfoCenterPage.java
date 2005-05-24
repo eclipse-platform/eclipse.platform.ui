@@ -55,6 +55,8 @@ public class InfoCenterPage extends RootScopePage {
 	//private boolean firstCheck;
 
 	private RemoteWorkingSet workingSet;
+	
+	private boolean tocStale;
 
 	class RemoteWorkingSet extends WorkingSet {
 		public RemoteWorkingSet() {
@@ -133,8 +135,8 @@ public class InfoCenterPage extends RootScopePage {
 		searchAll.setLayoutData(gd);
 		searchAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tree.getTree().setEnabled(false);
-				// searchQueryData.setBookFiltering(false);
+				if (searchAll.getSelection())
+					tree.getTree().setEnabled(false);
 			}
 		});
 
@@ -145,8 +147,11 @@ public class InfoCenterPage extends RootScopePage {
 		searchSelected.setLayoutData(gd);
 		searchSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tree.getTree().setEnabled(true);
-				// searchQueryData.setBookFiltering(false);
+				if (searchSelected.getSelection()) {
+					tree.getTree().setEnabled(true);
+					if (tocStale)
+						updateTocs();
+				}
 			}
 		});
 
@@ -207,6 +212,10 @@ public class InfoCenterPage extends RootScopePage {
 
 	private void loadTocs(String urlName) {
 		InputStream is = null;
+		if (urlName==null || urlName.length()==0) {
+			resetRemoteTocs();
+			return;
+		}
 		try {
 			URL url = new URL(urlName);
 			url = new URL(url, "toc/"); //$NON-NLS-1$
@@ -217,9 +226,11 @@ public class InfoCenterPage extends RootScopePage {
 			load(reader);
 			reader.close();
 		} catch (MalformedURLException e) {
-			HelpUIPlugin.logError(Messages.InfoCenterPage_invalidURL, e); 
+			HelpUIPlugin.logError(Messages.InfoCenterPage_invalidURL, e, false, true);
+			resetRemoteTocs();
 		} catch (IOException e) {
-			HelpUIPlugin.logError(Messages.InfoCenterPage_tocError, e); 
+			HelpUIPlugin.logError(Messages.InfoCenterPage_tocError, e, false, true);
+			resetRemoteTocs();
 		} finally {
 			if (is != null) {
 				try {
@@ -228,6 +239,10 @@ public class InfoCenterPage extends RootScopePage {
 				}
 			}
 		}
+	}
+	
+	private void resetRemoteTocs() {
+		remoteTocs = new AdaptableTocsArray(new IToc[0]);
 	}
 
 	private void load(Reader r) {
@@ -298,12 +313,36 @@ public class InfoCenterPage extends RootScopePage {
 		busyLoadTocs(url);
 		workingSet = new RemoteWorkingSet();
 		workingSet.load(store);
+		urlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				tocStale=true;
+			}
+		});
 		tree.setInput(remoteTocs);
 		boolean selected = store
 				.getBoolean(getKey(InfoCenterSearchScopeFactory.P_SEARCH_SELECTED));
 		searchAll.setSelection(!selected);
 		searchSelected.setSelection(selected);
 		tree.getTree().setEnabled(selected);
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				Object[] elements = workingSet.getElements();
+				tree.setCheckedElements(elements);
+				for (int i = 0; i < elements.length; i++) {
+					Object element = elements[i];
+					if (isExpandable(element))
+						setSubtreeChecked(element, true, true);
+					updateParentState(element, true);
+				}
+			}
+		});
+	}
+	
+	private void updateTocs() {
+		String url = urlText.getText();
+		busyLoadTocs(url);
+		tocStale=false;
+		tree.setInput(remoteTocs);
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				Object[] elements = workingSet.getElements();

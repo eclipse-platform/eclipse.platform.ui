@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.*;
 public class ScopePreferenceDialog extends PreferenceDialog {
 	private EngineDescriptorManager descManager;
 	private ArrayList pendingOperations;
-	private boolean editable;
 	
 	class PendingOperation {
 		int action;
@@ -49,7 +48,6 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	public ScopePreferenceDialog(Shell parentShell, PreferenceManager manager, EngineDescriptorManager descManager, boolean editable) {
 		super(parentShell, manager);
 		this.descManager = descManager;
-		this.editable = editable;
 	}
 
 	protected Control createTreeAreaContents(Composite parent) {
@@ -65,7 +63,6 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 
 		Button lbutton = createButton(container, NEW_ID, Messages.ScopePreferenceDialog_new, false); 
 		gd = (GridData)lbutton.getLayoutData();
-		lbutton.setEnabled(editable);
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
 		Button rbutton = createButton(container, DELETE_ID, Messages.ScopePreferenceDialog_delete, false); 
 		rbutton.setEnabled(false);
@@ -108,7 +105,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
 			ScopePreferenceManager.EnginePreferenceNode node = (ScopePreferenceManager.EnginePreferenceNode)obj;
 			EngineDescriptor desc = node.getDescriptor();
-			removable = editable && desc.isUserDefined();
+			removable = desc.isUserDefined();
 		}
 		getButton(DELETE_ID).setEnabled(removable);
 	}
