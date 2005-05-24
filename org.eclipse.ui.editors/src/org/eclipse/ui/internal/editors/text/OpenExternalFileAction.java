@@ -11,6 +11,9 @@
 package org.eclipse.ui.internal.editors.text;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -19,6 +22,8 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -143,10 +148,31 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private String getEditorId(File file) {
 		IWorkbench workbench= fWindow.getWorkbench();
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
-		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName());
+		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName(), getContentType(file));
 		if (descriptor != null)
 			return descriptor.getId();
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
+	}
+
+	private IContentType getContentType (File file) {
+		if (file == null)
+			return null;
+
+		InputStream stream= null;
+		try {
+			stream= new FileInputStream(file);
+			return Platform.getContentTypeManager().findContentTypeFor(stream, file.getName());
+		} catch (IOException x) {
+			EditorsPlugin.log(x);
+			return null;
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException x) {
+				EditorsPlugin.log(x);
+			}
+		}
 	}
 
 	private IEditorInput createEditorInput(File file) {
