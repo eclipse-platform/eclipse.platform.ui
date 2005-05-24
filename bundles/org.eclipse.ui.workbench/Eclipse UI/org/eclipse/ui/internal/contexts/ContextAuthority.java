@@ -225,99 +225,96 @@ final class ContextAuthority implements ISourceProviderListener {
 	 *            disposed.
 	 */
 	private final void checkWindowType(final Shell newShell,
-			final Shell oldShell) {
-		if (newShell != oldShell) {
-			/*
-			 * If the previous active shell was recognized as a dialog by
-			 * default, then remove its submissions.
-			 */
-			Collection oldActivations = (Collection) registeredWindows
-					.get(oldShell);
-			if (oldActivations == null) {
-				/*
-				 * The old shell wasn't registered. So, we need to check if it
-				 * was considered a dialog by default.
-				 */
-				oldActivations = (Collection) registeredWindows.get(null);
-				if (oldActivations != null) {
-					final Iterator oldActivationItr = oldActivations.iterator();
-					while (oldActivationItr.hasNext()) {
-						final IContextActivation activation = (IContextActivation) oldActivationItr
-								.next();
-						deactivateContext(activation);
-					}
-				}
-			}
+            final Shell oldShell) {
+        /*
+         * If the previous active shell was recognized as a dialog by default,
+         * then remove its submissions.
+         */
+        Collection oldActivations = (Collection) registeredWindows
+                .get(oldShell);
+        if (oldActivations == null) {
+            /*
+             * The old shell wasn't registered. So, we need to check if it was
+             * considered a dialog by default.
+             */
+            oldActivations = (Collection) registeredWindows.get(null);
+            if (oldActivations != null) {
+                final Iterator oldActivationItr = oldActivations.iterator();
+                while (oldActivationItr.hasNext()) {
+                    final IContextActivation activation = (IContextActivation) oldActivationItr
+                            .next();
+                    deactivateContext(activation);
+                }
+            }
+        }
 
-			/*
-			 * If the new active shell is recognized as a dialog by default,
-			 * then create some submissions, remember them, and submit them for
-			 * processing.
-			 */
-			if ((newShell != null) && (!newShell.isDisposed())) {
-				final Collection newActivations;
+        /*
+         * If the new active shell is recognized as a dialog by default, then
+         * create some submissions, remember them, and submit them for
+         * processing.
+         */
+        if ((newShell != null) && (!newShell.isDisposed())) {
+            final Collection newActivations;
 
-				if ((newShell.getParent() != null)
-						&& (registeredWindows.get(newShell) == null)) {
-					// This is a dialog by default.
-					newActivations = new ArrayList();
-					final Expression expression = new ActiveShellExpression(
-							newShell);
-					final IContextActivation dialogWindowActivation = new ContextActivation(
-							IContextService.CONTEXT_ID_DIALOG_AND_WINDOW,
-							expression, ActiveShellExpression.SOURCES,
-							contextService);
-					activateContext(dialogWindowActivation);
-					newActivations.add(dialogWindowActivation);
-					final IContextActivation dialogActivation = new ContextActivation(
-							IContextService.CONTEXT_ID_DIALOG, expression,
-							ActiveShellExpression.SOURCES, contextService);
-					activateContext(dialogActivation);
-					newActivations.add(dialogActivation);
-					registeredWindows.put(null, newActivations);
+            if ((newShell.getParent() != null)
+                    && (registeredWindows.get(newShell) == null)) {
+                // This is a dialog by default.
+                newActivations = new ArrayList();
+                final Expression expression = new ActiveShellExpression(
+                        newShell);
+                final IContextActivation dialogWindowActivation = new ContextActivation(
+                        IContextService.CONTEXT_ID_DIALOG_AND_WINDOW,
+                        expression, ActiveShellExpression.SOURCES,
+                        contextService);
+                activateContext(dialogWindowActivation);
+                newActivations.add(dialogWindowActivation);
+                final IContextActivation dialogActivation = new ContextActivation(
+                        IContextService.CONTEXT_ID_DIALOG, expression,
+                        ActiveShellExpression.SOURCES, contextService);
+                activateContext(dialogActivation);
+                newActivations.add(dialogActivation);
+                registeredWindows.put(null, newActivations);
 
-					/*
-					 * Make sure the submissions will be removed in event of
-					 * disposal. This is really just a paranoid check. The
-					 * "oldSubmissions" code above should take care of this.
-					 */
-					newShell.addDisposeListener(new DisposeListener() {
+                /*
+                 * Make sure the submissions will be removed in event of
+                 * disposal. This is really just a paranoid check. The
+                 * "oldSubmissions" code above should take care of this.
+                 */
+                newShell.addDisposeListener(new DisposeListener() {
 
-						/*
-						 * (non-Javadoc)
-						 * 
-						 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-						 */
-						public void widgetDisposed(DisposeEvent e) {
-							registeredWindows.remove(null);
-							newShell.removeDisposeListener(this);
+                    /*
+                     * (non-Javadoc)
+                     * 
+                     * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                     */
+                    public void widgetDisposed(DisposeEvent e) {
+                        registeredWindows.remove(null);
+                        newShell.removeDisposeListener(this);
 
-							/*
-							 * In the case where a dispose has happened, we are
-							 * expecting an activation event to arrive at some
-							 * point in the future. If we process the
-							 * submissions now, then we will update the
-							 * activeShell before checkWindowType is called.
-							 * This means that dialogs won't be recognized as
-							 * dialogs.
-							 */
-							final Iterator newActivationItr = newActivations
-									.iterator();
-							while (newActivationItr.hasNext()) {
-								deactivateContext((IContextActivation) newActivationItr
-										.next());
-							}
-						}
-					});
+                        /*
+                         * In the case where a dispose has happened, we are
+                         * expecting an activation event to arrive at some point
+                         * in the future. If we process the submissions now,
+                         * then we will update the activeShell before
+                         * checkWindowType is called. This means that dialogs
+                         * won't be recognized as dialogs.
+                         */
+                        final Iterator newActivationItr = newActivations
+                                .iterator();
+                        while (newActivationItr.hasNext()) {
+                            deactivateContext((IContextActivation) newActivationItr
+                                    .next());
+                        }
+                    }
+                });
 
-				} else {
-					// Shells that are not dialogs by default must register.
-					newActivations = null;
+            } else {
+                // Shells that are not dialogs by default must register.
+                newActivations = null;
 
-				}
-			}
-		}
-	}
+            }
+        }
+    }
 
 	/**
 	 * Returns a subset of the given <code>activations</code> containing only
