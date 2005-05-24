@@ -29,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 
 public class AntJRETab extends JavaJRETab {
 
@@ -134,7 +135,27 @@ public class AntJRETab extends JavaJRETab {
 	
 	private void applySeparateVMAttributes(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
-		configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+		//only set to use the remote ant process factory if the user
+		//has not set to use a logger...bug 84608
+        boolean userLogger= false;
+        try {
+            String[] arguments = ExternalToolsUtil.getArguments(configuration);
+            if (arguments != null) {
+                for (int i = 0; i < arguments.length; i++) {
+                    String arg = arguments[i];
+                    if (arg.equals("-logger")) { //$NON-NLS-1$
+                        userLogger= true;
+                        break;
+                    }
+                }
+            }
+        } catch (CoreException e) {
+        }
+        if (userLogger) {
+            configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, (String) null);
+        } else {
+            configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+        }
 	}
 
 	/* (non-Javadoc)

@@ -83,6 +83,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.ProxyInputHandler"; //$NON-NLS-1$
 	
 	private String fMode;
+    private boolean fUserSpecifiedLogger= false;
 	
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
@@ -91,7 +92,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
+		fUserSpecifiedLogger= false;
 		fMode= mode;
 		
 		// migrate the config to the new classpath format if required
@@ -308,14 +309,16 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	}
 
 	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine, boolean captureOutput) {
-		// link the process to its build logger via a timestamp
-		process.setAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
+		// link the process to the Eclipse build logger via a timestamp
+        if (!fUserSpecifiedLogger) {
+            process.setAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
+        }
 		
 		// create "fake" command line for the process
 		if (commandLine != null) {
 			process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
 		}
-		if (captureOutput) {
+		if (captureOutput && !fUserSpecifiedLogger) {
 			TaskLinkManager.registerAntBuild(process);
 		}
 	}
@@ -329,9 +332,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		if (arguments != null) {
 			for (int i = 0; i < arguments.length; i++) {
-				String arg = arguments[i];
 				commandLine.append(' ');
-				commandLine.append(arg);
+				commandLine.append(arguments[i]);
 			}
 		}
 		
@@ -404,25 +406,28 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				} else if (captureOutput) {
 					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
 				}
-			}
+			} else {
+			    fUserSpecifiedLogger= true;
+            }
 			if (commandLine.indexOf("-inputhandler") == -1 && setInputHandler) { //$NON-NLS-1$
 				commandLine.append(" -inputhandler "); //$NON-NLS-1$
 				commandLine.append(REMOTE_INPUT_HANDLER_CLASS);
 			}
 		} else {
-			if (setInputHandler) {
+			if (commandLine.indexOf("-inputhandler") == -1 && setInputHandler) { //$NON-NLS-1$
 				commandLine.append(" -inputhandler "); //$NON-NLS-1$
 				commandLine.append(INPUT_HANDLER_CLASS);
 			}
-		
-			commandLine.append(" -logger "); //$NON-NLS-1$
-			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-				commandLine.append(ANT_DEBUG_LOGGER_CLASS);
-			} else if (captureOutput) {
-				commandLine.append(ANT_LOGGER_CLASS);
-			} else {
-				commandLine.append(NULL_LOGGER_CLASS);
-			}
+            if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
+    			commandLine.append(" -logger "); //$NON-NLS-1$
+    			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+    				commandLine.append(ANT_DEBUG_LOGGER_CLASS);
+    			} else if (captureOutput) {
+    				commandLine.append(ANT_LOGGER_CLASS);
+    			} else {
+    				commandLine.append(NULL_LOGGER_CLASS);
+    			}
+            }
 		}
 		
 		if (separateVM) {
@@ -479,7 +484,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			if (requestPort != -1) {
 				listener.startListening(port, requestPort);
 			}
-		} else if (captureOutput) {
+		} else if (captureOutput && !fUserSpecifiedLogger) {
 			RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
 			if (port != -1) {
 				client.startListening(port);
