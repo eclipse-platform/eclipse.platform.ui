@@ -31,6 +31,7 @@ import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
@@ -52,6 +53,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -60,6 +62,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Shell;
@@ -550,7 +553,7 @@ public final class AntUtil {
 
 	/**
 	 * Migrates the classpath in the given configuration from the old format
-	 * to the new foramt. The old format is not preserved. Instead, the default
+	 * to the new format. The old format is not preserved. Instead, the default
 	 * classpath will be used. However, ANT_HOME settings are preserved.
 	 * 
 	 * @param configuration a configuration to migrate
@@ -710,5 +713,40 @@ public final class AntUtil {
 		}
     	
 		return separateJRE;
+    }
+    
+    public static void linkBuildFailedMessage(String message, IProcess process) {
+        String fileName = null;
+        String lineNumber = ""; //$NON-NLS-1$
+        int fileStart = 0;
+        int index = message.indexOf("xml"); //$NON-NLS-1$
+        if (index > 0) {
+            int numberStart= index + 4;
+            int numberEnd= message.indexOf(':', numberStart);
+            int fileEnd = index + 3;
+            if (numberStart > 0 && fileEnd > 0) {
+                fileName = message.substring(fileStart, fileEnd).trim();
+                if (numberEnd > 0) {
+                    lineNumber = message.substring(numberStart, numberEnd).trim();
+                }
+            }
+        }
+        
+        if (fileName != null) {
+            int num = -1;
+            try {
+                num = Integer.parseInt(lineNumber);
+            } catch (NumberFormatException e) {
+            }
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(fileName));
+            IFile file= null;
+            if (files.length > 0) {
+                file= files[0];
+            }
+            if (file != null && file.exists()) {
+                FileLink link = new FileLink(file, null, -1, -1, num);
+                TaskLinkManager.addTaskHyperlink(process, link, new Region(0, message.length()), message);
+            }
+        }
     }
 }

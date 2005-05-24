@@ -24,6 +24,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.FileUtils;
+import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.ExternalHyperlink;
@@ -245,6 +246,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
         String message= handleException(event);
         if (message != null) {
             logMessage(message, event, Project.MSG_ERR);
+            int fileStart= message.indexOf(AntSupportMessages.NullBuildLogger_1);
+            fileStart= fileStart + AntSupportMessages.NullBuildLogger_1.length() + StringUtils.LINE_SEP.length();
+            AntUtil.linkBuildFailedMessage(message.substring(fileStart).trim(), getAntProcess(fProcessId));
         }
 		fHandledException= null;
 		fBuildFileParent= null;

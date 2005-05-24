@@ -72,6 +72,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
     private Map fFileNameToIFile= new HashMap();
     private String fLastFileName= null;
     private String fLastTaskName= null;
+    private boolean fBuildFailed= false;
     
     /**
      * Reads the message stream from the RemoteAntBuildLogger
@@ -180,7 +181,14 @@ public class RemoteAntBuildListener implements ILaunchesListener {
             if (index > 0) {
                 int priority= Integer.parseInt(message.substring(0, index));
                 message= message.substring(index + 1);
+                
                 writeMessage(message + System.getProperty("line.separator"), priority); //$NON-NLS-1$
+                if (message.startsWith("BUILD FAILED")) { //$NON-NLS-1$
+                    fBuildFailed= true;
+                } else if (fBuildFailed) {
+                    AntUtil.linkBuildFailedMessage(message, getProcess());
+                    fBuildFailed= false;
+				}
             }
         }
     }

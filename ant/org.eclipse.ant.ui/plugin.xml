@@ -505,11 +505,6 @@ M4 = Platform-specific fourth key -->
             processType="org.eclipse.ant.ui.antProcess"
             id="org.eclipse.ant.ui.taskLineTracker">
       </consoleLineTracker>
-      <consoleLineTracker
-            class="org.eclipse.ant.internal.ui.console.BuildFailedTracker"
-            processType="org.eclipse.ant.ui.antProcess"
-            id="org.eclipse.ant.ui.buildFailedTracker">
-      </consoleLineTracker>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
