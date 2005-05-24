@@ -162,13 +162,21 @@ public class PluginDescriptor implements IPluginDescriptor {
 		} else
 			allBundles = new Bundle[] {bundleOsgi};
 		ArrayList allLibraries = new ArrayList();
+		// keep track of whether or not we have already added a "." to this classpath
+		boolean addedDot = false;
 		for (int i = 0; i < allBundles.length; i++)
 			try {
 				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) allBundles[i].getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
-				if (classpathElements == null)
-					continue;
-				for (int j = 0; j < classpathElements.length; j++)
-					allLibraries.add(new Library(classpathElements[j].getValue()));
+				// if there is no bundle classpath header, then we have to 
+				// add "." to the classpath
+				if (classpathElements == null) {
+					if (addedDot) 
+						continue; 
+					allLibraries.add(new Library(".")); //$NON-NLS-1$
+					addedDot = true;
+				} else
+					for (int j = 0; j < classpathElements.length; j++)
+						allLibraries.add(new Library(classpathElements[j].getValue()));
 			} catch (BundleException e) {
 				//Ignore because by the time we get here the errors will have already been logged.
 			}
