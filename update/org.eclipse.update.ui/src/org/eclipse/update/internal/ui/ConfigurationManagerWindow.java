@@ -130,13 +130,6 @@ public class ConfigurationManagerWindow
 
 		updateActionBars();
 
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			view.getTreeViewer().setSelection(new StructuredSelection(localSite));
-		}
-		catch (CoreException e) {
-		}
-		
 		UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
 		getShell().setImage(provider.get(UpdateUIImages.DESC_CONFIGS_VIEW, 0));
 		

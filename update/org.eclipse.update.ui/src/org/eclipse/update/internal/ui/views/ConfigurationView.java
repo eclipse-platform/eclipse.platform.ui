@@ -864,6 +864,12 @@ public class ConfigurationView
 		fillActionBars(getConfigurationWindow().getToolBarManager());
 
 		treeViewer.expandToLevel(2);
+
+		if (treeViewer.getTree().getItemCount() > 0) {
+			TreeItem[] items = treeViewer.getTree().getItems();
+			treeViewer.getTree().setSelection(new TreeItem[] { items[0] });
+			handleSelectionChanged(new StructuredSelection(items[0].getData()));
+		}
 	}
 
 	private void createTreeViewer(Composite parent) {
