@@ -85,13 +85,11 @@ final class TextEditorTemplateMessages extends NLS {
 	public static String GlobalVariables_variable_description_user;
 	public static String GlobalVariables_variable_description_selectedWord;
 	public static String GlobalVariables_variable_description_selectedLines;
+	public static String TemplatePreferencePage_column_autoinsert;
+	public static String EditTemplateDialog_autoinsert;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorTemplateMessages.class);
 	}
 
-	public static String TemplatePreferencePage_yes;
-	public static String TemplatePreferencePage_no;
-	public static String TemplatePreferencePage_column_autoinsert;
-	public static String EditTemplateDialog_autoinsert;
 }
