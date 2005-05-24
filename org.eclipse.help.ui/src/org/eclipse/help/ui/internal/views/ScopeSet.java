@@ -39,7 +39,7 @@ public class ScopeSet {
 	}
 	
 	public boolean isEditable() {
-		return !isDefault() && !isImplicit();
+		return !isDefault();
 	}
 	
 	public boolean isDefault() {

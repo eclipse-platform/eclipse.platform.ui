@@ -985,8 +985,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void update(IWorkbenchPart part, Control control) {
-		mform.setInput(new ContextHelpProviderInput((IContextProvider) null,
-				null, control, part));
+		mform.setInput(new ContextHelpProviderInput(null, null, control, part));
 	}
 
 	public void update(IContextProvider provider, IContext context, IWorkbenchPart part,
@@ -1030,8 +1029,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new BookmarksPart(parent, mform.getToolkit(), tbm);
 		}
 		if (part != null) {
+			mform.addPart(part);			
 			part.init(this, id, memento);
-			mform.addPart(part);
 		}
 		return part;
 	}

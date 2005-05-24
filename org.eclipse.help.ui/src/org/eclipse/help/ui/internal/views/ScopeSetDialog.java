@@ -250,7 +250,7 @@ public class ScopeSetDialog extends ListDialog {
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			PreferenceManager manager = new ScopePreferenceManager(descManager, set);
-			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager);
+			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager, set.isEditable());
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.create();
 			dialog.getShell().setText(NLS.bind(Messages.ScopePreferenceDialog_wtitle, set.getName()));
@@ -311,7 +311,7 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		boolean editableSet = set!=null && set.isEditable();
+		boolean editableSet = set!=null && set.isEditable() && !set.isImplicit();
 		removeButton.setEnabled(editableSet);
 		renameButton.setEnabled(editableSet);
 		Button okButton = getOkButton();

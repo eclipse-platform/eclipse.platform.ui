@@ -10,27 +10,52 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.search.federated.*;
-import org.eclipse.help.search.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
+import org.eclipse.help.internal.search.federated.FederatedSearchJob;
+import org.eclipse.help.search.ISearchEngineResult;
+import org.eclipse.help.search.ISearchEngineResultCollector;
+import org.eclipse.help.search.ISearchScope;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchPart extends AbstractFormPart implements IHelpPart,
 		IHelpUIConstants {
@@ -64,23 +89,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	private ScopeSetManager scopeSetManager;
 
 	private EngineDescriptorManager descManager;
-	
-	//private static final int COMBO_HISTORY_SIZE = 10;
-	
-	private Listener focusFilter = new Listener() {
-		public void handleEvent(Event e) {
-			switch (e.type) {
-			case SWT.FocusIn:
-				//System.out.println("Focus gained: "+e.widget);
-				break;
-			case SWT.FocusOut:
-			//System.out.println("Focus lost: "+e.widget);
-			break;
-			}
-		}
-	};
+
+	private static final int COMBO_HISTORY_SIZE = 10;
 
 	private JobListener jobListener;
+	
+	private boolean searchPending;
 
 	private class JobListener implements IJobChangeListener, Runnable {
 		private boolean searchInProgress = false;
@@ -144,8 +158,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		scopeSetManager = new ScopeSetManager();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
-		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.FocusIn, focusFilter);
-		PlatformUI.getWorkbench().getDisplay().addFilter(SWT.FocusOut, focusFilter);
 		container.setLayout(layout);
 		// Search Expression
 		searchWordText = toolkit.createFormText(container, false);
@@ -424,51 +436,49 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private void storeSearchHistory(String expression) {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
-		/*
 		HistoryScopeSet sset = scopeSetManager.findSearchSet(expression);
-		if (sset==null) {
+		if (sset == null) {
 			sset = new HistoryScopeSet(expression);
 			scopeSetManager.add(sset);
 		}
 		ScopeSet activeSet = scopeSetManager.getActiveSet();
-		sset.copyFrom(activeSet);		
+		sset.copyFrom(activeSet);
 		sset.save();
 		updateSearchCombo(sset);
 		searchWordCombo.setText(expression);
-		*/
 	}
 
 	private void updateSearchCombo(HistoryScopeSet current) {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
-		/*
-		ScopeSet [] sets = scopeSetManager.getScopeSets(true);
+		ScopeSet[] sets = scopeSetManager.getScopeSets(true);
 		ArrayList items = new ArrayList();
 		ArrayList toDelete = new ArrayList();
-		if (current!=null)
-			items.add(current.getExpression());
-		for (int i=sets.length-1; i>=0; i--) {
-			HistoryScopeSet sset = (HistoryScopeSet)sets[i];
-			if (current!=null && sset==current) continue;
-			if (sets.length-i>COMBO_HISTORY_SIZE)
+		// if (current!=null)
+		// items.add(current.getExpression());
+		for (int i = sets.length - 1; i >= 0; i--) {
+			HistoryScopeSet sset = (HistoryScopeSet) sets[i];
+			if (current != null && sset == current)
+				continue;
+			if (sets.length - i > COMBO_HISTORY_SIZE)
 				toDelete.add(sset);
 			items.add(sset.getExpression());
 		}
-		for (int i=0; i<toDelete.size(); i++) {
-			HistoryScopeSet sset = (HistoryScopeSet)toDelete.get(i);
+		for (int i = 0; i < toDelete.size(); i++) {
+			HistoryScopeSet sset = (HistoryScopeSet) toDelete.get(i);
 			scopeSetManager.remove(sset);
 		}
-		if (items.size()>0)
-			searchWordCombo.setItems((String[])items.toArray(new String[items.size()]));
-			*/
+		if (items.size() > 0)
+			searchWordCombo.setItems((String[]) items.toArray(new String[items
+					.size()]));
 	}
 
 	private void searchFromHistory(int index) {
-		ScopeSet [] sets = scopeSetManager.getScopeSets(true);
-		if (index>=sets.length) return;
-		HistoryScopeSet sset = (HistoryScopeSet)sets[index];
-		String expression = sset.getExpression();
-		setActiveScopeSet(sset);
-		doSearch(expression);
+		String expression = searchWordCombo.getSelection();
+		ScopeSet set = scopeSetManager.findSearchSet(expression);
+		if (set == null)
+			return;
+		setActiveScopeSet(set);
+		doSearch(expression, true);
 	}
 
 	private void handleButtonPressed() {
@@ -479,10 +489,25 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			stop();
 		}
 	}
-
+	
 	private void doSearch(String text) {
-		storeSearchHistory(text);
+		doSearch(text, false);
+	}
+
+	private void doSearch(String text, boolean fromHistory) {
 		ScopeSet set = scopeSetManager.getActiveSet();
+		if (!fromHistory && set instanceof HistoryScopeSet) {
+			String setExpression = ((HistoryScopeSet)set).getExpression();
+			if (setExpression.equals(text))
+				fromHistory=true;
+		}
+		if (!fromHistory) {
+			storeSearchHistory(text);
+			boolean switchedSet = scopeSetManager.restoreLastExplicitSet();
+			set = scopeSetManager.getActiveSet();
+			if (switchedSet)
+				setActiveScopeSet(set);
+		}
 		ArrayList entries = new ArrayList();
 		final SearchResultsPart results = (SearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
@@ -500,7 +525,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 								results.add(ed, searchResult);
 							}
 
-							public void accept(ISearchEngineResult[] searchResults) {
+							public void accept(
+									ISearchEngineResult[] searchResults) {
 								results.add(ed, searchResults);
 							}
 
@@ -529,7 +555,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		ScopeSet set = scopeSetManager.getActiveSet();
 		PreferenceManager manager = new ScopePreferenceManager(descManager, set);
 		PreferenceDialog dialog = new ScopePreferenceDialog(container
-				.getShell(), manager, descManager);
+				.getShell(), manager, descManager, set.isEditable());
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.create();
 		dialog.getShell().setText(
@@ -557,8 +583,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			activeSet.save();
 		Platform.getJobManager().removeJobChangeListener(jobListener);
 		stop();
-		PlatformUI.getWorkbench().getDisplay().removeFilter(SWT.FocusIn, focusFilter);
-		PlatformUI.getWorkbench().getDisplay().removeFilter(SWT.FocusOut, focusFilter);
 		super.dispose();
 	}
 
@@ -580,8 +604,33 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		this.parent = parent;
 		this.id = id;
 		parent.hookFormText(searchWordText);
+		if (memento != null)
+			restorePart(memento);
 	}
 
+	private void restorePart(IMemento memento) {
+		String setName = memento.getString("activeSet"); //$NON-NLS-1$
+		if (setName != null) {
+			ScopeSet sset = scopeSetManager.findSet(setName);
+			if (sset != null)
+				scopeSetManager.setActiveSet(sset);
+		}
+		String expression = memento.getString("expression"); //$NON-NLS-1$
+		if (expression!=null) {
+			searchWordCombo.setText(expression);
+			searchPending=true;
+			markStale();
+		}
+	}
+
+	public void refresh() {
+		super.refresh();
+		if (searchPending) {
+			searchPending=false;
+			doSearch(searchWordCombo.getText());
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -639,5 +688,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	public void saveState(IMemento memento) {
+		ScopeSet sset = scopeSetManager.getActiveSet();
+		if (sset != null)
+			memento.putString("activeSet", sset.getName()); //$NON-NLS-1$
+		memento.putString("expression", searchWordCombo.getText()); //$NON-NLS-1$
 	}
 }

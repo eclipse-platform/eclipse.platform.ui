@@ -23,6 +23,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 public class ScopeSetManager {
 	private ScopeSet activeSet;
 
+	private ScopeSet lastExplicitSet;
+
 	private static final String ACTIVE_SET = "activeScopeSet"; //$NON-NLS-1$
 
 	private ArrayList sets;
@@ -46,6 +48,17 @@ public class ScopeSetManager {
 			this.activeSet.save();
 		}
 		this.activeSet = set;
+		if (!activeSet.isImplicit())
+			lastExplicitSet = set;
+	}
+
+	public boolean restoreLastExplicitSet() {
+		if (activeSet != null && activeSet.isImplicit()
+				&& lastExplicitSet != null) {
+			setActiveSet(lastExplicitSet);
+			return true;
+		}
+		return false;
 	}
 
 	public static void ensureLocation() {
@@ -73,6 +86,8 @@ public class ScopeSetManager {
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
 			if (set.isImplicit() == implicit)
+				result.add(set);
+			if (!implicit && set.isImplicit() && activeSet==set)
 				result.add(set);
 		}
 		return (ScopeSet[]) result.toArray(new ScopeSet[result.size()]);
@@ -126,6 +141,8 @@ public class ScopeSetManager {
 					.getDialogSettings();
 			String name = settings.get(ACTIVE_SET);
 			activeSet = findSet(name);
+			if (!activeSet.isImplicit())
+				lastExplicitSet = activeSet;
 		}
 		return activeSet;
 	}

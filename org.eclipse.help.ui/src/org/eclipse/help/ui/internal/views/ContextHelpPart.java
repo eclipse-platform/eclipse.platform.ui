@@ -245,7 +245,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			updateText(helpText);
 		updateDynamicHelp(context!=null);
 	}
-
+	
 	private void updateTitle(boolean contextSupplied) {
 		String title = null;
 		if (lastContext != null && lastContext instanceof IContext2) {

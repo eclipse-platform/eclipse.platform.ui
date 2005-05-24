@@ -381,7 +381,7 @@ public class EngineResultSection {
         buff.append("\" alt=\""); //$NON-NLS-1$
         buff.append(Messages.SearchResultsPart_bmktooltip);
         buff.append("\" text=\""); //$NON-NLS-1$
-        buff.append(hit.getLabel());
+        buff.append(part.parent.escapeSpecialChars(hit.getLabel()));
         buff.append("\""); //$NON-NLS-1$ 
         buff.append("/>"); //$NON-NLS-1$ 
         buff.append("</a>"); //$NON-NLS-1$
