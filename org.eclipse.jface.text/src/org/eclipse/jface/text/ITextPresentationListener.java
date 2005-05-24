@@ -15,7 +15,7 @@ package org.eclipse.jface.text;
  * Text presentation listeners registered with an
  * {@link org.eclipse.jface.text.ITextViewer} are informed when a
  * {@link org.eclipse.jface.text.TextPresentation} is about to be applied to the
- * text viewer. The listener can apply changed to the text presentation and thus
+ * text viewer. The listener can apply changes to the text presentation and thus
  * participate in the process of text presentation creation.
  *
  * @since 3.0
