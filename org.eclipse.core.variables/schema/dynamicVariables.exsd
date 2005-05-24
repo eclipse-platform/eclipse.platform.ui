@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.core.variables">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.core.variables" id="dynamicVariables" name="Dynamic Stirng Substitution Variables"/>
+         <meta.schema plugin="org.eclipse.core.variables" id="dynamicVariables" name="Dynamic String Substitution Variables"/>
       </appInfo>
       <documentation>
          This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a dynamic variable is resolved at the time a string substitution is performed, with an optional argument.
