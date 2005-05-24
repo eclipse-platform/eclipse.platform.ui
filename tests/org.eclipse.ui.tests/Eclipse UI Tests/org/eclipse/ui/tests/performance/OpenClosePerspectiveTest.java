@@ -69,7 +69,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
             activePage.showView(ids[i]);
         }      
 
-        tagIfNecessary("Open/Close Perspective", Dimension.ELAPSED_PROCESS);
+        tagIfNecessary("UI - Open/Close Perspective", Dimension.ELAPSED_PROCESS);
         
         exercise(new TestRunnable() {
             public void run() throws Exception {

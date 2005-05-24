@@ -50,7 +50,7 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
 	protected void runTest() {
 		ObjectContributionTest tests = new ObjectContributionTest(
                 "testObjectContributions");
-        tagIfNecessary(selection.size() + " contribution(s)",
+        tagIfNecessary("UI - " + selection.size() + " contribution(s)",
                 Dimension.ELAPSED_PROCESS);
         setDegradationComment("See https://bugs.eclipse.org/bugs/show_bug.cgi?id=88274");
         startMeasuring();
