@@ -322,7 +322,7 @@ public final class Section extends ExpandableComposite {
 	}
 
 	private void putTitleBarColor(String key, Color color) {
-		if (color==null)
+		if (color == null)
 			return;
 		if (titleColors == null)
 			titleColors = new Hashtable();
@@ -387,7 +387,7 @@ public final class Section extends ExpandableComposite {
 					.fillGradientRectangle(marginWidth, marginHeight + midpoint
 							- 1, bounds.width - 1 - marginWidth - marginWidth,
 							rem - 1, true);
-		} else {
+		} else if (isExpanded()) {
 			gc.setForeground(bg);
 			gc.setBackground(getBackground());
 			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
@@ -402,32 +402,40 @@ public final class Section extends ExpandableComposite {
 				marginHeight, bounds.width - marginWidth - 1, marginHeight,
 				bounds.width - marginWidth - 1, marginHeight + 2 });
 		gc.setForeground(border);
-		// top left curve
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
-				marginHeight);
-		// top edge
-		gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth
-				- 3, marginHeight);
-		// top right curve
-		gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width
-				- marginWidth - 1, marginHeight + 2);
+		if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
+			// top left curve
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
+					marginHeight);
+			// top edge
+			gc.drawLine(marginWidth + 2, marginHeight, bounds.width
+					- marginWidth - 3, marginHeight);
+			// top right curve
+			gc.drawLine(bounds.width - marginWidth - 3, marginHeight,
+					bounds.width - marginWidth - 1, marginHeight + 2);
+		} else {
+			// collapsed short title bar
+			// top edge
+			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
+					marginHeight);
+		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
 				&& !isExpanded()) {
 			// left vertical edge
-			gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
-					+ theight - 1);
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
+					marginHeight + theight - 1);
 			// right vertical edge
 			gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-				bounds.width - marginWidth - 1, marginHeight + theight - 1);
+					bounds.width - marginWidth - 1, marginHeight + theight - 1);
 			// bottom edge (if closed)
 			gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
 					- marginWidth - 1, marginHeight + theight - 1);
-		}
-		else {
+		} else if (isExpanded()) {
 			// left vertical edge gradient
-			gc.fillGradientRectangle(marginWidth, marginHeight+2, 1, theight-2, true);
+			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
+					theight - 2, true);
 			// right vertical edge gradient
-			gc.fillGradientRectangle(bounds.width-marginWidth-1, marginHeight+2, 1, theight-2, true);
+			gc.fillGradientRectangle(bounds.width - marginWidth - 1,
+					marginHeight + 2, 1, theight - 2, true);
 		}
 	}
 }
