@@ -21,6 +21,8 @@ public class AntClassLoader extends URLClassLoader {
 
 	protected ClassLoader[] pluginLoaders;
 	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools"; //$NON-NLS-1$
+
+    private ClassLoader fContextClassloader= null;
 	
 	public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders) {
 		super(urls, ClassLoader.getSystemClassLoader());
@@ -55,18 +57,27 @@ public class AntClassLoader extends URLClassLoader {
 	}
 
 	protected Class loadClassPlugins(String name) {
-		Class result = null;
-		if (pluginLoaders != null) {
-			for (int i = 0; (i < pluginLoaders.length) && (result == null); i++) {
-				try {
-					result = pluginLoaders[i].loadClass(name);
-				} catch (ClassNotFoundException e) {
-					// Ignore exception now. If necessary we'll throw
-					// a ClassNotFoundException in loadClass(String)
-				}
-			}
-		}
-		return result;
+		//remove this classloader as the context classloader
+		//when loading classes from plugins...see bug 94471
+        if (fContextClassloader != null) {
+            Thread.currentThread().setContextClassLoader(fContextClassloader);
+        }
+        try {
+    		Class result = null;
+    		if (pluginLoaders != null) {
+    			for (int i = 0; (i < pluginLoaders.length) && (result == null); i++) {
+    				try {
+    					result = pluginLoaders[i].loadClass(name);
+    				} catch (ClassNotFoundException e) {
+    					// Ignore exception now. If necessary we'll throw
+    					// a ClassNotFoundException in loadClass(String)
+    				}
+    			}
+    		}
+    		return result;
+        } finally {
+            Thread.currentThread().setContextClassLoader(this);
+        }
 	}
 	
 	/**
@@ -79,4 +90,8 @@ public class AntClassLoader extends URLClassLoader {
 	public void allowPluginClassLoadersToLoadAntClasses(boolean allowLoading) {
 		this.allowPluginLoading = allowLoading;
 	}
+    
+    public void setPluginContextClassloader(ClassLoader classLoader) {
+        fContextClassloader= classLoader;
+    }
 }

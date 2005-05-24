@@ -44,6 +44,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.AntSecurityManager;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -285,8 +286,8 @@ public class AntModel implements IAntModel {
             parsed= false;
             return;
         }
-        ClassLoader parsingClassLoader= getClassLoader();
         ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
+        ClassLoader parsingClassLoader= getClassLoader(originalClassLoader);
         Thread.currentThread().setContextClassLoader(parsingClassLoader);
         Project project= null;
         try {
@@ -311,6 +312,7 @@ public class AntModel implements IAntModel {
             handleBuildException(e, null);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
+            getClassLoader(null);
             if (parsed) {       
                 SecurityManager origSM= System.getSecurityManager();
                 processAntHome(true);
@@ -1321,12 +1323,16 @@ public class AntModel implements IAntModel {
         return null;
     }
 
-    private ClassLoader getClassLoader() {
+    private ClassLoader getClassLoader(ClassLoader contextClassLoader) {
         if (fLocalClassLoader != null) {
+            ((AntClassLoader) fLocalClassLoader).setPluginContextClassloader(contextClassLoader);
             return fLocalClassLoader;
         }
         if (fgClassLoader == null) {
             fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader(true);
+        }
+        if (fgClassLoader instanceof AntClassLoader) {
+            ((AntClassLoader) fgClassLoader).setPluginContextClassloader(contextClassLoader);
         }
         return fgClassLoader;
     }
