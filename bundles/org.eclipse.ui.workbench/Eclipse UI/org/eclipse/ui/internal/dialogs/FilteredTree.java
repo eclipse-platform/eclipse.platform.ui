@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
@@ -20,6 +24,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -35,6 +41,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A simple control that provides a text widget and a tree viewer. The contents
@@ -66,6 +73,9 @@ public class FilteredTree extends Composite {
     protected String initialText = ""; //$NON-NLS-1$
     
     private String cachedTitle;
+    
+    //The job for refreshing the tree
+    private Job refreshJob;
    
     static {
         ImageDescriptor descriptor = AbstractUIPlugin
@@ -158,8 +168,60 @@ public class FilteredTree extends Composite {
         treeViewer = new TreeViewer(this, treeStyle);
         data = new GridData(GridData.FILL_BOTH);
         treeViewer.getControl().setLayoutData(data);
+        treeViewer.getControl().addDisposeListener(new DisposeListener(){
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+        	 */
+        	public void widgetDisposed(DisposeEvent e) {
+        		refreshJob.cancel();
+        		
+        	}
+        });
         treeViewer.addFilter(patternFilter);
+        
+        createRefreshJob();
     }
+
+    /**
+     * Create the refresh job for the receiver.
+     *
+     */
+	private void createRefreshJob() {
+		refreshJob = new WorkbenchJob("Refresh Filter"){//$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if(treeViewer.getControl().isDisposed())
+					return Status.CANCEL_STATUS;
+				
+				String filterText = getFilterControlText();
+		        boolean initial = initialText != null && filterText.equals(initialText); 
+		        if (initial) {
+		            patternFilter.setPattern(null);
+		        } else {
+		            patternFilter.setPattern(getFilterControlText());
+		        }       
+		        treeViewer.getControl().setRedraw(false);
+		        treeViewer.refresh(true);
+		        treeViewer.getControl().setRedraw(true);
+		       
+		        if (filterText.length() > 0 && !initial) {
+		            treeViewer.expandAll();
+		            // enabled toolbar is a hint that there is text to clear
+		            // and the list is currently being filtered
+		            filterToolBar.getControl().setVisible(true);
+		        } else {
+		            // disabled toolbar is a hint that there is no text to clear
+		            // and the list is currently not filtered
+		            filterToolBar.getControl().setVisible(preferenceFilter != null);
+		        }
+		        return Status.OK_STATUS;
+			}
+			
+		};
+		refreshJob.setSystem(true);
+	}
 
 	/**
 	 * Create the filter control.
@@ -193,30 +255,11 @@ public class FilteredTree extends Composite {
     protected String getFilterText() {
 		return filterText.getText();
 	}
-
 	/**
      * update the receiver after the text has changed
      */
     protected void textChanged() {
-        String filterText = getFilterControlText();
-        boolean initial = initialText != null && filterText.equals(initialText); 
-        if (initial) {
-            patternFilter.setPattern(null);
-        } else {
-            patternFilter.setPattern(getFilterControlText());
-        }        
-        treeViewer.refresh(true);
-        
-        if (filterText.length() > 0 && !initial) {
-            treeViewer.expandAll();
-            // enabled toolbar is a hint that there is text to clear
-            // and the list is currently being filtered
-            filterToolBar.getControl().setVisible(true);
-        } else {
-            // disabled toolbar is a hint that there is no text to clear
-            // and the list is currently not filtered
-            filterToolBar.getControl().setVisible(preferenceFilter != null);
-        }
+    	refreshJob.schedule(200);
     }
 
 	/**
