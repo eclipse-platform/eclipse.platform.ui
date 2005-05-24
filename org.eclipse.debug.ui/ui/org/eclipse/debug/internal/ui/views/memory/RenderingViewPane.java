@@ -507,7 +507,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
 		fTabFolderForDebugView.put(getMemoryBlockRetrieval(memoryblk), tabFolder);
 		
-		if (tabFolder != null && tabFolder.getItemCount() >= 1)
+		if (tabFolder.getItemCount() >= 1)
 		{
 			// remove "Create rendering tab"
 			TabItem item = tabFolder.getItem(0);
