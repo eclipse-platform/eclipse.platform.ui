@@ -25,31 +25,46 @@
          default="true"
          class="org.eclipse.ui.internal.browser.DefaultBrowserSupport"/>
    </extension>
-   
+
    <extension point="org.eclipse.ui.views">
       <view
-            allowMultiple="true"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.browser.WebBrowserView"
-            icon="icons/obj16/internal_browser.gif"
-            id="org.eclipse.ui.browser.view"
-            name="%viewWebBrowserTitle"/>
+         allowMultiple="true"
+         category="org.eclipse.ui"
+         class="org.eclipse.ui.internal.browser.WebBrowserView"
+         icon="icons/obj16/internal_browser.gif"
+         id="org.eclipse.ui.browser.view"
+         name="%viewWebBrowserTitle"/>
    </extension>
+
+<!--   <extension point="org.eclipse.ui.viewActions">
+      <viewContribution
+         id="org.eclipse.ui.browser.view"
+         targetID="org.eclipse.ui.browser.view">
+         <action
+            id="org.eclipse.ui.browser.view.sync"
+            label="%actionSyncView"
+            toolbarPath="sync"
+            tooltip="%actionSyncView"
+            icon="icons/elcl16/synced.gif"
+            style="toggle"
+            state="false"
+            class="org.eclipse.ui.internal.browser.WebBrowserSyncAction"/>
+      </viewContribution>
+   </extension>-->
 
    <extension point="org.eclipse.ui.editors">
       <editor
-            class="org.eclipse.ui.internal.browser.WebBrowserEditor"
-            contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
-            icon="icons/obj16/internal_browser.gif"
-            id="org.eclipse.ui.browser.editor"
-            extensions="htm,html,shtml"
-            name="%viewWebBrowserTitle"/>
+         class="org.eclipse.ui.internal.browser.WebBrowserEditor"
+         contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
+         icon="icons/obj16/internal_browser.gif"
+         id="org.eclipse.ui.browser.editor"
+         name="%viewWebBrowserTitle"/>
       <editor
-            extensions="htm,html,shtml"
-            icon="icons/obj16/internal_browser.gif"
-            id="org.eclipse.ui.browser.editorSupport"
-            launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
-            name="%viewWebBrowserSupportTitle"/>
+         extensions="htm,html,shtml"
+         icon="icons/obj16/internal_browser.gif"
+         id="org.eclipse.ui.browser.editorSupport"
+         launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
+         name="%viewWebBrowserSupportTitle"/>
   </extension>
 
 <!--

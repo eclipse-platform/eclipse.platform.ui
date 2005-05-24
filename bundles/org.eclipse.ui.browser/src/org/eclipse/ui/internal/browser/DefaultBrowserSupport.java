@@ -101,23 +101,22 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		// preference
 		if ((style & AS_EXTERNAL) != 0
 				|| WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL) {
-			if (WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.SYSTEM) {
-				webBrowser = new SystemBrowserInstance(browserId);
-			} else {
-				IBrowserDescriptor ewb = BrowserManager.getInstance()
-						.getCurrentWebBrowser();
-				if (ewb == null)
-					throw new PartInitException(Messages.errorNoBrowser);
+			IBrowserDescriptor ewb = BrowserManager.getInstance()
+					.getCurrentWebBrowser();
+			if (ewb == null)
+				throw new PartInitException(Messages.errorNoBrowser);
+			
+			if (ewb instanceof SystemBrowserDescriptor)
+				return new SystemBrowserInstance(browserId);
 
-				IBrowserExt ext = null;
-				if (ewb != null)
-					ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
-				if (ext != null)
-					webBrowser = ext.createBrowser(browserId,
-							ewb.getLocation(), ewb.getParameters());
-				if (webBrowser == null)
-					webBrowser = new ExternalBrowserInstance(browserId, ewb);
-			}
+			IBrowserExt ext = null;
+			if (ewb != null)
+				ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
+			if (ext != null)
+				webBrowser = ext.createBrowser(browserId,
+						ewb.getLocation(), ewb.getParameters());
+			if (webBrowser == null)
+				webBrowser = new ExternalBrowserInstance(browserId, ewb);
 		} else {
 			if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0)
 				webBrowser = new InternalBrowserViewInstance(browserId, style,

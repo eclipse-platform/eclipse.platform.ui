@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.browser;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -232,6 +234,7 @@ public class BrowserViewer extends Composite {
             text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
         addBrowserListeners();
+        //listen();
     }
 
     /**
@@ -703,6 +706,8 @@ public class BrowserViewer extends Composite {
 
         browser = null;
         text = null;
+        file = null;
+        fileListenerThread = null;
     }
 
     private ToolBar createLocationBar(Composite parent) {
@@ -870,4 +875,53 @@ public class BrowserViewer extends Composite {
     public void setContainer(IBrowserViewerContainer container) {
         this.container = container;
     }
+
+    protected File file;
+    protected long timestamp;
+    protected Thread fileListenerThread;
+
+    protected void listen() {
+   	 fileListenerThread = new Thread() {
+   		 public void run() {
+   			 while (fileListenerThread != null) {
+   				 try {
+   					 Thread.sleep(2000);
+   				 } catch (Exception e) {
+   					 // ignore
+   				 }
+   				 synchronized (fileListenerThread) {
+						 if (file != null && file.lastModified() != timestamp) {
+	   					 timestamp = file.lastModified();
+	   					 Display.getDefault().syncExec(new Runnable() {
+	 							public void run() {
+	 								refresh();
+	 							}
+	   					 });
+						 }
+					  }
+   			 }
+   		 }
+   	 };
+   	 fileListenerThread.setDaemon(true);
+   	 fileListenerThread.setPriority(Thread.MIN_PRIORITY);
+   	 fileListenerThread.start();
+   	 
+   	 browser.addLocationListener(new LocationListener() {
+          public void changed(LocationEvent event) {
+         	 String loc = event.location;
+         	 File temp = new File(loc);
+         	 if (temp.exists()) {
+         		 synchronized (fileListenerThread) {
+         			 file = temp;
+            		 timestamp = file.lastModified();
+					 }
+         	 } else
+         		 file = null;
+          }
+          
+          public void changing(LocationEvent event) {
+             // do nothing
+         }
+       });
+   }
 }

@@ -44,7 +44,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -66,8 +65,6 @@ import org.eclipse.ui.PlatformUI;
 public class WebBrowserPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	protected Button internal;
-
-	protected Button system;
 
 	protected Button external;
 
@@ -187,14 +184,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		if (!WebBrowserUtil.canUseInternalWebBrowser())
 			internal.setEnabled(false);
 
-		if (WebBrowserUtil.canUseSystemBrowser()) {
-			system = new Button(composite, SWT.RADIO);
-			system.setText(Messages.prefSystemBrowser);
-			data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-			data.horizontalSpan = 2;
-			system.setLayoutData(data);
-		}
-
 		external = new Button(composite, SWT.RADIO);
 		external.setText(Messages.prefExternalBrowser);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -267,7 +256,10 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
-						boolean sel = !tableViewer.getSelection().isEmpty();
+						IStructuredSelection sele = ((StructuredSelection) tableViewer
+								.getSelection());
+						boolean sel = sele.getFirstElement() != null &&
+								!(sele.getFirstElement() instanceof SystemBrowserDescriptor);
 						remove.setEnabled(sel);
 						edit.setEnabled(sel);
 					}
@@ -497,7 +489,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			}
 		});
 
-		external.addSelectionListener(new SelectionListener() {
+		/*external.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean sel = !tableViewer.getSelection().isEmpty();
 				edit.setEnabled(sel);
@@ -507,13 +499,15 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// ignore
 			}
-		});
+		});*/
 		internal.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.INTERNAL);
-		if (system != null)
-			system.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.SYSTEM);		
 		external.setSelection(WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.EXTERNAL);
 
-		boolean sel = !tableViewer.getSelection().isEmpty();
+		//boolean sel = !tableViewer.getSelection().isEmpty();
+		IStructuredSelection sele = ((StructuredSelection) tableViewer
+				.getSelection());
+		boolean sel = sele.getFirstElement() != null &&
+				!(sele.getFirstElement() instanceof SystemBrowserDescriptor);
 		edit.setEnabled(sel);
 		remove.setEnabled(sel);
 
@@ -604,13 +598,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		internal.setSelection(WebBrowserPreference
 				.isDefaultUseInternalBrowser());
-		if (system != null)
-			system.setSelection(!WebBrowserPreference.
-				isDefaultUseInternalBrowser() &&
-				WebBrowserPreference.isDefaultUseSystemBrowser());
 		external.setSelection(!WebBrowserPreference.
-				isDefaultUseInternalBrowser() &&
-				!WebBrowserPreference.isDefaultUseSystemBrowser());
+				isDefaultUseInternalBrowser());
 
 		super.performDefaults();
 	}
@@ -622,8 +611,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		int choice;
 		if (internal.getSelection())
 			choice = WebBrowserPreference.INTERNAL;
-		else if (system != null && system.getSelection())
-			choice = WebBrowserPreference.SYSTEM;
 		else
 			choice = WebBrowserPreference.EXTERNAL;
 		WebBrowserPreference.setBrowserChoice(choice);

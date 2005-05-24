@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 /**
@@ -95,6 +94,10 @@ public class BrowserManager extends Observable {
 				Reader reader = new InputStreamReader(in);
 				IMemento memento = XMLMemento.createReadRoot(reader);
 				
+				IMemento system = memento.getChild("system"); //$NON-NLS-1$
+				if (system != null)
+					browsers.add(new SystemBrowserDescriptor());
+				
 				IMemento[] children = memento.getChildren("external"); //$NON-NLS-1$
 				int size = children.length;
 				for (int i = 0; i < size; i++) {
@@ -109,6 +112,13 @@ public class BrowserManager extends Observable {
 				}
 			} catch (Exception e) {
 				Trace.trace(Trace.WARNING, "Could not load browsers: " + e.getMessage()); //$NON-NLS-1$
+			}
+			
+			IBrowserDescriptor system = new SystemBrowserDescriptor();
+			if (WebBrowserUtil.canUseSystemBrowser() && !browsers.contains(system)) {
+				browsers.add(0, system);
+				currentBrowser = system;
+				saveBrowsers();
 			}
 		} else {
 			setupDefaultBrowsers();
@@ -133,6 +143,8 @@ public class BrowserManager extends Observable {
 					BrowserDescriptor browser = (BrowserDescriptor) obj;
 					IMemento child = memento.createChild("external"); //$NON-NLS-1$
 					browser.save(child);
+				} else if (obj instanceof SystemBrowserDescriptor) {
+					memento.createChild("system"); //$NON-NLS-1$
 				}
 			}
 			
@@ -152,30 +164,19 @@ public class BrowserManager extends Observable {
 
 	private void setupDefaultBrowsers() {
 		browsers = new ArrayList();
+
+		// add system browser
+		if (WebBrowserUtil.canUseSystemBrowser()) {
+			IBrowserDescriptor system = new SystemBrowserDescriptor();
+			browsers.add(system);
+		}
 		
 		// handle all the EXTERNAL browsers by criteria and add those too at startup
 		WebBrowserUtil.addFoundBrowsers(browsers);
 		
 		// by default, if internal is there, that is current, else set the first external one
-		if (!browsers.isEmpty()) {
-			Program program = Program.findProgram("html"); //$NON-NLS-1$
-			if (program == null)
-				Program.findProgram("htm"); //$NON-NLS-1$
-			if (program != null) {
-				String programName = program.getName();
-				if (programName != null) {
-					Iterator iterator = browsers.iterator();
-					while (iterator.hasNext()) {
-						IBrowserDescriptor descr = (IBrowserDescriptor) iterator.next();
-						if (programName.equals(descr.getName())) {
-							currentBrowser = descr;
-						}
-					}
-				}
-			}
-			if (currentBrowser == null)
-				currentBrowser = (IBrowserDescriptor) browsers.get(0);
-		}
+		if (!browsers.isEmpty() && currentBrowser == null)
+			currentBrowser = (IBrowserDescriptor) browsers.get(0);
 	}
 
 	protected void addBrowser(IBrowserDescriptor browser) {

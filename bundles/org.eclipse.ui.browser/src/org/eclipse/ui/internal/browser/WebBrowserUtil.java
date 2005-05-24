@@ -25,9 +25,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.ui.PlatformUI;
-
 /**
- * Utility class for the Web browser tooling.
+ * Utility class for the Web browser tools.
  */
 public class WebBrowserUtil {
 	private static final String BROWSER_PACKAGE_NAME = "org.eclipse.swt.browser.Browser"; //$NON-NLS-1$
@@ -159,7 +158,8 @@ public class WebBrowserUtil {
 				.iterator();
 		while (iterator.hasNext()) {
 			IBrowserDescriptor wb = (IBrowserDescriptor) iterator.next();
-			paths.add(wb.getLocation().toLowerCase());
+			if (wb != null && wb.getLocation() != null)
+				paths.add(wb.getLocation().toLowerCase());
 		}
 		return paths;
 	}

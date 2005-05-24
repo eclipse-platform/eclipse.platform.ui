@@ -13,6 +13,10 @@ package org.eclipse.ui.internal.browser;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -24,7 +28,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class WebBrowserView extends ViewPart implements IBrowserViewerContainer {
 	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view"; //$NON-NLS-1$
-    protected BrowserViewer viewer;
+	protected BrowserViewer viewer;
 
 	public void createPartControl(Composite parent) {
         int style = WebBrowserUtil.decodeStyle(getViewSite().getSecondaryId());
@@ -39,6 +43,7 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
 				}
 		  };
 		  viewer.addPropertyChangeListener(propertyChangeListener);*/
+        initDragAndDrop();
 	}
     
     public void setURL(String url) {
@@ -75,5 +80,19 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
         catch (PartInitException e) {
             //TODO handle this
         }
+    }
+
+    /**
+     * Adds drag and drop support to the view.
+     */
+    protected void initDragAndDrop() {
+ 		Transfer[] transfers = new Transfer[] {
+ 			//LocalSelectionTransfer.getInstance(),
+ 			//ResourceTransfer.getInstance(),
+ 			FileTransfer.getInstance() };
+ 		
+ 		DropTarget dropTarget = new DropTarget(viewer, DND.DROP_COPY | DND.DROP_DEFAULT);
+		dropTarget.setTransfer(transfers);
+		dropTarget.addDropListener(new WebBrowserViewDropAdapter(viewer));
     }
 }

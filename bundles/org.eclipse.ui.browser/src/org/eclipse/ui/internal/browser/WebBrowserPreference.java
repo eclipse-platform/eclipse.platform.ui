@@ -38,9 +38,7 @@ public class WebBrowserPreference {
 
 	public static final int INTERNAL = 0;
 
-	public static final int SYSTEM = 1;
-
-	public static final int EXTERNAL = 2;
+	public static final int EXTERNAL = 1;
 
 	/**
 	 * WebBrowserPreference constructor comment.
@@ -132,17 +130,16 @@ public class WebBrowserPreference {
 	}
 
 	/**
-	 * Returns whether the internal, system or external browser is being used
+	 * Returns whether the internal or external browser is being used
 	 * 
-	 * @return one of <code>INTERNAL</code>, <code>EXTERNAL</code> and
-	 *         <code>SYSTEM</code>.
+	 * @return one of <code>INTERNAL</code> or <code>EXTERNAL</code>.
 	 */
 	public static int getBrowserChoice() {
 		int choice = getPreferenceStore().getInt(PREF_BROWSER_CHOICE);
+		if (choice == 2)
+			return EXTERNAL;
 		if (choice == INTERNAL && !WebBrowserUtil.canUseInternalWebBrowser())
-			choice = SYSTEM;
-		if (choice == SYSTEM && !WebBrowserUtil.canUseSystemBrowser())
-			choice = EXTERNAL;
+			return EXTERNAL;
 		return choice;
 	}
 
