@@ -963,8 +963,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					
 					boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
 					try {
-						boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
-						if (!visibleDocumentReplaced && !fireRedraw)
+						executeProjectionCommands(commandQueue, fireRedraw);
+						if (!fireRedraw)
 							invalidateTextPresentation();
 					} catch (IllegalArgumentException x) {
 						reinitializeProjection();
@@ -991,7 +991,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
-	private boolean executeProjectionCommands(ProjectionCommandQueue commandQueue, boolean fireRedraw) throws BadLocationException {
+	private void executeProjectionCommands(ProjectionCommandQueue commandQueue, boolean fireRedraw) throws BadLocationException {
 
 		ProjectionCommand command;
 		Iterator e= commandQueue.iterator();
@@ -1012,14 +1012,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 		commandQueue.clear();
-
-		IDocument master= getDocument();
-		IDocument slave= getVisibleDocument();
-		if (slave instanceof ProjectionDocument && slave.getLength() == master.getLength()) {
-			replaceVisibleDocument(master);
-			return true;
-		}
-		return false;
 	}
 
 	private boolean covers(Position expanded, Position position) {
