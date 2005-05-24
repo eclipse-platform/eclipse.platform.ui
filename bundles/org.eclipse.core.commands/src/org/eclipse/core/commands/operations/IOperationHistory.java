@@ -378,7 +378,8 @@ public interface IOperationHistory {
 	 * subsequent requests to execute, add, undo, or redo another operation will
 	 * result in that operation being added to the open operation. Once the
 	 * operation is closed, the composite will be considered an atomic
-	 * operation.
+	 * operation.  Clients should not modify the composite directly (by adding and
+	 * removing children) while it is open.
 	 * </p>
 	 * <p>
 	 * When a composite is open, operations that are added to the history will

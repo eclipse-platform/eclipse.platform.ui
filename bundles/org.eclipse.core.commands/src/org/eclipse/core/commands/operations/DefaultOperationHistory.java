@@ -131,10 +131,10 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	private List undoList = Collections.synchronizedList(new ArrayList());
 
 	/**
-	 * a key that is used to synchronize access between the undo and redo
+	 * a lock that is used to synchronize access between the undo and redo
 	 * history
 	 */
-	final Object undoRedoHistoryKey = new Object();
+	final Object undoRedoHistoryLock = new Object();
 
 	/**
 	 * An operation that is "absorbing" all other operations while it is open.
@@ -143,7 +143,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 */
 	private ICompositeOperation openComposite = null;
+	
+	/**
+	 * a lock that is used to synchronize access to the open composite.
+	 */
+	final Object openCompositeLock = new Object();
 
+	
 	/**
 	 * Create an instance of DefaultOperationHistory.
 	 */
@@ -167,13 +173,15 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		 * batching operation and assume that its undo will be triggered by the
 		 * batching operation undo.
 		 */
-		if (openComposite != null && openComposite != operation) {
-			openComposite.add(operation);
-			return;
+		synchronized (openCompositeLock) {
+			if (openComposite != null && openComposite != operation) {
+				openComposite.add(operation);
+				return;
+			}
 		}
 
 		if (checkUndoLimit(operation)) {
-			synchronized (undoRedoHistoryKey) {
+			synchronized (undoRedoHistoryLock) {
 				undoList.add(operation);
 			}
 			notifyAdd(operation);
@@ -373,7 +381,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			// We check this condition outside of the synchronized block.
 			// See bug #84444
 			boolean addToUndoStack = operation.canUndo();
-			synchronized (undoRedoHistoryKey) {
+			synchronized (undoRedoHistoryLock) {
 				redoList.remove(operation);
 				if (addToUndoStack && checkUndoLimit(operation)) {
 					undoList.add(operation);
@@ -441,7 +449,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			// We check this outside of the synchronized block.
 			// See bug #84444
 			boolean addToRedoStack = operation.canRedo();
-			synchronized (undoRedoHistoryKey) {
+			synchronized (undoRedoHistoryLock) {
 				undoList.remove(operation);
 				if (addToRedoStack && checkRedoLimit(operation)) {
 					redoList.add(operation);
@@ -480,23 +488,21 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		/*
-		 * If we are in the middle of an open batch, then we will add this
-		 * operation's contexts to the open operation rather than add the
-		 * operation to the history. We will still execute it, but will dispose
-		 * of it afterward. Operations triggered during an operation are assumed
-		 * to be model-related and we assume the undo of this related operation
-		 * will be triggered automatically by the undo of the batching
-		 * operation.
+		 * If we are in the middle of an open composite, then we will add this
+		 * operation to the open operation rather than add the
+		 * operation to the history. We will still execute it.
 		 */
 		boolean merging = false;
-		if (openComposite != null) {
-			// the composite shouldn't be executed explicitly while it is still
-			// open
-			if (openComposite == operation) {
-				return IOperationHistory.OPERATION_INVALID_STATUS;
+		synchronized (openCompositeLock) {
+			if (openComposite != null) {
+				// the composite shouldn't be executed explicitly while it is still
+				// open
+				if (openComposite == operation) {
+					return IOperationHistory.OPERATION_INVALID_STATUS;
+				}
+				openComposite.add(operation);
+				merging = true;
 			}
-			openComposite.add(operation);
-			merging = true;
 		}
 
 		/*
@@ -524,24 +530,26 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			if (status.isOK()) {
 				notifyDone(operation);
 				// Only add the operation to the history if it can indeed be
-				// undone.
-				// This conservatism is added to support the integration of
-				// existing
-				// frameworks (such as Refactoring) that may be using a history
-				// to execute
+				// undone.  This conservatism is added to support the 
+				// integration of existing frameworks (such as Refactoring) 
+				// that may be using a history to execute
 				// all operations, even those that are not undoable.
-				// See bug #84444
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=84444
 				if (operation.canUndo()) {
 					add(operation);
+				} else {
+					// dispose the operation since we did not add it to the stack
+					// and will no longer have a reference to it.
+					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=94400
+					operation.dispose();
 				}
 			} else {
 				notifyNotOK(operation);
+				// dispose the operation since we did not add it to the stack
+				// and will no longer have a reference to it.
+				operation.dispose();
 			}
-		} else {
-			// dispose of this operation since it is not to be kept in the
-			// history
-			operation.dispose();
-		}
+		} 
 		// all other severities are not interpreted. Simply return the status.
 		return status;
 	}
@@ -561,7 +569,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		List filtered = new ArrayList();
 		Iterator iterator = list.iterator();
-		synchronized (undoRedoHistoryKey) {
+		synchronized (undoRedoHistoryLock) {
 			while (iterator.hasNext()) {
 				IUndoableOperation operation = (IUndoableOperation) iterator
 						.next();
@@ -630,16 +638,23 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		 * flushing all operations, then null it out and notify that we are
 		 * ending it. We don't remove it since it was never added.
 		 */
-		if (openComposite != null) {
-			if (openComposite.hasContext(context)) {
-				if (context == GLOBAL_UNDO_CONTEXT
-						|| openComposite.getContexts().length == 1) {
-					notifyNotOK(openComposite);
-					openComposite = null;
-				} else {
-					openComposite.removeContext(context);
+		ICompositeOperation endedComposite = null;
+		synchronized (openCompositeLock) {
+			if (openComposite != null) {
+				if (openComposite.hasContext(context)) {
+					if (context == GLOBAL_UNDO_CONTEXT
+							|| openComposite.getContexts().length == 1) {
+						endedComposite = openComposite;
+						openComposite = null;
+					} else {
+						openComposite.removeContext(context);
+					}
 				}
 			}
+		}
+		// notify outside of the synchronized block.
+		if (endedComposite != null) {
+			notifyNotOK(endedComposite);
 		}
 	}
 
@@ -770,7 +785,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getRedoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		synchronized (undoRedoHistoryKey) {
+		synchronized (undoRedoHistoryLock) {
 			for (int i = redoList.size() - 1; i >= 0; i--) {
 				IUndoableOperation operation = (IUndoableOperation) redoList
 						.get(i);
@@ -833,7 +848,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getUndoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		synchronized (undoRedoHistoryKey) {
+		synchronized (undoRedoHistoryLock) {
 			for (int i = undoList.size() - 1; i >= 0; i--) {
 				IUndoableOperation operation = (IUndoableOperation) undoList
 						.get(i);
@@ -1123,9 +1138,11 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	public void replaceOperation(IUndoableOperation operation,
 			IUndoableOperation[] replacements) {
 		// check the undo history first.
-		int index = undoList.indexOf(operation);
-		if (index > -1) {
-			synchronized (undoRedoHistoryKey) {
+		boolean inUndo = false;
+		synchronized (undoRedoHistoryLock) {
+			int index = undoList.indexOf(operation);
+			if (index > -1) {
+				inUndo = true;
 				undoList.remove(operation);
 				// notify listeners after the lock on undoList is released
 				ArrayList allContexts = new ArrayList(replacements.length);
@@ -1135,7 +1152,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 						allContexts.add(opContexts[j]);
 					}
 					undoList.add(index, replacements[i]);
-					// notify listeners after the lock on undoList is released
+					// notify listeners after the lock on the history is released
 				}
 				// recheck all the limits. We do this at the end so the index
 				// doesn't change during replacement
@@ -1144,40 +1161,44 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					forceUndoLimit(context, getLimit(context));
 				}
 			}
+		}
+		if (inUndo) {		
 			// notify listeners of operations added and removed
 			internalRemove(operation);
-			for (int i = 0; i < replacements.length; i++)
+			for (int i = 0; i < replacements.length; i++) {
 				notifyAdd(replacements[i]);
-			// look in the redo history
-		} else {
-			synchronized (undoRedoHistoryKey) {
-				index = redoList.indexOf(operation);
-				if (index == -1)
-					return;
-				ArrayList allContexts = new ArrayList(replacements.length);
-				redoList.remove(operation);
-				// notify listeners after we release the lock on redoList
-				for (int i = 0; i < replacements.length; i++) {
-					IUndoContext[] opContexts = replacements[i].getContexts();
-					for (int j = 0; j < opContexts.length; j++) {
-						allContexts.add(opContexts[j]);
-					}
-					redoList.add(index, replacements[i]);
-					// notify listeners after we release the lock on redoList
-				}
-				// recheck all the limits. We do this at the end so the index
-				// doesn't change during replacement
-				for (int i = 0; i < allContexts.size(); i++) {
-					IUndoContext context = (IUndoContext) allContexts.get(i);
-					forceRedoLimit(context, getLimit(context));
-				}
-			}
-			// send listener notifications after we release the lock on the redo
-			// list
-			internalRemove(operation);
-			for (int i = 0; i < replacements.length; i++)
-				notifyAdd(replacements[i]);
+			} 
+			return;
 		}
+		
+		// operation was not in the undo history.  Check the redo history.
+
+		synchronized (undoRedoHistoryLock) {
+			int index = redoList.indexOf(operation);
+			if (index == -1)
+				return;
+			ArrayList allContexts = new ArrayList(replacements.length);
+			redoList.remove(operation);
+			// notify listeners after we release the lock on redoList
+			for (int i = 0; i < replacements.length; i++) {
+				IUndoContext[] opContexts = replacements[i].getContexts();
+				for (int j = 0; j < opContexts.length; j++) {
+					allContexts.add(opContexts[j]);
+				}
+				redoList.add(index, replacements[i]);
+				// notify listeners after we release the lock on redoList
+			}
+			// recheck all the limits. We do this at the end so the index
+			// doesn't change during replacement
+			for (int i = 0; i < allContexts.size(); i++) {
+				IUndoContext context = (IUndoContext) allContexts.get(i);
+				forceRedoLimit(context, getLimit(context));
+			}
+		}
+		// send listener notifications after we release the lock on the history
+		internalRemove(operation);
+		for (int i = 0; i < replacements.length; i++)
+			notifyAdd(replacements[i]);
 	}
 
 	/*
@@ -1267,21 +1288,23 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#openOperation(org.eclipse.core.commands.operations.ICompositeOperation)
 	 */
 	public void openOperation(ICompositeOperation operation, int mode) {
-		if (openComposite != null && openComposite != operation) {
-			// unexpected nesting of operations.
-			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-				System.out
-						.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
-				System.out.print(openComposite);
-				System.out.print("new:  "); //$NON-NLS-1$
-				System.out.print(operation);
-				System.out.println();
+		synchronized (openCompositeLock) {
+			if (openComposite != null && openComposite != operation) {
+				// unexpected nesting of operations.
+				if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+					System.out
+							.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
+					System.out.print(openComposite);
+					System.out.print("new:  "); //$NON-NLS-1$
+					System.out.print(operation);
+					System.out.println();
+				}
+	
+				throw new IllegalStateException(
+						"Cannot open an operation while one is already open"); //$NON-NLS-1$
 			}
-
-			throw new IllegalStateException(
-					"Cannot open an operation while one is already open"); //$NON-NLS-1$
+			openComposite = operation;
 		}
-		openComposite = operation;
 		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
 			System.out.print("OPERATIONHISTORY >>> Opening operation "); //$NON-NLS-1$ 
 			System.out.print(openComposite);
@@ -1301,34 +1324,41 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public void closeOperation(boolean operationOK, boolean addToHistory,
 			int mode) {
-		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-			if (openComposite == null) {
-				System.out
-						.print("OPERATIONHISTORY >>> Attempted to close operation when none was open "); //$NON-NLS-1$ 
-				System.out.println();
-				return;
+		ICompositeOperation endedComposite = null;
+
+		synchronized(openCompositeLock) {
+			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+				if (openComposite == null) {
+					System.out
+							.print("OPERATIONHISTORY >>> Attempted to close operation when none was open "); //$NON-NLS-1$ 
+					System.out.println();
+					return;
+				}
+			}
+		// notifications will occur outside the synchonized block
+			if (openComposite != null) {
+				if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
+					System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
+					System.out.print(openComposite);
+					System.out.println();
+				}
+				endedComposite = openComposite;
+				openComposite = null;
 			}
 		}
-		if (openComposite != null) {
-			if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
-				System.out.print("OPERATIONHISTORY >>> Closing operation "); //$NON-NLS-1$ 
-				System.out.print(openComposite);
-				System.out.println();
-			}
-			// any mode other than EXECUTE was triggered by a request to undo or
-			// redo something already in the history, so undo and redo
-			// notification will occur at
-			// the end of that sequence.
+		// any mode other than EXECUTE was triggered by a request to undo or
+		// redo something already in the history, so undo and redo
+		// notification will occur at the end of that sequence.
+		if (endedComposite != null) {
 			if (operationOK) {
 				if (mode == EXECUTE)
-					notifyDone(openComposite);
+					notifyDone(endedComposite);
 				if (addToHistory)
-					add(openComposite);
+					add(endedComposite);
 			} else {
 				if (mode == EXECUTE)
-					notifyNotOK(openComposite);
+					notifyNotOK(endedComposite);
 			}
-			openComposite = null;
 		}
 	}
 
