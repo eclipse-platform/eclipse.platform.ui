@@ -1523,7 +1523,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         window.firePerspectiveClosed(this, persp.getDesc());
         persp.dispose();
 
-        stickyPerspectives.remove(persp.getDesc());
+        stickyPerspectives.remove(persp.getDesc().getId());
     }
 
     /**
