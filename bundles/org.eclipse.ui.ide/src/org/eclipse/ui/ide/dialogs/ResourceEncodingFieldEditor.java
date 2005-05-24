@@ -97,10 +97,10 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 		//Clear the value if nothing is selected
 		if(isDefaultSelected())
 			encoding = null;
-		else{//Don't update if the same thing is selected
-			if (hasSameEncoding(encoding))
-				return;
-		}
+		//Don't update if the same thing is selected
+		if (hasSameEncoding(encoding))
+			return;
+
 
 		String descriptionCharset = getCharsetFromDescription();
 		if (descriptionCharset != null && !(descriptionCharset.equals(encoding))) {
