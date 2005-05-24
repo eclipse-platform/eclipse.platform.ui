@@ -366,16 +366,12 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 					if (foundItem == null) {
 						TableItem item = new TableItem(editorTable, SWT.NULL);
 						item.setData(DATA_EDITOR, editor);
-						item.setData(DATA_FROM_CONTENT_TYPE, Boolean.TRUE);
-						item
-								.setText(editor.getLabel()
-										+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+						item.setData(DATA_FROM_CONTENT_TYPE, contentTypes[i]);
+						setLockedItemText(item, editor.getLabel());
 						item.setImage(getImage(editor));
 					} else { // update the item to reflect its origin
-						foundItem.setData(DATA_FROM_CONTENT_TYPE, Boolean.TRUE);
-						foundItem
-								.setText(foundItem.getText()
-										+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+						foundItem.setData(DATA_FROM_CONTENT_TYPE, contentTypes[i]);
+						setLockedItemText(foundItem, editor.getLabel());
 					}
 				}
 			}
@@ -383,6 +379,20 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         }
     }
 
+    /**
+	 * Set the locked message on the item. Assumes the item has an instance of
+	 * IContentType in the data map.
+	 * 
+	 * @param item the item to set
+	 * @param baseLabel the base label
+	 */
+	private void setLockedItemText(TableItem item, String baseLabel) {
+		item.setText(NLS
+				.bind(WorkbenchMessages.FileEditorPreference_isLocked,
+						baseLabel, ((IContentType) item
+								.getData(DATA_FROM_CONTENT_TYPE)).getName()));
+	}
+    
     /**
 	 * Place the existing resource types in the table
 	 */
@@ -564,10 +574,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                                 .getLabel()
                                 + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
 			if (!isEditorRemovable(item))
-				item
-						.setText(item.getText()
-								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
-        }
+				setLockedItemText(item, item.getText());
+		}
 
     }
 
@@ -595,14 +603,12 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                     .setText(((EditorDescriptor) oldDefaultItem.getData(DATA_EDITOR))
                             .getLabel());
             // update the label to reflect the locked state
-            if (!isEditorRemovable(oldDefaultItem)) 
-            	oldDefaultItem
-						.setText(oldDefaultItem.getText()
-								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+            if (!isEditorRemovable(oldDefaultItem))
+            		setLockedItemText(oldDefaultItem, oldDefaultItem.getText());
             // Now set the new default
             EditorDescriptor editor = (EditorDescriptor) items[0].getData(DATA_EDITOR);
             getSelectedResourceType().setDefaultEditor(editor);
-            Boolean fromContentType = (Boolean) items[0].getData(DATA_FROM_CONTENT_TYPE);
+            IContentType fromContentType = (IContentType) items[0].getData(DATA_FROM_CONTENT_TYPE);
             items[0].dispose(); //Table is single selection
             TableItem item = new TableItem(editorTable, SWT.NULL, 0);
             item.setData(DATA_EDITOR, editor);
@@ -613,9 +619,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                             + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
             item.setImage(getImage(editor));
             if (!isEditorRemovable(item))
-				item
-						.setText(item.getText()
-								+ " " + WorkbenchMessages.FileEditorPreference_isLocked); //$NON-NLS-1$
+				setLockedItemText(item, item.getText());
 			editorTable.setSelection(new TableItem[] { item });
         }
     }
@@ -658,10 +662,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 	 * @since 3.1
 	 */
     private boolean isEditorRemovable(TableItem item) {
-		Boolean fromContentType = (Boolean) item.getData(DATA_FROM_CONTENT_TYPE);
-		if (fromContentType == null)
-			return true;
-		return !fromContentType.booleanValue();
+		IContentType fromContentType = (IContentType) item.getData(DATA_FROM_CONTENT_TYPE);
+		return fromContentType == null;
 	}
 
 	/**
