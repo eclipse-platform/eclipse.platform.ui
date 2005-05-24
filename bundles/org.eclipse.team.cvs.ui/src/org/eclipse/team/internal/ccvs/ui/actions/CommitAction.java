@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.internal.resources.mapping.ResourceMapping;
 import org.eclipse.core.internal.resources.mapping.ResourceTraversal;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -85,13 +84,17 @@ public class CommitAction extends WorkspaceTraversalAction {
                     for (int k = 0; k < resources.length; k++) {
                         IResource resource = resources[k];
                         if (resource.getType() != IResource.FILE) {
-                            collectShallowFiles(((IContainer)resource).members(), roots);
+                            collectShallowFiles(members(resource), roots);
                         }
                     }
                 }
             }
         }
         return (IResource[]) roots.toArray(new IResource[roots.size()]);
+    }
+
+    private IResource[] members(IResource resource) throws CoreException {
+        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().members(resource);
     }
 
     private void collectShallowFiles(IResource[] resources, List roots) {
