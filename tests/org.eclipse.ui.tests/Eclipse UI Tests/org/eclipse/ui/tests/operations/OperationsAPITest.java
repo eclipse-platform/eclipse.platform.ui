@@ -221,7 +221,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op.hasContext(contextB));
 	}
 	
-	public void test94410() throws ExecutionException {
+	public void test94459() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		op2.execute(null, null);
@@ -236,7 +236,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op.hasContext(contextA));
 	}
 	
-	public void test94410AllContextsEmpty() throws ExecutionException {
+	public void test94459AllContextsEmpty() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		op2.execute(null, null);
