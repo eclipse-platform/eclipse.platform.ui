@@ -10,36 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -234,6 +214,11 @@ public class TagSelectionArea extends DialogArea {
 	            FilteredTagList list = (FilteredTagList)tagTable.getInput();
 	            list.setPattern(filter);
 	            tagTable.refresh();
+                int maxWidth = getMaxWidth(list.getChildren(null));
+                if (maxWidth > 0) {
+                    maxWidth = maxWidth + 40; /* space for the tag icon */
+                    tagTable.getTable().getColumn(0).setWidth(maxWidth);
+                }
 	            if (filterText == null || filter == null || filter.length() == 0) {
 	                setSelection(selection);
 	            } else {
@@ -260,6 +245,22 @@ public class TagSelectionArea extends DialogArea {
         }
     }
     
+    private int getMaxWidth(Object[] children) {
+        PixelConverter converter = new PixelConverter(tagTable.getTable());
+        int maxWidth = 0;
+        for (int i = 0; i < children.length; i++) {
+            Object object = children[i];
+            if (object instanceof TagElement) {
+                TagElement tag = (TagElement) object;
+                int width = tag.getTag().getName().length();
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            }
+        }
+        return converter.convertWidthInCharsToPixels(maxWidth);
+    }
+
     /**
      * Return whether only a table should be used
      * @return whether only a table should be used
@@ -361,10 +362,9 @@ public class TagSelectionArea extends DialogArea {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(100, true));
+		layout.addColumnData(new ColumnWeightData(100));
 		table.setLayout(layout);
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
+		new TableColumn(table, SWT.NONE);
 		TableViewer viewer = new TableViewer(table);
 		initialize(viewer);
 		viewer.setInput(createFilteredInput());
