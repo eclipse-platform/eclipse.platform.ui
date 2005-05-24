@@ -6,14 +6,14 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.team.internal.ui.TeamUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.team.internal.ui,
- org.eclipse.team.internal.ui.actions,
- org.eclipse.team.internal.ui.dialogs,
- org.eclipse.team.internal.ui.preferences,
- org.eclipse.team.internal.ui.registry,
- org.eclipse.team.internal.ui.synchronize,
- org.eclipse.team.internal.ui.synchronize.actions,
- org.eclipse.team.internal.ui.wizards,
+Export-Package: org.eclipse.team.internal.ui;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.actions;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.dialogs;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.preferences;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.registry;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.synchronize;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.synchronize.actions;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
+ org.eclipse.team.internal.ui.wizards;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.ui,
  org.eclipse.team.ui.synchronize
 Require-Bundle: org.eclipse.ui.ide;resolution:=optional,

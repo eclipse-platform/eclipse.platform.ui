@@ -6,16 +6,16 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.team.internal.ccvs.ui.CVSUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.team.internal.ccvs.ui,
- org.eclipse.team.internal.ccvs.ui.actions,
- org.eclipse.team.internal.ccvs.ui.console,
- org.eclipse.team.internal.ccvs.ui.model,
- org.eclipse.team.internal.ccvs.ui.operations,
- org.eclipse.team.internal.ccvs.ui.repo,
- org.eclipse.team.internal.ccvs.ui.subscriber,
- org.eclipse.team.internal.ccvs.ui.sync,
- org.eclipse.team.internal.ccvs.ui.tags,
- org.eclipse.team.internal.ccvs.ui.wizards
+Export-Package: org.eclipse.team.internal.ccvs.ui;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.actions;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.console;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.model;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.operations;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.repo;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.subscriber;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.sync;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.tags;x-internal:=true,
+ org.eclipse.team.internal.ccvs.ui.wizards;x-internal:=true
 Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.ui.views;resolution:=optional,
  org.eclipse.jface.text;resolution:=optional,
