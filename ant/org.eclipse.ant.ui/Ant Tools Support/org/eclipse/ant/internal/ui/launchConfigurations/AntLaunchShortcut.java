@@ -246,7 +246,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			buffer.append(' ');
 			buffer.append(filePath.lastSegment());
 		} else {
-			buffer.append(filePath.toOSString());
+			buffer.append(filePath.lastSegment());
 		}
 		
 		if (targetAttribute != null) {
