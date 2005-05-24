@@ -131,6 +131,8 @@ public class PluginRegistry implements IPluginRegistry {
 	 */
 	public IPluginDescriptor[] getPluginDescriptors(String plugin) {
 		Bundle[] bundles = InternalPlatform.getDefault().getBundles(plugin, null);
+		if (bundles == null)
+			return new IPluginDescriptor[0];
 		IPluginDescriptor[] results = new IPluginDescriptor[bundles.length];
 		int added = 0;
 		for (int i = 0; i < bundles.length; i++) {

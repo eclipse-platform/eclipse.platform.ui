@@ -284,6 +284,8 @@ public final class InternalPlatform {
 	}
 
 	public Bundle getBundle(String symbolicName) {
+		if (packageAdmin == null)
+			return null;
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
 		if (bundles == null)
 			return null;
@@ -320,6 +322,8 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getBundles(String symbolicName, String version) {
+		if (packageAdmin == null)
+			return null;
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
 		if (bundles == null)
 			return null;
@@ -361,6 +365,8 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getFragments(Bundle bundle) {
+		if (packageAdmin == null)
+			return null;
 		return packageAdmin.getFragments(bundle);
 	}
 
@@ -369,6 +375,8 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getHosts(Bundle bundle) {
+		if (packageAdmin == null)
+			return null;
 		return packageAdmin.getHosts(bundle);
 	}
 
@@ -776,6 +784,8 @@ public final class InternalPlatform {
 	}
 
 	public boolean isFragment(Bundle bundle) {
+		if (packageAdmin == null)
+			return false;
 		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
 	}
 
