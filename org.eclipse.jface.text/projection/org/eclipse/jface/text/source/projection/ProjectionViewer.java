@@ -870,6 +870,19 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
+	
+	/**
+	 * Tests whether the visible document's master document
+	 * is identical to this viewer's document.
+	 * 
+	 * @return <code>true</code> if the visible document's master is
+	 * 			identical to this viewer's document 
+	 * @since 3.1
+	 */
+	private boolean isVisibleMasterDocumentSameAsDocument() {
+		IDocument visibleDocument= getVisibleDocument();
+		return (visibleDocument instanceof ProjectionDocument) && ((ProjectionDocument)visibleDocument).getMasterDocument() == getDocument();
+	}
 
 	/**
 	 * Adapts the slave visual document of this viewer to the changes described
@@ -880,7 +893,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @exception BadLocationException in case the annotation model event is no longer in synchronization with the document
 	 */
 	private void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) throws BadLocationException {
-		if (event == null) {
+		
+		if (event == null || !isVisibleMasterDocumentSameAsDocument()) {
 
 			fPendingAnnotationWorldChange= false;
 			reinitializeProjection();
@@ -893,82 +907,79 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			} else
 				fPendingAnnotationWorldChange= true;
 
-		} else {
-
-			if (fPendingAnnotationWorldChange) {
-				if (event.isValid()) {
-					fPendingAnnotationWorldChange= false;
-					reinitializeProjection();
-				}
-			} else {
-
-				Annotation[] addedAnnotations= event.getAddedAnnotations();
-				Annotation[] changedAnnotation= event.getChangedAnnotations();
-				Annotation[] removedAnnotations= event.getRemovedAnnotations();
-
-				fCommandQueue= new ProjectionCommandQueue();
-
-				boolean isRedrawing= redraws();
-				int topIndex;
-				if (isRedrawing) {
-					rememberSelection();
-					topIndex= getTopIndex();
-				} else {
-					topIndex= -1;
-				}
-
-				processDeletions(event, removedAnnotations, true);
-				List coverage= new ArrayList();
-				processChanges(addedAnnotations, true, coverage);
-				processChanges(changedAnnotation, true, coverage);
-
-				ProjectionCommandQueue commandQueue= fCommandQueue;
-				fCommandQueue= null;
-
-				if (commandQueue.passedRedrawCostsThreshold()) {
-					setRedraw(false);
-					try {
-
-						try {
-							executeProjectionCommands(commandQueue, false);
-						} catch (IllegalArgumentException x) {
-							reinitializeProjection();
-						}
-
-					} finally {
-						if (isRedrawing)
-							restoreSelection();
-						setRedraw(true, topIndex);
-					}
-
-				} else {
-
-					StyledText textWidget= getTextWidget();
-
-					try {
-						if (isRedrawing && textWidget != null && !textWidget.isDisposed())
-							textWidget.setRedraw(false);
-
-						boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
-						try {
-							boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
-							if (!visibleDocumentReplaced && !fireRedraw)
-								invalidateTextPresentation();
-						} catch (IllegalArgumentException x) {
-							reinitializeProjection();
-						}
-
-					} finally {
-						if (isRedrawing) {
-							restoreSelection();
-							restoreViewport(topIndex);
-						}
-					}
-				}
-
+		} else if (fPendingAnnotationWorldChange) {
+			if (event.isValid()) {
+				fPendingAnnotationWorldChange= false;
+				reinitializeProjection();
 			}
-
+		} else {
+			
+			Annotation[] addedAnnotations= event.getAddedAnnotations();
+			Annotation[] changedAnnotation= event.getChangedAnnotations();
+			Annotation[] removedAnnotations= event.getRemovedAnnotations();
+			
+			fCommandQueue= new ProjectionCommandQueue();
+			
+			boolean isRedrawing= redraws();
+			int topIndex;
+			if (isRedrawing) {
+				rememberSelection();
+				topIndex= getTopIndex();
+			} else {
+				topIndex= -1;
+			}
+			
+			processDeletions(event, removedAnnotations, true);
+			List coverage= new ArrayList();
+			processChanges(addedAnnotations, true, coverage);
+			processChanges(changedAnnotation, true, coverage);
+			
+			ProjectionCommandQueue commandQueue= fCommandQueue;
+			fCommandQueue= null;
+			
+			if (commandQueue.passedRedrawCostsThreshold()) {
+				setRedraw(false);
+				try {
+					
+					try {
+						executeProjectionCommands(commandQueue, false);
+					} catch (IllegalArgumentException x) {
+						reinitializeProjection();
+					}
+					
+				} finally {
+					if (isRedrawing)
+						restoreSelection();
+					setRedraw(true, topIndex);
+				}
+				
+			} else {
+				
+				StyledText textWidget= getTextWidget();
+				
+				try {
+					if (isRedrawing && textWidget != null && !textWidget.isDisposed())
+						textWidget.setRedraw(false);
+					
+					boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
+					try {
+						boolean visibleDocumentReplaced= executeProjectionCommands(commandQueue, fireRedraw);
+						if (!visibleDocumentReplaced && !fireRedraw)
+							invalidateTextPresentation();
+					} catch (IllegalArgumentException x) {
+						reinitializeProjection();
+					}
+					
+				} finally {
+					if (isRedrawing) {
+						restoreSelection();
+						restoreViewport(topIndex);
+					}
+				}
+			}
+			
 		}
+		
 	}
 
 	private void restoreViewport(int topIndex) {
@@ -1076,6 +1087,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public IRegion computeCollapsedRegion(Position position) {
 		try {
 			IDocument document= getDocument();
+			if (document == null)
+				return null;
+			
 			int line= document.getLineOfOffset(position.getOffset());
 			int offset= document.getLineOffset(line + 1);
 
@@ -1100,6 +1114,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	IRegion[] computeCollapsedRegions(Position position) {
 		try {
 			IDocument document= getDocument();
+			if (document == null)
+				return null;
 
 			if (position instanceof IProjectionPosition) {
 				IProjectionPosition projPosition= (IProjectionPosition) position;
@@ -1131,6 +1147,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public Position computeCollapsedRegionAnchor(Position position) {
 		try {
 			IDocument document= getDocument();
+			if (document == null)
+				return null;
 
 			int captionOffset= position.getOffset();
 			if (position instanceof IProjectionPosition)
