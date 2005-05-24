@@ -1266,6 +1266,7 @@ public class Main {
             // if we are not cascaded then remove the parent property even if it was set.
             System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
         else {
+        	ensureAbsolute(PROP_SHARED_CONFIG_AREA);
             URL sharedConfigURL = buildLocation(PROP_SHARED_CONFIG_AREA, null, ""); //$NON-NLS-1$
             if (sharedConfigURL == null)
                 try {
@@ -1300,6 +1301,40 @@ public class Main {
             bootLocation = resolve(urlString);
         }
     }
+
+    /**
+	 * Ensures the value for a system property is an absolute URL. Relative URLs are translated to
+	 * absolute URLs by taking the install URL as reference.
+	 *   
+	 * @param locationProperty the key for a system property containing a URL
+	 */
+	private void ensureAbsolute(String locationProperty) {
+		String propertyValue = System.getProperty(locationProperty);
+		if (propertyValue == null)
+			// property not defined
+			return;
+		URL locationURL = null;
+		try {
+			locationURL = new URL(propertyValue);
+		} catch (MalformedURLException e) {
+			// property is not a valid URL
+			return;
+		}
+		String locationPath = locationURL.getPath();
+		if (locationPath.startsWith("/")) //$NON-NLS-1$
+			// property value is absolute
+			return;
+		URL installURL = getInstallLocation();
+		if (!locationURL.getProtocol().equals(installURL.getProtocol()))
+			// not same protocol
+			return;
+		try {
+			URL absoluteURL = new URL(installURL, locationPath);
+			System.getProperties().put(locationProperty, absoluteURL.toExternalForm());
+		} catch (MalformedURLException e) {
+			// should not happen - the relative URL is known to be valid
+		}
+	}
 
     /**
      * Returns url of the location this class was loaded from
