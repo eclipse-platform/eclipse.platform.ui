@@ -416,7 +416,7 @@
       <page
             class="org.eclipse.ui.ExtensionFactory:contentTypesPreferencePage"
             id="org.eclipse.ui.preferencePages.ContentTypes"
-            category="org.eclipse.ui.preferencePages.Editors"
+            category="org.eclipse.ui.preferencePages.Workbench"
             name="%PreferencePages.ContentTypes">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
       </page>
