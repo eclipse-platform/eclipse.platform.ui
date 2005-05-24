@@ -69,7 +69,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
 	 * want to continue launch despite existing compile errors in specific
-	 * projects. This enahnces the 'compileErrorPromptStatus' by specifying
+	 * projects. This enhances the 'compileErrorPromptStatus' by specifying
 	 * which projects the errors exist in.
 	 * 
 	 * @since 3.1
