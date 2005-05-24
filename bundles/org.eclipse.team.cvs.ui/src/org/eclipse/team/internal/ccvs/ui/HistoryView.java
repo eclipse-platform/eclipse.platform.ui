@@ -42,7 +42,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
-import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.*;
@@ -281,18 +281,29 @@ public class HistoryView extends ViewPart {
 				}
 				return resources;
 			}
+            /*
+             * Override the creation of the tag operation in order to support
+             * the refresh of the view after the tag operation completes
+             */
+            protected ITagOperation createTagOperation() {
+                return new TagInRepositoryOperation(getTargetPart(), getSelectedRemoteResources()) {
+                    public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
+                        super.execute(monitor);
+                        Display.getDefault().asyncExec(new Runnable() {
+                            public void run() {
+                                if( ! wasCancelled()) {
+                                    refresh();
+                                }
+                            }
+                        });
+                    };
+                };
+            }
 		};
 		tagWithExistingAction = getContextMenuAction(CVSUIMessages.HistoryView_tagWithExistingAction, false /* no progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						if( ! ((MoveRemoteTagAction)tagActionDelegate).wasCancelled()) {
-							refresh();
-						}
-					}
-				});
 			}
 		});
 		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
