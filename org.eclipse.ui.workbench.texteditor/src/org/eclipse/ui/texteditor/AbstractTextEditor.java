@@ -3748,7 +3748,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				isSynchronized= (modifiedStamp == synchStamp);
 			}
 
-			if (fErrorCorrectionOnSave == 1 && !isSynchronized) {
+			boolean isLowLevelException= exception.getStatus().getException() != null;
+			if (!isLowLevelException && fErrorCorrectionOnSave == 1 && !isSynchronized) {
 
 				String title= EditorMessages.Editor_error_save_outofsync_title;
 				String msg= EditorMessages.Editor_error_save_outofsync_message;
@@ -3765,21 +3766,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						progressMonitor.setCanceled(true);
 				}
 			} else {
-				IStatus status= exception.getStatus();
+
 				String title= EditorMessages.Editor_error_save_title;
 				String msg= EditorMessages.Editor_error_save_message;
-				
-				/*
-				 * XXX: Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=96227
-				 * 		Appending low-level message to message for now
-				 */
-				if (status.getException() != null) {
-					String lowLevelMessage= status.getException().getLocalizedMessage();
-					if (lowLevelMessage == null)
-						msg= msg + "\n" + lowLevelMessage; //$NON-NLS-1$
-				}
-				
-				ErrorDialog.openError(shell, title, msg, status);
+				ErrorDialog.openError(shell, title, msg, exception.getStatus());
 
 				/*
 				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
