@@ -14,14 +14,17 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -85,7 +88,44 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * prompts at the same time.
 	 */
 	private boolean fPrompting;
+	private PerspectiveSwitchLock fPerspectiveSwitchLock = new PerspectiveSwitchLock();
+	
+	/**
+	 * Lock used to synchronize perspective switching with view activation.
+	 * Clients wanting to perform an action after a perspective switch should
+	 * schedule jobs with the perspective manager via #schedulePostSwitch(..)
+	 */
+	public class PerspectiveSwitchLock
+	{
+
+		private int fSwitch = 0;
+		private List fJobs = new ArrayList();
 		
+		public synchronized void startSwitch() {
+			fSwitch++;
+		}
+		
+		public synchronized void endSwitch() {
+			fSwitch--;
+			if (fSwitch == 0) {
+				Iterator jobs = fJobs.iterator();
+				while (jobs.hasNext()) {
+					((Job)jobs.next()).schedule();
+				}
+				fJobs.clear();
+			}
+		}
+				
+		public synchronized void schedulePostSwitch(Job job) {
+			if (fSwitch > 0) {
+				fJobs.add(job);	
+			} else {
+				job.schedule();
+			}
+		}
+	}
+	
+	
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The perspective manager starts listening for
@@ -131,6 +171,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public void launchAdded(ILaunch launch) {
+		
+		fPerspectiveSwitchLock.startSwitch();
+		
 		String perspectiveId = null;
 		// check event filters
 		try {
@@ -152,13 +195,19 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		// switch
 		async(new Runnable() {
 			public void run() {
-				IWorkbenchWindow window = getWindowForPerspective(id);
-				if (id != null && window != null && shouldSwitchPerspectiveForLaunch(window, id)) {
-					switchToPerspective(window, id);
+				try
+				{
+					IWorkbenchWindow window = getWindowForPerspective(id);
+					if (id != null && window != null && shouldSwitchPerspectiveForLaunch(window, id)) {
+						switchToPerspective(window, id);
+					}
+				}
+				finally
+				{
+					fPerspectiveSwitchLock.endSwitch();
 				}
 			}
 		});
-		
 	}
 
 
@@ -284,6 +333,15 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @param event the suspend event
 	 */
 	private void handleBreakpointHit(DebugEvent event) {
+		
+		// Must be called here to indicate that the perspective
+		// may be switching.
+		// Putting this in the async UI call will cause the Perspective
+		// Manager to turn on the lock too late.  Consequently, LaunchViewContextListener
+		// may not know that the perspective will switch and will open view before
+		// the perspective switch.
+		fPerspectiveSwitchLock.startSwitch();
+		
 		// apply event filters
 		ILaunch launch= null;
 		Object source = event.getSource();
@@ -307,34 +365,41 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		Runnable r = new Runnable() {
 			public void run() {
 				IWorkbenchWindow window = null;
+				try{
 				if (targetId != null) {
-					window = getWindowForPerspective(targetId);
-					if (window == null) {
-						return;
-					}
-					if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
-						switchToPerspective(window, targetId);
-						// Showing the perspective can open a new window
-						// (based on user prefs). So check again in case a
-						// new window has been opened.
 						window = getWindowForPerspective(targetId);
 						if (window == null) {
 							return;
 						}
+						
+						if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
+							switchToPerspective(window, targetId);
+							// Showing the perspective can open a new window
+							// (based on user prefs). So check again in case a
+							// new window has been opened.
+							window = getWindowForPerspective(targetId);
+							if (window == null) {
+								return;
+							}
+						}
+						// re-open the window if minimized 
+						Shell shell= window.getShell();
+						if (shell != null) {
+							if (shell.getMinimized()) {
+								shell.setMinimized(false);
+							}
+							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+								shell.forceActive();
+							}
+						}
 					}
-					// re-open the window if minimized 
-					Shell shell= window.getShell();
-					if (shell != null) {
-						if (shell.getMinimized()) {
-							shell.setMinimized(false);
-						}
-						if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
-							shell.forceActive();
-						}
+					if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+						showDebugView(window);
 					}
 				}
-				if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-					showDebugView(window);
+				finally
+				{
+					fPerspectiveSwitchLock.endSwitch();
 				}
 			}
 		};
@@ -742,4 +807,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		
 	}
 	
+	/**
+	 * Schedules the given job after perspective switching is complete, or
+	 * immediately if a perspective switch is not in progress.
+	 * 
+	 * @param job job to run after perspective switching
+	 */
+	public void schedulePostSwitch(Job job) {
+		fPerspectiveSwitchLock.schedulePostSwitch(job);
+	}
 }

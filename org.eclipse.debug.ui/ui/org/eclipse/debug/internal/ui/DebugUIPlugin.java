@@ -389,6 +389,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
+		// make sure the perspective manager is created
+		// and be the first debug event listener
+		fPerspectiveManager = new PerspectiveManager();
+		fPerspectiveManager.startup();		
+		
 		// Listen to launches to lazily create "launch processors"
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
         
@@ -652,11 +657,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getProcessConsoleManager().startup();
 		
-		if (fPerspectiveManager == null) {
-			PerspectiveManager manager = getPerspectiveManager();
-			manager.launchAdded(launch);
-		}
-		
 		if (fStepFilterManager == null) {
 			getStepFilterManager().launchAdded(launch);
 		}
@@ -665,15 +665,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns the persepective manager - instantiating it if required.
+	 * Returns the persepective manager.
 	 * 
 	 * @return
 	 */
 	public PerspectiveManager getPerspectiveManager() {
-		if (fPerspectiveManager == null) {
-			fPerspectiveManager = new PerspectiveManager();
-			fPerspectiveManager.startup();			
-		}
 		return fPerspectiveManager;
 	}
 	

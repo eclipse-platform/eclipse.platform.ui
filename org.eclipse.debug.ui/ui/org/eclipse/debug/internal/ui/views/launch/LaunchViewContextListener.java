@@ -24,7 +24,10 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
@@ -32,6 +35,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -56,6 +60,7 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * A context listener which automatically opens/closes/activates views in
@@ -530,87 +535,129 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 	 * @param contextId the ID of the context that has been
 	 * 	enabled
 	 */
-	public void contextEnabled(Set contextIds) {
+	public void contextEnabled(final Set contextIds) {
 		if (!isAutoManageViews()) {
 			return;
 		}
-		IWorkbenchPage page= getPage();
-		// We ignore the "Debugging" context since we use it
-		// to provide a base set of views for other context
-		// bindings to inherit. If we don't ignore it, we'll
-		// end up opening those views whenever a debug session
-		// starts, which is not the desired behavior.
-		contextIds.remove(DEBUG_CONTEXT);
-		if (page == null || contextIds.size() == 0) {
-			return;
-		}
-		Set viewsToShow= new HashSet();
-		Set viewsToOpen= new HashSet();
-		computeViewActivation(contextIds, viewsToOpen, viewsToShow);
 		
-		boolean resetTrackingPartChanges = false;
-		if (fIsTrackingPartChanges)
-		{
-			// only change the flag if it is currently
-			// tracking part changes.
-			fIsTrackingPartChanges= false;
-			resetTrackingPartChanges = true;
-		}
-		
-		Iterator iterator= viewsToOpen.iterator();
-		
-		String id = page.getPerspective().getId();
-		Set views = (Set)openedViewIds.get(id);
-		if (views == null)
-		{
-			views = new HashSet();
-		}
-		
-		while (iterator.hasNext()) {
-			String viewId = (String) iterator.next();
-			try {
-				IViewPart view = page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
-				views.add(viewId);
-
-				viewsToShow.add(view);
-			} catch (PartInitException e) {
-				DebugUIPlugin.log(e.getStatus());
-			}
-		}
-		
-		if (!viewsToOpen.isEmpty()) {
-			openedViewIds.put(id, views);
-			saveOpenedViews();
-		}
-		iterator= viewsToShow.iterator();
-		while (iterator.hasNext()) {
-			boolean activate= true;
-			IViewPart view = (IViewPart) iterator.next();
-			IViewPart[] stackedViews = page.getViewStack(view);
-			if (stackedViews == null) {
-				continue;
-			}
-			// For each applicable view, iterate through the view stack.
-			// If we find that view before any other applicable views,
-			// show it. Otherwise, don't.
-			for (int i = 0; i < stackedViews.length; i++) {
-				IViewPart stackedView= stackedViews[i];
-				if (view == stackedView) {
-					break;
-				} else if (viewsToShow.contains(stackedView)) {
-					// If this view is below an appropriate view, don't show it
-					activate= false;
-					break;
+		final UIJob openViewsJob = new UIJob("Open Context-Enabled Views") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				IWorkbenchPage page =  getPage();
+				if (page == null)
+					return Status.OK_STATUS;
+				
+				// Since we run this job asynchronously on the UI Thread,
+				// #getPerspective() may return null when this job is run
+				// when the workbench is shutting down.
+				if (page.getPerspective() == null)
+					return Status.OK_STATUS;
+				
+				// We ignore the "Debugging" context since we use it
+				// to provide a base set of views for other context
+				// bindings to inherit. If we don't ignore it, we'll
+				// end up opening those views whenever a debug session
+				// starts, which is not the desired behavior.
+				contextIds.remove(DEBUG_CONTEXT);
+				if (page == null || contextIds.size() == 0) {
+					return Status.OK_STATUS;
 				}
+				Set viewsToShow = new HashSet();
+				Set viewsToOpen = new HashSet();
+				computeViewActivation(contextIds, viewsToOpen, viewsToShow);
+
+				boolean resetTrackingPartChanges = false;
+				if (fIsTrackingPartChanges) {
+					// only change the flag if it is currently
+					// tracking part changes.
+					fIsTrackingPartChanges = false;
+					resetTrackingPartChanges = true;
+				}
+
+				Iterator iterator = viewsToOpen.iterator();
+
+				String id = page.getPerspective().getId();
+				Set views = (Set) openedViewIds.get(id);
+				if (views == null) {
+					views = new HashSet();
+				}
+
+				while (iterator.hasNext()) {
+					String viewId = (String) iterator.next();
+					try {
+						IViewPart view = page.showView(viewId, null,
+								IWorkbenchPage.VIEW_CREATE);
+						views.add(viewId);
+
+						viewsToShow.add(view);
+					} catch (PartInitException e) {
+						DebugUIPlugin.log(e.getStatus());
+					}
+				}
+
+				if (!viewsToOpen.isEmpty()) {
+					openedViewIds.put(id, views);
+					saveOpenedViews();
+				}
+				iterator = viewsToShow.iterator();
+				while (iterator.hasNext()) {
+					boolean activate = true;
+					IViewPart view = (IViewPart) iterator.next();
+					IViewPart[] stackedViews = page.getViewStack(view);
+					if (stackedViews == null) {
+						continue;
+					}
+					// For each applicable view, iterate through the view stack.
+					// If we find that view before any other applicable views,
+					// show it. Otherwise, don't.
+					for (int i = 0; i < stackedViews.length; i++) {
+						IViewPart stackedView = stackedViews[i];
+						if (view == stackedView) {
+							break;
+						} else if (viewsToShow.contains(stackedView)) {
+							// If this view is below an appropriate view, don't
+							// show it
+							activate = false;
+							break;
+						}
+					}
+					if (activate) {
+						page.bringToTop(view);
+					}
+				}
+
+				// Reset if we have previously changed this setting
+				if (resetTrackingPartChanges)
+					loadTrackViews();
+				
+				return Status.OK_STATUS;
 			}
-			if (activate) {
-				page.bringToTop(view);
-			}
+		};
+		
+		openViewsJob.setSystem(true);
+
+		final PerspectiveManager manager = DebugUIPlugin.getDefault().getPerspectiveManager();
+		if (isBoundToViews(contextIds)) {
+			manager.schedulePostSwitch(openViewsJob);
+		}
+	}
+	
+	/**
+	 * @param contextIds
+	 * @return if the specified the context ids are tied
+	 * to any context-enabled views.
+	 */
+	private boolean isBoundToViews(Set contextIds)
+	{
+		Set possibleViewsToShow = new HashSet();
+		Iterator iter = contextIds.iterator();
+		while (iter.hasNext())
+		{
+			String contextId = (String)iter.next();
+			Set viewIds = getApplicableViewIds(contextId);
+			possibleViewsToShow.addAll(viewIds);
 		}
 		
-		// Reset if we have previously changed this setting
-		if (resetTrackingPartChanges)
-			loadTrackViews();
+		return !possibleViewsToShow.isEmpty();		
 	}
 	
 	/**
@@ -661,7 +708,7 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 	 * @param contexts
 	 */
 	public void contextsDisabled(Set contexts) {
-		IWorkbenchPage page= getPage();
+		IWorkbenchPage page=  getPage();
 		if (page == null || contexts.size() == 0 || !isAutoManageViews()) {
 			return;
 		}
@@ -715,7 +762,12 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 		Set viewIdsToClose= new HashSet();
 		Set viewIdsToKeepOpen= getViewIdsForEnabledContexts();
 		Iterator contexts = contextIds.iterator();
-		String currentPerspId = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective().getId();
+		IWorkbenchPage page = getPage();
+		if (page == null)
+			return viewIdsToClose;
+		if (page.getPerspective() == null)
+			return viewIdsToClose;
+		String currentPerspId = page.getPerspective().getId();
 		Set viewIds = (Set)openedViewIds.get(currentPerspId);
 		while (contexts.hasNext()) {
 			String contextId = (String) contexts.next();
