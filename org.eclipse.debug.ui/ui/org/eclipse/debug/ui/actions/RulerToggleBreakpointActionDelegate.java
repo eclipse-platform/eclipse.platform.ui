@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Event;
+
+import org.eclipse.jface.action.IAction;
+
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -78,12 +79,7 @@ public class RulerToggleBreakpointActionDelegate extends AbstractRulerActionDele
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		IDocumentProvider provider = editor.getDocumentProvider();
-		IDocument document = null;
-		if (provider != null) {
-			document = provider.getDocument(editor.getEditorInput());
-		}
-		fDelegate = new ToggleBreakpointAction(editor, document, rulerInfo);
+		fDelegate = new ToggleBreakpointAction(editor, null, rulerInfo);
 		return fDelegate;
 	}
 

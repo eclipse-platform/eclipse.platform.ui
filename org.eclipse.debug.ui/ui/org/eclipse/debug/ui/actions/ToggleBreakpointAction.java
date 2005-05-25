@@ -21,6 +21,8 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action to toggle a breakpoint in a vertical ruler of a workbench part
@@ -45,9 +47,9 @@ public class ToggleBreakpointAction extends Action {
 	 * 
 	 * @param part the part in which to toggle the breakpoint - provides
 	 *  an <code>IToggleBreakpointsTarget</code> adapter
-	 * @param document the document breakpoints are being set in - used
-	 *  to determine a line number/text range for the breakpoint. When
-	 *  <code>null</code> this action will not run.
+	 * @param document the document breakpoints are being set in or 
+	 * <code>null</code> when the document should be derived from the
+	 * given part
 	 * @param rulerInfo specifies location the user has double-clicked 
 	 */
 	public ToggleBreakpointAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
@@ -61,14 +63,15 @@ public class ToggleBreakpointAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		if (fDocument == null) {
+		IDocument document= getDocument();
+		if (document == null) {
 			return;
 		}
 		IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) fPart.getAdapter(IToggleBreakpointsTarget.class);
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
 		try {
-			IRegion region = fDocument.getLineInformation(line);
-			ITextSelection selection = new TextSelection(fDocument, region.getOffset(), 0);
+			IRegion region = document.getLineInformation(line);
+			ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
 			if (adapter instanceof IToggleBreakpointsTargetExtension) {
 				IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
 				if (extension.canToggleBreakpoints(fPart, selection)) {
@@ -108,4 +111,29 @@ public class ToggleBreakpointAction extends Action {
 		fPart = null;
 		fRulerInfo = null;
 	}
+
+	/**
+	 * Returns the document on which this action operates.
+	 * 
+	 * @return the document or <code>null</null> if none
+	 */
+	private IDocument getDocument() {
+		if (fDocument != null)
+			return fDocument;
+		
+		if (fPart instanceof ITextEditor) {
+			ITextEditor editor= (ITextEditor)fPart;
+			IDocumentProvider provider = editor.getDocumentProvider();
+			if (provider != null)
+				return provider.getDocument(editor.getEditorInput());
+		}
+		
+		IDocument doc = (IDocument) fPart.getAdapter(IDocument.class);
+		if (doc != null) {
+			return doc;
+		}
+		
+		return null;
+	}
+
 }
