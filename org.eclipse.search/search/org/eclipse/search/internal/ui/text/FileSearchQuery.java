@@ -81,7 +81,11 @@ public class FileSearchQuery implements ISearchQuery {
 		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
 		ITextSearchResultCollector collector= new TextSearchResultCollector(textResult, pm);
-		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
+		String searchString= fSearchString;
+		if (searchString.trim().equals(String.valueOf('*'))) {
+			searchString= new String();
+		}
+		return new TextSearchEngine().search(fScope, fVisitDerived, collector, new MatchLocator(searchString, isCaseSensitive(), isRegexSearch()));
 	}
 
 	public String getLabel() {
