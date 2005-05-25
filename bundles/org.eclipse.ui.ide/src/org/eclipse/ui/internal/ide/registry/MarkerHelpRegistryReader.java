@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.ide.registry;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -52,11 +52,11 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
      * </p>
      */
     public void addHelp(MarkerHelpRegistry registry) {
-        IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+        IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
         markerHelpRegistry = registry;
-        readRegistry(pluginRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH,
+        readRegistry(extensionRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH,
                 IDEWorkbenchPlugin.PL_MARKER_HELP);
-        readRegistry(pluginRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH,
+        readRegistry(extensionRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH,
                 IDEWorkbenchPlugin.PL_MARKER_RESOLUTION);
     }
 

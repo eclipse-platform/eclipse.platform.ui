@@ -322,7 +322,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
      */
     public void load() {
         CapabilityRegistryReader reader = new CapabilityRegistryReader();
-        reader.read(Platform.getPluginRegistry(), this);
+        reader.read(Platform.getExtensionRegistry(), this);
         mapCapabilities();
     }
 

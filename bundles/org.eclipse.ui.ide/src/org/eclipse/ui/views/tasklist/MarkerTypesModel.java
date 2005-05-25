@@ -72,7 +72,7 @@ class MarkerTypesModel {
      */
     private HashMap readTypes() {
         HashMap types = new HashMap();
-        IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(
+        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(
                 ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
         if (point != null) {
             // Gather all registered marker types.

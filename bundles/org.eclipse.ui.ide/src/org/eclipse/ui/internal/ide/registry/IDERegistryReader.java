@@ -18,7 +18,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -170,7 +170,7 @@ public abstract class IDERegistryReader {
      *	Start the registry reading process using the
      * supplied plugin ID and extension point.
      */
-    protected void readRegistry(IPluginRegistry registry, String pluginId,
+    protected void readRegistry(IExtensionRegistry registry, String pluginId,
             String extensionPoint) {
         String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
         IExtension[] extensions = (IExtension[]) extensionPoints.get(pointId);

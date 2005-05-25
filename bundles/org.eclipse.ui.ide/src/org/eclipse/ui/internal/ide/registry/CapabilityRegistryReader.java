@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -127,7 +127,7 @@ public class CapabilityRegistryReader extends IDERegistryReader {
      * Reads project capabilities and capability categories from the provided
      * plugin registry and stores them in the provided capability registry.
      */
-    public void read(IPluginRegistry registry, CapabilityRegistry out) {
+    public void read(IExtensionRegistry registry, CapabilityRegistry out) {
         capabilityRegistry = out;
         readRegistry(registry, IDEWorkbenchPlugin.IDE_WORKBENCH,
                 IDEWorkbenchPlugin.PL_CAPABILITIES);

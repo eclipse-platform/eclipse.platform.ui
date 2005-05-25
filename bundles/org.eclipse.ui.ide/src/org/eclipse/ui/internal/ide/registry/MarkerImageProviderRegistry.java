@@ -78,7 +78,7 @@ public class MarkerImageProviderRegistry {
             }
 
             public void readRegistry() {
-                readRegistry(Platform.getPluginRegistry(),
+                readRegistry(Platform.getExtensionRegistry(),
                         IDEWorkbenchPlugin.IDE_WORKBENCH,
                         IDEWorkbenchPlugin.PL_MARKER_IMAGE_PROVIDER);
             }

@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -67,7 +67,7 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
     /**
      * Read the project nature images within a registry.
      */
-    public void readProjectNatureImages(IPluginRegistry in,
+    public void readProjectNatureImages(IExtensionRegistry in,
             ProjectImageRegistry out) {
         registry = out;
         readRegistry(in, IDEWorkbenchPlugin.IDE_WORKBENCH,

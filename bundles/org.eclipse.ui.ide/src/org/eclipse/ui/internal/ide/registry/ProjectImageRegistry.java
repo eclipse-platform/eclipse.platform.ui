@@ -36,7 +36,7 @@ public class ProjectImageRegistry {
      */
     public void load() {
         ProjectImageRegistryReader reader = new ProjectImageRegistryReader();
-        reader.readProjectNatureImages(Platform.getPluginRegistry(), this);
+        reader.readProjectNatureImages(Platform.getExtensionRegistry(), this);
     }
 
     /**

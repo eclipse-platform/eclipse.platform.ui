@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * Holds the information for an item appearing in the welcome editor
@@ -126,16 +126,15 @@ public class WelcomeItem {
      * Run an action
      */
     private void runAction(String pluginId, String className) {
-        IPluginDescriptor desc = Platform.getPluginRegistry()
-                .getPluginDescriptor(pluginId);
-        if (desc == null) {
+    	Bundle pluginBundle = Platform.getBundle(pluginId);
+        if (pluginBundle == null) {
             logActionLinkError(pluginId, className);
             return;
         }
         Class actionClass;
         IAction action;
         try {
-            actionClass = desc.getPluginClassLoader().loadClass(className);
+        	actionClass = pluginBundle.loadClass(className);
         } catch (ClassNotFoundException e) {
             logActionLinkError(pluginId, className);
             return;
