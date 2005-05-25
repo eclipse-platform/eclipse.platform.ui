@@ -1648,6 +1648,7 @@ public final class Workbench implements IWorkbench {
 				display.asyncExec(new Runnable() {
 					public void run() {
 						UIStats.end(UIStats.START_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
+						UIStats.startupComplete();
 					}
 				});
 

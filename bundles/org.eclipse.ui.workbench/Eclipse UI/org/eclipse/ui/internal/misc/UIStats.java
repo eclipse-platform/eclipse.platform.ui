@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.misc;
 
 import java.util.HashMap;
 import org.eclipse.core.runtime.PerformanceStats;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -129,4 +130,26 @@ public class UIStats {
             PerformanceStats.getStats(events[event], blame).addRun(elapsed, label);
         }
     }
+   	
+   	/**
+   	 * Special hook to signal that application startup is complete and the event
+   	 * loop has started running.
+   	 */
+   	public static void startupComplete() {
+   		// We use a runtime debug option here for backwards compatibility (bug 96672)
+		// Note that this value is only relevant if the workspace chooser is not used.
+   		String option = Platform.getDebugOption(Platform.PI_RUNTIME + "/debug"); //$NON-NLS-1$
+		if (option == null || !"true".equalsIgnoreCase(option)) //$NON-NLS-1$
+			return;
+		String startString = System.getProperty("eclipse.startTime"); //$NON-NLS-1$
+		if (startString == null)
+			return;
+		try {
+			long start = Long.parseLong(startString);
+			long end = System.currentTimeMillis();
+			System.out.println("Startup complete: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (NumberFormatException e) {
+			//this is just debugging code -- ok to swallow exception
+		}
+   	}
 }
