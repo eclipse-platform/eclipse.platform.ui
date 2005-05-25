@@ -62,7 +62,7 @@ public final class InternalPlatform {
 	public static boolean DEBUG_PREFERENCE_SET = false;
 	public static boolean DEBUG_REGISTRY = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
-	private static Runnable endOfInitializationHandler = null;
+	private static Runnable splashHandler = null;
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
 	private static String[] frameworkArgs = new String[0];
@@ -129,7 +129,6 @@ public final class InternalPlatform {
 	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static boolean splashDown = false;
 	private static final String UPDATE = "-update"; //$NON-NLS-1$
 	static URLConverter urlConverter;
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
@@ -225,25 +224,23 @@ public final class InternalPlatform {
 	}
 
 	/**
-	 * @see Platform
+	 * @see Platform#endSplash()
 	 */
 	public void endSplash() {
-		if (DEBUG) {
-			//This value is only relevant if the workspace chooser is not used.
-			String startString = System.getProperty("eclipse.startTime"); //$NON-NLS-1$
-			if (startString != null)
-				try {
-					long start = Long.parseLong(startString);
-					long end = System.currentTimeMillis();
-					System.out.println("Startup complete: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (NumberFormatException e) {
-					//this is just debugging code -- ok to swallow exception
-				}
-		}
-		if (splashDown)
+		final Runnable handler = splashHandler;
+		if (handler == null)
 			return;
-		splashDown = true;
-		run(endOfInitializationHandler);
+		//clear reference to handler to avoid calling it again and to avoid object leak
+		splashHandler = null;
+		run(new ISafeRunnable() {
+			public void handleException(Throwable e) {
+				// just continue ... the exception has already been logged by
+				// handleException(ISafeRunnable)
+			}
+			public void run() throws Exception {
+				handler.run();
+			}
+		});
 	}
 
 	public URL find(Bundle b, IPath path) {
@@ -1046,26 +1043,6 @@ public final class InternalPlatform {
 		}
 	}
 
-	private void run(Runnable handler) {
-		// run end-of-initialization handler
-		if (handler == null)
-			return;
-
-		final Runnable finalHandler = handler;
-		ISafeRunnable code = new ISafeRunnable() {
-
-			public void handleException(Throwable e) {
-				// just continue ... the exception has already been logged by
-				// the platform (see handleException(ISafeRunnable)
-			}
-
-			public void run() throws Exception {
-				finalHandler.run();
-			}
-		};
-		run(code);
-	}
-
 	public void setExtensionRegistry(IExtensionRegistry value) {
 		registry = value;
 	}
@@ -1089,7 +1066,7 @@ public final class InternalPlatform {
 		this.context = runtimeContext;
 		initializeLocationTrackers();
 		ResourceTranslator.start();
-		endOfInitializationHandler = getSplashHandler();
+		splashHandler = getSplashHandler();
 		processCommandLine(infoService.getNonFrameworkArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
