@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.expressions.PropertyTester;
@@ -18,8 +22,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.ui.IPathEditorInput;
 
 /**
  * ResourceExtender provides property testers for the XML expression language
@@ -41,7 +48,31 @@ public class ResourceExtender extends PropertyTester {
      */
     public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
         IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
-        if (resource != null) {
+        if (resource == null) {
+        	if (PROPERTY_MATCHES_CONTENT_TYPE.equals(method)) {
+		        IPathEditorInput editorInput = (IPathEditorInput) ((IAdaptable) receiver).getAdapter(IPathEditorInput.class);
+		        if (editorInput != null) {
+		            IPath path= editorInput.getPath();
+		            File file= path.toFile();
+		            if (file.exists()) {
+		                try {
+		                    FileReader reader= new FileReader(file);
+		                    IContentType contentType= Platform.getContentTypeManager().getContentType((String)expectedValue);
+		                    IContentDescription description= contentType.getDescriptionFor(reader, IContentDescription.ALL);
+		                    reader.close();
+		                    if (description != null) {
+		                        IContentType type = description.getContentType();
+		                        return type != null && expectedValue.equals(type.getId());
+		                    }
+		                } catch (FileNotFoundException e) {
+		                    return false;
+		                } catch (IOException e) {
+		                    return false;
+		                }
+		            }
+		        }
+        	}
+        } else {
             if (PROPERTY_MATCHES_PATTERN.equals(method)) { //$NON-NLS-1$
                 String fileName = resource.getName();
                 String expected = (String) expectedValue;
