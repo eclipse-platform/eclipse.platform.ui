@@ -336,7 +336,6 @@ public abstract class PreferencePage extends DialogPage implements
             Point bodySize = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
             GridData gd = (GridData) descriptionLabel.getLayoutData();
             gd.widthHint = bodySize.x;
-            descriptionLabel.getParent().layout(true);
         }
         return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
     }
