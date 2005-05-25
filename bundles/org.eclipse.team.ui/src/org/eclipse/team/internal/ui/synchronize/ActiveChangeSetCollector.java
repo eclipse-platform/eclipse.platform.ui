@@ -70,7 +70,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
             provider.performUpdate(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) {
-                    listener.defaultSetChanged(previousDefault, set);
+                    if (listener != null)
+                        listener.defaultSetChanged(previousDefault, set);
                 }
             }, true, true);
         }
@@ -89,7 +90,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         public void nameChanged(final ChangeSet set) {
             provider.performUpdate(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) {
-                    listener.nameChanged(set);
+                    if (listener != null)
+                        listener.nameChanged(set);
                 }
             }, true, true);
         }
@@ -334,7 +336,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         }
         if (added) {
             set.getSyncInfoSet().addSyncSetChangedListener(this);
-            listener.setAdded(set);
+            if (listener != null)
+                listener.setAdded(set);
         }
         return sis;
     }
