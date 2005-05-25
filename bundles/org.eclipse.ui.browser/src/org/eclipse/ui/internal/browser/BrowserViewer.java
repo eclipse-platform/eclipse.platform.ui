@@ -34,6 +34,8 @@ import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.browser.VisibilityWindowListener;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -203,6 +205,19 @@ public class BrowserViewer extends Composite {
 				if (showToolbar | showURLbar) {
 				    busy = new BusyIndicator(toolbarComp, SWT.NONE);
 				    busy.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				    busy.addMouseListener(new MouseListener() {
+						public void mouseDoubleClick(MouseEvent e) {
+							// ignore
+						}
+
+						public void mouseDown(MouseEvent e) {
+							setURL("http://www.eclipse.org"); //$NON-NLS-1$
+						}
+
+						public void mouseUp(MouseEvent e) {
+							// ignore
+						}
+				    });
 				}
         }
 
