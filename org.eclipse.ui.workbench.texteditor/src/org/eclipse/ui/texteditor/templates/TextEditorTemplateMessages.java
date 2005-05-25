@@ -42,6 +42,7 @@ final class TextEditorTemplateMessages extends NLS {
 	public static String TemplatePreferencePage_column_name;
 	public static String TemplatePreferencePage_column_context;
 	public static String TemplatePreferencePage_column_description;
+	public static String TemplatePreferencePage_on;
 	public static String TemplatePreferencePage_use_code_formatter;
 	public static String TemplatePreferencePage_import_title;
 	public static String TemplatePreferencePage_import_extension;

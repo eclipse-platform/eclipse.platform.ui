@@ -118,7 +118,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				case 2:
 					return template.getDescription();
 				case 3:
-					return template.isAutoInsertable() ? "X" : "";  //$NON-NLS-1$ //$NON-NLS-2$
+					return template.isAutoInsertable() ? TextEditorTemplateMessages.TemplatePreferencePage_on : "";  //$NON-NLS-1$
 				default:
 					return ""; //$NON-NLS-1$
 			}
