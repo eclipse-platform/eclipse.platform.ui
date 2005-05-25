@@ -11,9 +11,15 @@
 package org.eclipse.ui.internal.operations;
 
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The TimeTriggeredProgressMonitorDialog is a progress monitor dialog that only
@@ -178,4 +184,38 @@ public class TimeTriggeredProgressMonitorDialog extends ProgressMonitorDialog {
             createWrapperedMonitor();
         return wrapperedMonitor;
     }
+    
+   /*
+    * (non-Javadoc) 
+    * 
+    * @see org.eclipse.jface.operations.IRunnableContext#run(boolean, boolean, IRunnableWithProgress)
+    */
+    public void run(final boolean fork, final boolean cancelable,
+            final IRunnableWithProgress runnable) throws InvocationTargetException,
+            InterruptedException {
+    	final InvocationTargetException[] invokes = new InvocationTargetException[1];
+        final InterruptedException[] interrupt = new InterruptedException[1];
+        Runnable dialogWaitRunnable = new Runnable() {
+    		public void run() {
+    			try {
+    				TimeTriggeredProgressMonitorDialog.super.run(fork, cancelable, runnable);
+    			} catch (InvocationTargetException e) {
+    				invokes[0] = e;
+    			} catch (InterruptedException e) {
+    				interrupt[0]= e;
+    			}
+    		}
+        };
+        final Display display = PlatformUI.getWorkbench().getDisplay();
+        if (display == null)
+            return;
+        //show a busy cursor until the dialog opens
+        BusyIndicator.showWhile(display, dialogWaitRunnable);
+        if (invokes[0] != null) {
+            throw invokes[0];
+        }
+        if (interrupt[0] != null) {
+            throw interrupt[0];
+        }
+     }
 }
