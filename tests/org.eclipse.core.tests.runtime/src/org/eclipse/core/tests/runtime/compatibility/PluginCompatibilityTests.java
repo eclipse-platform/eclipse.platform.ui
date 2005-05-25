@@ -38,7 +38,10 @@ public class PluginCompatibilityTests extends TestCase {
 				IPluginDescriptor descriptor = InternalPlatform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
 				assertNotNull("2.0", descriptor);
 				assertNotNull("2.1", descriptor.getRuntimeLibraries());
-				assertEquals("2.2", 0, descriptor.getRuntimeLibraries().length);
+				// see bug 89845. Changed in 3.1...even bundles with no libraries have "dot"
+				// on the classpath
+				assertEquals("2.2", 1, descriptor.getRuntimeLibraries().length);
+				assertEquals("2.3", ".", descriptor.getRuntimeLibraries()[0].getPath().toString());
 			}
 		}, RuntimeTestsPlugin.getContext(), new String[] {RuntimeTestsPlugin.TEST_FILES_ROOT + "compatibility/bundle01"}, null);
 	}
