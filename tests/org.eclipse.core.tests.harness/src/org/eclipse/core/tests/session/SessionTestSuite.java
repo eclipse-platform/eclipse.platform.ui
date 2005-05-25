@@ -45,6 +45,9 @@ public class SessionTestSuite extends TestSuite {
 		this.pluginId = pluginId;
 	}
 
+	/**
+	 * Crash tests are not expected to complete (they fail if they do).
+	 */
 	public void addCrashTest(TestCase test) {
 		crashTests.add(test);
 		super.addTest(test);
