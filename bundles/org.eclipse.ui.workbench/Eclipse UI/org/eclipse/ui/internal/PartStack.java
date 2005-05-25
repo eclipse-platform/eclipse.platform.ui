@@ -927,7 +927,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         Integer appearance = memento
                 .getInteger(IWorkbenchConstants.TAG_APPEARANCE);
         if (appearance != null) {
-            this.appearance = appearance.intValue();
+            // Detached views always have the same appearance -- ignore anything that is persisted
+            // here
+            if (this.appearance != PresentationFactoryUtil.ROLE_DETACHED) {
+                this.appearance = appearance.intValue();
+            }
         }
 
         // Determine if the presentation has saved any info here

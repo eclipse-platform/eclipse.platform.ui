@@ -101,6 +101,24 @@ public abstract class AbstractPresentationFactory {
     }
 
     /**
+     * Creates a stack presentation for presenting detached views.
+     * <p>
+     * The presentation creates its controls under the given parent composite.
+     * </p>
+     * 
+     * @param parent
+     *            the parent composite to use for the presentation's controls
+     * @param site
+     *            the site used for communication between the presentation and
+     *            the workbench
+     * @return a newly created stack presentation
+     */
+    public StackPresentation createDetachedViewPresentation(
+            Composite parent, IStackPresentationSite site) {
+        return createViewPresentation(parent, site);
+    }
+    
+    /**
      * Returns a globally unique identifier for this type of presentation factory. This is used
      * to ensure that one presentation is not restored from mementos saved by a different
      * presentation.

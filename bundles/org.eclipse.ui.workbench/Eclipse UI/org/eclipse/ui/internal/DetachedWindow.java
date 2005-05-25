@@ -42,9 +42,6 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
-import org.eclipse.ui.internal.presentations.defaultpresentation.DetachedViewPresentationFactory;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 
 /**
@@ -99,25 +96,9 @@ public class DetachedWindow implements IDragOverListener {
      * Create a new FloatingWindow.
      */
     public DetachedWindow(WorkbenchPage workbenchPage) {
-        //super(workbenchPage.getWorkbenchWindow().getShell());
-        //setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
-        //SWT.RESIZE | getDefaultOrientation());
         this.page = workbenchPage;
         
-        // Ugly hack: if we're using the default presentation, change the appearance
-        // of detached views. Really, each presentation should be able to provide an
-        // alternate appearance for detached views
-        AbstractPresentationFactory defaultFactory = ((WorkbenchWindow)page
-            .getWorkbenchWindow()).getWindowConfigurer()
-            .getPresentationFactory();
-        
-        AbstractPresentationFactory factory = null;
-        
-        if (defaultFactory.getClass() == WorkbenchPresentationFactory.class) {
-            factory = new DetachedViewPresentationFactory();
-        }
-        
-        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW, factory);
+        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_DETACHED, null);
         folder.addListener(propertyListener);
     }
 
