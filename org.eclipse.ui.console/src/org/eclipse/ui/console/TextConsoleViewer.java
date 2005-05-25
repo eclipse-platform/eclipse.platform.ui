@@ -216,6 +216,10 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                 continue;
             }
             
+            if (start < existingRange.start && end>existingRange.start) {
+                start = existingRange.start;
+            }
+            
             if (start >= existingRange.start && end <=rEnd) {
                 existingRange.length = start - existingRange.start;
                 ranges.add(++i, newRange);
