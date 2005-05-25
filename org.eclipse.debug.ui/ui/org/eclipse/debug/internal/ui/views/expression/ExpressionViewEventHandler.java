@@ -165,13 +165,16 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	protected void doHandleChangeEvent(DebugEvent event) {
 		if (event.getSource() instanceof IExpression) {
 			refresh(event.getSource());
+			getVariablesView().populateDetailPane();
 		} else if (event.getDetail() == DebugEvent.STATE) {
 			// only process variable state changes
 			if (event.getSource() instanceof IVariable) {
 				refresh(event.getSource());
+				getVariablesView().populateDetailPane();
 			}
 		} else {
 			refresh();
+			getVariablesView().populateDetailPane();
 		}	
 	}
 

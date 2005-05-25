@@ -129,6 +129,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		} else {
 			if (!(event.getSource() instanceof IExpression)) {
 				refresh();
+				getVariablesView().populateDetailPane();
 			}
 		}	
 	}	
