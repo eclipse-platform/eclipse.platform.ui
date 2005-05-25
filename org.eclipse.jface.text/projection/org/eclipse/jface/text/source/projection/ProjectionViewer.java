@@ -924,7 +924,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			int topIndex;
 			if (isRedrawing) {
 				rememberSelection();
-				topIndex= getTopIndex();
+				topIndex= computeTopIndex(addedAnnotations, changedAnnotation, removedAnnotations);
 			} else {
 				topIndex= -1;
 			}
@@ -940,13 +940,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (commandQueue.passedRedrawCostsThreshold()) {
 				setRedraw(false);
 				try {
-					
-					try {
-						executeProjectionCommands(commandQueue, false);
-					} catch (IllegalArgumentException x) {
-						reinitializeProjection();
-					}
-					
+					executeProjectionCommands(commandQueue, false);
+				} catch (IllegalArgumentException x) {
+					reinitializeProjection();
 				} finally {
 					if (isRedrawing)
 						restoreSelection();
@@ -962,14 +958,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						textWidget.setRedraw(false);
 					
 					boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
-					try {
-						executeProjectionCommands(commandQueue, fireRedraw);
-						if (!fireRedraw)
-							invalidateTextPresentation();
-					} catch (IllegalArgumentException x) {
-						reinitializeProjection();
-					}
-					
+					executeProjectionCommands(commandQueue, fireRedraw);
+					if (!fireRedraw)
+						invalidateTextPresentation();
+				} catch (IllegalArgumentException x) {
+					reinitializeProjection();
 				} finally {
 					if (isRedrawing) {
 						restoreSelection();
@@ -977,9 +970,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					}
 				}
 			}
-			
 		}
-		
+	}
+
+	private int computeTopIndex(Annotation[] addedAnnotations, Annotation[] changedAnnotation, Annotation[] removedAnnotations) throws BadLocationException {
+		if (addedAnnotations.length == 0 && removedAnnotations.length == 0 && changedAnnotation.length == 1) {
+			ProjectionAnnotation pa= (ProjectionAnnotation) changedAnnotation[0];
+			if (pa.isCollapsed()) {
+				// single annotation gets collapsed -> ensure caption line is visible
+				Position pos= fProjectionAnnotationModel.getPosition(pa);
+				Position anchor= computeCollapsedRegionAnchor(pos);
+				IDocument model= getDocument();
+				int anchorLine= model.getLineOfOffset(anchor.getOffset());
+				if (anchorLine < getTopIndex())
+					return anchorLine;
+			}
+		}
+		return -1;
 	}
 
 	private void restoreViewport(int topIndex) {
