@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
-public class WebBrowserSyncAction implements IViewActionDelegate {
+public class WebBrowserSyncAction2 implements IViewActionDelegate {
 	protected WebBrowserView view;
 
 	public void init(IViewPart newView) {
@@ -28,9 +28,9 @@ public class WebBrowserSyncAction implements IViewActionDelegate {
 			return;
 		
 		if (action.isChecked())
-			view.addSelectionListener();
+			view.viewer.addSynchronizationListener();
 		else
-			view.removeSelectionListener();
+			view.viewer.removeSynchronizationListener();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

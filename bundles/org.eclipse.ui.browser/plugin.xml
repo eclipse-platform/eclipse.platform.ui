@@ -36,7 +36,7 @@
          name="%viewWebBrowserTitle"/>
    </extension>
 
-<!--   <extension point="org.eclipse.ui.viewActions">
+   <extension point="org.eclipse.ui.viewActions">
       <viewContribution
          id="org.eclipse.ui.browser.view"
          targetID="org.eclipse.ui.browser.view">
@@ -50,7 +50,20 @@
             state="false"
             class="org.eclipse.ui.internal.browser.WebBrowserSyncAction"/>
       </viewContribution>
-   </extension>-->
+      <viewContribution
+         id="org.eclipse.ui.browser.view"
+         targetID="org.eclipse.ui.browser.view">
+         <action
+            id="org.eclipse.ui.browser.view.sync"
+            label="%actionSyncView2"
+            toolbarPath="sync"
+            tooltip="%actionSyncView2"
+            icon="icons/elcl16/synced.gif"
+            style="toggle"
+            state="false"
+            class="org.eclipse.ui.internal.browser.WebBrowserSyncAction2"/>
+      </viewContribution>
+   </extension>
 
    <extension point="org.eclipse.ui.editors">
       <editor
@@ -107,7 +120,7 @@
       </browser>
       <browser
          id="org.eclipse.ui.browser.firefox"
-         name="%firefox"
+         name="%browserFirefox"
          os="linux,aix,hpux,solaris"
          executable="firefox"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
@@ -182,7 +195,7 @@
          name="%browserFirefox"
          os="MacOSX"
          executable="firefox-bin"
-         factoryclass="org.eclipse.ui.internal.browser.macosx.MozillaFactory">
+         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>Applications/Firefox.app/Contents/MacOS/firefox-bin</location>
       </browser>
       <browser
@@ -192,20 +205,20 @@
          executable="Camino">
          <location>Applications/Camino.app/Contents/MacOS/Camino</location>
       </browser>
-      <browser
+<!--      <browser
          id="org.eclipse.ui.browser.safari"
          name="%browserSafari"
          os="MacOSX"
          executable="Safari"
          factoryclass="org.eclipse.ui.internal.browser.macosx.SafariBrowserFactory">
          <location>Applications/Safari.app/Contents/MacOS/Safari</location>
-      </browser>
+      </browser> -->
       <browser
          id="org.eclipse.ui.browser.mozilla"
          name="%browserMozilla"
          os="MacOSX"
          executable="mozilla-bin"
-         factoryclass="org.eclipse.ui.internal.browser.macosx.MozillaFactory">
+         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>Applications/Mozilla.app/Contents/MacOS/mozilla-bin</location>
       </browser>
       <browser
