@@ -706,8 +706,8 @@ public class BrowserViewer extends Composite {
 
         browser = null;
         text = null;
-        file = null;
-        fileListenerThread = null;
+
+        removeSynchronizationListener();
     }
 
     private ToolBar createLocationBar(Composite parent) {
@@ -879,9 +879,14 @@ public class BrowserViewer extends Composite {
     protected File file;
     protected long timestamp;
     protected Thread fileListenerThread;
-
-    protected void listen() {
-   	 fileListenerThread = new Thread() {
+    protected LocationListener locationListener2;
+    protected Object syncObject = new Object();
+    
+    protected void addSynchronizationListener() {
+   	 if (fileListenerThread != null)
+   		 return;
+   	 
+   	 fileListenerThread = new Thread("Browser file synchronization") { //$NON-NLS-1$
    		 public void run() {
    			 while (fileListenerThread != null) {
    				 try {
@@ -889,7 +894,7 @@ public class BrowserViewer extends Composite {
    				 } catch (Exception e) {
    					 // ignore
    				 }
-   				 synchronized (fileListenerThread) {
+   				 synchronized (syncObject) {
 						 if (file != null && file.lastModified() != timestamp) {
 	   					 timestamp = file.lastModified();
 	   					 Display.getDefault().syncExec(new Runnable() {
@@ -904,14 +909,12 @@ public class BrowserViewer extends Composite {
    	 };
    	 fileListenerThread.setDaemon(true);
    	 fileListenerThread.setPriority(Thread.MIN_PRIORITY);
-   	 fileListenerThread.start();
    	 
-   	 browser.addLocationListener(new LocationListener() {
+   	 locationListener2 = new LocationListener() {
           public void changed(LocationEvent event) {
-         	 String loc = event.location;
-         	 File temp = new File(loc);
-         	 if (temp.exists()) {
-         		 synchronized (fileListenerThread) {
+         	 File temp = getFile(event.location);
+         	 if (temp != null && temp.exists()) {
+         		 synchronized (syncObject) {
          			 file = temp;
             		 timestamp = file.lastModified();
 					 }
@@ -922,6 +925,32 @@ public class BrowserViewer extends Composite {
           public void changing(LocationEvent event) {
              // do nothing
          }
-       });
-   }
+       };
+       browser.addLocationListener(locationListener2);
+       
+       File temp = getFile(browser.getUrl());
+   	 if (temp != null && temp.exists()) {
+   		file = temp;
+      	timestamp = file.lastModified();
+   	 }
+   	 fileListenerThread.start();
+    }
+
+    protected static File getFile(String location) {
+   	 if (location == null)
+   		 return null;
+   	 if (location.startsWith("file:/")) //$NON-NLS-1$
+   		 location = location.substring(6);
+   	 
+   	 return new File(location);
+    }
+
+    protected void removeSynchronizationListener() {
+   	 if (fileListenerThread == null)
+   		 return;
+   	 
+   	 fileListenerThread = null;
+   	 browser.removeLocationListener(locationListener2);
+   	 locationListener2 = null;
+    }
 }

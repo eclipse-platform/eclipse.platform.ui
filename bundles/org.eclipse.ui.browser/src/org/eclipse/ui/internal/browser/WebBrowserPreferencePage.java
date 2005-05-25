@@ -174,6 +174,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
+		
+		label = new Label(composite, SWT.WRAP);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
 
 		internal = new Button(composite, SWT.RADIO);
 		internal.setText(Messages.prefInternalBrowser);
@@ -189,11 +194,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		external.setLayoutData(data);
-		
-		label = new Label(composite, SWT.WRAP);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.browserList);

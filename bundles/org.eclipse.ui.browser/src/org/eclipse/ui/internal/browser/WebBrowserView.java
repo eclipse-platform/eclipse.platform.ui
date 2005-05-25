@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -29,6 +36,8 @@ import org.eclipse.ui.part.ViewPart;
 public class WebBrowserView extends ViewPart implements IBrowserViewerContainer {
 	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view"; //$NON-NLS-1$
 	protected BrowserViewer viewer;
+	
+	protected ISelectionListener listener;
 
 	public void createPartControl(Composite parent) {
         int style = WebBrowserUtil.decodeStyle(getViewSite().getSecondaryId());
@@ -45,8 +54,13 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
 		  viewer.addPropertyChangeListener(propertyChangeListener);*/
         initDragAndDrop();
 	}
-    
-    public void setURL(String url) {
+
+	public void dispose() {
+		if (listener != null)
+			removeSelectionListener();
+	}
+
+   public void setURL(String url) {
 		if (viewer != null)
 			viewer.setURL(url);
 	}
@@ -75,11 +89,57 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
             support.getExternalBrowser().openURL(theURL);
         }
         catch (MalformedURLException e) {
-            //TODO handle this
+            // TODO handle this
         }
         catch (PartInitException e) {
-            //TODO handle this
+            // TODO handle this
         }
+    }
+    
+    public void addSelectionListener() {
+   		 if (listener != null)
+   			 return;
+	   	 
+   		 listener = new ISelectionListener() {
+				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+					if (!(selection instanceof StructuredSelection))
+						return;
+					StructuredSelection sel = (StructuredSelection) selection;
+					Object obj = sel.getFirstElement();
+					if (obj instanceof IAdaptable) {
+						IAdaptable adapt = (IAdaptable) obj;
+						//ILocationProvider loc = (ILocationProvider) adapt.getAdapter(ILocationProvider.class);
+						IPath path = (IPath) adapt.getAdapter(IPath.class);
+						if (path != null) {
+							File file = path.toFile();
+							if (file.exists() && isWebFile(file.getName()))
+								try {
+									setURL(file.toURL().toExternalForm());
+								} catch (Exception e) {
+									// ignore
+								}
+						}
+					}
+				}
+			};
+			getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(listener);
+   	 }
+	public void removeSelectionListener() {
+   	 if (listener == null)
+   		 return;
+   	 getSite().getWorkbenchWindow().getSelectionService().removePostSelectionListener(listener);
+   	 listener = null;
+    }
+    
+    /**
+     * Return true if the filename has a "web" extension.
+     * 
+     * @param name
+     * @return
+     */
+    protected boolean isWebFile(String name) {
+   	 return name.endsWith("html") || name.endsWith("htm") || name.endsWith("gif") ||  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   	 	name.endsWith("jpg"); //$NON-NLS-1$
     }
 
     /**

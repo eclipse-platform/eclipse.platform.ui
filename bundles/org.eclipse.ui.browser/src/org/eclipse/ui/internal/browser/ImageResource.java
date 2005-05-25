@@ -160,7 +160,7 @@ public class ImageResource {
 		// busy images
 		busyImages = new Image[13];
 		for (int i = 0; i < 13; i++) {
-			registerImage("busy" + i, URL_OBJ + "frames/frame" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			registerImage("busy" + i, URL_OBJ + "busy/" + (i+1) + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			busyImages[i] = getImage("busy" + i); //$NON-NLS-1$
 		}
 	}
