@@ -91,7 +91,9 @@ public class ExceptionCollector {
             log.log(new Status(severity, pluginId, 0, message, e));
         }
         // Record each status individually to flatten the resulting multi-status
-        IStatus status = e.getStatus();
+        IStatus exceptionStatus = e.getStatus();
+        // Wrap the exception so the stack trace is not lost.
+        IStatus status = new Status(exceptionStatus.getSeverity(), exceptionStatus.getPlugin(), exceptionStatus.getCode(), exceptionStatus.getMessage(), e);
         recordStatus(status);
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {
