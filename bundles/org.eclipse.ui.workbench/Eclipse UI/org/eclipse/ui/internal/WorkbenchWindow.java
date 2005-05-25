@@ -1439,6 +1439,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     void makeVisible() {
     	Shell shell = getShell();
     	if (shell != null && !shell.isDisposed()) {
+    		shell.setVisible(true);
     		if (shell.getMinimized()) {
     			shell.setMinimized(false);
     		}
