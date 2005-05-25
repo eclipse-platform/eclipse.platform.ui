@@ -86,7 +86,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(EMPHASIZE_POTENTIAL_MATCHES, true);
 		store.setDefault(IGNORE_POTENTIAL_MATCHES, false);
 		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
-		store.setDefault(REUSE_EDITOR, false);
+		store.setDefault(REUSE_EDITOR, true);
 		store.setDefault(BRING_VIEW_TO_FRONT, true);
 		store.setDefault(DEFAULT_PERSPECTIVE, NO_DEFAULT_PERSPECTIVE);
 		store.setDefault(LIMIT_TABLE_TO, 200);
@@ -254,7 +254,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	private void updateLimitValueEnablement() {
 		fLimitTableValue.setEnabled(fLimitTable.getSelection());
 	}
-	/**
+	/*
 	 * Return a 2-dimensional array of perspective names and ids.
 	 */
 	private String[][] getPerspectiveNamesAndIds() {
