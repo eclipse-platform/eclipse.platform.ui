@@ -101,7 +101,6 @@ public abstract class AbstractViewerState {
 	 * @param viewer viewer to which state is restored
 	 */
 	public void restoreState(TreeViewer viewer) {
-		List newExpansion = new ArrayList();
 	    boolean expansionComplete = true;
 	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {		
 	        for (int i = 0; i < fSavedExpansion.size(); i++) {
@@ -111,7 +110,7 @@ public abstract class AbstractViewerState {
 	                try {
 	                    obj = decodePath(path, viewer);
 	                    if (obj != null) {
-	                        newExpansion.add(obj);
+	                        viewer.expandToLevel(obj, 1);
 	                    } else {
 	                        expansionComplete = false;                  
 	                    }
@@ -119,9 +118,6 @@ public abstract class AbstractViewerState {
 	                }
 	            }
 	        }
-            if (newExpansion.size() > 0) {
-                viewer.setExpandedElements(newExpansion.toArray());
-            }
 	        if (expansionComplete) {
 	            fSavedExpansion = null;
 	        }
