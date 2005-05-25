@@ -372,13 +372,10 @@ public class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Create the given file in the local store. 
+	 * Create the given file in the file system. 
 	 */
 	public void createFileInFileSystem(IPath path, InputStream contents) throws IOException {
-		java.io.File file = path.toFile();
-		file.getParentFile().mkdirs();
-		FileOutputStream output = new FileOutputStream(file);
-		transferData(contents, output);
+		createFileInFileSystem(path.toFile(), contents);
 	}
 
 	public IResource[] createHierarchy() {
@@ -618,10 +615,10 @@ public class ResourceTest extends CoreTest {
 				{NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3}, //cycle
 		};
 	}
-	
+
 	public String getUniqueString() {
 		return new UniversalUniqueIdentifier().toString();
-	}	
+	}
 
 	/**
 	 * Returns valid sets of natures
