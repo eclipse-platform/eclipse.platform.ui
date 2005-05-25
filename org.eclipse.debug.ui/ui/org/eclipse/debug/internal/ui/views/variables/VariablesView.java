@@ -365,6 +365,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
             ((VariablesViewer)viewer).removeUpdateListener(fUpdateListener);
 		}
+        IAction action= getAction("FindVariable"); //$NON-NLS-1$
+        if (action != null && action instanceof FindVariableAction) {
+            ((FindVariableAction) action).dispose();
+        }
 		super.dispose();
 	}
 

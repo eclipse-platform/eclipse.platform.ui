@@ -82,4 +82,7 @@ public class FindVariableAction extends Action implements IUpdate {
 		setEnabled(false);
 	}
 
+    public void dispose() {
+        fDelegate.dispose();
+    }
 }
