@@ -222,10 +222,10 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		if (etdesc == null)
 			return;
 		edesc.setEngineType(etdesc);
+		edesc.setUserDefined(true);
 		edesc.setId(id);
 		edesc.setLabel(label);
 		edesc.setDescription(desc);
-		edesc.setUserDefined(true);
 		descriptors.add(edesc);
 	}
 

@@ -243,10 +243,8 @@ public abstract class RootScopePage extends PreferencePage implements
 			masterValueChanged(value);
 		} else if (first)
 			masterValueChanged(value);
-		//if (ed.isUserDefined()) {
-			labelText.setText(ed.getLabel());
-			descText.setText(ed.getDescription());
-		//}
+		labelText.setText(ed.getLabel());
+		descText.setText(ed.getDescription());
 	}
 
 	/**

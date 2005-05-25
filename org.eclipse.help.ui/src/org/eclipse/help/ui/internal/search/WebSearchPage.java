@@ -15,9 +15,12 @@ import org.eclipse.help.ui.RootScopePage;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Web serch participant in the federated search.
@@ -61,6 +64,9 @@ public class WebSearchPage extends RootScopePage {
 		return 2;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.ui.RootScopePage#initializeDefaults(org.eclipse.jface.preference.IPreferenceStore)
+	 */
 	protected void initializeDefaults(IPreferenceStore store) {
 		super.initializeDefaults(store);
 		String template = (String) getEngineDescriptor().getParameters().get(
@@ -71,6 +77,9 @@ public class WebSearchPage extends RootScopePage {
 							template);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
 	protected void performDefaults() {
 		getPreferenceStore().setToDefault(
 				getStoreKey(WebSearchScopeFactory.P_URL));

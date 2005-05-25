@@ -616,7 +616,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				scopeSetManager.setActiveSet(sset);
 		}
 		String expression = memento.getString("expression"); //$NON-NLS-1$
-		if (expression!=null) {
+		if (expression!=null && expression.length()>0) {
 			searchWordCombo.setText(expression);
 			searchPending=true;
 			markStale();
