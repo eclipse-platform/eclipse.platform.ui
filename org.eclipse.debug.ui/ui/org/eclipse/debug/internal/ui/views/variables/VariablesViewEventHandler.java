@@ -125,6 +125,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 			// only process variable state changes
 			if (event.getSource() instanceof IVariable) {
 				refresh(event.getSource());
+				getVariablesView().populateDetailPane();
 			}
 		} else {
 			if (!(event.getSource() instanceof IExpression)) {
