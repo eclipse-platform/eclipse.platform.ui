@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.update.configuration,
  org.eclipse.update.core,
  org.eclipse.update.core.model,
- org.eclipse.update.internal.core;x-friends:="org.eclipse.pde.build,org.eclipse.update.ui",
+ org.eclipse.update.internal.core;x-friends:="org.eclipse.update.ui",
  org.eclipse.update.internal.mirror;x-internal:=true,
  org.eclipse.update.internal.model;x-internal:=true,
  org.eclipse.update.internal.operations;x-friends:="org.eclipse.update.ui",
