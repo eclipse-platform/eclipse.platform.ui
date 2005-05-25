@@ -26,7 +26,6 @@ import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.configurator.SiteEntry;
 import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.BaseSiteLocalFactory;
-import org.eclipse.update.internal.core.InstallConfiguration;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
