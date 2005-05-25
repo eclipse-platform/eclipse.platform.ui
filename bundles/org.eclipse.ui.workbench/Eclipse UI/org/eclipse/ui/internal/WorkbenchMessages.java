@@ -571,9 +571,9 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	// Workbench
 	// ==============================================================================
-	public static String Restoring_Workspace;
-	public static String Restoring_Loaded;
-	public static String Restoring_Done;
+	public static String Startup_LoadingPlugins;
+	public static String Startup_Loaded;
+	public static String Startup_Done;
 
 	public static String WorkbenchPage_UnknownLabel;
 

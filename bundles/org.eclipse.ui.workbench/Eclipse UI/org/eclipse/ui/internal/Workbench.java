@@ -153,6 +153,36 @@ import org.osgi.framework.SynchronousBundleListener;
  */
 public final class Workbench implements IWorkbench {
 	
+	private final class StartupProgressBundleListener implements SynchronousBundleListener {
+
+		private final IProgressMonitor progressMonitor;
+		private final int maximumProgressCount;
+
+		private StartupProgressBundleListener(IProgressMonitor progressMonitor, int maximumProgressCount) {
+			super();
+			this.progressMonitor = progressMonitor;
+			this.maximumProgressCount = maximumProgressCount;
+		}
+
+		public void bundleChanged(final BundleEvent event) {
+		    // Don't report progress unless we're running in the ui thread
+		    if (Display.getCurrent() == null) {
+		        return;
+		    }
+		    
+		    if (event.getType() == BundleEvent.STARTED) {
+		    	if(Display.getCurrent() != null) {
+		        	progressCount++;
+					if(progressCount <= maximumProgressCount) {
+						progressMonitor.worked(1);
+		        	}
+		        	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Startup_Loaded, event.getBundle().getSymbolicName()));
+		            Display.getCurrent().update();
+		    	}
+		    }
+		}
+	}
+
 	/**
 	 * Family for the early startup job.
 	 */
@@ -1185,6 +1215,64 @@ public final class Workbench implements IWorkbench {
 	 * Opens the initial workbench window.
 	 */
 	/* package */void openFirstTimeWindow() {
+		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+		
+		if(!showProgress) {
+			doOpenFirstTimeWindow();
+		} else {
+			// We don't know how many plug-ins will be loaded,
+			// assume we are loading a tenth of the installed plug-ins.
+			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of 2005-5-20)
+			final int expectedProgressCount = Math.max(1, WorkbenchPlugin.getDefault().getBundleCount() / 10);
+			
+			try {
+				runStartupWithProgress(expectedProgressCount, new Runnable() {
+					public void run() {
+						doOpenFirstTimeWindow();
+					}});
+			} catch (InvocationTargetException e) {
+				Throwable t = e.getTargetException();
+				ErrorDialog.openError(null,
+						WorkbenchMessages.Problems_Opening_Page, null, new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.Problems_Opening_Page, t));
+			} catch (InterruptedException e) {
+				WorkbenchPlugin.log("Interrupted while opening first time window", e); //$NON-NLS-1$
+			}
+		}
+	}
+
+	private void runStartupWithProgress(final int expectedProgressCount, final Runnable runnable) throws InvocationTargetException, InterruptedException {
+		progressCount = 0;
+		final double cutoff = 0.95;
+
+		final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(null);
+		
+		SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
+		WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+			
+		try {
+			progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
+
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask(WorkbenchMessages.Startup_LoadingPlugins, expectedProgressCount);
+					
+					// hide splash screen now that we are showing progress.
+					// Assuming that Platform.endSplash() is idempotent.
+					Platform.endSplash();
+					
+					runnable.run();
+					
+					monitor.subTask(WorkbenchMessages.Startup_Done);
+					int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
+					monitor.worked(remainingWork);
+					Display.getCurrent().update();
+					monitor.done();
+				}});
+		} finally {
+			WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+		}
+	}
+
+	private void doOpenFirstTimeWindow() {
 		try {
 			busyOpenWorkbenchWindow(getPerspectiveRegistry()
 					.getDefaultPerspective(), getDefaultPageInput());
@@ -1402,74 +1490,27 @@ public final class Workbench implements IWorkbench {
 		
 		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 		
-		if(!showProgress) {
+		try {
 			/*
 			 * Restored windows will be set in the createdWindows field to be used by the openWindowsAfterRestore() method 
 			 */
-			try {
+			if(!showProgress) {
 				doRestoreState(memento, result);
-			} finally {
-				openWindowsAfterRestore();
-			}
-		} else {
-			// Retrieve how many plug-ins were loaded while restoring the workbench
-			Integer lastProgressCount = memento.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
-			
-			// If we don't know how many plug-ins were loaded last time,
-			// assume we are loading half of the installed plug-ins.
-			final int expectedProgressCount = Math.max(1, lastProgressCount==null ? WorkbenchPlugin.getDefault().getBundleCount() / 2 : lastProgressCount.intValue());
-			progressCount = 0;
-			final double cutoff = 0.95;
-			final Thread uiThread = Thread.currentThread();
-			
-			final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(null);
-			SynchronousBundleListener bundleListener = new SynchronousBundleListener() {
-	
-				public void bundleChanged(final BundleEvent event) {
-	                // Don't report progress unless we're running in the ui thread
-	                if (Display.getCurrent() == null) {
-	                    return;
-	                }
-	                
-	                if (event.getType() == BundleEvent.STARTED) {
-	                	if(Thread.currentThread()==uiThread) {
-		                	progressCount++;
-		                	IProgressMonitor progressMonitor = progressMonitorDialog.getProgressMonitor();
-							if(progressCount <= expectedProgressCount * cutoff) {
-								progressMonitor.worked(1);
-		                	}
-		                	progressMonitor.subTask(NLS.bind(WorkbenchMessages.Restoring_Loaded, event.getBundle().getSymbolicName()));
-                            Display.getCurrent().update();
-	                	}
-	                }
-				}};
-			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+			} else {
+				// Retrieve how many plug-ins were loaded while restoring the workbench
+				Integer lastProgressCount = memento.getInteger(IWorkbenchConstants.TAG_PROGRESS_COUNT);
 				
-			try {
-				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
-	
-					public void run(IProgressMonitor monitor) {
-						monitor.beginTask(WorkbenchMessages.Restoring_Workspace, expectedProgressCount);
-						
-						// hide splash screen now that we are showing progress.
-						// Assuming that Platform.endSplash() is idempotent.
-						Platform.endSplash();
-						
-						/*
-						 * Restored windows will be set in the createdWindows field to be used by the openWindowsAfterRestore() method 
-						 */
+				// If we don't know how many plug-ins were loaded last time,
+				// assume we are loading half of the installed plug-ins.
+				final int expectedProgressCount = Math.max(1, lastProgressCount==null ? WorkbenchPlugin.getDefault().getBundleCount() / 2 : lastProgressCount.intValue());
+
+				runStartupWithProgress(expectedProgressCount, new Runnable() {
+					public void run() {
 						doRestoreState(memento, result);
-						
-						monitor.subTask(WorkbenchMessages.Restoring_Done);
-						int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
-						monitor.worked(remainingWork);
-						monitor.done();
 					}});
-			} finally {
-				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
-				
-				openWindowsAfterRestore();
 			}
+		} finally {
+			openWindowsAfterRestore();
 		}
 		return result;
 	}
