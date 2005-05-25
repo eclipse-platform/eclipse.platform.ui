@@ -143,9 +143,18 @@ public class AnalyzerDescriptor {
 	 *         analyzer
 	 */
 	public boolean isCompatible(String analyzerId) {
-		if (id.equals(analyzerId)) {
+		// if (id.equals(analyzerId)) {
+		// return true;
+		// }
+		// when we run in a locale e.g. ru_RU
+		// and prebuilt index from a language of that locale, all countries
+		// e.g. org.eclipse.help.base#3.1.0?locale=ru then indexes might be
+		// compatible
+		// for analyzers from org.eclipse.help.base plug-in this is true.
+		if (id.startsWith(analyzerId)) {
 			return true;
 		}
+		
 		// analyzers between some versions of org.eclipse.help plugin
 		// are compatible (logic unchanged), index can be preserved between
 		// them
