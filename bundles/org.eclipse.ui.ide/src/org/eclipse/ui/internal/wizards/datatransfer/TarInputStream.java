@@ -96,10 +96,8 @@ public class TarInputStream extends FilterInputStream
 		filepos = entry.filepos;
 		nextEntry = 0;
 		nextEOF = 0;
-		TarEntry foundEntry = getNextEntry();
-		if(!foundEntry.getName().equals(entry.getName())) {
-			throw new IOException("inconsistent file"); //$NON-NLS-1$
-		}
+		// Read next header to seek to file data.
+		getNextEntry();
 		return true;
 	}
 
@@ -271,7 +269,14 @@ public class TarInputStream extends FilterInputStream
 			// We get a file called ././@LongLink which just contains
 			// the real pathname.
 			byte[] longNameData = new byte[(int) entry.getSize()];
-			read(longNameData, 0, longNameData.length);
+			int bytesread = 0;
+			while (bytesread < longNameData.length) {
+				int cur = read(longNameData, bytesread, longNameData.length - bytesread);
+				if (cur < 0) {
+					throw new IOException("early end of stream"); //$NON-NLS-1$
+				}
+				bytesread += cur;
+			}
 
 			int pos = 0;
 			while (pos < longNameData.length && longNameData[pos] != 0)
