@@ -107,6 +107,8 @@ public class AntLaunchConfigurationMessages extends NLS {
 
 	public static String AntEnvironmentTab_0;
 	public static String SetTargetsDialog_0;
+    
+    public static String AntWorkingDirectoryBlock_0;
 
 	static {
 		// load message values from bundle file
