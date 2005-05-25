@@ -12,15 +12,17 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.io.IOException;
 import java.io.StringReader;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
-import org.eclipse.debug.ui.sourcelookup.*;
+import org.eclipse.debug.ui.sourcelookup.WorkingSetSourceContainer;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -65,7 +67,7 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 			if (isEmpty(name)) {
 				abort(SourceLookupUIMessages.sourceSearch_initError,null);//$NON-NLS-1$
 			}
-			workingSet = WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSet(name);
+			workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
 			//check that set still exists
 			if (workingSet == null) {				
 				abort(SourceLookupUIMessages.sourceSearch_initError, null); //$NON-NLS-1$
