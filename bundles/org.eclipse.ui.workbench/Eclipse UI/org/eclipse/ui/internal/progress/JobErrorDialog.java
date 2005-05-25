@@ -78,7 +78,7 @@ public class JobErrorDialog extends ErrorDialog {
      */
     public JobErrorDialog(Shell parentShell, String title, String msg, ErrorInfo errorInfo, int displayMask) {
         super(parentShell, title == null ? errorInfo.getJob().getName() : title, msg, errorInfo.getErrorStatus(), displayMask);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE |getDefaultOrientation()); // Do not want this one to be modal
+        setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE |SWT.MIN | getDefaultOrientation()); // Do not want this one to be modal
         this.selectedError = errorInfo;
 		setBlockOnOpen(false);
     }
