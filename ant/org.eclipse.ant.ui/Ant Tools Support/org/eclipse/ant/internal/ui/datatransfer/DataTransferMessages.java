@@ -43,7 +43,9 @@ public class DataTransferMessages extends NLS {
 	public static String AntNewJavaProjectPage_21;
 	public static String AntNewJavaProjectPage_22;
 	public static String AntNewJavaProjectPage_2;
+    public static String AntNewJavaProjectPage_3;
 	public static String ProjectCreator_0;
+    public static String JavacTableLabelProvider_0;
 
 	static {
 		// load message values from bundle file

@@ -15,12 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
+import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
@@ -35,6 +37,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -48,6 +53,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -73,11 +79,19 @@ public class AntNewJavaProjectPage extends WizardPage {
 		public void modifyText(ModifyEvent e) {
 		    //no lexical or position, has task info
 			fAntModel= AntUtil.getAntModel(getProjectLocationFieldValue(), false, false, true);
-			if (fAntModel != null && fAntModel.getProjectNode() != null) {
+            AntProjectNode projectNode= fAntModel == null ? null : fAntModel.getProjectNode();
+			if (fAntModel != null && projectNode != null) {
 			    setProjectName(); // page will be validated on setting the project name
+                List javacNodes= new ArrayList();
+                getJavacNodes(javacNodes, projectNode);
+                fTableViewer.setInput(javacNodes.toArray());
+                if (!javacNodes.isEmpty()) {
+                    fTableViewer.setSelection(new StructuredSelection(javacNodes.get(0)));
+                }
 			} else {
-				setPageComplete(validatePage());
+                fTableViewer.setInput(new Object[] {});
 			}
+            setPageComplete(validatePage());
 		}
 	};
 	
@@ -88,6 +102,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	};
 
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+    private TableViewer fTableViewer;
 	
 	public AntNewJavaProjectPage() {
 		super("newPage"); //$NON-NLS-1$
@@ -115,6 +130,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
+        createTargetsTable(composite);
 		validatePage();
 		// Show description on opening
 		setErrorMessage(null);
@@ -312,7 +328,14 @@ public class AntNewJavaProjectPage extends WizardPage {
 			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_19); //$NON-NLS-1$
 			return false;
 		}
-
+        
+		
+		if (fTableViewer.getTable().getItemCount() == 0) {
+		    setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_1);
+		    setPageComplete(false);
+		    return false;
+		}
+       
 		setErrorMessage(null);
 		setMessage(null);
 		return true;
@@ -351,27 +374,13 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 *    was not created
 	 */
 	protected IJavaProject createProject() {
-
-		AntProjectNode projectNode= fAntModel.getProjectNode();
-		
-		final List javacNodes= new ArrayList();
-		getJavacNodes(javacNodes, projectNode);
-		if (javacNodes.size() > 1) {
-			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_20); //$NON-NLS-1$
-			setPageComplete(false);
-			return null;
-		} else if (javacNodes.size() == 0) {
-			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_1); //$NON-NLS-1$
-			setPageComplete(false);
-			return null;
-		}
 		final IJavaProject[] result= new IJavaProject[1];
 		final String projectName= getProjectNameFieldValue();
 		final File buildFile= getBuildFile(getProjectLocationFieldValue());
-		
+		final List selectedJavacs= ((IStructuredSelection)fTableViewer.getSelection()).toList();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
-				List javacTasks= resolveJavacTasks(javacNodes);
+				List javacTasks= resolveJavacTasks(selectedJavacs);
 				ProjectCreator creator= new ProjectCreator();
 				Iterator iter= javacTasks.iterator();
 				while (iter.hasNext()) {
@@ -468,8 +477,46 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if(visible) {
+		if (visible) {
 			fLocationPathField.setFocus();
 		}
 	}
+    
+ 	/**
+     * Creates the table which displays the available targets
+     * @param parent the parent composite
+     */
+    private void createTargetsTable(Composite parent) {
+        Font font= parent.getFont();
+        Label label = new Label(parent, SWT.NONE);
+        label.setFont(font);
+        label.setText(DataTransferMessages.AntNewJavaProjectPage_3);
+                
+        Table table= new Table(parent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
+        
+        GridData data= new GridData(GridData.FILL_BOTH);
+        int availableRows= availableRows(parent);
+        data.heightHint = table.getItemHeight() * (availableRows / 20);
+        data.widthHint= 250;
+        table.setLayoutData(data);
+        table.setFont(font);
+        
+        fTableViewer = new TableViewer(table);
+        fTableViewer.setLabelProvider(new JavacTableLabelProvider());
+        fTableViewer.setContentProvider(new AntModelContentProvider());
+    }
+    
+    /**
+     * Return the number of rows available in the current display using the
+     * current font.
+     * @param parent The Composite whose Font will be queried.
+     * @return int The result of the display size divided by the font size.
+     */
+    private int availableRows(Composite parent) {
+
+        int fontHeight = (parent.getFont().getFontData())[0].getHeight();
+        int displayHeight = parent.getDisplay().getClientArea().height;
+
+        return displayHeight / fontHeight;
+    }
 }
