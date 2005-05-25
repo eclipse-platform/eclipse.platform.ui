@@ -305,20 +305,19 @@ public class LaunchViewContextListener implements IContextManagerListener, IActi
 			if (configurationElements != null) {
 				ListIterator iter= configurationElements.listIterator();
 				while (iter.hasNext()) {
-					// Remove any configuration elements for views that
-					// are already "bound" by a configuration element.
+					// Only add the element if configuredViewIds do not already
+					// contain viewId.
 					// This allows child contexts to override parent
 					// bindings.
 					IConfigurationElement element= (IConfigurationElement) iter.next();
 					String viewId = element.getAttribute(ATTR_VIEW_ID);
 					if (viewId != null) {
-						if (configuredViewIds.contains(viewId)) {
-							iter.remove();
+						if (!configuredViewIds.contains(viewId)) {
+							allConfigurationElements.add(element);
 						}
 						configuredViewIds.add(viewId);
 					}
 				}
-				allConfigurationElements.addAll(configurationElements);
 			}
 			IContext context = contextManager.getContext(contextId);
 			if (context != null) {
