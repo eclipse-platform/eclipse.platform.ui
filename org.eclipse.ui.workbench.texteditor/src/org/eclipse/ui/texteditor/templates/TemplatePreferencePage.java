@@ -65,7 +65,6 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -226,32 +225,25 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 
 		GridData data= new GridData(GridData.FILL_BOTH);
-		data.widthHint= convertWidthInCharsToPixels(3);
+		data.widthHint= 360;
 		data.heightHint= convertHeightInCharsToPixels(10);
 		table.setLayoutData(data);
 
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		TableLayout tableLayout= new TableLayout();
-		table.setLayout(tableLayout);
-
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_name);
-		column1.setResizable(false);
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
-		column2.setResizable(false);
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
 		column3.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_description);
-		column3.setResizable(false);
 
 		TableColumn column4= new TableColumn(table, SWT.NONE);
 		column4.setAlignment(SWT.CENTER);
 		column4.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_autoinsert);
-		column4.setResizable(false);
 
 		fTableViewer= new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
@@ -384,9 +376,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 
 		updateButtons();
-        configureTableResizing(table, column1, column2, column3, column4);
+        configureTableResizing(table);
 
 		Dialog.applyDialogFont(parent);
+		// trigger the resizer
+		table.getHorizontalBar().setVisible(true);
 		return parent;
 	}
 
@@ -416,31 +410,87 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return true;
 	}
 
-	/**
-     * Correctly resizes the table so no phantom columns appear
-     *
-	 * @param table the table
-	 * @param column1 the first column
-	 * @param column2 the second column
-	 * @param column3 the third column
-	 * @param column4 the fourth column
-     */
-    private static void configureTableResizing(final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3, final TableColumn column4) {
-        table.addControlListener(new ControlAdapter() {
-            public void controlResized(ControlEvent e) {
-                int width= table.getClientArea().width;
-                // give the description column twice as much as all the others
-                // minimum is 80
-                int normalWidth= Math.max(width / 5, 80);
-                int descWidth= Math.max(width - 3 * normalWidth, 80);
-                column1.setWidth(normalWidth);
-                column2.setWidth(normalWidth);
-                column3.setWidth(descWidth);
-                column4.setWidth(normalWidth);
-                table.getHorizontalBar().setVisible(normalWidth * 3 + descWidth > width);
-            }
-        });
-    }
+		/**
+		 * Correctly resizes the table so no phantom columns appear
+		 * 
+		 * @param table the table
+		 */
+	private static void configureTableResizing(final Table table) {
+	        ControlAdapter resizer= new ControlAdapter() {
+	        	private boolean fIsResizing= false;
+	        	private final int[] fWidths= {80, 80, 160, 50};
+	        	private int fSum= 370;
+	            public void controlResized(ControlEvent e) {
+	            	if (fIsResizing)
+	            		return;
+	            	try {
+	            		fIsResizing= true;
+	            		int clientAreaWidth= table.getClientArea().width;
+	            		TableColumn[] columns= table.getColumns();
+	            		int tableWidth= 0;
+	            		
+	            		if (e.widget == table) {
+	            			int initial[]= {80, 80, 80, 50};
+	            			int minimums[]= new int[columns.length];
+	            			int minSum= 0;
+	            			for (int i= 0; i < columns.length; i++) {
+								// don't make a column narrower than the minimum, 
+								// or than what it is currently if less than the minimum
+								minimums[i]= Math.min(fWidths[i], initial[i]);
+								minSum+= minimums[i];
+							}
+	            			
+	            			int newWidth= fSum < clientAreaWidth ? clientAreaWidth : Math.max(clientAreaWidth, minSum);
+							final int toDistribute= newWidth - fSum;
+							int lastPart= toDistribute;
+							if (toDistribute != 0) {
+								int[] iteration= {0,1,3,2}; // give the description column all the rest
+								for (int i= 0; i < iteration.length; i++) {
+									int c= iteration[i];
+									int width;
+									if (fSum > 0) {
+										int part;
+										if (i == iteration.length - 1)
+											part= lastPart;
+										else
+											// current width is the weight for the distribution of the extra space
+											part= toDistribute * fWidths[c] / fSum;
+										lastPart-= part;
+										width= Math.max(minimums[c], fWidths[c] + part);
+									} else {
+										width= toDistribute * initial[c] / 280;
+									}
+									columns[c].setWidth(width);
+									fWidths[c]= width;
+									tableWidth+= width;
+								}
+								fSum= tableWidth;
+							}
+	            		} else {
+	            			// column being resized
+	            			// on GTK, the last column gets auto-adapted - ignore this
+	            			if (e.widget == columns[3])
+	            				return;
+	            			for (int i= 0; i < columns.length; i++) {
+	            				fWidths[i]= columns[i].getWidth();
+								tableWidth+= fWidths[i];
+	            			}
+	            			fSum= tableWidth;
+	            		}
+	            		
+	            		// set scroll bar visible
+	            		table.getHorizontalBar().setVisible(tableWidth > clientAreaWidth);
+	            	} finally {
+	            		fIsResizing= false;
+	            	}
+	            }
+	        };
+			table.addControlListener(resizer);
+			TableColumn[] columns= table.getColumns();
+			for (int i= 0; i < columns.length; i++) {
+				columns[i].addControlListener(resizer);
+			}
+	    }
 
 
 	private TemplatePersistenceData[] getEnabledTemplates() {
