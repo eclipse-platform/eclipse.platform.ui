@@ -11,9 +11,9 @@ Export-Package: org.eclipse.debug.core,
  org.eclipse.debug.core.model,
  org.eclipse.debug.core.sourcelookup,
  org.eclipse.debug.core.sourcelookup.containers,
- org.eclipse.debug.internal.core,
- org.eclipse.debug.internal.core.sourcelookup,
- org.eclipse.debug.internal.core.sourcelookup.containers
+ org.eclipse.debug.internal.core;x-friends:="org.eclipse.debug.ui",
+ org.eclipse.debug.internal.core.sourcelookup;x-friends:="org.eclipse.debug.ui",
+ org.eclipse.debug.internal.core.sourcelookup.containers;x-friends:="org.eclipse.debug.ui"
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.variables,
  org.eclipse.core.runtime
