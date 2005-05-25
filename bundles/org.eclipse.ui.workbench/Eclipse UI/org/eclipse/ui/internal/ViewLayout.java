@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.ui.IViewLayout;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Implementation of IViewLayout.

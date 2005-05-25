@@ -10,13 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
@@ -120,7 +128,7 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
                 || adapter == IPersistableElement.class) {
             return this;
         }
-        return InternalPlatform.getDefault().getAdapterManager().getAdapter(this, adapter);
+        return Platform.getAdapterManager().getAdapter(this, adapter);
     }
 
     /* (non-Javadoc)
