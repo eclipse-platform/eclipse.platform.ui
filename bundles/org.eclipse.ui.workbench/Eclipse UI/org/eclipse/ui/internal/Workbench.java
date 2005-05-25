@@ -1777,7 +1777,7 @@ public final class Workbench implements IWorkbench {
 				for (int i = 0; i < perspectives.length; i++) {
 					IPerspectiveDescriptor persp = perspectives[i];
 					if (perspectiveId.equals(persp.getId())) {
-						win.getShell().open();
+						win.makeVisible();
 						page.setPerspective(persp);
 						return page;
 					}
@@ -1887,7 +1887,7 @@ public final class Workbench implements IWorkbench {
 					for (int i = 0; i < perspectives.length; i++) {
 						IPerspectiveDescriptor persp = perspectives[i];
 						if (perspectiveId.equals(persp.getId())) {
-							win.getShell().open();
+							win.makeVisible();
 							page.setPerspective(persp);
 							return page;
 						}
