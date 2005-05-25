@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.core.refactoring,
  org.eclipse.ltk.core.refactoring.participants,
- org.eclipse.ltk.internal.core.refactoring
+ org.eclipse.ltk.internal.core.refactoring;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  org.eclipse.core.filebuffers,

@@ -6,9 +6,9 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ltk.ui.refactoring,
- org.eclipse.ltk.internal.ui.refactoring,
- org.eclipse.ltk.internal.ui.refactoring.util
+Export-Package: org.eclipse.ltk.internal.ui.refactoring;x-internal:=true,
+ org.eclipse.ltk.internal.ui.refactoring.util;x-internal:=true,
+ org.eclipse.ltk.ui.refactoring
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  org.eclipse.core.filebuffers,
