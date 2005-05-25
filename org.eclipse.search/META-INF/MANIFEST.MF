@@ -6,17 +6,16 @@ Bundle-Version: 3.1.0
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: 
- org.eclipse.search.internal.core,
- org.eclipse.search.internal.core.text,
- org.eclipse.search.internal.ui,
- org.eclipse.search.internal.ui.text,
- org.eclipse.search.internal.ui.util,
+Export-Package: org.eclipse.search.internal.core;x-internal:=true,
+ org.eclipse.search.internal.core.text;x-internal:=true,
+ org.eclipse.search.internal.ui;x-internal:=true,
+ org.eclipse.search.internal.ui.text;x-internal:=true,
+ org.eclipse.search.internal.ui.util;x-internal:=true,
  org.eclipse.search.ui,
  org.eclipse.search.ui.text,
- org.eclipse.search2.internal.ui,
- org.eclipse.search2.internal.ui.basic.views,
- org.eclipse.search2.internal.ui.text
+ org.eclipse.search2.internal.ui;x-internal:=true,
+ org.eclipse.search2.internal.ui.basic.views;x-internal:=true,
+ org.eclipse.search2.internal.ui.text;x-internal:=true
 Require-Bundle: 
  org.eclipse.core.resources,
  org.eclipse.ui,
