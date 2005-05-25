@@ -26,6 +26,7 @@ import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.configurator.SiteEntry;
 import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.BaseSiteLocalFactory;
+import org.eclipse.update.internal.core.InstallConfiguration;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -46,7 +47,7 @@ public class InstallConfigurationParser {
 	 */
 	public InstallConfigurationParser(
 		IPlatformConfiguration platformConfig,
-		InstallConfigurationModel config)
+		InstallConfigurationModel config, boolean light)
 		throws IOException, CoreException {
 
 		Assert.isTrue(platformConfig instanceof PlatformConfiguration);
@@ -59,8 +60,14 @@ public class InstallConfigurationParser {
 			UpdateCore.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 		
-		processConfig(this.platformConfig);
+		if (light) {
+			processConfigurationLight(this.platformConfig);
+		} else {
+			processConfig(this.platformConfig);
+		}
 	}
+	
+	
 
 
 
@@ -183,9 +190,7 @@ public class InstallConfigurationParser {
 	private void processConfig(PlatformConfiguration platformConfig) throws IOException, CoreException {
 
 		// date
-		Date date = new Date(platformConfig.getChangeStamp());
-		config.setCreationDate(date);
-		config.setLabel(date.toString());
+		processConfigurationLight(platformConfig);
 		
 		//timeline
 //		String timelineString = attributes.getValue("timeline"); //$NON-NLS-1$
@@ -200,4 +205,15 @@ public class InstallConfigurationParser {
 			processSite(sites[i]);
 
 	}
+
+
+
+	private void processConfigurationLight(PlatformConfiguration platformConfig) {
+		Date date = new Date(platformConfig.getChangeStamp());
+		config.setCreationDate(date);
+		config.setLabel(date.toString());
+		
+		config.setCurrent( date.equals(org.eclipse.update.internal.configurator.PlatformConfiguration.getCurrent().getConfiguration().getDate()));
+	}
+	
 }
