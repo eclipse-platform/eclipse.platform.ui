@@ -253,5 +253,14 @@ public class CoreTest extends TestCase {
 		for (int i = 0; i < expected.length; i++)
 			assertEquals(message, expected[i], actual[i]);
 	}
+	
+	/**
+	 * Create the given file in the file system. 
+	 */
+	public void createFileInFileSystem(File file, InputStream contents) throws IOException {
+		file.getParentFile().mkdirs();
+		FileOutputStream output = new FileOutputStream(file);
+		transferData(contents, output);
+	}
 
 }
