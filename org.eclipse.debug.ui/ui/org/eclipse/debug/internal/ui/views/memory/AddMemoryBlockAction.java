@@ -89,7 +89,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		
 		// get selection from Debug View
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		fSite.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		
 		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
 		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
@@ -101,19 +101,20 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
-	public AddMemoryBlockAction(String text, int style)
+	public AddMemoryBlockAction(String text, int style, IMemoryRenderingSite site)
 	{
 		super(text, style);
 		
+		fSite = site;
 		setToolTipText(DebugUIMessages.AddMemoryBlockAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		fSite.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		
 		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+		ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		fCurrentSelection = selection;
 		setEnabled(MemoryViewUtil.isValidSelection(selection));
 		
@@ -136,7 +137,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			}
 			
 			//	get current selection from Debug View
-			 ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			 ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 			Object elem = ((IStructuredSelection)selection).getFirstElement();
 			if (!(elem instanceof IDebugElement))
 				 return;
@@ -324,7 +325,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		fSite.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)

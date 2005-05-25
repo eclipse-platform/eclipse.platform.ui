@@ -399,8 +399,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		fContentProvider = new MemoryBlocksViewerContentProvider();
 		fTreeViewer.setLabelProvider(new MemoryBlocksViewerLabelProvider());
 		fTreeViewer.setContentProvider(fContentProvider);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this); //$NON-NLS-1$
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		fParent.getViewSite().getPage().addSelectionListener(this);
 		
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -440,7 +439,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	 */
 	private void populateViewPane() {
 		
-		ISelection selected = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW); //$NON-NLS-1$
+		ISelection selected = fParent.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW); //$NON-NLS-1$
 		if (selected instanceof IStructuredSelection)
 		{
 			Object obj = ((IStructuredSelection)selected).getFirstElement();
@@ -509,8 +508,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	public void dispose()
 	{
 		fMemoryBlocks.clear();
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this); //$NON-NLS-1$
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this); 
+		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fContentProvider.dispose();
 		fAddMemoryBlockAction.dispose();
 	}

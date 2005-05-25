@@ -112,7 +112,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		addListeners();
 		
 		// check current selection and create folder if something is already selected from debug view
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+		ISelection selection = fParent.getViewSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 
 		if (MemoryViewUtil.isValidSelection(selection))
 		{
@@ -127,15 +127,13 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected void addListeners()
 	{
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		fParent.getViewSite().getPage().addSelectionListener(this);
 	}
 	
 	protected void removeListeners()
 	{
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		fParent.getViewSite().getPage().removeSelectionListener(this);
 		
 		if (fStackLayout.topControl != null)
 		{

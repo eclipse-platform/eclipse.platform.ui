@@ -1013,7 +1013,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	private IDebugTarget getSelectedDebugTarget()
 	{
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+		ISelection selection = fParent.getViewSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
 		if (selection instanceof IStructuredSelection && !selection.isEmpty())
 		{
 			Object elem = ((IStructuredSelection)selection).getFirstElement();
