@@ -388,11 +388,12 @@ public class ErrorDialog extends IconAndMessageDialog {
 	            sb.append(NESTING_INDENT); //$NON-NLS-1$
 	        }
 	        String message = t.getLocalizedMessage();
-	        if (message != null) {
-	            sb.append(message);
-	            listToPopulate.add(sb.toString());
-	            incrementNesting= true;
-	        }
+	        if (message == null)
+	        	message = t.toString();
+	        	
+	        sb.append(message);
+	        listToPopulate.add(sb.toString());
+	        incrementNesting= true;
         }
         
         if (incrementNesting) 
