@@ -66,7 +66,7 @@ public abstract class AbstractHandler implements IHandler {
 	 *            the event describing changes to this instance. Must not be
 	 *            <code>null</code>.
 	 */
-	protected final void fireHandlerChanged(final HandlerEvent handlerEvent) {
+	protected void fireHandlerChanged(final HandlerEvent handlerEvent) {
 		if (handlerEvent == null)
 			throw new NullPointerException();
 		if (handlerListeners != null)
@@ -102,7 +102,7 @@ public abstract class AbstractHandler implements IHandler {
 	 * @return true iff there is one or more IHandlerListeners attached to this
 	 *         AbstractHandler
 	 */
-	protected final boolean hasListeners() {
+	protected boolean hasListeners() {
 		return handlerListeners != null;
 	}
 
