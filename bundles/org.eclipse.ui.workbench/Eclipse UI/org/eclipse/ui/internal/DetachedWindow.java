@@ -33,19 +33,31 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DetachedViewPresentationFactory;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
-public class DetachedWindow {
+
+/**
+ * TODO: Drag from detached to fast view bar back to detached causes NPE
+ * 
+ * @since 3.1
+ */
+public class DetachedWindow implements IDragOverListener {
 
     private PartStack folder;
 
     private WorkbenchPage page;
-
-    //Keep the state of a DetachedWindow when switching perspectives.
-    private String title;
-
+    
     private Rectangle bounds = new Rectangle(0,0,0,0);
 
     private Shell s;
@@ -64,6 +76,24 @@ public class DetachedWindow {
             folder.setBounds(shell.getClientArea());
         }
     };
+
+    private IPropertyListener propertyListener = new IPropertyListener() {
+        public void propertyChanged(Object source, int propId) {
+            if (propId == PartStack.PROP_SELECTION) {
+                activePartChanged(getPartReference(folder.getSelection()));
+            }
+        }
+    };
+
+    private IWorkbenchPartReference activePart;
+
+    private IPropertyListener partPropertyListener = new IPropertyListener() {
+        public void propertyChanged(Object source, int propId) {
+            if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+                updateTitle();
+            }
+        }
+    };
     
     /**
      * Create a new FloatingWindow.
@@ -73,7 +103,56 @@ public class DetachedWindow {
         //setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
         //SWT.RESIZE | getDefaultOrientation());
         this.page = workbenchPage;
-        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
+        
+        // Ugly hack: if we're using the default presentation, change the appearance
+        // of detached views. Really, each presentation should be able to provide an
+        // alternate appearance for detached views
+        AbstractPresentationFactory defaultFactory = ((WorkbenchWindow)page
+            .getWorkbenchWindow()).getWindowConfigurer()
+            .getPresentationFactory();
+        
+        AbstractPresentationFactory factory = null;
+        
+        if (defaultFactory.getClass() == WorkbenchPresentationFactory.class) {
+            factory = new DetachedViewPresentationFactory();
+        }
+        
+        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW, factory);
+        folder.addListener(propertyListener);
+    }
+
+    protected void activePartChanged(IWorkbenchPartReference partReference) {
+        if (activePart == partReference) {
+            return;
+        }
+         
+        if (activePart != null) {
+            activePart.removePropertyListener(partPropertyListener);
+        }
+        activePart = partReference;
+        if (partReference != null) {
+            partReference.addPropertyListener(partPropertyListener);   
+        }
+        updateTitle();
+    }
+
+    private void updateTitle() {
+        if (activePart != null) {
+            String text = activePart.getTitle();
+            
+            if (!text.equals(s.getText())) {
+                s.setText(text);
+            }
+        }
+    }
+
+    private static IWorkbenchPartReference getPartReference(PartPane pane) {
+        
+        if (pane == null) {
+            return null;
+        }
+        
+        return pane.getPartReference();
     }
 
     public Shell getShell() {
@@ -83,6 +162,7 @@ public class DetachedWindow {
     public void create() {
         s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
         s.setData(this);
+        DragUtil.addDragTarget(s, this);
         hideViewsOnClose = true;
         if (bounds.isEmpty()) {
             Point center = Geometry.centerPoint(page.getWorkbenchWindow().getShell().getBounds());
@@ -144,10 +224,9 @@ public class DetachedWindow {
         if (folder != null)
             folder.dispose();
         
-//        Shell s = getShell();
         if (s != null) {
             s.removeListener(SWT.Resize, resizeListener);
-            title = s.getText();
+            DragUtil.removeDragTarget(s, this);
             bounds = s.getBounds();
 
             // Unregister this detached view as a window (for key bindings).
@@ -163,6 +242,26 @@ public class DetachedWindow {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
+     */
+    public IDropTarget drag(Control currentControl, Object draggedObject,
+            Point position, Rectangle dragRectangle) {
+
+        if (!(draggedObject instanceof LayoutPart)) {
+            return null;
+        }
+
+        final LayoutPart sourcePart = (LayoutPart) draggedObject;
+
+        if (sourcePart.getWorkbenchWindow() != page.getWorkbenchWindow()) {
+            return null;
+        }
+        
+        IDropTarget target = folder.getDropTarget(draggedObject, position);
+        return target;
+    }
+    
     /**
      * Answer a list of the view panes.
      */
@@ -179,8 +278,7 @@ public class DetachedWindow {
      * This method will be called to initialize the given Shell's layout
      */
     protected void configureShell(Shell shell) {
-        if (title != null)
-            shell.setText(title);
+        updateTitle();
         shell.addListener(SWT.Resize, resizeListener);
 
         // Register this detached view as a window (for key bindings).
@@ -226,9 +324,6 @@ public class DetachedWindow {
      * @see IPersistablePart
      */
     public void restoreState(IMemento memento) {
-        // Read the title.
-        title = memento.getString(IWorkbenchConstants.TAG_TITLE);
-
         // Read the bounds.
         Integer bigInt;
         bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
@@ -244,7 +339,6 @@ public class DetachedWindow {
         // Set the bounds.
         bounds = new Rectangle(x, y, width, height);
         if (getShell() != null) {
-            getShell().setText(title);
             getShell().setBounds(bounds);
         }
         
@@ -259,11 +353,8 @@ public class DetachedWindow {
      */
     public void saveState(IMemento memento) {
         if (getShell() != null) {
-            title = getShell().getText();
             bounds = getShell().getBounds();
         }
-        // Save the title.
-        memento.putString(IWorkbenchConstants.TAG_TITLE, title);
 
         // Save the bounds.
         memento.putInteger(IWorkbenchConstants.TAG_X, bounds.x);

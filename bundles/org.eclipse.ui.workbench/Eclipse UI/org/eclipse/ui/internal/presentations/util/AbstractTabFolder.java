@@ -311,13 +311,29 @@ public abstract class AbstractTabFolder {
         }
     }
     
+    protected void detachListeners(Control theControl, boolean recursive) {
+        theControl.removeListener(SWT.MenuDetect, menuListener);
+        theControl.removeMouseListener(mouseListener);
+        PresentationUtil.removeDragListener(theControl, dragListener);
+        
+        if (recursive && theControl instanceof Composite) {
+            Composite composite = (Composite) theControl;
+            Control[] children = composite.getChildren();
+            
+            for (int i = 0; i < children.length; i++) {
+                Control control = children[i];
+                
+                detachListeners(control, recursive);
+            }
+        }
+    }
+    
     protected void handleContextMenu(Point displayPos, Event e) {
         if (isOnBorder(displayPos)) {
             return;
         }
-        
-        Point localPos = getControl().toControl(displayPos);
-        AbstractTabItem tab = getItem(localPos); 
+
+        AbstractTabItem tab = getItem(displayPos); 
         
         fireEvent(TabFolderEvent.EVENT_SYSTEM_MENU, tab, displayPos);
     }
@@ -339,13 +355,12 @@ public abstract class AbstractTabFolder {
     }
     
     protected void handleDragStarted(Point displayPos, Event e) {
-        Point localPos = getControl().toControl(displayPos);
-        
+
         if (isOnBorder(displayPos)) {
             return;
         }
         
-        AbstractTabItem tab = getItem(localPos);
+        AbstractTabItem tab = getItem(displayPos);
         fireEvent(TabFolderEvent.EVENT_DRAG_START, tab, displayPos);
     }
 

@@ -58,6 +58,9 @@ public final class PresentablePartFolder implements IPresentablePartList {
 		}
 
 		public void controlResized(ControlEvent e) {
+            if (e.widget == contentProxy) {
+                layoutContent();
+            }
 		}
 		
 	};

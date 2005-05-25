@@ -236,7 +236,6 @@ public class PerspectiveHelper {
         }
 
         enableAllDrag();
-        //enableAllDrop();
 
         active = true;
     }

@@ -365,7 +365,7 @@ public class PageLayout implements IPageLayout {
                 }
 
                 ViewStack newFolder = new ViewStack(rootLayoutContainer.page,
-                        true, appearance);
+                        true, appearance, null);
                 newFolder.add(newPart);
                 setFolderPart(viewId, newFolder);
                 addPart(newFolder, viewId, relationship, ratio, refId);

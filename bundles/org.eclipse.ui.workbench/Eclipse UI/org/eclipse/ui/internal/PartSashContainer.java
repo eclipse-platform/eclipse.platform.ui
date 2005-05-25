@@ -1125,11 +1125,15 @@ public abstract class PartSashContainer extends LayoutPart implements
                     targetPart);
         }
 
-        setVisiblePart(visiblePart.getContainer(), visiblePart);
+        if (visiblePart != null) {
+            setVisiblePart(visiblePart.getContainer(), visiblePart);
+        }
 
         getControl().setRedraw(true);
-
-        visiblePart.setFocus();
+        
+        if (visiblePart != null) {
+            visiblePart.setFocus();
+        }
     }
 
     /**

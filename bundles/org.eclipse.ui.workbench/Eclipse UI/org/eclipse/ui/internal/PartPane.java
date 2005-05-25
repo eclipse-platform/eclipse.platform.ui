@@ -209,8 +209,11 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * @see Listener
      */
     public void handleEvent(Event event) {
-        if (event.type == SWT.Activate)
-            requestActivation();
+        if (event.type == SWT.Activate) {
+            if (inLayout) {
+                requestActivation();
+            }
+        }
     }
 
     /**
@@ -250,6 +253,20 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Sets the parent for this part.
      */
     public void setContainer(ILayoutContainer container) {
+        
+        if (container instanceof LayoutPart) {
+            LayoutPart part = (LayoutPart) container;
+            
+            Control containerControl = part.getControl();
+            
+            if (containerControl != null) {
+                Control control = getControl();
+                Composite newParent = containerControl.getParent();
+                if (control != null && newParent != control.getParent()) {
+                    reparent(newParent);
+                }
+            }
+        }
         super.setContainer(container);
     }
 

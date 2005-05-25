@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.presentations.defaultpresentation;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
@@ -36,8 +38,8 @@ public class DefaultTabItem extends WidgetTabItem {
     private String shortName = Util.ZERO_LENGTH_STRING;
     private String longName = Util.ZERO_LENGTH_STRING;
     
-    public DefaultTabItem(DefaultTabFolder parent, int index, int flags) {
-        super(parent.getFolder().createItem(flags, index));
+    public DefaultTabItem(CTabFolder parent, int index, int flags) {
+        super(new CTabItem(parent, flags, index));
         updateFont();
     }
     
@@ -45,7 +47,7 @@ public class DefaultTabItem extends WidgetTabItem {
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabItem#getBounds()
      */
     public Rectangle getBounds() {
-        return getItem().getBounds();
+        return Geometry.toDisplay(getItem().getParent(), getItem().getBounds());
     }
     
     public CTabItem getItem() {

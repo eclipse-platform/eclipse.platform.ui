@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.presentations.SystemMenuDetach;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -59,12 +60,12 @@ public class ViewStack extends PartStack {
     }
 
     public ViewStack(WorkbenchPage page, boolean allowsStateChanges) {
-        this(page, allowsStateChanges, PresentationFactoryUtil.ROLE_VIEW);
+        this(page, allowsStateChanges, PresentationFactoryUtil.ROLE_VIEW, null);
     }
 
     public ViewStack(WorkbenchPage page, boolean allowsStateChanges,
-            int appearance) {
-        super(appearance);
+            int appearance, AbstractPresentationFactory factory) {
+        super(appearance, factory);
 
         this.page = page;
         setID(this.toString());

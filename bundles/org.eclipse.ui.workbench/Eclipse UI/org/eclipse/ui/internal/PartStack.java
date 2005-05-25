@@ -21,6 +21,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistable;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
@@ -53,6 +55,8 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
+    public static final int PROP_SELECTION = 0x42;
+    
     private List children = new ArrayList(3);
 
     protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
@@ -207,6 +211,14 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private static final PartStackDropResult dropResult = new PartStackDropResult();
 
     private boolean isMinimized;
+
+    private ListenerList listeners = new ListenerList();
+
+    /**
+     * Custom presentation factory to use for this stack, or null to
+     * use the default
+     */
+    private AbstractPresentationFactory factory;
             
     protected abstract boolean isMoveable(IPresentablePart part);
 
@@ -228,16 +240,40 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             m.add(item);
         }
     }
-
+    
     /**
      * Creates a new PartStack, given a constant determining which presentation to use
      * 
      * @param appearance one of the PresentationFactoryUtil.ROLE_* constants
      */
     public PartStack(int appearance) {
+        this(appearance, null);
+    }
+    
+    /**
+     * Creates a new part stack that uses the given custom presentation factory
+     * @param appearance
+     * @param factory custom factory to use (or null to use the default)
+     */
+    public PartStack(int appearance, AbstractPresentationFactory factory) {
         super("PartStack"); //$NON-NLS-1$
 
         this.appearance = appearance;
+        this.factory = factory;
+    }
+
+    /**
+     * Adds a property listener to this stack. The listener will receive a PROP_SELECTION
+     * event whenever the result of getSelection changes
+     * 
+     * @param listener
+     */
+    public void addListener(IPropertyListener listener) {
+        listeners.add(listener);
+    }
+    
+    public void removeListener(IPropertyListener listener) {
+        listeners.remove(listener);
     }
     
     protected final boolean isStandalone() {
@@ -465,13 +501,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     }
 
     protected AbstractPresentationFactory getFactory() {
-        AbstractPresentationFactory factory = ((WorkbenchWindow) getPage()
+        
+        if (factory != null) {
+            return factory;
+        }
+        
+        return ((WorkbenchWindow) getPage()
                 .getWorkbenchWindow()).getWindowConfigurer()
                 .getPresentationFactory();
-
-        return factory;
     }
-
+    
     public void createControl(Composite parent) {
         if (!isDisposed()) {
             return;
@@ -509,11 +548,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             return null;
         }
 
-        final StackDropResult dropResult = getPresentation().dragOver(
+        StackDropResult dropResult = getPresentation().dragOver(
                 getControl(), position);
         
         if (dropResult == null) {
-            return null;
+            Rectangle displayBounds = DragUtil.getDisplayBounds(getControl());
+            if (displayBounds.contains(position)) {
+                dropResult = new StackDropResult(displayBounds, null);
+            } else {
+                return null;
+            }
         }
         
         return createDropTarget(pane, dropResult); 
@@ -602,6 +646,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
         presentationCurrent = null;
         current = null;
+        fireInternalPropertyChange(PROP_SELECTION);
     }
 
     public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
@@ -782,11 +827,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Reparent a part. Also reparent visible children...
      */
     public void reparent(Composite newParent) {
-        if (!newParent.isReparentable())
-            return;
 
         Control control = getControl();
-        if ((control == null) || (control.getParent() == newParent))
+        if ((control == null) || (control.getParent() == newParent) || !control.isReparentable())
             return;
 
         super.reparent(newParent);
@@ -1067,6 +1110,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
             // Update the return value of getVisiblePart
             current = requestedCurrent;
+            fireInternalPropertyChange(PROP_SELECTION);
         }
     }
 
@@ -1339,5 +1383,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public IMemento getSavedPresentationState() {
         return savedPresentationState;
+    }
+    
+    private void fireInternalPropertyChange(int id) {
+        Object listeners[] = this.listeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ((IPropertyListener) listeners[i]).propertyChanged(this, id);
+        }
     }
 }

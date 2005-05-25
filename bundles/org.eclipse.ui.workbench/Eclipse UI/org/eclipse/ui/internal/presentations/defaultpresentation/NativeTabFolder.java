@@ -70,7 +70,7 @@ public class NativeTabFolder extends AbstractTabFolder {
         }
         
     };
-
+    
     public NativeTabFolder(Composite parent) {
         control = new TabFolder(parent, SWT.BOTTOM);
         control.addListener(SWT.Selection, selectionListener);
@@ -219,7 +219,7 @@ public class NativeTabFolder extends AbstractTabFolder {
         bounds.y = 0;
         Geometry.expand(bounds, 0, 0, - (clientArea.height + clientArea.y), 0);
         
-        return bounds;
+        return Geometry.toDisplay(control.getParent(), bounds);
     }
     
     /* (non-Javadoc)

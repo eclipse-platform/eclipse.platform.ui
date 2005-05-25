@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
@@ -176,7 +178,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#add(int)
      */
     public AbstractTabItem add(int index, int flags) {
-        DefaultTabItem result = new DefaultTabItem(this, index, flags);
+        DefaultTabItem result = new DefaultTabItem((CTabFolder)getFolder().getControl(), index, flags);
         
         result.getWidget().setData(result);
         
@@ -253,7 +255,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getTabArea()
      */
     public Rectangle getTabArea() {
-        return paneFolder.getTitleArea();
+        return Geometry.toDisplay(paneFolder.getControl().getParent(), paneFolder.getTitleArea());
     }
 
     /**

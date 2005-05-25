@@ -43,9 +43,9 @@ public class ReplaceDragHandler extends TabDragHandler {
             int dragStart) {
 
         // Determine which tab we're currently dragging over
-        Point localPos = tabFolder.getControl().toControl(location);
+        //Point localPos = tabFolder.getControl().toControl(location);
 
-        AbstractTabItem tabUnderPointer = tabFolder.getItem(localPos);
+        AbstractTabItem tabUnderPointer = tabFolder.getItem(location);
 
         // This drop target only deals with tabs... if we're not dragging over
         // a tab, exit.
@@ -54,7 +54,7 @@ public class ReplaceDragHandler extends TabDragHandler {
 
             // If we're dragging over the title area, treat this as a drop in the last
             // tab position.
-            if (titleArea.contains(localPos)) {
+            if (titleArea.contains(location)) {
                 int dragOverIndex = tabFolder.getItemCount();
                 AbstractTabItem lastTab = tabFolder.getItem(dragOverIndex - 1);
 
@@ -72,17 +72,16 @@ public class ReplaceDragHandler extends TabDragHandler {
                 if (dragStart >= 0) {
                     dragOverIndex--;
 
-                    return new StackDropResult(Geometry.toDisplay(tabFolder
-                            .getControl(), lastTabBounds), new Integer(
+                    return new StackDropResult(lastTabBounds, new Integer(
                             dragOverIndex));
                 }
 
                 // Make the drag-over rectangle look like a tab at the end of the tab region.
                 // We don't actually know how wide the tab will be when it's dropped, so just
                 // make it 3 times wider than it is tall.
-                Rectangle dropRectangle = Geometry.toDisplay(tabFolder
-                        .getControl(), titleArea);
+                Rectangle dropRectangle = titleArea;
 
+                dropRectangle.x = lastTabBounds.x + lastTabBounds.width;
                 dropRectangle.width = 3 * dropRectangle.height;
                 return new StackDropResult(dropRectangle, new Integer(
                         dragOverIndex));
@@ -110,8 +109,7 @@ public class ReplaceDragHandler extends TabDragHandler {
             return null;
         }
 
-        return new StackDropResult(Geometry.toDisplay(tabFolder.getControl(),
-                tabUnderPointer.getBounds()), new DragCookie(tabFolder
+        return new StackDropResult(tabBounds, new DragCookie(tabFolder
                 .indexOf(tabUnderPointer)));
     }
 
