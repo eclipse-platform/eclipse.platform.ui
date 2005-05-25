@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui;
 import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -45,7 +44,7 @@ public class ExternalHyperlink implements IHyperlink {
 
     public void linkActivated() {
         IEditorInput input = new JavaFileEditorInput(fFile);
-        IWorkbenchPage activePage = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
+        IWorkbenchPage activePage = AntUIPlugin.getActiveWorkbenchWindow().getActivePage();
         try {
             IEditorPart editorPart= activePage.openEditor(input, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
             if (fLineNumber > 0 && editorPart instanceof ITextEditor) {
