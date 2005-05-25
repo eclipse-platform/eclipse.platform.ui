@@ -149,6 +149,9 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			return;
 		}
 		
+		// when reading externalized URLs, need to convert them to absolute form
+		url = Utils.makeAbsolute(Utils.getInstallURL(), url);
+		
 		if (!isValidSite(url))
 			return;
 		
@@ -292,10 +295,11 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		config.setURL(configURL);
 		
 		try {
-			String sharedURL = attributes.getValue(CFG_SHARED_URL);
-			if (sharedURL != null) {
+			String sharedURLString = attributes.getValue(CFG_SHARED_URL);
+			if (sharedURLString != null) {
+				URL sharedURL = Utils.makeAbsolute(Utils.getInstallURL(), new URL(sharedURLString));				
 				ConfigurationParser parser = new ConfigurationParser();
-				Configuration sharedConfig = parser.parse(new URL(sharedURL));
+				Configuration sharedConfig = parser.parse(sharedURL);
 				if (sharedConfig == null)
 					throw new Exception();
 				config.setLinkedConfig(sharedConfig);

@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.update.internal.configurator.ConfigurationActivator;
+import org.eclipse.update.internal.configurator.Utils;
 import org.osgi.framework.*;
 
 /**
@@ -78,6 +79,6 @@ public class ConfiguratorUtils {
 	 * @return the URL of this eclispe installation
 	 */
 	public static URL getInstallURL() {
-		return ConfigurationActivator.getInstallURL();
+		return Utils.getInstallURL();
 	}
 }

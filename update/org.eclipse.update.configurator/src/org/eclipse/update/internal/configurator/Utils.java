@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.configurator;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -21,7 +22,9 @@ public class Utils {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	static FrameworkLog log;
-	
+	// Install location	
+	private static URL installURL;
+
 	public static void debug(String s) {
 		if (ConfigurationActivator.DEBUG)
 			System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
@@ -256,4 +259,93 @@ public class Utils {
 		}
 		return false;
 	}
+
+	/**
+	 * Returns an absolute URL by combining a base absolute URL and another URL relative to the first one.
+	 * If the relative URL protocol does not match the base URL protocol, or if the relative URL path is not relative, 
+	 * return it as is. 
+	 */
+	public static URL makeAbsolute(URL base, URL relativeLocation) {
+		if (relativeLocation.getProtocol() != null && !relativeLocation.getProtocol().equals(base.getProtocol()))
+			// it is not relative, return as is (avoid creating garbage)
+			return relativeLocation;
+		IPath relativePath = new Path(relativeLocation.getPath());
+		if (relativePath.isAbsolute())
+			return relativeLocation;
+		try {
+			IPath absolutePath = new Path(base.getPath()).append(relativeLocation.getPath());
+			return new URL(base.getProtocol(), base.getHost(), base.getPort(), absolutePath.toString());
+		} catch (MalformedURLException e) {
+			// cannot happen since we are building from two existing valid URLs
+			Utils.log(e.getLocalizedMessage());
+			return relativeLocation;
+		}
+	}
+
+	/**
+	 * Returns a URL which is equivalent to the given URL relative to the
+	 * specified base URL. Works only for file: URLs
+	 */
+	public static URL makeRelative(URL base, URL location) {
+		if (base == null)
+			return location;
+		if (!"file".equals(base.getProtocol())) //$NON-NLS-1$
+			return location;
+		if (!base.getProtocol().equals(location.getProtocol()))
+			return location;
+		if (base.getHost() == null ^ location.getHost() == null)
+			return location;
+		if (base.getHost() != null && !base.getHost().equals(location.getHost()))
+			return location;
+		if (base.getPort() != location.getPort())
+			return location;
+		IPath locationPath = new Path(location.getPath());
+		if (!locationPath.isAbsolute())
+			return location;
+		IPath relativePath = makeRelative(new Path(base.getPath()), locationPath);
+		try {
+			return new URL(base.getProtocol(), base.getHost(), base.getPort(), relativePath.toString());
+		} catch (MalformedURLException e) {
+			String message = e.getMessage();
+			if (message == null)
+				message = ""; //$NON-NLS-1$
+			Utils.log(Utils.newStatus(message, e));
+		}
+		return location;
+	}
+
+	/**
+	 * Returns a path which is equivalent to the given location relative to the
+	 * specified base path.
+	 */
+	public static IPath makeRelative(IPath base, IPath location) {
+		if (location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice()))
+			return location;
+		int baseCount = base.segmentCount();
+		int count = base.matchingFirstSegments(location);
+		String temp = ""; //$NON-NLS-1$
+		for (int j = 0; j < baseCount - count; j++)
+			temp += "../"; //$NON-NLS-1$
+		return new Path(temp).append(location.removeFirstSegments(count));
+	}
+
+	/**
+	 * Returns a string URL which is equivalent to the given absolute location 
+	 * made relative to the specified base path.
+	 */
+	public static String makeRelative(URL base, String absolute) {
+		try {
+			return makeRelative(base, new URL(absolute)).toExternalForm();
+		} catch (MalformedURLException e) {
+			// returns the original string if is invalid
+			return absolute;
+		}
+	}
+
+	public static URL getInstallURL() {
+		if (installURL == null)
+			installURL = Platform.getInstallLocation().getURL();
+		return installURL;
+	}
+
 }

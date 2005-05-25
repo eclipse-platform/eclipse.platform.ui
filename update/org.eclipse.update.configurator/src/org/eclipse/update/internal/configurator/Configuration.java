@@ -107,7 +107,8 @@ public class Configuration implements IConfigurationConstants {
 			configElement.setAttribute(CFG_TRANSIENT, transitory);
 						
 			if (linkedConfig != null) {
-				configElement.setAttribute(CFG_SHARED_URL, linkedConfig.getURL().toExternalForm());
+				// make externalized URL install relative 
+				configElement.setAttribute(CFG_SHARED_URL, Utils.makeRelative(Utils.getInstallURL(), linkedConfig.getURL()).toExternalForm());
 			}
 
 			// collect site entries

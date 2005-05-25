@@ -975,7 +975,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// modify config.ini and platform.xml to only link original files
 			File configIni = new File(newConfigIniURL.getFile());
 			Properties props = new Properties();
-			props.put("osgi.sharedConfiguration.area", sharedConfigLocation.getURL().toExternalForm()); //$NON-NLS-1$
+			String externalForm = Utils.makeRelative(Utils.getInstallURL(), sharedConfigLocation.getURL()).toExternalForm();
+			props.put("osgi.sharedConfiguration.area", externalForm); //$NON-NLS-1$
 			props.store(new FileOutputStream(configIni), "Linked configuration"); //$NON-NLS-1$
 			
 			config = new Configuration(new Date());

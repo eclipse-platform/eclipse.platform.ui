@@ -126,7 +126,8 @@ public class FeatureParser extends DefaultHandler {
 				File f = new File(url.getFile().replace('/', File.separatorChar));
 				feature.setURL("features" + "/" + f.getParentFile().getName() + "/");// + f.getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				feature.setURL(url.toExternalForm());
+				// externalized URLs might be in relative form, ensure they are absolute				
+				feature.setURL(Utils.makeAbsolute(Utils.getInstallURL(), url).toExternalForm());
 			}
 
 			Utils.

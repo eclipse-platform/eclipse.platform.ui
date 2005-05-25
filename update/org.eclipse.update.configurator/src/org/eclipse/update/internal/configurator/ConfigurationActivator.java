@@ -46,9 +46,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private ServiceRegistration configurationFactorySR;
 	private PlatformConfiguration configuration;
 	
-	// Install location
-	private static URL installURL;
-	
 	// Location of the configuration data
 	private Location configLocation;
 	
@@ -106,7 +103,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			}
 		}
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(getInstallURL(), configLocation);
+		configuration = getPlatformConfiguration(Utils.getInstallURL(), configLocation);
 		if (configuration == null)
 			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] { configLocation.getURL().toExternalForm() })), null);
 
@@ -270,7 +267,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 		ArrayList bundlesToInstall = new ArrayList(newPlugins.length);
 		for (int i = 0; i < newPlugins.length; i++) {
-			String location = makeRelative(getInstallURL(), newPlugins[i]).getFile();
+			String location = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
 			// check if already installed
 			if (cachedBundlesSet.contains(location))
 				continue;
@@ -288,7 +285,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		HashSet newPluginsSet = new HashSet(newPlugins.length);
 		for (int i=0; i<newPlugins.length; i++) {
 			
-			String pluginLocation = makeRelative(getInstallURL(), newPlugins[i]).getFile();
+			String pluginLocation = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
 			newPluginsSet.add(pluginLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (isWindows)
@@ -429,12 +426,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return context;
 	}
 		
-	public static URL getInstallURL() {
-		if (installURL == null)
-			installURL = Platform.getInstallLocation().getURL();
-		return installURL;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
 	 */
@@ -473,51 +464,5 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			return;
 		Utils.log  = (FrameworkLog) context.getService(logServiceReference);
 	}
-	
-	/**
-	 * Returns a URL which is equivalent to the given URL relative to the
-	 * specified base URL. Works only for file: URLs
-	 */
-	public URL makeRelative(URL base, URL location) {
-		if (base == null)
-			return location;
-		if (!"file".equals(base.getProtocol())) //$NON-NLS-1$
-			return location;
-		if (!base.getProtocol().equals(location.getProtocol()))
-			return location;
-		if (base.getHost() == null ^ location.getHost() == null)
-			return location;
-		if (base.getHost() != null && !base.getHost().equals(location.getHost()))
-			return location;
-		if (base.getPort() != location.getPort())
-			return location;
-		IPath locationPath = new Path(location.getPath());
-		if (!locationPath.isAbsolute())
-			return location;
-		IPath relativePath = makeRelative(new Path(base.getPath()), locationPath);
-		try {
-			return new URL(base.getProtocol(), base.getHost(), base.getPort(), relativePath.toString());
-		} catch (MalformedURLException e) {			
-			String message = e.getMessage();
-			if (message == null)
-				message = ""; //$NON-NLS-1$
-			Utils.log(Utils.newStatus(message, e));
-		}
-		return location;
-	}
-	
-	/**
-	 * Returns a path which is equivalent to the given location relative to the
-	 * specified base path.
-	 */
-	public static IPath makeRelative(IPath base, IPath location) {
-		if (location.getDevice() != null && !location.getDevice().equalsIgnoreCase(base.getDevice()))
-			return location;
-		int baseCount = base.segmentCount();
-		int count = base.matchingFirstSegments(location);
-		String temp = ""; //$NON-NLS-1$
-		for (int j = 0; j < baseCount - count; j++)
-			temp += "../"; //$NON-NLS-1$
-		return new Path(temp).append(location.removeFirstSegments(count));
-	}	
-}
+}	
+
