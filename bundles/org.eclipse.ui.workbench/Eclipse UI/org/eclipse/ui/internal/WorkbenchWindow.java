@@ -1431,19 +1431,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     /**
-     * Makes the window visible, by unminimizing and activating it.
-     * The workbench should use this rather than Shell.open().
-     * For more background, see bug Bug 4414 DCR - Platform inconsistency of Shell.open
-     * and bug 95561.
+     * Makes the window visible and frontmost.
      */
     void makeVisible() {
     	Shell shell = getShell();
     	if (shell != null && !shell.isDisposed()) {
-    		shell.setVisible(true);
-    		if (shell.getMinimized()) {
-    			shell.setMinimized(false);
-    		}
-    		shell.setActive();
+    		// see bug 96700 and bug 4414 for a discussion on the use of open() here
+    		shell.open();
     	}
     }
     
