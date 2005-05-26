@@ -3011,8 +3011,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fSourceViewer != null) {
 				initializeSourceViewer(input);
 
-				// reset the undo context for the undo and redo action handlers
-				createUndoRedoActions();
+				// Reset the undo context for the undo and redo action handlers
+				IAction undoAction= getAction(ITextEditorActionConstants.UNDO);
+				IAction redoAction= getAction(ITextEditorActionConstants.REDO);
+				boolean areOperationActionHandlersInstalled= undoAction instanceof OperationHistoryActionHandler && redoAction instanceof OperationHistoryActionHandler;
+				IUndoContext undoContext= getUndoContext();
+				if (undoContext != null && areOperationActionHandlersInstalled) {
+					((OperationHistoryActionHandler)undoAction).setContext(undoContext);
+					((OperationHistoryActionHandler)redoAction).setContext(undoContext);
+				} else {
+					createUndoRedoActions();
+				}
 			}
 
 			if (fIsOverwriting)
@@ -3025,6 +3034,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fSelectionListener != null)
 				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
 		}
+	}
+	
+	/**
+	 * Returns this editor's viewer's undo manager undo context.
+	 *
+	 * @return the undo context or <code>null</code> if not available
+	 * @since 3.1
+	 */
+	private IUndoContext getUndoContext() {
+		if (fSourceViewer instanceof ITextViewerExtension6) {
+			IUndoManager undoManager= ((ITextViewerExtension6)fSourceViewer).getUndoManager();
+			if (undoManager instanceof IUndoManagerExtension)
+				return ((IUndoManagerExtension)undoManager).getUndoContext();
+		}
+		return null;
 	}
 
 	/*
@@ -4187,13 +4211,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	protected void createUndoRedoActions() {
-		IUndoContext undoContext= null;
-		if (fSourceViewer instanceof ITextViewerExtension6) {
-			IUndoManager undoManager= ((ITextViewerExtension6)fSourceViewer).getUndoManager();
-			if (undoManager instanceof IUndoManagerExtension)
-				undoContext= ((IUndoManagerExtension)undoManager).getUndoContext();
-		}
-
+		IUndoContext undoContext= getUndoContext();
 		if (undoContext != null) {
 			// Use actions provided by global undo/redo
 			
@@ -4209,7 +4227,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
 
-			// install operation approvers
+			// Install operation approvers
 			IOperationHistory history= OperationHistoryFactory.getOperationHistory();
 
 			// The first approver will prompt when operations affecting outside elements are to be undone or redone.
