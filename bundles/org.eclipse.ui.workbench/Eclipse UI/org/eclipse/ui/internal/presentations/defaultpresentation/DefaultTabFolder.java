@@ -255,7 +255,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getTabArea()
      */
     public Rectangle getTabArea() {
-        return Geometry.toDisplay(paneFolder.getControl().getParent(), paneFolder.getTitleArea());
+        return Geometry.toDisplay(paneFolder.getControl(), paneFolder.getTitleArea());
     }
 
     /**

@@ -42,6 +42,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
+import org.eclipse.ui.presentations.StackDropResult;
 
 
 /**
@@ -229,17 +230,27 @@ public class DetachedWindow implements IDragOverListener {
     public IDropTarget drag(Control currentControl, Object draggedObject,
             Point position, Rectangle dragRectangle) {
 
-        if (!(draggedObject instanceof LayoutPart)) {
+        if (!(draggedObject instanceof PartPane)) {
             return null;
         }
 
-        final LayoutPart sourcePart = (LayoutPart) draggedObject;
+        final PartPane sourcePart = (PartPane) draggedObject;
 
         if (sourcePart.getWorkbenchWindow() != page.getWorkbenchWindow()) {
             return null;
         }
         
         IDropTarget target = folder.getDropTarget(draggedObject, position);
+        
+        if (target == null) {
+	        Rectangle displayBounds = DragUtil.getDisplayBounds(folder.getControl());
+	        if (displayBounds.contains(position)) {
+	            target = folder.createDropTarget(sourcePart, new StackDropResult(displayBounds, null));
+	        } else {
+	            return null;
+	        }
+        }
+        
         return target;
     }
     

@@ -552,12 +552,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 getControl(), position);
         
         if (dropResult == null) {
-            Rectangle displayBounds = DragUtil.getDisplayBounds(getControl());
-            if (displayBounds.contains(position)) {
-                dropResult = new StackDropResult(displayBounds, null);
-            } else {
-                return null;
-            }
+        	return null;
         }
         
         return createDropTarget(pane, dropResult); 
@@ -596,7 +591,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         refreshPresentationSelection();
     }
 
-    private IDropTarget createDropTarget(PartPane pane, StackDropResult result) {
+    public IDropTarget createDropTarget(PartPane pane, StackDropResult result) {
         dropResult.setTarget(this, pane, result);
         return dropResult;
     }
