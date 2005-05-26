@@ -383,6 +383,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		if (secondaryId != null)
 			MemoryViewIdRegistry.deregisterView(secondaryId);
 		
+		fSyncService.shutdown();
+		
 		super.dispose();
 	}
 	

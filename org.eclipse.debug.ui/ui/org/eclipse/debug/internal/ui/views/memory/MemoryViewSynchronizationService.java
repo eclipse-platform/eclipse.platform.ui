@@ -165,6 +165,7 @@ public class MemoryViewSynchronizationService implements
 			fSynchronizeInfo.clear();
 			fSynchronizeInfo = null;
 		}
+		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 	}
 	
 	
