@@ -147,7 +147,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
@@ -4198,30 +4197,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (undoContext != null) {
 			// Use actions provided by global undo/redo
 			
-			OperationHistoryActionHandler action;
-
 			// Create the undo action
-			action= new UndoActionHandler(getEditorSite(), undoContext);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
-			setAction(ActionFactory.UNDO.getId(), action);
+			OperationHistoryActionHandler undoAction= new UndoActionHandler(getEditorSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
 
 			// Create the redo action.
-			action= new RedoActionHandler(getEditorSite(), undoContext);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
-			setAction(ActionFactory.REDO.getId(), action);
+			OperationHistoryActionHandler redoAction= new RedoActionHandler(getEditorSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
 
 			// install operation approvers
 			IOperationHistory history= OperationHistoryFactory.getOperationHistory();
 
-			// the first approver will prompt when operations affecting outside elements are to be undone or redone.
+			// The first approver will prompt when operations affecting outside elements are to be undone or redone.
 			if (fNonLocalOperationApprover != null)
 				history.removeOperationApprover(fNonLocalOperationApprover);
 			fNonLocalOperationApprover= getUndoRedoOperationApprover(undoContext);
 			history.addOperationApprover(fNonLocalOperationApprover);
 
-			// the second approver will prompt from this editor when an undo is attempted on an operation
+			// The second approver will prompt from this editor when an undo is attempted on an operation
 			// and it is not the most recent operation in the editor.
 			if (fLinearUndoViolationApprover != null)
 				history.removeOperationApprover(fLinearUndoViolationApprover);
@@ -4229,18 +4226,46 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			history.addOperationApprover(fLinearUndoViolationApprover);
 
 		} else {
+			// Use text operation actions (pre 3.1 style)
+			
 			ResourceAction action;
+			
+			if (getAction(ITextEditorActionConstants.UNDO) == null) {
+				action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
+				action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+				action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+				setAction(ITextEditorActionConstants.UNDO, action);
+			}
 
-			action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
-			action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
-			setAction(ITextEditorActionConstants.UNDO, action);
-
-			action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
-			action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
-			setAction(ITextEditorActionConstants.REDO, action);
+			if (getAction(ITextEditorActionConstants.REDO) == null) {
+				action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
+				action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
+				action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+				setAction(ITextEditorActionConstants.REDO, action);
+			}
 		}
+	}
+	
+	/**
+	 * Registers the given undo/redo action under the given ID and
+	 * ensures that previously installed actions get disposed. It
+	 * also takes care of re-registering the new action with the
+	 * global action handler.
+	 * 
+	 * @param actionId	the action id under which to register the action
+	 * @param action	the action to register
+	 * @since 3.1
+	 */
+	private void registerUndoRedoAction(String actionId, OperationHistoryActionHandler action) {
+		IAction oldAction= getAction(actionId);
+		if (oldAction instanceof OperationHistoryActionHandler)
+			((OperationHistoryActionHandler)oldAction).dispose();
+
+		setAction(actionId, action);
+		
+		IActionBars actionBars= getEditorSite().getActionBars();
+		if (actionBars != null)
+			actionBars.setGlobalActionHandler(actionId, action);
 	}
 
 	/**
