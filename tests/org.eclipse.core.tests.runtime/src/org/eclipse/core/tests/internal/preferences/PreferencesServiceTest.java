@@ -1022,6 +1022,47 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.verify();
 	}
 
+	/*
+	 * See Bug 95608 - [Preferences] How do I specify a nested node in a preferenceTransfer
+	 * When you specify a transfer with children, you should export it even if the
+	 * parent doesn't have any key/value pairs.
+	 */
+	public void testExportWithTransfers3() {
+
+		final String QUALIFIER = getUniqueString();
+		IPreferenceFilter transfer = new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				Map result = new HashMap();
+				result.put(QUALIFIER, null);
+				return result;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		};
+
+		IPreferencesService service = Platform.getPreferencesService();
+		ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
+
+		Preferences node = new InstanceScope().getNode(QUALIFIER).node("child");
+		String VALID_KEY_1 = "key1";
+		String VALID_KEY_2 = "key2";
+		node.put(VALID_KEY_1, "value1");
+		node.put(VALID_KEY_2, "value2");
+
+		verifier.addVersion();
+		verifier.addExportRoot(service.getRootNode());
+		verifier.addExpected(node.absolutePath(), VALID_KEY_1);
+		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
+
+		node = new InstanceScope().getNode(getUniqueString());
+		node.put("invalidkey1", "value1");
+		node.put("invalidkey2", "value2");
+
+		verifier.verify();
+	}
+
 	public void testApplyWithTransfers() {
 		// todo
 	}

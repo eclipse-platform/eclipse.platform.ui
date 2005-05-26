@@ -881,7 +881,8 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 						}
 						keys = (String[]) list.toArray(new String[list.size()]);
 					}
-					copyFromTo(tree.node(childPath), result.node(childPath), keys, 0);
+					// do infinite depth if there are no keys specified since the parent matched.
+					copyFromTo(tree.node(childPath), result.node(childPath), keys, keys == null ? -1 : 0);
 				}
 			}
 		}
