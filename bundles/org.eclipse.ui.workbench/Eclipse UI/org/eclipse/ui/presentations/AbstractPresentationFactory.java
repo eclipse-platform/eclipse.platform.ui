@@ -105,6 +105,10 @@ public abstract class AbstractPresentationFactory {
      * <p>
      * The presentation creates its controls under the given parent composite.
      * </p>
+     * <p>
+     * The default implementation calls {@link #createViewPresentation(Composite, IStackPresentationSite)}.
+     * Subclasses may override.
+     * </p>
      * 
      * @param parent
      *            the parent composite to use for the presentation's controls
@@ -112,6 +116,7 @@ public abstract class AbstractPresentationFactory {
      *            the site used for communication between the presentation and
      *            the workbench
      * @return a newly created stack presentation
+     * @since 3.1
      */
     public StackPresentation createDetachedViewPresentation(
             Composite parent, IStackPresentationSite site) {
