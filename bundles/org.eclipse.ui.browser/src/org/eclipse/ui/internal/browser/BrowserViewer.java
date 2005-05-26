@@ -721,6 +721,9 @@ public class BrowserViewer extends Composite {
 
         browser = null;
         text = null;
+        if (clipboard!=null)
+        	clipboard.dispose();
+        clipboard=null;
 
         removeSynchronizationListener();
     }
