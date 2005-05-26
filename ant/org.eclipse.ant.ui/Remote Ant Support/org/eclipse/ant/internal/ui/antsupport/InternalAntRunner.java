@@ -72,8 +72,6 @@ public class InternalAntRunner {
 	
 	private Project currentProject;
 	
-	private String defaultTarget;
-	
 	private BuildLogger buildLogger= null;
 	
 	private Map eclipseSpecifiedTasks;
@@ -400,7 +398,6 @@ public class InternalAntRunner {
 			}
 			
 			parseBuildFile(getCurrentProject());
-			validateDefaultTarget();
 			
 			if (projectHelp) {
 				printHelp(getCurrentProject());
@@ -515,27 +512,6 @@ public class InternalAntRunner {
 		setter.remapSystemIn(getCurrentProject());
 	}
 	
-	private void validateDefaultTarget() {
-		defaultTarget = getCurrentProject().getDefaultTarget();
-		if (defaultTarget == null) {
-		    return;      
-        }
-		Enumeration currentTargets = getCurrentProject().getTargets().elements();
-		boolean defaultFound= false;
-		while (currentTargets.hasMoreElements()) {
-			Target target = (Target) currentTargets.nextElement();
-			if (target.getName().equals(defaultTarget)) {
-				defaultFound= true;
-				break;
-			}
-		}
-		
-		if (!defaultFound) {
-			//default target must exist
-			throw new BuildException(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Default_target_{0}{1}{2}_does_not_exist_in_this_project_1"), new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-	}
-
 	/**
 	 * Creates and returns the default build logger for logging build events to the ant log.
 	 * 

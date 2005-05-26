@@ -89,8 +89,6 @@ public class InternalAntRunner {
 	
 	private Project currentProject;
 	
-	private String defaultTarget;
-	
 	private BuildLogger buildLogger= null;
 	
 	/**
@@ -383,7 +381,7 @@ public class InternalAntRunner {
 				new InputHandlerSetter().setInputHandler(antProject, "org.eclipse.ant.internal.core.ant.NullInputHandler"); //$NON-NLS-1$
 			}
 			parseBuildFile(antProject);
-			defaultTarget = antProject.getDefaultTarget();
+			String defaultTarget = antProject.getDefaultTarget();
 			Enumeration projectTargets = antProject.getTargets().elements();
 			List infos= new ArrayList();
 			infos.add(antProject.getName());
@@ -437,15 +435,6 @@ public class InternalAntRunner {
 			antProject= new InternalProject();
 		}
 		return antProject;
-	}
-	
-	/**
-	 * Returns the default target name that was last computed or <code>null</code>
-	 * if no default target has been computed.
-	 * @return the default target name
-	 */
-	public String getDefaultTarget() {
-		return defaultTarget;
 	}
 
 	/**
@@ -679,7 +668,6 @@ public class InternalAntRunner {
 			}
 			
 			parseBuildFile(getCurrentProject());
-			validateDefaultTarget();
 			createMonitorBuildListener(getCurrentProject());
 			
 			if (projectHelp) {
@@ -771,27 +759,6 @@ public class InternalAntRunner {
 	
 	public void setAntHome(String antHome) {
 		this.buildAntHome= antHome;
-	}
-	
-	private void validateDefaultTarget() {
-		defaultTarget = getCurrentProject().getDefaultTarget();
-		if (defaultTarget == null) {
-		    return;      
-        }
-		Enumeration currentTargets = getCurrentProject().getTargets().elements();
-		boolean defaultFound= false;
-		while (currentTargets.hasMoreElements()) {
-			Target target = (Target) currentTargets.nextElement();
-			if (target.getName().equals(defaultTarget)) {
-				defaultFound= true;
-				break;
-			}
-		}
-		
-		if (!defaultFound) {
-			//default target must exist
-			throw new BuildException(MessageFormat.format(InternalAntMessages.InternalAntRunner_Default_target__0__1__2__does_not_exist_in_this_project_1, new String[]{"'", defaultTarget, "'"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
 	}
 
 	/**
