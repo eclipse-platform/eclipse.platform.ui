@@ -1332,4 +1332,19 @@
       </wizard>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.preferenceTransfer">
+       <transfer
+            id="org.eclipse.cvs.ui.transfer.repos"
+            icon="\icons\full\obj16\repository_rep.gif"
+            name="%RepoPreference.Name">
+            <mapping scope="instance">
+            	<entry node="org.eclipse.team.cvs.core/repositories"/>
+            </mapping>
+			<description>
+            	%RepoPreference.Description
+		    </description>
+	   </transfer>
+   </extension>
+   
 </plugin>
