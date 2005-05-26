@@ -272,7 +272,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!canRun(trigger))
 				return;
 			try {
-				building = true;
+				hookStartBuild(trigger);
 				IProject[] ordered = workspace.getBuildOrder();
 				HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
 				leftover.removeAll(Arrays.asList(ordered));
@@ -285,7 +285,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				cleanup(trigger);
+				hookEndBuild(trigger);
 			}
 		} finally {
 			monitor.done();
@@ -298,13 +298,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (!canRun(trigger))
 			return;
 		try {
-			building = true;
+			hookStartBuild(trigger);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 			basicBuild(project, trigger, status, monitor);
 			if (!status.isOK())
 				throw new ResourceException(status);
 		} finally {
-			cleanup(trigger);
+			hookEndBuild(trigger);
 		}
 	}
 
@@ -316,7 +316,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!canRun(trigger))
 				return;
 			try {
-				building = true;
+				hookStartBuild(trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 				ICommand command = getCommand(project, builderName, args);
 				IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
@@ -325,7 +325,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (!status.isOK())
 					throw new ResourceException(status);
 			} finally {
-				cleanup(trigger);
+				hookEndBuild(trigger);
 			}
 		} finally {
 			monitor.done();
@@ -350,16 +350,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		//check for request to interrupt the auto-build
 		if (autoBuildJob.isInterrupted())
 			throw new OperationCanceledException();
-	}
-
-	private void cleanup(int trigger) {
-		building = false;
-		builtProjects.clear();
-		deltaCache.flush();
-		deltaTreeCache.flush();
-		//ensure autobuild runs after a clean
-		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD)
-			autoBuildJob.forceBuild();
 	}
 
 	/**
@@ -413,6 +403,24 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
+	 * Returns a string representation of a build trigger for debugging purposes.
+	 * @param trigger The trigger to compute a representation of
+	 * @return A string describing the trigger.
+	 */
+	private String debugTrigger(int trigger) {
+		switch (trigger) {
+			case IncrementalProjectBuilder.FULL_BUILD :
+				return "FULL_BUILD"; //$NON-NLS-1$
+			case IncrementalProjectBuilder.CLEAN_BUILD :
+				return "CLEAN_BUILD"; //$NON-NLS-1$
+			case IncrementalProjectBuilder.AUTO_BUILD :
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
+			default :
+				return "INCREMENTAL_BUILD"; //$NON-NLS-1$
+		}
+	}
+
+	/**
 	 * The outermost workspace operation has finished.  Do an autobuild if necessary.
 	 */
 	public void endTopLevel(boolean needsBuild) {
@@ -432,7 +440,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		InternalBuilder result = ((BuildCommand) command).getBuilder();
 		if (result == null) {
 			result = initializeBuilder(command.getBuilderName(), project, buildSpecIndex, status);
-			((BuildCommand) command).setBuilder((IncrementalProjectBuilder)result);
+			((BuildCommand) command).setBuilder((IncrementalProjectBuilder) result);
 			result.setCommand(command);
 			result.setProject(project);
 			result.startupOnInitialize();
@@ -443,7 +451,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			result.setLastBuiltTree(null);
 			return null;
 		}
-		return (IncrementalProjectBuilder)result;
+		return (IncrementalProjectBuilder) result;
 	}
 
 	/**
@@ -628,6 +636,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * Hook for adding trace options and debug information at the end of a build.
+	 * This hook is called after each builder instance is called.
 	 */
 	private void hookEndBuild(IncrementalProjectBuilder builder) {
 		if (ResourceStats.TRACE_BUILDERS)
@@ -639,27 +648,43 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
+	 * Hook for adding trace options and debug information at the end of a build.
+	 * This hook is called at the end of a build cycle invoked by calling a
+	 * build API mehtod.
+	 */
+	private void hookEndBuild(int trigger) {
+		building = false;
+		builtProjects.clear();
+		deltaCache.flush();
+		deltaTreeCache.flush();
+		//ensure autobuild runs after a clean
+		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD)
+			autoBuildJob.forceBuild();
+	}
+
+	/**
 	 * Hook for adding trace options and debug information at the start of a build.
+	 * This hook is called before each builder instance is called.
 	 */
 	private void hookStartBuild(IncrementalProjectBuilder builder, int trigger) {
 		if (ResourceStats.TRACE_BUILDERS)
 			ResourceStats.startBuild(builder);
 		if (Policy.DEBUG_BUILD_INVOKING) {
 			timeStamp = System.currentTimeMillis();
-			String type;
-			switch (trigger) {
-				case IncrementalProjectBuilder.FULL_BUILD :
-					type = "FULL_BUILD"; //$NON-NLS-1$
-					break;
-				case IncrementalProjectBuilder.CLEAN_BUILD :
-					type = "CLEAN_BUILD"; //$NON-NLS-1$
-					break;
-				case IncrementalProjectBuilder.AUTO_BUILD :
-				case IncrementalProjectBuilder.INCREMENTAL_BUILD :
-				default :
-					type = "INCREMENTAL_BUILD"; //$NON-NLS-1$
-			}
-			Policy.debug("Invoking (" + type + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
+			Policy.debug("Invoking (" + debugTrigger(trigger) + ") on builder: " + toString(builder)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Hook for adding trace options and debug information at the start of a build.
+	 * This hook is called when a build API method is called, before any builders
+	 * start running.
+	 */
+	private void hookStartBuild(int trigger) {
+		building = true;
+		if (Policy.DEBUG_BUILD_STACK) {
+			IStatus info = new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, 1, "Starting build: " + debugTrigger(trigger), new RuntimeException().fillInStackTrace()); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(info);
 		}
 	}
 

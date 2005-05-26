@@ -30,6 +30,7 @@ public class Policy {
 	public static boolean DEBUG_NEEDS_BUILD = false;
 	public static boolean DEBUG_BUILD_INVOKING = false;
 	public static boolean DEBUG_BUILD_DELTA = false;
+	public static boolean DEBUG_BUILD_STACK = false;
 	public static boolean DEBUG_NATURES = false;
 	public static boolean DEBUG_HISTORY = false;
 	public static boolean DEBUG_PREFERENCES = false;
@@ -65,6 +66,7 @@ public class Policy {
 			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
 			DEBUG_BUILD_INVOKING = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking")); //$NON-NLS-1$ 
 			DEBUG_BUILD_DELTA = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ 
+			DEBUG_BUILD_STACK = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/stacktrace")); //$NON-NLS-1$ 
 			DEBUG_NATURES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ 
 			DEBUG_HISTORY = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ 
 			DEBUG_PREFERENCES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/preferences")); //$NON-NLS-1$
