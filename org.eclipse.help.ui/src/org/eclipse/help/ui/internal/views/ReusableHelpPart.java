@@ -654,7 +654,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// all topics page
 		page = new HelpPartPage(HV_ALL_TOPICS_PAGE,
 				Messages.ReusableHelpPart_allTopicsPage_name,
-				IHelpUIConstants.IMAGE_TOC_CLOSED); //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_ALL_TOPICS); //$NON-NLS-1$
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
 		page.addPart(HV_TOPIC_TREE, true);
@@ -680,7 +680,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// context help page
 		page = new HelpPartPage(HV_CONTEXT_HELP_PAGE,
 				Messages.ReusableHelpPart_contextHelpPage_name,
-				IHelpUIConstants.IMAGE_FILE_F1TOPIC); //$NON-NLS-1$
+				IHelpUIConstants.IMAGE_RELATED_TOPICS); //$NON-NLS-1$
 		// page.addPart(HV_CONTEXT_HELP, false);
 		// page.addPart(HV_SEARCH_RESULT, false, true);
 		page.setVerticalSpacing(0);
