@@ -175,6 +175,7 @@ public class Messages extends NLS {
 	public static String url_createConnection;
 	public static String url_invalidURL;
 	public static String url_noaccess;
+	public static String url_noOutput;
 	public static String url_resolveFragment;
 	public static String url_resolvePlugin;
 

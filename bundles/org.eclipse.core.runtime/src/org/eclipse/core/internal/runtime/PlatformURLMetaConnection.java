@@ -14,7 +14,8 @@ import java.io.*;
 import java.net.URL;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
@@ -41,11 +42,11 @@ public class PlatformURLMetaConnection extends PlatformURLConnection {
 		String id = getId(ref);
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
-			throw new IOException(NLS.bind(Messages.url_resolvePlugin, url.toString())); 
+			throw new IOException(NLS.bind(Messages.url_resolvePlugin, url.toString()));
 		IPath path = Platform.getStateLocation(target);
 		if (ix != -1 || (ix + 1) <= spec.length())
 			path = path.append(spec.substring(ix + 1));
-		return new URL("file", null, path.toString()); //$NON-NLS-1$
+		return path.toFile().toURL(); //$NON-NLS-1$
 	}
 
 	public static void startup() {

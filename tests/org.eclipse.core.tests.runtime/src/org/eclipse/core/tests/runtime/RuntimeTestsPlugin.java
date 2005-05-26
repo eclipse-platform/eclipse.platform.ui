@@ -41,4 +41,8 @@ public class RuntimeTestsPlugin extends Plugin {
 		return plugin != null ? plugin.context : null;
 	}
 
+	public static Plugin getPlugin() {
+		return plugin;
+	}
+
 }

@@ -17,8 +17,7 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.runtime.model,
  org.eclipse.core.tests.runtime.perf,
  org.eclipse.core.tests.runtime.session
-Require-Bundle: org.eclipse.osgi.services,
- org.eclipse.core.runtime.compatibility,
+Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.core.tests.harness,
  org.junit,
  org.eclipse.test.performance;resolution:=optional

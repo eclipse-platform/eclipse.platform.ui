@@ -35,6 +35,8 @@ public class AllTests extends TestCase {
 		suite.addTest(CipherStreamsTest.suite());
 		suite.addTest(CipherTest.suite());
 		suite.addTest(LogSerializationTest.suite());
+		suite.addTest(PlatformURLLocalTest.suite());
+		suite.addTest(PlatformURLSessionTest.suite());
 		return suite;
 	}
 }

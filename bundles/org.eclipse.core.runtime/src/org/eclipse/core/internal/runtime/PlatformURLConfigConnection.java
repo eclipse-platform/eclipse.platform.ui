@@ -12,12 +12,15 @@ package org.eclipse.core.internal.runtime;
 
 import java.io.*;
 import java.net.URL;
+import java.net.UnknownServiceException;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 
 public class PlatformURLConfigConnection extends PlatformURLConnection {
+	private static final String FILE_PROTOCOL = "file"; //$NON-NLS-1$
 	private static boolean isRegistered = false;
 	public static final String CONFIG = "config"; //$NON-NLS-1$
 
@@ -35,7 +38,28 @@ public class PlatformURLConfigConnection extends PlatformURLConnection {
 		if (!spec.startsWith(CONFIG))
 			throw new IOException(NLS.bind(Messages.url_badVariant, url.toString()));
 		String path = spec.substring(CONFIG.length() + 1);
-		return new URL(Platform.getConfigurationLocation().getURL(), path);
+		// resolution takes parent configuration into account (if it exists)
+		Location localConfig = Platform.getConfigurationLocation();
+		Location parentConfig = localConfig.getParentLocation();
+		// assume we will find the file locally
+		URL localURL = new URL(localConfig.getURL(), path);
+		if (!FILE_PROTOCOL.equals(localURL.getProtocol()) || parentConfig == null)
+			// we only support cascaded file: URLs
+			return localURL;
+		File localFile = new File(localURL.getPath());
+		if (localFile.exists())
+			// file exists in local configuration
+			return localURL;
+		// try to find in the parent configuration
+		URL parentURL = new URL(parentConfig.getURL(), path);
+		if (FILE_PROTOCOL.equals(parentURL.getProtocol())) {
+			// we only support cascaded file: URLs			
+			File parentFile = new File(parentURL.getPath());
+			if (parentFile.exists())
+				// parent has the file
+				return parentURL;
+		}
+		return localURL;
 	}
 
 	public static void startup() {
@@ -50,6 +74,8 @@ public class PlatformURLConfigConnection extends PlatformURLConnection {
 	 * @see java.net.URLConnection#getOutputStream()
 	 */
 	public OutputStream getOutputStream() throws IOException {
+		if (Platform.getConfigurationLocation().isReadOnly())
+			throw new UnknownServiceException(NLS.bind(Messages.url_noOutput, url));
 		//This is not optimal but connection is a private ivar in super.
 		URL resolved = getResolvedURL();
 		if (resolved != null) {
