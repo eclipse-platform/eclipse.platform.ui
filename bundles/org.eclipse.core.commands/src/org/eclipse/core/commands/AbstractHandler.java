@@ -114,7 +114,7 @@ public abstract class AbstractHandler implements IHandler {
 	 * for support of <code>AbstractHandler</code> in
 	 * <code>org.eclipse.ui.workbench</code>, and clients should be wary of
 	 * overriding this behaviour. If this method is overridden, then the return
-	 * value should include "<code>super.hasListeners() ||</codee>".
+	 * value should include "<code>super.hasListeners() ||</code>".
 	 * </p>
 	 * 
 	 * @return true iff there is one or more IHandlerListeners attached to this
