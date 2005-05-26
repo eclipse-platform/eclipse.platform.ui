@@ -263,7 +263,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			return;
 		}
 		
-		if (frame != null) {
+		if (frame == null) {
+			// suspend event, but no frames in the thead
+			fLastStackFrame = null;			
+			refresh(thread);
+			getLaunchView().autoExpand(thread, !evaluationEvent);
+		} else {
 		    fLastStackFrame = frame;
 			// Auto-expand the thread. Only select the thread if this wasn't the end
 			// of an evaluation
