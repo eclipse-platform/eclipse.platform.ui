@@ -148,6 +148,7 @@ public class Main {
     private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 	private static final String PROP_NL = "osgi.nl";  //$NON-NLS-1$
     private static final String PROP_NOSHUTDOWN = "osgi.noShutdown"; //$NON-NLS-1$
+    private static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$	
 	
     private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
     private static final String PROP_EXITDATA = "eclipse.exitdata"; //$NON-NLS-1$
@@ -252,6 +253,9 @@ public class Main {
         System.getProperties().setProperty("eclipse.startTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
         commands = args;
         String[] passThruArgs = processCommandLine(args);
+        if (!debug)
+        	// debug can be specified as system property as well
+        	debug = System.getProperty(PROP_DEBUG) != null;
         setupVMProperties();
         processConfiguration();
         
