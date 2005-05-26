@@ -161,7 +161,7 @@ public class AntTaskNode extends AntElementNode {
 
 	public List computeIdentifierOffsets(String identifier) {
         String textToSearch= getAntModel().getText(getOffset(), getLength());
-        if (textToSearch == null || textToSearch.length() == 0) {
+        if (textToSearch == null || textToSearch.length() == 0 || identifier.length() ==0) {
         	return null;
         }
         List results= new ArrayList();
@@ -184,7 +184,7 @@ public class AntTaskNode extends AntElementNode {
                 int withinValueOffset= value.indexOf(identifier);
                 while (withinValueOffset != -1) {
 					int resultLine= ((AntModel)getAntModel()).getLine(getOffset() + valueOffset + withinValueOffset);
-					//the value stored in the attribute map seems to be modified to not contain control charactes
+					//the value stored in the attribute map seems to be modified to not contain control characters
 					//new lines, carriage returns and these are replaced with spaces
 					//so if the line separator is greater than 1 in length we need to correct for this
 					int resultOffset= getOffset() + valueOffset + withinValueOffset + identifierCorrection + ((resultLine - valueLine) * (lineSep.length() - 1));

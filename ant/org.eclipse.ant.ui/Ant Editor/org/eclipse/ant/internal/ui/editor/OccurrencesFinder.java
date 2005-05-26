@@ -76,8 +76,11 @@ public class OccurrencesFinder {
 		} catch (BadLocationException e) {
 			return null;
 		}
+        int length= identifier.length();
+        if (length == 0) {
+            return null;
+        }
 		List positions= new ArrayList(usages.size());
-		int length= identifier.length();
 		for (Iterator each= usages.iterator(); each.hasNext();) {
 			AntElementNode currentNode= (AntElementNode)each.next();
 			List offsets= currentNode.computeIdentifierOffsets(identifier);
