@@ -45,7 +45,7 @@
             fg="#7269d2" 
             -->
             <launchBar 	
-            	location="right" 
+            	location="fastview" 
             	bg="#c6c3e8" 
             	>
                <handle
