@@ -15,13 +15,14 @@ import java.net.URL;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,7 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
@@ -45,7 +46,6 @@ import org.eclipse.update.internal.ui.model.DiscoveryFolder;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.model.SiteCategory;
 import org.eclipse.update.internal.ui.model.UpdateModel;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IUpdateModelChangedListener;
 import org.eclipse.update.search.EnvironmentFilter;
@@ -54,56 +54,12 @@ import org.eclipse.update.search.UpdateSearchScope;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 
-	class TreeContentProvider
-		extends DefaultContentProvider
-		implements ITreeContentProvider {
-
-		public Object[] getElements(Object parent) {
-			return getAllSiteBookmarks();
-		}
-
-		public Object[] getChildren(final Object parent) {
-//			if (parent instanceof SiteBookmark) {
-//				final SiteBookmark bookmark = (SiteBookmark) parent;
-//				if (bookmark.isUnavailable())
-//					return new Object[0];
-//				final Object[] children =
-//					getSiteCatalogWithIndicator(
-//						bookmark,
-//						!bookmark.isSiteConnected());
-//				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-//						if (children.length > 0)
-//							handleSiteExpanded(bookmark, children);
-//					}
-//				});
-//				return children;
-//			}
-			return new Object[0];
-		}
-
-		public Object getParent(Object element) {
-//			if (element instanceof SiteCategory)
-//				return ((SiteCategory) element).getBookmark();
-			return null;
-		}
-
-		public boolean hasChildren(Object element) {
-            return false;
-//			return (element instanceof SiteBookmark);
-		}
-
-	}
-
-	class TreeLabelProvider extends LabelProvider {
+	class SitesLabelProvider extends LabelProvider {
 
 		public Image getImage(Object obj) {
 			if (obj instanceof SiteBookmark)
 				return UpdateUI.getDefault().getLabelProvider().get(
 					UpdateUIImages.DESC_SITE_OBJ);
-			if (obj instanceof SiteCategory)
-				return UpdateUI.getDefault().getLabelProvider().get(
-					UpdateUIImages.DESC_CATEGORY_OBJ);
 			return super.getImage(obj);
 		}
 
@@ -117,23 +73,23 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	class ModelListener implements IUpdateModelChangedListener {
 		public void objectChanged(Object object, String property) {
-			treeViewer.refresh();
+			viewer.refresh();
 			checkItems();
 		}
 
 		public void objectsAdded(Object parent, Object[] children) {
-            treeViewer.refresh();
+            viewer.refresh();
 			checkItems();
 		}
 
 		public void objectsRemoved(Object parent, Object[] children) {
-			treeViewer.refresh();
+			viewer.refresh();
 			checkItems();
 		}
 	}
 
 	private static DiscoveryFolder discoveryFolder = new DiscoveryFolder();
-	private CheckboxTreeViewer treeViewer;
+	private CheckboxTableViewer viewer;
 	private ScrolledFormText descLabel;
 	private Button addSiteButton;
 	private Button addLocalButton;
@@ -193,7 +149,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		createTreeViewer(client);
+		createViewer(client);
 
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -317,32 +273,38 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		return client;
 	}
 
-	private void createTreeViewer(Composite parent) {
-		treeViewer =
-			new CheckboxTreeViewer(
+	private void createViewer(Composite parent) {
+		viewer =
+			CheckboxTableViewer.newCheckList(
 				parent,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		treeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		treeViewer.setContentProvider(new TreeContentProvider());
-		treeViewer.setLabelProvider(new TreeLabelProvider());
-		treeViewer.setInput(UpdateUI.getDefault().getUpdateModel());
+		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object parent) {
+				return getAllSiteBookmarks();
+			}
 
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+			}
+		});
+		viewer.setLabelProvider(new SitesLabelProvider());
+		viewer.setInput(UpdateUI.getDefault().getUpdateModel());
+		
 		initializeItems();
 
-		treeViewer.addCheckStateListener(new ICheckStateListener() {
+		viewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				Object element = e.getElement();
 				if (element instanceof SiteBookmark)
 					handleSiteChecked((SiteBookmark) element, e.getChecked());
-//				else if (element instanceof SiteCategory) {
-//					handleCategoryChecked(
-//						(SiteCategory) element,
-//						e.getChecked());
-//				}
 			}
 		});
 
-		treeViewer
+		viewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged((IStructuredSelection) e.getSelection());
@@ -357,13 +319,10 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void checkItems() {
-		TreeItem[] items = treeViewer.getTree().getItems();
+		TableItem[] items = viewer.getTable().getItems();
 		for (int i = 0; i < items.length; i++) {
 			SiteBookmark bookmark = (SiteBookmark) items[i].getData();
-			treeViewer.setChecked(bookmark, bookmark.isSelected());
-//			String[] ignoredCats = bookmark.getIgnoredCategories();
-//			treeViewer.setGrayed(bookmark, ignoredCats.length > 0
-//					&& bookmark.isSelected());
+			viewer.setChecked(bookmark, bookmark.isSelected());
 		}
 	}
 
@@ -406,12 +365,12 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	private void handleRemove() {
 		BusyIndicator
-			.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				UpdateModel updateModel =
 					UpdateUI.getDefault().getUpdateModel();
 				IStructuredSelection ssel =
-					(IStructuredSelection) treeViewer.getSelection();
+					(IStructuredSelection) viewer.getSelection();
 				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
 				String selName = bookmark.getLabel();
 				boolean answer = MessageDialog
@@ -431,7 +390,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	private void handleEdit() {
 		IStructuredSelection ssel =
-			(IStructuredSelection) treeViewer.getSelection();
+			(IStructuredSelection) viewer.getSelection();
 		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
 		URL oldURL = bookmark.getURL();
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark, getAllSiteBookmarks());
@@ -485,7 +444,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		if (bookmark.isUnavailable()) {
 			bookmark.setSelected(false);
-			treeViewer.setChecked(bookmark, false);
+			viewer.setChecked(bookmark, false);
 			return;
 		}
 		
@@ -515,7 +474,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void updateSearchRequest() {
-		Object[] checked = treeViewer.getCheckedElements();
+		Object[] checked = viewer.getCheckedElements();
 
 		UpdateSearchScope scope = new UpdateSearchScope();
 		int nsites = 0;
@@ -567,6 +526,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	public boolean isPageComplete() {
-		return treeViewer.getCheckedElements().length != 0;
+		return viewer.getCheckedElements().length != 0;
 	}
 }
