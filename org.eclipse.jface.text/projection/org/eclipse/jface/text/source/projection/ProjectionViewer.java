@@ -1296,21 +1296,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public void setRangeIndication(int offset, int length, boolean moveCursor) {
 
-		List expand= new ArrayList(2);
-		if (moveCursor && fProjectionAnnotationModel != null) {
-
-			// expand the immediate effected collapsed regions
-			Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
-			while (iterator.hasNext()) {
-				ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
-					expand.add(annotation);
-			}
-
-			if (!expand.isEmpty()) {
-				Iterator e= expand.iterator();
-				while (e.hasNext())
-					fProjectionAnnotationModel.expand((Annotation) e.next());
+		if (getRangeIndication() != null) {
+			List expand= new ArrayList(2);
+			if (moveCursor && fProjectionAnnotationModel != null) {
+				
+				// expand the immediate effected collapsed regions
+				Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
+				while (iterator.hasNext()) {
+					ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
+					if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
+						expand.add(annotation);
+				}
+				
+				if (!expand.isEmpty()) {
+					Iterator e= expand.iterator();
+					while (e.hasNext())
+						fProjectionAnnotationModel.expand((Annotation) e.next());
+				}
 			}
 		}
 

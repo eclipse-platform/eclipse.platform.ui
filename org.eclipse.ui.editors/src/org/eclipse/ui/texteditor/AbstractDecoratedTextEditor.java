@@ -320,6 +320,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (!isOverwriteModeEnabled())
 			enableOverwriteMode(false);
+		
+		if (!isRangeIndicatorEnabled()) {
+			getSourceViewer().removeRangeIndication();
+			getSourceViewer().setRangeIndicator(null);
+		}
 	}
 
 
@@ -608,6 +613,19 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return store != null ? !store.getBoolean(DISABLE_OVERWRITE_MODE) : true;
 	}
 
+	/**
+	 * Returns whether the range indicator is enabled according to the preference
+	 * store settings. Subclasses may override this method to provide a custom
+	 * preference setting.
+	 *
+	 * @return <code>true</code> if overwrite mode is enabled
+	 * @since 3.1
+	 */
+	private boolean isRangeIndicatorEnabled() {
+		IPreferenceStore store= getPreferenceStore();
+		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR) : true;
+	}
+	
 	/**
 	 * Returns whether quick diff info should be visible upon opening an editor
 	 * according to the preference store settings.
@@ -904,6 +922,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			if (fLineNumberRulerColumn instanceof LineNumberChangeRulerColumn
 					&& AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE.equals(property)) {
 				initializeChangeRulerColumn(getChangeColumn());
+			}
+			
+			if (AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR.equals(property)) {
+				if (isRangeIndicatorEnabled()) {
+					getSourceViewer().setRangeIndicator(getRangeIndicator());
+				} else {
+					getSourceViewer().removeRangeIndication();
+					getSourceViewer().setRangeIndicator(null);
+				}
 			}
 
 			AnnotationPreference pref= getAnnotationPreference(property);

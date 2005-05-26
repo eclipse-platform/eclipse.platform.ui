@@ -333,6 +333,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_DISABLE_OVERWRITE_MODE= "disable_overwrite_mode"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls the display of the range indicator.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.1
+	 */
+	public static final String SHOW_RANGE_INDICATOR= "show_range_indicator"; //$NON-NLS-1$
+
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -389,6 +399,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
+		
+		store.setDefault(SHOW_RANGE_INDICATOR, true);
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

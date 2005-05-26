@@ -112,4 +112,6 @@ final class TextEditorMessages extends NLS {
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
+
+	public static String TextEditorDefaultsPreferencePage_range_indicator;
 }

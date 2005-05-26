@@ -446,6 +446,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -524,6 +525,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
 
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_range_indicator;
+		Preference showMagnet= new Preference(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, label, null);
+		addCheckBox(appearanceComposite, showMagnet, new BooleanDomain(), 0);
+		
 		label= TextEditorMessages.HyperlinksEnabled_label;
 		Preference hyperlinksEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, label, null);
 		fHyperlinksEnabledCheckBox= addCheckBox(appearanceComposite, hyperlinksEnabled, new BooleanDomain(), 0);
