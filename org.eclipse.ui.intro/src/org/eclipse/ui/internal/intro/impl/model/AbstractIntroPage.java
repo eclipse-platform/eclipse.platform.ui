@@ -597,10 +597,21 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected void resolvePage() {
         // insert base meta-tag,
         ModelUtil.insertBase(dom, ModelUtil.getParentFolderOSString(content));
-        // resolve all relative resources relative to content file.
+
+        // resolve all relative resources relative to content file. Do it before
+        // inserting shared style to enable comparing fully qualified styles.
         ModelUtil.updateResourceAttributes(dom.getDocumentElement(), this);
+
+        // now add shared style.
+        String style = IntroPlugin.getDefault().getIntroModelRoot()
+            .getPresentation().getImplementationStyle();
+        if (style != null) {
+            ModelUtil.insertStyle(dom, style);
+        }
+
         // and resolve includes.
         resolveIncludes();
+
         // now remove all anchors from this page.
         ModelUtil.removeAllElements(dom, IntroAnchor.TAG_ANCHOR);
         resolved = true;

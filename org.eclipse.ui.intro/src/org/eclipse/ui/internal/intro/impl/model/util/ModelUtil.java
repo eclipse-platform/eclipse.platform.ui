@@ -43,6 +43,7 @@ public class ModelUtil {
     private static String TAG_HEAD = "head"; //$NON-NLS-1$
     private static String TAG_BASE = "base"; //$NON-NLS-1$
     public static String TAG_DIV = "div"; //$NON-NLS-1$
+    public static String TAG_HEAD_LINK = "link";
     private static String TAG_PARAM = "param"; //$NON-NLS-1$
     private static String ATT_SRC = "src"; //$NON-NLS-1$
     private static String ATT_HREF = "href"; //$NON-NLS-1$
@@ -52,6 +53,9 @@ public class ModelUtil {
     private static String ATT_CODEBASE = "codebase"; //$NON-NLS-1$
     private static String ATT_VALUE = "value"; //$NON-NLS-1$
     private static String ATT_VALUE_TYPE = "valuetype"; //$NON-NLS-1$
+    private static String ATT_REL = "rel"; //$NON-NLS-1$
+    private static String ATT_TYPE = "type"; //$NON-NLS-1$
+
 
 
     /*
@@ -198,6 +202,52 @@ public class ModelUtil {
         }
     }
 
+
+    public static Element getBase(Document dom) {
+        // there should only be one head and one base element dom.
+        NodeList headList = dom.getElementsByTagName(TAG_HEAD);
+        Element head = (Element) headList.item(0);
+        NodeList baseList = head.getElementsByTagName(TAG_BASE);
+        if (baseList.getLength() == 0)
+            // no base defined, signal failure.
+            return null;
+
+        return (Element) baseList.item(baseList.getLength() - 1);
+
+    }
+
+
+    // <link rel="stylesheet" href="shared.css" type="text/css" />
+    public static void insertStyle(Document dom, String cssUrl) {
+        // there should only be one head and one base element dom.
+        NodeList headList = dom.getElementsByTagName(TAG_HEAD);
+        Element head = null;
+        // Element base = getBase(dom);
+        NodeList styleList = null;
+        // there can be more than one style. DO not add style if it exists.
+        if (headList.getLength() >= 1) {
+            head = (Element) headList.item(0);
+            styleList = head.getElementsByTagName(TAG_HEAD_LINK);
+            for (int i = 0; i < styleList.getLength(); i++) {
+                Element style = (Element) styleList.item(0);
+                String styleString = style.getAttribute(ATT_HREF);
+                if (styleString.equals(cssUrl))
+                    return;
+            }
+        }
+
+        // insert the style, since it is not defined.
+        Element styleToAdd = dom.createElement(TAG_HEAD_LINK);
+        styleToAdd.setAttribute(ATT_HREF, cssUrl);
+        styleToAdd.setAttribute(ATT_REL, "stylesheet");
+        styleToAdd.setAttribute(ATT_TYPE, "text/css");
+        if (styleList != null && styleList.getLength() >= 1)
+            styleList.item(0).getParentNode().insertBefore(styleToAdd,
+                styleList.item(0));
+        else
+            head.appendChild(styleToAdd);
+
+    }
 
     /**
      * Returns a reference to the body of the DOM.
