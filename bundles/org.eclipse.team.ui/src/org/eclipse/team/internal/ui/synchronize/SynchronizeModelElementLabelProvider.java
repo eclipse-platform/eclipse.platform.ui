@@ -215,6 +215,7 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+        workbenchLabelProvider.dispose();
 		if(busyFont != null) {
 			busyFont.dispose();
 		}
