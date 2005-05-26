@@ -254,8 +254,8 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			if (image == null) {
 				image = descriptor.createImage();
 				images.put(descriptor, image);
-				item.setImage(image);
 			}
+			item.setImage(image);
 		}
 
 	}
