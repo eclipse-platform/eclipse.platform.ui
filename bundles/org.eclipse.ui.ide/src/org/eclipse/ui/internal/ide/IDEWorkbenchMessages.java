@@ -21,29 +21,14 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String QuickStartAction_errorDialogTitle;
 	public static String QuickStartAction_infoReadError;
-
-	public static String SystemSummary_configuration;
-	public static String SystemSummary_isCurrentConfiguration;
-
-	public static String SystemSummary_date;
-	public static String SystemSummary_target;
-	public static String SystemSummary_status;
-	public static String SystemSummary_action;
-
-	public static String SystemSummary_activity_enabled;
-	public static String SystemSummary_activity_disabled;
-	public static String SystemSummary_activity_revert;
-	public static String SystemSummary_activity_reconcile;
-	public static String SystemSummary_activity_preserved;
-	public static String SystemSummary_activity_unknown;
-	public static String SystemSummary_activity_featureInstalled;
-	public static String SystemSummary_activity_featureRemoved;
-	public static String SystemSummary_activity_siteInstalled;
-	public static String SystemSummary_activity_siteRemoved;
-
-	public static String SystemSummary_activity_status_unknown;
-	public static String SystemSummary_activity_status_success;
-	public static String SystemSummary_activity_status_failure;
+	
+	public static String ConfigurationLogUpdateSection_installConfiguration;
+	public static String ConfigurationLogUpdateSection_lastChangedOn;
+	public static String ConfigurationLogUpdateSection_location;
+	public static String ConfigurationLogUpdateSection_configurationSites;
+	public static String ConfigurationLogUpdateSection_configurationFeatures;
+	public static String ConfigurationLogUpdateSection_featureIdAndVersion;
+	public static String ConfigurationLogUpdateSection_plugins;
 
 	public static String ErrorClosing;
 
@@ -851,4 +836,7 @@ public class IDEWorkbenchMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
 	}
+
+
+	
 }

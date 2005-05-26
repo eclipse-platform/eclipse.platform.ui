@@ -693,6 +693,7 @@
             	value="org.eclipse.ui.views.ProblemView" />
       </key>
    </extension>
+
    <extension
          point="org.eclipse.ui.systemSummarySections">
       <section
@@ -701,6 +702,7 @@
             class="org.eclipse.ui.internal.ide.dialogs.ConfigurationLogUpdateSection">
       </section>
    </extension>
+
 <!-- Update Actions -->
    <extension
          point="org.eclipse.ui.actionSets">

@@ -11,15 +11,17 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.io.PrintWriter;
+import java.net.URL;
+import java.text.DateFormat;
+import java.util.Date;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.update.configuration.IActivity;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.IFeatureEntry;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
 
 /**
  * Writes information about the update configurer into the system summary.
@@ -28,66 +30,31 @@ import org.eclipse.update.core.SiteManager;
  */
 public class ConfigurationLogUpdateSection implements ISystemSummarySection {
     public void write(PrintWriter writer) {
-        ILocalSite site;
-        try {
-            site = SiteManager.getLocalSite();
-        } catch (CoreException e) {
-            e.printStackTrace(writer);
-            return;
-        }
-        IInstallConfiguration[] configurations = site.getConfigurationHistory();
-        for (int i = 0; i < configurations.length; i++) {
-            writer.println();
-            if (i > 0)
-                writer
-                        .println("----------------------------------------------------"); //$NON-NLS-1$
-
-            writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_configuration, configurations[i].getLabel()));
-            writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_isCurrentConfiguration, new Boolean(configurations[i].isCurrent())));
-            IActivity[] activities = configurations[i].getActivities();
-            for (int j = 0; j < activities.length; j++) {
-                writer.println();
-                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_date, activities[j].getDate()));
-                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_target, activities[j].getLabel()));
-                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_action, getActionLabel(activities[j])));
-                writer.println(NLS.bind(IDEWorkbenchMessages.SystemSummary_status, getStatusLabel(activities[j])));
-            }
-        }
-    }
-
-    private String getActionLabel(IActivity activity) {
-        int action = activity.getAction();
-        switch (action) {
-        case IActivity.ACTION_CONFIGURE:
-            return IDEWorkbenchMessages.SystemSummary_activity_enabled;
-        case IActivity.ACTION_FEATURE_INSTALL:
-            return IDEWorkbenchMessages.SystemSummary_activity_featureInstalled;
-        case IActivity.ACTION_FEATURE_REMOVE:
-            return IDEWorkbenchMessages.SystemSummary_activity_featureRemoved;
-        case IActivity.ACTION_SITE_INSTALL:
-            return IDEWorkbenchMessages.SystemSummary_activity_siteInstalled;
-        case IActivity.ACTION_SITE_REMOVE:
-            return IDEWorkbenchMessages.SystemSummary_activity_siteRemoved;
-        case IActivity.ACTION_UNCONFIGURE:
-            return IDEWorkbenchMessages.SystemSummary_activity_disabled;
-        case IActivity.ACTION_REVERT:
-            return IDEWorkbenchMessages.SystemSummary_activity_revert;
-        case IActivity.ACTION_RECONCILIATION:
-            return IDEWorkbenchMessages.SystemSummary_activity_reconcile;
-        case IActivity.ACTION_ADD_PRESERVED:
-            return IDEWorkbenchMessages.SystemSummary_activity_preserved;
-        default:
-            return IDEWorkbenchMessages.SystemSummary_activity_unknown;
-        }
-    }
-
-    private String getStatusLabel(IActivity activity) {
-        switch (activity.getStatus()) {
-        case IActivity.STATUS_OK:
-            return IDEWorkbenchMessages.SystemSummary_activity_status_success;
-        case IActivity.STATUS_NOK:
-            return IDEWorkbenchMessages.SystemSummary_activity_status_failure;
-        }
-        return IDEWorkbenchMessages.SystemSummary_activity_status_unknown;
+    	
+    	IPlatformConfiguration platformConf = ConfiguratorUtils.getCurrentPlatformConfiguration();
+    	writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_installConfiguration); 
+    	writer.println(" " + NLS.bind( IDEWorkbenchMessages.ConfigurationLogUpdateSection_lastChangedOn, DateFormat.getDateInstance().format(new Date(platformConf.getChangeStamp())))); //$NON-NLS-1$
+       	writer.println(" " + NLS.bind( IDEWorkbenchMessages.ConfigurationLogUpdateSection_location, platformConf.getConfigurationLocation()));  //$NON-NLS-1$
+       	
+       	ISiteEntry[] sites = platformConf.getConfiguredSites();
+       	writer.println();
+       	writer.println(" " + IDEWorkbenchMessages.ConfigurationLogUpdateSection_configurationSites);   //$NON-NLS-1$
+       	for(int i = 0; i < sites.length; i++){
+       		writer.println("  " + sites[i].getURL().toExternalForm()); //$NON-NLS-1$
+       	}
+       	
+       	writer.println();
+       	writer.println(" " + IDEWorkbenchMessages.ConfigurationLogUpdateSection_configurationFeatures);  //$NON-NLS-1$
+       	IFeatureEntry[] features = platformConf.getConfiguredFeatureEntries();     
+       	for(int i = 0; i < features.length; i++){
+       		writer.println("  " + NLS.bind( IDEWorkbenchMessages.ConfigurationLogUpdateSection_featureIdAndVersion, features[i].getFeaturePluginIdentifier(), features[i].getFeaturePluginVersion())); //$NON-NLS-1$ 
+       	}
+       	
+       	writer.println();
+  		URL[] urls = platformConf.getPluginPath();
+  		writer.println(" " + IDEWorkbenchMessages.ConfigurationLogUpdateSection_plugins); //$NON-NLS-1$
+   		for(int j = 0; j < urls.length; j++){
+   			writer.println("  " + urls[j].toExternalForm()); //$NON-NLS-1$
+   		}
     }
 }
