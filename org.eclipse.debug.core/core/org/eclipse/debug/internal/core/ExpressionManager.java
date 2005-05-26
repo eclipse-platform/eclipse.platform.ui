@@ -413,6 +413,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	protected void watchExpressionChanged(IWatchExpression expression) {
 		if (fExpressions != null && fExpressions.contains(expression)) {
 			storeWatchExpressions();
+			fireUpdate(new IExpression[]{expression}, CHANGED);
 		}
 	}
 

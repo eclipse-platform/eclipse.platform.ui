@@ -136,7 +136,6 @@ public class WatchExpression implements IWatchExpression {
 	 * persisted expression.
 	 */
 	private void watchExpressionChanged() {
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.CHANGE)});
 		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this);
 	}
 
