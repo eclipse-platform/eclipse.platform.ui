@@ -59,6 +59,16 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
     private boolean isEmergencyClosing = false;
 
     /**
+     * Indicates the behaviour when the last window is closed.
+     * If <code>true</code>, the workbench will exit (saving the last window's state, 
+     * if configured to do so).
+     * If <code>false</code> the window will be closed, leaving the workbench running.
+     * 
+     * @since 3.1
+     */
+	private boolean exitOnLastWindowClose = true;
+
+    /**
      * Creates a new workbench configurer.
      * <p>
      * This method is declared package-private. Clients are passed an instance
@@ -185,5 +195,19 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 */
 	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
 		return getWindowConfigurer(((Workbench) getWorkbench()).restoreWorkbenchWindow(memento));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getExitOnLastWindowClose()
+	 */
+	public boolean getExitOnLastWindowClose() {
+		return exitOnLastWindowClose;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setExitOnLastWindowClose(boolean)
+	 */
+	public void setExitOnLastWindowClose(boolean enabled) {
+		exitOnLastWindowClose = enabled;
 	}
 }

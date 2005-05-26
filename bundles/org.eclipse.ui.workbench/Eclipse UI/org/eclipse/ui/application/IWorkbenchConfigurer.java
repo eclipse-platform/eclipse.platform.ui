@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
@@ -211,4 +212,48 @@ public interface IWorkbenchConfigurer {
      * @see WorkbenchAdvisor#openWindows
      */
     public void openFirstTimeWindow();
+    
+    /**
+	 * Returns <code>true</code> if the workbench should exit when the last
+	 * window is closed, <code>false</code> if the window should just be
+	 * closed, leaving the workbench (and its event loop) running.
+	 * <p>
+	 * If <code>true</code>, the last window's state is saved before closing,
+	 * so that it will be restored in the next session. This applies only if
+	 * {@link #getSaveAndRestore() returns <code>true</code>}).
+	 * </p>
+	 * <p>
+	 * If <code>false</code>, the window is simply closed, losing its state.
+	 * </p>
+	 * <p>
+	 * If the workbench is left running, it can be closed using
+	 * {@link IWorkbench#close()}, or a new window can be opened using
+	 * {@link IWorkbench#openWorkbenchWindow(String, IAdaptable)}.
+	 * </p>
+	 * <p>
+	 * The initial value is <code>true</code>.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the workbench will exit when the last
+	 *         window is closed, <code>false</code> if the window should just
+	 *         be closed
+	 * @since 3.1
+	 */
+    public boolean getExitOnLastWindowClose();
+    
+    /**
+	 * Sets whether the workbench should exit when the last window is closed, or
+	 * whether the window should just be closed, leaving the workbench (and its
+	 * event loop) running.
+	 * <p>
+	 * For more details, see {@link #getExitOnLastWindowClose()}.
+	 * </p>
+	 * 
+	 * @param enabled
+	 *            <code>true</code> if the workbench should exit when the last
+	 *            window is closed, <code>false</code> if the window should
+	 *            just be closed
+	 * @since 3.1
+	 */
+    public void setExitOnLastWindowClose(boolean enabled);
 }

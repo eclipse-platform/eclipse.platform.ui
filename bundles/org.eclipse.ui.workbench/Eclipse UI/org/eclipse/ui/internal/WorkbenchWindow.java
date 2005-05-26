@@ -637,7 +637,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
             Workbench workbench = getWorkbenchImpl();
             int count = workbench.getWorkbenchWindowCount();
             //also check for starting - if the first window dies on startup then we'll need to open a default window.
-            if (!workbench.isStarting() && !workbench.isClosing() && count <= 1) {
+            if (!workbench.isStarting() && !workbench.isClosing() && count <= 1 && workbench.getWorkbenchConfigurer().getExitOnLastWindowClose()) {
                 windowClosed = workbench.close();
             } else {
                 if (okToClose()) {
