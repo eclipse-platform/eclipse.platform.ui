@@ -91,6 +91,7 @@ public class RemoteTreeViewer extends TreeViewer {
     	                    expandToLevel(element, 1);
                         }
                         element = null;
+                        parents.clear();
                         return Status.OK_STATUS;
                     }
                 }
@@ -119,7 +120,7 @@ public class RemoteTreeViewer extends TreeViewer {
         
         private IStructuredSelection selection;
         private Object first;
-        private List parents; // top down
+        private List parents = new ArrayList(); // top down
         
         /**
          * Constucts a job to select the given element.
@@ -156,6 +157,8 @@ public class RemoteTreeViewer extends TreeViewer {
                     if (findItem(first) != null) {
                         setSelection(selection, true);
                         selection = null;
+                        first = null;
+                        parents.clear();
                         return Status.OK_STATUS;
                     }
                 }
@@ -167,7 +170,7 @@ public class RemoteTreeViewer extends TreeViewer {
         public void setDeferredSelection(IStructuredSelection sel) {
             selection = sel;
             first = selection.getFirstElement();
-            parents = new ArrayList();
+            parents.clear();
             addAllParents(parents, first);
         }
         
