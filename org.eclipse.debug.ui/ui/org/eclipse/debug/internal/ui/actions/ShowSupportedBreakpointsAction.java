@@ -219,6 +219,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
 		super.valueChanged(on);
+		fView.initializeCheckedState();
 //		if (!on) {
 //			((BreakpointsView)getView()).initializeCheckedState((CheckboxTreeViewer) getViewer());
 //		}
