@@ -27,11 +27,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -401,7 +396,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	}
 	
 	public Viewer createDiffViewer(Composite parent) {
-		Viewer viewer = super.createDiffViewer(parent);
+		final Viewer viewer = super.createDiffViewer(parent);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				CompareConfiguration cc = getCompareConfiguration();
@@ -415,6 +410,21 @@ public class CVSCompareEditorInput extends CompareEditorInput {
                     Object o = ((IStructuredSelection)selection).getFirstElement();
                     if (o instanceof DiffNode) {
                         updateLabelsFor((DiffNode)o);
+                    }
+                }
+            }
+        });
+        ((StructuredViewer)viewer).addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                ISelection selection = event.getSelection();
+                if (! selection.isEmpty() && selection instanceof IStructuredSelection) {
+                    Object o = ((IStructuredSelection)selection).getFirstElement();
+                    if (o instanceof DiffNode) {
+                        DiffNode diffNode = ((DiffNode)o);
+                        if (diffNode.hasChildren()) {
+                            AbstractTreeViewer atv = ((AbstractTreeViewer)viewer);
+                            atv.setExpandedState(o, !atv.getExpandedState(o));
+                        }
                     }
                 }
             }
