@@ -311,10 +311,19 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		transfersTable.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
+				updateRadioButtons(e);
 				updateDescription();
 			}
 
+			private void updateRadioButtons(SelectionEvent e) {
+				if (((TableItem)e.item).getChecked()) {
+					allButton.setSelection(false);
+					chooseImportsButton.setSelection(true);
+				}
+			}
+
 			public void widgetDefaultSelected(SelectionEvent e) {
+				updateRadioButtons(e);
 				updateDescription();
 			}
 
@@ -325,17 +334,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 							.getDescription());
 				} else
 					text.setText(""); //$NON-NLS-1$
-			}
-		});
-
-		allButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				updateTransferAll(allButton.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				updateTransferAll(allButton.getSelection());
 			}
 		});
 
@@ -879,7 +877,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		else
 			chooseImportsButton.setSelection(true);
 
-		updateTransferAll(all);
 	}
 
 	private boolean getOverwriteExisting() {
@@ -888,12 +885,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private boolean getTransferAll() {
 		return allButton.getSelection();
-	}
-
-	private void updateTransferAll(boolean transferAll) {
-		transfersTable.setEnabled(!transferAll);
-		buttonComposite.setEnabled(!transferAll);
-		group.setEnabled(!transferAll);
 	}
 
 	/**
