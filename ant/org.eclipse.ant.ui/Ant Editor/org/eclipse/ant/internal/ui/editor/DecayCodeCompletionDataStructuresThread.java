@@ -11,6 +11,8 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
+
 
 public class DecayCodeCompletionDataStructuresThread extends Thread {
 	
@@ -34,12 +36,13 @@ public class DecayCodeCompletionDataStructuresThread extends Thread {
 		setPriority(Thread.MIN_PRIORITY);
 		setDaemon(true);
 		fgInstance= this;
+        setContextClassLoader(null); //don't hold on to any class loaders
 	}
 	
 	/**
 	 * The background activity that is triggered when the last <code>AntModel</code> is disposed.
 	 * Waits for the required delay and then nulls out the memory expensive Ant code
-	 * completion data structures.
+	 * completion data structures and reset the ProjectHelper.
 	 * If an <code>AntModel</code> is created during the wait, the thread is
 	 * interrupted and no nulling out occurs.
 	 */
@@ -48,6 +51,7 @@ public class DecayCodeCompletionDataStructuresThread extends Thread {
 			try {
 				wait(fgDelay);
 				AntEditorCompletionProcessor.resetCodeCompletionDataStructures();
+                ProjectHelper.reset();
 			} catch (InterruptedException x) {
 			}
 		}

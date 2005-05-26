@@ -238,6 +238,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void reset() {
 			task= null;
 			currentTask= null;
+            fNormalizedFileNames.clear();
 		}
 	}
 	
@@ -635,6 +636,7 @@ public class ProjectHelper extends ProjectHelper2 {
 
     public static void reset() {
         fgXMLReader= null;
+        fu= null;
     }
     
 	public static void setAntModel(IAntModel antModel) {
