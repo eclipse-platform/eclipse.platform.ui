@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
+import org.eclipse.ui.internal.intro.impl.model.IntroExtensionContent;
 import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
@@ -305,8 +307,17 @@ public class ModelUtil {
 
     }
 
+    public static void updateResourceAttributes(Element element,
+            AbstractIntroPage page) {
+        updateResourceAttributes(element, page.getBase(), page.getBundle());
+    }
 
 
+    public static void updateResourceAttributes(Element element,
+            IntroExtensionContent extensionContent) {
+        updateResourceAttributes(element, extensionContent.getBase(),
+            extensionContent.getBundle());
+    }
 
     /**
      * Updates all the resource attributes of the passed element to point to a
@@ -315,42 +326,43 @@ public class ModelUtil {
      * @param element
      * @param extensionContent
      */
-    public static void updateResourceAttributes(Element element,
-            String localContentFilePath) {
-        String folderLocalPath = getParentFolderOSString(localContentFilePath);
-        doUpdateResourceAttributes(element, folderLocalPath);
+    private static void updateResourceAttributes(Element element, String base,
+            Bundle bundle) {
+        // doUpdateResourceAttributes(element, base, bundle);
         NodeList children = element.getElementsByTagName("*"); //$NON-NLS-1$
         for (int i = 0; i < children.getLength(); i++) {
             Element child = (Element) children.item(i);
-            doUpdateResourceAttributes(child, folderLocalPath);
+            doUpdateResourceAttributes(child, base, bundle);
         }
     }
 
     private static void doUpdateResourceAttributes(Element element,
-            String folderLocalPath) {
-        qualifyAttribute(element, ATT_SRC, folderLocalPath);
-        qualifyAttribute(element, ATT_HREF, folderLocalPath);
-        qualifyAttribute(element, ATT_CITE, folderLocalPath);
-        qualifyAttribute(element, ATT_LONGDESC, folderLocalPath);
-        qualifyAttribute(element, ATT_CODEBASE, folderLocalPath);
-        qualifyAttribute(element, ATT_DATA, folderLocalPath);
-        qualifyValueAttribute(element, folderLocalPath);
+            String base, Bundle bundle) {
+        qualifyAttribute(element, ATT_SRC, base, bundle);
+        qualifyAttribute(element, ATT_HREF, base, bundle);
+        qualifyAttribute(element, ATT_CITE, base, bundle);
+        qualifyAttribute(element, ATT_LONGDESC, base, bundle);
+        qualifyAttribute(element, ATT_CODEBASE, base, bundle);
+        qualifyAttribute(element, ATT_DATA, base, bundle);
+        qualifyValueAttribute(element, base, bundle);
     }
 
     private static void qualifyAttribute(Element element, String attributeName,
-            String folderLocalPath) {
+            String base, Bundle bundle) {
         if (element.hasAttribute(attributeName)) {
             String attributeValue = element.getAttribute(attributeName);
             if (new IntroURLParser(attributeValue).hasProtocol())
                 return;
-            IPath localSrcPath = new Path(folderLocalPath)
-                .append(attributeValue);
-            element.setAttribute(attributeName, localSrcPath.toOSString());
+
+            // resolve the resource against the nl mechanism.
+            String attributePath = BundleUtil.getResolvedResourceLocation(base,
+                attributeValue, bundle);
+            element.setAttribute(attributeName, attributePath);
         }
     }
 
-    private static void qualifyValueAttribute(Element element,
-            String folderLocalPath) {
+    private static void qualifyValueAttribute(Element element, String base,
+            Bundle bundle) {
         if (element.hasAttribute(ATT_VALUE)
                 && element.hasAttribute(ATT_VALUE_TYPE)
                 && element.getAttribute(ATT_VALUE_TYPE).equals("ref") //$NON-NLS-1$
@@ -358,8 +370,10 @@ public class ModelUtil {
             String value = element.getAttribute(ATT_VALUE);
             if (new IntroURLParser(value).hasProtocol())
                 return;
-            IPath localSrcPath = new Path(folderLocalPath).append(value);
-            element.setAttribute(ATT_VALUE, localSrcPath.toOSString());
+            // resolve the resource against the nl mechanism.
+            String attributePath = BundleUtil.getResolvedResourceLocation(base,
+                bundle);
+            element.setAttribute(ATT_VALUE, attributePath);
         }
     }
 

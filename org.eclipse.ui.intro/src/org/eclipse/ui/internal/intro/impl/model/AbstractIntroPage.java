@@ -595,8 +595,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * attributes.</li>
      */
     protected void resolvePage() {
-        // insert base meta-tag, and resolve includes.
+        // insert base meta-tag,
         ModelUtil.insertBase(dom, ModelUtil.getParentFolderOSString(content));
+        // resolve all relative resources relative to content file.
+        ModelUtil.updateResourceAttributes(dom.getDocumentElement(), this);
+        // and resolve includes.
         resolveIncludes();
         // now remove all anchors from this page.
         ModelUtil.removeAllElements(dom, IntroAnchor.TAG_ANCHOR);
@@ -633,10 +636,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             Node targetNode = dom.importNode(targetElement, true);
             // update the src attribute of this node, if defined by w3
             // specs.
-            String targetContentFilePath = ((AbstractIntroPage) results[0])
-                .getContent();
-            ModelUtil.updateResourceAttributes((Element) targetNode,
-                targetContentFilePath);
+            AbstractIntroPage page = ((AbstractIntroPage) results[0]);
+            ModelUtil.updateResourceAttributes((Element) targetNode, page);
             // use of replace API to remove include element is tricky. It
             // confuses the NodeList used in the loop above. Removing an include
             // removes it from the NodeList. Used cloned Array instead.

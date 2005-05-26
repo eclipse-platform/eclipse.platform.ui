@@ -532,7 +532,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param targer
      * @return
      */
-    protected AbstractIntroElement cloneTarget(AbstractIntroElement targer) {
+    protected AbstractIntroElement cloneTarget(AbstractIntroElement target) {
         return null;
     }
 

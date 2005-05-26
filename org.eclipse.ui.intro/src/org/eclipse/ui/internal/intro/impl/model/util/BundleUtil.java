@@ -85,23 +85,7 @@ public class BundleUtil {
         Bundle bundle = getBundleFromConfigurationElement(element);
         return getResolvedResourceLocation(resource, bundle, false);
     }
-
-
-
-    /**
-     * Returns the fully qualified location of the passed resource string from
-     * the declaring plugin. If the plugin is not defined, or file could not be
-     * loaded from the plugin, the resource is returned as is.
-     * 
-     * @param resource
-     * @return
-     */
-    public static String getResolvedResourceLocation(String resource,
-            IConfigurationElement element) {
-        Bundle bundle = getBundleFromConfigurationElement(element);
-        return getResolvedResourceLocation(resource, bundle, true);
-    }
-
+ 
 
     /**
      * Returns the fully qualified location of the passed resource string from
@@ -127,7 +111,8 @@ public class BundleUtil {
     public static String getResolvedResourceLocation(String resource,
             Bundle bundle) {
         return getResolvedResourceLocation(resource, bundle, true);
-    }
+    } 
+    
 
     public static String getResolvedResourceLocation(String base,
             String resource, Bundle bundle) {
@@ -138,6 +123,7 @@ public class BundleUtil {
         String fullResource = new Path(base).append(resource).toString();
         return getResolvedResourceLocation(fullResource, bundle, true);
     }
+    
 
     public static String getResolvedResourceLocation(String resource,
             Bundle bundle, boolean forceNLResolve) {

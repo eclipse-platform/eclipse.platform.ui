@@ -475,9 +475,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
             Node targetNode = pageDom.importNode(children[i], true);
             // update the src attribute of this node, if defined by w3
             // specs.
-            String localContentFilePath = extensionContent.getContent();
+
             ModelUtil.updateResourceAttributes((Element) targetNode,
-                localContentFilePath);
+                extensionContent);
             targetAnchor.getParentNode().insertBefore(targetNode, targetAnchor);
         }
         return true;
