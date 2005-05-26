@@ -11,12 +11,17 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +33,6 @@ import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -43,6 +47,8 @@ import org.w3c.dom.Element;
 public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEntry {
 	
 	public static final String TYPE_ID = "org.eclipse.ant.ui.classpathentry.extraClasspathEntries"; //$NON-NLS-1$
+    
+    public static List fgSWTEntries= null;
 		
 	/**
 	 * Default contructor required to instantiate persisted extensions.
@@ -133,20 +139,53 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	}
 	
 	private void addSWTJars(List rtes) {
-        Location eclipseHome= Platform.getInstallLocation();
-        if (eclipseHome == null) {
-            return;
+        if (fgSWTEntries == null) {
+            fgSWTEntries= new ArrayList();
+            Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
+            BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
+            BundleDescription[] fragments= description.getFragments();
+            for (int i = 0; i < fragments.length; i++) {
+                Bundle fragmentBundle= Platform.getBundle(fragments[i].getName());
+                URL bundleURL;
+                try {
+                    bundleURL = Platform.resolve(fragmentBundle.getEntry("/")); //$NON-NLS-1$
+                } catch (IOException e) {
+                    AntUIPlugin.log(e);
+                   continue;
+                }
+                String urlFileName= bundleURL.getFile();
+                if (urlFileName.startsWith("file:")) { //$NON-NLS-1$
+                    try {
+                        urlFileName= new URL(urlFileName).getFile();
+                        if (urlFileName.endsWith("!/")) { //$NON-NLS-1$
+                            urlFileName= urlFileName.substring(0, urlFileName.length() - 2);
+                        }
+                    } catch (MalformedURLException e) {
+                        AntUIPlugin.log(e);
+                       continue;
+                    }
+                }
+                IPath fragmentPath= new Path(urlFileName);
+                if (fragmentPath.getFileExtension() != null) { //JAR file
+                    fgSWTEntries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(fragmentPath));
+                } else { // folder
+                    File bundleFolder= fragmentPath.toFile();
+                    if (!bundleFolder.isDirectory()) {
+                        continue;
+                    }
+                    String[] names= bundleFolder.list(new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            return name.endsWith(".jar"); //$NON-NLS-1$
+                        }
+                    });
+                    for (int j = 0; j < names.length; j++) {
+                        String jarName = names[j];
+                        fgSWTEntries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(fragmentPath.append(jarName)));
+                    }
+                }
+            }
         }
-        Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
-        BundleDescription description= Platform.getPlatformAdmin().getState(false).getBundle(bundle.getBundleId());
-        BundleDescription[] fragments= description.getFragments();
-        String eclipseVersion = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-        IPath startingPath= new Path(new File(eclipseHome.getURL().getPath()).getAbsolutePath());
-        startingPath= startingPath.append("plugins"); //$NON-NLS-1$
-        for (int i = 0; i < fragments.length; i++) {
-            IPath path= startingPath.append(fragments[i].getSymbolicName() + "_" + eclipseVersion + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
-            rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));    
-        }
+        rtes.addAll(fgSWTEntries);
 	}
     
 	/**
