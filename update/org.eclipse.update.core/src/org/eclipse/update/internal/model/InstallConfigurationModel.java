@@ -100,7 +100,7 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @since 2.0
 	 */
 	public boolean isCurrent() {
-		if (!lightlyInitialized) 
+		if (!lightlyInitialized && !initialized ) 
 			doLightInitialization();
 		
 		return isCurrent;
