@@ -88,7 +88,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                             BreakpointContainer[] roots = provider.getRoots(breakpoint);
                             if (roots != null) {
                                 for (int j = 0; j < roots.length; j++) {
-                                    viewer.expandToLevel(roots[i], AbstractTreeViewer.ALL_LEVELS);
+                                    viewer.expandToLevel(roots[j], AbstractTreeViewer.ALL_LEVELS);
                                 }
                             }
                         }
