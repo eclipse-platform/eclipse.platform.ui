@@ -172,10 +172,10 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <element ref="handle" minOccurs="0" maxOccurs="1"/>
             <element ref="shortcut" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="location" use="default" value="right">
+         <attribute name="location" use="default" value="fastview">
             <annotation>
                <documentation>
-                  the location of the launch bar relative to the content area in the main window.
+                  the location of the launch bar relative to the content area in the main window (one of &lt;code&gt;left&lt;/code&gt;, &lt;code&gt;bottom&lt;/code&gt; or &lt;code&gt;right&lt;/code&gt;). If the choice is set to &lt;code&gt;fastview&lt;/code&gt; (the default), the launch bar will be initially created where the fast view bar is.
                </documentation>
             </annotation>
             <simpleType>
@@ -185,6 +185,8 @@ The content file is parsed at run time by the intro framework. Based on the sett
                   <enumeration value="bottom">
                   </enumeration>
                   <enumeration value="right">
+                  </enumeration>
+                  <enumeration value="fastview">
                   </enumeration>
                </restriction>
             </simpleType>

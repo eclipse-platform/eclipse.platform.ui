@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 
 /**
@@ -25,19 +27,6 @@ import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
  * @since 3.1
  */
 public class IntroLaunchBarElement extends AbstractIntroElement {
-    protected static final String TAG_LAUNCH_BAR = "launchBar"; //$NON-NLS-1$    
-    private static final String TAG_HANDLE = "handle"; //$NON-NLS-1$
-
-    private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
-    private static final String ATT_BG = "bg"; //$NON-NLS-1$
-    private static final String ATT_FG = "fg"; //$NON-NLS-1$
-    private static final String ATT_CLOSE = "close"; //$NON-NLS-1$
-    private static final String ATT_IMAGE = "image"; //$NON-NLS-1$
-
-    private static final String LOC_LEFT = "left"; //$NON-NLS-1$
-    private static final String LOC_BOTTOM = "bottom"; //$NON-NLS-1$
-
-
     private ArrayList shortcuts;
 
     IntroLaunchBarElement(IConfigurationElement element) {
@@ -73,23 +62,35 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
      * @return
      */
     public int getLocation() {
-        String location = getCfgElement().getAttribute(ATT_LOCATION);
-        int loc = SWT.RIGHT;
+        String location = getCfgElement().getAttribute("location"); //$NON-NLS-1$
+
         if (location != null) {
-            if (location.equals(LOC_LEFT))
+            if (location.equals("left")) //$NON-NLS-1$
                 return SWT.LEFT;
-            if (location.equals(LOC_BOTTOM))
+            if (location.equals("bottom")) //$NON-NLS-1$
                 return SWT.BOTTOM;
+            if (location.equals("right")) //$NON-NLS-1$
+                return SWT.RIGHT;
         }
-        return loc;
+        // default to the initial fast view location
+        String fastviewLocation = PlatformUI.getPreferenceStore().getString(
+            IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION);
+        if (fastviewLocation.equals(IWorkbenchPreferenceConstants.LEFT))
+            return SWT.LEFT;
+        if (fastviewLocation.equals(IWorkbenchPreferenceConstants.RIGHT))
+            return SWT.RIGHT;
+        if (fastviewLocation.equals(IWorkbenchPreferenceConstants.BOTTOM))
+            return SWT.BOTTOM;
+        // just in case
+        return SWT.RIGHT;
     }
 
     public String getBackground() {
-        return getCfgElement().getAttribute(ATT_BG);
+        return getCfgElement().getAttribute("bg"); //$NON-NLS-1$
     }
 
     public String getForeground() {
-        return getCfgElement().getAttribute(ATT_FG);
+        return getCfgElement().getAttribute("fg"); //$NON-NLS-1$
     }
 
     public boolean getCreateHandle() {
@@ -99,7 +100,7 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
     public boolean getClose() {
         IConfigurationElement handle = getHandleElement();
         if (handle != null) {
-            String value = handle.getAttribute(ATT_CLOSE);
+            String value = handle.getAttribute("close"); //$NON-NLS-1$
             return value == null || value.equals("true"); //$NON-NLS-1$
         }
         return true;
@@ -114,7 +115,7 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
         IConfigurationElement handle = getHandleElement();
         if (handle == null)
             return null;
-        return handle.getAttribute(ATT_IMAGE);
+        return handle.getAttribute("image"); //$NON-NLS-1$
     }
 
     /**
@@ -132,7 +133,7 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
 
     private IConfigurationElement getHandleElement() {
         IConfigurationElement[] children = getCfgElement().getChildren(
-            TAG_HANDLE);
+            "handle"); //$NON-NLS-1$
         if (children.length > 0)
             return children[0];
         return null;
