@@ -59,7 +59,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	public static final String TYPE= "org.eclipse.projection"; //$NON-NLS-1$
 
 
-	private static final int COLOR= SWT.COLOR_DARK_GRAY;
+	private static final int COLOR= SWT.COLOR_GRAY;
 	private static Image fgCollapsedImage;
 	private static Image fgExpandedImage;
 
