@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IFile;
 public class FileCharSequenceProvider {
 	
 	private static int NUMBER_OF_BUFFERS= 3;
-	public static int BUFFER_SIZE= 2 << 11; // public for testing
+	public static int BUFFER_SIZE= 2 << 18; // public for testing
 	
 	private FileCharSequence fReused= null;
 	
