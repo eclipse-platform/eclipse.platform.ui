@@ -56,7 +56,7 @@ public class ViewPerformanceSuite extends TestSuite {
             
             boolean fingerprint = id.equals(FINGERPRINT_TEST);
         	//tag
-            addTest(new OpenCloseViewTest(id, fingerprint ? BasicPerformanceTest.LOCAL  | BasicPerformanceTest.GLOBAL
+            addTest(new OpenCloseViewTest(id, fingerprint ? BasicPerformanceTest.GLOBAL
                     : BasicPerformanceTest.NONE));
         }         
     }

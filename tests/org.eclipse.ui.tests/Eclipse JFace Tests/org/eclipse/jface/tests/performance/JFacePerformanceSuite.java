@@ -21,14 +21,14 @@ public class JFacePerformanceSuite extends TestSuite {
 
 	public JFacePerformanceSuite() {
 		super();
-		addTest(new ListViewerRefreshTest("testRefresh",BasicPerformanceTest.GLOBAL | BasicPerformanceTest.LOCAL));
+		addTest(new ListViewerRefreshTest("testRefresh",BasicPerformanceTest.GLOBAL));
 		addTest(new ComboViewerRefreshTest("testRefresh",BasicPerformanceTest.LOCAL));
 		addTest(new TableViewerRefreshTest("testRefresh"));
 		addTest(new TableViewerRefreshTest("testUpdate"));
 		addTest(new TreeTest("testAddTen"));
 		addTest(new TreeTest("testAddFifty"));
 		addTest(new TreeTest("testAddThousand"));
-		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.GLOBAL | BasicPerformanceTest.LOCAL));
+		addTest(new TreeTest("testAddHundred", BasicPerformanceTest.GLOBAL));
 		addTest(new TreeTest("testAddThousandPreSort", BasicPerformanceTest.LOCAL));
 
 	}

@@ -32,7 +32,7 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     
     protected void runTest() throws Throwable {
     	
-    	tagIfNecessary("Open/Close Window", Dimension.ELAPSED_PROCESS);
+    	tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
         
         exercise(new TestRunnable() {
             public void run() throws Exception {

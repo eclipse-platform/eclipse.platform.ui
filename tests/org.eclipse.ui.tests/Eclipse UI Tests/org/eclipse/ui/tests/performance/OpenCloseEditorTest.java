@@ -51,7 +51,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
             } 
         });
         
-		tagIfNecessary("Open/Close Editor", Dimension.ELAPSED_PROCESS);
+		tagIfNecessary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
 		commitMeasurements();
 		assertPerformance();
 	}
