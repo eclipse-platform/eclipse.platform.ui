@@ -344,7 +344,13 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
                             viewer.getControl().getDisplay().syncExec(new Runnable() {
                                 public void run() {
         	                        if (viewer != null && !viewer.getControl().isDisposed()) {
-        	                            viewer.setSorter(modelProvider.getViewerSorter());
+        	                            ViewerSorter newSorter = modelProvider.getViewerSorter();
+                                        ViewerSorter oldSorter = viewer.getSorter();
+                                        if (newSorter == oldSorter) {
+                                            viewer.refresh();
+                                        } else {
+                                            viewer.setSorter(newSorter);
+                                        }
         	                        }
                                 }
                             });
