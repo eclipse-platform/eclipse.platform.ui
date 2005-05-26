@@ -273,7 +273,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			// Auto-expand the thread. Only select the thread if this wasn't the end
 			// of an evaluation
 		    refresh(thread);
-			getLaunchView().autoExpand(fLastStackFrame, !evaluationEvent);
+			getLaunchView().autoExpand(frame, !evaluationEvent);
 		}
 	}
 	
