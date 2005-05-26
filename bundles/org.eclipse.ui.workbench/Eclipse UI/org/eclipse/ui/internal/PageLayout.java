@@ -801,4 +801,26 @@ public class PageLayout implements IPageLayout {
     public Map getIDtoViewLayoutRecMap() {
         return mapIDtoViewLayoutRec;
     }
+
+    /**
+     * Removes any existing placeholder with the given id.
+     * 
+     * @param id the id for the placeholder
+     * @since 3.1
+     */
+	public void removePlaceholder(String id) {
+		LayoutPart part = getRefPart(id);
+		if (part instanceof PartPlaceholder) {
+			ViewStack stack = getFolderPart(id);
+			if (stack != null) {
+				stack.remove(part);
+			}
+			else {
+				rootLayoutContainer.remove(part);
+			}
+			mapIDtoPart.remove(id);
+			mapIDtoFolder.remove(id);
+			mapIDtoViewLayoutRec.remove(id);
+		}
+	}
 }

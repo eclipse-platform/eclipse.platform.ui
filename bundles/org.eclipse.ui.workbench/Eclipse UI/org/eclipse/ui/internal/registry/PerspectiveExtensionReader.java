@@ -218,6 +218,12 @@ public class PerspectiveExtensionReader extends RegistryReader {
         else
             return false;
 
+        if (visible) {
+        	// If adding a view (not just a placeholder), remove any existing placeholder.
+        	// See bug 85948 [Perspectives] Adding register & expressions view by default to debug perspective fails
+        	pageLayout.removePlaceholder(id);
+        }
+        
         // If stack ..
         if (stack) {
             if (visible)
