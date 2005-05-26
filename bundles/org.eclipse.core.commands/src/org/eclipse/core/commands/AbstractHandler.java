@@ -61,6 +61,14 @@ public abstract class AbstractHandler implements IHandler {
 	/**
 	 * Fires an event to all registered listeners describing changes to this
 	 * instance.
+	 * <p>
+	 * Subclasses may extend the definition of this method (i.e., if a different
+	 * type of listener can be attached to a subclass). This is used primarily
+	 * for support of <code>AbstractHandler</code> in
+	 * <code>org.eclipse.ui.workbench</code>, and clients should be wary of
+	 * overriding this behaviour. If this method is overridden, then the first
+	 * line of the method should be "<code>super.fireHandlerChanged(handlerEvent);</code>".
+	 * </p>
 	 * 
 	 * @param handlerEvent
 	 *            the event describing changes to this instance. Must not be
@@ -96,8 +104,18 @@ public abstract class AbstractHandler implements IHandler {
 	}
 
 	/**
+	 * <p>
 	 * Returns true iff there is one or more IHandlerListeners attached to this
 	 * AbstractHandler.
+	 * </p>
+	 * <p>
+	 * Subclasses may extend the definition of this method (i.e., if a different
+	 * type of listener can be attached to a subclass). This is used primarily
+	 * for support of <code>AbstractHandler</code> in
+	 * <code>org.eclipse.ui.workbench</code>, and clients should be wary of
+	 * overriding this behaviour. If this method is overridden, then the return
+	 * value should include "<code>super.hasListeners() ||</codee>".
+	 * </p>
 	 * 
 	 * @return true iff there is one or more IHandlerListeners attached to this
 	 *         AbstractHandler
