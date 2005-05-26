@@ -86,7 +86,12 @@ public final class LinearUndoViolationUserApprover extends
 			// redo the local changes first
 			while (operation != history.getRedoOperation(context)) {
 				try {
-					history.redo(context, null, uiInfo);
+					IStatus status = history.redo(context, null, uiInfo);
+					if (!status.isOK()) {
+						// flush the redo history because the operation failed
+						history.dispose(context, false, true, false);
+						return Status.CANCEL_STATUS;
+					}
 				} catch (ExecutionException e) {
 					// flush the redo history here because it failed.
 					history.dispose(context, false, true, false);
@@ -125,7 +130,12 @@ public final class LinearUndoViolationUserApprover extends
 			// redo the local changes first
 			while (operation != history.getUndoOperation(context)) {
 				try {
-					history.undo(context, null, uiInfo);
+					IStatus status = history.undo(context, null, uiInfo);
+					if (!status.isOK()) {
+						// flush the operation history because the operation failed.
+						history.dispose(context, true, false, false);
+						return Status.CANCEL_STATUS;
+					}
 				} catch (ExecutionException e) {
 					// flush the undo history here because something went wrong.
 					history.dispose(context, true, false, false);
