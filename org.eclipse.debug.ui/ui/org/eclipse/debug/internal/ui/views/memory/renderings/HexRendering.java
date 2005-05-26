@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ken Dyck - Bug 90154: [Memory View] Short Input Rejected by Hex Rendering
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
