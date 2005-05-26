@@ -1244,7 +1244,7 @@ public final class Workbench implements IWorkbench {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
-		final ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(null);
+		final ProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(null);
 		
 		SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
 		WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
