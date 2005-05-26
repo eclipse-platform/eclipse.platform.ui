@@ -216,7 +216,7 @@ public class ContentAssistHandler {
 	private void activateHandler() {
 		final IHandler handler= new AbstractHandler() {
 			public Object execute(Map parameterValuesByName) throws ExecutionException {
-				if (isEnabled())
+				if (ContentAssistHandler.this.isEnabled())
 					fContentAssistant.showPossibleCompletions();
 				return null;
 			}
