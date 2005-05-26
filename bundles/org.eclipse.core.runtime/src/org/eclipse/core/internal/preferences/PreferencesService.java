@@ -1030,11 +1030,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 						continue;
 					}
 					// if there are no entries defined then we return false even if we
-					// are supposed to match on the node as a whole (bug 88820)
-					// on the existance of the node as a whole
+					// are supposed to match on the existance of the node as a whole (bug 88820)
 					Preferences child = tree.node(childPath);
 					if (entries == null)
-						return child.keys().length != 0;
+						return child.keys().length != 0 || child.childrenNames().length != 0;
 					// otherwise check to see if we have any applicable keys
 					for (int j = 0; j < entries.length; j++) {
 						if (entries[j] != null && child.get(entries[j].getKey(), null) != null)

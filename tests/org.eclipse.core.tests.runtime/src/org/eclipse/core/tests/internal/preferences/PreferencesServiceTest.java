@@ -858,7 +858,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			fail("3.00", e);
 		}
 		assertEquals("3.0", 0, matching.length);
-		
+
 		// add some values so it does match
 		new InstanceScope().getNode(QUALIFIER).put("key", "value");
 		try {
@@ -908,6 +908,34 @@ public class PreferencesServiceTest extends RuntimeTest {
 			fail("7.0", e);
 		}
 		assertEquals("7.1", 0, matching.length);
+	}
+
+	/*
+	 * See bug 95608 - A node should match if it has any keys OR has a child node
+	 * with keys.
+	 */
+	public void testMatches2() {
+		IPreferencesService service = Platform.getPreferencesService();
+		final String QUALIFIER = getUniqueString();
+
+		// setup - create a child node with a key/value pair
+		new InstanceScope().getNode(QUALIFIER).node("child").put("key", "value");
+		IPreferenceFilter[] filters = new IPreferenceFilter[] {new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				Map result = new HashMap();
+				result.put(QUALIFIER, null);
+				return result;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		}};
+		try {
+			assertEquals("1.0", 1, service.matches(service.getRootNode(), filters).length);
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
 	}
 
 	public void testExportWithTransfers1() {
@@ -974,7 +1002,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				String[] keys = node.keys();
-				for (int i=0; i<keys.length; i++)
+				for (int i = 0; i < keys.length; i++)
 					verifier.addExpected(node.absolutePath(), keys[i]);
 				return true;
 			}
