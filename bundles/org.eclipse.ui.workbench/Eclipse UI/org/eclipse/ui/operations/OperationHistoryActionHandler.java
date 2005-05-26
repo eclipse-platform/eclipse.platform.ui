@@ -125,8 +125,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				if (display != null && event.getOperation().hasContext(undoContext)) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							if (pruning)
+							if (pruning) {
 								flush();
+								// not all flushes will trigger an update so force it here
+								update();
+							}
 							else
 								update();
 						}
