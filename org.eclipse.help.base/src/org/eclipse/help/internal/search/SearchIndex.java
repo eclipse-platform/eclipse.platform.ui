@@ -36,6 +36,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -608,6 +609,8 @@ public class SearchIndex {
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
 			}
+		} catch (BooleanQuery.TooManyClauses tmc){
+			throw new QueryTooComplexException();
 		} catch (QueryTooComplexException qe) {
 			throw qe;
 		} catch (Exception e) {
