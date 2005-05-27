@@ -195,9 +195,13 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         // the actual selected object.
         if (canAdapt()) {
 			Object adapted = LegacyResourceSupport.getAdapter(object, getObjectClass());
-			if (adapted == null && Policy.DEBUG_CONTRIBUTIONS) {
-				WorkbenchPlugin.log("Error adapting " + object.getClass().getName() + //$NON-NLS-1$
-						" to " + getObjectClass() + ". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (adapted == null) {
+				if (Policy.DEBUG_CONTRIBUTIONS)
+					WorkbenchPlugin
+							.log("Error adapting " + object.getClass().getName() + //$NON-NLS-1$
+									" to " //$NON-NLS-1$
+									+ getObjectClass()
+									+ ". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				object = adapted;
 			}
