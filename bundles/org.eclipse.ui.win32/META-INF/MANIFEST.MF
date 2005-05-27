@@ -6,6 +6,6 @@ Bundle-Version: 3.1.0
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.ui.ide;bundle-version="[3.0.0,4.0.0)"
-Bundle-Localization: fragment-win32
+Bundle-Localization: fragment
 Export-Package: org.eclipse.ui.internal.editorsupport.win32;x-internal:=true
 Eclipse-PlatformFilter: (osgi.ws=win32)
