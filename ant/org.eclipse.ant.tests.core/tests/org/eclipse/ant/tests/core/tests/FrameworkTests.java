@@ -120,17 +120,6 @@ public class FrameworkTests extends AbstractAntTest {
 		assertSuccessful();
 		restorePreferenceDefaults();
 	}
-	
-	public void testMissingDefaultTarget() {
-		try {
-			run("MissingDefault.xml", new String[]{"test"}, false);
-		} catch (CoreException e) {
-			String msg= e.getMessage();
-			assertTrue("Message incorrect: " + msg, msg.equals("Default target 'build' does not exist in this project"));
-			return;
-		}
-		assertTrue("Build files with no default targets should not be accepted", false);
-	}
     
     public void testNoDefaultTarget() throws CoreException {
         run("NoDefault.xml");

@@ -89,6 +89,8 @@ public class InternalAntRunner {
 	
 	private Project currentProject;
 	
+	private String defaultTarget;
+	
 	private BuildLogger buildLogger= null;
 	
 	/**
@@ -381,7 +383,7 @@ public class InternalAntRunner {
 				new InputHandlerSetter().setInputHandler(antProject, "org.eclipse.ant.internal.core.ant.NullInputHandler"); //$NON-NLS-1$
 			}
 			parseBuildFile(antProject);
-			String defaultTarget = antProject.getDefaultTarget();
+			defaultTarget = antProject.getDefaultTarget();
 			Enumeration projectTargets = antProject.getTargets().elements();
 			List infos= new ArrayList();
 			infos.add(antProject.getName());
@@ -435,6 +437,15 @@ public class InternalAntRunner {
 			antProject= new InternalProject();
 		}
 		return antProject;
+	}
+	
+	/**
+	 * Returns the default target name that was last computed or <code>null</code>
+	 * if no default target has been computed.
+	 * @return the default target name
+	 */
+	public String getDefaultTarget() {
+		return defaultTarget;
 	}
 
 	/**
