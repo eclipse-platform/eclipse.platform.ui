@@ -60,9 +60,6 @@ public class BrowserIntroPartImplementation extends
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
 
-    // cache model instance for reuse.
-    // private IntroModelRoot model = getModel();
-
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
 
@@ -146,7 +143,7 @@ public class BrowserIntroPartImplementation extends
 
     private void handleDynamicIntro() {
         IntroHomePage homePage = getModel().getHomePage();
-        // check cache state.
+        // check cache state, and populate url page if needed.
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null) {
             // we have a cached state. handle appropriately
@@ -372,6 +369,13 @@ public class BrowserIntroPartImplementation extends
             // we have a standby part, nothing more to do in presentation.
             return;
 
+        if (history.currentLocationIsUrl())
+            // last page disaplyed was a url. It is already set in the browser
+            // and stored in history. Nothing more to do.
+            return;
+
+
+
         // presentation is shown here. toggle standby page. No need to update
         // history here.
         IntroHomePage homePage = getModel().getHomePage();
@@ -448,7 +452,9 @@ public class BrowserIntroPartImplementation extends
         // and returns "about:blank" if we are on a dynamic page
         if (browser != null && browser.getUrl() != null
                 && browser.getUrl().length() > 0
-                && !(browser.getUrl().equals("about:blank"))) { //$NON-NLS-1$
+                && !(browser.getUrl().equals("about:blank")) //$NON-NLS-1$
+                && !(browser.getUrl().equals("file:///"))) { //$NON-NLS-1$
+
             String currentURL = browser.getUrl();
             if (currentURL != null) {
                 memento.putString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT,
@@ -542,8 +548,17 @@ public class BrowserIntroPartImplementation extends
         IntroHomePage rootPage = getModel().getHomePage();
         boolean success = false;
         if (getModel().isDynamic()) {
+            // special case for when workbench is started with a cached URL. We
+            // set the url in the browser, but current page is Home Page, and so
+            // setting the root page will not fire an event. So, force a
+            // generation
+            // of root page.
+            if (history.currentLocationIsUrl())
+                generateDynamicContentForPage(rootPage);
+
             success = getModel().setCurrentPageId(rootPage.getId());
             updateHistory(rootPage);
+
         } else {
             String location = rootPage.getUrl();
             success = browser.setUrl(location);

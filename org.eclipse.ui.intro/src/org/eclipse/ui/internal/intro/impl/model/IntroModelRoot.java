@@ -480,15 +480,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 extensionContent);
             targetAnchor.getParentNode().insertBefore(targetNode, targetAnchor);
         }
-        
+
         // now handle style inheritance.
-          // Update the parent page styles. skip style if it is null;
+        // Update the parent page styles. skip style if it is null;
         String[] styles = extensionContent.getStyles();
-        if (styles != null) { 
-            for(int i =0; i< styles.length; i++)
+        if (styles != null) {
+            for (int i = 0; i < styles.length; i++)
                 ModelUtil.insertStyle(pageDom, styles[i]);
         }
-           
+
         return true;
 
     }
@@ -773,5 +773,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         String content = configElement.getAttribute(ATT_CONTENT);
         return ModelUtil.getParentFolderToString(content);
     }
+
+  
 
 }
