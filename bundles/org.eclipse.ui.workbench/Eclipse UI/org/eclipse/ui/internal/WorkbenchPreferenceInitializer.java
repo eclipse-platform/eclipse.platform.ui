@@ -92,6 +92,7 @@ public class WorkbenchPreferenceInitializer extends
 
 		// Heap status preferences
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
+		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

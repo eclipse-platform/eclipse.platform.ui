@@ -848,14 +848,17 @@ public class WorkbenchMessages extends NLS {
 	public static String HeapStatus_Error;
 	public static String HeapStatus_widthStr;
 	public static String HeapStatus_memoryToolTip;
-	public static String HeapStatus_memoryToolTipWithMark;
+	public static String HeapStatus_meg;
+	public static String HeapStatus_maxUnknown;
+	public static String HeapStatus_noMark;
 	public static String HeapStatus_buttonToolTip;
 	public static String SetMarkAction_text;
 	public static String ClearMarkAction_text;
-	public static String ShowKyrsoftViewAction_text;
-	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
-	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
-	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
+	public static String ShowMaxAction_text;
+//	public static String ShowKyrsoftViewAction_text;
+//	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
+//	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
+//	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
 
 
     // ==============================================================================

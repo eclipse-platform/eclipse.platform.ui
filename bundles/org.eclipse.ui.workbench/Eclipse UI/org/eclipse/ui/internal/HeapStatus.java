@@ -11,7 +11,10 @@
 
 package org.eclipse.ui.internal;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -43,13 +46,22 @@ public class HeapStatus extends Composite {
 
 	private boolean armed;
 	private Image gcImage;
-	private Color bgCol, usedMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol, armCol;  
+	private Color bgCol, usedMemCol, lowMemCol, freeMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol, armCol;  
     private Canvas button;
 	private IPreferenceStore prefStore;
 	private int updateInterval;
+	private boolean showMax;
+    private long totalMem;
+    private long usedMem;
+    private long mark = -1;
+    // start with 12x12
+	private Rectangle imgBounds = new Rectangle(0,0,12,12);
+	private long maxMem = Long.MAX_VALUE;
+	private boolean maxMemKnown;
+	private float lowMemThreshold = 0.05f;
+	private boolean showLowMemThreshold = true;
 
     private final Runnable timer = new Runnable() {
-
         public void run() {
             if (!isDisposed()) {
                 updateStats();
@@ -64,17 +76,13 @@ public class HeapStatus extends Composite {
     private final IPropertyChangeListener prefListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			if (IHeapStatusConstants.PREF_UPDATE_INTERVAL.equals(event.getProperty())) {
-				updateUpdateInterval();
+				setUpdateIntervalInMS(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
+			}
+			else if (IHeapStatusConstants.PREF_SHOW_MAX.equals(event.getProperty())) {
+				showMax = prefStore.getBoolean(IHeapStatusConstants.PREF_SHOW_MAX);
 			}
 		}
 	};
-
-    private long totalMem;
-    private long usedMem;
-    private long mark = -1;
-    // start with 12x12
-	private Rectangle imgBounds = new Rectangle(0,0,12,12);
-
 
     /**
      * Creates a new heap status control with the given parent, and using
@@ -86,10 +94,15 @@ public class HeapStatus extends Composite {
      */
 	public HeapStatus(Composite parent, IPreferenceStore prefStore) {
 		super(parent, SWT.NONE);
-        
+
+		maxMem = getMaxMem();
+		maxMemKnown = maxMem != Long.MAX_VALUE;
+
         this.prefStore = prefStore;
         prefStore.addPropertyChangeListener(prefListener);
-        updateUpdateInterval();
+        
+        setUpdateIntervalInMS(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
+        showMax = prefStore.getBoolean(IHeapStatusConstants.PREF_SHOW_MAX);
 		
         button = new Canvas(this, SWT.NONE);
         button.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
@@ -99,7 +112,9 @@ public class HeapStatus extends Composite {
 		if (gcImage != null)
 			imgBounds = gcImage.getBounds();
 		Display display = getDisplay();
-		usedMemCol = new Color(display, 255, 255, 175);
+		usedMemCol = new Color(display, 255, 255, 175);  // light yellow
+		lowMemCol = new Color(display, 255, 70, 70);  // medium red 
+		freeMemCol = new Color(display, 255, 190, 125);  // light orange
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		sepCol = topLeftCol = armCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
@@ -119,10 +134,12 @@ public class HeapStatus extends Composite {
                     button.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
                     break;
                 case SWT.Paint:
-                    if (event.widget == HeapStatus.this)
-                        paintComposite(event.gc);
-                    else if (event.widget == button)
+                    if (event.widget == HeapStatus.this) {
+                    	paintComposite(event.gc);
+                    }
+                    else if (event.widget == button) {
                         paintButton(event.gc);
+                    }
                     break;
                 case SWT.MouseUp:
                     if (event.button == 1) {
@@ -165,9 +182,28 @@ public class HeapStatus extends Composite {
 			}
 		});
    	}
+
+	/**
+	 * Returns the maximum memory limit, or Long.MAX_VALUE if the max is not known.
+	 */
+	private long getMaxMem() {
+		long max = Long.MAX_VALUE;
+		try {
+			// Must use reflect to allow compilation against JCL/Foundation
+			Method maxMemMethod = Runtime.class.getMethod("maxMemory", new Class[0]); //$NON-NLS-1$
+			Object o = maxMemMethod.invoke(Runtime.getRuntime(), new Object[0]);
+			if (o instanceof Long) {
+				max = ((Long) o).longValue();
+			}
+		}
+		catch (Exception e) {
+			// ignore if method missing or if there are other failures trying to determine the max
+		}
+		return max;
+	}
 	
-	private void updateUpdateInterval() {
-		updateInterval = Math.max(20, prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
+	private void setUpdateIntervalInMS(int interval) {
+		updateInterval = Math.max(100, interval);
 	}
 
 	private void doDispose() {
@@ -176,6 +212,10 @@ public class HeapStatus extends Composite {
     		gcImage.dispose();
         if (usedMemCol != null)
         	usedMemCol.dispose();
+        if (lowMemCol != null)
+        	lowMemCol.dispose();
+        if (freeMemCol != null)
+        	freeMemCol.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -214,6 +254,7 @@ public class HeapStatus extends Composite {
     private void fillMenu(IMenuManager menuMgr) {
         menuMgr.add(new SetMarkAction());
         menuMgr.add(new ClearMarkAction());
+        menuMgr.add(new ShowMaxAction());
 //        if (isKyrsoftViewAvailable()) {
 //        	menuMgr.add(new ShowKyrsoftViewAction());
 //        }
@@ -223,6 +264,7 @@ public class HeapStatus extends Composite {
      * Sets the mark to the current usedMem level. 
      */
     private void setMark() {
+    	updateStats();  // get up-to-date stats before taking the mark
         mark = usedMem;
         redraw();
     }
@@ -264,6 +306,13 @@ public class HeapStatus extends Composite {
     }
 
     private void paintComposite(GC gc) {
+		if (showMax && maxMemKnown)
+			paintCompositeMaxKnown(gc);
+		else
+			paintCompositeMaxUnknown(gc);
+    }
+    
+    private void paintCompositeMaxUnknown(GC gc) {
         Rectangle rect = getClientArea();
         int x = rect.x;
         int y = rect.y;
@@ -278,8 +327,8 @@ public class HeapStatus extends Composite {
         gc.setBackground(bgCol);
         gc.fillRectangle(rect);
         gc.setForeground(sepCol);
-		gc.drawLine(dx, rect.y, dx, y + h);
-		gc.drawLine(ux, rect.y, ux, y + h);
+		gc.drawLine(dx, y, dx, y + h);
+		gc.drawLine(ux, y, ux, y + h);
         gc.setForeground(topLeftCol);
         gc.drawLine(x, y, x+w, y);
 		gc.drawLine(x, y, x, y+h);
@@ -287,13 +336,10 @@ public class HeapStatus extends Composite {
         gc.drawLine(x+w-1, y, x+w-1, y+h);
 		gc.drawLine(x, y+h-1, x+w, y+h-1);
 		
-		if (usedMemCol != null) {
-			gc.setBackground(usedMemCol);
-		}
-        gc.fillRectangle(x + 1, y + 1, uw, y + h - 2);
+		gc.setBackground(usedMemCol);
+        gc.fillRectangle(x + 1, y + 1, uw, h - 2);
         
-        String s = NLS.bind(WorkbenchMessages.HeapStatus_status, new Integer(
-				convertToMeg(usedMem)), new Integer(convertToMeg(totalMem)));
+        String s = NLS.bind(WorkbenchMessages.HeapStatus_status, convertToMeg(usedMem), convertToMeg(totalMem));
         Point p = gc.textExtent(s);
         int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
         int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
@@ -301,17 +347,77 @@ public class HeapStatus extends Composite {
         gc.drawString(s, sx, sy, true);
         
         // draw an I-shaped bar in the foreground colour for the mark (if present)
-        gc.setForeground(markCol);
         if (mark != -1) {
             int ssx = (int) (sw * mark / totalMem) + x + 1;
-            gc.drawLine(ssx, y+1, ssx, y+h-2);
-//            gc.drawLine(ssx-2, y+1, ssx+2, y+1);
-            gc.drawLine(ssx-1, y+1, ssx+1, y+1);
-            gc.drawLine(ssx-1, y+h-2, ssx+1, y+h-2);
-//            gc.drawLine(ssx-2, y+h-2, ssx+2, y+h-2);
+            paintMark(gc, ssx, y, h);
         }
-        
     }
+
+    private void paintCompositeMaxKnown(GC gc) {
+        Rectangle rect = getClientArea();
+        int x = rect.x;
+        int y = rect.y;
+        int w = rect.width;
+        int h = rect.height;
+        int bw = imgBounds.width; // button width
+        int dx = x + w - bw - 2; // divider x
+        int sw = w - bw - 3; // status width 
+        int uw = (int) (sw * usedMem / maxMem); // used mem width
+        int ux = x + 1 + uw; // used mem right edge
+        int tw = (int) (sw * totalMem / maxMem); // current total mem width
+        int tx = x + 1 + tw; // current total mem right edge
+        
+        gc.setBackground(bgCol);
+        gc.fillRectangle(rect);
+        gc.setForeground(sepCol);
+		gc.drawLine(dx, y, dx, y + h);
+		gc.drawLine(ux, y, ux, y + h);
+		gc.drawLine(tx, y, tx, y + h);
+        gc.setForeground(topLeftCol);
+        gc.drawLine(x, y, x+w, y);
+		gc.drawLine(x, y, x, y+h);
+		gc.setForeground(bottomRightCol);
+        gc.drawLine(x+w-1, y, x+w-1, y+h);
+		gc.drawLine(x, y+h-1, x+w, y+h-1);
+		
+        if (lowMemThreshold != 0 && ((double)(maxMem - usedMem) / (double)maxMem < lowMemThreshold)) {
+            gc.setBackground(lowMemCol);
+        } else {
+            gc.setBackground(usedMemCol);
+        }
+        gc.fillRectangle(x + 1, y + 1, uw, h - 2);
+        
+        gc.setBackground(freeMemCol);
+        gc.fillRectangle(ux + 1, y + 1, tx - (ux + 1), h - 2);
+
+        // paint line for low memory threshold
+        if (showLowMemThreshold && lowMemThreshold != 0) {
+            gc.setForeground(lowMemCol);
+            int thresholdX = x + 1 + (int) (sw * (1.0 - lowMemThreshold));
+            gc.drawLine(thresholdX, y + 1, thresholdX, y + h - 2);
+        }
+
+        String s = NLS.bind(WorkbenchMessages.HeapStatus_status, 
+				convertToMeg(usedMem), convertToMeg(totalMem));
+        Point p = gc.textExtent(s);
+        int sx = (rect.width - 15 - p.x) / 2 + rect.x + 1;
+        int sy = (rect.height - 2 - p.y) / 2 + rect.y + 1;
+        gc.setForeground(textCol);
+        gc.drawString(s, sx, sy, true);
+        
+        // draw an I-shaped bar in the foreground colour for the mark (if present)
+        if (mark != -1) {
+            int ssx = (int) (sw * mark / maxMem) + x + 1;
+            paintMark(gc, ssx, y, h);
+        }
+    }
+
+	private void paintMark(GC gc, int x, int y, int h) {
+        gc.setForeground(markCol);
+		gc.drawLine(x, y+1, x, y+h-2);
+		gc.drawLine(x-1, y+1, x+1, y+1);
+		gc.drawLine(x-1, y+h-2, x+1, y+h-2);
+	}
 
     private void updateStats() {
         Runtime runtime = Runtime.getRuntime();
@@ -321,29 +427,21 @@ public class HeapStatus extends Composite {
     }
 
     private void updateToolTip() {
-        String toolTip;
-        if (mark == -1) {
-	        toolTip = NLS
-					.bind(WorkbenchMessages.HeapStatus_memoryToolTip, new Integer(
-							convertToMeg(totalMem)), new Integer(
-							convertToMeg(usedMem)));
-        }
-        else {
-	        toolTip = NLS.bind(
-					WorkbenchMessages.HeapStatus_memoryToolTipWithMark,
-					new Object[] { new Integer(convertToMeg(totalMem)),
-							new Integer(convertToMeg(usedMem)),
-							new Integer(convertToMeg(mark)) });
-        }
-        if (!toolTip.equals(getToolTipText()))
+    	String usedStr = convertToMeg(usedMem);
+    	String totalStr = convertToMeg(totalMem);
+    	String maxStr = maxMemKnown ? convertToMeg(maxMem) : WorkbenchMessages.HeapStatus_maxUnknown;
+    	String markStr = mark == -1 ? WorkbenchMessages.HeapStatus_noMark : convertToMeg(mark);
+        String toolTip = NLS.bind(WorkbenchMessages.HeapStatus_memoryToolTip, new Object[] { usedStr, totalStr, maxStr, markStr });
+        if (!toolTip.equals(getToolTipText())) {
             setToolTipText(toolTip);
+        }
     }
 	
     /**
-     * Converts the given number of bytes to number of megabytes (rounded up).
+     * Converts the given number of bytes to a printable number of megabytes (rounded up).
      */
-    private int convertToMeg(long totalMem2) {
-        return (int) ((totalMem2 + (512 * 1024)) / (1024 * 1024));
+    private String convertToMeg(long numBytes) {
+        return NLS.bind(WorkbenchMessages.HeapStatus_meg, new Long((numBytes + (512 * 1024)) / (1024 * 1024)));
     }
 
 
@@ -368,6 +466,17 @@ public class HeapStatus extends Composite {
         
         public void run() {
             clearMark();
+        }
+    }
+
+    class ShowMaxAction extends Action {
+    	ShowMaxAction() {
+            super(WorkbenchMessages.ShowMaxAction_text, IAction.AS_CHECK_BOX);
+            setChecked(showMax);
+        }
+        
+        public void run() {
+            prefStore.setValue(IHeapStatusConstants.PREF_SHOW_MAX, isChecked());
         }
     }
 
