@@ -649,9 +649,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 
 		Element siteElement = doc.createElement(CFG_SITE);
 		
-		if (getURL() != null)
-			siteElement.setAttribute(CFG_URL, Utils.makeRelative(Utils.getInstallURL(), getURL()).toString());
-
+		if (getURL() != null) {
+			URL toPersist = (config == null || config.isTransient()) ? getURL() : Utils.makeRelative(Utils.getInstallURL(), getURL());
+			siteElement.setAttribute(CFG_URL, toPersist.toString());
+		}
+		
 		siteElement.setAttribute(CFG_ENABLED, isEnabled() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		siteElement.setAttribute(CFG_UPDATEABLE, isUpdateable() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isExternallyLinkedSite()) 
