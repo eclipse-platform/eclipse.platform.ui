@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -44,50 +43,9 @@ import org.eclipse.ui.part.PageBook;
  */
 public class CommitWizardCommitPage extends WizardPage implements IPropertyChangeListener {
     
-    
-    /**
-     * Saves the size of the wizard dialog.
-     */
-    private class SettingsSaver {
-        
-        private static final String PREF_WEIGHT_A = "commit_wizard_page.weight_a"; //$NON-NLS-1$
-        private static final String PREF_WEIGHT_B = "Commit_wizard_page.weigth_b"; //$NON-NLS-1$
-        
-        public void saveWeights(int a, int b) {
-            final IDialogSettings settings= getSettings();
-            if (settings == null)
-                return;
-            
-            settings.put(PREF_WEIGHT_A, a);
-            settings.put(PREF_WEIGHT_B, b);
-        }
-        
-        public int [] loadWeights() {
-            final int [] weights= { 1, 1 };
-            final IDialogSettings settings= getSettings();
-            if (settings == null)
-                return weights;
-            try {
-                weights[0]= settings.getInt(PREF_WEIGHT_A);
-                weights[1]= settings.getInt(PREF_WEIGHT_B);
-            } catch (NumberFormatException e) {
-            }
-            return weights;
-        }
-        
-        private IDialogSettings getSettings() {
-            final IWizard wizard= getWizard();
-            if (wizard == null)
-                return null;
-            return wizard.getDialogSettings();
-        }
-    }
-    
     private final CommitCommentArea fCommentArea;
-    private final SettingsSaver fSettingsSaver;
     
     private ISynchronizePageConfiguration fConfiguration;
-    private SashForm fSashForm;
     
     protected final CommitWizard fWizard;
     
@@ -100,7 +58,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         setTitle(CVSUIMessages.CommitWizardCommitPage_0); //$NON-NLS-1$
         setDescription(CVSUIMessages.CommitWizardCommitPage_2); //$NON-NLS-1$
         
-        fSettingsSaver= new SettingsSaver();
         fWizard= wizard;
         fCommentArea= new CommitCommentArea();
         fCommentArea.setProposedComment(getProposedComment(resources));
@@ -119,55 +76,38 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
         
-        /**
-         * A sash for the comment area and the changes.
-         */
-        fSashForm= new SashForm(composite, SWT.VERTICAL);
-        fSashForm.setLayoutData(SWTUtils.createHVFillGridData());
+        createCommentArea(composite, converter);
+        createChangesArea(composite, converter);
         
-        createCommentArea(fSashForm, converter);
-        createChangesArea(fSashForm, converter);
-                
-        int[] weights = fSettingsSaver.loadWeights();
-        if (fConfiguration == null) {
-            weights = new int[] { 90, 10};
-        }
-        fSashForm.setWeights(weights);
+        //fSashForm.setWeights(weights);
+        Dialog.applyDialogFont(parent);
         setControl(composite);
         
         fCommentArea.setFocus();
+        
         validatePage(false);
     }
     
     private void createCommentArea(Composite parent, PixelConverter converter) {
         
-        final Composite composite= new Composite(parent, SWT.NONE);
-        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
-        
-        fCommentArea.createArea(composite);
-        fCommentArea.getComposite().setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, convertHeightInCharsToPixels(8), SWT.FILL, SWT.FILL, true, true));
+        fCommentArea.createArea(parent);
+        fCommentArea.getComposite().setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
         fCommentArea.addPropertyChangeListener(this);
         
-        createPlaceholder(composite);
+        createPlaceholder(parent);
     }
     
     private void createChangesArea(Composite parent, PixelConverter converter) {
-
-        final Composite composite= new Composite(parent, SWT.NONE);
-        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
-        composite.setLayoutData(SWTUtils.createHVFillGridData());
-        
-        createPlaceholder(composite);
         
         CommitWizardParticipant participant= fWizard.getParticipant();
         int size = participant.getSyncInfoSet().size();
         if (size > getFileDisplayThreshold()) {
             // Create a page book to allow eventual inclusion of changes
-            bottomChild = new PageBook(composite, SWT.NONE);
-            bottomChild.setLayoutData(SWTUtils.createHVFillGridData());
+            bottomChild = new PageBook(parent, SWT.NONE);
+            bottomChild.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, false));
             // Create composite for showing the reason for not showing the changes and a button to show them
             Composite changeDesc = new Composite(bottomChild, SWT.NONE);
-            changeDesc.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
+            changeDesc.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
             SWTUtils.createLabel(changeDesc, NLS.bind(CVSUIMessages.CommitWizardCommitPage_1, new String[] { Integer.toString(size), Integer.toString(getFileDisplayThreshold()) })); //$NON-NLS-1$
             Button showChanges = new Button(changeDesc, SWT.PUSH);
             showChanges.setText(CVSUIMessages.CommitWizardCommitPage_5); //$NON-NLS-1$
@@ -176,8 +116,15 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
                     showChangesPane();
                 }
             });
+            showChanges.setLayoutData(new GridData());
             bottomChild.showPage(changeDesc);
         } else {
+            final Composite composite= new Composite(parent, SWT.NONE);
+            composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
+            composite.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
+            
+            createPlaceholder(composite);
+            
             Control c = createChangesPage(composite, participant);
             c.setLayoutData(SWTUtils.createHVFillGridData());
         }
@@ -185,9 +132,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
     protected void showChangesPane() {
         Control c = createChangesPage(bottomChild, fWizard.getParticipant());
+        bottomChild.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
         bottomChild.showPage(c);
-        fSashForm.setWeights(fSettingsSaver.loadWeights());
-        fSashForm.layout();
+        Dialog.applyDialogFont(getControl());
+        ((Composite)getControl()).layout();
     }
 
     private Control createChangesPage(final Composite composite, CommitWizardParticipant participant) {

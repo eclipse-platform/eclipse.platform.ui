@@ -79,8 +79,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
         public Name(String name, boolean contributed) { super(name, contributed); }
     }
     
-    private final static int SMALL_COLUMN= 15;
-    private final static int LARGE_COLUMN= 20;
+    private final static int COLUMN_PADDING = 5;
     
     protected static final String ITEM = "item"; //$NON-NLS-1$
     protected static final String PROPERTY_MODE= "mode"; //$NON-NLS-1$
@@ -110,14 +109,23 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		 * The 'Extension' column
 		 */
 		final TableColumn fileColumn = new TableColumn(table, SWT.NONE, 0);
-		fileColumn.setWidth(converter.convertWidthInCharsToPixels(LARGE_COLUMN));
+		fileColumn.setWidth(converter.convertWidthInCharsToPixels(TeamUIMessages.FileTypeTable_4.length() + COLUMN_PADDING));
 		fileColumn.setText(TeamUIMessages.FileTypeTable_4); //$NON-NLS-1$
 		
 		/**
 		 * The 'Mode' column
 		 */
 		final TableColumn modeColumn = new TableColumn(table, SWT.NONE, 1);
-		modeColumn.setWidth(converter.convertWidthInCharsToPixels(SMALL_COLUMN));
+		int length;
+        try {
+            length = TeamUIMessages.FileTypeTable_5.length();
+            length = Math.max(length, TeamUIMessages.FileTypeTable_0.length());
+            length = Math.max(length, TeamUIMessages.FileTypeTable_1.length());
+        } catch (RuntimeException e) {
+            // There may be an unbound message so just pick a reasonable length
+            length = 15;
+        }
+        modeColumn.setWidth(converter.convertWidthInCharsToPixels(length + COLUMN_PADDING));
 		modeColumn.setText(TeamUIMessages.FileTypeTable_5); //$NON-NLS-1$
 
 		/**
@@ -125,7 +133,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		 */
 		if (fShowSaveColumn) {
 		    final TableColumn saveColumn = new TableColumn(table, SWT.NONE, 2);
-		    saveColumn.setWidth(converter.convertWidthInCharsToPixels(LARGE_COLUMN));
+		    saveColumn.setWidth(converter.convertWidthInCharsToPixels(TeamUIMessages.FileTypeTable_6.length() + COLUMN_PADDING));
 		    saveColumn.setText(TeamUIMessages.FileTypeTable_6); //$NON-NLS-1$
 		}
 		

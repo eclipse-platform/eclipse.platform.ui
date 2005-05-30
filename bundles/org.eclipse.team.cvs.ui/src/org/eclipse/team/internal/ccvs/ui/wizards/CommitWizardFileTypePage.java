@@ -67,11 +67,11 @@ public class CommitWizardFileTypePage extends WizardPage {
         
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(1, false));
-        Dialog.applyDialogFont(composite);
         
 	    final Label label= new Label(composite, SWT.WRAP);
 	    label.setText(CVSUIMessages.CommitWizardFileTypePage_3); //$NON-NLS-1$
 	    label.setLayoutData(SWTUtils.createHFillGridData());
+	    Dialog.applyDialogFont(composite);
         
         final List items= new ArrayList();
         items.addAll(fNames);
