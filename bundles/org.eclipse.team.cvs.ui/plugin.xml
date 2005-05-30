@@ -9,7 +9,7 @@
       <wizard
             name="%WorkspaceSynchronizeWizard.name"
             description="%WorkspaceSynchronizeWizard.description"
-            icon="icons/full/eview16/cvs_persp.gif"
+            icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CVSSynchronizeWizard"
             id="org.eclipse.team.ccvs.ui.SynchronizeWizard">
       </wizard>
@@ -19,7 +19,7 @@
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             label="CVS"
-            icon="icons/full/eview16/console_view.gif"
+            icon="$nl$/icons/full/eview16/console_view.gif"
             class="org.eclipse.team.internal.ccvs.ui.console.CVSConsoleFactory"/>
    </extension>
    <extension
@@ -38,20 +38,20 @@
          point="org.eclipse.team.ui.synchronizeParticipants">
       <participant
             name="%CVSWorkspaceParticipant"
-            icon="icons/full/eview16/cvs_persp.gif"
+            icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
       </participant>
       <participant
             name="%CVSMergeParticipant"
-            icon="icons/full/elcl16/newstream_wiz.gif"
+            icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsmerge-participant">
       </participant>
       <participant
             persistent="false"
             name="%CVSCompareParticipant"
-            icon="icons/full/eview16/compare_view.gif"
+            icon="$nl$/icons/full/eview16/compare_view.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             id="org.eclipse.team.cvs.ui.compare-participant">
       </participant>
@@ -84,7 +84,7 @@
          point="org.eclipse.team.ui.configurationWizards">
       <wizard
             name="%SharingWizard.name"
-            icon="icons/full/etool16/newconnect_wiz.gif"
+            icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"
             id="org.eclipse.team.ccvs.ui.SharingWizard">
       </wizard>
@@ -153,7 +153,7 @@
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                label="%ShowHistoryAction.label"
                definitionId="org.eclipse.team.cvs.ui.showHistory"
-               icon="icons/full/etool16/history.gif"
+               icon="$nl$/icons/full/etool16/history.gif"
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
                menubarPath="team.main/group2"
@@ -163,7 +163,7 @@
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                label="%ShowAnnotationAction.label"
                definitionId="org.eclipse.team.cvs.ui.showAnnotation"
-               icon="icons/full/etool16/annotate.gif"
+               icon="$nl$/icons/full/etool16/annotate.gif"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
                menubarPath="team.main/group2"
@@ -262,7 +262,7 @@
                definitionId="org.eclipse.team.cvs.ui.merge"
                tooltip="%MergeAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
-               icon="icons/full/obj16/branches_rep.gif"
+               icon="$nl$/icons/full/obj16/branches_rep.gif"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.merge">
          </action>
@@ -272,7 +272,7 @@
                definitionId="org.eclipse.team.cvs.ui.branch"
                tooltip="%BranchAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
-               icon="icons/full/elcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.branch">
          </action>
@@ -282,7 +282,7 @@
                definitionId="org.eclipse.team.cvs.ui.tag"
                tooltip="%TagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction"
-               icon="icons/full/obj16/versions_rep.gif"
+               icon="$nl$/icons/full/obj16/versions_rep.gif"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.tag">
          </action>
@@ -415,7 +415,7 @@
          </action>
          <action
                label="%ConfigureTags.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
                tooltip="%ConfigureTags.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"
@@ -424,7 +424,7 @@
          </action>
          <action
                label="%AddToBranch.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.add_to_branch_context"
                tooltip="%ddToBranch.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.AddToBranchAction"
@@ -444,7 +444,7 @@
          </action>
          <action
                label="%ShowHistoryAction.label"
-               icon="icons/full/ctool16/history.gif"
+               icon="$nl$/icons/full/ctool16/history.gif"
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"
@@ -452,7 +452,7 @@
          </action>
          <action
                label="%ShowAnnotationAction.label"
-               icon="icons/full/ctool16/annotate.gif"
+               icon="$nl$/icons/full/ctool16/annotate.gif"
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
@@ -479,7 +479,7 @@
          </action>
          <action
                label="%ShowAnnotationAction.label"
-               icon="icons/full/ctool16/annotate.gif"
+               icon="$nl$/icons/full/ctool16/annotate.gif"
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
@@ -491,7 +491,7 @@
             id="org.eclipse.team.ccvs.ui.VersionCategoryContributions">
          <action
                label="%ConfigureTags.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
                tooltip="%ConfigureTags.label"
                class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"
@@ -503,7 +503,7 @@
             id="org.eclipse.team.ccvs.ui.ProjectVersionContributions">
          <action
                label="%ConfigureTags.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"
                tooltip="%ConfigureTags.label"
                class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"
@@ -523,7 +523,7 @@
          </action>
          <action
                label="%RefreshTagsAction.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
                tooltip="%RefreshTagsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
@@ -532,7 +532,7 @@
          </action>
          <action
                label="%NewDateTagAction.label"
-               icon="icons/full/obj16/date.gif"
+               icon="$nl$/icons/full/obj16/date.gif"
                helpContextId="org.eclipse.team.cvs.ui.new_date_tag_action_context"
                class="org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction"
                tooltip="%NewDateTagAction.tooltip"
@@ -545,7 +545,7 @@
             id="org.eclipse.team.ccvs.ui.DateCategoryContributions">
          <action
                label="%NewDateTagAction.label"
-               icon="icons/full/obj16/date.gif"
+               icon="$nl$/icons/full/obj16/date.gif"
                helpContextId="org.eclipse.team.cvs.ui.new_date_tag_action_context"
                class="org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction"
                tooltip="%NewDateTagAction.tooltip"
@@ -558,7 +558,7 @@
             id="org.eclipse.team.ccvs.ui.model.BranchCategoryContributions">
          <action
                label="%RefreshTagsAction.label"
-               icon="icons/full/clcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/clcl16/newstream_wiz.gif"
                helpContextId="org.eclipse.team.cvs.ui.refresh_tags_action_context"
                tooltip="%RefreshTagsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.RefreshTagsAction"
@@ -616,7 +616,7 @@
       </category>
       <view
             name="%RepositoriesView.name"
-            icon="icons/full/eview16/repo_rep.gif"
+            icon="$nl$/icons/full/eview16/repo_rep.gif"
             category="org.eclipse.team.ccvs.ui"
             fastViewWidthRatio="0.5"
             class="org.eclipse.team.internal.ccvs.ui.repo.RepositoriesView"
@@ -624,21 +624,21 @@
       </view>
       <view
             name="%HistoryView.name"
-            icon="icons/full/eview16/history_view.gif"
+            icon="$nl$/icons/full/eview16/history_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.HistoryView"
             id="org.eclipse.team.ccvs.ui.HistoryView">
       </view>
       <view
             name="%EditorsView.name"
-            icon="icons/full/eview16/rep_editors_view.gif"
+            icon="$nl$/icons/full/eview16/rep_editors_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.EditorsView"
             id="org.eclipse.team.ccvs.ui.EditorsView">
       </view>
       <view
             name="%AnnotateView.name"
-            icon="icons/full/eview16/annotate_view.gif"
+            icon="$nl$/icons/full/eview16/annotate_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.AnnotateView"
             id="org.eclipse.team.ccvs.ui.AnnotateView">
@@ -752,11 +752,11 @@
             id="org.eclipse.team.cvs.ui.history">
          <action
                label="%HistoryFilter.label"
-               hoverIcon="icons/full/clcl16/filter_history.gif"
-               icon="icons/full/elcl16/filter_history.gif"
+               hoverIcon="$nl$/icons/full/clcl16/filter_history.gif"
+               icon="$nl$/icons/full/elcl16/filter_history.gif"
                tooltip="%HistoryFilter.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction"
-               disabledIcon="icons/full/dlcl16/filter_history.gif"
+               disabledIcon="$nl$/icons/full/dlcl16/filter_history.gif"
                toolbarPath="actions"
                id="org.eclipse.team.cvs.ui.historyaction">
          </action>
@@ -766,7 +766,7 @@
             id="org.eclipse.team.cvs.ui.repoview_actions">
          <action
                label="%CVSActionSet.newLabel"
-               icon="icons/full/etool16/newlocation_wiz.gif"
+               icon="$nl$/icons/full/etool16/newlocation_wiz.gif"
                tooltip="%CVSActionSet.newTooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
                toolbarPath="actions"
@@ -779,7 +779,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%CVSRepositoryExploring"
-            icon="icons/full/eview16/cvs_persp.gif"
+            icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.CVSPerspective"
             id="org.eclipse.team.cvs.ui.cvsPerspective">
       </perspective>
@@ -852,7 +852,7 @@
          <action
                definitionId="org.eclipse.team.cvs.ui.checkout"
                label="%CVSActionSet.checkoutLabel"
-               icon="icons/full/etool16/newconnect_wiz.gif"
+               icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
                tooltip="%CVSActionSet.checkoutTooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
                toolbarPath="Normal/CVS"
@@ -920,7 +920,7 @@
                definitionId="org.eclipse.team.cvs.ui.showHistory"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
                tooltip="%ShowHistoryAction.tooltip"
-               icon="icons/full/eview16/history_view.gif"
+               icon="$nl$/icons/full/eview16/history_view.gif"
                menubarPath="cvs.main/group2"
                id="org.eclipse.team.cvs.ui.showHistory">
          </action>
@@ -930,7 +930,7 @@
                definitionId="org.eclipse.team.cvs.ui.showAnnotation"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
                tooltip="%ShowAnnotationAction.tooltip"
-               icon="icons/full/etool16/annotate.gif"
+               icon="$nl$/icons/full/etool16/annotate.gif"
                menubarPath="cvs.main/group2"
                id="org.eclipse.team.cvs.ui.showAnnotation">
           </action>
@@ -954,7 +954,7 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_merge_action_context"
                label="%MergeAction.label"
-               icon="icons/full/obj16/branches_rep.gif"
+               icon="$nl$/icons/full/obj16/branches_rep.gif"
                tooltip="%MergeAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
                definitionId="org.eclipse.team.cvs.ui.merge"
@@ -964,7 +964,7 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_branch_action_context"
                label="%BranchAction.label"
-               icon="icons/full/elcl16/newstream_wiz.gif"
+               icon="$nl$/icons/full/elcl16/newstream_wiz.gif"
                tooltip="%BranchAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
                definitionId="org.eclipse.team.cvs.ui.branch"
@@ -974,7 +974,7 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_tag_as_version_action_context"
                label="%TagAction.label"
-               icon="icons/full/obj16/versions_rep.gif"
+               icon="$nl$/icons/full/obj16/versions_rep.gif"
                tooltip="%TagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction"
                definitionId="org.eclipse.team.cvs.ui.tag"
@@ -1307,7 +1307,7 @@
          </category>
       <wizard
       		category="org.eclipse.team.cvs.ui"
-            icon="icons/full/etool16/newconnect_wiz.gif"
+            icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
             name="%newProjectCheckoutWizard"
             class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
             project="true"
@@ -1322,7 +1322,7 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard
-            icon="icons/full/etool16/newconnect_wiz.gif"
+            icon="$nl$/icons/full/etool16/newconnect_wiz.gif"
             name="%newProjectCheckoutWizard"
             class="org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard"
             id="org.eclipse.team.cvs.ui.newProjectCheckout">

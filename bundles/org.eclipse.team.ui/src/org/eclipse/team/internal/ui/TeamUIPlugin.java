@@ -45,7 +45,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private static TeamUIPlugin instance;
 	
 	// image paths
-	public static final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
+	public static final String ICON_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 	
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	
@@ -245,18 +245,17 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @param id  the identifier for the image
 	 * @param baseURL  the base URL for the image
 	 */
-	protected static void createImageDescriptor(TeamUIPlugin plugin, String id, URL baseURL) {
+	protected static void createImageDescriptor(TeamUIPlugin plugin, String id, URL baseUrl) {
 		// Delegate to the plugin instance to avoid concurrent class loading problems
-		plugin.privateCreateImageDescriptor(id, baseURL);
+		plugin.privateCreateImageDescriptor(id, baseUrl);
 	}
-	private void privateCreateImageDescriptor(String id, URL baseURL) {
-		URL url = null;
+	private void privateCreateImageDescriptor(String id, URL baseUrl) {
 		try {
-			url = new URL(baseURL, ICON_PATH + id);
-		} catch (MalformedURLException e) {
-		}
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		imageDescriptors.put(id, desc);
+            ImageDescriptor desc = ImageDescriptor.createFromURL(new URL(baseUrl, id));
+            imageDescriptors.put(id, desc);
+        } catch (MalformedURLException e) {
+            // Ignore
+        }
 	}
 	
 	/**
@@ -272,8 +271,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	}
 	private ImageDescriptor privateGetImageDescriptor(String id) {
 		if(! imageDescriptors.containsKey(id)) {
-			URL baseURL = Platform.getBundle(PLUGIN_ID).getEntry("/"); //$NON-NLS-1$
-			createImageDescriptor(getPlugin(), id, baseURL);
+            URL baseUrl = getImageBaseUrl();
+			createImageDescriptor(getPlugin(), id, baseUrl);
 		}
 		return (ImageDescriptor)imageDescriptors.get(id);
 	}	
@@ -286,14 +285,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * @return the image
 	 */
 	public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
-		URL path = Platform.getBundle(extension.getNamespace()).getEntry("/"); //$NON-NLS-1$
-		URL fullPathString = null;
-		try {
-			fullPathString = new URL(path,subdirectoryAndFilename);
-			return ImageDescriptor.createFromURL(fullPathString);
-		} catch (MalformedURLException e) {
-		}
-		return null;
+		URL fullPathString = Platform.find(Platform.getBundle(extension.getNamespace()), new Path(subdirectoryAndFilename));
+		return ImageDescriptor.createFromURL(fullPathString);
 	}
 	/*
 	 * Initializes the table of images used in this plugin. The plugin is
@@ -302,8 +295,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * for a description of why this is required. 
 	 */
 	private void initializeImages(TeamUIPlugin plugin) {
-		URL baseURL = Platform.getBundle(PLUGIN_ID).getEntry("/"); //$NON-NLS-1$
-
+        URL baseURL = getImageBaseUrl();
+       
 		// Overlays
 		createImageDescriptor(plugin, ISharedImages.IMG_DIRTY_OVR, baseURL);
 		createImageDescriptor(plugin, ISharedImages.IMG_CONFLICT_OVR, baseURL);
@@ -354,6 +347,10 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_VIEW, baseURL);
 		createImageDescriptor(plugin, ITeamUIImages.IMG_HIERARCHICAL, baseURL);		
 	}
+
+    private URL getImageBaseUrl() {
+        return Platform.find(Platform.getBundle(PLUGIN_ID), new Path(ICON_PATH));
+    }
 
 	/**
 	 * Returns the standard display to be used. The method first checks, if

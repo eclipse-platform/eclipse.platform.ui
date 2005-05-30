@@ -12,7 +12,6 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -107,11 +106,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * Creates an image and places it in the image registry.
 	 */
 	protected void createImageDescriptor(String id, URL baseURL) {
-		URL url = null;
-		try {
-			url = new URL(baseURL, ICVSUIConstants.ICON_PATH + id);
-		} catch (MalformedURLException e) {
-		}
+		URL url = Platform.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + id));
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		imageDescriptors.put(id, desc);
 	}

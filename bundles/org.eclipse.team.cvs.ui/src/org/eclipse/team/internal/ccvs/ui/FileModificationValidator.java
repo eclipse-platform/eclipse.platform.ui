@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
@@ -115,12 +114,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
     }
     
     private URL getOperationIcon() {
-        try {
-            URL baseURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
-            return  new URL(baseURL, ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
+        return Platform.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE));
     }
     
     private boolean isRunningInUIThread() {

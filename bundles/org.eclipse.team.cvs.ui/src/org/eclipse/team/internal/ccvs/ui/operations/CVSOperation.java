@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -26,8 +25,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,12 +64,7 @@ public abstract class CVSOperation extends TeamOperation {
 	 * @see org.eclipse.team.ui.TeamOperation#getOperationIcon()
 	 */
 	protected URL getOperationIcon() {
-		try {
-			URL baseURL = CVSUIPlugin.getPlugin().getBundle().getEntry("/"); //$NON-NLS-1$
-			return  new URL(baseURL, ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE);
-		} catch (MalformedURLException e) {
-			return null;
-		}
+		return Platform.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE));
 	}
 	
 	/* (non-Javadoc)

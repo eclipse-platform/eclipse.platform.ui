@@ -111,7 +111,7 @@
       </category>
       <view
             name="%SyncView.name"
-            icon="icons/full/eview16/synch_synch.gif"
+            icon="$nl$/icons/full/eview16/synch_synch.gif"
             fastViewWidthRatio="0.25"
             category="org.eclipse.team.ui"
             allowMultiple="true"
@@ -120,7 +120,7 @@
       </view>
     <!--  <view
             name="%CompareView.name"
-            icon="icons/full/eview16/compare_view.gif"
+            icon="$nl$/icons/full/eview16/compare_view.gif"
             fastViewWidthRatio="0.25"
             category="org.eclipse.team.ui"
             class="org.eclipse.team.internal.ui.synchronize.CompareView"
@@ -132,7 +132,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%Synchronizing.perspective"
-            icon="icons/full/eview16/synch_synch.gif"
+            icon="$nl$/icons/full/eview16/synch_synch.gif"
             class="org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective"
             id="org.eclipse.team.ui.TeamSynchronizingPerspective">
       </perspective>
@@ -151,7 +151,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%ProjectSetImportWizard.name"
-            icon="icons/full/obj/import_projectset.gif"
+            icon="$nl$/icons/full/obj/import_projectset.gif"
             class="org.eclipse.team.internal.ui.wizards.ProjectSetImportWizard"
             id="org.eclipse.team.ui.ProjectSetImportWizard">
          <description>
@@ -167,7 +167,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             name="%ProjectSetExportWizard.name"
-            icon="icons/full/obj/export_projectset.gif"
+            icon="$nl$/icons/full/obj/export_projectset.gif"
             class="org.eclipse.team.internal.ui.wizards.ProjectSetExportWizard"
             id="org.eclipse.team.ui.ProjectSetExportWizard">
          <description>
@@ -254,7 +254,7 @@
                label="%Command.syncAll.name"
                tooltip="%Command.syncAll.name"
                class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
-               icon="icons/full/elcl16/synch_participants.gif"
+               icon="$nl$/icons/full/elcl16/synch_participants.gif"
                style="pulldown"
                id="org.eclipse.team.ui.synchronizeAll">
          </action>

@@ -15,7 +15,7 @@ public interface ICVSUIConstants {
 	public final String PREFIX = CVSUIPlugin.ID + "."; //$NON-NLS-1$
 
 	// image path
-	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
+	public final String ICON_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 	
 	// images
 	public final String IMG_CVS_CONSOLE = "eview16/console_view.gif"; //$NON-NLS-1$
