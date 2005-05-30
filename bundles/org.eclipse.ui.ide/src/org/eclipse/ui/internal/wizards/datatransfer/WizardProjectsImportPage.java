@@ -191,6 +191,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private static final String[] FILE_IMPORT_MASK = {
 			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
+	//The last selected path to mimize searches
+	private String lastPath;
+
 	/**
 	 * Creates a new project creation wizard page.
 	 * 
@@ -500,6 +503,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		});
 
 		directoryPathField.addFocusListener(new FocusAdapter() {
+			
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -508,6 +512,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				updateProjectsList(directoryPathField.getText().trim());
 			}
+			
 		});
 
 		archivePathField.addTraverseListener(new TraverseListener() {
@@ -576,6 +581,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @param path
 	 */
 	protected void updateProjectsList(final String path) {
+		
+		if(path.equals(lastPath))//Do not select the same path again
+			return;
+		
+		lastPath = path;
+		
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
 			selectedProjects = new ProjectRecord[0];
