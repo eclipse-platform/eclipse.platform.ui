@@ -278,7 +278,7 @@ public class HelpIndexBuilder {
 		if (doc == null)
 			return;
 
-		PluginIdentifier pid = getPluginID(doc);
+		PluginIdentifier pid = getPluginID(manifest.getParentFile(), doc);
 		PluginIdentifier fid = null;
 		
 		if (!manifest.getParentFile().equals(destination)) {
@@ -287,7 +287,7 @@ public class HelpIndexBuilder {
 			Document fdoc=null;
 			if (fragmentFile.exists())
 				fdoc = readXMLFile(fragmentFile);
-			fid = getPluginID(fdoc);
+			fid = getPluginID(destination, fdoc);
 			fdoc=null;
 		}		
 
@@ -664,7 +664,7 @@ public class HelpIndexBuilder {
 		indexPath = null;
 	}
 
-	private PluginIdentifier getPluginID(Document doc) throws CoreException {
+	private PluginIdentifier getPluginID(File dir, Document doc) throws CoreException {
 		String id = null;
 		String version = null;
 		if (doc != null) {
@@ -675,7 +675,7 @@ public class HelpIndexBuilder {
 				return new PluginIdentifier(id, version);
 		}
 		// check for the OSGi manifest
-		File OSGiFile = new File(destination,
+		File OSGiFile = new File(dir,
 				"META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (OSGiFile.exists()) {
