@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
@@ -157,9 +158,9 @@ class OpenChangeSetAction extends SynchronizeModelAction {
                 if (set instanceof CheckedInChangeSet) {
                     CheckedInChangeSet cics = (CheckedInChangeSet)set;
                     String date = DateFormat.getDateTimeInstance().format(cics.getDate());
-                    return "[" + cics.getAuthor() + "] (" + date + ")";
+                    return NLS.bind(CVSUIMessages.OpenChangeSetAction_0, new String[] {cics.getAuthor(), date});
                 }
-                return "CVS Change";
+                return CVSUIMessages.OpenChangeSetAction_1;
             }
 
             private ICVSRepositoryLocation getLocation(SyncInfo info) {

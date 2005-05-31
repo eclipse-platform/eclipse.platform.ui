@@ -982,4 +982,7 @@ public class CVSUIMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
 	}
+
+    public static String OpenChangeSetAction_0;
+    public static String OpenChangeSetAction_1;
 }

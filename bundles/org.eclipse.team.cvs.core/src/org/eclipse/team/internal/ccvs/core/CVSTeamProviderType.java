@@ -35,7 +35,7 @@ public class CVSTeamProviderType extends RepositoryProviderType {
 		List projectsToShare = new ArrayList();
 		
 		AutoShareJob() {
-			super("Auto-sharing imported CVS projects");
+			super(CVSMessages.CVSTeamProviderType_0);
 		}
 
 		public boolean isQueueEmpty() {

@@ -15,10 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
@@ -90,7 +86,7 @@ public class Add extends Command {
                 
                 String serverMessage = getServerMessage(line, location);
                 if (serverMessage != null) {
-                    if (serverMessage.indexOf("cvs commit") != -1 && serverMessage.indexOf("add") != -1 && serverMessage.indexOf("permanently") != -1) //$NON-NLS-1$
+                    if (serverMessage.indexOf("cvs commit") != -1 && serverMessage.indexOf("add") != -1 && serverMessage.indexOf("permanently") != -1) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         return OK;
                     if (serverMessage.startsWith("scheduling file") && serverMessage.indexOf("for addition") != -1) //$NON-NLS-1$ //$NON-NLS-2$
                         return OK;

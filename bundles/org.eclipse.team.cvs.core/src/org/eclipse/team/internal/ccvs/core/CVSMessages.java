@@ -250,4 +250,6 @@ public class CVSMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, CVSMessages.class);
 	}
+
+    public static String CVSTeamProviderType_0;
 }
