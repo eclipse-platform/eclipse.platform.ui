@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -45,23 +43,6 @@ public class WebBrowserPreference {
 	 */
 	private WebBrowserPreference() {
 		super();
-	}
-
-	/**
-	 * Returns the URL to the homepage.
-	 * 
-	 * @return java.lang.String
-	 */
-	public static String getHomePageURL() {
-		try {
-			// get the default home page
-			URL url = WebBrowserUIPlugin.getInstance().getBundle().getEntry(
-					"home/home.html"); //$NON-NLS-1$
-			url = Platform.resolve(url);
-			return url.toExternalForm();
-		} catch (Exception e) {
-			return "http://www.eclipse.org"; //$NON-NLS-1$
-		}
 	}
 
 	/**
