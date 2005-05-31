@@ -11,24 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class IgnoreResourcesDialog extends Dialog {
 	// resources that should be ignored
@@ -134,7 +126,7 @@ public class IgnoreResourcesDialog extends Dialog {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		
-		WorkbenchHelp.setHelp(top, IHelpContextIds.ADD_TO_CVSIGNORE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IHelpContextIds.ADD_TO_CVSIGNORE);
 		
 		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_prompt, 0); //$NON-NLS-1$
 		

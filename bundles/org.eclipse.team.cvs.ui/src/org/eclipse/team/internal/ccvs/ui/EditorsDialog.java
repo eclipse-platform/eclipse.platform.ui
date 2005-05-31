@@ -15,7 +15,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -50,7 +50,7 @@ public class EditorsDialog extends Dialog {
 		editorsView.setInput(editorsInfo);
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.EDITORS_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.EDITORS_DIALOG);
 		
 		Dialog.applyDialogFont(parent);
 

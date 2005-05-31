@@ -35,9 +35,9 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSRepositoryPropertiesPage extends PropertyPage {
 	private static final String FAKE_PASSWORD = "*********"; //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		useCustomPort.addListener(SWT.Selection, connectionInfoChangedListener);
 		pathText.addListener(SWT.Modify, connectionInfoChangedListener);
 		
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
         Dialog.applyDialogFont(parent);
 		return composite;
 	}

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Administrator
@@ -98,7 +98,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 		// required in order to use setButtonLayoutData
 		initializeDialogUnits(composite);
 		
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_LOCATION_SELECTION_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHECKOUT_LOCATION_SELECTION_PAGE);
 
 		final Button useDefaultsButton =
 			new Button(composite, SWT.CHECK | SWT.RIGHT);

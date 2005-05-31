@@ -33,7 +33,7 @@ import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectE
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.PageBook;
@@ -126,7 +126,7 @@ public class TagSelectionArea extends DialogArea {
         
 		// Add F1 help
 		if (helpContext != null) {
-			WorkbenchHelp.setHelp(composite, helpContext);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpContext);
 		}
 		
 		// Create the tree area and refresh buttons with the possibility to add stuff in between

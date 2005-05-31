@@ -18,9 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 
 public class ConsolePreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -80,7 +78,7 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 		addField(errorColorEditor);
 		
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 	}
 	
 	

@@ -23,9 +23,7 @@ import org.eclipse.team.core.IIgnoreInfo;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Table ignoreTable;
 	private Button addButton;
@@ -53,7 +51,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		parent.setLayoutData(data);
 	
 		// set F1 help
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.IGNORE_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.IGNORE_PREFERENCE_PAGE);
 		
 		Label l1 = new Label(parent, SWT.NULL);
 		l1.setText(TeamUIMessages.IgnorePreferencePage_ignorePatterns); //$NON-NLS-1$
@@ -83,7 +81,6 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		addButton.setText(TeamUIMessages.IgnorePreferencePage_add); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		addButton.setLayoutData(data);
@@ -98,7 +95,6 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		removeButton.setText(TeamUIMessages.IgnorePreferencePage_remove); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		removeButton.setLayoutData(data);

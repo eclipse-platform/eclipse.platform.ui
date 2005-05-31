@@ -28,8 +28,8 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -344,7 +344,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		
 		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_4, 1); //$NON-NLS-1$
 		
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_ENCODING_PROPERTY_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.REPOSITORY_ENCODING_PROPERTY_PAGE);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}

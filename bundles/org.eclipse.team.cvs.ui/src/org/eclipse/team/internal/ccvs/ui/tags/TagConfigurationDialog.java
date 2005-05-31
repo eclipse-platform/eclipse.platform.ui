@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -36,7 +37,7 @@ import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -499,7 +500,7 @@ public class TagConfigurationDialog extends Dialog {
 						}
 					}
 				});			
-			WorkbenchHelp.setHelp(autoRefreshFileList, IHelpContextIds.TAG_CONFIGURATION_REFRESHLIST);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(autoRefreshFileList, IHelpContextIds.TAG_CONFIGURATION_REFRESHLIST);
 		}
 			
 		Label seperator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -507,7 +508,7 @@ public class TagConfigurationDialog extends Dialog {
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
 	
-		WorkbenchHelp.setHelp(shell, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
 	
 		updateEnablements();
 	    Dialog.applyDialogFont(parent);

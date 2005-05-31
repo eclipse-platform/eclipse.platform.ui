@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Unmanage action removes the cvs feature from a project and optionally
@@ -86,7 +86,7 @@ public class UnmanageAction extends WorkspaceAction {
 			radio1.setSelection(deleteContent);
 			radio2.setSelection(!deleteContent);
 			
-			WorkbenchHelp.setHelp(composite, IHelpContextIds.DISCONNECT_ACTION);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.DISCONNECT_ACTION);
 			
 			return composite;
 		}

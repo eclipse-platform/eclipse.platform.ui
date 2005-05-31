@@ -11,43 +11,23 @@
 package org.eclipse.team.internal.ui.preferences;
 
  
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.team.core.IFileContentManager;
-import org.eclipse.team.core.IStringMapping;
-import org.eclipse.team.core.Team;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.PixelConverter;
-import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.preferences.FileTypeTable.Item;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 /**
  * This preference page displays all patterns which determine whether a resource
  * is to be treated as a text file or not. The page allows the user to add or
@@ -153,7 +133,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	protected Control createContents(Composite parent) {
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_TYPE_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.FILE_TYPE_PREFERENCE_PAGE);
 		initializeDialogUnits(parent);	
 		
 		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);

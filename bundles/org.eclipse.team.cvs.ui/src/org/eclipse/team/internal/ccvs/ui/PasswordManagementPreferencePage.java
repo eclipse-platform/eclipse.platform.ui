@@ -26,9 +26,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ui.PixelConverter;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 
 public class PasswordManagementPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private TableViewer viewer;
@@ -157,7 +155,7 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		viewer.setInput(KnownRepositories.getInstance());
 		handleSelection();
 		
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PASSWORD_MANAGEMENT_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PASSWORD_MANAGEMENT_PAGE);
 		
 		return parent;
 	}

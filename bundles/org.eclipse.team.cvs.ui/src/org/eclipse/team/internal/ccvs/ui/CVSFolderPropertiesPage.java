@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,7 +29,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 
@@ -89,7 +89,6 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 				final Button disconnect = new Button(composite, SWT.NONE);
 				disconnect.setText(CVSUIMessages.CVSFolderPropertiesPage_disconnect); //$NON-NLS-1$
 				GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-				data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 				int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 				data.widthHint = Math.max(widthHint, disconnect.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 				disconnect.setLayoutData(data);
@@ -108,7 +107,7 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 			// Display error text
 			createLabel(composite, CVSUIMessages.CVSFilePropertiesPage_error, 2); //$NON-NLS-1$
 		}
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FOLDER_PROPERTY_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.FOLDER_PROPERTY_PAGE);
         Dialog.applyDialogFont(parent);
 		return composite;
 	}

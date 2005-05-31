@@ -32,10 +32,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.OverlayIcon;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
@@ -87,8 +87,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 			
 			fText= SWTUtils.createText(composite);
-			
-			final PixelConverter converter= SWTUtils.createDialogPixelConverter(composite);
 			
 			final Button button = new Button(composite, SWT.NONE);
 			button.setText(buttonText);
@@ -553,7 +551,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		fGeneralTab.addObserver(fPreview);
 
 		initializeValues();
-		WorkbenchHelp.setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
 		
 		PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener= new ThemeListener(fPreview));

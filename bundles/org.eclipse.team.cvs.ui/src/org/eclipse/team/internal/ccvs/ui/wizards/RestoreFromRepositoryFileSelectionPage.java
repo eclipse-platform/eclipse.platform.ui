@@ -38,7 +38,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
@@ -119,7 +119,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		Composite composite= createComposite(parent, 1, false);
 		setControl(composite);
 		
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE);
 		
 		// Top and bottom panes: top is the two selection panes, bottom is the file content viewer
 		Splitter vsplitter= new Splitter(composite,  SWT.VERTICAL);

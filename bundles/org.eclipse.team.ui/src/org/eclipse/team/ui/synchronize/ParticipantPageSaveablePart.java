@@ -12,7 +12,6 @@ package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareEditor;
@@ -40,8 +39,6 @@ import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
 import org.eclipse.ui.*;
 import org.eclipse.ui.commands.*;
-import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -329,7 +326,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		control = parent;
 		
 		if(! showContentPanes) {
-			((Splitter)hsplitter).setMaximizedControl(fEditionPane);
+			hsplitter.setMaximizedControl(fEditionPane);
 		}
 	}
 	
@@ -509,7 +506,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					return toolbar;
 				}
 				public void setGlobalActionHandler(String actionId, IAction action) {
-					if (actionId != null && !"".equals(actionId)) {
+					if (actionId != null && !"".equals(actionId)) { //$NON-NLS-1$
 						IHandler handler = new ActionHandler(action);
 						HandlerSubmission handlerSubmission = new HandlerSubmission(null, dialogShell, null, actionId, handler, Priority.MEDIUM);
 						PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);

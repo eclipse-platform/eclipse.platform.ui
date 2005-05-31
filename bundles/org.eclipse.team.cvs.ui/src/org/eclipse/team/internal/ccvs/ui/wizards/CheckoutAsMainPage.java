@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This is the main page of the Check Out As wizard. It allows the user to specify
@@ -64,7 +64,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 1, false);
 		setControl(composite);
 		
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_CONFIGURATION_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHECKOUT_CONFIGURATION_PAGE);
 		
 		if (isSingleFolder()) {
 			createSingleFolderArea(composite);

@@ -16,7 +16,7 @@ import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -49,7 +49,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 				getFieldEditorParent()) {
             protected Button getChangeControl(Composite parent) {
                 Button button = super.getChangeControl(parent);
-                WorkbenchHelp.setHelp(button, IHelpContextIds.PREF_CONSIDER_CONTENT);
+                PlatformUI.getWorkbench().getHelpSystem().setHelp(button, IHelpContextIds.PREF_CONSIDER_CONTENT);
                 return button;
             }
 		});

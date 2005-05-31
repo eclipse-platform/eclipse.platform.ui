@@ -667,7 +667,6 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
             IResource[] expanded;
             IResource[] selected;
             public void run(IProgressMonitor monitor) throws CoreException {
-                IResource[] resources = null;
                 if (preserveExpansion)
                     recordExpandedResources();
                 try {

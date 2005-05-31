@@ -12,43 +12,24 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 
 /**
  * CVS Preference Page
@@ -94,7 +75,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			super(key);
 			fCheckbox= new Button(composite, SWT.CHECK);
 			fCheckbox.setText(label);
-			WorkbenchHelp.setHelp(fCheckbox, helpID);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(fCheckbox, helpID);
 		}
 		
 		public void initializeValue(IPreferenceStore store) {
@@ -125,7 +106,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 				label.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, false, false));
 			}
 			
-			WorkbenchHelp.setHelp(fCombo, helpID);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(fCombo, helpID);
 		}
 		
 		public Combo getCombo() {
@@ -199,7 +180,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 				fButtons[i].setText(labels[i]);
 			}
 			SWTUtils.equalizeControls(SWTUtils.createDialogPixelConverter(composite), fButtons, 0, fButtons.length - 2);
-			WorkbenchHelp.setHelp(fGroup, helpID);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(fGroup, helpID);
 		}
 		
 		public void initializeValue(IPreferenceStore store) {
@@ -271,7 +252,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
             fText.addModifyListener(this);
 			
             if (helpID != null)
-                WorkbenchHelp.setHelp(fText, helpID);
+                PlatformUI.getWorkbench().getHelpSystem().setHelp(fText, helpID);
 		}
 		
 		public Text getControl() {

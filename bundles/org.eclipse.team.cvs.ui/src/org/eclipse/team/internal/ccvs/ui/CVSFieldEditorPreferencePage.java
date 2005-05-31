@@ -15,9 +15,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 
 /**
  * This class acts as an abstract superclass for CVS preference pages that use
@@ -47,7 +45,7 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 		Control control = super.createContents(parent);
 		String id = getPageHelpContextId();
 		if (id != null)
-			WorkbenchHelp.setHelp(control, id);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(control, id);
 		Dialog.applyDialogFont(control);
 		return control;
 	}

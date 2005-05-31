@@ -18,13 +18,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog for creating and editing commit set
@@ -102,7 +100,7 @@ public class CommitSetDialog extends Dialog {
 		updateEnablements();
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.COMMIT_SET_DIALOG);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_SET_DIALOG);	
         Dialog.applyDialogFont(parent);
         return composite;
     }

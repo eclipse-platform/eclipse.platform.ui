@@ -20,21 +20,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -73,7 +63,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		internal = createInternalArea(composite);
 		
 		initializeDefaults();
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
@@ -162,9 +152,9 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		cvsServer.setLayoutData(data);
 		
-		WorkbenchHelp.setHelp(cvsRsh, IHelpContextIds.EXT_PREFERENCE_RSH);
-		WorkbenchHelp.setHelp(cvsRshParameters, IHelpContextIds.EXT_PREFERENCE_PARAM);
-		WorkbenchHelp.setHelp(cvsServer, IHelpContextIds.EXT_PREFERENCE_SERVER);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(cvsRsh, IHelpContextIds.EXT_PREFERENCE_RSH);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(cvsRshParameters, IHelpContextIds.EXT_PREFERENCE_PARAM);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(cvsServer, IHelpContextIds.EXT_PREFERENCE_SERVER);
 		return composite;
 	}
 	

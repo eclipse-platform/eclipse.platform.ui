@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -20,7 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog for obtaining a date from the user
@@ -209,7 +210,7 @@ public class DateTagDialog extends Dialog {
 		updateWidgetEnablements();
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(topLevel, IHelpContextIds.DATE_TAG_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, IHelpContextIds.DATE_TAG_DIALOG);
 		Dialog.applyDialogFont(parent);
 		return topLevel;
 	}

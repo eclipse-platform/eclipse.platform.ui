@@ -29,7 +29,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 
@@ -100,7 +99,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		// F1 Help
 		String helpID = getHelpContextId();
 		if (helpID != null)
-			WorkbenchHelp.setHelp(viewer.getControl(), helpID);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), helpID);
 	}
 	
 	/**
@@ -220,7 +219,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				}
 			}
 		};
-		WorkbenchHelp.setHelp(selectWorkingSetAction, IHelpContextIds.SELECT_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(selectWorkingSetAction, IHelpContextIds.SELECT_WORKING_SET_ACTION);
 
 		// Deselect Working Set (popup)
 		deselectWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_deselectWorkingSet) { //$NON-NLS-1$
@@ -228,7 +227,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				setWorkingSet(null, true);
 			}
 		};
-		WorkbenchHelp.setHelp(deselectWorkingSetAction, IHelpContextIds.DESELECT_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(deselectWorkingSetAction, IHelpContextIds.DESELECT_WORKING_SET_ACTION);
 
 		// Edit Working Set (popup)
 		editWorkingSetAction = new Action(CVSUIMessages.RepositoriesView_editWorkingSet) { //$NON-NLS-1$
@@ -251,7 +250,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 					setWorkingSet(wizard.getSelection(), true);
 			}
 		};
-		WorkbenchHelp.setHelp(editWorkingSetAction, IHelpContextIds.EDIT_WORKING_SET_ACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(editWorkingSetAction, IHelpContextIds.EDIT_WORKING_SET_ACTION);
 
 		// Create the popup menu
 		MenuManager menuMgr = new MenuManager();

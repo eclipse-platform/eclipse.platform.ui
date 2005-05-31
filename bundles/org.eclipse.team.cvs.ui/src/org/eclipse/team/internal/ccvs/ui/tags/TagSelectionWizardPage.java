@@ -15,9 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -25,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * General tag selection page that allows the selection of a tag
@@ -78,7 +76,7 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 		
 		// set F1 help
 		if (helpContextId != null)
-			WorkbenchHelp.setHelp(composite, helpContextId);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpContextId);
 		
 		if (allowNoTag) {
 			SelectionListener listener = new SelectionAdapter() {

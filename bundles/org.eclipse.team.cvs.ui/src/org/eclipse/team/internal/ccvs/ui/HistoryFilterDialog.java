@@ -20,14 +20,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class HistoryFilterDialog extends Dialog {
 
@@ -159,7 +153,7 @@ public class HistoryFilterDialog extends Dialog {
 		initializeValues();
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(topLevel, IHelpContextIds.HISTORY_FILTER_DIALOG);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, IHelpContextIds.HISTORY_FILTER_DIALOG);
         Dialog.applyDialogFont(parent);
 		return topLevel;
 	}

@@ -33,7 +33,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ModuleSelectionPage extends CVSWizardPage {
@@ -67,7 +67,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 2, false);
 
 		if (helpContextId != null)
-			WorkbenchHelp.setHelp(composite, helpContextId);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpContextId);
 		
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

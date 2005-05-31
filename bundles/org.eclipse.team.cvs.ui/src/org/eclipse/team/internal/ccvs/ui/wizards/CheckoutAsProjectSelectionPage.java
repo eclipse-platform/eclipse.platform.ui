@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This page allows the user to select the target parent container for
@@ -87,7 +87,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		Composite composite= createComposite(parent, 2, false);
 		setControl(composite);
 		
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_PROJECT_SELECTION_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CHECKOUT_PROJECT_SELECTION_PAGE);
 		
 		if (isSingleFolder()) {
 			createLabel(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_name); //$NON-NLS-1$

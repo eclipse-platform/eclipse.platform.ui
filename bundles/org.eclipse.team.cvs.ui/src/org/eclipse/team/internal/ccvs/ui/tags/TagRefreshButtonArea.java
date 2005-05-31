@@ -28,7 +28,6 @@ import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An area that displays the Refresh and Configure Tags buttons
@@ -98,8 +97,8 @@ public class TagRefreshButtonArea extends DialogArea {
 				}
 			});  
 		
-		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
-		WorkbenchHelp.setHelp(configureTagsButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);		
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(configureTagsButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);		
 		Dialog.applyDialogFont(buttonComp);
     }
     

@@ -31,8 +31,8 @@ import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.*;
 
 /**
@@ -101,7 +101,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		setControl(composite);
 
 		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_PROJECT_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.SHARE_PROJECT_PAGE);
 				
 		Label label = new Label(composite, SWT.LEFT);
 		label.setText(description);

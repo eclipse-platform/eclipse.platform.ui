@@ -31,7 +31,6 @@ import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -138,7 +137,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		top.setLayoutData(data);
 		setControl(top);
 
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SYNC_RESOURCE_SELECTION_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SYNC_RESOURCE_SELECTION_PAGE);
 		
 		Label l = new Label(top, SWT.NULL);
 		l.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_5); //$NON-NLS-1$

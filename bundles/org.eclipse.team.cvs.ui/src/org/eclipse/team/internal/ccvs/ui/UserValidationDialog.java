@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,7 +24,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.ITeamUIImages;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog for prompting for a username and password
@@ -66,7 +67,7 @@ public class UserValidationDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(CVSUIMessages.UserValidationDialog_required); //$NON-NLS-1$
 		// set F1 help
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.USER_VALIDATION_DIALOG);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.USER_VALIDATION_DIALOG);	
 	}
 	/**
 	 * @see Window#create

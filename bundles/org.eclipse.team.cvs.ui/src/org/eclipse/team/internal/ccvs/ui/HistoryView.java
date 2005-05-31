@@ -46,7 +46,6 @@ import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -217,7 +216,7 @@ public class HistoryView extends ViewPart {
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
 
 		getRevisionAction = getContextMenuAction(CVSUIMessages.HistoryView_getRevisionAction, true /* needs progress */, new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -248,7 +247,7 @@ public class HistoryView extends ViewPart {
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
 
 		// Override MoveRemoteTagAction to work for log entries
 		final IActionDelegate tagActionDelegate = new MoveRemoteTagAction() {
@@ -306,7 +305,7 @@ public class HistoryView extends ViewPart {
 				tagActionDelegate.run(tagWithExistingAction);
 			}
 		});
-		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
 				
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -317,7 +316,7 @@ public class HistoryView extends ViewPart {
 			}
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
-		WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
 		// Toggle list visible action
 		toggleListAction = new Action(CVSUIMessages.HistoryView_showTags) { //$NON-NLS-1$
 			public void run() {
@@ -326,7 +325,7 @@ public class HistoryView extends ViewPart {
 			}
 		};
 		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
-		WorkbenchHelp.setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 		
 		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -414,7 +413,7 @@ public class HistoryView extends ViewPart {
 		setViewerVisibility();
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
 		 
 		// add listener for editor page activation - this is to support editor linking

@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -20,24 +19,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -70,7 +60,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		initializeDialogUnits(composite);
 
 		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXPORT_PROJECT_SET_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.EXPORT_PROJECT_SET_PAGE);
 				
 		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Select_the_projects_to_include_in_the_project_set__2); //$NON-NLS-1$
 
@@ -117,7 +107,6 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		browseButton.setText(TeamUIMessages.ExportProjectSetMainPage_Browse_4); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, browseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		browseButton.setLayoutData(data);
@@ -150,10 +139,10 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				projectList.add(workspaceProjects[i]);
 			}
 		}
-		tableViewer.setInput((IProject[]) projectList.toArray(new IProject[projectList.size()]));
+		tableViewer.setInput(projectList.toArray(new IProject[projectList.size()]));
 		// Check any necessary projects
 		if (selectedProjects != null) {
-			tableViewer.setCheckedElements((IProject[])selectedProjects.toArray(new IProject[selectedProjects.size()]));
+			tableViewer.setCheckedElements(selectedProjects.toArray(new IProject[selectedProjects.size()]));
 		}
 	}
 	private void updateEnablement() {

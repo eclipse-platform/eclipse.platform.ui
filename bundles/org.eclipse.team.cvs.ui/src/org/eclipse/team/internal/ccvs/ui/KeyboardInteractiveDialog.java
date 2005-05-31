@@ -13,12 +13,13 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog for keyboad-interactive authentication for the ssh2 connection.
@@ -90,7 +91,7 @@ public class KeyboardInteractiveDialog extends Dialog {
     main.setLayoutData(new GridData(GridData.FILL_BOTH));
     
 	// set F1 help
-	WorkbenchHelp.setHelp(main, IHelpContextIds.KEYBOARD_INTERACTIVE_DIALOG);
+    PlatformUI.getWorkbench().getHelpSystem().setHelp(main, IHelpContextIds.KEYBOARD_INTERACTIVE_DIALOG);
 	
     if (message!=null) {
       Label messageLabel=new Label(main, SWT.WRAP);
