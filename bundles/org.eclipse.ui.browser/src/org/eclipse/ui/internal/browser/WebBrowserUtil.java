@@ -139,7 +139,7 @@ public class WebBrowserUtil {
 		} catch (Throwable t) {
 			WebBrowserUIPlugin.getInstance().getLog().log(
 					new Status(IStatus.WARNING, WebBrowserUIPlugin.PLUGIN_ID,
-							0, "Internal browser is not operational", t)); //$NON-NLS-1$
+							0, "Internal browser is not available: " + t.getMessage(), null)); //$NON-NLS-1$
 			isInternalBrowserOperational = new Boolean(false);
 			return false;
 		} finally {
