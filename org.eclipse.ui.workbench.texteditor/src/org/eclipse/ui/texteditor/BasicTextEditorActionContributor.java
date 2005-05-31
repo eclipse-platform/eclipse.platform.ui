@@ -156,7 +156,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
-		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Editor.HippieCompletion."); //$NON-NLS-1$
+		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.HippieCompletion."); //$NON-NLS-1$
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 
 		fStatusFields= new HashMap(3);
