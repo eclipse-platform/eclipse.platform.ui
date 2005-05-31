@@ -154,9 +154,6 @@ body, .page{
 }
 
 .page { 
-	background-image : url(graphics/contentpage/wordmark.gif);
-	background-repeat : no-repeat;
-	background-position : bottom left;
 	min-height : 475px;
 }
 
