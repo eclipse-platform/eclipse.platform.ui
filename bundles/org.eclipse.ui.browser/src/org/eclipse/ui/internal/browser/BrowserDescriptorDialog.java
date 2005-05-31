@@ -95,10 +95,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		((GridLayout)composite.getLayout()).numColumns = 3;
 		
-		if (isEdit)
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_EXTERNAL_EDIT);
-		else
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_EXTERNAL_ADD);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_DIALOG);
 		
 		SWTUtil.createLabel(composite, Messages.name);
 		browserNameTextfield = createText(composite, browser.getName(), new StringModifyListener() {

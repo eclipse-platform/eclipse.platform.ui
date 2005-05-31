@@ -13,13 +13,7 @@ package org.eclipse.ui.internal.browser;
  * Context help id constants.
  */
 public interface ContextIds {
-	public static final String PREF_BROWSER = WebBrowserUIPlugin.PLUGIN_ID + ".wbpr0000"; //$NON-NLS-1$
-	public static final String PREF_BROWSER_INTERNAL = WebBrowserUIPlugin.PLUGIN_ID + ".wbpr0002"; //$NON-NLS-1$
-	public static final String PREF_BROWSER_EXTERNAL_ADD = WebBrowserUIPlugin.PLUGIN_ID + ".wbpr0004"; //$NON-NLS-1$
-	public static final String PREF_BROWSER_EXTERNAL_EDIT = WebBrowserUIPlugin.PLUGIN_ID + ".wbpr0005"; //$NON-NLS-1$
-	public static final String PREF_BROWSER_EXTERNAL_SEARCH = WebBrowserUIPlugin.PLUGIN_ID + ".wbpr0006"; //$NON-NLS-1$
-
-	public static final String WEB_BROWSER = WebBrowserUIPlugin.PLUGIN_ID + ".sewb0000"; //$NON-NLS-1$
-	public static final String WEB_BROWSER_URL = WebBrowserUIPlugin.PLUGIN_ID + ".sewb0002"; //$NON-NLS-1$
-	public static final String WEB_BROWSER_WEB = WebBrowserUIPlugin.PLUGIN_ID + ".sewb0004"; //$NON-NLS-1$
+	public static final String PREF_BROWSER = WebBrowserUIPlugin.PLUGIN_ID + ".browser_preference_page_context"; //$NON-NLS-1$
+	public static final String PREF_BROWSER_DIALOG = WebBrowserUIPlugin.PLUGIN_ID + ".browser_preference_page_dialog_context"; //$NON-NLS-1$
+	public static final String WEB_BROWSER = WebBrowserUIPlugin.PLUGIN_ID + ".browser_context"; //$NON-NLS-1$
 }
