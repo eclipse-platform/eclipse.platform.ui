@@ -146,14 +146,8 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 */
 	public IAdaptable createElement(IMemento memento) {
 		URL url2 = null;
-		try {
-			url2 = new URL(WebBrowserPreference.getHomePageURL());
-		} catch (Exception e) {
-			// could not determine the URL
-		}
+		int newStyle = 0;
 
-		int newStyle = 0; // ExternalBrowserInstance.SHOW_TOOLBAR |
-							// ExternalBrowserInstance.SHOW_STATUSBAR;
 		try {
 			newStyle = memento.getInteger(MEMENTO_STYLE).intValue();
 
