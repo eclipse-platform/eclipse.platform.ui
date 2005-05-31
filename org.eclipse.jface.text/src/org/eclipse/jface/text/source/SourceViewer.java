@@ -678,12 +678,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	protected void clearRememberedSelection() {
-		if (fSelections.isEmpty())
-			return;
-		fSelections.clear();
+		if (!fSelections.isEmpty())
+			fSelections.clear();
 
 		IDocument document= getDocument();
-		if (document != null) {
+		if (document != null && fSelectionUpdater != null) {
 			document.removePositionUpdater(fSelectionUpdater);
 			try {
 				document.removePositionCategory(fSelectionCategory);
