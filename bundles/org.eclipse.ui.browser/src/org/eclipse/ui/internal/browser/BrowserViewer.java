@@ -181,26 +181,19 @@ public class BrowserViewer extends Composite {
         setLayout(layout);
         setLayoutData(new GridData(GridData.FILL_BOTH));
         clipboard = new Clipboard(parent.getDisplay());
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-                ContextIds.WEB_BROWSER);
-
+        
         if (showToolbar || showURLbar) {
             Composite toolbarComp = new Composite(this, SWT.NONE);
-            GridLayout outerLayout = new GridLayout();
-            outerLayout.numColumns = 4;
-            outerLayout.marginWidth = 2;
-            outerLayout.marginHeight = 2;
-            toolbarComp.setLayout(outerLayout);
+            toolbarComp.setLayout(new ToolbarLayout());
             toolbarComp.setLayoutData(new GridData(
-                    GridData.VERTICAL_ALIGN_BEGINNING
-                            | GridData.FILL_HORIZONTAL));
+                  GridData.VERTICAL_ALIGN_BEGINNING
+                  | GridData.FILL_HORIZONTAL));
 
-            if (showToolbar) {
+            if (showToolbar)
                 createToolbar(toolbarComp);
-            }
-				if (showURLbar) {
+            
+				if (showURLbar)
                 createLocationBar(toolbarComp);
-            }
 
 				if (showToolbar | showURLbar) {
 				    busy = new BusyIndicator(toolbarComp, SWT.NONE);
@@ -219,6 +212,8 @@ public class BrowserViewer extends Composite {
 						}
 				    });
 				}
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+                  ContextIds.WEB_BROWSER); 
         }
 
         // create a new SWT Web browser widget, checking once again to make sure
@@ -243,7 +238,7 @@ public class BrowserViewer extends Composite {
          if (browser!=null) {
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
             PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
-                    ContextIds.WEB_BROWSER_WEB);            
+                    ContextIds.WEB_BROWSER);
         }
         else
             text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -265,7 +260,7 @@ public class BrowserViewer extends Composite {
      * Navigate to the home URL.
      */
     public void home() {
-        navigate(WebBrowserPreference.getHomePageURL());
+   	 browser.setText(""); //$NON-NLS-1$
     }
 
     /**
@@ -288,7 +283,7 @@ public class BrowserViewer extends Composite {
      * @see #getURL()
      */
     public void setURL(String url) {
-        setURL(url, true);
+       setURL(url, true);
     }
 
     protected void updateBackNextBusy() {
@@ -439,29 +434,17 @@ public class BrowserViewer extends Composite {
                     if (!event.top)
                         return;
                     if (combo != null) {
-                        if (!isHome()) {
+                        if (!"about:blank".equals(event.location)) { //$NON-NLS-1$
                             combo.setText(event.location);
                             addToHistory(event.location);
                             updateHistory();
-                        } else
-                            combo.setText(""); //$NON-NLS-1$
+                        }// else
+                        //    combo.setText(""); //$NON-NLS-1$
                     }
                 }
 
                 public void changing(LocationEvent event) {
                     // do nothing
-                }
-
-                /**
-                 * Returns true if the homepage is currently being displayed.
-                 * 
-                 * @return boolean
-                 */
-                protected boolean isHome() {
-                    return getURL() != null
-                            && getURL().endsWith(
-                                    WebBrowserPreference.getHomePageURL()
-                                            .substring(9));
                 }
             });
         }
@@ -667,9 +650,6 @@ public class BrowserViewer extends Composite {
             return;
         }
 
-        if (url.endsWith(WebBrowserPreference.getHomePageURL().substring(9)))
-            return;
-
         if ("eclipse".equalsIgnoreCase(url)) //$NON-NLS-1$
             url = "http://www.eclipse.org"; //$NON-NLS-1$
         else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
@@ -748,10 +728,7 @@ public class BrowserViewer extends Composite {
                 setURL(combo.getText());
             }
         });
-        combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(combo,
-                ContextIds.WEB_BROWSER_URL);
-
+        
         ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
         ToolItem go = new ToolItem(toolbar, SWT.NONE);
@@ -765,8 +742,6 @@ public class BrowserViewer extends Composite {
                 setURL(combo.getText());
             }
         });
-		  
-		  new ToolItem(toolbar, SWT.SEPARATOR);
 		  
 		  return toolbar;
     }
@@ -830,8 +805,6 @@ public class BrowserViewer extends Composite {
                 refresh();
             }
         });
-		  
-		  new ToolItem(toolbar, SWT.SEPARATOR);
 		  
 		  return toolbar;
     }
