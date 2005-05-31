@@ -140,10 +140,10 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		int basicSizeof(MarkerAttributeMap markerMap) {
-			int count = 20;//object header plus two slots
+			int count = DeepSize.OBJECT_HEADER_SIZE + 8;//object header plus two slots
 			Object[] elements = SpySupport.getElements(markerMap);
 			if (elements != null) {
-				count += 16 + 4 * elements.length;
+				count += DeepSize.ARRAY_HEADER_SIZE + 4 * elements.length;
 				for (int i = 0; i < elements.length; i++)
 					count += sizeof(elements[i]);
 			}
@@ -151,7 +151,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		int basicSizeof(MarkerInfo info) {
-			int count = 36;//object plus slots
+			int count = DeepSize.OBJECT_HEADER_SIZE + 24;//object plus slots
 			count += sizeof(info.getType());
 			count += sizeof(info.getAttributes(false));
 			return count;
@@ -160,10 +160,10 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		int basicSizeof(MarkerSet markerSet) {
 			if (markerSet == null)
 				return 0;
-			int count = 20;//object size plus two slots
+			int count = DeepSize.OBJECT_HEADER_SIZE + 8;//object size plus two slots
 			IMarkerSetElement[] elements = SpySupport.getElements(markerSet);
 			if (elements != null) {
-				count += 16 + 4 * elements.length;//size of elements array object
+				count += DeepSize.ARRAY_HEADER_SIZE + 4 * elements.length;//size of elements array object
 				for (int i = 0; i < elements.length; i++)
 					if (elements[i] != null)
 						count += sizeof(elements[i]);
@@ -172,7 +172,8 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		int basicSizeof(String str) {
-			return 36 + 2 * str.length();
+			//String object has four slots, plus char[] object, plus two bytes per character
+			return 16 + DeepSize.OBJECT_HEADER_SIZE + DeepSize.ARRAY_HEADER_SIZE + 2 * str.length();
 		}
 
 		void countResources() {
@@ -234,7 +235,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		int sizeof(AbstractDataTreeNode node) {
-			int count = 12;//three slots for an empty object
+			int count = DeepSize.OBJECT_HEADER_SIZE;//empty object
 			if (node instanceof DataTreeNode) {
 				//count memory for data
 				count += 4;//reference to data
@@ -251,7 +252,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			count += 4;//reference to child array
 			AbstractDataTreeNode[] children = node.getChildren();
 			if (children != null && !DeepSize.ignore(children)) {
-				count += 16 + (4 * children.length);//object header plus slots
+				count += DeepSize.ARRAY_HEADER_SIZE + (4 * children.length);//object header plus slots
 			}
 			return count;
 		}
@@ -266,7 +267,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object instanceof String)
 				return basicSizeof((String) object);
 			if (object instanceof byte[])
-				return 16 + ((byte[]) object).length;
+				return DeepSize.ARRAY_HEADER_SIZE + ((byte[]) object).length;
 			if (object instanceof MarkerAttributeMap)
 				return basicSizeof((MarkerAttributeMap) object);
 			if (object instanceof MarkerInfo)
@@ -274,7 +275,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			if (object instanceof MarkerSet)
 				return basicSizeof((MarkerSet) object);
 			if (object instanceof Integer)
-				return 16;
+				return DeepSize.OBJECT_HEADER_SIZE + 4;
 			if (object instanceof Map)
 				return basicSizeof((Map) object);
 			if (object instanceof QualifiedName) {
@@ -287,7 +288,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 		int sizeof(ResourceInfo resourceInfo) {
 			//object header plus all slots
-			int count = 12 + (11 * 4);
+			int count = DeepSize.OBJECT_HEADER_SIZE + (11 * 4);
 
 			//markers
 			markerMemory += sizeof(resourceInfo.getMarkers());
@@ -499,5 +500,4 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		if (updateAction != null)
 			updateAction.run();
 	}
-
 }
