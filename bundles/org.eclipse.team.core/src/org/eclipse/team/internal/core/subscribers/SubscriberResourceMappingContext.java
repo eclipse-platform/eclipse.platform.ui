@@ -20,8 +20,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A resource mapping context that provides the client access to the remote state 
@@ -297,9 +296,9 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
         if (remote == null) return null;
         boolean containerExpected = resource.getType() != IResource.FILE;
         if (remote.isContainer() && !containerExpected) {
-            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.RESOURCE_WRONG_TYPE, "Remote conterpart of {0} is a container" + resource.getFullPath().toString(), null));
+            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.RESOURCE_WRONG_TYPE, Messages.SubscriberResourceMappingContext_0 + resource.getFullPath().toString(), null));
         } else if (!remote.isContainer() && containerExpected) {
-            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.RESOURCE_WRONG_TYPE, "Remote conterpart of {0} is not a container" + resource.getFullPath().toString(), null));
+            throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.RESOURCE_WRONG_TYPE, Messages.SubscriberResourceMappingContext_1 + resource.getFullPath().toString(), null));
         }
         return remote;
     }

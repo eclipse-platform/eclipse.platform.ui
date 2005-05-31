@@ -85,4 +85,8 @@ public class Messages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
+
+    public static String SubscriberResourceMappingContext_0;
+
+    public static String SubscriberResourceMappingContext_1;
 }
