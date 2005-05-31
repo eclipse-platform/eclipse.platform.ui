@@ -42,7 +42,11 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 		}
 		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText); //$NON-NLS-1$
 		Program program = Program.findProgram("html"); //$NON-NLS-1$
-		if (program == null || !program.execute(urlText))
+		if (program != null) {
+			if (program.execute(urlText))
+				return;
+		}
+		if (!Program.launch(urlText))
 			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, url.toExternalForm()));
 	}
 }
