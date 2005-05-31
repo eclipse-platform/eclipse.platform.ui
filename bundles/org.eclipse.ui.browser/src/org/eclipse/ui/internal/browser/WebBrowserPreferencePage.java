@@ -106,6 +106,20 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	class BrowserTableLabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
+			IBrowserDescriptor browser = (IBrowserDescriptor) element;
+			if (browser instanceof SystemBrowserDescriptor) {
+				Image image = ImageResource.getImage(ImageResource.IMG_SYSTEM_BROWSER);
+				if (image != null)
+					return image;
+				return ImageResource.getImage(ImageResource.IMG_EXTERNAL_BROWSER);
+			}
+			
+			IBrowserExt ext = WebBrowserUIPlugin.findBrowsers(browser.getLocation());
+			if (ext != null) {
+				Image image = ((BrowserExt)ext).getImage();
+				if (image != null)
+					return image;
+			}
 			return ImageResource.getImage(ImageResource.IMG_EXTERNAL_BROWSER);
 		}
 
@@ -477,8 +491,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					tableViewer.setChecked(cbrowser, true);
 			}
 		});
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(search,
-				ContextIds.PREF_BROWSER_EXTERNAL_SEARCH);
 
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {

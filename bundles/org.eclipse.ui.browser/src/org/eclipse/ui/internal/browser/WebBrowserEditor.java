@@ -181,7 +181,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			initialURL = url.toExternalForm();
 			if (webBrowser != null) {
 				webBrowser.setURL(initialURL);
-				site.getWorkbenchWindow().getActivePage().bringToTop(this);
+				site.getWorkbenchWindow().getActivePage().activate(this);
 			}
 			
 			setPartName(path.lastSegment());
@@ -202,7 +202,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 				initialURL = wbei.getURL().toExternalForm();
 			if (webBrowser != null) {
 				webBrowser.setURL(initialURL);
-				site.getWorkbenchWindow().getActivePage().bringToTop(this);
+				site.getWorkbenchWindow().getActivePage().activate(this);
 			}
 	
 			setPartName(wbei.getName());

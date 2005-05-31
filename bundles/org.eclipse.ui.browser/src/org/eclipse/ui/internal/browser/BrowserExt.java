@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
-
 /**
  * @since 1.0
  */
@@ -64,6 +64,14 @@ public class BrowserExt implements IBrowserExt {
 		if (os == null)
 			os = ""; //$NON-NLS-1$
 		return os;
+	}
+	
+	protected String getNamespace() {
+		return element.getDeclaringExtension().getNamespace();
+	}
+
+	protected Image getImage() {
+		return ImageResource.getImage(getId());
 	}
 
 	public String[] getDefaultLocations() {
