@@ -894,7 +894,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	public void setAllowCaching(boolean value) {
 		allowCaching = value;
-		updateCache();
+        if (allowCaching)
+            updateCache();
+        else
+            flushCache();
 	}
 	
 	public void updateCache() {
