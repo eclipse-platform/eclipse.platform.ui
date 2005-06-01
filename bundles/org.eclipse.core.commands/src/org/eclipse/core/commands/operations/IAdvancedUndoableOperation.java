@@ -73,7 +73,7 @@ public interface IAdvancedUndoableOperation {
 	 * is used when computing the validity of an undo is too expensive to
 	 * perform in {@link IUndoableOperation#canUndo()}. It is not called by the
 	 * operation history, but instead is used by clients (such as implementers
-	 * of {@linkIOperationApprover} who wish to perform advanced validation of
+	 * of {@link IOperationApprover}) who wish to perform advanced validation of
 	 * an operation before attempting to undo it.
 	 * 
 	 * If the result of this method is the discovery that an operation can in
@@ -103,7 +103,7 @@ public interface IAdvancedUndoableOperation {
 	 * is used when computing the validity of a redo is too expensive to perform
 	 * in {@link IUndoableOperation#canRedo()}. It is not called by the
 	 * operation history, but instead is used by clients (such as implementers
-	 * of {@linkIOperationApprover} who wish to perform advanced validation of
+	 * of {@link IOperationApprover}) who wish to perform advanced validation of
 	 * an operation before attempting to redo it.
 	 * 
 	 * If the result of this method is the discovery that an operation can in
