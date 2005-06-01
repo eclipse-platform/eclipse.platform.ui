@@ -225,7 +225,6 @@
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
             label="Pessimistic Filesystem Provider Decorator"
             state="true"
@@ -234,6 +233,9 @@
          <description>
             Provides simple checked-in, checked-out decorations on files.
          </description>
+         <enablement>
+             <objectClass name="org.eclipse.core.resources.IResource"/> 
+         </enablement>
       </decorator>
    </extension>
 
