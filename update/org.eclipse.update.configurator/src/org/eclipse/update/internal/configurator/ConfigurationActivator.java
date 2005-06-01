@@ -38,8 +38,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug"; //$NON-NLS-1$
 	// debug values
 	public static boolean DEBUG = false;
-	// os
-	private static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
@@ -261,7 +259,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			bundleLocation = bundleLocation.substring(offset);
 			cachedBundlesSet.add(bundleLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
-			if (isWindows)
+			if (Utils.isWindows)
 				cachedBundlesSet.add(bundleLocation.toLowerCase());
 		}
 		
@@ -271,7 +269,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			// check if already installed
 			if (cachedBundlesSet.contains(location))
 				continue;
-			if (isWindows && cachedBundlesSet.contains(location.toLowerCase()))
+			if (Utils.isWindows && cachedBundlesSet.contains(location.toLowerCase()))
 				continue;
 			
 			bundlesToInstall.add(location);
@@ -288,7 +286,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			String pluginLocation = Utils.makeRelative(Utils.getInstallURL(), newPlugins[i]).getFile();
 			newPluginsSet.add(pluginLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
-			if (isWindows)
+			if (Utils.isWindows)
 				newPluginsSet.add(pluginLocation.toLowerCase());
 		}
 		
@@ -305,7 +303,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 			if (newPluginsSet.contains(cachedBundleLocation))
 				continue;
-			if (isWindows && newPluginsSet.contains(cachedBundleLocation.toLowerCase()))
+			if (Utils.isWindows && newPluginsSet.contains(cachedBundleLocation.toLowerCase()))
 				continue;
 			
 			bundlesToUninstall.add(cachedBundles[i]);

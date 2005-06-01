@@ -69,6 +69,7 @@ public class Configuration implements IConfigurationConstants {
 	}
 	
 	public void addSiteEntry(String url, SiteEntry site) {
+		url = Utils.canonicalizeURL(url);
 		// only add the same site once
 		if (sites.get(url) == null && (linkedConfig == null || linkedConfig.sites.get(url) == null)) {
 			site.setConfig(this);
@@ -77,10 +78,12 @@ public class Configuration implements IConfigurationConstants {
 	}
 	
 	public void removeSiteEntry(String url) {
+		url =Utils.canonicalizeURL(url);		
 		sites.remove(url);
 	}
 	
 	public SiteEntry getSiteEntry(String url) {
+		url = Utils.canonicalizeURL(url);		
 		SiteEntry site = (SiteEntry)sites.get(url);
 		if (site == null && linkedConfig != null)
 			site = linkedConfig.getSiteEntry(url);

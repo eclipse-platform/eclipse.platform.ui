@@ -21,6 +21,8 @@ import org.eclipse.osgi.framework.log.*;
 public class Utils {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
+	// os
+	public static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$	
 	static FrameworkLog log;
 	// Install location	
 	private static URL installURL;
@@ -266,6 +268,9 @@ public class Utils {
 	 * return it as is. 
 	 */
 	public static URL makeAbsolute(URL base, URL relativeLocation) {
+		if (!"file".equals(base.getProtocol())) //$NON-NLS-1$
+			// we only deal with file: URLs 
+			return relativeLocation;
 		if (relativeLocation.getProtocol() != null && !relativeLocation.getProtocol().equals(base.getProtocol()))
 			// it is not relative, return as is (avoid creating garbage)
 			return relativeLocation;
@@ -274,7 +279,8 @@ public class Utils {
 			return relativeLocation;
 		try {
 			IPath absolutePath = new Path(base.getPath()).append(relativeLocation.getPath());
-			return new URL(base.getProtocol(), base.getHost(), base.getPort(), absolutePath.toString());
+			// File.toURL() is the best way to create a file: URL
+			return absolutePath.toFile().toURL();
 		} catch (MalformedURLException e) {
 			// cannot happen since we are building from two existing valid URLs
 			Utils.log(e.getLocalizedMessage());
@@ -341,6 +347,29 @@ public class Utils {
 			return absolute;
 		}
 	}
+
+	/**
+	 * Ensures file: URLs on Windows have the right form (i.e. '/' as segment separator, drive letter in lower case, etc)
+	 */
+	public static String canonicalizeURL(String url) {
+		if (!(isWindows && url.startsWith("file:"))) //$NON-NLS-1$
+			return url;
+		try {
+			String path = new URL(url).getPath();			
+	        // normalize to not have leading / so we can check the form
+	        File file = new File(path);
+	        path = file.toString().replace('\\', '/');
+            if (Character.isUpperCase(path.charAt(0))) {
+                char[] chars = path.toCharArray();
+                chars[0] = Character.toLowerCase(chars[0]);
+                path = new String(chars);
+                return new File(path).toURL().toExternalForm();
+            }
+		} catch (MalformedURLException e) {
+			// default to original url
+		}		
+		return url;
+	}	
 
 	public static URL getInstallURL() {
 		if (installURL == null)
