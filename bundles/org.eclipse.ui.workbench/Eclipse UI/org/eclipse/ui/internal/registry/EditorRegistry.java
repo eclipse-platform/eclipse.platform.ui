@@ -1469,4 +1469,112 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 		
 		return (IEditorDescriptor[]) allRelated.toArray(new IEditorDescriptor[allRelated.size()]);
 	}
+	
+	public IFileEditorMapping [] getUnifiedMappings() {
+        IFileEditorMapping[] standardMappings = PlatformUI.getWorkbench()
+                .getEditorRegistry().getFileEditorMappings();
+        
+        List allMappings = new ArrayList(Arrays.asList(standardMappings));
+        // mock-up content type extensions into IFileEditorMappings
+        IContentType [] contentTypes = Platform.getContentTypeManager().getAllContentTypes();
+        for (int i = 0; i < contentTypes.length; i++) {
+			IContentType type = contentTypes[i];
+			String [] extensions = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			for (int j = 0; j < extensions.length; j++) {
+				String extension = extensions[j];
+				boolean found = false;
+				for (Iterator k = allMappings.iterator(); k.hasNext();) {
+					IFileEditorMapping mapping = (IFileEditorMapping) k.next();
+					if ("*".equals(mapping.getName()) && extension.equals(mapping.getExtension())) { //$NON-NLS-1$
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					MockMapping mockMapping = new MockMapping(type, "*", extension); //$NON-NLS-1$
+					allMappings.add(mockMapping);
+				}
+			}
+		
+			String [] filenames = type.getFileSpecs(IContentType.FILE_NAME_SPEC);
+			for (int j = 0; j < filenames.length; j++) {
+				String wholename = filenames[j];
+				int idx = wholename.indexOf('.');				
+				String name = idx == -1 ? wholename : wholename.substring(0, idx);
+				String extension = idx == -1 ? "" : wholename.substring(idx + 1); //$NON-NLS-1$
+				
+				boolean found = false;
+				for (Iterator k = allMappings.iterator(); k.hasNext();) {
+					IFileEditorMapping mapping = (IFileEditorMapping) k.next();
+					if (name.equals(mapping.getName()) && extension.equals(mapping.getExtension())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					MockMapping mockMapping = new MockMapping(type, name, extension);
+					allMappings.add(mockMapping);
+				}
+			}
+		}
+        
+        return (IFileEditorMapping []) allMappings
+				.toArray(new IFileEditorMapping [allMappings.size()]);
+	}
 }
+
+
+class MockMapping implements IFileEditorMapping {
+
+	private IContentType contentType;
+	private String extension;
+	private String filename;
+	
+	MockMapping(IContentType type, String name, String ext) {
+		this.contentType = type;
+		this.filename = name;
+		this.extension = ext;
+	}
+
+	public IEditorDescriptor getDefaultEditor() {
+		IEditorDescriptor[] candidates = ((EditorRegistry) PlatformUI
+				.getWorkbench().getEditorRegistry())
+				.getEditorsForContentType(contentType);
+		if (candidates.length == 0) {
+			return null;
+		}
+		return candidates[0];
+	}
+
+	public IEditorDescriptor[] getEditors() {
+		return ((EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry())
+				.getEditorsForContentType(contentType);
+	}
+
+	public IEditorDescriptor[] getDeletedEditors() {
+		return new IEditorDescriptor[0];
+	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public ImageDescriptor getImageDescriptor() {
+		IEditorDescriptor editor = getDefaultEditor();
+		if (editor == null) {
+			return WorkbenchImages
+					.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+		}
+
+		return editor.getImageDescriptor();
+	}
+
+	public String getLabel() {
+		return filename + '.' + extension; 
+	}
+
+	public String getName() {
+		return filename;
+    }	
+}
+

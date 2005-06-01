@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,6 +38,7 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 
 /**
  * The TypeFilteringDialog is a SelectionDialog that allows the user to select a
@@ -157,8 +159,8 @@ public class TypeFilteringDialog extends SelectionDialog {
      * viewer.
      */
     private void checkInitialSelections() {
-        IFileEditorMapping editorMappings[] = PlatformUI.getWorkbench()
-                .getEditorRegistry().getFileEditorMappings();
+        IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI
+				.getWorkbench().getEditorRegistry()).getUnifiedMappings();
         ArrayList selectedMappings = new ArrayList();
         for (int i = 0; i < editorMappings.length; i++) {
             IFileEditorMapping mapping = editorMappings[i];
@@ -215,6 +217,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         listViewer.setLabelProvider(FileEditorMappingLabelProvider.INSTANCE);
         listViewer
                 .setContentProvider(FileEditorMappingContentProvider.INSTANCE);
+        listViewer.setSorter(new ViewerSorter());
         addSelectionButtons(composite);
         createUserEntryGroup(composite);
         initializeViewer();
@@ -258,8 +261,8 @@ public class TypeFilteringDialog extends SelectionDialog {
         //Filter the mappings to be just those with a wildcard extension
         if (currentInput == null) {
             List wildcardEditors = new ArrayList();
-            IFileEditorMapping[] allMappings = PlatformUI.getWorkbench()
-                    .getEditorRegistry().getFileEditorMappings();
+            IFileEditorMapping[] allMappings = ((EditorRegistry)PlatformUI.getWorkbench()
+                    .getEditorRegistry()).getUnifiedMappings();
             for (int i = 0; i < allMappings.length; i++) {
                 if (allMappings[i].getName().equals("*"))//$NON-NLS-1$
                     wildcardEditors.add(allMappings[i]);
