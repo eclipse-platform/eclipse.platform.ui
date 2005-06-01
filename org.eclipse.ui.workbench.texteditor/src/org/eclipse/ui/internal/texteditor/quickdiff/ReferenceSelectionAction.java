@@ -63,13 +63,17 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	/**
 	 * Creates an instance of the implementation provided by the extension, if none has been created
 	 * before. Otherwise, the cached implementation is returned.
+	 * @param cache <code>true</code> if the provider should be cached
 	 * @return The <code>IQuickDiffProviderImplementation</code> instance provided by the extension.
 	 */
-	private IQuickDiffReferenceProvider getProvider() {
-		if (fProvider == null) {
-			fProvider= fDescriptor.createProvider();
+	private IQuickDiffReferenceProvider getProvider(boolean cache) {
+		IQuickDiffReferenceProvider provider= fProvider;
+		if (provider == null) {
+			provider= fDescriptor.createProvider();
+			if (cache)
+				fProvider= provider;
 		}
-		return fProvider;
+		return provider;
 	}
 
 	/*
@@ -83,7 +87,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 
 		if (fEditor instanceof ITextEditorExtension3) {
 			ITextEditorExtension3 extension= (ITextEditorExtension3) fEditor;
-			IQuickDiffReferenceProvider provider= getProvider();
+			IQuickDiffReferenceProvider provider= getProvider(true);
 			if (provider != null) {
 				provider.setActiveEditor(fEditor);
 				if (provider.isEnabled()) {
@@ -117,12 +121,19 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		}
 
 		if (fDescriptor.isPluginLoaded()) {
-			getProvider();
-			if (fProvider == null) {
+			IQuickDiffReferenceProvider provider= getProvider(false);
+			if (provider == null) {
 				setEnabled(false);
 			} else {
-				fProvider.setActiveEditor(fEditor);
-				setEnabled(fProvider.isEnabled());
+				try {
+					provider.setActiveEditor(fEditor);
+					setEnabled(provider.isEnabled());
+				} finally {
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=67857
+					// dispose the provider if we just created it to check enablement
+					if (provider != fProvider)
+						provider.dispose();
+				}
 			}
 		} else {
 			// optimistically enable it
