@@ -186,8 +186,10 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		public void initializeValue(IPreferenceStore store) {
 			final Object value= loadValue(store, fKey);
 			final int index= fValues.indexOf(value);
-			if (index >= 0 && index < fLabels.length)
-				fButtons[index].setSelection(true);
+            for (int i = 0; i < fButtons.length; i++) {
+                Button b = fButtons[i];
+                b.setSelection(index == i);
+            }
 		}
 
 		public void performOk(IPreferenceStore store) {
