@@ -249,6 +249,7 @@
                id="org.eclipse.team.cvs.ui.setKeywordSubstitution">
          </action>
          <action
+                helpContextId="org.eclipse.team.cvs.ui.team_switch_action_context"
                label="%UpdateActionSwitch.label"
                definitionId="org.eclipse.team.cvs.ui.updateSwitch"
                class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"

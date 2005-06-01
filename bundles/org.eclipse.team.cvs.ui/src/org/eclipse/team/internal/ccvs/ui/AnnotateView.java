@@ -85,6 +85,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		Label label = new Label(top, SWT.WRAP);
 		label.setText(CVSUIMessages.CVSAnnotateView_viewInstructions); //$NON-NLS-1$
 		top.layout();
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(label, IHelpContextIds.ANNOTATE_VIEW);
 	}
 
 	/**

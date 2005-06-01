@@ -32,6 +32,8 @@ public interface IHelpContextIds {
 	public static final String DATE_TAG_DIALOG = PREFIX + "date_tag_dialog_context"; //$NON-NLS-1$
 	public static final String KEYBOARD_INTERACTIVE_DIALOG = PREFIX + "keyboard_interactive_dialog_context"; //$NON-NLS-1$
 	public static final String COMMIT_SET_DIALOG = PREFIX + "commit_set_dialog_context"; //$NON-NLS-1$
+    public static final String REPLACE_OVERWRITE_PROMPT = PREFIX + "replace_overwrite_dialog_context"; //$NON-NLS-1$
+    public static final String TAG_UNCOMMITED_PROMPT = PREFIX + "tag_uncommmited_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
@@ -52,12 +54,9 @@ public interface IHelpContextIds {
 	public static final String PATCH_SELECTION_PAGE = PREFIX + "patch_selection_page_context"; //$NON-NLS-1$
 	public static final String PATCH_OPTIONS_PAGE = PREFIX + "patch_options_page_context"; //$NON-NLS-1$
 	
-	public static final String KEYWORD_SUBSTITUTION_SELECTION_PAGE = PREFIX + "keyword_substituton_selection_page_context"; //$NON-NLS-1$
-	public static final String KEYWORD_SUBSTITUTION_SUMMARY_PAGE = PREFIX + "keyword_substituton_summary_page_context"; //$NON-NLS-1$
-	public static final String KEYWORD_SUBSTITUTION_SHARED_PAGE = PREFIX + "keyword_substituton_shared_page_context"; //$NON-NLS-1$
-	public static final String KEYWORD_SUBSTITUTION_CHANGED_PAGE = PREFIX + "keyword_substituton_changed_page_context"; //$NON-NLS-1$
-	public static final String KEYWORD_SUBSTITUTION_COMMIT_COMMENT_PAGE = PREFIX + "keyword_substituton_commit_comment_page_context"; //$NON-NLS-1$
+	public static final String KEYWORD_SUBSTITUTION_PAGE = PREFIX + "keyword_substitution_page_context"; //$NON-NLS-1$
 	
+    public static final String MERGE_WIZARD_PAGE = PREFIX + "merge_wizard_page_context"; //$NON-NLS-1$
 	public static final String MERGE_START_PAGE = PREFIX + "merge_start_page_context"; //$NON-NLS-1$
 	public static final String MERGE_END_PAGE = PREFIX + "merge_end_page_context"; //$NON-NLS-1$
 	
@@ -72,6 +71,9 @@ public interface IHelpContextIds {
 	public static final String RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE = PREFIX + "restore_from_repository_file_selection_page_context"; //$NON-NLS-1$
 	public static final String REFRESH_REMOTE_PROJECT_SELECTION_PAGE = PREFIX + "refresh_remote_project_selection_page_context"; //$NON-NLS-1$
 
+    public static final String COMMIT_FILE_TYPES_PAGE = PREFIX + "commit_file_types_page_context"; //$NON-NLS-1$
+    public static final String COMMIT_COMMENT_PAGE = PREFIX + "commit_comment_page_context"; //$NON-NLS-1$
+    
 	// Preference Pages
 	public static final String PREF_DEBUG_PROTOCOL = PREFIX + "debug_protocol_pref"; //$NON-NLS-1$
 	public static final String PREF_PRUNE = PREFIX + "prune_empty_directories_pref"; //$NON-NLS-1$
@@ -152,7 +154,4 @@ public interface IHelpContextIds {
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "project_property_page_context"; //$NON-NLS-1$
 	public static final String FOLDER_PROPERTY_PAGE = PREFIX + "folder_property_page_context"; //$NON-NLS-1$
 	public static final String FILE_PROPERTY_PAGE = PREFIX + "file_property_page_context"; //$NON-NLS-1$
-
-
-
 }

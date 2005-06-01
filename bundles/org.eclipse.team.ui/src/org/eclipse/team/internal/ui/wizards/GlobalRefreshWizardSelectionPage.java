@@ -24,11 +24,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
@@ -121,6 +120,7 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		Composite top = new Composite(parent2, SWT.NULL);
 		top.setLayout(new GridLayout());
 		setControl(top);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IHelpContextIds.REFRESH_WIZARD_SELECTION_PAGE);
 		
 		Label l = new Label(top, SWT.NULL);
 		l.setText(TeamUIMessages.GlobalRefreshParticipantSelectionPage_3); //$NON-NLS-1$

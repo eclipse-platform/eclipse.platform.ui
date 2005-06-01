@@ -30,11 +30,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 /**
@@ -75,6 +77,8 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_COMMENT_PAGE);
         
         createCommentArea(composite, converter);
         createChangesArea(composite, converter);

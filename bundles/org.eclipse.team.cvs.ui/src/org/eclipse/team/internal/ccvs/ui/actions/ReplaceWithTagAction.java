@@ -52,6 +52,9 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
                         protected String getMultipleMappingsMessage() {
                             return CVSUIMessages.ReplaceWithTagAction_1; //$NON-NLS-1$
                         }
+                        protected String getHelpContextId() {
+                            return IHelpContextIds.REPLACE_OVERWRITE_PROMPT;
+                        }
                     };
                 }
             });

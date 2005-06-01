@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.ui.PlatformUI;
 
 public class MergeWizardPage extends CVSWizardPage {
 
@@ -60,6 +61,8 @@ public class MergeWizardPage extends CVSWizardPage {
         
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.MERGE_WIZARD_PAGE);
         
         final Composite mainArea = new Composite(composite, SWT.NONE);
         mainArea.setLayoutData(SWTUtils.createHFillGridData());

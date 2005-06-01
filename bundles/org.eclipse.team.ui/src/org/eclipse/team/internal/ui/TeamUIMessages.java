@@ -107,8 +107,6 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_allFiles;
 	public static String ImportProjectSetMainPage_Project_Set_Files_2;
 	public static String ExportProjectSetMainPage__File_name__1;
-	public static String TeamPreferencePage_General_settings_for_Team_support_1;
-	public static String TeamPreferencePage__Use_Incoming_Outgoing_mode_when_synchronizing_2;
 
 	public static String SyncViewPreferencePage_lastRefreshRunNever;
 

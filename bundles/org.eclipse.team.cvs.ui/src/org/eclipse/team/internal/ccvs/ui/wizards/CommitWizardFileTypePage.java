@@ -31,9 +31,10 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.preferences.FileTypeTable;
+import org.eclipse.ui.PlatformUI;
 
 /**                
  * 
@@ -67,6 +68,8 @@ public class CommitWizardFileTypePage extends WizardPage {
         
         final Composite composite= new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(1, false));
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_FILE_TYPES_PAGE);
         
 	    final Label label= new Label(composite, SWT.WRAP);
 	    label.setText(CVSUIMessages.CommitWizardFileTypePage_3); //$NON-NLS-1$
@@ -80,6 +83,7 @@ public class CommitWizardFileTypePage extends WizardPage {
         new FileTypeTable(composite, items, true);
 
         setControl(composite);
+        
     }
 
 	public void getModesForExtensions(Map toSave, Map notToSave) {
