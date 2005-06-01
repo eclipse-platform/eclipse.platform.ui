@@ -64,6 +64,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -3771,9 +3772,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				isSynchronized= (modifiedStamp == synchStamp);
 			}
 
-			boolean isLowLevelException= exception.getStatus().getException() != null;
-			if (!isLowLevelException && fErrorCorrectionOnSave == 1 && !isSynchronized) {
-
+			if (isNotSynchronizedException(exception) && fErrorCorrectionOnSave == 1 && !isSynchronized) {
 				String title= EditorMessages.Editor_error_save_outofsync_title;
 				String msg= EditorMessages.Editor_error_save_outofsync_message;
 
@@ -3789,7 +3788,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						progressMonitor.setCanceled(true);
 				}
 			} else {
-
 				String title= EditorMessages.Editor_error_save_title;
 				String msg= EditorMessages.Editor_error_save_message;
 				ErrorDialog.openError(shell, title, msg, exception.getStatus());
@@ -3802,10 +3800,37 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (progressMonitor != null)
 					progressMonitor.setCanceled(true);
 			}
-
 		} finally {
 			-- fErrorCorrectionOnSave;
 		}
+	}
+	
+	/**
+	 * Tells whether the given core exception is exactly the
+	 * exception which is thrown for a non-synchronized element.
+	 * <p>
+	 * XXX: After 3.1 this method must be delegated to the document provider
+	 * 		see 
+	 * </p>
+	 * 
+	 * @param ex the core exception
+	 * @return <code>true</code> iff the given core exception is exactly the
+	 *			exception which is thrown for a non-synchronized element
+	 * @since 3.1
+	 */
+	private boolean isNotSynchronizedException(CoreException ex) {
+		if (ex == null)
+			return false;
+		
+		IStatus status= ex.getStatus(); 
+		if (status == null || status instanceof MultiStatus)
+			return false;
+		
+		if (status.getException() != null)
+			return false;
+		
+		// Can't access IResourceStatus.OUT_OF_SYNC_LOCAL, using value: 274
+		return status.getCode() == 274;
 	}
 
 	/**
