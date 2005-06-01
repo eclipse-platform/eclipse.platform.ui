@@ -50,6 +50,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
@@ -77,6 +78,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
     private Text charsetField;
 
     private Button setButton;
+
+	private IWorkbench workbench;
 
     private class Spec {
         String name;
@@ -290,6 +293,10 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         createContentTypesTree(composite);
         createFileAssociations(composite);
         createCharset(composite);
+        
+        workbench.getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.CONTENT_TYPES_PREFERENCE_PAGE);
+
         return composite;
     }
 
@@ -557,6 +564,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
     public void init(IWorkbench workbench) {
+    		this.workbench = workbench;
         noDefaultAndApplyButton();
     }
 }
