@@ -122,7 +122,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * Clients may implement this interface.
 	 * </p>
 	 * 
-	 * @see IContentTypeManager#getMatcher(ISelectionPolicy, IScopeContext)
+	 * @see IContentTypeManager#getMatcher(IContentTypeManager.ISelectionPolicy, IScopeContext)
 	 * @since 3.1
 	 */
 	public interface ISelectionPolicy {

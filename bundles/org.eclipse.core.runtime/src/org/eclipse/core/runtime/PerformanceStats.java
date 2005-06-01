@@ -49,7 +49,7 @@ public class PerformanceStats {
 	 * This class is intended to be subclassed.
 	 * </p>
 	 * 
-	 * @see PerformanceStats#addListener(PerformanceListener)
+	 * @see PerformanceStats#addListener(PerformanceStats.PerformanceListener)
 	 */
 	public static abstract class PerformanceListener {
 		/**
@@ -174,7 +174,7 @@ public class PerformanceStats {
 	 * an equal listener is already installed, it will be replaced.
 	 * 
 	 * @param listener The listener to be added
-	 * @see #removeListener(PerformanceListener)
+	 * @see #removeListener(PerformanceStats.PerformanceListener)
 	 */
 	public static void addListener(PerformanceListener listener) {
 		if (ENABLED)
@@ -273,7 +273,7 @@ public class PerformanceStats {
 	 * listener object is not currently registered.
 	 * 
 	 * @param listener The listener to remove
-	 * @see #addListener(PerformanceListener)
+	 * @see #addListener(PerformanceStats.PerformanceListener)
 	 */
 	public static void removeListener(PerformanceListener listener) {
 		if (ENABLED)
