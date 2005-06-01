@@ -30,6 +30,9 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
@@ -37,6 +40,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -314,33 +319,36 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * @param provider the document provider to register as element state listener
 	 */
 	private void addElementStateListener(ITextEditor editor, final IDocumentProvider provider) {
-		// addElementStateListener adds at most once - no problem to call
-		provider.addElementStateListener(this);
-
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=66686 and
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56871
 
-//		// repeatedly
-//		Runnable runnable= new Runnable() {
-//			public void run() {
-//				synchronized (fLock) {
-//					if (fDocumentProvider == provider)
-//						provider.addElementStateListener(LastSaveReferenceProvider.this);
-//				}
-//			}
-//		};
-//
-//		Display display= null;
-//		if (editor != null) {
-//			IWorkbenchPartSite site= editor.getSite();
-//			if (site != null)
-//				site.getWorkbenchWindow().getShell().getDisplay();
-//		}
-//
-//		if (display != null && !display.isDisposed())
-//			display.asyncExec(runnable);
-//		else
-//			runnable.run();
+		Runnable runnable= new Runnable() {
+			public void run() {
+				synchronized (fLock) {
+					if (fDocumentProvider == provider)
+						// addElementStateListener adds at most once - no problem to call repeatedly
+						provider.addElementStateListener(LastSaveReferenceProvider.this);
+				}
+			}
+		};
+
+		Display display= null;
+		if (editor != null) {
+			IWorkbenchPartSite site= editor.getSite();
+			if (site != null) {
+				IWorkbenchWindow window= site.getWorkbenchWindow();
+				if (window != null) {
+					Shell shell= window.getShell();
+					if (shell != null)
+						display= shell.getDisplay();
+				}
+			}
+		}
+
+		if (display != null && !display.isDisposed())
+			display.asyncExec(runnable);
+		else
+			runnable.run();
 	}
 
 	/**
