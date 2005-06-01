@@ -10,15 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.variants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -175,7 +167,6 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	protected abstract boolean setVariant(IResource local, IResourceVariant remote) throws TeamException;
 
 	private void collectChanges(IResource local, IResourceVariant remote, Collection changedResources, int depth, IProgressMonitor monitor) throws TeamException {
-        monitor.subTask(NLS.bind(Messages.AbstractResourceVariantTree_0, new String[] {local.getFullPath().toString()}));
 		boolean changed = setVariant(local, remote);
 		if (changed) {
 			changedResources.add(local);
