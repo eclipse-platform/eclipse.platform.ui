@@ -118,6 +118,11 @@ public class AppserverPreferencePage extends PreferencePage
 		// Validation of port field
 		textServerPort.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (textServerPort.getText().length() == 0) {
+					AppserverPreferencePage.this.setValid(true);
+					setErrorMessage(null);
+					return;
+				}
 				try {
 					int num = Integer.valueOf(textServerPort.getText())
 							.intValue();
