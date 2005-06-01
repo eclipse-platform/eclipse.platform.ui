@@ -282,24 +282,20 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	public void documentChanged(DocumentEvent event) {
 		if (fRememberedPosition != null) {
 			if (!fRememberedPosition.isDeleted()) {
-
 				event.getDocument().removePosition(fRememberedPosition);
 				fActiveRegion= new Region(fRememberedPosition.getOffset(), fRememberedPosition.getLength());
-				fRememberedPosition= null;
-
-				   StyledText widget= fTextViewer.getTextWidget();
-				if (widget != null && !widget.isDisposed()) {
-					widget.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							hideHyperlinks();
-						}
-					});
-				}
-
 			} else {
-				fActiveRegion= null;
-				fRememberedPosition= null;
-				hideHyperlinks();
+				fActiveRegion= new Region(event.getOffset(), event.getLength());
+			}
+			fRememberedPosition= null;
+			
+			StyledText widget= fTextViewer.getTextWidget();
+			if (widget != null && !widget.isDisposed()) {
+				widget.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						hideHyperlinks();
+					}
+				});
 			}
 		}
 	}
