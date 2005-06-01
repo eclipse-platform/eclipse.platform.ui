@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -186,7 +187,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 
 	private OverlayPreferenceStore fStore;
-	private ColorEditor fAnnotationForegroundColorEditor;
+	private ColorSelector fAnnotationForegroundColorEditor;
 
 	private Button fShowInTextCheckBox;
 	private Button fShowInOverviewRulerCheckBox;
@@ -318,7 +319,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalIndent= 20;
 		label.setLayoutData(gd);
 
-		fAnnotationForegroundColorEditor= new ColorEditor(optionsComposite);
+		fAnnotationForegroundColorEditor= new ColorSelector(optionsComposite);
 		Button foregroundColorButton= fAnnotationForegroundColorEditor.getButton();
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;

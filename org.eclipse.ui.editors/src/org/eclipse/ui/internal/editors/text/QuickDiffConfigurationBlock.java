@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 
 import org.eclipse.jface.text.Assert;
@@ -77,7 +78,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * The color editors for quick diff.
 	 * @since 3.0
 	 */
-	private ColorEditor[] fQuickDiffColorEditors;
+	private ColorSelector[] fQuickDiffColorEditors;
 	/**
 	 * The checkbox for the quick diff overview ruler property.
 	 * @since 3.0
@@ -232,12 +233,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalSpan= 2;
 		group.setLayoutData(gd);
 
-		fQuickDiffColorEditors= new ColorEditor[3];
+		fQuickDiffColorEditors= new ColorSelector[3];
 		for (int i= 0; i < fQuickDiffModel.length; i++) {
 			label= fQuickDiffModel[i][2];
 			l= new Label(group, SWT.LEFT);
 			l.setText(label);
-			final ColorEditor editor= new ColorEditor(group);
+			final ColorSelector editor= new ColorSelector(group);
 			fQuickDiffColorEditors[i]= editor;
 			Button changeColorButton= editor.getButton();
 			gd= new GridData(GridData.FILL_HORIZONTAL);
