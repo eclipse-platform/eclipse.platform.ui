@@ -334,7 +334,7 @@ public class XMLStructureCreator implements IStructureCreator {
                             body_value= removeWhiteSpace(body_value);
                         }
                         XMLNode bodynode= new XMLNode(TYPE_TEXT, "body_(" + fcurrentParent.bodies + ")", body_value, (fsignature + SIGN_TEXT), fdoc, offset, length); //$NON-NLS-2$ //$NON-NLS-1$
-                        bodynode.setName(MessageFormat.format("{0} ({1})", new String[] { XMLCompareMessages.XMLStructureCreator_body, Integer.toString(fcurrentParent.bodies)})); 
+                        bodynode.setName(MessageFormat.format("{0} ({1})", new String[] { XMLCompareMessages.XMLStructureCreator_body, Integer.toString(fcurrentParent.bodies)}));  //$NON-NLS-1$
                         fcurrentParent.addChild(bodynode);
                         bodynode.setParent(fcurrentParent);
                         if (XMLStructureCreator.DEBUG_MODE)

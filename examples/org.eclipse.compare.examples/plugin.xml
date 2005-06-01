@@ -25,7 +25,8 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             extensions="kvtxt"
-            class="org.eclipse.compare.examples.structurecreator.TextMergeViewerCreator">
+            class="org.eclipse.compare.examples.structurecreator.TextMergeViewerCreator"
+            id="org.eclipse.compare.examples.TextMergeViewerCreator">
       </viewer>
    </extension>
    
@@ -33,7 +34,8 @@
          point="org.eclipse.compare.structureCreators">
       <structureCreator
             extensions="kv"
-            class="org.eclipse.compare.examples.structurecreator.KeyValuePairStructureCreator">
+            class="org.eclipse.compare.examples.structurecreator.KeyValuePairStructureCreator"
+            id="org.eclipse.compare.examples.KeyValuePairStructureCreator">
       </structureCreator>
    </extension>
 

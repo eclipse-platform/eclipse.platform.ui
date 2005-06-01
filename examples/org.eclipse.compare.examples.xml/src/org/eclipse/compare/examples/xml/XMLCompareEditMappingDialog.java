@@ -140,22 +140,22 @@ public class XMLCompareEditMappingDialog extends StatusDialog {
 			errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_noname; 
 			isError= true;
 		} else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidname; 
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidname;  //$NON-NLS-1$
 			isError= true;
 		} else if (!fEdit && fIdmapHM != null && fIdmapHM.containsKey(mappingKey)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_mappingExists; 
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_mappingExists;  //$NON-NLS-1$
 			isError= true;
 		}
 		text= fSignatureText.getText();
 		if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidsignature; 
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalidsignature;  //$NON-NLS-1$
 			isError= true;
 		}
 		text= fIdAttributeText.getText();
 		if (text.length() == 0)
 			isError= true;
 		else if (XMLComparePreferencePage.containsInvalidCharacters(text)) {
-			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalididattribute; 
+			if (errormsg == "") errormsg= XMLCompareMessages.XMLCompareEditMappingDialog_error_invalididattribute;  //$NON-NLS-1$
 			isError= true;
 		}
 		if (isError) status.setError(errormsg);
