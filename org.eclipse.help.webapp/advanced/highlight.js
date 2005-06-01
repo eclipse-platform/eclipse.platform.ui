@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-var isSafari = navigator.userAgent.indexOf('Safari/') != -1;
+var isSafari = (navigator.userAgent.indexOf('Safari/') != -1)
+			|| (navigator.userAgent.indexOf('AppleWebKit/') != -1);
 var highlighted=false;
 var startTime;
 var MAX_DURATION=3000;
