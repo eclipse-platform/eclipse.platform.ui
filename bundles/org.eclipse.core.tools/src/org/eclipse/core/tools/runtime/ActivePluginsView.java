@@ -20,6 +20,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * View used to display the activated plugins 
@@ -149,7 +150,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		refreshAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
 		refreshAction.setToolTipText("Refresh the data"); //$NON-NLS-1$
 		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
+		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 
 		displayClassesInfoAction = new Action("Classes") { //$NON-NLS-1$
 			public void run() {

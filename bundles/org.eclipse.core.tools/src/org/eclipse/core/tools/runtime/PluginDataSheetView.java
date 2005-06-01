@@ -68,7 +68,7 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 		}
 		result.append("Extension loading stats:\n"); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
-			IExtension extension = (IExtension) extensions[i];
+			IExtension extension = extensions[i];
 			result.append('\t');
 			result.append(extension.getExtensionPointUniqueIdentifier());
 			result.append(" <- "); //$NON-NLS-1$
