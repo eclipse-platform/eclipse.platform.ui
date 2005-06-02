@@ -149,11 +149,12 @@ public class ContextHelpDialog {
 		// Correct x and y of the shell if it not contained within the screen
 		int width = shell.getBounds().width;
 		int height = shell.getBounds().height;
-		// check lower boundaries
-		x = x >= 0 ? x : 0;
-		y = y >= 0 ? y : 0;
-		// check upper boundaries
+		
 		Rectangle screen = display.getClientArea();
+		// check lower boundaries
+		x = x >= screen.x ? x : screen.x;
+		y = y >= screen.y ? y : screen.y;
+		// check upper boundaries
 		x = x + width <= screen.width ? x : screen.width - width;
 		y = y + height <= screen.height ? y : screen.height - height;
 		shell.setLocation(x, y);
