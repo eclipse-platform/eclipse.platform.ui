@@ -19,9 +19,9 @@ import org.eclipse.ui.IViewPart;
  * view. The only behavior provided by the view is a mechanism for switching 
  * between participants.
  * <p> 
- * Clients should not add viewActions to this view because they will be global
+ * Clients can not add viewActions to this view because they will be global
  * to all participants. Instead, add participant specific actions as described
- * in {@link StructuredViewerAdvisor}.
+ * in {@link org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration}.
  * </p>
  * <p>
  * Clients are not intended to implement this interface.

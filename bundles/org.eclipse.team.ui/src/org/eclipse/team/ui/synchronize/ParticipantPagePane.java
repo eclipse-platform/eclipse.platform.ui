@@ -102,8 +102,8 @@ public final class ParticipantPagePane {
 	 * Creates a part for the provided participant. The page configuration is used when creating the participant page and the resulting
 	 * compare/merge panes will be configured with the provided compare configuration.
 	 * <p>
-	 * For example, clients can decide if the user can edit the compare panes by calling {@link CompareConfiguration#setLeftEditable(boolean)}
-	 * or {@link CompareConfiguration#setRightEditable(boolean)}. 
+	 * For example, clients can decide if the user can edit the compare panes by calling {@link org.eclipse.compare.CompareConfiguration#setLeftEditable(boolean)}
+	 * or {@link org.eclipse.compare.CompareConfiguration#setRightEditable(boolean)}. 
 	 * </p>
 	 * @param shell the parent shell for this part
 	 * @param isModal to set the pane as modal or not
