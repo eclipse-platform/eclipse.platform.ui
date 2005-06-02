@@ -342,7 +342,14 @@ public class AntDebugState implements IDebugBuildLogger {
 	    
 		Target targetToExecute= getTargetToExecute();
 		Target targetExecuting= getTargetExecuting();
-        Project projectExecuting= targetExecuting.getProject();
+      
+        Project projectExecuting= null;
+        if (targetExecuting != null) {
+            projectExecuting= targetExecuting.getProject();
+        } else { //no target...must be a task
+            Task task= (Task) tasks.peek();
+            projectExecuting= task.getProject();
+        }
         
 		if (!isAfterTaskEvent()) {
 			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$

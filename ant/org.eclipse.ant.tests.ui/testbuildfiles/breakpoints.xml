@@ -32,4 +32,6 @@
 		<property name="CCC" value="ccc" />
 		<echo>all done</echo>
 	</target>
+	
+	<property name="name" value="value"/>
 </project>

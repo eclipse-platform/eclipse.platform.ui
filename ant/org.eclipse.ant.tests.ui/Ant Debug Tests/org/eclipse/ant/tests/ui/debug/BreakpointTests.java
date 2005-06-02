@@ -176,6 +176,14 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	public void testTargetBreakpoint() throws Exception {
 		breakpoints(false, "entry2", 4, 24);
 	}
+    
+    public void testTaskOutOfTargetBreakpoint() throws Exception {
+        breakpoints(false, "entry2", 36, 5);
+    }
+    
+    public void testTaskOutOfTargetBreakpointSepVm() throws Exception {
+        breakpoints(true, "entry2", 36, 5);
+    }
 	
 	public void testTargetBreakpointSepVM() throws Exception {
 		breakpoints(true, "entry2", 4, 24);
