@@ -14,8 +14,11 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,10 +58,21 @@ public class IntroExtensionContent extends AbstractIntroElement {
         this.element = element;
         this.base = base;
 
-        // load and resolve styles.
+        // load and resolve styles, first.
         init(element, bundle, base);
+
         // if content is not null we have XHTML extension.
-        content = BundleUtil.getResolvedResourceLocation(base, content, bundle);
+        if (content != null) {
+            // BASE: since content is being loaded from another XHTML file and
+            // not this xml file, point the base of this page to be relative to
+            // the new xml file location.
+            IPath subBase = ModelUtil.getParentFolderPath(content);
+            String newBase = new Path(base).append(subBase).toString();
+            content = BundleUtil.getResolvedResourceLocation(base, content,
+                bundle);
+            this.base = newBase;
+        }
+
     }
 
 

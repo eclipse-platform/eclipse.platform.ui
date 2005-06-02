@@ -306,6 +306,10 @@ public abstract class AbstractIntroElement implements Cloneable {
         this.parent = parent;
     }
 
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
     /**
      * Returns the parent page holding this intro element. For the model root
      * and the introPart presentation it returns null. For Pages, it returns the

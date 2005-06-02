@@ -175,7 +175,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
         if (launchBar != null)
             return launchBar;
         IConfigurationElement[] children = getCfgElement().getChildren(
-            "launchBar");
+            "launchBar"); //$NON-NLS-1$
         if (children.length > 0) {
             launchBar = new IntroLaunchBarElement(children[0]);
             if (children.length > 1)

@@ -43,7 +43,7 @@ public class ModelUtil {
     private static String TAG_HEAD = "head"; //$NON-NLS-1$
     private static String TAG_BASE = "base"; //$NON-NLS-1$
     public static String TAG_DIV = "div"; //$NON-NLS-1$
-    public static String TAG_HEAD_LINK = "link";
+    public static String TAG_HEAD_LINK = "link"; //$NON-NLS-1$
     private static String TAG_PARAM = "param"; //$NON-NLS-1$
     private static String ATT_SRC = "src"; //$NON-NLS-1$
     private static String ATT_HREF = "href"; //$NON-NLS-1$
@@ -239,8 +239,8 @@ public class ModelUtil {
         // insert the style, since it is not defined.
         Element styleToAdd = dom.createElement(TAG_HEAD_LINK);
         styleToAdd.setAttribute(ATT_HREF, cssUrl);
-        styleToAdd.setAttribute(ATT_REL, "stylesheet");
-        styleToAdd.setAttribute(ATT_TYPE, "text/css");
+        styleToAdd.setAttribute(ATT_REL, "stylesheet"); //$NON-NLS-1$
+        styleToAdd.setAttribute(ATT_TYPE, "text/css"); //$NON-NLS-1$
         if (styleList != null && styleList.getLength() >= 1)
             styleList.item(0).getParentNode().insertBefore(styleToAdd,
                 styleList.item(0));
@@ -422,7 +422,7 @@ public class ModelUtil {
                 return;
             // resolve the resource against the nl mechanism.
             String attributePath = BundleUtil.getResolvedResourceLocation(base,
-                bundle);
+                value, bundle);
             element.setAttribute(ATT_VALUE, attributePath);
         }
     }

@@ -85,7 +85,7 @@ public class BundleUtil {
         Bundle bundle = getBundleFromConfigurationElement(element);
         return getResolvedResourceLocation(resource, bundle, false);
     }
- 
+
 
     /**
      * Returns the fully qualified location of the passed resource string from
@@ -111,8 +111,8 @@ public class BundleUtil {
     public static String getResolvedResourceLocation(String resource,
             Bundle bundle) {
         return getResolvedResourceLocation(resource, bundle, true);
-    } 
-    
+    }
+
 
     public static String getResolvedResourceLocation(String base,
             String resource, Bundle bundle) {
@@ -121,9 +121,15 @@ public class BundleUtil {
             return null;
 
         String fullResource = new Path(base).append(resource).toString();
-        return getResolvedResourceLocation(fullResource, bundle, true);
+        String resolvedResource = getResolvedResourceLocation(fullResource,
+            bundle, true);
+
+        if (resolvedResource.equals(fullResource))
+            // return resource as is when the resource does not exist.
+            return resource;
+        return resolvedResource;
     }
-    
+
 
     public static String getResolvedResourceLocation(String resource,
             Bundle bundle, boolean forceNLResolve) {

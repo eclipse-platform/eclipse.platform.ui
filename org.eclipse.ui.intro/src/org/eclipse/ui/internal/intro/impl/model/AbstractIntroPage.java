@@ -52,6 +52,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
     private static final String INVALID_CONTENT = "invalidPage/invalidPage.xhtml"; //$NON-NLS-1$
+    private static final String INVALID_CONTENT_BASE = "invalidPage"; //$NON-NLS-1$
 
     private String style;
     private String altStyle;
@@ -419,13 +420,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             ModelUtil.extractParentFolder(introBundle, INVALID_CONTENT);
 
             String invalidContentFilePath = BundleUtil
-                .getResolvedResourceLocation(INVALID_CONTENT, IntroPlugin
-                    .getDefault().getBundle());
+                .getResolvedResourceLocation(INVALID_CONTENT, introBundle);
             parser = new IntroContentParser(invalidContentFilePath);
             dom = parser.getDocument();
-            // make sure to override content attribute to resolve the Invalid
+            // make sure to override all attributes to resolve the Invalid
             // Page page correctly.
             content = invalidContentFilePath;
+            this.base = INVALID_CONTENT_BASE;
+            setBundle(introBundle);
         }
 
         // parse content depending on type. Make sure to set the loaded flag
