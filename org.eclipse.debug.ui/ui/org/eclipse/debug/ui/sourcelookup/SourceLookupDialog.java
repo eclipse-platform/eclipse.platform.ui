@@ -12,6 +12,7 @@ package org.eclipse.debug.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupPanel;
@@ -20,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -52,7 +54,8 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 *  path to be edited
 	 */
 	public SourceLookupDialog(Shell shell, ISourceLookupDirector director) {
-		super(shell);					
+		super(shell);	
+        setShellStyle(getShellStyle() | SWT.RESIZE);
 		fDirector = director;
 	}
 	
@@ -93,6 +96,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 */
 	protected void okPressed() {
 		fPanel.performApply(null);
+        DialogSettingsHelper.persistShellGeometry(getShell(), getClass().getName());
 		super.okPressed();
 	}
 	
@@ -111,4 +115,23 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fPanel.dispose();
 		return super.close();
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+     */
+    protected Point getInitialLocation(Point initialSize) {
+        Point initialLocation= DialogSettingsHelper.getInitialLocation(getClass().getName());
+        if (initialLocation != null) {
+            return initialLocation;
+        }
+        return super.getInitialLocation(initialSize);
+    }  
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#getInitialSize()
+     */
+    protected Point getInitialSize() {
+        Point size = super.getInitialSize();
+        return DialogSettingsHelper.getInitialSize(getClass().getName(), size);
+    }    
 }
