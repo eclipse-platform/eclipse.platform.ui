@@ -40,6 +40,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -56,7 +58,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Singleton string variable manager. 
  */
-public class StringVariableManager implements IStringVariableManager {
+public class StringVariableManager implements IStringVariableManager, IPropertyChangeListener {
 	
 	/**
 	 * Dynamic variables - maps variable names to variables.
@@ -83,8 +85,9 @@ public class StringVariableManager implements IStringVariableManager {
 	 */
 	private static StringVariableManager fgManager; 
 	
-	// true during initialization code - supress change notification
-	private boolean fInitializing = false;
+	// true during internal updates indicates that change notification
+	// should be suppressed/ignored.
+	private boolean fInternalChange = false;
 	
 	// Variable extension point constants
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
@@ -190,15 +193,16 @@ public class StringVariableManager implements IStringVariableManager {
 	/**
 	 * Load contributed variables and persisted variables
 	 */
-	private void initialize() {
+	private synchronized void initialize() {
 		if (fDynamicVariables == null) {
-			fInitializing = true;
+			fInternalChange = true;
 			fDynamicVariables = new HashMap(5);
 			fValueVariables = new HashMap(5);
 			loadPersistedValueVariables();
 			loadContributedValueVariables();
 			loadDynamicVariables();
-			fInitializing = false;
+			VariablesPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+			fInternalChange = false;
 		}
 	}
 	
@@ -312,7 +316,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getVariables()
 	 */
-	public IStringVariable[] getVariables() {
+	public synchronized IStringVariable[] getVariables() {
 		initialize();
 		List list = new ArrayList(fDynamicVariables.size() + fValueVariables.size());
 		list.addAll(fDynamicVariables.values());
@@ -323,7 +327,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariables()
 	 */
-	public IValueVariable[] getValueVariables() {
+	public synchronized IValueVariable[] getValueVariables() {
 		initialize();
 		return (IValueVariable[]) fValueVariables.values().toArray(new IValueVariable[fValueVariables.size()]);
 	}
@@ -331,7 +335,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariables()
 	 */
-	public IDynamicVariable[] getDynamicVariables() {
+	public synchronized IDynamicVariable[] getDynamicVariables() {
 		initialize();
 		return (IDynamicVariable[]) fDynamicVariables.values().toArray(new IDynamicVariable[fDynamicVariables.size()]);
 	}
@@ -358,7 +362,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
-	public void addVariables(IValueVariable[] variables) throws CoreException {
+	public synchronized void addVariables(IValueVariable[] variables) throws CoreException {
 		initialize();
 		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.StringVariableManager_26, null); //$NON-NLS-1$
 		for (int i = 0; i < variables.length; i++) {
@@ -383,7 +387,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
-	public void removeVariables(IValueVariable[] variables) {
+	public synchronized void removeVariables(IValueVariable[] variables) {
 		initialize();
 		List removed = new ArrayList(variables.length);
 		for (int i = 0; i < variables.length; i++) {
@@ -400,7 +404,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariable(java.lang.String)
 	 */
-	public IDynamicVariable getDynamicVariable(String name) {
+	public synchronized IDynamicVariable getDynamicVariable(String name) {
 		initialize();
 		return (IDynamicVariable) fDynamicVariables.get(name);
 	}
@@ -408,7 +412,7 @@ public class StringVariableManager implements IStringVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariable(java.lang.String)
 	 */
-	public IValueVariable getValueVariable(String name) {
+	public synchronized IValueVariable getValueVariable(String name) {
 		initialize();
 		return (IValueVariable) fValueVariables.get(name);
 	}
@@ -493,7 +497,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * Saves the value variables currently registered in the
 	 * preference store. 
 	 */
-	private void storeValueVariables() {
+	private synchronized void storeValueVariables() {
 		Preferences prefs= VariablesPlugin.getDefault().getPluginPreferences();
 		String variableString= ""; //$NON-NLS-1$
 		if (!fValueVariables.isEmpty()) {
@@ -510,8 +514,10 @@ public class StringVariableManager implements IStringVariableManager {
 				return;
 			}
 		}
+		fInternalChange = true;
 		prefs.setValue(PREF_VALUE_VARIABLES, variableString);
 		VariablesPlugin.getDefault().savePluginPreferences();
+		fInternalChange = false;
 	}
 
 	/**
@@ -520,7 +526,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @param variable the variable that has changed
 	 */
 	protected void notifyChanged(ValueVariable variable) {
-		if (!fInitializing) {
+		if (!fInternalChange) {
 			IValueVariable existing = getValueVariable(variable.getName());
 			if (variable.equals(existing)) {
 				// do not do change notification for unregistered variables
@@ -567,4 +573,19 @@ public class StringVariableManager implements IStringVariableManager {
         }
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (PREF_VALUE_VARIABLES.equals(event.getProperty())) {
+			synchronized (this) {
+				if (!fInternalChange) {
+					fValueVariables.clear();
+					loadPersistedValueVariables();
+					loadContributedValueVariables();
+				}
+			}
+		}
+	}
 }
