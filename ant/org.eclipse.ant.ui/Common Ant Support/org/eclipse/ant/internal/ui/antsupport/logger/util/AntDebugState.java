@@ -344,31 +344,30 @@ public class AntDebugState implements IDebugBuildLogger {
 		Target targetExecuting= getTargetExecuting();
         Project projectExecuting= targetExecuting.getProject();
         
-		if (tasks.isEmpty()) {
+		if (!isAfterTaskEvent()) {
 			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
-		} else {
-			for (int i = tasks.size() - 1; i >= 0 ; i--) {
-				Task task= (Task) tasks.get(i);
-                if (task.getProject() == projectExecuting) {
-                    appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
-                } else {
-                    //sub build target dependancies
-                    String targetName= task.getOwningTarget().getName();
-                    if (targetName != null && targetName.length() != 0) { //skip for implicit target
-                        Iterator itr= fTargetsToExecute.iterator();
-                        while (itr.hasNext()) {
-                            Target target = (Target) itr.next();
-                            if (target.getProject() != projectExecuting) {
-                                continue;
-                            }
-                            marshalTargetDependancyStack(stackRepresentation, target, targetExecuting);
+		} 
+		for (int i = tasks.size() - 1; i >= 0 ; i--) {
+			Task task= (Task) tasks.get(i);
+            if (task.getProject() == projectExecuting) {
+                appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
+            } else {
+                //sub build target dependancies
+                String targetName= task.getOwningTarget().getName();
+                if (targetName != null && targetName.length() != 0) { //skip for implicit target
+                    Iterator itr= fTargetsToExecute.iterator();
+                    while (itr.hasNext()) {
+                        Target target = (Target) itr.next();
+                        if (target.getProject() != projectExecuting) {
+                            continue;
                         }
+                        marshalTargetDependancyStack(stackRepresentation, target, targetExecuting);
                     }
-                    projectExecuting= task.getProject();
-                    targetExecuting= task.getOwningTarget();
-                    appendToStack(stackRepresentation, targetExecuting.getName(), task.getTaskName(), task.getLocation());
                 }
-			}
+                projectExecuting= task.getProject();
+                targetExecuting= task.getOwningTarget();
+                appendToStack(stackRepresentation, targetExecuting.getName(), task.getTaskName(), task.getLocation());
+            }
 		}
 
 	    //target dependancy stack 
