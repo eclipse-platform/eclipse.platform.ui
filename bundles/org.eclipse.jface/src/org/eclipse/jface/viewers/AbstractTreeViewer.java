@@ -1279,11 +1279,20 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
     /**
      * Removes the given elements from this viewer.
+     * <p>
+     * EXPERIMENTAL.  Not to be used except by JDT.
+     * This method was added to support JDT's explorations
+     * into grouping by working sets, which requires viewers to support multiple 
+     * equal elements.  See bug 76482 for more details.  This support will
+     * likely be removed in Eclipse 3.2 in favour of proper support for
+     * multiple equal elements. 
+     * </p>
      * 
      * @param elements
      *           the elements to remove
+     * @since 3.1
      */
-    private void internalRemove(Object[] elements) {
+    protected void internalRemove(Object[] elements) {
         Object input = getInput();
         // Note: do not use the comparer here since the hashtable
         // contains SWT Items, not model elements.
