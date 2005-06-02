@@ -510,6 +510,9 @@ public final class AntUtil {
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public static IFile getFileForLocation(String path, File buildFileParent) {
+		if (path == null) {
+			return null;
+		}
 		IPath filePath= new Path(path);
 		IFile file = null;
 		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
