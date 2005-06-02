@@ -165,9 +165,13 @@ public class EngineResultSection {
             buff.append("<form>"); //$NON-NLS-1$
             buff.append("<p><a href=\""); //$NON-NLS-1$
             buff.append(HREF_PROGRESS);
-            buff.append("\" alt=\""); //$NON-NLS-1$
-            buff.append(Messages.EngineResultSection_progressTooltip); //$NON-NLS-1$
-            buff.append("\">"); //$NON-NLS-1$
+            buff.append("\""); //$NON-NLS-1$
+            if (Platform.getWS()!=Platform.WS_GTK) {
+            	buff.append(" alt=\""); //$NON-NLS-1$
+            	buff.append(Messages.EngineResultSection_progressTooltip); //$NON-NLS-1$
+            	buff.append("\""); //$NON-NLS-1$
+            }
+            buff.append(">"); //$NON-NLS-1$
             buff.append(Messages.EngineResultSection_searchInProgress); //$NON-NLS-1$
             buff.append("</a></p></form>"); //$NON-NLS-1$
             searchResults.setText(buff.toString(), true, false);
@@ -321,7 +325,7 @@ public class EngineResultSection {
             buff.append(part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit
                     .getHref(), false)));
             buff.append("\""); //$NON-NLS-1$
-            if (hit.getCategory() != null) {
+            if (hit.getCategory() != null && Platform.getWS()!=Platform.WS_GTK) {
                 buff.append(" alt=\""); //$NON-NLS-1$
                 buff.append(hit.getCategory().getLabel());
                 buff.append("\""); //$NON-NLS-1$
@@ -338,9 +342,12 @@ public class EngineResultSection {
                 buff.append(ahref);
                 buff.append("\"><img href=\""); //$NON-NLS-1$ 
                 buff.append(IHelpUIConstants.IMAGE_NW);
-                buff.append("\" alt=\""); //$NON-NLS-1$
-                buff.append(Messages.SearchResultsPart_nwtooltip);//$NON-NLS-1$ 
-                buff.append("\""); //$NON-NLS-1$ 
+                buff.append("\""); //$NON-NLS-1$
+                if (Platform.getWS()!=Platform.WS_GTK) {
+                	buff.append(" alt=\""); //$NON-NLS-1$
+                	buff.append(Messages.SearchResultsPart_nwtooltip);//$NON-NLS-1$ 
+                	buff.append("\""); //$NON-NLS-1$
+                }
                 buff.append("/>"); //$NON-NLS-1$ 
                 buff.append("</a>"); //$NON-NLS-1$
             }
@@ -378,9 +385,13 @@ public class EngineResultSection {
         buff.append(ahref);
         buff.append("\"><img href=\""); //$NON-NLS-1$ 
         buff.append(IHelpUIConstants.IMAGE_ADD_BOOKMARK);
-        buff.append("\" alt=\""); //$NON-NLS-1$
-        buff.append(Messages.SearchResultsPart_bmktooltip);
-        buff.append("\" text=\""); //$NON-NLS-1$
+        buff.append("\""); //$NON-NLS-1$
+        if (Platform.getWS()!=Platform.WS_GTK) {
+        	buff.append(" alt=\""); //$NON-NLS-1$
+        	buff.append(Messages.SearchResultsPart_bmktooltip);
+        	buff.append("\""); //$NON-NLS-1$
+        }
+        buff.append(" text=\""); //$NON-NLS-1$
         buff.append(part.parent.escapeSpecialChars(hit.getLabel()));
         buff.append("\""); //$NON-NLS-1$ 
         buff.append("/>"); //$NON-NLS-1$ 

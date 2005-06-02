@@ -329,9 +329,13 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append("<a href=\""); //$NON-NLS-1$
 				buff.append(hit.getHref());
-				buff.append("\" alt=\""); //$NON-NLS-1$
-				buff.append(parent.escapeSpecialChars(hit.getToc().getLabel()));
-				buff.append("\">"); //$NON-NLS-1$
+				buff.append("\""); //$NON-NLS-1$
+				if (Platform.getWS()!=Platform.WS_GTK) {
+					buff.append(" alt=\""); //$NON-NLS-1$
+					buff.append(parent.escapeSpecialChars(hit.getToc().getLabel()));
+					buff.append("\""); //$NON-NLS-1$
+				}
+				buff.append(">"); //$NON-NLS-1$
 				buff.append(parent.escapeSpecialChars(hit.getLabel()));
 				buff.append("</a>"); //$NON-NLS-1$
 				buff.append("</li>"); //$NON-NLS-1$

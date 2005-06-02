@@ -208,21 +208,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					.getSearchExpression(lastControl) : null, lastControl);
 	}
 
-//	public void handleActivation(IContext context, Control c,
-//			IWorkbenchPart part) {
-//		if (text.isDisposed())
-//			return;
-//		lastControl = c;
-//		lastContext = context;
-//		lastPart = part;
-//		lastProvider = null;
-//		String helpText = formatHelpContext(context);
-//		updateTitle(context!=null);
-//		if (getSection().isExpanded())
-//			updateText(helpText);
-//		updateDynamicHelp();
-//	}
-
 	public void handleActivation(IContextProvider provider, IContext context, 
 			Control c,
 			IWorkbenchPart part) {
@@ -445,7 +430,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
 				String tcat = getTopicCategory(link.getHref(), locale);
-				if (tcat != null) {
+				if (tcat != null && Platform.getWS()!=Platform.WS_GTK) {
 					sbuf.append("\" alt=\""); //$NON-NLS-1$
 					sbuf.append(tcat);
 				}
