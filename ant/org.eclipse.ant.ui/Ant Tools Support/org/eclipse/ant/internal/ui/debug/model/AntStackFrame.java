@@ -92,7 +92,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
         }
 	}
 	
-	protected String getFilePath() {
+	public String getFilePath() {
 		return fFullPath;
 	}
 	
