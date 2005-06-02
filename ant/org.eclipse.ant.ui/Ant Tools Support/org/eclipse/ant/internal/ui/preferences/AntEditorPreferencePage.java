@@ -416,6 +416,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	protected void handleDefaults() {
 		handleSyntaxColorListSelection();
 		restoreWorkingValuesToDefaults();
+		updateControlsForProblemReporting(!AntUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL));
 	}
 	
 	private Control createSyntaxPage(Composite parent) {
