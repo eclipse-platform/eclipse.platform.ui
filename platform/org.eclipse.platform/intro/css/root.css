@@ -153,6 +153,9 @@ a#news .background-image {
 #action-links a#workbench:focus .background-image,
 #action-links a#workbench:active .background-image {
 	visibility : visible;
+	position: absolute;
+	top: 0px;
+	right: 0px;	
 }
 /* hide the link and description until users hover over the link */
 #action-links a p .text, #action-links a .link-label {
@@ -162,6 +165,7 @@ a#news .background-image {
 #action-links a:focus .link-label,
 #action-links a:active .link-label {
 	display : block;	width : 16em;
+	margin-left : 10px;
 }
 #action-links a:hover p .text,
 #action-links a:focus p .text,
@@ -173,9 +177,3 @@ a#news .background-image {
 #action-links a:active {
 	border : 0px;
 }
-/* Styles for debugging 
-div#links-background a {
-  border: #000000 solid;}
-	
-#page-links a img {
-	border: #000000 dotted;} */
