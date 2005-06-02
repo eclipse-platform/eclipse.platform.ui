@@ -182,7 +182,7 @@ public class DeferredTreeContentManager {
                 placeholder);
         // Cancel any jobs currently fetching children for the same parent
         // instance.
-        Platform.getJobManager().cancel(new DeferredContentFamily(this, parent));
+        cancel(parent);
         String jobName = getFetchJobName(parent, adapter);
         Job job = new Job(jobName) {
             /* (non-Javadoc)
@@ -362,7 +362,7 @@ public class DeferredTreeContentManager {
      * @param parent
      */
     public void cancel(Object parent) {
-        Platform.getJobManager().cancel(parent);
+        Platform.getJobManager().cancel(new DeferredContentFamily(this, parent));
     }
 
     /**
