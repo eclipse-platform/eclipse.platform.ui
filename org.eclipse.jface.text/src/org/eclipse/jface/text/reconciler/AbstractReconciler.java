@@ -521,6 +521,12 @@ abstract public class AbstractReconciler implements IReconciler {
 
 		if (fDocument != null) {
 
+			if (!fThread.isDirty()&& fThread.isAlive())
+				aboutToBeReconciled();
+
+			if (fProgressMonitor != null && fThread.isActive())
+				fProgressMonitor.setCanceled(true);
+			
 			if (fIsIncrementalReconciler) {
 				DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), fDocument.get());
 				createDirtyRegion(e);
