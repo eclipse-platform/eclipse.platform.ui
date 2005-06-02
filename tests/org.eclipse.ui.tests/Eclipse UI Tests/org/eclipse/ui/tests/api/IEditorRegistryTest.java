@@ -295,8 +295,8 @@ public class IEditorRegistryTest extends TestCase {
 	/**
 	 * Assert that in the absence of content type, fall back to the traditional filename binding.
 	 */
-	public void testEditorContentTypeByExtWithoutContentType() {
-		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type1", null);
+	public void testEditorContentTypeByExtWithoutContentType1() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type1");
 		assertNotNull(descriptor);
 		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
 	}
@@ -304,12 +304,32 @@ public class IEditorRegistryTest extends TestCase {
 	/**
 	 * Assert that in the absence of content type, fall back to the traditional filename binding.
 	 */
-	public void testEditorContentTypeByFilenameWithoutContentType() {
-		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type1.blah", null);
+	public void testEditorContentTypeByFilenameWithoutContentType1() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type1.blah");
 		assertNotNull(descriptor);
 		assertEquals("org.eclipse.ui.tests.contentType1Editor-fallback", descriptor.getId());
 	}
     
+	/**
+	 * Assert that in the absence of content type, choose the content type
+	 * editor based on content type guess.
+	 */
+	public void testEditorContentTypeByFilenameWithoutContentType2() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("content-type2.blah");
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType2Editor", descriptor.getId());	
+	}
+	
+	/**
+	 * Assert that in the absence of content type, choose the content type
+	 * editor based on content type guess.
+	 */
+	public void testEditorContentTypeByExtWithoutContentType2() {
+		IEditorDescriptor descriptor = fReg.getDefaultEditor("blah.content-type2");
+		assertNotNull(descriptor);
+		assertEquals("org.eclipse.ui.tests.contentType2Editor", descriptor.getId());	
+	}
+	
     /**
      * Assert that IEditorRegistry.getEditors() does not return null children
      * when the default editor has been set to null.

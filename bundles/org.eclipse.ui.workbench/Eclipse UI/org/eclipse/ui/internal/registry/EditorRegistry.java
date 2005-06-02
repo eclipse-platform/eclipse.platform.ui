@@ -324,8 +324,19 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor getDefaultEditor(String filename) {
-		return getDefaultEditor(filename, null);
+		return getDefaultEditor(filename, guessAtContentType(filename));
     }
+
+	/**
+	 * Return the (approximated) content type for a file with the given name.
+	 * 
+	 * @param filename the filename
+	 * @return the content type or <code>null</code> if it could not be determined
+	 * @since 3.1
+	 */
+	private IContentType guessAtContentType(String filename) {
+		return Platform.getContentTypeManager().findContentTypeFor(filename);
+	}
 
     /**
      * Returns the default file image descriptor.
@@ -341,7 +352,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor[] getEditors(String filename) {
-		return getEditors(filename, null);
+		return getEditors(filename, guessAtContentType(filename));
 	}
 
     /*
@@ -368,7 +379,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public ImageDescriptor getImageDescriptor(String filename) {
-		return getImageDescriptor(filename, null);
+		return getImageDescriptor(filename, guessAtContentType(filename));
 	}
 
 	/**

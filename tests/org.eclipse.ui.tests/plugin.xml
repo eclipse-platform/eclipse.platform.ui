@@ -576,7 +576,7 @@
              filenames="content-type1.blah"
              icon="icons/anything.gif"
              id="org.eclipse.ui.tests.contentType1Editor-fallback"
-             name="org.eclipse.ui.tests.editor2org.eclipse.ui.tests.contentType1Editor-fallback"/>       
+             name="org.eclipse.ui.tests.contentType1Editor-fallback"/>       
       <editor
             name="Mock Matching Editor 1"
             icon="icons\mockeditorpart1.gif"
@@ -590,6 +590,14 @@
             icon="icons/binary_co.gif"
             id="org.eclipse.ui.tests.api.SessionEditorPart"
             name="SessionEditor"/>
+      <editor
+            class="org.eclipse.ui.tests.api.MockEditorPart"
+            default="false"
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.contentType2Editor"
+            name="org.eclipse.ui.tests.contentType2Editor">
+         <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type2"/>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -796,6 +804,16 @@
 				<parameter name="element" value="contentType1" />
 			</describer>
         </content-type>
+       <content-type
+             file-extensions="content-type2"
+             file-names="content-type2.blah"
+             id="content-type2"
+             name="org.eclipse.ui.tests.content-type2"
+             priority="normal">
+             <describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+				<parameter name="element" value="contentType1" />
+			</describer>
+       </content-type>
    </extension>
    		
    <extension
