@@ -264,10 +264,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		AntRunner runner= new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
-        if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-            runner.addBuildLogger(ANT_DEBUG_LOGGER_CLASS);
-        } else if (ExternalToolsUtil.getCaptureOutput(configuration)) {
-			runner.addBuildLogger(ANT_LOGGER_CLASS);
+		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
+		if (captureOutput) {
+			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+				runner.addBuildLogger(ANT_DEBUG_LOGGER_CLASS);
+			} else {
+				runner.addBuildLogger(ANT_LOGGER_CLASS);
+			}
 		} else {
 			runner.addBuildLogger(NULL_LOGGER_CLASS);
 		}
@@ -402,11 +405,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		if (separateVM) { 
 			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
-				commandLine.append(" -logger "); //$NON-NLS-1$
-				if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-					commandLine.append(REMOTE_ANT_DEBUG_LOGGER_CLASS);
-				} else if (captureOutput) {
-					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+				if (captureOutput) {
+					commandLine.append(" -logger "); //$NON-NLS-1$
+					if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+						commandLine.append(REMOTE_ANT_DEBUG_LOGGER_CLASS);
+					} else {
+						commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+					}
 				}
 			} else {
 			    fUserSpecifiedLogger= true;
@@ -481,15 +486,17 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, String antHome, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
         boolean debug= fMode.equals(ILaunchManager.DEBUG_MODE);
-		if (debug) {
-			RemoteAntDebugBuildListener listener= new RemoteAntDebugBuildListener(launch);
-			if (requestPort != -1) {
-				listener.startListening(port, requestPort);
-			}
-		} else if (captureOutput && !fUserSpecifiedLogger) {
-			RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
-			if (port != -1) {
-				client.startListening(port);
+		if (captureOutput) {
+			if (debug) {
+				RemoteAntDebugBuildListener listener= new RemoteAntDebugBuildListener(launch);
+				if (requestPort != -1) {
+					listener.startListening(port, requestPort);
+				}
+			} else if (!fUserSpecifiedLogger) {
+				RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
+				if (port != -1) {
+					client.startListening(port);
+				}
 			}
 		}
 		
