@@ -380,7 +380,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return text;
 	}
 
-	private IContext findHelpContext(Control c) {
+	public static IContext findHelpContext(Control c) {
 		String contextId = null;
 		Control node = c;
 		do {

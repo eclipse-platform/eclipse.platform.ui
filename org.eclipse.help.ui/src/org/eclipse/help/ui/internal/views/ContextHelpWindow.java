@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 93374
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -89,6 +90,10 @@ public class ContextHelpWindow extends Window implements IPageChangedListener {
 				}
 			};
 		}
+	}
+	
+	public void showSearch() {
+		helpPart.showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
 	}
 
 	private void maintainRelativePosition() {

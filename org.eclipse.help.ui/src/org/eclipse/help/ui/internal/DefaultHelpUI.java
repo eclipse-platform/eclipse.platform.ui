@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 93374
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
@@ -20,6 +21,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
+import org.eclipse.help.ui.internal.views.ContextHelpPart;
 import org.eclipse.help.ui.internal.views.ContextHelpWindow;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -145,9 +147,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				introMng.setIntroStandby(intro, true);
 			
 			IWorkbenchPage page = window.getActivePage();
+			Control c = activeShell.getDisplay().getFocusControl();
 			if (page != null) {
 				IWorkbenchPart activePart = page.getActivePart();
-				Control c = activeShell.getDisplay().getFocusControl();
 				try {
 					IViewPart part = page.showView(HELP_VIEW_ID);
 					if (part!=null) {
@@ -158,6 +160,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				}
 			}
 			else {
+				// check the dialog
+				if (activeShell!=null) {
+					Object data = activeShell.getData();
+					if (data instanceof Window) {
+						IContext context = ContextHelpPart.findHelpContext(c);
+						displayContextAsHelpPane(activeShell, context);
+						return;
+					}
+				}
 				warnNoOpenPerspective(window);
 			}
 		}
@@ -188,6 +199,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				}
 			}
 			else {
+				// check the dialog
+				if (activeShell!=null) {
+					Object data = activeShell.getData();
+					if (data instanceof Window) {
+						displayContextAsHelpPane(activeShell, null);
+						return;
+					}
+				}
 				warnNoOpenPerspective(window);
 			}
 		}
@@ -324,7 +343,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		Shell helpShell = f1Window.getShell();
 		helpShell.setText(Messages.DefaultHelpUI_wtitle);
 		helpShell.setSize(300, pbounds.height);
-		f1Window.update(context, c);
+		if (context!=null)
+			f1Window.update(context, c);
+		else
+			f1Window.showSearch();
 		if (!Platform.getWS().equals(Platform.WS_GTK))		
 			f1Window.dock(true);
 		helpShell.addDisposeListener(new DisposeListener() {
