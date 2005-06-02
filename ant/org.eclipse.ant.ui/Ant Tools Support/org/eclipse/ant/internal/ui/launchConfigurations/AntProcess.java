@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.console.IConsole;
 
 public class AntProcess extends PlatformObject implements IProcess, IProgressMonitor {
 	
-	private AntStreamsProxy fProxy = new AntStreamsProxy();
+	private AntStreamsProxy fProxy;
 	private String fLabel = null;
 	private ILaunch fLaunch = null;
 	private Map fAttributes = null;
@@ -40,6 +40,10 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 			fAttributes = new HashMap();
 		} else {
 			fAttributes = attributes;
+		}
+		String captureOutput= launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
+		if(!("false".equals(captureOutput))) { //$NON-NLS-1$
+			fProxy= new AntStreamsProxy();
 		}
 		launch.addProcess(this);
 	}
