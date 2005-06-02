@@ -217,7 +217,7 @@ public abstract class TextConsole extends AbstractConsole {
 	 * Sets the font used by this console. Specify <code>null</code> to use
 	 * the default text font.
 	 * 
-	 * @param font font, or <code>null</code> to indicate the default font
+	 * @param newFont font, or <code>null</code> to indicate the default font
 	 */
     public void setFont(Font newFont) {
         // ensure font is initialized
@@ -252,7 +252,7 @@ public abstract class TextConsole extends AbstractConsole {
 
     /**
      * Returns the console's document partitioner.
-     * @return
+     * @return The console's document partitioner
      */
     protected abstract IConsoleDocumentPartitioner getPartitioner();
     

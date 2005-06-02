@@ -142,7 +142,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * Constructs a new console with the given name, type, image and lifecycle.
 	 * 
 	 * @param name console name, cannot be <code>null</code>
-	 * @param consoleType console type identifier or <code>null</code>
+	 * @param type console type identifier or <code>null</code>
 	 * @param imageDescriptor image descriptor, or <code>null</code> if none
 	 * @param autoLifecycle whether this console's lifecycle methods should be called
 	 *  automatically when it is added (<code>initialize()</code>) and removed

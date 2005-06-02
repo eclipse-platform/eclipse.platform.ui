@@ -121,7 +121,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * Sets the color of this stream. Use <code>null</code> to indicate
      * the default color.
 	 * 
-	 * @param color color of this stream, or <code>null</code>
+	 * @param newColor color of this stream, or <code>null</code>
 	 */
 	public void setColor(Color newColor) {
 		Color old = color;

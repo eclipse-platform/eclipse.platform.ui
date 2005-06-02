@@ -29,28 +29,28 @@ public class MessageConsole extends IOConsole {
 	/**
 	 * Property constant indicating the font of this console has changed. 
 	 * 
-	 * @deprecated use {@link IConsoleConstants.P_FONT} 
+	 * @deprecated use {@link IConsoleConstants#P_FONT} 
 	 */
 	public static final String P_FONT = IConsoleConstants.P_FONT;
 	
 	/**
 	 * Property constant indicating the color of a stream has changed. 
 	 * 
-	 * @deprecated use {@link IConsoleConstants.P_STREAM_COLOR} 
+	 * @deprecated use {@link IConsoleConstants#P_STREAM_COLOR} 
 	 */
 	public static final String P_STREAM_COLOR = IConsoleConstants.P_STREAM_COLOR;
 	
 	/**
 	 * Property constant indicating tab size has changed
 	 * 
-	 * @deprecated use {@link IConsoleConstants.P_TAB_SIZE}
+	 * @deprecated use {@link IConsoleConstants#P_TAB_SIZE}
 	 */
 	public static final String P_TAB_SIZE = IConsoleConstants.P_TAB_SIZE;
 	
 	/**
 	 * The default tab size
 	 * 
-	 * @deprecated use {@link IConsoleConstants.DEFAULT_TAB_SIZE}
+	 * @deprecated use {@link IConsoleConstants#DEFAULT_TAB_SIZE}
 	 */
 	public static final int DEFAULT_TAB_SIZE = IConsoleConstants.DEFAULT_TAB_SIZE;	
 

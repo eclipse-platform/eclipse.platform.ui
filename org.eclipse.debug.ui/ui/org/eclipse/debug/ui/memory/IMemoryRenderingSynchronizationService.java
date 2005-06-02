@@ -30,7 +30,7 @@ public interface IMemoryRenderingSynchronizationService {
      * it is registered to listen for are updated.
      *
      * @param listener a property change listener
-     * @param properites properties the listener is interested in, or <code>null</code>
+     * @param properties properties the listener is interested in, or <code>null</code>
      *  to indicate all properties.
      */    
     public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties);

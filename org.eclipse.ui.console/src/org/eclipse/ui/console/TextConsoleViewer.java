@@ -505,7 +505,7 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * Sets the console to have a fixed character width. Use -1 to indicate that a fixed
      * width should not be used.
      * 
-     * @param consoleWidth fixed characater width of the console, or -1 
+     * @param width fixed characater width of the console, or -1 
      */
     public void setConsoleWidth(int width) {
         if (consoleWidth != width) {
