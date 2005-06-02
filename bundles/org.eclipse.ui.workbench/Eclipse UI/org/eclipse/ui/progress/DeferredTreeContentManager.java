@@ -52,6 +52,29 @@ public class DeferredTreeContentManager {
     AbstractTreeViewer treeViewer;
 
     IWorkbenchSiteProgressService progressService;
+    
+    /**
+     * The DeferredContentFamily is a class used to keep track of a
+     * manager-object pair so that only jobs scheduled by the receiver
+     * are cancelled by the receiver.
+     * @since 3.1
+     *
+     */
+    class DeferredContentFamily {
+    	protected DeferredTreeContentManager manager;
+		protected Object element;
+		
+		/**
+		 * Create a new instance of the receiver to define a family
+		 * for object in a particular scheduling manager.
+		 * @param schedulingManager
+		 * @param object
+		 */
+		DeferredContentFamily(DeferredTreeContentManager schedulingManager, Object object) {
+			this.manager = schedulingManager;
+			this.element = object;
+    	}
+    }
 
     /**
      * Create a new instance of the receiver using the supplied content
@@ -159,9 +182,12 @@ public class DeferredTreeContentManager {
                 placeholder);
         // Cancel any jobs currently fetching children for the same parent
         // instance.
-        Platform.getJobManager().cancel(parent);
+        Platform.getJobManager().cancel(new DeferredContentFamily(this, parent));
         String jobName = getFetchJobName(parent, adapter);
         Job job = new Job(jobName) {
+            /* (non-Javadoc)
+             * @see org.eclipse.core.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+             */
             public IStatus run(IProgressMonitor monitor) {
                 adapter.fetchDeferredChildren(parent, collector, monitor);
                 if(monitor.isCanceled())
@@ -169,17 +195,18 @@ public class DeferredTreeContentManager {
 				return Status.OK_STATUS;
             }
 
-            /**
-             * Check if the object is equal to parent or one of parents
-             * children so that the job can be cancelled if the parent is
-             * refreshed.
-             * 
-             * @param family
-             *            the potential ancestor of the current parent
-             * @return boolean
+           
+            /* (non-Javadoc)
+             * @see org.eclipse.core.jobs.Job#belongsTo(java.lang.Object)
              */
             public boolean belongsTo(Object family) {
-                return isParent(family, parent);
+            	if (family instanceof DeferredContentFamily) {
+            		DeferredContentFamily contentFamily = (DeferredContentFamily) family;
+            		if (contentFamily.manager == DeferredTreeContentManager.this)
+            			return isParent(contentFamily, parent);
+            	}
+                return false;
+               
             }
 
             /**
@@ -187,13 +214,15 @@ public class DeferredTreeContentManager {
              * this job.
              * 
              * @param family
-             *            The potential ancestor of the current parent
+             *            The DeferredContentFamily that defines a potential 
+             *            ancestor of the current parent in a particualr manager.
              * @param child
              *            The object to check against.
-             * @return boolean
+             * @return boolean <code>true</code> if the child or one of its
+             * 			  parents are the same as the element of the family.
              */
-            private boolean isParent(Object family, Object child) {
-                if (family.equals(child))
+            private boolean isParent(DeferredContentFamily family, Object child) {
+                if (family.element.equals(child))
                     return true;
                 IWorkbenchAdapter workbenchAdapter = getWorkbenchAdapter(child);
                 if (workbenchAdapter == null)
