@@ -34,10 +34,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class AntHandler extends DefaultHandler {
     /**
-     * An exception indicating that the parsing should stop. This is usually
-     * triggered when the top-level element has been found.
+     * An exception indicating that the parsing should stop.
      * 
-     * @since 3.0
+     * @since 3.1
      */
     private class StopParsingException extends SAXException {
         /**
@@ -142,6 +141,9 @@ public final class AntHandler extends DefaultHandler {
     public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
         if (fTopElementFound == null) {
             fTopElementFound = elementName;
+            if (!hasRootProjectElement()) {
+                throw new StopParsingException();
+            }
             if (attributes != null) {
                 fDefaultAttributeFound= attributes.getValue(DEFAULT_ATTRIBUTE) != null;
                 if (fDefaultAttributeFound) {
