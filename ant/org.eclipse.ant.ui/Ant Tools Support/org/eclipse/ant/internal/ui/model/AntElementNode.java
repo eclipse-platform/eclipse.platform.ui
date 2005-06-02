@@ -181,10 +181,10 @@ public class AntElementNode implements IAdaptable {
      */
     public void addChildNode(AntElementNode childElement) {
     	childElement.setParent(this);
-        if (fChildNodes == null) {
-        	fChildNodes= new ArrayList();
-        }
         synchronized (this) {
+            if (fChildNodes == null) {
+                fChildNodes= new ArrayList();
+            }
             fChildNodes.add(childElement);
         }
     }
@@ -423,8 +423,8 @@ public class AntElementNode implements IAdaptable {
 	 * @return the node that includes the offset in its source range or <code>null</code>
 	 */
 	public AntElementNode getNode(int sourceOffset) {
-		if (fChildNodes != null) {
-            synchronized (this) {
+        synchronized (this) {
+            if (fChildNodes != null) {
     			for (Iterator iter = fChildNodes.iterator(); iter.hasNext(); ) {
     				AntElementNode node = (AntElementNode) iter.next();
     				AntElementNode containingNode= node.getNode(sourceOffset);
