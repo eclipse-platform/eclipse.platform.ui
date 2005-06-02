@@ -266,10 +266,10 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		runner.setBuildFileLocation(location.toOSString());
 		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
 		if (captureOutput) {
-			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-				runner.addBuildLogger(ANT_DEBUG_LOGGER_CLASS);
+        if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+            runner.addBuildLogger(ANT_DEBUG_LOGGER_CLASS);
 			} else {
-				runner.addBuildLogger(ANT_LOGGER_CLASS);
+			runner.addBuildLogger(ANT_LOGGER_CLASS);
 			}
 		} else {
 			runner.addBuildLogger(NULL_LOGGER_CLASS);
@@ -406,12 +406,12 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		if (separateVM) { 
 			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
 				if (captureOutput) {
-					commandLine.append(" -logger "); //$NON-NLS-1$
-					if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-						commandLine.append(REMOTE_ANT_DEBUG_LOGGER_CLASS);
+				commandLine.append(" -logger "); //$NON-NLS-1$
+				if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+					commandLine.append(REMOTE_ANT_DEBUG_LOGGER_CLASS);
 					} else {
-						commandLine.append(REMOTE_ANT_LOGGER_CLASS);
-					}
+					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
+				}
 				}
 			} else {
 			    fUserSpecifiedLogger= true;
@@ -481,7 +481,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		commandLine.append(name);
 		commandLine.append('='); 
 		commandLine.append(value);
-		commandLine.append(" \""); //$NON-NLS-1$
+		commandLine.append("\""); //$NON-NLS-1$
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, String antHome, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
