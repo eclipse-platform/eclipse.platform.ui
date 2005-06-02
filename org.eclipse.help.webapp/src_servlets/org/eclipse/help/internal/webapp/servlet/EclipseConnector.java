@@ -161,6 +161,15 @@ public class EclipseConnector {
 					null, -1, url.substring("help:".length()), //$NON-NLS-1$
 					HelpURLStreamHandler.getDefault());
 		} else {
+			if (url.startsWith("jar:")) {
+				// fix for bug 83929
+				int excl = url.indexOf("!/");
+				String jar = url.substring(0, excl);
+				String path = url.length() > excl + 2 ? url.substring(excl + 2)
+						: "";
+				url = jar.replaceAll("!", "%21") + "!/"
+						+ path.replaceAll("!", "%21");
+			}
 			helpURL = new URL(url);
 		}
 		String protocol = helpURL.getProtocol();
