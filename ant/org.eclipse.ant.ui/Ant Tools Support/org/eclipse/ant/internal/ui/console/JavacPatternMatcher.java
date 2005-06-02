@@ -47,19 +47,19 @@ public class JavacPatternMatcher implements IPatternMatchListenerDelegate {
             AntUIPlugin.log(e);
             return;
         }
+
+        int numEnd = matchedText.lastIndexOf(':');
+        int numStart= matchedText.lastIndexOf(':', numEnd - 1);
         
-        int index = matchedText.indexOf("[javac]"); //$NON-NLS-1$
-        String filePath = matchedText.substring(index+7);
-        index = filePath.indexOf(':');
-        filePath = filePath.substring(0, index).trim();
+        int index = matchedText.indexOf("]"); //$NON-NLS-1$
+        String filePath = matchedText.substring(index + 1, numStart);
+        filePath = filePath.trim();
 
         int fileStart = matchedText.indexOf(filePath);
         eventOffset += fileStart;
         eventLength = filePath.length();
-
-        int numStart = matchedText.indexOf(':')+1;
-        int numEnd = matchedText.indexOf(':', numStart);
-        String lineNumberString = matchedText.substring(numStart, numEnd);
+        
+        String lineNumberString = matchedText.substring(numStart + 1, numEnd);
         int lineNumber = Integer.parseInt(lineNumberString);
             
         if (filePath == null) {
@@ -81,7 +81,5 @@ public class JavacPatternMatcher implements IPatternMatchListenerDelegate {
         } catch (BadLocationException e) {
             AntUIPlugin.log(e);
         }
-        
     }
-
 }
