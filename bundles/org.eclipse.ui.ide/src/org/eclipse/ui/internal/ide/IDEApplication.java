@@ -314,7 +314,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             boolean force) {
         URL url = null;
         do {
-            new ChooseWorkspaceDialog(shell, launchData, false).prompt(force);
+            new ChooseWorkspaceDialog(shell, launchData, false, true).prompt(force);
             String instancePath = launchData.getSelection();
             if (instancePath == null)
                 return null;

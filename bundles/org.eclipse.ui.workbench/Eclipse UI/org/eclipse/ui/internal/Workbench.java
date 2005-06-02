@@ -1244,33 +1244,56 @@ public final class Workbench implements IWorkbench {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
-		final ProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(null);
-		
-		SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
-		WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
-			
-		try {
-			progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
+        Shell shell = new Shell(Display.getCurrent(), SWT.ON_TOP);
+        try {
 
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(WorkbenchMessages.Startup_LoadingPlugins, expectedProgressCount);
-					
-					// hide splash screen now that we are showing progress.
-					// Assuming that Platform.endSplash() is idempotent.
-					Platform.endSplash();
-					
-					runnable.run();
-					
-					monitor.subTask(WorkbenchMessages.Startup_Done);
-					int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
-					monitor.worked(remainingWork);
-					Display.getCurrent().update();
-					monitor.done();
-				}});
-		} finally {
-			WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
-		}
+			final ProgressMonitorDialog progressMonitorDialog = new StartupProgressMonitorDialog(shell);
+			
+			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitorDialog.getProgressMonitor(), (int) (expectedProgressCount * cutoff));
+			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+				
+			try {
+				progressMonitorDialog.run(false, false, new IRunnableWithProgress() {
+	
+					public void run(IProgressMonitor monitor) {
+						monitor.beginTask(getProductProgressTitle(), expectedProgressCount);
+			
+						runnable.run();
+						
+						monitor.subTask(WorkbenchMessages.Startup_Done);
+						int remainingWork = expectedProgressCount - Math.min(progressCount, (int)(expectedProgressCount * cutoff));
+						monitor.worked(remainingWork);
+						Display.getCurrent().update();
+						monitor.done();
+					}});
+			} finally {
+				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
+			}
+		
+        } finally {
+            shell.dispose();
+        }
 	}
+
+	/**
+	 * 
+	 * Answer the message that will be used in the startup progress dialog 
+	 * @return the message 
+	 */
+	private String getProductProgressTitle() {
+		String productName = null;
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			productName = product.getName();
+		}
+		if (productName == null) {
+			productName = WorkbenchMessages.Startup_DefaultProductName;
+		}
+		String productStarting = NLS.bind(WorkbenchMessages.Startup_Starting,
+				productName);
+		return productStarting;
+	}
+
 
 	private void doOpenFirstTimeWindow() {
 		try {

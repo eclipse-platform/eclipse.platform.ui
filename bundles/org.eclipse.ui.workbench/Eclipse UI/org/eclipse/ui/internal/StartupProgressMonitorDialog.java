@@ -11,108 +11,96 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * This class implements a simple dialog with text and progress bar.
+ *  
+ * @since 3.1
+ *
+ */
 public class StartupProgressMonitorDialog extends ProgressMonitorDialog {
 
-	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
-
-	private Image aboutImage = null;
-
+	/**
+	 * Construct an instance of this dialog.
+	 * @param parent
+	 */
 	public StartupProgressMonitorDialog(Shell parent) {
 		super(parent);
-	}
-
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		String productName = null;
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			productName = product.getName();
-		}
-		if (productName == null) {
-			productName =  WorkbenchMessages.Startup_DefaultProductName;
-		}
-		String productStarting = NLS.bind(WorkbenchMessages.Startup_Starting,
-				productName);
-		shell.setText(productStarting);
+		setShellStyle(SWT.NONE);
 	}
 
 	protected Control createContents(Composite parent) {
 
-		IProduct product = Platform.getProduct();
-		boolean showProgressUnderImage = false;
-		// brand the about box if there is product info
-		aboutImage = null;
-		if (product != null) {
-			ImageDescriptor imageDescriptor = ProductProperties
-					.getAboutImage(product);
-			if (imageDescriptor != null)
-				aboutImage = imageDescriptor.createImage();
-
-			if (aboutImage != null) {
-				// if the about image is too large, show progress underneath
-				if (aboutImage.getBounds().width > MAX_IMAGE_WIDTH_FOR_TEXT) {
-					showProgressUnderImage = true;
-				}
-			}
-		}
-
 		Composite container = new Composite(parent, SWT.NONE);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		container.setLayoutData(gridData);
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = showProgressUnderImage ? 1 : 2;
-		//gridLayout.horizontalSpacing = 0;
+		gridLayout.numColumns = 1;
+		gridLayout.horizontalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		gridLayout.verticalSpacing = 0;
 		container.setLayout(gridLayout);
 
-		GridData data;
-		if (aboutImage != null) {
-			Label imageLabel = new Label(container, SWT.NONE);
-
-			data = new GridData();
-			data.horizontalAlignment = SWT.LEFT;
-			data.verticalAlignment = SWT.TOP;
-			data.grabExcessHorizontalSpace = false;
-			imageLabel.setLayoutData(data);
-			imageLabel.setImage(aboutImage);
-		}
-
 		Composite progressArea = new Composite(container, SWT.NONE);
 		super.createContents(progressArea);
-		
+
 		return container;
 	}
 	
-	protected Control createButtonBar(Composite parent) {
-		return null; //super.createButtonBar(parent);
+	/*
+	 * Simple dialog has no image.
+	 */
+	protected Image getImage() {
+		return null;
 	}
 
-	public boolean close() {
-		if (aboutImage != null) {
-			aboutImage.dispose();
-			aboutImage = null;
-		}
+	protected Control createDialogArea(Composite parent) {
+		Composite composite = (Composite) super.createDialogArea(parent);
+		GridData gridData = (GridData) composite.getLayoutData();
+		gridData.verticalAlignment = SWT.CENTER;
 
-		return super.close();
+		// make the subTaskLabel height be just one line
+		gridData = (GridData) subTaskLabel.getLayoutData();
+		gridData.heightHint = SWT.DEFAULT;
+		return composite;
+	}
+
+	/*
+	 * see org.eclipse.jface.Window.getInitialLocation() 
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		Composite parent = getShell().getParent();
+		
+		if (parent == null)
+			return super.getInitialLocation(initialSize);
+
+		Monitor monitor = parent.getMonitor();
+		Rectangle monitorBounds = monitor.getClientArea();
+		Point centerPoint = Geometry.centerPoint(monitorBounds);
+
+		return new Point(centerPoint.x - (initialSize.x / 2), Math.max(
+				monitorBounds.y, Math.min(centerPoint.y
+						- (initialSize.y * 2 / 3), monitorBounds.y
+						+ monitorBounds.height - initialSize.y)));
 	}
 	
-	protected Image getImage() {
-		// no image in the progress area if we have an about image
-		return aboutImage == null ? super.getImage() : null;
+	/*
+	 * Do not call super as we do not want any buttons in the button bar.
+	 */
+	protected Control createButtonBar(Composite parent) {
+		return null; 
 	}
-
 }

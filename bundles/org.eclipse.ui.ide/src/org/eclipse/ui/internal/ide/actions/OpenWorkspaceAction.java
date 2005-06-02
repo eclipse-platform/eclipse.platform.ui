@@ -96,7 +96,7 @@ public class OpenWorkspaceAction extends Action implements
         ChooseWorkspaceData data = new ChooseWorkspaceData(Platform
                 .getInstanceLocation().getURL());
         ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(window
-                .getShell(), data, true);
+                .getShell(), data, true, false);
         dialog.prompt(true);
 
         // return null if the user changed their mind
