@@ -464,7 +464,7 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param argArray the command line arguments
 	 * @exception Exception if a problem occurred during the buildfile execution
 	 * @return an exit object (<code>EXIT_OK</code>) indicating normal termination if no exception occurs
-	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
+	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object argArray) throws Exception {
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
