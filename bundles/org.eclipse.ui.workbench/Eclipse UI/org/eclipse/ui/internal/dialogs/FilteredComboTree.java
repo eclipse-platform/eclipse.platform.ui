@@ -86,21 +86,19 @@ public class FilteredComboTree extends FilteredTree {
 				String [] textValues = filterCombo.getItems();
 				String newText = filterCombo.getText();
 				
-				//Only add new entries which are not the empty string
-				if(!getFilterText().equals("")){ //$NON-NLS-1$
-					for (int i = 0; i < textValues.length; i++) {
-						if(textValues[i].equals(newText))
-							return;					
-					}
-					
-					if(textValues.length >= maxNumItems)				
-						//Discard the oldest search to get space for new search 
-						filterCombo.remove(maxNumItems-1);
-					
-					filterCombo.add(newText,0);
+				if((newText.equals(""))&&(newText .equals(initialText)))//$NON-NLS-1$
+					return;
+			
+				for (int i = 0; i < textValues.length; i++) {
+					if(textValues[i].equals(newText))
+						return;					
 				}
+					
+				if(textValues.length >= maxNumItems)				
+					//Discard the oldest search to get space for new search 
+					filterCombo.remove(maxNumItems-1);
 				
-				
+				filterCombo.add(newText,0);
 			}
 		});
 		filterCombo.addSelectionListener(new SelectionAdapter(){
