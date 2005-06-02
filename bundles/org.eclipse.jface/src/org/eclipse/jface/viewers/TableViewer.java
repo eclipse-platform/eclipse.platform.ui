@@ -1052,7 +1052,7 @@ public class TableViewer extends StructuredViewer {
 	 * and will not call the content provider to verify.
 	 * <strong>Note that this method will create a TableItem
 	 * for all of the elements provided</strong>.
-	 * @param elements
+	 * @param element
 	 * @param index
 	 * @see ILazyContentProvider
 	 * 
