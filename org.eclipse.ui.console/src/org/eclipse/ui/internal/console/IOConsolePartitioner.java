@@ -95,6 +95,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 */
 	private Object overflowLock = new Object();
 	
+    
+    private int fBuffer; 
+    
 	public IOConsolePartitioner(IOConsoleInputStream inputStream, IOConsole console) {
 		this.inputStream = inputStream;
 		this.console = console;
@@ -118,6 +121,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		inputPartitions = new ArrayList();
 		queueJob = new QueueProcessingJob();
 		queueJob.setSystem(true);
+        queueJob.setPriority(Job.INTERACTIVE);
 		queueJob.setRule(console.getSchedulingRule());
 		connected = true;
 	}
@@ -448,8 +452,19 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-				queueJob.schedule(100);
+                if (fBuffer > 1000) {
+                    queueJob.schedule();
+                } else {
+                    queueJob.schedule(100);
+                }
 			}
+            
+            if (fBuffer > 160000) { 
+                try {
+                    pendingPartitions.wait();
+                } catch (InterruptedException e) {
+                }
+            }
 		}
 	}
 	
@@ -469,6 +484,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		
 		void append(String moreText) {
 			text.append(moreText);
+            fBuffer += moreText.length();
 		}
 	}
 	
@@ -498,6 +514,8 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					synchronized(pendingPartitions) {
 						pendingCopy.addAll(pendingPartitions);
 						pendingPartitions.clear();
+                        fBuffer = 0;
+                        pendingPartitions.notifyAll();
 					}
 					
 					buffer = new StringBuffer();

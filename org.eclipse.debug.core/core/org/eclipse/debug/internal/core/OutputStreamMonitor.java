@@ -71,7 +71,6 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * given stream (connected to system out or err).
 	 */
 	public OutputStreamMonitor(InputStream stream) {
-//		fStream= new LazyInputStream(stream);
         fStream = new BufferedInputStream(stream, 8192);
 		fContents= new StringBuffer();
 	}
@@ -126,7 +125,6 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	private void read() {
 		byte[] bytes= new byte[BUFFER_SIZE];
 		int read = 0;
-		int count = 0;
 		while (read >= 0) {
 			try {
 				if (fKilled) {
@@ -140,17 +138,6 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 							fContents.append(text);
 						}
 						fireStreamAppended(text);
-					}
-					if (count == 10) {
-						try {
-						    //allow other threads to do some processing.
-						    //heavy console output can make this loop busy.
-						    Thread.sleep(10);
-						} catch (InterruptedException e) {
-						}
-						count = 0;
-					} else {
-					    count++;
 					}
 				}
 			} catch (IOException ioe) {
@@ -194,6 +181,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				}
 			}, DebugCoreMessages.OutputStreamMonitor_label); //$NON-NLS-1$
             fThread.setDaemon(true);
+            fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();
 		}
 	}
