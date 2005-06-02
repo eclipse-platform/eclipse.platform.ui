@@ -118,18 +118,6 @@ body {
 	background-position : bottom right;
 }
 
-#background-image {
-	width : 100%;
-	min-width : 770px;
-	height : 164px;
-	background-image : url(graphics/contentpage/background.jpg);
-	background-repeat : no-repeat;
-	background-position : top left;	
-	position : absolute;
-	top : 0px;
-	z-index : -100;
-}
-
 #curve-image { 
 	width : 100%;
 	height : 164px;
@@ -155,6 +143,9 @@ body, .page{
 
 .page { 
 	min-height : 475px;
+	background-image : url(graphics/contentpage/background.jpg);
+	background-repeat : no-repeat;
+	background-position : top left;	
 }
 
 #page-content {

@@ -68,7 +68,6 @@
 -->
     <page style="css/overview/overview.css" alt-style="css/overview/swt.properties" id="overview" style-id="page">
         <title style-id="intro-header">Welcome to Eclipse 3.1</title>
-        <group id="background-image" filteredFrom="swt"/>
         <group id="curve-image" filteredFrom="swt"/>
         <group id="navigation-links" filteredFrom="swt">
             <group id="page-links">
@@ -118,7 +117,6 @@
 -->
     <page style="css/tutorials/tutorials.css" alt-style="css/tutorials/swt.properties" id="tutorials" style-id="page">
         <title style-id="intro-header">Welcome to Eclipse 3.1</title>
-        <group id="background-image" filteredFrom="swt"/>
         <group id="curve-image" filteredFrom="swt"/>
         <include path="overview/navigation-links"/>
         <group id="page-content">
@@ -137,7 +135,6 @@
 -->
     <page style="css/samples/samples.css" alt-style="css/samples/swt.properties" id="samples" style-id="page">
         <title style-id="intro-header">Welcome to Eclipse 3.1</title>
-        <group id="background-image" filteredFrom="swt"/>
         <group id="curve-image" filteredFrom="swt"/>
         <include path="overview/navigation-links"/>
         <group id="page-content">
@@ -156,7 +153,6 @@
 -->
     <page style="css/whatsnew/whatsnew.css" alt-style="css/whatsnew/swt.properties" id="news" style-id="page">
         <title style-id="intro-header">Welcome to Eclipse 3.1</title>
-        <group id="background-image" filteredFrom="swt"/>
         <group id="curve-image" filteredFrom="swt"/>
         <include path="overview/navigation-links"/>
         <group id="page-content">
