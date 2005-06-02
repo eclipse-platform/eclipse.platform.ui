@@ -843,6 +843,8 @@ public class ExpandableComposite extends Composite {
 		fireExpanding(newState, true);
 		internalSetExpanded(newState);
 		fireExpanding(newState, false);
+		if (newState)
+			FormUtil.ensureVisible(this);
 	}
 
 	/**
