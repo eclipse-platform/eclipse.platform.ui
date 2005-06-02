@@ -232,5 +232,6 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 	 */
 	protected void handleDefaults() {
 		handleContentAssistColorListSelection();
+		updateAutoactivationControls();
 	}
 }
