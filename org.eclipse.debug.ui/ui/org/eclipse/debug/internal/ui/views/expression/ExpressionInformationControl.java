@@ -302,6 +302,11 @@ public class ExpressionInformationControl extends PopupInformationControl {
 	 */
 	protected void performCommand() {
 		DebugPlugin.getDefault().getExpressionManager().addExpression(exp);	
+		
+		// set exp to null since this dialog does not own the expression anymore
+		// the expression now belongs to the Expression View
+		exp = null;
+		
 		IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 		if (part == null) {
 			try {
@@ -320,6 +325,11 @@ public class ExpressionInformationControl extends PopupInformationControl {
         if (modelPresentation != null) {
             modelPresentation.dispose();
         }
-        exp.dispose();
+        
+        // expression added to Expression View
+        // the expression will be disposed when the expression is
+        // removed from the view
+        if (exp != null)
+        	exp.dispose();
     }
 }
