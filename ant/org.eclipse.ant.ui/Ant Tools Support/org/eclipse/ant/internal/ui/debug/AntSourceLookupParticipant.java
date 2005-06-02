@@ -25,7 +25,7 @@ public class AntSourceLookupParticipant extends AbstractSourceLookupParticipant 
 	 */
 	public String getSourceName(Object object) throws CoreException {
 		if (object instanceof AntStackFrame) {
-			return ((AntStackFrame)object).getSourceName();
+			return ((AntStackFrame)object).getFilePath();
 		}
         if (object instanceof String) {
             // assume it's a file name
