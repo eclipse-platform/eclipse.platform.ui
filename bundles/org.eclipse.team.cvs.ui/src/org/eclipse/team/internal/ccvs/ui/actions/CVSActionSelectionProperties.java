@@ -27,7 +27,7 @@ public class CVSActionSelectionProperties {
     // Use a weak hash map so that the properties ae collected when the selection is no longer referenced
     private static Map selectionProperties = new WeakHashMap();
     
-    private IStructuredSelection selection;
+    private Object[] selection;
     private Map properties = new HashMap();
     
     private static final String SELECTED_RESOURCES = "selectedResources"; //$NON-NLS-1$
@@ -39,17 +39,14 @@ public class CVSActionSelectionProperties {
         CVSActionSelectionProperties props = (CVSActionSelectionProperties)selectionProperties.get(selection);
         if (props == null) {
             props = new CVSActionSelectionProperties(selection);
-            selectionProperties.put(props.getSelection(), props);
+            selectionProperties.put(selection, props);
         }
         return props;
     }
     
     public CVSActionSelectionProperties(IStructuredSelection selection) {
-        this.selection = selection;
-    }
-    
-    public IStructuredSelection getSelection() {
-        return selection;
+        // Copy the selection so that the WeakHashMap will not think the seleciton used for the key is still in use
+        this.selection = selection.toArray();
     }
 
     public void put(String key, Object value) {
@@ -63,7 +60,7 @@ public class CVSActionSelectionProperties {
     public IResource[] getAllSelectedResources() {
         IResource[] resources = (IResource[])get(SELECTED_RESOURCES);
         if (resources == null) {
-            resources = getResources(selection.toArray());
+            resources = getResources(selection);
             put(SELECTED_RESOURCES, resources);
         }
         return resources;
