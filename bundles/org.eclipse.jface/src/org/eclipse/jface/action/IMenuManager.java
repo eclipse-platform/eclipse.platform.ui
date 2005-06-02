@@ -61,11 +61,13 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
     public IContributionItem findUsingPath(String path);
 
     /**
-     * Returns whether all items should be removed when the menu is first shown,
-     * but before notifying menu listeners.  The default is <code>false</code>.
-     *
-     * @return <code>true</code> if all items should be removed when shown, <code>false</code> if not 
-     */
+	 * Returns whether all items should be removed when the menu is about to
+	 * show, but before notifying menu listeners. The default is
+	 * <code>false</code>.
+	 * 
+	 * @return <code>true</code> if all items should be removed when shown,
+	 *         <code>false</code> if not
+	 */
     public boolean getRemoveAllWhenShown();
 
     /**
@@ -85,11 +87,13 @@ public interface IMenuManager extends IContributionManager, IContributionItem {
     public void removeMenuListener(IMenuListener listener);
 
     /**
-     * Sets whether all items should be removed when the menu is first shown,
-     * but before notifying menu listeners.
-     *
-     * @param removeAll <code>true</code> if all items should be removed when shown, <code>false</code> if not 
-     */
+	 * Sets whether all items should be removed when the menu is about to show,
+	 * but before notifying menu listeners.
+	 * 
+	 * @param removeAll
+	 *            <code>true</code> if all items should be removed when shown,
+	 *            <code>false</code> if not
+	 */
     public void setRemoveAllWhenShown(boolean removeAll);
 
     /**
