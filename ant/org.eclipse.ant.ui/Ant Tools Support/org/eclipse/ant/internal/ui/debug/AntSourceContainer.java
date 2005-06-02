@@ -58,10 +58,9 @@ public class AntSourceContainer extends AbstractSourceContainer {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-     * Not presented in the UI
 	 */
 	public String getName() {
-		return null;
+		return AntDebugMessages.AntSourceContainer_0;
 	}
 
 	/* (non-Javadoc)

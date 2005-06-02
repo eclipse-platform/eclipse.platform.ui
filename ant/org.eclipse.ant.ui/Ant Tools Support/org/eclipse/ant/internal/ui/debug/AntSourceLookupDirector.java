@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 
@@ -25,4 +26,11 @@ public class AntSourceLookupDirector extends AbstractSourceLookupDirector {
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[]{new AntSourceLookupParticipant()});
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
+     */
+    public String getMemento() throws CoreException {
+        return null;
+    }
 }
