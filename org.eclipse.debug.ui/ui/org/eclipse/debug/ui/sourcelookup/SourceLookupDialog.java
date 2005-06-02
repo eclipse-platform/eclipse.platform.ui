@@ -118,6 +118,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+     * @since 3.1
      */
     protected Point getInitialLocation(Point initialSize) {
         Point initialLocation= DialogSettingsHelper.getInitialLocation(getClass().getName());
@@ -129,6 +130,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#getInitialSize()
+     * @since 3.1
      */
     protected Point getInitialSize() {
         Point size = super.getInitialSize();
