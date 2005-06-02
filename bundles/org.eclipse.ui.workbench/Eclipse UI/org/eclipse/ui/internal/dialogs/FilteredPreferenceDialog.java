@@ -377,6 +377,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		
 		Composite toolbarArea=new Composite(parent, SWT.NONE);
 		GridLayout toolbarLayout = new GridLayout();
+		toolbarLayout.marginHeight = 0;
+		toolbarLayout.verticalSpacing = 0;
 		toolbarArea.setLayout(toolbarLayout);
 		toolbarArea.setLayoutData(new GridData(SWT.END, SWT.FILL, false, true));
 		Control topBar = getContainerToolBar(toolbarArea);
