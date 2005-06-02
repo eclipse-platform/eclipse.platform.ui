@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -122,6 +123,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					fos = new FileOutputStream(exportFile);
 				} catch (FileNotFoundException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
+					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
 					return false;
 				}
 				IPreferencesService service = Platform.getPreferencesService();
