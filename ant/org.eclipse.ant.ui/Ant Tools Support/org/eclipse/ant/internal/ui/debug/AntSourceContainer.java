@@ -33,6 +33,9 @@ public class AntSourceContainer extends AbstractSourceContainer {
 		fRoot = ResourcesPlugin.getWorkspace().getRoot();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+	 */
 	public Object[] findSourceElements(String path) throws CoreException {
 		ArrayList sources = new ArrayList();
 		File osFile = new File(path);
@@ -43,7 +46,6 @@ public class AntSourceContainer extends AbstractSourceContainer {
 				if (files.length > 0) {
 					for (int i = 0; i < files.length; i++) {
 						sources.add(files[i]);
-					
 					}
 				} else {
 					sources.add(new LocalFileStorage(osFile));
@@ -54,14 +56,19 @@ public class AntSourceContainer extends AbstractSourceContainer {
 		return sources.toArray();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
+     * Not presented in the UI
+	 */
 	public String getName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
+     * Not persisted via the launch configuration
+	 */
 	public ISourceContainerType getType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
