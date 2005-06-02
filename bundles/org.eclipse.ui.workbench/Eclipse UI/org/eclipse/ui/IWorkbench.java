@@ -178,7 +178,6 @@ public interface IWorkbench extends IAdaptable {
 	 * 
 	 * @return the number of open windows
 	 * @since 3.0
-	 * @issue Use getWorkbenchWindows().length?
 	 */
 	public int getWorkbenchWindowCount();
 
