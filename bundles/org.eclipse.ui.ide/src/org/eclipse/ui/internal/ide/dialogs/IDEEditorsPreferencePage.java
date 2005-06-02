@@ -19,16 +19,16 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
-import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -69,18 +69,29 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		appearanceArea.getControl().setLayoutData(data);
-		
-		Label space = new Label(composite,SWT.NONE);
-		space.setLayoutData(new GridData());
-		
+			
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
 		createShowMultipleEditorTabsPref(composite);
 		createEditorReuseGroup(composite);
 
-		createSpace(composite);
-		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, composite, ResourcesPlugin
+		
+		Composite lower = new Composite(composite,SWT.NONE);
+		GridLayout lowerLayout = new GridLayout();
+		lowerLayout.numColumns = 2;
+		lowerLayout.makeColumnsEqualWidth = true;
+		lower.setLayout(lowerLayout);
+		
+		lower.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		Composite encodingComposite = new Composite(lower,SWT.NONE);
+		encodingComposite.setLayout(new GridLayout());
+		encodingComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages.WorkbenchPreference_encoding, encodingComposite, ResourcesPlugin
 				.getWorkspace().getRoot());
 
 		encodingEditor.setPage(this);
@@ -96,7 +107,12 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 			}
 		});
 		
-		lineSeparatorEditor = new LineDelimiterEditor(composite);
+		Composite lineComposite = new Composite(lower,SWT.NONE);
+		lineComposite.setLayout(new GridLayout());
+		lineComposite.setLayoutData(new GridData(
+                GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		
+		lineSeparatorEditor = new LineDelimiterEditor(lineComposite);
 		lineSeparatorEditor.doLoad();
 
 		// @issue need IDE-level help for this page
