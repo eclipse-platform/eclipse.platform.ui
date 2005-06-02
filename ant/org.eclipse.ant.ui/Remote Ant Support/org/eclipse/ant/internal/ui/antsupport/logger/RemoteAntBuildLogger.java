@@ -325,7 +325,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
             //older Ant
             fileName= location.toString();
         }
-        if (location == Location.UNKNOWN_LOCATION) {
+        if (location.equals(Location.UNKNOWN_LOCATION)) {
             fileName= location.toString();
             lineNumber= -1;
         }

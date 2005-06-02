@@ -187,7 +187,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * @return hyper link, or <code>null</code>
 	 */
 	private IHyperlink getLocationLink(Location location) {
-		if (location != null) {
+		if (location != null && !location.equals(Location.UNKNOWN_LOCATION)) {
             try {
                 String fileName= location.getFileName();
                 IFile file= (IFile) fFileNameToIFile.get(fileName);
