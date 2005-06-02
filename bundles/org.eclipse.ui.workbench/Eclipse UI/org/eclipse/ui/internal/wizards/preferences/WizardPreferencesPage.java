@@ -311,19 +311,20 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		transfersTable.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				updateRadioButtons(e);
+				updateState(e);
 				updateDescription();
 			}
 
-			private void updateRadioButtons(SelectionEvent e) {
+			private void updateState(SelectionEvent e) {
 				if (((TableItem)e.item).getChecked()) {
 					allButton.setSelection(false);
 					chooseImportsButton.setSelection(true);
 				}
+				updatePageCompletion();
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				updateRadioButtons(e);
+				updateState(e);
 				updateDescription();
 			}
 
@@ -685,15 +686,25 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * Returns whether this page's options group's controls currently all
 	 * contain valid values.
 	 * <p>
-	 * The <code>WizardDataTransferPage</code> implementation of this method
-	 * returns <code>true</code>. Subclasses may reimplement this hook
-	 * method.
+	 * The <code>WizardPreferencesPage</code> implementation of this method
+	 * returns <code>true</code> if the button to transfer all preferences is 
+	 * selected OR at least one of the individual items are checked. Subclasses 
+	 * may reimplement this method.
 	 * </p>
 	 * 
 	 * @return <code>true</code> indicating validity of all controls in the
 	 *         options group
 	 */
 	protected boolean validateOptionsGroup() {
+		if (chooseImportsButton.getSelection()) {
+			TableItem[] items = transfersTable.getItems();
+			for (int i = 0; i < items.length; i++) {
+				TableItem item = items[i];
+				if (item.getChecked())
+					return true;
+			}
+			return false;
+		}
 		return true;
 	}
 
