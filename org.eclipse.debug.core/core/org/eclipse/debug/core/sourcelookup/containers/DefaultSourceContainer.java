@@ -73,7 +73,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
@@ -95,14 +95,14 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
 		return SourceLookupMessages.DefaultSourceContainer_0; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		ISourcePathComputer sourcePathComputer = getSourcePathComputer();

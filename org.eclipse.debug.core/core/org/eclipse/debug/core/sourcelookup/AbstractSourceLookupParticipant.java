@@ -34,21 +34,21 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	protected static final Object[] EMPTY = new Object[0]; 
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	public void init(ISourceLookupDirector director) {
 		fDirector = director;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#dispose()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#dispose()
 	 */
 	public void dispose() {
 		fDirector = null;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
 	 */
 	public Object[] findSourceElements(Object object) throws CoreException {
 		List results = null;
@@ -157,7 +157,7 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 	}

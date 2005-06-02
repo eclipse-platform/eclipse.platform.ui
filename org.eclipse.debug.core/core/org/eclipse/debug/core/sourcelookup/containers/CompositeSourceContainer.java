@@ -32,14 +32,14 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	private ISourceContainer[] fContainers;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
 	public boolean isComposite() {
 		return true;
 	}
-
+    
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
 		return findSourceElements(name, getSourceContainers());
@@ -119,7 +119,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	protected abstract ISourceContainer[] createSourceContainers() throws CoreException;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
 	public synchronized ISourceContainer[] getSourceContainers() throws CoreException {
 		if (fContainers == null) {
@@ -131,8 +131,9 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 		}
 		return fContainers;
 	}
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */
 	public void dispose() {
 		super.dispose();

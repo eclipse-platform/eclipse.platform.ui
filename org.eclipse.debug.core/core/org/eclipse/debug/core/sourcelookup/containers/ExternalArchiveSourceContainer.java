@@ -72,7 +72,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
 		name = name.replace('\\', '/');
@@ -198,13 +198,13 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
 		return fArchivePath;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);

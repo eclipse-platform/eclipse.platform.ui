@@ -42,9 +42,8 @@ public class FolderSourceContainer extends ContainerSourceContainer {
 		super(folder, subfolders);
 	}
 	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);

@@ -68,21 +68,21 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	}
 
 	/* (non-Javadoc)
-	* @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
-	*/
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
+	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
 	public boolean isComposite() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (getProject().isOpen()) {

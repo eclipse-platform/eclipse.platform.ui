@@ -183,7 +183,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2#dispose()
+	 * @see org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2#dispose()
 	 */
 	public synchronized void dispose() {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
@@ -264,7 +264,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getSourceContainers()
 	 */
 	public synchronized ISourceContainer[] getSourceContainers() {
 		if (fSourceContainers == null) {
@@ -276,18 +276,14 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#isFindDuplicates()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#isFindDuplicates()
 	 */
 	public boolean isFindDuplicates() {			
 		return fDuplicates;			
 	}
 	
-	/**
-	 * Sets whether source containers should be searched exhaustively for
-	 * applicable source elements or if only the first match should be located.
-	 * 
-	 * @param duplicates whether source containers should be searched exhaustively for
-	 *  applicable source elements or if only the first match should be located
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#setFindDuplicates(boolean)
 	 */
 	public void setFindDuplicates(boolean duplicates) {			
 		fDuplicates = duplicates;			
@@ -523,7 +519,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLookupDirector#initializeFromMemento(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2#initializeFromMemento(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
 	    dispose();
@@ -542,7 +538,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getLaunchConfiguration()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getLaunchConfiguration()
 	 */
 	public ILaunchConfiguration getLaunchConfiguration() {
 		return fConfig;
@@ -584,13 +580,13 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getParticipants()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getParticipants()
 	 */
 	public synchronized ISourceLookupParticipant[] getParticipants() {
 		return (ISourceLookupParticipant[]) fParticipants.toArray(new ISourceLookupParticipant[fParticipants.size()]);
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.core.sourcelookup.ISourceContainerType)
 	 */
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return true;
@@ -644,7 +640,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#clearSourceElements(java.lang.Object)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#clearSourceElements(java.lang.Object)
 	 */
 	public void clearSourceElements(Object element) {
 		List list = doSourceLookup(element);
@@ -656,7 +652,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#addParticipants(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant[])
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#addParticipants(org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant[])
 	 */
 	public void addParticipants(ISourceLookupParticipant[] participants) {
 		for (int i = 0; i < participants.length; i++) {
@@ -666,7 +662,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#removeParticipants(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant[])
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#removeParticipants(org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant[])
 	 */
 	public void removeParticipants(ISourceLookupParticipant[] participants) {
 		for (int i = 0; i < participants.length; i++) {
@@ -675,7 +671,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getId()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getId()
 	 */
 	public String getId() {
 		return fId;

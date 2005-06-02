@@ -48,28 +48,28 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 * 
 	 * By default, do nothing. Subclasses should override as requried.
 	 * 
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */
 	public void dispose() {
 		fDirector = null;
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() throws CoreException {
 		return new ISourceContainer[0];
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
 	public boolean isComposite() {
 		return false;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	public void init(ISourceLookupDirector director) {
 		fDirector = director;

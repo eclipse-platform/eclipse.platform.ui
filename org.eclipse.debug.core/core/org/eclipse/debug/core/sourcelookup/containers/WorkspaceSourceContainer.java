@@ -38,7 +38,7 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	}	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
 		return SourceLookupMessages.WorkspaceSourceContainer_0; //$NON-NLS-1$
@@ -59,14 +59,14 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	}
 			
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
-
+    
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();

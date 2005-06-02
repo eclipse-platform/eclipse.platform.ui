@@ -68,7 +68,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	}	
 		
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
 		return fDirectory.getName();
@@ -86,14 +86,14 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
 		ArrayList sources = new ArrayList();
@@ -127,7 +127,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
 	public boolean isComposite() {
 		return fSubfolders;
@@ -149,8 +149,9 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
+	
+    /* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (isComposite()) {
