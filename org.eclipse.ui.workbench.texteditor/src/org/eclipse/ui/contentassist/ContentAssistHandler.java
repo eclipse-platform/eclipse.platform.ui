@@ -12,8 +12,11 @@
 package org.eclipse.ui.contentassist;
 
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.contentassist.AbstractControlContentAssistSubjectAdapter;
 import org.eclipse.jface.contentassist.ComboContentAssistSubjectAdapter;
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
@@ -31,16 +35,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
-
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
@@ -64,14 +61,14 @@ public class ContentAssistHandler {
 	 */
 	private SubjectControlContentAssistant fContentAssistant;
 	/**
-	 * The currently installed HandlerSubmission, or <code>null</code> iff none installed.
+	 * The currently installed FocusListener, or <code>null</code> iff none installed.
 	 * This is also used as flag to tell whether content assist is enabled
 	 */
 	private FocusListener fFocusListener;
 	/**
-	 * The currently installed HandlerSubmission, or <code>null</code> iff none installed.
+	 * The currently installed IHandlerActivation, or <code>null</code> iff none installed.
 	 */
-	private HandlerSubmission fHandlerSubmission;
+	private IHandlerActivation fHandlerActivation;
 
 	/**
 	 * Creates a new {@link ContentAssistHandler} for the given {@link Combo}.
@@ -167,7 +164,7 @@ public class ContentAssistHandler {
 			fContentAssistSubjectAdapter.setContentAssistCueProvider(null);
 			fControl.removeFocusListener(fFocusListener);
 			fFocusListener= null;
-			if (fHandlerSubmission != null)
+			if (fHandlerActivation != null)
 				deactivateHandler();
 		}
 	}
@@ -181,13 +178,11 @@ public class ContentAssistHandler {
 			 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-				ICommand command= commandManager.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-				List bindings= command.getKeySequenceBindings();
-				if (bindings.size() == 0)
+				IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+				TriggerSequence[] activeBindings= bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+				if (activeBindings.length == 0)
 					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable;
-				IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
-				Object[] args= { ksb.getKeySequence().format() };
+				Object[] args= { activeBindings[0].format() };
 				return MessageFormat.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, args);
 			}
 		};
@@ -200,10 +195,11 @@ public class ContentAssistHandler {
 	private void installFocusListener() {
 		fFocusListener= new FocusListener() {
 			public void focusGained(final FocusEvent e) {
-				activateHandler();
+				if (fHandlerActivation == null)
+					activateHandler();
 			}
 			public void focusLost(FocusEvent e) {
-				if (fHandlerSubmission != null)
+				if (fHandlerActivation != null)
 					deactivateHandler();
 			}
 		};
@@ -214,25 +210,27 @@ public class ContentAssistHandler {
 	 * Create and register fHandlerSubmission.
 	 */
 	private void activateHandler() {
-		final IHandler handler= new AbstractHandler() {
-			public Object execute(Map parameterValuesByName) throws ExecutionException {
-				if (ContentAssistHandler.this.isEnabled())
+		IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		if (handlerService == null)
+			return;
+		
+		IHandler handler= new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				if (ContentAssistHandler.this.isEnabled()) // don't call AbstractHandler#isEnabled()!
 					fContentAssistant.showPossibleCompletions();
 				return null;
 			}
 		};
-		fHandlerSubmission= new HandlerSubmission(null, fControl.getShell(), null,
-				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM);
-		IWorkbenchCommandSupport commandSupport= PlatformUI.getWorkbench().getCommandSupport();
-		commandSupport.addHandlerSubmission(fHandlerSubmission);
+		fHandlerActivation= handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler);
 	}
 
 	/**
-	 * Unregister the {@link HandlerSubmission} from the shell.
+	 * Unregister the {@link IHandlerActivation} from the shell.
 	 */
 	private void deactivateHandler() {
-		IWorkbenchCommandSupport commandSupport= PlatformUI.getWorkbench().getCommandSupport();
-		commandSupport.removeHandlerSubmission(fHandlerSubmission);
-		fHandlerSubmission= null;
+		IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		if (handlerService != null)
+			handlerService.deactivateHandler(fHandlerActivation);
+		fHandlerActivation= null;
 	}
 }
