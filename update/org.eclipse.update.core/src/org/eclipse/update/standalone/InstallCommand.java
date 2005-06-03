@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+s * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,19 +9,38 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.standalone;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.configurator.UpdateURLDecoder;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.search.SiteSearchCategory;
+import org.eclipse.update.operations.IBatchOperation;
+import org.eclipse.update.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.search.BackLevelFilter;
+import org.eclipse.update.search.EnvironmentFilter;
+import org.eclipse.update.search.IUpdateSearchResultCollector;
+import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.UpdateSearchScope;
+import org.eclipse.update.search.VersionedIdentifiersFilter;
 
 /**
  * Command to install a feature.
@@ -92,7 +111,7 @@ public class InstallCommand extends ScriptedCommand {
 			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite(
-				"remoteSite", //$NON-NLS-1$
+				NLS.bind( Messages.InstallCommand_site, remoteSiteURL.toExternalForm()),
 				remoteSiteURL,
 				new String[0]);
 
