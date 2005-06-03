@@ -43,35 +43,23 @@ public class VariableInputDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite inner = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		inner.setLayout(layout);
-		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite inner= (Composite) super.createDialogArea(parent);
+		((GridLayout)inner.getLayout()).numColumns= 2;
 		
 		Label label = new Label(inner, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.AddVariableStringAction_2); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
-
-		Composite inputComp = new Composite(inner, SWT.NONE);
-		layout = new GridLayout(2, false);
-		inputComp.setLayout(layout);
-		inputComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fText = new Text(inputComp, SWT.SINGLE | SWT.BORDER);
+		fText = new Text(inner, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		gd.widthHint = 200;
 		fText.setLayoutData(gd);
 		
-		Button button = new Button(inputComp, SWT.PUSH); 
-		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(gd);
-		
+		Button button = new Button(inner, SWT.PUSH); 
+		button.setText(AntLaunchConfigurationMessages.AddVariableStringAction_3); //$NON-NLS-1$		
 		button.addSelectionListener(new SelectionAdapter() {
 			public  void widgetSelected(SelectionEvent se) {
 				getVariable();
@@ -86,6 +74,7 @@ public class VariableInputDialog extends Dialog {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
