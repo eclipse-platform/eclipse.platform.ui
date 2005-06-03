@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.action.Action;
@@ -68,6 +70,16 @@ public class ToggleBreakpointAction extends Action {
 			return;
 		}
 		IToggleBreakpointsTarget adapter = (IToggleBreakpointsTarget) fPart.getAdapter(IToggleBreakpointsTarget.class);
+		if (adapter == null) {
+			// attempt to force load adapter
+			IAdapterManager manager = Platform.getAdapterManager();
+			if (manager.hasAdapter(fPart, IToggleBreakpointsTarget.class.getName())) {
+				adapter = (IToggleBreakpointsTarget) manager.loadAdapter(fPart, IToggleBreakpointsTarget.class.getName());
+			}
+		}
+		if (adapter == null) {
+			return;
+		}
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
 		try {
 			IRegion region = document.getLineInformation(line);
