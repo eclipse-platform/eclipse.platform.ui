@@ -24,6 +24,8 @@ public class PlatformURLConfigConnection extends PlatformURLConnection {
 	private static boolean isRegistered = false;
 	public static final String CONFIG = "config"; //$NON-NLS-1$
 
+	private boolean parentConfiguration = false;
+
 	/**
 	 * @param url
 	 */
@@ -55,9 +57,11 @@ public class PlatformURLConfigConnection extends PlatformURLConnection {
 		if (FILE_PROTOCOL.equals(parentURL.getProtocol())) {
 			// we only support cascaded file: URLs			
 			File parentFile = new File(parentURL.getPath());
-			if (parentFile.exists())
-				// parent has the file
+			if (parentFile.exists()) {
+				// parent has the location
+				parentConfiguration = true;
 				return parentURL;
+			}
 		}
 		return localURL;
 	}
@@ -74,7 +78,7 @@ public class PlatformURLConfigConnection extends PlatformURLConnection {
 	 * @see java.net.URLConnection#getOutputStream()
 	 */
 	public OutputStream getOutputStream() throws IOException {
-		if (Platform.getConfigurationLocation().isReadOnly())
+		if (parentConfiguration || Platform.getConfigurationLocation().isReadOnly())
 			throw new UnknownServiceException(NLS.bind(Messages.url_noOutput, url));
 		//This is not optimal but connection is a private ivar in super.
 		URL resolved = getResolvedURL();

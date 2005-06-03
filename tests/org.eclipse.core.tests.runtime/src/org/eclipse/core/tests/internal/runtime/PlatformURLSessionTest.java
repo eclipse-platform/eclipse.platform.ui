@@ -23,6 +23,7 @@ public class PlatformURLSessionTest extends RuntimeTest {
 	private static final String CONFIG_URL = "platform:/config/" + PI_RUNTIME_TESTS + "/";
 	private static final String DATA_CHILD = "child";
 	private static final String DATA_PARENT = "parent";
+	private static final String FILE_ANOTHER_PARENT_ONLY = "parent2.txt";
 	private static final String FILE_BOTH_PARENT_AND_CHILD = "both.txt";
 	private static final String FILE_CHILD_ONLY = "child.txt";
 	private static final String FILE_PARENT_ONLY = "parent.txt";
@@ -86,49 +87,76 @@ public class PlatformURLSessionTest extends RuntimeTest {
 		super(name);
 	}
 
-	/**
-	 * Creates test data in both child and parent configurations.
-	 */
-	public void test0CreateData() {
+	private void createData(String tag) {
+		// create some data for this and following test cases
 		URL childConfigURL = Platform.getConfigurationLocation().getURL();
 		//tests run with file based configuration
-		assertEquals("0.1", "file", childConfigURL.getProtocol());
+		assertEquals(tag + ".1", "file", childConfigURL.getProtocol());
 		File childConfigPrivateDir = new File(childConfigURL.getPath(), PI_RUNTIME_TESTS);
 		try {
 			createFileInFileSystem(new File(childConfigPrivateDir, FILE_CHILD_ONLY), getContents(DATA_CHILD));
-		} catch (IOException e) {
-			fail("1.0");
-		}
-		try {
 			createFileInFileSystem(new File(childConfigPrivateDir, FILE_BOTH_PARENT_AND_CHILD), getContents(DATA_CHILD));
 		} catch (IOException e) {
-			fail("2.0");
+			fail(tag + ".2", e);
 		}
 
 		Location parent = Platform.getConfigurationLocation().getParentLocation();
 		//tests run with cascaded configuration
-		assertNotNull("4.0", parent);
+		assertNotNull(tag + ".3", parent);
 		URL parentConfigURL = parent.getURL();
 		//tests run with file based configuration
-		assertEquals("4.1", "file", parentConfigURL.getProtocol());
+		assertEquals(tag + ".4", "file", parentConfigURL.getProtocol());
 		File parentConfigPrivateDir = new File(parentConfigURL.getPath(), PI_RUNTIME_TESTS);
 		try {
 			createFileInFileSystem(new File(parentConfigPrivateDir, FILE_PARENT_ONLY), getContents(DATA_PARENT));
-		} catch (IOException e) {
-			fail("5.0");
-		}
-		try {
+			createFileInFileSystem(new File(parentConfigPrivateDir, FILE_ANOTHER_PARENT_ONLY), getContents(DATA_PARENT));
 			createFileInFileSystem(new File(parentConfigPrivateDir, FILE_BOTH_PARENT_AND_CHILD), getContents(DATA_PARENT));
 		} catch (IOException e) {
-			fail("6.0");
+			fail(tag + ".5", e);
+		}
+	}
+
+	/**
+	 * Creates test data in both child and parent configurations.
+	 */
+	public void test0FirstSession() {
+		createData("1");
+
+		// try to modify a file in the parent configuration area  - should fail
+		URL configURL = null;
+		try {
+			configURL = new URL(CONFIG_URL + FILE_ANOTHER_PARENT_ONLY);
+		} catch (MalformedURLException e) {
+			fail("2.0", e);
+		}
+		URLConnection connection = null;
+		try {
+			connection = configURL.openConnection();
+		} catch (IOException e) {
+			fail("3.0", e);
+		}
+		connection.setDoOutput(true);
+		OutputStream output = null;
+		try {
+			output = connection.getOutputStream();
+			fail("4.0 - should have failed");
+		} catch (IOException e) {
+			// that is expected - parent configuration area is read-only
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// not interested
+				}
 		}
 	}
 
 	public void test1OutputOnReadOnly() {
-		// try to modify a file in the configuration area  -should fail
+		// try to modify a file in the configuration area  - should fail
 		URL configURL = null;
 		try {
-			configURL = new URL(CONFIG_URL + "somefile.txt");
+			configURL = new URL(CONFIG_URL + FILE_CHILD_ONLY);
 		} catch (MalformedURLException e) {
 			fail("1.0", e);
 		}
