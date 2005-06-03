@@ -45,13 +45,19 @@ public class Worker extends Thread {
 
 	private void log(IStatus result) {
 		try {
-			InternalPlatform.getDefault().log(result);
+			//if job is running after shudown, it has already been logged
+			final InternalPlatform platform = InternalPlatform.getDefault();
+			if (platform.isRunning()) {
+				platform.log(result);
+				return;
+			}
 		} catch (RuntimeException e) {
-			//failed to log, so print to console instead
-			Throwable t = result.getException();
-			if (t != null)
-				t.printStackTrace();
+			//fall through below
 		}
+		//failed to log, so print to console instead
+		Throwable t = result.getException();
+		if (t != null)
+			t.printStackTrace();
 	}
 
 	public void run() {
