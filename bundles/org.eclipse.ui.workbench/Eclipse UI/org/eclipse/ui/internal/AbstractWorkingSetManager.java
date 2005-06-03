@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
@@ -474,7 +475,10 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     //---- working set delta handling -------------------------------------------------
     
 	public void bundleChanged(BundleEvent event) {
-		if (event.getType() != BundleEvent.STARTED)
+		if (event.getBundle().getState() != Bundle.ACTIVE)
+				return;		
+		// If the workbench isn't running anymore simply return.
+		if (!Workbench.getInstance().isRunning())
 			return;
 		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault()
         	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
