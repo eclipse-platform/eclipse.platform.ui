@@ -110,7 +110,10 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String GlobalBuildAction_rebuildAllOperationTitle;
 	public static String GlobalBuildAction_jobTitle;
 
+	public static String BuildSetAction_noBuildTitle;
+	public static String BuildSetAction_noProjects;
 
+	
 	// --- Window Menu ---
 	public static String Workbench_window;
 	public static String Workbench_openPerspective;
@@ -836,7 +839,4 @@ public class IDEWorkbenchMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
 	}
-
-
-	
 }
