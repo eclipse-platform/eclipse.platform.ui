@@ -76,6 +76,19 @@ public class SteppingTests extends AbstractAntDebugTest {
 	 public void testStepOverAntCallSepVM() throws Exception {
 		 antCallStack(true, 5, DebugEvent.STEP_OVER, "default: echo", 7);
 	 }
+     
+     /**
+      * bug 96022
+      */
+     public void testStepOverAntCallPastOtherAntCalls() throws Exception {
+         debugStack(false, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true);
+     }
+     /**
+      * bug 96022
+      */
+     public void testStepOverAntCallPastOtherAntCallsSepVm() throws Exception {
+        debugStack(true, 7, DebugEvent.STEP_OVER, "default: echo", 9, "96022", true);
+     }
 	 
 	 public void testStepOverAntCallHitBreakpoint() throws Exception {
 		 String fileName = "debugAntCall";

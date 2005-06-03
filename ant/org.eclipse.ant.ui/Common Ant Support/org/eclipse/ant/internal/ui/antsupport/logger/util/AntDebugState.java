@@ -25,7 +25,11 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MacroInstance;
 
-public class AntDebugState implements IDebugBuildLogger {
+public class AntDebugState {
+    
+    private static final String fgAntTaskName= "ant"; //$NON-NLS-1$
+    private static final String fgAntCallTaskName= "antcall"; //$NON-NLS-1$
+    
 	private IDebugBuildLogger fLogger;
 	private Stack fTasks= new Stack();
 	private Task fCurrentTask;
@@ -218,7 +222,7 @@ public class AntDebugState implements IDebugBuildLogger {
         String taskName= lastTask.getTaskName();
        
         if (getStepOverTask() != null) {
-        	if ("antcall".equals(taskName) || "ant".equals(taskName)) { //$NON-NLS-1$ //$NON-NLS-2$
+        	if ((fgAntCallTaskName.equals(taskName) || fgAntTaskName.equals(taskName)) && (!fgAntCallTaskName.equals(getStepOverTask().getTaskName()) && !fgAntTaskName.equals(getStepOverTask().getTaskName()))) {
         		setShouldSuspend(true);
         	} else if (lastTask.getRuntimeConfigurableWrapper().getProxy() instanceof MacroInstance) {
         		setShouldSuspend(true);
