@@ -83,6 +83,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	    public DebugRequestJob(String name) {
 	        super(name);
 	        setPriority(Job.INTERACTIVE);
+	        setSystem(true);
 	    }
 	    
         /* (non-Javadoc)
