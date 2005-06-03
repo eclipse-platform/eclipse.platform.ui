@@ -56,6 +56,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	public UserValidationDialog(Shell parentShell, String location, String defaultName, String message) {
 		super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.defaultUsername = defaultName;
 		this.domain = location;
 		this.message = message;
