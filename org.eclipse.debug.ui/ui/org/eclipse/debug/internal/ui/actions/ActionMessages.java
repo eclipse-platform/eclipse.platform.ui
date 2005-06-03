@@ -153,4 +153,6 @@ public class ActionMessages extends NLS {
     public static String AssignValueAction_5;
 
 	public static String AbstractDebugActionDelegate_0;
+
+	public static String AbstractDebugActionDelegate_1;
 }

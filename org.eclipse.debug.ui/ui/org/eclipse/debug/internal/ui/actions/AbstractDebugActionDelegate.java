@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -36,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, IActionDelegate2, ISelectionListener, INullSelectionListener {
 	
@@ -69,6 +71,47 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * Background job for this action, or <code>null</code> if none.
 	 */
 	private DebugRequestJob fBackgroundJob = null;
+	
+	/**
+	 * Background job to update enablement. 
+	 */
+	private UpdateEnablementJob fUpdateEnablementJob = new UpdateEnablementJob(); 
+	
+	/**
+	 * Used to schedule jobs, or <code>null</code> if none
+	 */
+	private IWorkbenchSiteProgressService fProgressService = null;
+	
+	class UpdateEnablementJob extends Job {
+		
+		IAction targetAction = null;
+		ISelection targetSelection = null;
+		
+		public UpdateEnablementJob() {
+			super(ActionMessages.AbstractDebugActionDelegate_1);
+			setPriority(Job.INTERACTIVE);
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			IAction action = null;
+			ISelection selection = null;
+			synchronized (this) {
+				action = targetAction;
+				selection = targetSelection; 
+			}
+			update(action, selection);
+			return Status.OK_STATUS;
+		}
+		
+		public synchronized void setTargets(IAction action, ISelection selection) {
+			targetAction = action;
+			targetSelection = selection;
+		}
+	}
 	
 	class DebugRequestJob extends Job {
 	    
@@ -176,7 +219,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			fBackgroundJob = new DebugRequestJob(DebugUIPlugin.removeAccelerators(action.getText()));
 	    }
 	    fBackgroundJob.setTargets(selection.toArray());
-		fBackgroundJob.schedule();
+	    schedule(fBackgroundJob);
 	}
 	
 	/**
@@ -247,7 +290,12 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
 			if (getView() != null) {
-				update(action, s);
+				if (isRunInBackground()) {
+					fUpdateEnablementJob.setTargets(action, s);
+					schedule(fUpdateEnablementJob);
+				} else {
+					update(action, s);
+				}
 			}
 		}
 	}
@@ -292,6 +340,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	public void init(IViewPart view) {
 		fViewPart = view;
+		fProgressService = (IWorkbenchSiteProgressService) view.getAdapter(IWorkbenchSiteProgressService.class);
 	}
 	
 	/**
@@ -355,7 +404,12 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		update(getAction(), selection);
+		if (isRunInBackground()) {
+			fUpdateEnablementJob.setTargets(getAction(), selection);
+			schedule(fUpdateEnablementJob);
+		} else {
+			update(getAction(), selection);
+		}
 	}
 	
 	protected void setAction(IAction action) {
@@ -418,5 +472,18 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
+	}
+	
+	/**
+	 * Schedules the given job with this action's progress service
+	 * 
+	 * @param job
+	 */
+	private void schedule(Job job) {
+		if (fProgressService == null) {
+			job.schedule();
+		} else {
+			fProgressService.schedule(job);
+		}
 	}
 }
