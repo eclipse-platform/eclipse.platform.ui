@@ -224,8 +224,17 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void flush() {
-		if (fIsOpen && fActiveOperation != null) {
-			fOperationHistroy.closeOperation(false, false, IOperationHistory.EXECUTE);
+		if (fActiveOperation != null) {
+			if (fIsOpen) {
+				fOperationHistroy.closeOperation(false, false, IOperationHistory.EXECUTE);
+			}
+			/* the triggering operation is invalid, but we must ensure that any
+	         * other operations executed while it was open remain in the undo
+	         * history.  We accomplish this by adding the invalid operation,
+	         * since disposing the context later will cause it to be broken up into
+	         * its atomic parts.
+	         */
+			fOperationHistroy.add(fActiveOperation);
 		}
 		fActiveOperation= null;
 		fIsOpen= false;
