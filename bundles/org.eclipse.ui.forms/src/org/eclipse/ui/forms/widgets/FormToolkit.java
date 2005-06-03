@@ -399,12 +399,28 @@ public class FormToolkit {
 	public void adapt(Control control, boolean trackFocus, boolean trackKeyboard) {
 		control.setBackground(colors.getBackground());
 		control.setForeground(colors.getForeground());
+		if (control instanceof ExpandableComposite) {
+			ExpandableComposite ec = (ExpandableComposite)control;
+			if (ec.toggle != null) {
+				if (trackFocus)
+					ec.toggle.addFocusListener(visibilityHandler);
+				if (trackKeyboard)
+					ec.toggle.addKeyListener(keyboardHandler);
+			}
+			if (ec.textLabel != null) {
+				if (trackFocus)
+					ec.textLabel.addFocusListener(visibilityHandler);
+				if (trackKeyboard)
+					ec.textLabel.addKeyListener(keyboardHandler);
+			}
+			return;
+		}
 		if (trackFocus)
 			control.addFocusListener(visibilityHandler);
 		if (trackKeyboard)
 			control.addKeyListener(keyboardHandler);
 	}
-
+	
 	/**
 	 * Adapts a composite to be used in a form associated with this toolkit.
 	 * 
@@ -445,16 +461,9 @@ public class FormToolkit {
 	 */
 	public Section createSection(Composite parent, int sectionStyle) {
 		Section section = new Section(parent, orientation, sectionStyle);
-		section.setBackground(colors.getBackground());
-		section.setForeground(colors.getForeground());
 		section.setMenu(parent.getMenu());
-		if (section.textLabel != null) {
-			section.textLabel.addFocusListener(visibilityHandler);
-			section.textLabel.addKeyListener(keyboardHandler);
-		}
+		adapt(section, true, true);
 		if (section.toggle != null) {
-			section.toggle.addFocusListener(visibilityHandler);
-			section.toggle.addKeyListener(keyboardHandler);
 			section.toggle.setHoverDecorationColor(colors
 					.getColor(FormColors.TB_TOGGLE_HOVER));
 			section.toggle.setDecorationColor(colors
@@ -488,17 +497,7 @@ public class FormToolkit {
 		ExpandableComposite ec = new ExpandableComposite(parent, orientation,
 				expansionStyle);
 		ec.setMenu(parent.getMenu());
-		ec.setBackground(colors.getBackground());
-		ec.setForeground(colors.getForeground());
-		// hyperlinkGroup.add(ec.textLabel);
-		if (ec.toggle != null) {
-			ec.toggle.addFocusListener(visibilityHandler);
-			ec.toggle.addKeyListener(keyboardHandler);
-		}
-		if (ec.textLabel != null) {
-			ec.textLabel.addFocusListener(visibilityHandler);
-			ec.textLabel.addKeyListener(keyboardHandler);
-		}
+		adapt(ec, true, true);
 		ec.setFont(boldFontHolder.getBoldFont(ec.getFont()));
 		return ec;
 	}
