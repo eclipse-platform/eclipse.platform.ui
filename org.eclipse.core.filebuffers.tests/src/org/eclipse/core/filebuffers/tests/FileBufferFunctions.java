@@ -60,6 +60,10 @@ public abstract class FileBufferFunctions extends TestCase {
 		fPath= createPath(fProject);
 	}
 	
+	protected IProject getProject() {
+		return fProject;
+	}
+	
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 	}

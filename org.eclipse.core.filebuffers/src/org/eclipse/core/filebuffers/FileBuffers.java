@@ -15,7 +15,6 @@ import java.io.File;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -68,30 +67,43 @@ public final class FileBuffers {
 	}
 
 	/**
-	 * Returns a copy of the given location in a normalized form.
-	 *
-	 * @param location the location to be normalized
-	 * @return normalized copy of location
+	 * Returns the normalized form of the given path or location.
+	 * <p>
+	 * The normalized form is defined as follows:
+	 * </p>
+	 * <ul>
+	 * <li><b>Existing Workspace Files:</b> For a path or location for
+	 * which there
+	 * {@link org.eclipse.core.resources.IContainer#exists(org.eclipse.core.runtime.IPath) exists}
+	 * a workspace file, the normalized form is that file's workspace
+	 * relative, absolute path as returned by
+	 * {@link IFile#getFullPath()}.</li>
+	 * <li><b>Non-existing Workspace Files:</b> For a path to a
+	 * non-existing workspace file, the normalized form is the
+	 * {@link IPath#makeAbsolute() absolute} form of the path.</li>
+	 * <li><b>External Files:</b> For a location for which there
+	 * exists no workspace file, the normalized form is the
+	 * {@link IPath#makeAbsolute() absolute} form of the location.</li>
+	 * </ul>
+	 * 
+	 * @param pathOrLocation the path or location to be normalized
+	 * @return the normalized form of <code>pathOrLocation</code>
 	 */
-	public static IPath normalizeLocation(IPath location) {
+	public static IPath normalizeLocation(IPath pathOrLocation) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IProject[] projects= workspaceRoot.getProjects();
 
-		for (int i= 0, length= projects.length; i < length; i++) {
-			if (projects[i].isAccessible()) {
-				IPath path= projects[i].getLocation();
-				if (path != null && path.isPrefixOf(location)) {
-					IPath filePath= location.removeFirstSegments(path.segmentCount());
-					filePath= projects[i].getFullPath().append(filePath);
-					filePath= filePath.makeAbsolute();
-					IFile file= workspaceRoot.getFile(filePath);
-					if (file != null && file.exists())
-						return filePath;
-					break;
-				}
-			}
-		}
-		return location.makeAbsolute();
+		// existing workspace resources - this is the 93% case
+		if (workspaceRoot.exists(pathOrLocation))
+			return pathOrLocation.makeAbsolute();
+
+		IFile file= workspaceRoot.getFileForLocation(pathOrLocation);
+		// existing workspace resources referenced by their file system path
+		// files that do not exist (including non-accessible files) do not pass
+		if (file != null && file.exists())
+			return file.getFullPath();
+
+		// non-existing resources and external files
+		return pathOrLocation.makeAbsolute();
 	}
 
 	/**

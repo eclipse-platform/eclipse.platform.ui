@@ -32,6 +32,7 @@ public class FileBuffersTestSuite {
 		suite.addTestSuite(FileBuffersForFilesInLinkedFolders.class);
 		suite.addTestSuite(FileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileBuffersForNonExistingWorkspaceFiles.class);
+		suite.addTestSuite(FileBuffersForNonAccessibleWorkspaceFiles.class);
 		//$JUnit-END$
 		return suite;
 	}
