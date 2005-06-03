@@ -108,9 +108,17 @@ public class AddCustomDialog extends StatusDialog {
 		Composite topComposite= (Composite) super.createDialogArea(parent);
 		topComposite.setSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		createNameGroup(topComposite);
-		new Label(topComposite, SWT.NULL);
-		createRootDirectoryGroup(topComposite);
+		Composite topGroup = new Composite(topComposite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		topGroup.setLayout(layout);
+		topGroup.setFont(topComposite.getFont());
+		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+        
+		createNameGroup(topGroup);
+		createRootDirectoryGroup(topGroup);
 		createFileSelectionGroup(topComposite);
 		
 		if (library != null) {
@@ -119,21 +127,12 @@ public class AddCustomDialog extends StatusDialog {
 		return topComposite;
 	}
 	
-	private void createNameGroup(Composite topComposite) {
-		Composite nameContainerGroup = new Composite(topComposite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		nameContainerGroup.setLayout(layout);
-		nameContainerGroup.setFont(topComposite.getFont());
-		nameContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		
-		Label label = new Label(nameContainerGroup, SWT.NONE);
+	private void createNameGroup(Composite topComposite) {		
+		Label label = new Label(topComposite, SWT.NONE);
 		label.setFont(topComposite.getFont());
 		label.setText(AntPreferencesMessages.AddCustomDialog__Name__3); //$NON-NLS-1$
 		
-		nameField = new Text(nameContainerGroup, SWT.BORDER);
+		nameField = new Text(topComposite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 	
@@ -184,22 +183,12 @@ public class AddCustomDialog extends StatusDialog {
 	 *	Create the group for creating the root directory
 	 */
 	private void createRootDirectoryGroup(Composite parent) {
-		Composite sourceContainerGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight=0;
-		layout.marginWidth=0;
-		
-		sourceContainerGroup.setLayout(layout);
-		sourceContainerGroup.setFont(parent.getFont());
-		sourceContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-
-		Label groupLabel = new Label(sourceContainerGroup, SWT.NONE);
+		Label groupLabel = new Label(parent, SWT.NONE);
 		groupLabel.setText(AntPreferencesMessages.AddCustomDialog__Location); //$NON-NLS-1$
 		groupLabel.setFont(parent.getFont());
 
 		// source name entry field
-		sourceNameField = new Combo(sourceContainerGroup, SWT.BORDER | SWT.READ_ONLY);
+		sourceNameField = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		sourceNameField.setLayoutData(data);
@@ -216,7 +205,7 @@ public class AddCustomDialog extends StatusDialog {
 			ClasspathEntry entry = (ClasspathEntry) libraries.next();
 			sourceNameField.add(entry.getLabel());
 		}
-
+		
 		sourceNameField.addKeyListener(new KeyAdapter() {
 			/*
 			 * @see KeyListener.keyPressed
