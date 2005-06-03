@@ -68,6 +68,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		glayout.marginWidth = glayout.marginHeight = 0;
 		glayout.numColumns = 2;
 		client.setLayout(glayout);
+		client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		
 		SelectionListener choiceListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

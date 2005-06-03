@@ -46,7 +46,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 		layout.topMargin = 5;
 		layout.leftMargin = 5;
 		layout.rightMargin = 2;
-		layout.bottomMargin = 2;
+		//layout.bottomMargin = 2;
 		parent.setLayout(layout);
 
 		FormToolkit toolkit = mform.getToolkit();
@@ -59,6 +59,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 		s1.setLayoutData(td);
 		toolkit.createCompositeSeparator(s1);
 		Composite client = toolkit.createComposite(s1);
+		client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		GridLayout glayout = new GridLayout();
 		glayout.marginWidth = glayout.marginHeight = 0;
 		client.setLayout(glayout);
