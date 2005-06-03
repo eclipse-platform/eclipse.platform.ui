@@ -573,6 +573,15 @@ href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.1
+      </documentation>
+   </annotation>
+   
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
