@@ -487,11 +487,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="%category.view.name"
-            description="%category.view.description"
-            id="org.eclipse.ui.category.views">
-      </category>
-      <category
             name="%category.project.name"
             description="%category.project.description"
             id="org.eclipse.ui.category.project">
@@ -500,17 +495,6 @@
             name="%category.perspective.name"
             description="%category.perspective.description"
             id="org.eclipse.ui.category.perspectives" />
-      <command
-      		name="%command.showView.name"
-      		description="%command.showView.description"
-      		categoryId="org.eclipse.ui.category.views"
-      		id="org.eclipse.ui.views.showView"
-      		defaultHandler="org.eclipse.ui.handlers.ShowViewHandler">
-      		<commandParameter
-      			id="org.eclipse.ui.views.showView.viewId"
-      			name="%command.showView.viewIdParameter"
-      			values="org.eclipse.ui.internal.ide.registry.ViewParameterValues" />
-      </command>
       <command
       		name="%command.showPerspective.name"
       		description="%command.showPerspective.description"
@@ -691,6 +675,30 @@
             <parameter 
             	id="org.eclipse.ui.views.showView.viewId" 
             	value="org.eclipse.ui.views.ProblemView" />
+      </key>
+      <key
+            sequence="M2+M3+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+            	id="org.eclipse.ui.views.showView.viewId"
+            	value="org.eclipse.ui.views.ContentOutline" />
+      </key>
+      <key
+            platform="carbon"
+            sequence="M2+M3+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M1+M3+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+            	id="org.eclipse.ui.views.showView.viewId" 
+            	value="org.eclipse.ui.views.ContentOutline" />
       </key>
    </extension>
 

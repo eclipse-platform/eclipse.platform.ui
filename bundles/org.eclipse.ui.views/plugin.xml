@@ -19,33 +19,5 @@
             id="org.eclipse.ui.views.ContentOutline">
       </view>
    </extension>
-
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            sequence="M2+M3+Q O"
-            contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.showView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-            <parameter
-            	id="org.eclipse.ui.views.showView.viewId"
-            	value="org.eclipse.ui.views.ContentOutline" />
-      </key>
-      <key
-            platform="carbon"
-            sequence="M2+M3+Q O"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
-            platform="carbon"
-            sequence="M1+M3+Q O"
-            contextId="org.eclipse.ui.contexts.window"
-            commandId="org.eclipse.ui.views.showView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-            <parameter
-            	id="org.eclipse.ui.views.showView.viewId" 
-            	value="org.eclipse.ui.views.ContentOutline" />
-      </key>
-   </extension>
    
 </plugin>

@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.ide.registry;
+package org.eclipse.ui.internal.registry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.IParameterValues;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -28,7 +28,7 @@ public final class ViewParameterValues implements IParameterValues {
 	public final Map getParameterValues() {
 		final Map values = new HashMap();
 
-		final IViewDescriptor[] views = WorkbenchPlugin.getDefault()
+		final IViewDescriptor[] views = PlatformUI.getWorkbench()
 				.getViewRegistry().getViews();
 		for (int i = 0; i < views.length; i++) {
 			final IViewDescriptor view = views[i];
