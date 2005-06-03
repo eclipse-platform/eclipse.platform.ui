@@ -3,6 +3,9 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
    name="Eclipse Platform Team/CVS">
+   
+ <component-depends unrestricted="true"/>
+
  <plugin id="org.eclipse.team.core" />
  <plugin id="org.eclipse.team.ui" />
  <plugin id="org.eclipse.team.cvs.core" />
