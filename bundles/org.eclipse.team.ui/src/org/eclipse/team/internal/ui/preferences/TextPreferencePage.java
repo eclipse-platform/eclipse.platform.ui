@@ -132,8 +132,6 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	protected Control createContents(Composite parent) {
 		
-		// set F1 help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.FILE_TYPE_PREFERENCE_PAGE);
 		initializeDialogUnits(parent);	
 		
 		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
@@ -209,6 +207,10 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		});
 		
 		Dialog.applyDialogFont(parent);
+        
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.FILE_TYPE_PREFERENCE_PAGE);
+        
 		return composite;
 	}
 	

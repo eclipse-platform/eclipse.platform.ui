@@ -45,7 +45,7 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 		Control control = super.createContents(parent);
 		String id = getPageHelpContextId();
 		if (id != null)
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(control, id);
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), id);
 		Dialog.applyDialogFont(control);
 		return control;
 	}

@@ -49,9 +49,6 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		parent.setLayoutData(data);
-	
-		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.IGNORE_PREFERENCE_PAGE);
 		
 		Label l1 = new Label(parent, SWT.NULL);
 		l1.setText(TeamUIMessages.IgnorePreferencePage_ignorePatterns); //$NON-NLS-1$
@@ -106,6 +103,10 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		});
 		fillTable(Team.getAllIgnores());
 		Dialog.applyDialogFont(ancestor);
+        
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.IGNORE_PREFERENCE_PAGE);
+        
 		return parent;
 	}
 	/**

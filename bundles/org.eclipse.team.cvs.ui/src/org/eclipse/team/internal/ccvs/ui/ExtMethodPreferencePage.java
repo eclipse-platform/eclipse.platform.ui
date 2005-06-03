@@ -63,7 +63,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		internal = createInternalArea(composite);
 		
 		initializeDefaults();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EXT_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}

@@ -61,7 +61,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	public void createControl(Composite parent) {
 		super.createControl(parent);
         // set F1 help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.SYNC_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SYNC_PREFERENCE_PAGE);
 	}
 	
 	/* (non-Javadoc)

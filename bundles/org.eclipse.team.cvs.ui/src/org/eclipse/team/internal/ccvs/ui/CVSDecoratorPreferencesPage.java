@@ -551,7 +551,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		fGeneralTab.addObserver(fPreview);
 
 		initializeValues();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
 		
 		PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener= new ThemeListener(fPreview));

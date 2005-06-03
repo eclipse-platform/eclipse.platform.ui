@@ -78,7 +78,7 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 		addField(errorColorEditor);
 		
 		Dialog.applyDialogFont(composite);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 	}
 	
 	
