@@ -59,7 +59,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
      * The server socket
      */
     private ServerSocket fServerSocket;
-    private static final int fgServerSocketTimeout= 5000;
+    private static final int fgServerSocketTimeout= 10000;
     private Socket fSocket;
     private int fPort= -1;
     private BufferedReader fBufferedReader;
