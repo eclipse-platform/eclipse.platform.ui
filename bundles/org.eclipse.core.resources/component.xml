@@ -3,6 +3,8 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
    name="Eclipse Platform Resources">
+	<component-depends unrestricted="true"/>
+
  <plugin id="org.eclipse.core.resources" />
  <plugin id="org.eclipse.core.resources.win32" fragment="true" />
  <plugin id="org.eclipse.core.resources.linux" fragment="true" />
