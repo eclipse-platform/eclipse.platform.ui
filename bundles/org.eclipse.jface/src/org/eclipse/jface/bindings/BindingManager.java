@@ -1548,6 +1548,7 @@ public final class BindingManager implements IContextManagerListener,
 		final Collection matches = new ArrayList();
 		final Iterator bindingItr = bindings.iterator();
 		Binding bestMatch = (Binding) bindingItr.next();
+		matches.add(bestMatch);
 
 		/*
 		 * Iterate over each binding and compares it with the best match. If a
