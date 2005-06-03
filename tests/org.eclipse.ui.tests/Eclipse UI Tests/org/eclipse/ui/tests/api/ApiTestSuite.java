@@ -17,7 +17,6 @@ import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
 import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
 import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
 import org.eclipse.ui.tests.ide.api.FileEditorInputTest;
-import org.eclipse.ui.tests.session.WorkbenchSessionTest;
 
 /**
  * Test all areas of the UI API.
@@ -36,7 +35,6 @@ public class ApiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public ApiTestSuite() {
-    	 addTest(new WorkbenchSessionTest("editorSessionTests", Bug95357Test.class));
         addTest(new TestSuite(PlatformUITest.class));
         addTest(new TestSuite(IWorkbenchTest.class));
         addTest(new TestSuite(IWorkbenchWindowTest.class));

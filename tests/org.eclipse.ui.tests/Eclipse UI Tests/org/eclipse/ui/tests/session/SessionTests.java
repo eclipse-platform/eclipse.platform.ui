@@ -23,6 +23,7 @@ public class SessionTests extends TestSuite {
 	 */
 	public SessionTests() {
 		addIntroTests();
+		addEditorTests();
 	}
 
 	/**
@@ -37,5 +38,13 @@ public class SessionTests extends TestSuite {
 	 */
 	private void addIntroTests() {
 		addTest(new WorkbenchSessionTest("introSessionTests", IntroSessionTests.class));
+	}
+	
+	/**
+	 * Add editor tests that involve starting and stopping sessions.
+	 */
+	private void addEditorTests() {
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				Bug95357Test.class));		
 	}
 }

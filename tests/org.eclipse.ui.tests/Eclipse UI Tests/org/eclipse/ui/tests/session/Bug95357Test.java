@@ -1,4 +1,4 @@
-package org.eclipse.ui.tests.api;
+package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
 
@@ -15,6 +15,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.EditorStack;
+import org.eclipse.ui.tests.api.SessionEditorPart;
 import org.eclipse.ui.tests.dnd.DragOperations;
 import org.eclipse.ui.tests.dnd.EditorDropTarget;
 import org.eclipse.ui.tests.dnd.ExistingWindowProvider;
@@ -184,7 +185,7 @@ public class Bug95357Test extends TestCase {
 	}
 
 	/**
-	 * Test for .txt files and the basic editor.
+	 * Test for .txt files and the basic editor. Part 1 of 2
 	 * 
 	 * @throws Throwable
 	 */
@@ -195,7 +196,7 @@ public class Bug95357Test extends TestCase {
 	}
 
 	/**
-	 * Second part of test for .txt files.
+	 * Test for .txt files and the basic editor. Part 2 of 2
 	 * 
 	 * @throws Throwable
 	 */
@@ -206,7 +207,7 @@ public class Bug95357Test extends TestCase {
 	}
 
 	/**
-	 * Test multiple stacks with .txt editor.
+	 * Test multiple stacks with .txt editor. Part 1 of 2
 	 * 
 	 * @throws Throwable
 	 */
@@ -216,7 +217,7 @@ public class Bug95357Test extends TestCase {
 	}
 
 	/**
-	 * Finish multiple stack test with .txt editors.
+	 * Test multiple stacks with .txt editor. Part 2 of 2
 	 * 
 	 * @throws Throwable
 	 */
@@ -226,6 +227,11 @@ public class Bug95357Test extends TestCase {
 		
 	}
 	
+	/**
+	 * Test for .session files and the SessionEditorPart editor. Part 1 of 2
+	 * 
+	 * @throws Throwable
+	 */
 	public void testMultipleEditorsSession() throws Throwable {
 		setupFilenames(".session");
 		multipleEditors();
@@ -233,11 +239,22 @@ public class Bug95357Test extends TestCase {
 		
 	}
 	
+	/**
+	 * Test for .session files and the SessionEditorPart editor. Part 2 of 2
+	 * 
+	 * @throws Throwable
+	 */
 	public void testMultipleEditorsOpenSession() throws Throwable {
 		setupFilenames(".session");
 		multipleEditorsOpen();
 		assertEquals(2, SessionEditorPart.instantiatedEditors);
 	}
+
+	/**
+	 * Test multiple stacks with .session editor. Part 1 of 2
+	 * 
+	 * @throws Throwable
+	 */
 	public void testMultipleStacksSession() throws Throwable {
 		setupFilenames(".session");
 		SessionEditorPart.instantiatedEditors = 0;
@@ -246,6 +263,11 @@ public class Bug95357Test extends TestCase {
 		
 	}
 	
+	/**
+	 * Test multiple stacks with .session editor. Part 2 of 2
+	 * 
+	 * @throws Throwable
+	 */
 	public void testMultipleStacksOnStartupSession() throws Throwable {
 		setupFilenames(".session");
 		multipleStacksOnStartup();
