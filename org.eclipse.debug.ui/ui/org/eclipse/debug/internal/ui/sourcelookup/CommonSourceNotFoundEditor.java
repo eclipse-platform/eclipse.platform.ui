@@ -138,20 +138,20 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
 		fText = new Text(parent,SWT.READ_ONLY|SWT.WRAP);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        data.grabExcessHorizontalSpace = true;
+        fText.setLayoutData(data);
 		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));	
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));	
 		if (getEditorInput() != null) {
 			setInput(getEditorInput());
 		}
 		
-		
 		Button button = new Button(parent, SWT.PUSH);
 		data = new GridData();
 		data.grabExcessHorizontalSpace = false;
 		data.grabExcessVerticalSpace = false;
-		data.heightHint = 50;
-		data.widthHint=50;
-		button.setData(data);
+		button.setLayoutData(data);
 		button.setText(SourceLookupUIMessages.addSourceLocation_addButton2); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
