@@ -113,7 +113,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 * Creates an area to display a description of the selected variable
 	 * and a button to configure the variable's argument.
 	 * 
-	 * @param parent parnet widget
+	 * @param parent parent widget
 	 */
 	private void createArgumentArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
