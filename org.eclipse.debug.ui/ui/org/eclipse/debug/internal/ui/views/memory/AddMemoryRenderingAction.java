@@ -30,11 +30,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 	
-	public static final String PREFIX = "AddMemoryRenderingAction."; //$NON-NLS-1$
-	public static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	public static final String ADD_RENDERING_FAILED = PREFIX + "add_rendering_failed"; //$NON-NLS-1$
-	public static final String FAILED_TO_ADD_THE_SELECTED_RENDERING = PREFIX + "failed_to_add_the_selected_rendering"; //$NON-NLS-1$
-	
 	private IMemoryRenderingContainer fContainer;
 	
 	public AddMemoryRenderingAction(IMemoryRenderingContainer container)
@@ -93,7 +88,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 							fContainer.addMemoryRendering(rendering);
 						}
 					} catch (CoreException e) {
-						MemoryViewUtil.openError(ADD_RENDERING_FAILED, FAILED_TO_ADD_THE_SELECTED_RENDERING, e);  //$NON-NLS-1$ //$NON-NLS-2$
+						MemoryViewUtil.openError(DebugUIMessages.AddMemoryRenderingAction_Add_rendering_failed, DebugUIMessages.AddMemoryRenderingAction_Unable_to_add_selected_renderings, e); 
 					}
 				}					
 			}
