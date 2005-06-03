@@ -9,14 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 public class SiteCategory extends UIModelObject {
 
@@ -174,4 +180,23 @@ public class SiteCategory extends UIModelObject {
 		}
 		return null;
 	}
+
+	public boolean equals(Object object) {
+
+		if ( (object == null) || !( object instanceof SiteCategory))
+			return false;
+		
+		if ( this == object)
+			return true;
+		
+		return getName().equals(((SiteCategory)object).getName()) && bookmark.equals(((SiteCategory)object).getBookmark());
+
+	}
+
+	public int hashCode() {
+
+		return getName().hashCode() * ( (bookmark == null)? 1: bookmark.hashCode());
+	}
+	
+	
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -66,7 +67,10 @@ import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.operations.FeatureStatus;
+import org.eclipse.update.internal.operations.OperationValidator;
 import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.operations.OperationValidator.InternalImport;
+import org.eclipse.update.internal.operations.OperationValidator.RequiredFeaturesResult;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
@@ -80,9 +84,6 @@ import org.eclipse.update.internal.ui.parts.SharedLabelProvider;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 import org.eclipse.update.operations.IUpdateModelChangedListener;
 import org.eclipse.update.operations.OperationsManager;
-import org.eclipse.update.internal.operations.OperationValidator;
-import org.eclipse.update.internal.operations.OperationValidator.InternalImport;
-import org.eclipse.update.internal.operations.OperationValidator.RequiredFeaturesResult;
 import org.eclipse.update.search.IUpdateSearchSite;
 import org.eclipse.update.search.UpdateSearchRequest;
 
@@ -114,6 +115,7 @@ public class ReviewPage	extends BannerPage {
     private ContainerCheckedTreeViewer treeViewer;
     private boolean initialized;
     private boolean isUpdateSearch;
+  
     
     class TreeContentProvider extends DefaultContentProvider implements
             ITreeContentProvider {
@@ -164,8 +166,12 @@ public class ReviewPage	extends BannerPage {
 //                    return categories[0];
                 SiteBookmark[] sites = (SiteBookmark[])((ITreeContentProvider)treeViewer.getContentProvider()).getElements(null);
                 for (int i=0; i<sites.length; i++) {
-                    if (sites[i].getSite(false, null) != f.getSite())
-                        continue;
+                	try {
+                		if (sites[i].getSite(false, null).getURL() != f.getSite().getSiteContentProvider().getURL())
+                			continue;
+                	} catch (CoreException ce) {
+                		return null;
+                	}
                     Object[] children = sites[i].getCatalog(true, null);
                     for (int j = 0; j<children.length; j++) {
                         if (!(children[j] instanceof SiteCategory))
@@ -250,8 +256,13 @@ public class ReviewPage	extends BannerPage {
                 boolean patch = feature.isPatch();
                 
                 //boolean problematic=problematicFeatures.contains(feature) && treeViewer.getChecked(obj);
-                boolean problematic=treeViewer.getChecked(obj) && isFeatureProblematic(feature);
+                boolean featureIsProblematic = isFeatureProblematic(feature);
+                boolean problematic = treeViewer.getChecked(obj) && featureIsProblematic;
                 
+                if (!problematic && featureIsProblematic) {
+                	Object parent = ((TreeContentProvider)treeViewer.getContentProvider()).getParent(obj);
+                	problematic = treeViewer.getChecked(parent) && !treeViewer.getGrayed(parent);
+                }
                 
                 if (patch) {
                     return get(UpdateUIImages.DESC_EFIX_OBJ, problematic? F_ERROR : 0);
@@ -309,12 +320,25 @@ public class ReviewPage	extends BannerPage {
     }
 
 	class ContainmentFilter extends ViewerFilter {
-		public boolean select(Viewer v, Object parent, Object child) {
-            if (child instanceof IInstallFeatureOperation)
-                return !isContained((IInstallFeatureOperation) child);
-            else
-                return true;
+		
+		private IInstallFeatureOperation[] selectedJobs;
+		
+		public boolean select(Viewer viewer, Object parent, Object element) {
+            if (element instanceof IInstallFeatureOperation) {
+                return !isContained((IInstallFeatureOperation) element) || isSelected( selectedJobs, (IInstallFeatureOperation)element);
+            } else if ( (element instanceof SiteCategory) || (element instanceof SiteBookmark)){
+            	Object[] children = ((ITreeContentProvider)((ContainerCheckedTreeViewer)viewer).getContentProvider()).getChildren(element);
+            	for ( int i = 0; i < children.length; i++) {
+            		if (select(viewer, element, children[i])) {
+            			return true;
+            		}
+            	}
+            	return false;
+            }
+        
+            return true;
 		}
+		
 		private boolean isContained(IInstallFeatureOperation job) {
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 
@@ -356,15 +380,41 @@ public class ReviewPage	extends BannerPage {
 				cycleCandidates.remove(feature);
 			}
 		}
+
+
+		public IInstallFeatureOperation[] getSelectedJobs() {
+			return selectedJobs;
+		}
+		
+
+		public void setSelectedJobs(IInstallFeatureOperation[] selectedJobs) {
+			this.selectedJobs = selectedJobs;
+		}
+
+	
 	}
 
 	class LatestVersionFilter extends ViewerFilter {
-		public boolean select(Viewer v, Object parent, Object child) {
-            if (child instanceof IInstallFeatureOperation)
-                return isLatestVersion((IInstallFeatureOperation) child);
-            else
-                return true;
+		
+		private IInstallFeatureOperation[] selectedJobs;
+		
+		public boolean select(Viewer viewer, Object parent, Object element) {
+						
+            if (element instanceof IInstallFeatureOperation) {
+                return isLatestVersion((IInstallFeatureOperation) element) || isSelected( selectedJobs, (IInstallFeatureOperation)element);
+            } else if ( (element instanceof SiteCategory) || (element instanceof SiteBookmark)){
+            	Object[] children = ((ITreeContentProvider)((ContainerCheckedTreeViewer)viewer).getContentProvider()).getChildren(element);
+            	for ( int i = 0; i < children.length; i++) {
+            		if (select(viewer, element, children[i])) {
+            			return true;
+            		}
+            	}
+                return false;
+            }
+            
+            return true;
 		}
+		
 		private boolean isLatestVersion(IInstallFeatureOperation job) {
 			IFeature feature = job.getFeature();
 			for (int i = 0; i < jobs.size(); i++) {
@@ -381,6 +431,16 @@ public class ReviewPage	extends BannerPage {
 			}
 			return true;
 		}
+		
+		public IInstallFeatureOperation[] getSelectedJobs() {
+			return selectedJobs;
+		}
+		
+		public void setSelectedJobs(IInstallFeatureOperation[] selectedJobs) {
+			this.selectedJobs = selectedJobs;
+		}
+		
+		
 	}
 	
 	class FeaturePropertyDialogAction extends PropertyDialogAction {
@@ -621,12 +681,16 @@ public class ReviewPage	extends BannerPage {
 		treeViewer.addFilter(olderVersionFilter);
 		filterOlderVersionCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+
+				IInstallFeatureOperation[] jobs = getSelectedJobs();
+				
 				if (filterOlderVersionCheck.getSelection())
 					treeViewer.addFilter(olderVersionFilter);
 				else 
 					treeViewer.removeFilter(olderVersionFilter);
 				
-				pageChanged();
+				olderVersionFilter.setSelectedJobs(jobs);				
+				pageChanged(jobs);
 			}
 		});
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -639,6 +703,9 @@ public class ReviewPage	extends BannerPage {
 		//tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				
+				IInstallFeatureOperation[] jobs = getSelectedJobs();
+				
 				if (filterCheck.getSelection()) {
 					// make sure model is local
 					if (downloadIncludedFeatures()) {
@@ -649,7 +716,10 @@ public class ReviewPage	extends BannerPage {
 				} else {
 					treeViewer.removeFilter(filter);
 				}
-				pageChanged();
+				
+				filter.setSelectedJobs(jobs);
+				
+				pageChanged(jobs);
 			}
 		});
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -830,20 +900,25 @@ public class ReviewPage	extends BannerPage {
 	}
 	
 	private void pageChanged() {
-		Object[] checked = getSelectedJobs();
-		updateItemCount();
-		if (checked.length > 0) {
-			validateSelection();
-		} else {
+		pageChanged(this.getSelectedJobs());
+	}
+	
+	private void pageChanged( IInstallFeatureOperation[] jobsSelected) {
+	
+		if (jobsSelected.length == 0) {
 			lastDisplayedStatus = null;
 			setErrorMessage(null);
 			setPageComplete(false);
 			validationStatus = null;
 			problematicFeatures.clear();
 		}
-		treeViewer.update(jobs.toArray(), null);
+
 		statusButton.setEnabled(validationStatus != null);
+		treeViewer.setCheckedElements(jobsSelected);
+		//validateSelection();
         treeViewer.refresh();
+        treeViewer.setCheckedElements(jobsSelected);
+        updateItemCount();
 	}
 	
 	private void updateItemCount() {
@@ -890,7 +965,10 @@ public class ReviewPage	extends BannerPage {
 //}
 
    private void handleDeselectAll() {
-        treeViewer.setCheckedElements(new Object[0]);
+        //treeViewer.setCheckedElements(new Object[0]);
+         IInstallFeatureOperation[] selectedJobs = getSelectedJobs();
+         for( int i = 0; i < selectedJobs.length; i++)
+        	 treeViewer.setChecked( selectedJobs[i], false);
         // make sure model is local (download using progress monitor from
         // container)
 //        downloadIncludedFeatures();
@@ -1002,7 +1080,6 @@ public class ReviewPage	extends BannerPage {
 		}
 
 		if (!toBeInstalled.isEmpty()) {
-			//System.out.println("and to be installed:"+ toBeInstalled.size());
 			Iterator toBeInstalledIterator = toBeInstalled.iterator();
 			while (toBeInstalledIterator.hasNext()) {
 				treeViewer.setChecked(toBeInstalledIterator.next(), true);			
@@ -1030,7 +1107,6 @@ public class ReviewPage	extends BannerPage {
 			treeViewer.update(getSelectedJobs(), null);
 			statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
 
-			//System.out.println("# of jobs selected: " + getSelectedJobs().length);
 			return validationStatus;
 		}
 	}
@@ -1065,6 +1141,7 @@ public class ReviewPage	extends BannerPage {
 		statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
 		
 		updateWizardMessage();
+		
 	}
 
 	private void showStatus() {
@@ -1367,5 +1444,21 @@ public class ReviewPage	extends BannerPage {
 		} catch (CoreException ce) {
 		}
  		return false;
+	}
+	
+	private boolean isSelected( IInstallFeatureOperation[] selectedJobs, IInstallFeatureOperation iInstallFeatureOperation) {
+		
+		if (selectedJobs == null)
+			return false;
+		
+		for( int i = 0; i < selectedJobs.length; i++) {
+			
+			if (iInstallFeatureOperation.getFeature().getVersionedIdentifier().equals(selectedJobs[i].getFeature().getVersionedIdentifier()) &&
+				iInstallFeatureOperation.getFeature().getSite().getURL().equals(selectedJobs[i].getFeature().getSite().getURL())) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
