@@ -905,6 +905,13 @@ public class IWorkspaceTest extends ResourceTest {
 			assertTrue("2.7", !getWorkspace().validateName("|dsasf", IResource.FILE).isOK());
 			assertTrue("2.8", !getWorkspace().validateName("\"dsasf", IResource.FILE).isOK());
 			assertTrue("2.10", !getWorkspace().validateName("\\dsasf", IResource.FILE).isOK());
+			assertTrue("2.11", !getWorkspace().validateName("...", IResource.PROJECT).isOK());
+			assertTrue("2.12", !getWorkspace().validateName("foo.", IResource.FILE).isOK());
+		} else {
+			//trailing dots are ok on other platforms
+			assertTrue("3.3", getWorkspace().validateName("...", IResource.FILE).isOK());
+			assertTrue("3.4", getWorkspace().validateName("....", IResource.PROJECT).isOK());
+			assertTrue("3.7", getWorkspace().validateName("abc.", IResource.FILE).isOK());
 		}
 		/* invalid characters on all platforms */
 		assertTrue("2.9", !getWorkspace().validateName("/dsasf", IResource.FILE).isOK());
@@ -913,11 +920,11 @@ public class IWorkspaceTest extends ResourceTest {
 		/* dots */
 		assertTrue("3.1", !getWorkspace().validateName(".", IResource.FILE).isOK());
 		assertTrue("3.2", !getWorkspace().validateName("..", IResource.FILE).isOK());
-		assertTrue("3.3", getWorkspace().validateName("...", IResource.FILE).isOK());
-		assertTrue("3.4", getWorkspace().validateName("....", IResource.FILE).isOK());
+		assertTrue("3.3", getWorkspace().validateName("...z", IResource.FILE).isOK());
+		assertTrue("3.4", getWorkspace().validateName("....z", IResource.FILE).isOK());
 		assertTrue("3.5", getWorkspace().validateName("....abc", IResource.FILE).isOK());
 		assertTrue("3.6", getWorkspace().validateName("abc....def", IResource.FILE).isOK());
-		assertTrue("3.7", getWorkspace().validateName("abc....", IResource.FILE).isOK());
+		assertTrue("3.7", getWorkspace().validateName("abc.d...z", IResource.FILE).isOK());
 	}
 
 	/**
@@ -964,14 +971,21 @@ public class IWorkspaceTest extends ResourceTest {
 
 			assertTrue("5.2", !(getWorkspace().validatePath("\\", IResource.FILE).isOK()));
 			assertTrue("5.4", !(getWorkspace().validatePath("device:/abc/123", IResource.FILE).isOK()));
+			
+			//trailing dots in segments names not allowed on Windows
+			assertTrue("3.1", !getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK());
+			assertTrue("3.2", !getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK());
+			assertTrue("3.3", !getWorkspace().validatePath("/abc/def..../ghi", IResource.FILE).isOK());
+		} else {
+			assertTrue("3.1", getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK());
+			assertTrue("3.2", getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK());
+			assertTrue("3.3", getWorkspace().validatePath("/abc/def..../ghi", IResource.FILE).isOK());
 		}
 
 		/* dots */
-		assertTrue("3.1", getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK());
-		assertTrue("3.2", getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK());
-		assertTrue("3.3", getWorkspace().validatePath("/abc/def..../ghi", IResource.FILE).isOK());
-		assertTrue("3.4", getWorkspace().validatePath("/abc/....def/ghi", IResource.FILE).isOK());
-		assertTrue("3.5", getWorkspace().validatePath("/abc/def....ghi/jkl", IResource.FILE).isOK());
+		assertTrue("3.4", getWorkspace().validatePath("/abc/../ghi/j", IResource.FILE).isOK());
+		assertTrue("3.5", getWorkspace().validatePath("/abc/....def/ghi", IResource.FILE).isOK());
+		assertTrue("3.6", getWorkspace().validatePath("/abc/def....ghi/jkl", IResource.FILE).isOK());
 
 		/* test hiding incorrect characters using .. and device separator : */
 		assertTrue("4.1", getWorkspace().validatePath("/abc/.?./../def/as", IResource.FILE).isOK());
@@ -1006,20 +1020,26 @@ public class IWorkspaceTest extends ResourceTest {
 		/* invalid characters (windows only) */
 		final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 		if (WINDOWS) {
-			assertTrue("2.1", !(workspace.validateProjectLocation(project, new Path("d:\\dsa:sf")).isOK()));
-			assertTrue("2.2", !(workspace.validateProjectLocation(project, new Path("/abc/*dsasf")).isOK()));
-			assertTrue("2.3", !(workspace.validateProjectLocation(project, new Path("/abc/?dsasf")).isOK()));
-			assertTrue("2.4", !(workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK()));
-			assertTrue("2.5", !(workspace.validateProjectLocation(project, new Path("/abc/<dsasf")).isOK()));
-			assertTrue("2.6", !(workspace.validateProjectLocation(project, new Path("/abc/>dsasf")).isOK()));
-			assertTrue("2.7", !(workspace.validateProjectLocation(project, new Path("/abc/|dsasf")).isOK()));
-			assertTrue("2.8", !(workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK()));
+			assertTrue("2.1", !workspace.validateProjectLocation(project, new Path("d:\\dsa:sf")).isOK());
+			assertTrue("2.2", !workspace.validateProjectLocation(project, new Path("/abc/*dsasf")).isOK());
+			assertTrue("2.3", !workspace.validateProjectLocation(project, new Path("/abc/?dsasf")).isOK());
+			assertTrue("2.4", !workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK());
+			assertTrue("2.5", !workspace.validateProjectLocation(project, new Path("/abc/<dsasf")).isOK());
+			assertTrue("2.6", !workspace.validateProjectLocation(project, new Path("/abc/>dsasf")).isOK());
+			assertTrue("2.7", !workspace.validateProjectLocation(project, new Path("/abc/|dsasf")).isOK());
+			assertTrue("2.8", !workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK());
+			
+			//trailing dots invalid on Windows
+			assertTrue("3.1", !workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK());
+			assertTrue("3.2", !workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK());
+			assertTrue("3.3", !workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK());
+		} else {
+			assertTrue("3.1", workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK());
+			assertTrue("3.2", workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK());
+			assertTrue("3.3", workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK());
 		}
 
 		/* dots */
-		assertTrue("3.1", workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK());
-		assertTrue("3.2", workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK());
-		assertTrue("3.3", workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK());
 		assertTrue("3.4", workspace.validateProjectLocation(project, new Path("/abc/....def/ghi")).isOK());
 		assertTrue("3.5", workspace.validateProjectLocation(project, new Path("/abc/def....ghi/jkl")).isOK());
 

@@ -30,10 +30,9 @@ public abstract class OS {
 		String[] names = null;
 		INSTALLED_PLATFORM = Platform.getOS();
 		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
-			//list taken from http://support.microsoft.com/support/kb/articles/q177/5/06.asp
+			//valid names and characters taken from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/fileio/fs/naming_a_file.asp
 			chars = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 
-			//list taken from http://support.microsoft.com/support/kb/articles/Q216/6/54.ASP
 			names = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 					"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 					"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
@@ -58,8 +57,12 @@ public abstract class OS {
 		if (name.equals(".") || name.equals("..")) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
-			//on windows, filename suffixes are not relevant to name validity
+			// filenames ending in dot are not valid
+			if (name.charAt(name.length()-1) == '.')
+				return false;
+			
 			int dot = name.indexOf('.');
+			//on windows, filename suffixes are not relevant to name validity
 			name = dot == -1 ? name : name.substring(0, dot);
 		}
 		return Arrays.binarySearch(INVALID_RESOURCE_NAMES, name.toLowerCase()) < 0;
