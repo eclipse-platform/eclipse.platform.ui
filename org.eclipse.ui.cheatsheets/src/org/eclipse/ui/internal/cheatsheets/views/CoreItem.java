@@ -134,7 +134,7 @@ public class CoreItem extends ViewItem {
 			subAction = sub.getPerformWhen().getSelectedAction();
 		} else {
 			subAction = sub.getAction();
-		};
+		}
 		
 		final int fi = index;
 		ImageHyperlink startButton = null;
