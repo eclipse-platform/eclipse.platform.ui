@@ -330,10 +330,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 item.setData(DATA_EDITOR, editor);
                 // Check if it is the default editor
                 String defaultString = null;
-                FileEditorMapping ext = getSelectedResourceType();
-                if (ext != null) {
-                    IEditorDescriptor preferredEditor = ext.getDefaultEditor();
-                    if (preferredEditor == editor)
+                if (resourceType != null) {
+                    if (resourceType.getDefaultEditor() == editor && resourceType.isDeclaredDefaultEditor(editor))
                         defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
                 }
 
@@ -537,6 +535,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 editorTable.setSelection(i);
                 editorTable.setFocus();
                 getSelectedResourceType().addEditor(editor);
+				if (isEmpty)
+					getSelectedResourceType().setDefaultEditor(editor);
                 updateSelectedResourceType(); //in case of new default
             }
         }
@@ -568,6 +568,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         }
         if (defaultEditor && editorTable.getItemCount() > 0) {
             TableItem item = editorTable.getItem(0);
+            // explicitly set the new editor first editor to default
+            getSelectedResourceType().setDefaultEditor(
+					(EditorDescriptor) item.getData(DATA_EDITOR));
             if (item != null)
                 item
                         .setText(((EditorDescriptor) (item.getData(DATA_EDITOR)))
@@ -608,6 +611,9 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             // Now set the new default
             EditorDescriptor editor = (EditorDescriptor) items[0].getData(DATA_EDITOR);
             getSelectedResourceType().setDefaultEditor(editor);
+            // explicitly unset the old editor from being default
+            getSelectedResourceType().unsetDefaultEditor(
+					(EditorDescriptor) oldDefaultItem.getData((DATA_EDITOR)));
             IContentType fromContentType = (IContentType) items[0].getData(DATA_FROM_CONTENT_TYPE);
             items[0].dispose(); //Table is single selection
             TableItem item = new TableItem(editorTable, SWT.NULL, 0);

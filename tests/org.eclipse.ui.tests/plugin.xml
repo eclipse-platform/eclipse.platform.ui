@@ -571,7 +571,7 @@
           <contentTypeBinding contentTypeId="org.eclipse.ui.tests.content-type1"/>
        </editor>
        <editor
-             default="false"
+             default="true"
              extensions="content-type1"
              filenames="content-type1.blah"
              icon="icons/anything.gif"

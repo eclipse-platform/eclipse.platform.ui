@@ -35,6 +35,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     private List deletedEditors = new ArrayList(1);
 
+	private List declaredDefaultEditors = new ArrayList(1);
+
     /**
      *  Create an instance of this class.
      *
@@ -192,6 +194,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     public void removeEditor(EditorDescriptor editor) {
         editors.remove(editor);
         deletedEditors.add(editor);
+        declaredDefaultEditors.remove(editor);
     }
 
     /**
@@ -203,6 +206,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     public void setDefaultEditor(EditorDescriptor editor) {
         editors.remove(editor);
         editors.add(0, editor);
+        if (!declaredDefaultEditors.contains(editor))
+        	declaredDefaultEditors.add(editor);
     }
 
     /**
@@ -216,7 +221,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * @param newEditors the new list of associated editors
      */
     public void setEditorsList(List newEditors) {
-        editors = newEditors;
+        editors = newEditors;       
+        declaredDefaultEditors.retainAll(newEditors);
     }
 
     /**
@@ -249,4 +255,37 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+	 * Get the editors that have been declared as default. This may be via plugin
+	 * declarations or the preference page.
+	 * 
+	 * @return the editors the default editors
+	 * @since 3.1
+	 */
+	public IEditorDescriptor [] getDeclaredDefaultEditors() {
+		return (IEditorDescriptor []) declaredDefaultEditors.
+				toArray(new IEditorDescriptor[declaredDefaultEditors.size()]);
+	}
+	
+	/**
+	 * Return whether the editor is declared default.
+	 * 
+	 * @param editor the editor to test
+	 * @return whether the editor is declared default
+	 * @since 3.1
+	 */
+	public boolean isDeclaredDefaultEditor (IEditorDescriptor editor) {
+		return declaredDefaultEditors.contains(editor);
+	}
+	
+	/**
+	 * Removes the given editor from the list of declared default editors.
+	 * 
+	 * @param descriptor the editor to remove from the default list
+	 * @since 3.1
+	 */
+	public void unsetDefaultEditor(EditorDescriptor descriptor) {
+		declaredDefaultEditors.remove(descriptor);
+	}
 }

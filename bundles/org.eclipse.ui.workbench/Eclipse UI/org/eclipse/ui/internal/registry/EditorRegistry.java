@@ -71,7 +71,7 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
  */
 public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler {
 	
-	private final static Object [] EMPTY = new Object[0];
+	private final static IEditorDescriptor [] EMPTY = new IEditorDescriptor[0];
 	
 	class RelatedRegistry {
 
@@ -81,8 +81,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
          * @param type
          * @return the objects related to the type
 		 */
-		public Object[] getRelatedObjects(IContentType type) {			
-			Object[] relatedObjects = (Object[]) contentTypeToEditorMappings.get(type);
+		public IEditorDescriptor[] getRelatedObjects(IContentType type) {			
+			IEditorDescriptor[] relatedObjects = (IEditorDescriptor[]) contentTypeToEditorMappings.get(type);
 			if (relatedObjects == null)
 				return EMPTY;
 			return relatedObjects;
@@ -93,7 +93,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
          * @param fileName
          * @return the objects related to the filename
 		 */
-		public Object[] getRelatedObjects(String fileName) {
+		public IEditorDescriptor[] getRelatedObjects(String fileName) {
 			IFileEditorMapping mapping = getMappingFor(fileName);
 			if (mapping == null)
 				return EMPTY;
@@ -240,13 +240,13 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 			if (contentTypeId != null && contentTypeId.length() > 0) {
 				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
 				if (contentType != null) {
-					Object [] editorArray = (Object[]) contentTypeToEditorMappings.get(contentType);
+					IEditorDescriptor [] editorArray = (IEditorDescriptor[]) contentTypeToEditorMappings.get(contentType);
 					if (editorArray == null) {
-						editorArray = new Object[] {editor};
+						editorArray = new IEditorDescriptor[] {editor};
 						contentTypeToEditorMappings.put(contentType, editorArray);
 					}
 					else {
-						Object [] newArray = new Object[editorArray.length + 1];
+						IEditorDescriptor [] newArray = new IEditorDescriptor[editorArray.length + 1];
 						System.arraycopy(editorArray, 0, newArray, 0, editorArray.length);
 						newArray[editorArray.length] = editor;
 						contentTypeToEditorMappings.put(contentType, newArray);
@@ -1260,53 +1260,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 	 * @see org.eclipse.ui.IEditorRegistry#getEditors(java.lang.String, org.eclipse.core.runtime.content.IContentType)
 	 */
 	public IEditorDescriptor[] getEditors(String fileName, IContentType contentType) {
-        IEditorDescriptor[] editors = new IEditorDescriptor[0];
-        IEditorDescriptor[] filenameEditors = editors;
-        IEditorDescriptor[] extensionEditors = editors;
-
-        FileEditorMapping mapping[] = getMappingForFilename(fileName);
-        if (mapping[0] != null) {
-            editors = mapping[0].getEditors();
-            if (editors != null)
-                filenameEditors = editors;
-        }
-        if (mapping[1] != null) {
-            editors = mapping[1].getEditors();
-            if (editors != null)
-                extensionEditors = editors;
-        }
-
-        editors = new IEditorDescriptor[filenameEditors.length
-                + extensionEditors.length];
-        System
-                .arraycopy(filenameEditors, 0, editors, 0,
-                        filenameEditors.length);
-        System.arraycopy(extensionEditors, 0, editors, filenameEditors.length,
-                extensionEditors.length);
-
-        ArrayList list = new ArrayList(editors.length);
-		if (contentType != null) {
-			Object [] editorsByForContentType = findRelatedObjects(contentType, fileName, relatedRegistry);
-			if (editorsByForContentType != null && editorsByForContentType.length > 0) 
-				list.addAll(Arrays.asList(editorsByForContentType));
-		}
-		
-		// remove duplicates - something may be bound by content type and traditional filename bindings
-		for (int i = 0; i < editors.length; i++) {
-			if (!list.contains(editors[i]))
-				list.add(editors[i]);
-		}
-        ArrayList filtered = new ArrayList();
-        for (Iterator i = list.iterator(); i.hasNext();) {
-            Object next = i.next();
-            if (next == null || WorkbenchActivityHelper.filterItem(next))
-                continue;
-            filtered.add(next);
-        }
-        editors = (IEditorDescriptor[]) filtered
-                .toArray(new IEditorDescriptor[filtered.size()]);
-
-        return editors;
+		return findRelatedObjects(contentType, fileName, relatedRegistry);
 	}
 
 	/* (non-Javadoc)
@@ -1374,37 +1328,47 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 	 * @param registry
 	 * @return the related objects
 	 */
-	private Object[] findRelatedObjects(IContentType type, String fileName,
+	private IEditorDescriptor [] findRelatedObjects(IContentType type, String fileName,
 			RelatedRegistry registry) {
 		List allRelated = new ArrayList();
-		Object[] related;
-
-		// backward compatibility requested - add any objects related directly to the file name
+		List nonDefaultFileEditors = new ArrayList();
+		IEditorDescriptor [] related;
+		
 		if (fileName != null) {
-			related = registry.getRelatedObjects(fileName);
-			for (int i = 0; i < related.length; i++) {
-				// we don't want to return duplicates
-				if (!allRelated.contains(related[i])) {
-					// if it's not filtered, add it to the list
-					if (!WorkbenchActivityHelper.filterItem(related[i]))
-						allRelated.add(related[i]);
-				}
-			}
-		}
-
-		//now add any objects related to the file extension
-		if (fileName != null) {
-			int index = fileName.lastIndexOf('.');
-			if (index > -1) {
-				String extension = "*" + fileName.substring(index); //$NON-NLS-1$
-				related = registry.getRelatedObjects(extension);
+			FileEditorMapping mapping = getMappingFor(fileName);
+			if (mapping != null) {
+				// backwards compatibility - add editors flagged as "default"
+				related = mapping.getDeclaredDefaultEditors();
 				for (int i = 0; i < related.length; i++) {
-					//                	 we don't want to return duplicates
+					// we don't want to return duplicates
 					if (!allRelated.contains(related[i])) {
 						// if it's not filtered, add it to the list
 						if (!WorkbenchActivityHelper.filterItem(related[i]))
 							allRelated.add(related[i]);
 					}
+				}
+				
+				// add all filename editors to the nonDefaultList
+				// we'll later try to add them all after content types are resolved
+				// duplicates (ie: default editors) will be ignored
+				nonDefaultFileEditors.addAll(Arrays.asList(mapping.getEditors()));
+			}
+			
+			int index = fileName.lastIndexOf('.');
+			if (index > -1) {
+				String extension = "*" + fileName.substring(index); //$NON-NLS-1$
+				mapping = getMappingFor(extension);
+				if (mapping != null) {
+					related = mapping.getDeclaredDefaultEditors();
+					for (int i = 0; i < related.length; i++) {
+						// we don't want to return duplicates
+						if (!allRelated.contains(related[i])) {
+							// if it's not filtered, add it to the list
+							if (!WorkbenchActivityHelper.filterItem(related[i]))
+								allRelated.add(related[i]);
+						}
+					}
+					nonDefaultFileEditors.addAll(Arrays.asList(mapping.getEditors()));
 				}
 			}
 		}
@@ -1437,7 +1401,16 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 				}
 			}
 		}
-		return allRelated.toArray();
+			
+		// add all non-default editors to the list
+		for (Iterator i = nonDefaultFileEditors.iterator(); i.hasNext();) {
+			IEditorDescriptor editor = (IEditorDescriptor) i.next();
+			if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor))
+				allRelated.add(editor);
+		}
+		
+		return (IEditorDescriptor []) allRelated.toArray(new IEditorDescriptor [allRelated
+				.size()]);
 	}
 
 	/**
@@ -1481,6 +1454,12 @@ public class EditorRegistry implements IEditorRegistry, IExtensionChangeHandler 
 		return (IEditorDescriptor[]) allRelated.toArray(new IEditorDescriptor[allRelated.size()]);
 	}
 	
+	/**
+	 * Get filemappings for all defined filetypes, including those defined by content type.
+	 * 
+	 * @return the filetypes
+	 * @since 3.1
+	 */
 	public IFileEditorMapping [] getUnifiedMappings() {
         IFileEditorMapping[] standardMappings = PlatformUI.getWorkbench()
                 .getEditorRegistry().getFileEditorMappings();
