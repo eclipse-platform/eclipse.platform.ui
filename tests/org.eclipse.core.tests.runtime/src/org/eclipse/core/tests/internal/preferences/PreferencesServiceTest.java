@@ -522,6 +522,18 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertEquals("10.0", searchPath, service.getString(qualifier, searchPath, null, null));
 	}
 
+	public void testImportExceptions() {
+		// importing an empty file is an error (invalid file format)
+		IPreferencesService service = Platform.getPreferencesService();
+		InputStream input = new BufferedInputStream(new ByteArrayInputStream(new byte[0]));
+		try {
+			service.importPreferences(input);
+			fail("0.0");
+		} catch (CoreException e) {
+			// expected
+		}
+	}
+
 	public void testImportLegacy() {
 		IPreferencesService service = Platform.getPreferencesService();
 		String[] qualifiers = new String[] {getRandomString() + 1, getRandomString() + 2};
@@ -750,7 +762,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IStatus result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
 		assertTrue("1.0", result.isOK());
 
-		// no errors for an empty file
+		// an empty file wasn't written by #export so its an invalid file format
+		// NOTE: this changed from "do nothing" to being an error in Eclipse 3.1
 		Properties properties = new Properties();
 		OutputStream output = null;
 		try {
@@ -767,7 +780,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 				}
 		}
 		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
-		assertTrue("2.0", result.isOK());
+		assertTrue("2.0", !result.isOK());
 
 		// no errors for a file which we write out right now
 		try {

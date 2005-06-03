@@ -154,6 +154,7 @@ public class Messages extends NLS {
 	public static String preferences_importProblems;
 	public static String preferences_incompatible;
 	public static String preferences_invalidExtensionSuperclass;
+	public static String preferences_invalidFileFormat;
 	public static String preferences_loadException;
 	public static String preferences_matching;
 	public static String preferences_missingClassAttribute;

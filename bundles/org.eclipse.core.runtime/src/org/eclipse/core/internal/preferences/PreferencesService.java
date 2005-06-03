@@ -31,7 +31,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * strings.
 	 */
 	private static final long STRING_SHARING_INTERVAL = 300000;
-	
+
 	// cheat here and add "project" even though we really shouldn't know about it
 	// because of plug-in dependancies and it being defined in the resources plug-in
 	private static final String[] DEFAULT_DEFAULT_LOOKUP_ORDER = new String[] {"project", //$NON-NLS-1$ 
@@ -57,7 +57,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * The last time analysis was done to remove duplicate strings
 	 */
 	private long lastStringSharing = 0;
-	
+
 	/*
 	 * Create and return an IStatus object with ERROR severity and the
 	 * given message and exception.
@@ -152,7 +152,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			modifyListeners.add(listener);
 		} catch (CoreException e) {
 			log(e.getStatus());
-			return ;
+			return;
 		}
 	}
 
@@ -673,6 +673,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			}
 		}
 
+		// an empty file is an invalid file format
+		if (properties.isEmpty())
+			throw new CoreException(createStatusError(Messages.preferences_invalidFileFormat, null));
+
 		// manipulate the file if it from a legacy preference export
 		if (isLegacy(properties)) {
 			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
@@ -690,7 +694,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] deltas = event.getExtensionDeltas(Platform.PI_RUNTIME, Platform.PT_PREFERENCES);
-		if (deltas.length == 0) 
+		if (deltas.length == 0)
 			return;
 		// dynamically adjust the registered scopes
 		for (int i = 0; i < deltas.length; i++) {
@@ -724,7 +728,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			defaultsRegistry.put(registryKey, obj);
 		}
 	}
-	
+
 	/**
 	 * Shares all duplicate equal strings referenced by the preference service.
 	 */
@@ -875,7 +879,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					String[] keys = null;
 					if (entries != null) {
 						ArrayList list = new ArrayList();
-						for (int j=0; j<entries.length; j++) {
+						for (int j = 0; j < entries.length; j++) {
 							if (entries[j] != null)
 								list.add(entries[j].getKey());
 						}
@@ -1005,7 +1009,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			if (mapping == null) {
 				// if we are the root check to see if the scope exists
 				if (tree.parent() == null && tree.nodeExists(scope))
-					return containsKeys((IEclipsePreferences) tree.node(scope)) ;
+					return containsKeys((IEclipsePreferences) tree.node(scope));
 				// otherwise check to see if we are in the right scope
 				if (scopeMatches(scope, tree) && containsKeys(tree))
 					return true;
@@ -1072,10 +1076,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			trees.add(trimTree(tree, filters[i]));
 		// merge the union of the matching filters
 		IEclipsePreferences toApply = mergeTrees((IEclipsePreferences[]) trees.toArray(new IEclipsePreferences[trees.size()]));
-		
+
 		// fire an event to give people a chance to modify the tree
 		toApply = firePreApplyEvent(toApply);
-		
+
 		// actually apply the settings
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
@@ -1088,7 +1092,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		};
 		toApply.accept(visitor);
 	}
-	
+
 	/*
 	 * Give clients a chance to modify the tree before it is applied globally 
 	 */
