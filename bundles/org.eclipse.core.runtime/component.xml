@@ -3,7 +3,8 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
    name="Eclipse Platform Runtime">
-   
+   <component-depends unrestricted="true"/>
+
  <plugin id="org.eclipse.core.runtime" />
  <plugin id="org.eclipse.core.runtime.compatibility" />
 
