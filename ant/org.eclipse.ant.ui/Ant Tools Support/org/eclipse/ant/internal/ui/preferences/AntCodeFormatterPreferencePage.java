@@ -18,7 +18,6 @@ import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -124,11 +123,6 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		group.setFont(parent.getFont());
 		
 		final GridLayout layout= new GridLayout(numColumns, false);
-		layout.verticalSpacing=  convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		layout.marginHeight= 0;//convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= 0;convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		
 		group.setLayout(layout);
 		group.setText(text);
 		return group;
