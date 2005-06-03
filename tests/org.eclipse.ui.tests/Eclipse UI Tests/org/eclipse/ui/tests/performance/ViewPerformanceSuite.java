@@ -84,8 +84,9 @@ public class ViewPerformanceSuite extends TestSuite {
 			IViewDescriptor descriptor = descriptors[i];
 
 			// Heuristically prune out any test or example views
-			if (descriptor.getId().indexOf(".test") == -1
-					&& descriptor.getId().indexOf(".examples") == -1) {
+			if (descriptor.getId().equals(BASIC_VIEW)
+					|| (descriptor.getId().indexOf(".test") == -1 && descriptor
+							.getId().indexOf(".examples") == -1)) {
 
 				result.add(descriptor.getId());
 			}

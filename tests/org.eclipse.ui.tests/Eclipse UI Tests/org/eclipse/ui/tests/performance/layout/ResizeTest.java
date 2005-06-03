@@ -42,8 +42,7 @@ public class ResizeTest extends BasicPerformanceTest {
      * @param testName
      */
     public ResizeTest(TestWidgetFactory widgetFactory, int tagging, String tagString) {
-        super(widgetFactory.getName() + " setSize");
-
+        super(widgetFactory.getName() + " setSize",tagging);
         this.tagString = tagString;
         this.widgetFactory = widgetFactory;
     }
