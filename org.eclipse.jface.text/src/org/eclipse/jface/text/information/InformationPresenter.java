@@ -376,7 +376,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			GC gc= new GC(styledText);
 			int width= gc.getFontMetrics().getAverageCharWidth();
 			gc.dispose();
-			Point loc= styledText.getLocationAtOffset(widgetRegion.getOffset());
+			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, width, styledText.getLineHeight());
 		}
 		
