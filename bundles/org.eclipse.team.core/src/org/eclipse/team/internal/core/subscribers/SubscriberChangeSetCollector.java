@@ -421,6 +421,16 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
     
     private void save() {
 		Preferences prefs = getPreferences();
+        // Clear the persisted state before saving the new state
+        try {
+            String[] oldSetNames = prefs.childrenNames();
+            for (int i = 0; i < oldSetNames.length; i++) {
+                String string = oldSetNames[i];
+                prefs.node(string).removeNode();
+            }
+        } catch (BackingStoreException e) {
+            TeamPlugin.log(IStatus.ERROR, NLS.bind("An error occurred purging the sommit set state for {0}", new String[] { getSubscriber().getName() }), e); //$NON-NLS-1$
+        }
         ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];
