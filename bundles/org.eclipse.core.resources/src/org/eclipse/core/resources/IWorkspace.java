@@ -684,9 +684,12 @@ public interface IWorkspace extends IAdaptable {
 	 * @param projectDescriptionFile the path in the local file system of an
 	 * existing project description file
 	 * @return a new project description
-	 * @exception CoreException if the operation failed, either because the
-	 * project description file does not exist, or cannot be opened, or cannot
-	 * be parsed as a legal project description file
+	 * @exception CoreException if the operation failed. Reasons include:
+	 * <ul>
+	 * <li>The project description file does not exist.</li>
+	 * <li>The file cannot be opened or read.</li>
+	 * <li>The file cannot be parsed as a legal project description.</li>
+	 * </li>
 	 * @see #newProjectDescription(String)
 	 * @see IProject#getDescription()
 	 * @since 2.0
@@ -706,9 +709,11 @@ public interface IWorkspace extends IAdaptable {
 	 * @param projectDescriptionFile an InputStream pointing to an existing project
 	 * description file
 	 * @return a new project description
-	 * @exception CoreException if the operation failed, either because the
-	 * project description file does not exist, or cannot be opened, or cannot
-	 * be parsed as a legal project description file
+	 * @exception CoreException if the operation failed. Reasons include:
+	 * <ul>
+	 * <li>The stream could not be read.</li>
+	 * <li>The stream does not contain a legal project description.</li>
+	 * </li>
 	 * @see #newProjectDescription(String)
 	 * @see IProject#getDescription()
 	 * @see IWorkspace#loadProjectDescription(IPath)
