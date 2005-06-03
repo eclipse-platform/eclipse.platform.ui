@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
@@ -30,7 +31,8 @@ public class InjectionFilter implements IFilter {
 	private static final String narrowBook1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 
 	private static final String narrowBook2 = "narrow_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$
-
+	
+	private static final String osNarrowBook2 = "_narrow_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$
 	private static final String disabledBook1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 
 	private static final String disabledBook2 = "disabled_book.css\" charset=\"ISO-8859-1\" type=\"text/css\">"; //$NON-NLS-1$
@@ -83,6 +85,10 @@ public class InjectionFilter implements IFilter {
 			script.append(narrowBook1);
 			appendRelativePath(script, upLevels);
 			script.append(narrowBook2);
+			script.append(narrowBook1);
+			appendRelativePath(script, upLevels);
+			script.append(Platform.getOS());
+			script.append(osNarrowBook2);
 		}
 		if (addDisabled) {
 			script.append(disabledBook1);
