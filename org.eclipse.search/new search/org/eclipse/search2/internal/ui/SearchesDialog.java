@@ -56,6 +56,7 @@ public class SearchesDialog extends SelectionDialog {
 	
 	private List fInput;
 	private TableViewer fViewer;
+	private Button fRemoveButton;
 	
 	private static final class SearchesLabelProvider extends LabelProvider {
 		
@@ -106,6 +107,21 @@ public class SearchesDialog extends SelectionDialog {
 		return label;
 	}
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	public void create() {
+		super.create();
+		
+		List initialSelection= getInitialElementSelections();
+		if (initialSelection != null)
+			fViewer.setSelection(new StructuredSelection(initialSelection));
+
+		validateDialogState();
+	}
+	
 	/*
 	 * Overrides method from Dialog
 	 */
@@ -123,7 +139,7 @@ public class SearchesDialog extends SelectionDialog {
 		parent.setLayout(layout);
 		
 
-		fViewer= new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+		fViewer= new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fViewer.setContentProvider(new ListContentProvider());
 		
 		final Table table= fViewer.getTable();
@@ -139,19 +155,19 @@ public class SearchesDialog extends SelectionDialog {
 		table.setLayoutData(gd);
 		
 		
-        final Button button= new Button(parent, SWT.PUSH);
-        button.setText(SearchMessages.SearchesDialog_remove_label); 
-        button.addSelectionListener(new SelectionAdapter() {
+        fRemoveButton= new Button(parent, SWT.PUSH);
+        fRemoveButton.setText(SearchMessages.SearchesDialog_remove_label); 
+        fRemoveButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent event) {
                 buttonPressed(REMOVE_ID);
             }
         });
-		button.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
-		SWTUtil.setButtonDimensionHint(button);
+		fRemoveButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				button.setEnabled(!event.getSelection().isEmpty());
+				validateDialogState();
 			}
 		});
 		
@@ -159,12 +175,20 @@ public class SearchesDialog extends SelectionDialog {
 
 		// set input & selections last, so all the widgets are created.
 		fViewer.setInput(fInput);
-		List initialSelection= getInitialElementSelections();
-		if (initialSelection != null)
-			fViewer.setSelection(new StructuredSelection(initialSelection));
-
 		return table;
 	}
+	
+	protected final void validateDialogState() {
+		IStructuredSelection sel= (IStructuredSelection) fViewer.getSelection();
+		int elementsSelected= sel.toList().size();
+		
+		fRemoveButton.setEnabled(elementsSelected > 0);
+		Button okButton= getOkButton();
+		if (okButton != null) {
+			okButton.setEnabled(elementsSelected == 1);
+		}
+	}
+	
 	
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == REMOVE_ID) {
@@ -174,8 +198,11 @@ public class SearchesDialog extends SelectionDialog {
 				ISearchResult result= (ISearchResult)searchResults.next();
 				InternalSearchUI.getInstance().removeQuery(result.getQuery());
 				fInput.remove(result);
+				fViewer.remove(result);
 			}
-			fViewer.refresh();
+			if (fViewer.getSelection().isEmpty() && !fInput.isEmpty()) {
+				fViewer.setSelection(new StructuredSelection(fInput.get(0)));
+			}
 			return;
 		}
 		super.buttonPressed(buttonId);
