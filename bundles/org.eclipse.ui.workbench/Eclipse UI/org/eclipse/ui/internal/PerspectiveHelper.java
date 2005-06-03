@@ -300,8 +300,6 @@ public class PerspectiveHelper {
                     window.open();
                     // add part to detached window.
                     ViewPane pane = (ViewPane) part;
-                    window.getShell().setText(
-                            pane.getPartReference().getTitle());
                     window.add(pane);
                     LayoutPart otherChildren[] = holder.getChildren();
                     for (int i = 0; i < otherChildren.length; i++)
@@ -767,8 +765,6 @@ public class PerspectiveHelper {
                     derefPart(children[i]);
                     // add part to detached window.
                     ViewPane pane = (ViewPane) children[i];
-                    window.getShell().setText(
-                            pane.getPartReference().getTitle());
                     window.add(pane);
                 }
             }
@@ -783,7 +779,6 @@ public class PerspectiveHelper {
             derefPart(part);
             // add part to detached window.
             ViewPane pane = (ViewPane) part;
-            window.getShell().setText(pane.getPartReference().getTitle());
             window.add(pane);
             part.setFocus();
         }
@@ -850,7 +845,6 @@ public class PerspectiveHelper {
         // add part to detached window.
         part.createControl(window.getShell());
         ViewPane pane = (ViewPane) part;
-        window.getShell().setText(pane.getPartReference().getTitle());
         window.add(pane);
 
         // Open window.

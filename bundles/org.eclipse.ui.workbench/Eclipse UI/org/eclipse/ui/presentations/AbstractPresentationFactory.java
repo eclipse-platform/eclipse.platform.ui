@@ -99,29 +99,6 @@ public abstract class AbstractPresentationFactory {
             Composite parent) {
         return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
     }
-
-    /**
-     * Creates a stack presentation for presenting detached views.
-     * <p>
-     * The presentation creates its controls under the given parent composite.
-     * </p>
-     * <p>
-     * The default implementation calls {@link #createViewPresentation(Composite, IStackPresentationSite)}.
-     * Subclasses may override.
-     * </p>
-     * 
-     * @param parent
-     *            the parent composite to use for the presentation's controls
-     * @param site
-     *            the site used for communication between the presentation and
-     *            the workbench
-     * @return a newly created stack presentation
-     * @since 3.1
-     */
-    public StackPresentation createDetachedViewPresentation(
-            Composite parent, IStackPresentationSite site) {
-        return createViewPresentation(parent, site);
-    }
     
     /**
      * Returns a globally unique identifier for this type of presentation factory. This is used

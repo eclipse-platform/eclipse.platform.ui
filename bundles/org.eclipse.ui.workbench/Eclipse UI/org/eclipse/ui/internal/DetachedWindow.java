@@ -99,7 +99,7 @@ public class DetachedWindow implements IDragOverListener {
     public DetachedWindow(WorkbenchPage workbenchPage) {
         this.page = workbenchPage;
         
-        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_DETACHED, null);
+        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW, null);
         folder.addListener(propertyListener);
     }
 
@@ -120,11 +120,12 @@ public class DetachedWindow implements IDragOverListener {
 
     private void updateTitle() {
         if (activePart != null) {
-            String text = activePart.getTitle();
-            
-            if (!text.equals(s.getText())) {
-                s.setText(text);
-            }
+            // Uncomment to set the shell title to match the title of the active part
+//            String text = activePart.getTitle();
+//            
+//            if (!text.equals(s.getText())) {
+//                s.setText(text);
+//            }
         }
     }
 
@@ -144,6 +145,7 @@ public class DetachedWindow implements IDragOverListener {
     public void create() {
         s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
         s.setData(this);
+        s.setText(""); //$NON-NLS-1$
         DragUtil.addDragTarget(s, this);
         hideViewsOnClose = true;
         if (bounds.isEmpty()) {

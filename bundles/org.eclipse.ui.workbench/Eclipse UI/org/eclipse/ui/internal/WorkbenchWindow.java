@@ -840,7 +840,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
 
-        detachedWindowShells = new ShellPool(shell, SWT.TOOL | SWT.TITLE | SWT.MIN | SWT.MAX | SWT.RESIZE | getDefaultOrientation());
+        detachedWindowShells = new ShellPool(shell, SWT.TOOL | SWT.TITLE | SWT.MAX | SWT.RESIZE | getDefaultOrientation());
         
         String title = getWindowConfigurer().basicGetTitle();
         if (title != null) {

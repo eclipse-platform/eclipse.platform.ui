@@ -29,8 +29,6 @@ public class PresentationFactoryUtil {
     public static final int ROLE_STANDALONE = 0x03;
 
     public static final int ROLE_STANDALONE_NOTITLE = 0x04;
-
-    public static final int ROLE_DETACHED = 0x05;
     
     public static StackPresentation createPresentation(
             AbstractPresentationFactory factory, int role, Composite parent,
@@ -50,9 +48,6 @@ public class PresentationFactoryUtil {
         case ROLE_STANDALONE_NOTITLE:
             presentation = factory.createStandaloneViewPresentation(parent,
                     site, false);
-            break;
-        case ROLE_DETACHED:
-            presentation = factory.createDetachedViewPresentation(parent, site);
             break;
         default:
             presentation = factory.createViewPresentation(parent, site);
